@@ -1,0 +1,35 @@
+code = { import | function | class } ;
+import = "import" identifier [ "from" string ] ";" ;
+function = "func" type identifier "(" [ parameter_list ] ")" "{" { statement | return_statement } "}" ;
+class = "class" identifier "{" { attribute | method } "}" ;
+parameter_list = parameter { "," parameter } ;
+parameter = variable_declaration
+attribute = variable_declaration
+variable_declaration = type identifier [ "=" expression ] ;
+method = "method" type identifier "(" "self" [ "," parameter_list ] ")" "{" { statement | return_statement } "}" ;
+type = builtin_type | identifier ;
+statement = variable_declaration ";" | if_statement | while_statement | for_statement | expression ";" | ";" ;
+if_statement = "if" "(" expression ")" "{" { statement } "}" { "elif" "(" expression ")" "{" { statement } "}" } [ "else" "{" { statement } "}" ] ;
+while_statement = "while" "(" expression ")" "{" { statement | break_statement | continue_statement } "}" ;
+for_statement = "for" "(" [ variable_declaration ] ";" [ expression ] ";" [ expression ] ")" "{" { statement | break_statement | continue_statement } "}" ;
+expression = term { operator term } ;
+term = literal | "(" expression ")" | variable_access | ("-" | "!") term ;
+variable_access = identifier | function_call | get_attribute | get_sequence ;
+function_call = variable_access "(" [ argument_list ] ")" ;
+get_attribute = variable_access "." identifier ;
+get_sequence = variable_access "[" expression "]" ;
+argument_list = expression { "," expression } ;
+literal = integer | float | string | boolean ;
+integer = digit { digit } ;
+float = digit { digit } "." digit { digit } ;
+string = "\"" { character } "\"" ;
+boolean = "true" | "false" ;
+return_statement = "return" [ expression ] ";" ;
+break_statement = "break" ";" ;
+continue_statement = "continue" ";" ;
+builtin_type = "int" | "float" | "string" | "bool" | "void" ;
+identifier = (alphabet | "_") { alphabet | digit | "_" } ;
+operator = "+" | "-" | "*" | "/" | "%" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||" | "=" | "+=" | "-=" | "*=" | "/=" | "%=" ;
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+alphabet = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" ;
+character = any_character_except_ascii_0x22 ;  # ascii 0x22 = `"`
