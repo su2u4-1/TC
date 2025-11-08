@@ -1,5 +1,8 @@
 #include "tc_lib.h"
 
+void handle_parameters(int argc, char* argv[]) {
+}
+
 int main(int argc, char* argv[]) {
     printf("handle parameter\n");
     char* file_name;

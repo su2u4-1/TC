@@ -3,9 +3,9 @@
 
 #include "tc_lib.h"
 
-void** mem_blocks = NULL;
-size_t mem_block_count = 0;
+extern void** mem_blocks;
 
+void tc_free_all_memory(void);
 void* tc_malloc(size_t size);
 void* tc_realloc(void* ptr, size_t size);
 

@@ -1,14 +1,17 @@
 #ifndef TC_LIB_H
 #define TC_LIB_H
 
+// #define DEBUG
+
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-char** tc_keywords = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void"};
-int tc_keywords_count = 21;
+extern char* tc_keywords[];
+extern int tc_keywords_count;
 
-char** tc_symbols = {"(", ")", "{", "}", ",", "!", ".", "[", "]", "\"", ";", "_", "+", "-", "*", "/", "%", "==", "!=", "<", ">", "<=", ">=", "&&", "||", "=", "+=", "-=", "*=", "/=", "%="};
-int tc_symbols_count = 31;
+extern char* tc_symbols[];
+extern int tc_symbols_count;
 
 #endif  // TC_LIB_H

@@ -1,5 +1,7 @@
 #include "tc_mem.h"
 
+#include "tc_err.h"
+
 size_t mem_block_index = 0;
 size_t mem_block_length = 16;
 void** mem_blocks = NULL;
@@ -8,13 +10,16 @@ static void mem_init(void) {
     mem_blocks = (void**)malloc(sizeof(void*) * mem_block_length);
 }
 
-static void mem_error(void) {
-    fprintf(stderr, "error: Memory allocation error\n");
-    for (size_t i = 0; i < mem_block_index; i++) {
-        free(mem_blocks[i]);
+void tc_free_all_memory(void) {
+    if (mem_blocks != NULL) {
+        for (size_t i = 0; i < mem_block_index; i++) {
+            free(mem_blocks[i]);
+        }
+        free(mem_blocks);
     }
-    free(mem_blocks);
-    exit(1);
+    mem_blocks = NULL;
+    mem_block_index = 0;
+    mem_block_length = 16;
 }
 
 void* tc_malloc(size_t size) {
@@ -23,13 +28,13 @@ void* tc_malloc(size_t size) {
     }
     void* ptr = malloc(size);
     if (ptr == NULL) {
-        mem_error();
+        tcerr_alloc();
     }
     if (mem_block_index >= mem_block_length) {
         mem_block_length *= 2;
         void* temp = realloc(mem_blocks, sizeof(void*) * mem_block_length);
         if (temp == NULL) {
-            mem_error();
+            tcerr_alloc();
         }
         mem_blocks = (void**)temp;
     }
@@ -46,7 +51,7 @@ void* tc_realloc(void* ptr, size_t size) {
     }
     void* new_ptr = realloc(ptr, size);
     if (new_ptr == NULL) {
-        mem_error();
+        tcerr_alloc();
     }
     for (size_t i = 0; i < mem_block_index; i++) {
         if (mem_blocks[i] == ptr) {

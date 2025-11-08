@@ -1,5 +1,6 @@
 #include "tc_lexer.h"
 
+#include "tc_err.h"
 #include "tc_mem.h"
 
 Token get_identifier_token(const char* source, int* index, int line_number) {
@@ -65,6 +66,9 @@ Token get_string_token(const char* source, int* index, int line_number) {
     char* buffer = (char*)tc_malloc(sizeof(char) * buf_length);
     char c = source[(*index) - 1];
     while (c != '"') {
+        if (c == '\0') {
+            tcerr_unclosed_string(line_number);
+        }
         buffer[buf_index++] = c;
         if (buf_index >= buf_length) {
             buf_length *= 2;
@@ -83,6 +87,9 @@ Token get_comment_token(const char* source, int* index, int line_number, int mul
     char* buffer = (char*)tc_malloc(sizeof(char) * buf_length);
     char c = source[(*index) - 1];
     while (!multi_line && c != '\n') {
+        if (c == '\0') {
+            tcerr_unclosed_comment(line_number);
+        }
         buffer[buf_index++] = c;
         if (buf_index >= buf_length) {
             buf_length *= 2;
@@ -91,6 +98,11 @@ Token get_comment_token(const char* source, int* index, int line_number, int mul
         c = source[(*index)++];
     }
     while (multi_line && (c != '/' || buffer[buf_index - 1] != '*')) {
+        if (c == '\n') {
+            ++line_number;
+        } else if (c == '\0') {
+            tcerr_unclosed_comment(line_number);
+        }
         buffer[buf_index++] = c;
         if (buf_index >= buf_length) {
             buf_length *= 2;
