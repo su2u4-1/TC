@@ -2,9 +2,9 @@
 
 #include "tc_err.h"
 
-size_t mem_block_index = 0;
-size_t mem_block_length = 16;
-void** mem_blocks = NULL;
+static size_t mem_block_index = 0;
+static size_t mem_block_length = 16;
+static void** mem_blocks = NULL;
 
 static void mem_init(void) {
     mem_blocks = (void**)malloc(sizeof(void*) * mem_block_length);
@@ -13,7 +13,9 @@ static void mem_init(void) {
 void tc_free_all_memory(void) {
     if (mem_blocks != NULL) {
         for (size_t i = 0; i < mem_block_index; i++) {
-            free(mem_blocks[i]);
+            if (mem_blocks[i] != NULL) {
+                free(mem_blocks[i]);
+            }
         }
         free(mem_blocks);
     }
@@ -56,9 +58,10 @@ void* tc_realloc(void* ptr, size_t size) {
     for (size_t i = 0; i < mem_block_index; i++) {
         if (mem_blocks[i] == ptr) {
             mem_blocks[i] = new_ptr;
-            break;
+            return new_ptr;
         }
     }
+    printf("warning: Attempted to realloc untracked memory\n");
     return new_ptr;
 }
 
