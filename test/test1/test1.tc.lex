@@ -173,7 +173,7 @@
 42: (symbol)     : ";"
 43: (symbol)     : "}"
 44: (symbol)     : "}"
-46: (comment)    : "int to string"
+46: (comment)    : " int to string"
 47: (keyword)    : "string"
 47: (identifier) : "itos"
 47: (symbol)     : "("

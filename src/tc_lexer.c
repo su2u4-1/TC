@@ -29,8 +29,8 @@ static Token get_number_token(const char* source, int* index, int line_number) {
         arr_push(char_buffer, &c);
         c = source[(*index)++];
     }
-    --*index;
     if (c == '.') {
+        arr_push(char_buffer, &c);
         c = source[(*index)++];
         while ('0' <= c && c <= '9') {
             arr_push(char_buffer, &c);
@@ -42,6 +42,7 @@ static Token get_number_token(const char* source, int* index, int line_number) {
         arr_free(char_buffer);
         return (Token){TOKEN_FLOAT, string, line_number};
     }
+    --*index;
     char* string = (char*)arr_get_all(char_buffer);
     string[char_buffer->length] = '\0';
     arr_free(char_buffer);
@@ -52,14 +53,11 @@ static Token get_string_token(const char* source, int* index, int line_number) {
     Array* char_buffer = arr_init(sizeof(char), 64);
     char c = source[(*index)++];
     while (c != '"') {
-        if (c == '\0') {
+        if (c == '\0' || c == '\n') {
             tcerr_unclosed_string(line_number);
         }
         arr_push(char_buffer, &c);
         c = source[(*index)++];
-    }
-    if (c == '\0') {
-        tcerr_unclosed_string(line_number);
     }
     char* string;
     if (char_buffer->length == 0) {
@@ -75,7 +73,6 @@ static Token get_string_token(const char* source, int* index, int line_number) {
 
 static Token get_comment_token(const char* source, int* index, int* line_number, int multi_line) {
     Array* char_buffer = arr_init(sizeof(char), 64);
-    ++*index;
     ++*index;
     char c = source[(*index)++];
     int start_line = *line_number;
@@ -102,7 +99,6 @@ static Token get_comment_token(const char* source, int* index, int* line_number,
         if (char_buffer->length >= 2 && *(char*)arr_get_item(char_buffer, -1) == '*') {
             char_buffer->length--;
         }
-        ++*index;
     }
     char* string = (char*)arr_get_all(char_buffer);
     string[char_buffer->length] = '\0';

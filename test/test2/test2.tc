@@ -1,0 +1,20 @@
+import from func class method self
+if elif else while for return break continue
+true false
+int float string bool void
+
++ - * / %
+== != < > <= >=
+&& ||
+= += -= *= /= %=
+; , ( ) { } . [ ]
+
+12345 123.456 "hello world"
+my_identifier _another_identifier MyClass123
+
+// abc
+"/*"
+/*"*/
+"abc"
+
++-*/%==!=<><=>=&&||"[][][]"=+=-=*/*{}{}{}*/=/=%=;,(){}.[]
