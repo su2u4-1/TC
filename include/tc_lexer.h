@@ -22,5 +22,6 @@ typedef struct Token {
 } Token;
 
 Token* lexer(const char* source);
+void output_lexer_result(Token* tokens, const char* output_path, const char* file_name);
 
 #endif  // TC_LEXER_H

@@ -191,3 +191,94 @@ Token* lexer(const char* source) {
     arr_free(token_array);
     return tokens;
 }
+
+static char* handle_newlines(char* str) {
+    Array* char_buffer = arr_init(sizeof(char), 64);
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (str[i] == '\n' || str[i] == '\t') {
+            // char_buffer->length--;
+            char* newline_str = str[i] == '\n' ? "\\n" : "\\t";
+#ifdef DEBUG
+            printf("[debug]: Handling newline/tab in comment: replacing with %s\n", newline_str);
+#endif
+            for (size_t j = 0; newline_str[j] != '\0'; j++) {
+                arr_push(char_buffer, &newline_str[j]);
+            }
+#ifdef DEBUG
+            printf("[debug]: Now char_buffer: %s\n", (char*)arr_get_all(char_buffer));
+#endif
+        } else if (str[i] != '\r') {
+            arr_push(char_buffer, &str[i]);
+        }
+    }
+    char* new_str = (char*)arr_get_all(char_buffer);
+    new_str[char_buffer->length] = '\0';
+    arr_free(char_buffer);
+    return new_str;
+}
+
+static char* output_token(Token token) {
+    const char* type_str;
+    switch (token.type) {
+        case TOKEN_EOF:
+            type_str = "(eof)       ";
+            break;
+        case TOKEN_IDENTIFIER:
+            type_str = "(identifier)";
+            break;
+        case TOKEN_KEYWORD:
+            type_str = "(keyword)   ";
+            break;
+        case TOKEN_SYMBOL:
+            type_str = "(symbol)    ";
+            break;
+        case TOKEN_INTEGER:
+            type_str = "(integer)   ";
+            break;
+        case TOKEN_FLOAT:
+            type_str = "(float)     ";
+            break;
+        case TOKEN_STRING:
+            type_str = "(string)    ";
+            break;
+        case TOKEN_COMMENT:
+            type_str = "(comment)   ";
+            break;
+        default:
+            type_str = "(unknown)   ";
+            break;
+    }
+    char* content = token.content ? token.content : "";
+    if (content && token.type == TOKEN_COMMENT) {
+        content = handle_newlines(content);
+    }
+    size_t buffer_size = (size_t)snprintf(NULL, 0, "%d%s: %s : \"%s\"", token.line, token.line < 10 ? " " : "", type_str, content);
+    char* buffer = (char*)tc_malloc(buffer_size + 1);
+    if (buffer) {
+        sprintf(buffer, "%d%s: %s : \"%s\"", token.line, token.line < 10 ? " " : "", type_str, content);
+    }
+    return buffer;
+}
+
+void output_lexer_result(Token* tokens, const char* output_path, const char* file_name) {
+    char full_path[1024];
+    if (output_path != NULL) {
+        snprintf(full_path, sizeof(full_path), "%s/%s.lex", output_path, file_name);
+    } else {
+        snprintf(full_path, sizeof(full_path), "%s.lex", file_name);
+    }
+    FILE* file = fopen(full_path, "w");
+    if (file == NULL) {
+        tcerr_file_open_error(full_path);
+    }
+    for (int i = 0;; i++) {
+        Token token = tokens[i];
+        char* token_str = output_token(token);
+        fprintf(file, "%s\n", token_str);
+        tc_free(token_str);
+        if (token.type == TOKEN_EOF) {
+            break;
+        }
+    }
+    fclose(file);
+}
