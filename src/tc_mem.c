@@ -10,6 +10,18 @@ static void mem_init(void) {
     mem_blocks = (void**)malloc(sizeof(void*) * mem_block_length);
 }
 
+static void mem_blocks_add(void* ptr) {
+    if (mem_block_index >= mem_block_length) {
+        mem_block_length *= 2;
+        void* temp = realloc(mem_blocks, sizeof(void*) * mem_block_length);
+        if (temp == NULL) {
+            tcerr_alloc();
+        }
+        mem_blocks = (void**)temp;
+    }
+    mem_blocks[mem_block_index++] = ptr;
+}
+
 void tc_free_all_memory(void) {
     if (mem_blocks != NULL) {
         for (size_t i = 0; i < mem_block_index; i++) {
@@ -36,15 +48,7 @@ void* tc_malloc(size_t size) {
     if (ptr == NULL) {
         tcerr_alloc();
     }
-    if (mem_block_index >= mem_block_length) {
-        mem_block_length *= 2;
-        void* temp = realloc(mem_blocks, sizeof(void*) * mem_block_length);
-        if (temp == NULL) {
-            tcerr_alloc();
-        }
-        mem_blocks = (void**)temp;
-    }
-    mem_blocks[mem_block_index++] = ptr;
+    mem_blocks_add(ptr);
     return ptr;
 }
 
@@ -70,6 +74,7 @@ void* tc_realloc(void* ptr, size_t size) {
         }
     }
     printf("[debug]: Attempted to realloc untracked memory\n");
+    mem_blocks_add(new_ptr);
     return new_ptr;
 }
 
