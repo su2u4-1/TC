@@ -85,7 +85,7 @@ static Token get_comment_token(const char* source, int* index, int line_number, 
         arr_push(char_buffer, &c);
         c = source[(*index)++];
     }
-    while (multi_line && (c != '/' || *(char*)arr_get_item(char_buffer, -1) != '*')) {
+    while (multi_line && (c != '/' || char_buffer->length == 0 || *(char*)arr_get_item(char_buffer, -1) != '*')) {
         if (c == '\n') {
             ++line_number;
         } else if (c == '\0') {
