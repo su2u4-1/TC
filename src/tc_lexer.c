@@ -3,119 +3,107 @@
 #include "tc_err.h"
 #include "tc_mem.h"
 
-Token get_identifier_token(const char* source, int* index, int line_number) {
-    int buf_length = 256;
-    int buf_index = 0;
-    char* buffer = (char*)tc_malloc(sizeof(char) * buf_length);
+static Token get_identifier_token(const char* source, int* index, int line_number) {
+    Array* char_buffer = arr_init(sizeof(char), 16);
     char c = source[(*index) - 1];
-    while ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || c == '_' || '0' <= c && c <= '9') {
-        buffer[buf_index++] = c;
-        if (buf_index >= buf_length) {
-            buf_length *= 2;
-            buffer = (char*)tc_realloc(buffer, sizeof(char) * buf_length);
-        }
+    while (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || c == '_' || ('0' <= c && c <= '9')) {
+        arr_push(char_buffer, &c);
         c = source[(*index)++];
     }
     --*index;
-    buffer[buf_index] = '\0';
+    char* string = (char*)arr_get_all(char_buffer);
+    string[char_buffer->length] = '\0';
+    arr_free(char_buffer);
     for (int i = 0; i < tc_keywords_count; i++) {
-        if (strcmp(buffer, tc_keywords[i]) == 0) {
-            return (Token){TOKEN_KEYWORD, buffer, line_number};
+        if (strcmp(string, tc_keywords[i]) == 0) {
+            return (Token){TOKEN_KEYWORD, string, line_number};
         }
     }
-    return (Token){TOKEN_IDENTIFIER, buffer, line_number};
+    return (Token){TOKEN_IDENTIFIER, string, line_number};
 }
 
-Token get_number_token(const char* source, int* index, int line_number) {
-    int buf_length = 256;
-    int buf_index = 0;
-    char* buffer = (char*)tc_malloc(sizeof(char) * buf_length);
+static Token get_number_token(const char* source, int* index, int line_number) {
+    Array* char_buffer = arr_init(sizeof(char), 16);
     char c = source[(*index) - 1];
     while ('0' <= c && c <= '9') {
-        buffer[buf_index++] = c;
-        if (buf_index >= buf_length) {
-            buf_length *= 2;
-            buffer = (char*)tc_realloc(buffer, sizeof(char) * buf_length);
-        }
+        arr_push(char_buffer, &c);
         c = source[(*index)++];
     }
     --*index;
     if (c == '.') {
         c = source[(*index)++];
         while ('0' <= c && c <= '9') {
-            buffer[buf_index++] = c;
-            if (buf_index >= buf_length) {
-                buf_length *= 2;
-                buffer = (char*)tc_realloc(buffer, sizeof(char) * buf_length);
-            }
+            arr_push(char_buffer, &c);
             c = source[(*index)++];
         }
         --*index;
-        buffer[buf_index++] = '\0';
-        buffer = (char*)tc_realloc(buffer, sizeof(char) * buf_index);
-        return (Token){TOKEN_FLOAT, buffer, line_number};
+        char* string = (char*)arr_get_all(char_buffer);
+        string[char_buffer->length] = '\0';
+        arr_free(char_buffer);
+        return (Token){TOKEN_FLOAT, string, line_number};
     }
-    buffer[buf_index++] = '\0';
-    buffer = (char*)tc_realloc(buffer, sizeof(char) * buf_index);
-    return (Token){TOKEN_INTEGER, buffer, line_number};
+    char* string = (char*)arr_get_all(char_buffer);
+    string[char_buffer->length] = '\0';
+    arr_free(char_buffer);
+    return (Token){TOKEN_INTEGER, string, line_number};
 }
 
-Token get_string_token(const char* source, int* index, int line_number) {
-    int buf_length = 256;
-    int buf_index = 0;
-    char* buffer = (char*)tc_malloc(sizeof(char) * buf_length);
-    char c = source[(*index) - 1];
+static Token get_string_token(const char* source, int* index, int line_number) {
+    Array* char_buffer = arr_init(sizeof(char), 64);
+    char c = source[(*index)++];
     while (c != '"') {
         if (c == '\0') {
             tcerr_unclosed_string(line_number);
         }
-        buffer[buf_index++] = c;
-        if (buf_index >= buf_length) {
-            buf_length *= 2;
-            buffer = (char*)tc_realloc(buffer, sizeof(char) * buf_length);
-        }
+        arr_push(char_buffer, &c);
         c = source[(*index)++];
     }
-    --*index;
-    buffer = (char*)tc_realloc(buffer, sizeof(char) * buf_index);
-    return (Token){TOKEN_STRING, buffer, line_number};
+    if (c == '\0') {
+        tcerr_unclosed_string(line_number);
+    }
+    char* string;
+    if (char_buffer->length == 0) {
+        string = (char*)tc_malloc(1);
+        string[0] = '\0';
+    } else {
+        string = (char*)arr_get_all(char_buffer);
+        string[char_buffer->length] = '\0';
+    }
+    arr_free(char_buffer);
+    return (Token){TOKEN_STRING, string, line_number};
 }
 
-Token get_comment_token(const char* source, int* index, int line_number, int multi_line) {
-    int buf_length = 256;
-    int buf_index = 0;
-    char* buffer = (char*)tc_malloc(sizeof(char) * buf_length);
-    char c = source[(*index) - 1];
+static Token get_comment_token(const char* source, int* index, int line_number, int multi_line) {
+    Array* char_buffer = arr_init(sizeof(char), 64);
+    ++*index;
+    ++*index;
+    char c = source[(*index)++];
     while (!multi_line && c != '\n') {
         if (c == '\0') {
             tcerr_unclosed_comment(line_number);
         }
-        buffer[buf_index++] = c;
-        if (buf_index >= buf_length) {
-            buf_length *= 2;
-            buffer = (char*)tc_realloc(buffer, sizeof(char) * buf_length);
-        }
+        arr_push(char_buffer, &c);
         c = source[(*index)++];
     }
-    while (multi_line && (c != '/' || buffer[buf_index - 1] != '*')) {
+    while (multi_line && (c != '/' || *(char*)arr_get_item(char_buffer, -1) != '*')) {
         if (c == '\n') {
             ++line_number;
         } else if (c == '\0') {
             tcerr_unclosed_comment(line_number);
         }
-        buffer[buf_index++] = c;
-        if (buf_index >= buf_length) {
-            buf_length *= 2;
-            buffer = (char*)tc_realloc(buffer, sizeof(char) * buf_length);
-        }
+        arr_push(char_buffer, &c);
         c = source[(*index)++];
     }
-    --*index;
-    buffer = (char*)tc_realloc(buffer, sizeof(char) * buf_index);
-    return (Token){TOKEN_COMMENT, buffer, line_number};
+    if (multi_line) {
+        ++*index;
+    }
+    char* string = (char*)arr_get_all(char_buffer);
+    string[char_buffer->length] = '\0';
+    arr_free(char_buffer);
+    return (Token){TOKEN_COMMENT, string, line_number};
 }
 
-int is_symbol_char(char c) {
+static int is_symbol_char(char c) {
     const char* symbols = "(){},!.[]\";_+-*/%=!<>&|";
     for (int i = 0; symbols[i] != '\0'; i++) {
         if (c == symbols[i]) {
@@ -125,7 +113,7 @@ int is_symbol_char(char c) {
     return 0;
 }
 
-int is_symbol(char c1, char c2) {
+static int is_symbol(char c1, char c2) {
     if (!is_symbol_char(c2)) {
         return 0;
     }
@@ -137,7 +125,7 @@ int is_symbol(char c1, char c2) {
     return 0;
 }
 
-Token get_symbol_token(const char* source, int* index, int line_number) {
+static Token get_symbol_token(const char* source, int* index, int line_number) {
     char* buffer = (char*)tc_malloc(sizeof(char) * 3);
     buffer[0] = source[(*index) - 1];
     buffer[1] = source[*index];
@@ -150,7 +138,7 @@ Token get_symbol_token(const char* source, int* index, int line_number) {
     return (Token){TOKEN_SYMBOL, buffer, line_number};
 }
 
-Token get_next_token(const char* source, int* index, int* line_number) {
+static Token get_next_token(const char* source, int* index, int* line_number) {
     while (1) {
         if (source[*index] == '\0') {
             return (Token){TOKEN_EOF, NULL, *line_number};
@@ -158,7 +146,7 @@ Token get_next_token(const char* source, int* index, int* line_number) {
             char c = source[(*index)++];
             if (c == '\n') {
                 (*line_number)++;
-            } else if ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || c == '_') {
+            } else if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || c == '_') {
                 return get_identifier_token(source, index, *line_number);
             } else if ('0' <= c && c <= '9') {
                 return get_number_token(source, index, *line_number);
@@ -172,6 +160,8 @@ Token get_next_token(const char* source, int* index, int* line_number) {
                 return get_symbol_token(source, index, *line_number);
             } else if (isspace(c)) {
                 // Skip whitespace
+            } else {
+                printf("[debug]: Unknown character '%c' at line %d\n", c, *line_number);
             }
         }
     }
@@ -179,20 +169,16 @@ Token get_next_token(const char* source, int* index, int* line_number) {
 
 Token* lexer(const char* source) {
     int source_index = 0;
-    int list_index = 0;
-    int list_length = 16;
     int line_number = 1;
-    Token* tokens = (Token*)tc_malloc(sizeof(Token) * list_length);
+    Array* token_array = arr_init(sizeof(Token), 16);
     while (1) {
         Token token = get_next_token(source, &source_index, &line_number);
-        if (list_index >= list_length) {
-            list_length *= 2;
-            tokens = (Token*)tc_realloc(tokens, sizeof(Token) * list_length);
-        }
-        tokens[list_index++] = token;
+        arr_push(token_array, &token);
         if (token.type == TOKEN_EOF) {
             break;
         }
     }
+    Token* tokens = (Token*)arr_get_all(token_array);
+    arr_free(token_array);
     return tokens;
 }
