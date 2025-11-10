@@ -73,34 +73,41 @@ static Token get_string_token(const char* source, int* index, int line_number) {
     return (Token){TOKEN_STRING, string, line_number};
 }
 
-static Token get_comment_token(const char* source, int* index, int line_number, int multi_line) {
+static Token get_comment_token(const char* source, int* index, int* line_number, int multi_line) {
     Array* char_buffer = arr_init(sizeof(char), 64);
     ++*index;
     ++*index;
     char c = source[(*index)++];
+    int start_line = *line_number;
     while (!multi_line && c != '\n') {
         if (c == '\0') {
-            tcerr_unclosed_comment(line_number);
+            tcerr_unclosed_comment(*line_number);
         }
         arr_push(char_buffer, &c);
         c = source[(*index)++];
     }
+    if (!multi_line && c == '\n') {
+        ++*line_number;
+    }
     while (multi_line && (c != '/' || char_buffer->length == 0 || *(char*)arr_get_item(char_buffer, -1) != '*')) {
         if (c == '\n') {
-            ++line_number;
+            ++*line_number;
         } else if (c == '\0') {
-            tcerr_unclosed_comment(line_number);
+            tcerr_unclosed_comment(*line_number);
         }
         arr_push(char_buffer, &c);
         c = source[(*index)++];
     }
     if (multi_line) {
+        if (char_buffer->length >= 2 && *(char*)arr_get_item(char_buffer, -1) == '*') {
+            char_buffer->length--;
+        }
         ++*index;
     }
     char* string = (char*)arr_get_all(char_buffer);
     string[char_buffer->length] = '\0';
     arr_free(char_buffer);
-    return (Token){TOKEN_COMMENT, string, line_number};
+    return (Token){TOKEN_COMMENT, string, start_line};
 }
 
 static int is_symbol_char(char c) {
@@ -153,15 +160,17 @@ static Token get_next_token(const char* source, int* index, int* line_number) {
             } else if (c == '"') {
                 return get_string_token(source, index, *line_number);
             } else if (c == '/' && source[*index] == '/') {
-                return get_comment_token(source, index, *line_number, 0);
+                return get_comment_token(source, index, line_number, 0);
             } else if (c == '/' && source[*index] == '*') {
-                return get_comment_token(source, index, *line_number, 1);
+                return get_comment_token(source, index, line_number, 1);
             } else if (is_symbol_char(c)) {
                 return get_symbol_token(source, index, *line_number);
             } else if (isspace(c)) {
                 // Skip whitespace
             } else {
+#ifdef DEBUG
                 printf("[debug]: Unknown character '%c' at line %d\n", c, *line_number);
+#endif
             }
         }
     }
