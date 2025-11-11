@@ -256,16 +256,10 @@ static char* output_token(Token token) {
     return buffer;
 }
 
-void output_lexer_result(Token* tokens, const char* output_path, const char* file_name) {
-    char full_path[1024];
-    if (output_path != NULL) {
-        snprintf(full_path, sizeof(full_path), "%s/%s.lex", output_path, file_name);
-    } else {
-        snprintf(full_path, sizeof(full_path), "%s.lex", file_name);
-    }
-    FILE* file = fopen(full_path, "w");
+void output_lexer_result(Token* tokens, const char* output_file) {
+    FILE* file = fopen(output_file, "w");
     if (file == NULL) {
-        tcerr_file_open_error(full_path);
+        tcerr_file_open_error(output_file);
     }
     for (int i = 0;; i++) {
         Token token = tokens[i];
