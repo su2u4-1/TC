@@ -120,7 +120,7 @@ void* arr_get_all(Array* arr) {
     if (arr->length == 0) {
         return NULL;
     }
-    void* block = tc_malloc(arr->item_size * arr->length);
+    void* block = tc_malloc(arr->item_size * arr->length + 1);
     memcpy(block, arr->items, arr->item_size * arr->length);
     return block;
 }
