@@ -2,25 +2,33 @@
 
 #include "tc_mem.h"
 
-__attribute__((noreturn)) void tcerr_alloc(void) {
+#if defined(__GNUC__) || defined(__clang__)
+#define NORETURN __attribute__((noreturn))
+#elif defined(_MSC_VER)
+#define NORETURN __declspec(noreturn)
+#else
+#define NORETURN
+#endif
+
+NORETURN void tcerr_alloc(void) {
     fprintf(stderr, "[os error]: Memory allocation error\n");
     tc_free_all_memory();
     exit(1);
 }
 
-__attribute__((noreturn)) void tcerr_unclosed_string(int line_number) {
+NORETURN void tcerr_unclosed_string(int line_number) {
     fprintf(stderr, "[syntax error]: Unclosed string at line %d\n", line_number);
     tc_free_all_memory();
     exit(2);
 }
 
-__attribute__((noreturn)) void tcerr_unclosed_comment(int line_number) {
+NORETURN void tcerr_unclosed_comment(int line_number) {
     fprintf(stderr, "[syntax error]: Unclosed comment at line %d\n", line_number);
     tc_free_all_memory();
     exit(3);
 }
 
-__attribute__((noreturn)) void tcerr_file_open_error(const char* file_path) {
+NORETURN void tcerr_file_open_error(const char* file_path) {
     fprintf(stderr, "[io error]: cannot open file %s\n", file_path);
     tc_free_all_memory();
     exit(4);
