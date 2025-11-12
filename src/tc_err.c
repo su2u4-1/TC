@@ -33,3 +33,9 @@ NORETURN void tcerr_file_open_error(const char* file_path) {
     tc_free_all_memory();
     exit(4);
 }
+
+NORETURN void tcerr_unexpected_token(const char* filename, int line_number, const char* token_content) {
+    fprintf(stderr, "[syntax error]: Unexpected token \"%s\" at %s:%d\n", token_content, filename, line_number);
+    tc_free_all_memory();
+    exit(5);
+}
