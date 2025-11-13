@@ -5,7 +5,7 @@ class = "class" identifier "{" { attribute | method } "}" ;
 parameter_list = parameter { "," parameter } ;
 parameter = variable_declaration ;
 attribute = variable_declaration ";" ;
-variable_declaration = "var" type identifier [ "=" expression ] ;
+variable_declaration = type identifier [ "=" expression ] ;
 method = "method" type identifier "(" "self" [ "," parameter_list ] ")" "{" { statement | return_statement } "}" ;
 type = builtin_type | identifier ;
 statement = variable_declaration ";" | if_statement | while_statement | for_statement | expression ";" | ";" ;
