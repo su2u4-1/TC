@@ -97,7 +97,7 @@ static Token get_comment_token(const char* source, int* index, int* line_number,
     }
     if (multi_line) {
         if (char_buffer->length >= 2 && *(char*)arr_get_item(char_buffer, -1) == '*') {
-            char_buffer->length--;
+            --char_buffer->length;
         }
     }
     char* string = (char*)arr_get_all(char_buffer);
@@ -192,7 +192,6 @@ static char* handle_newlines(char* str) {
     Array* char_buffer = arr_init(sizeof(char), 64);
     for (size_t i = 0; str[i] != '\0'; i++) {
         if (str[i] == '\n' || str[i] == '\t') {
-            // char_buffer->length--;
             char* newline_str = str[i] == '\n' ? "\\n" : "\\t";
 #ifdef DEBUG
             printf("[debug]: Handling newline/tab in comment: replacing with %s\n", newline_str);

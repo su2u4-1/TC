@@ -53,7 +53,7 @@ Path* path_init(const char* path) {
     char* file_name = (char*)tc_malloc(len + 1);
     strncpy(file_name, file, len);
     file_name[len] = '\0';
-    components->length--;
+    --components->length;
     arr_push(components, &file_name);
     arr_push(components, &ext);
     p->components = (char**)arr_get_all(components);
