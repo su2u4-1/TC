@@ -23,10 +23,16 @@ parameter_list = {"parameter_list", [variable_declaration, ...], n}
 type = {type_name, NULL, 0}
 variable_declaration = {"variable_declaration", [type, identifier, expression], 3}
     identifier = {identifier_name, NULL, 0}
-statement
 if_statement
-while_statement
-for_statement
+while_statement = {"while_statement", [condition, body], 2}
+    condition = expression
+    body = {"body", [statement, ...], n}
+for_statement = {"for_statement", [initialization, condition, increment, body], 4}
+    initialization = variable_declaration | expression | empty
+    condition = expression | empty
+    increment = expression | empty
+    body = {"body", [statement, ...], n}
+    empty = {"empty", NULL, 0}
 expression
 term
 variable_access
@@ -59,12 +65,27 @@ static Node parser_while_statement(const char* filename, size_t* current_index, 
 static Node parser_for_statement(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
 static Node parser_variable_declaration(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
 static Node parser_expression(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
+static Node parser_break_statement(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
+static Node parser_continue_statement(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
 
 static Token* get_next_token(Token* tokens, size_t* current_index, size_t token_count) {
     if (*current_index >= token_count) {
+#ifdef DEBUG
+        printf("[debug] in get_next_token: not get any token, current_index: %zu, token_count: %zu\n", *current_index, token_count);
+#endif
         return NULL;
     }
     return &tokens[(*current_index)++];
+}
+
+static Token* get_current_token(Token* tokens, size_t current_index, size_t token_count) {
+    if (current_index <= 0 || current_index > token_count) {
+#ifdef DEBUG
+        printf("[debug] in get_current_token: not get any token, current_index: %zu, token_count: %zu\n", *current_index, token_count);
+#endif
+        return NULL;
+    }
+    return &tokens[current_index - 1];
 }
 
 static int token_cmp(const Token* token, TokenType type, const char* content) {
@@ -89,6 +110,12 @@ static int token_is_type(const Token* token) {
     return 0;
 }
 
+static Node parser_break_statement(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
+}
+
+static Node parser_continue_statement(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
+}
+
 static Node parser_return_statement(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
 }
 
@@ -96,9 +123,145 @@ static Node parser_if_statement(const char* filename, size_t* current_index, Tok
 }
 
 static Node parser_while_statement(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
+    Token* current_token = get_next_token(tokens, current_index, token_count);
+    if (!token_cmp(current_token, TOKEN_SYMBOL, "(")) {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    current_token = get_next_token(tokens, current_index, token_count);
+    Node condition_node = parser_expression(filename, current_index, tokens, token_count);
+    current_token = get_next_token(tokens, current_index, token_count);
+    if (!token_cmp(current_token, TOKEN_SYMBOL, ")")) {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    current_token = get_next_token(tokens, current_index, token_count);
+    if (!token_cmp(current_token, TOKEN_SYMBOL, "{")) {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    Array* buffer = arr_init(sizeof(Node*), 16);
+    current_token = get_next_token(tokens, current_index, token_count);
+    while (!token_cmp(current_token, TOKEN_SYMBOL, "}")) {
+        Node statement_node;
+        // variable_declaration ";" | if_statement | while_statement | for_statement | expression ";" | ";" | return_statement ;
+        if (token_cmp(current_token, TOKEN_KEYWORD, "return")) {
+            statement_node = parser_return_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_KEYWORD, "if")) {
+            statement_node = parser_if_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_KEYWORD, "while")) {
+            statement_node = parser_while_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_KEYWORD, "for")) {
+            statement_node = parser_for_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_SYMBOL, "break")) {
+            statement_node = parser_break_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_SYMBOL, "continue")) {
+            statement_node = parser_continue_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_SYMBOL, ";")) {
+            // empty statement
+        } else if (token_is_type(current_token)) {
+            statement_node = parser_variable_declaration(filename, current_index, tokens, token_count);
+            current_token = get_next_token(tokens, current_index, token_count);
+            if (!token_cmp(current_token, TOKEN_SYMBOL, ";")) {
+                tcerr_unexpected_token(filename, current_token->line, current_token->content);
+            }
+        } else {
+            statement_node = parser_expression(filename, current_index, tokens, token_count);
+            current_token = get_next_token(tokens, current_index, token_count);
+            if (!token_cmp(current_token, TOKEN_SYMBOL, ";")) {
+                tcerr_unexpected_token(filename, current_token->line, current_token->content);
+            }
+        }
+        arr_push(buffer, &statement_node);
+        current_token = get_next_token(tokens, current_index, token_count);
+    }
+    Node body_node = {"body", (Node**)arr_get_all(buffer), buffer->length};
+    arr_free(buffer);
+    Node while_statement_node = {"while_statement", (Node**)tc_malloc(sizeof(Node*) * 2), 2};
+    while_statement_node.children[0] = &condition_node;
+    while_statement_node.children[1] = &body_node;
+    return while_statement_node;
 }
 
 static Node parser_for_statement(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
+    Token* current_token = get_next_token(tokens, current_index, token_count);
+    if (!token_cmp(current_token, TOKEN_SYMBOL, "(")) {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    current_token = get_next_token(tokens, current_index, token_count);
+    Node initialization_node = {"empty", NULL, 0};
+    if (token_is_type(current_token)) {
+        initialization_node = parser_variable_declaration(filename, current_index, tokens, token_count);
+        current_token = get_next_token(tokens, current_index, token_count);
+    } else if (!token_cmp(current_token, TOKEN_SYMBOL, ";")) {
+        initialization_node = parser_expression(filename, current_index, tokens, token_count);
+        current_token = get_next_token(tokens, current_index, token_count);
+    }
+    if (!token_cmp(current_token, TOKEN_SYMBOL, ";")) {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    current_token = get_next_token(tokens, current_index, token_count);
+    Node condition_node = {"empty", NULL, 0};
+    if (!token_cmp(current_token, TOKEN_SYMBOL, ";")) {
+        condition_node = parser_expression(filename, current_index, tokens, token_count);
+        current_token = get_next_token(tokens, current_index, token_count);
+    }
+    if (!token_cmp(current_token, TOKEN_SYMBOL, ";")) {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    current_token = get_next_token(tokens, current_index, token_count);
+    Node increment_node = {"empty", NULL, 0};
+    if (!token_cmp(current_token, TOKEN_SYMBOL, ")")) {
+        increment_node = parser_expression(filename, current_index, tokens, token_count);
+        current_token = get_next_token(tokens, current_index, token_count);
+    }
+    if (!token_cmp(current_token, TOKEN_SYMBOL, ")")) {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    current_token = get_next_token(tokens, current_index, token_count);
+    if (!token_cmp(current_token, TOKEN_SYMBOL, "{")) {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    Array* buffer = arr_init(sizeof(Node*), 16);
+    current_token = get_next_token(tokens, current_index, token_count);
+    while (!token_cmp(current_token, TOKEN_SYMBOL, "}")) {
+        Node statement_node;
+        // variable_declaration ";" | if_statement | while_statement | for_statement | expression ";" | ";" | return_statement ;
+        if (token_cmp(current_token, TOKEN_KEYWORD, "return")) {
+            statement_node = parser_return_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_KEYWORD, "if")) {
+            statement_node = parser_if_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_KEYWORD, "while")) {
+            statement_node = parser_while_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_KEYWORD, "for")) {
+            statement_node = parser_for_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_SYMBOL, "break")) {
+            statement_node = parser_break_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_SYMBOL, "continue")) {
+            statement_node = parser_continue_statement(filename, current_index, tokens, token_count);
+        } else if (token_cmp(current_token, TOKEN_SYMBOL, ";")) {
+            // empty statement
+        } else if (token_is_type(current_token)) {
+            statement_node = parser_variable_declaration(filename, current_index, tokens, token_count);
+            current_token = get_next_token(tokens, current_index, token_count);
+            if (!token_cmp(current_token, TOKEN_SYMBOL, ";")) {
+                tcerr_unexpected_token(filename, current_token->line, current_token->content);
+            }
+        } else {
+            statement_node = parser_expression(filename, current_index, tokens, token_count);
+            current_token = get_next_token(tokens, current_index, token_count);
+            if (!token_cmp(current_token, TOKEN_SYMBOL, ";")) {
+                tcerr_unexpected_token(filename, current_token->line, current_token->content);
+            }
+        }
+        arr_push(buffer, &statement_node);
+        current_token = get_next_token(tokens, current_index, token_count);
+    }
+    Node body_node = {"body", (Node**)arr_get_all(buffer), buffer->length};
+    arr_free(buffer);
+    Node for_statement_node = {"for_statement", (Node**)tc_malloc(sizeof(Node*) * 4), 4};
+    for_statement_node.children[0] = &initialization_node;
+    for_statement_node.children[1] = &condition_node;
+    for_statement_node.children[2] = &increment_node;
+    for_statement_node.children[3] = &body_node;
+    return for_statement_node;
 }
 
 static Node parser_expression(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
@@ -116,8 +279,9 @@ static Node parser_variable_declaration(const char* filename, size_t* current_in
         tcerr_unexpected_token(filename, current_token->line, current_token->content);
     }
     current_token = get_next_token(tokens, current_index, token_count);
-    Node expression_node = {"", NULL, 0};
+    Node expression_node = {"empty", NULL, 0};
     if (token_cmp(current_token, TOKEN_SYMBOL, "=")) {
+        current_token = get_next_token(tokens, current_index, token_count);
         expression_node = parser_expression(filename, current_index, tokens, token_count);
     } else {
         --*current_index;
@@ -130,7 +294,7 @@ static Node parser_variable_declaration(const char* filename, size_t* current_in
 }
 
 static Node parser_type(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
-    Token* current_token = tokens + *current_index - 1;
+    Token* current_token = get_current_token(tokens, *current_index, token_count);
     if (!token_is_type(current_token)) {
         tcerr_unexpected_token(filename, current_token->line, current_token->content);
     }
@@ -140,7 +304,7 @@ static Node parser_type(const char* filename, size_t* current_index, Token* toke
 
 static Node parser_parameter_list(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
     Array* buffer = arr_init(sizeof(Node*), 16);
-    Token* current_token = get_next_token(tokens, current_index, token_count);
+    Token* current_token = get_current_token(tokens, *current_index, token_count);
     while (!token_cmp(current_token, TOKEN_SYMBOL, ")")) {
         Node parameter_node = parser_variable_declaration(filename, current_index, tokens, token_count);
         arr_push(buffer, &parameter_node);
@@ -161,21 +325,23 @@ static Node parser_parameter_list(const char* filename, size_t* current_index, T
 static Node parser_import(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
     Token* current_token = get_next_token(tokens, current_index, token_count);
     char* module_name = "";
-    char* module_path = "";
-    if (current_token != NULL && current_token->type == TOKEN_IDENTIFIER) {
+    char* module_path = "empty";
+    if (token_cmp(current_token, TOKEN_IDENTIFIER, NULL)) {
         module_name = current_token->content;
     } else {
         tcerr_unexpected_token(filename, current_token->line, current_token->content);
     }
     current_token = get_next_token(tokens, current_index, token_count);
-    if (current_token != NULL && current_token->type == TOKEN_KEYWORD && strcmp(current_token->content, "from") == 0) {
+    if (token_cmp(current_token, TOKEN_SYMBOL, "from")) {
         current_token = get_next_token(tokens, current_index, token_count);
-        if (current_token != NULL && current_token->type == TOKEN_STRING) {
+        if (token_cmp(current_token, TOKEN_STRING, NULL)) {
             module_path = current_token->content;
         } else {
             tcerr_unexpected_token(filename, current_token->line, current_token->content);
         }
-    } else {
+        current_token = get_next_token(tokens, current_index, token_count);
+    }
+    if (!token_cmp(current_token, TOKEN_SYMBOL, ";")) {
         tcerr_unexpected_token(filename, current_token->line, current_token->content);
     }
     Node import_node = {"import", (Node**)tc_malloc(sizeof(Node*) * 2), 2};
@@ -216,8 +382,8 @@ static Node parser_function(const char* filename, size_t* current_index, Token* 
         tcerr_unexpected_token(filename, current_token->line, current_token->content);
     }
     Array* buffer = arr_init(sizeof(Node*), 16);
-    while (!token_cmp(current_token, TOKEN_SYMBOL, "{")) {
-        current_token = get_next_token(tokens, current_index, token_count);
+    current_token = get_next_token(tokens, current_index, token_count);
+    while (!token_cmp(current_token, TOKEN_SYMBOL, "}")) {
         Node statement_node;
         // variable_declaration ";" | if_statement | while_statement | for_statement | expression ";" | ";" | return_statement ;
         if (token_cmp(current_token, TOKEN_KEYWORD, "return")) {
@@ -244,6 +410,7 @@ static Node parser_function(const char* filename, size_t* current_index, Token* 
             }
         }
         arr_push(buffer, &statement_node);
+        current_token = get_next_token(tokens, current_index, token_count);
     }
     Node body_node = {"body", (Node**)arr_get_all(buffer), buffer->length};
     arr_free(buffer);
@@ -293,8 +460,8 @@ static Node parser_method(const char* filename, size_t* current_index, Token* to
     if (!token_cmp(current_token, TOKEN_SYMBOL, "{")) {
         tcerr_unexpected_token(filename, current_token->line, current_token->content);
     }
+    current_token = get_next_token(tokens, current_index, token_count);
     while (!token_cmp(current_token, TOKEN_SYMBOL, "}")) {
-        current_token = get_next_token(tokens, current_index, token_count);
         Node statement_node;
         // variable_declaration ";" | if_statement | while_statement | for_statement | expression ";" | ";" | return_statement ;
         if (token_cmp(current_token, TOKEN_KEYWORD, "return")) {
@@ -321,6 +488,7 @@ static Node parser_method(const char* filename, size_t* current_index, Token* to
             }
         }
         arr_push(buffer, &statement_node);
+        current_token = get_next_token(tokens, current_index, token_count);
     }
     Node body_node = {"body", (Node**)arr_get_all(buffer), buffer->length};
     arr_free(buffer);
@@ -346,8 +514,8 @@ static Node parser_class(const char* filename, size_t* current_index, Token* tok
     if (!token_cmp(current_token, TOKEN_SYMBOL, "{")) {
         tcerr_unexpected_token(filename, current_token->line, current_token->content);
     }
+    current_token = get_next_token(tokens, current_index, token_count);
     while (!token_cmp(current_token, TOKEN_SYMBOL, "}")) {
-        current_token = get_next_token(tokens, current_index, token_count);
         Node class_member_node;
         if (token_is_type(current_token)) {
             class_member_node = parser_variable_declaration(filename, current_index, tokens, token_count);
@@ -361,6 +529,7 @@ static Node parser_class(const char* filename, size_t* current_index, Token* tok
             tcerr_unexpected_token(filename, current_token->line, current_token->content);
         }
         arr_push(buffer, &class_member_node);
+        current_token = get_next_token(tokens, current_index, token_count);
     }
     Node class_node = {"class", (Node**)arr_get_all(buffer), buffer->length};
     arr_free(buffer);
@@ -370,7 +539,7 @@ static Node parser_class(const char* filename, size_t* current_index, Token* tok
 static Node parser_code(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
     Array* buffer = arr_init(sizeof(Node*), 16);
     Token* current_token = get_next_token(tokens, current_index, token_count);
-    while (current_token != NULL && current_token->type != TOKEN_EOF) {
+    while (current_token->type != TOKEN_EOF) {
         if (token_cmp(current_token, TOKEN_KEYWORD, "import")) {
             Node node = parser_import(filename, current_index, tokens, token_count);
             arr_push(buffer, &node);
