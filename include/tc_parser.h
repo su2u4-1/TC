@@ -10,6 +10,6 @@ typedef struct Node {
     size_t child_count;
 } Node;
 
-Node tc_parser(const char* filename, Token* tokens, size_t token_count);
+Node* tc_parser(const char* filename, Token* tokens, size_t token_count);
 
 #endif  // TC_PARSER_H
