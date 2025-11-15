@@ -139,7 +139,7 @@ static Token* get_next_token(Token* tokens, size_t* current_index, size_t token_
 static Token* get_current_token(Token* tokens, size_t current_index, size_t token_count) {
     if (current_index <= 0 || current_index > token_count) {
 #ifdef DEBUG
-        printf("[debug] in get_current_token: not get any token, current_index: %zu, token_count: %zu\n", *current_index, token_count);
+        printf("[debug] in get_current_token: not get any token, current_index: %zu, token_count: %zu\n", current_index, token_count);
 #endif
         return NULL;
     }
