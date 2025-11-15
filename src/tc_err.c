@@ -39,3 +39,9 @@ NORETURN void tcerr_unexpected_token(const char* filename, int line_number, cons
     tc_free_all_memory();
     exit(5);
 }
+
+NORETURN void tcerr_loop_error(const char* filename, int line_number, const char* message) {
+    fprintf(stderr, "[syntax error]: loop error: %s at %s:%d\n", message, filename, line_number);
+    tc_free_all_memory();
+    exit(6);
+}
