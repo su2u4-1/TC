@@ -19,6 +19,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define bool int
+#define true 1
+#define false 0
+
 extern char* tc_keywords[];
 extern int tc_keywords_count;
 
