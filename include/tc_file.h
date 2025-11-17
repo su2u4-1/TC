@@ -17,5 +17,6 @@ void path_normalize_windows(Path* p);
 void path_normalize_linux(Path* p);
 void path_change_extension(Path* p, const char* new_ext);
 void path_change_file_name(Path* p, const char* new_name, bool replace_extension);
+void path_free(Path* p);
 
 #endif  // TC_FILE_H
