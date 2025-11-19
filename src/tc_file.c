@@ -132,7 +132,53 @@ Path* path_init(const char* path) {
     return p;
 }
 
-static void path_normalize(Path* p) {
+static void path_normalize_windows(Path* p) {
+    if (strcmp(p->header, "") == 0) {
+        tc_free(p->header);
+        p->header = str_copy(".");
+    } else if (strcmp(p->header, "/") == 0) {
+        tc_free(p->header);
+        p->header = str_copy("C:");
+    } else if (strlen(p->header) == 2 && isalpha(p->header[0]) && !isalpha(p->header[1])) {
+        char new_header[3] = {(char)toupper(p->header[0]), ':', '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
+    } else if (strlen(p->header) == 2 && isalpha(p->header[1]) && !isalpha(p->header[0])) {
+        char new_header[3] = {(char)toupper(p->header[1]), ':', '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
+    } else if (strlen(p->header) == 1 && isalpha(p->header[0])) {
+        char new_header[3] = {(char)toupper(p->header[0]), ':', '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
+    }
+    path_rebuild(p);
+}
+
+static void path_normalize_linux(Path* p) {
+    if (strcmp(p->header, "") == 0) {
+        tc_free(p->header);
+        p->header = str_copy(".");
+    } else if (strcmp(p->header, "/") == 0) {
+        tc_free(p->header);
+        p->header = str_copy("");
+    } else if (strlen(p->header) == 2 && isalpha(p->header[0]) && !isalpha(p->header[1])) {
+        char new_header[3] = {'/', (char)tolower(p->header[0]), '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
+    } else if (strlen(p->header) == 2 && isalpha(p->header[1]) && !isalpha(p->header[0])) {
+        char new_header[3] = {'/', (char)tolower(p->header[1]), '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
+    } else if (strlen(p->header) == 1 && isalpha(p->header[0])) {
+        char new_header[3] = {'/', (char)tolower(p->header[0]), '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
+    }
+    path_rebuild(p);
+}
+
+void path_normalize(Path* p) {
     Array* normalized_components = arr_init(sizeof(char*), p->components->length);
     for (size_t i = 0; i < p->components->length; i++) {
         char* component = *(char**)arr_get_item(p->components, (int)i);
@@ -156,54 +202,11 @@ static void path_normalize(Path* p) {
     arr_free(p->components);
     p->components = normalized_components;
     path_rebuild(p);
-}
-
-void path_normalize_windows(Path* p) {
-    path_normalize(p);
-    if (strcmp(p->header, "") == 0) {
-        tc_free(p->header);
-        p->header = str_copy(".");
-    } else if (strcmp(p->header, "/") == 0) {
-        tc_free(p->header);
-        p->header = str_copy("C:");
-    } else if (strlen(p->header) == 2 && isalpha(p->header[0]) && !isalpha(p->header[1])) {
-        char new_header[3] = {(char)toupper(p->header[0]), ':', '\0'};
-        tc_free(p->header);
-        p->header = str_copy(new_header);
-    } else if (strlen(p->header) == 2 && isalpha(p->header[1]) && !isalpha(p->header[0])) {
-        char new_header[3] = {(char)toupper(p->header[1]), ':', '\0'};
-        tc_free(p->header);
-        p->header = str_copy(new_header);
-    } else if (strlen(p->header) == 1 && isalpha(p->header[0])) {
-        char new_header[3] = {(char)toupper(p->header[0]), ':', '\0'};
-        tc_free(p->header);
-        p->header = str_copy(new_header);
-    }
-    path_rebuild(p);
-}
-
-void path_normalize_linux(Path* p) {
-    path_normalize(p);
-    if (strcmp(p->header, "") == 0) {
-        tc_free(p->header);
-        p->header = str_copy(".");
-    } else if (strcmp(p->header, "/") == 0) {
-        tc_free(p->header);
-        p->header = str_copy("");
-    } else if (strlen(p->header) == 2 && isalpha(p->header[0]) && !isalpha(p->header[1])) {
-        char new_header[3] = {'/', (char)tolower(p->header[0]), '\0'};
-        tc_free(p->header);
-        p->header = str_copy(new_header);
-    } else if (strlen(p->header) == 2 && isalpha(p->header[1]) && !isalpha(p->header[0])) {
-        char new_header[3] = {'/', (char)tolower(p->header[1]), '\0'};
-        tc_free(p->header);
-        p->header = str_copy(new_header);
-    } else if (strlen(p->header) == 1 && isalpha(p->header[0])) {
-        char new_header[3] = {'/', (char)tolower(p->header[0]), '\0'};
-        tc_free(p->header);
-        p->header = str_copy(new_header);
-    }
-    path_rebuild(p);
+#ifdef PLATFORM_WINDOWS
+    path_normalize_windows(p);
+#elif defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS)
+    path_normalize_linux(p);
+#endif
 }
 
 void path_change_extension(Path* p, const char* new_ext) {
