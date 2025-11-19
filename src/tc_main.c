@@ -30,18 +30,11 @@ static void handle_parameters(int argc, char* argv[]) {
         } else {
             if (file_path == NULL) {
                 file_path = path_init(argv[i]);
-#if defined(PLATFORM_WINDOWS)
-                path_windows(file_path);
-#elif defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS)
-                path_linux(file_path);
-#endif
+                path_normalize(file_path);
+
             } else if (output_path == NULL) {
                 output_path = path_init(argv[i]);
-#if defined(PLATFORM_WINDOWS)
-                path_windows(output_path);
-#elif defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS)
-                path_linux(output_path);
-#endif
+                path_normalize(output_path);
             }
         }
     }
@@ -83,13 +76,9 @@ int main(int argc, char* argv[]) {
     if (flags & 4) {
         printf("[info]: output lexer result\n");
         Path* lex_path = path_init(output_path != NULL ? output_path->path : ".");
-        path_change_file_name(lex_path, file_path->file_name);
+        path_change_file_name(lex_path, file_path->file_name, false);
         path_change_extension(lex_path, ".lex");
-#if defined(PLATFORM_WINDOWS)
-        path_windows(lex_path);
-#elif defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS)
-        path_linux(lex_path);
-#endif
+        path_normalize(lex_path);
         printf("[info]: lexer output path: %s\n", lex_path->path);
         output_lexer_result(tokens, lex_path->path);
     }
@@ -97,44 +86,3 @@ int main(int argc, char* argv[]) {
     tc_free_all_memory();
     return 0;
 }
-
-// int main(void) {
-//     char* test_path[] = {
-//         "C:\\Users\\User\\Documents\\project\\file.tc",
-//         "\\c\\Users\\User\\Documents\\project\\file.tc",
-//         "/c/Users/User/Documents/project/file.tc",
-//         "/home/user/project/file.tc",
-//         "./file.tc",
-//         "../file.tc",
-//         "/usr/local/bin/file.tc",
-//         "file.tc",
-//         "D:/Games/GameDev/",
-//         "/d/Games/GameDev",
-//         "home/Games/GameDev",
-//     };
-//     for (int i = 0; i < 10; i++) {
-//         printf("Testing path: %s\n", test_path[i]);
-//         Path* p = path_init(test_path[i]);
-//         for (size_t j = 0; j < p->length; j++) {
-//             printf("'%s', ", p->components[j]);
-//         }
-//         printf("\norigin: %s", p->path);
-//         path_windows(p);
-//         printf("\nwindows: %s\n", p->path);
-//         for (size_t j = 0; j < p->length; j++) {
-//             printf("'%s', ", p->components[j]);
-//         }
-//         path_linux(p);
-//         printf("\nlinux: %s\n", p->path);
-//         for (size_t j = 0; j < p->length; j++) {
-//             printf("'%s', ", p->components[j]);
-//         }
-//         printf("\n========================================\n");
-//         tc_free(p->path);
-//         tc_free(p->components);
-//         tc_free(p->file_name);
-//         tc_free(p->extension);
-//         tc_free(p);
-//     }
-//     return 0;
-// }

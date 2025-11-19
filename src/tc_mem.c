@@ -41,7 +41,9 @@ void* tc_malloc(size_t size) {
         mem_init();
     }
     if (size <= 0) {
+#ifdef DEBUG
         printf("[debug]: Attempted to allocate zero or negative bytes\n");
+#endif
         return NULL;
     }
     void* ptr = malloc(size);
@@ -54,7 +56,9 @@ void* tc_malloc(size_t size) {
 
 void* tc_realloc(void* ptr, size_t size) {
     if (size <= 0) {
-        printf("[debug]: Attempted to allocate zero or negative bytes\n");
+#ifdef DEBUG
+        printf("[debug]: Attempted to reallocate zero or negative bytes\n");
+#endif
         return NULL;
     }
     if (ptr == NULL) {

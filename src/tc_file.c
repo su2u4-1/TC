@@ -1,228 +1,249 @@
 #include "tc_file.h"
 
+#include <string.h>
+
 #include "tc_mem.h"
+
+static char* str_copy_n(const char* s, size_t n) {
+    if (!s) return NULL;
+    char* d = (char*)tc_malloc(n + 1);
+    strncpy(d, s, n);
+    d[n] = '\0';
+    return d;
+}
+
+static char* str_copy(const char* s) {
+    if (!s) return NULL;
+    return str_copy_n(s, strlen(s));
+}
+
+static void path_rebuild(Path* p) {
+    size_t total_len = 0;
+    if (p->header && p->header[0] != '\0') {
+        total_len += strlen(p->header);
+    }
+    total_len++;  // for '/'
+
+    for (size_t i = 0; i < p->components->length; ++i) {
+        char* component = *(char**)arr_get_item(p->components, (int)i);
+        if (component && component[0] != '\0') {
+            total_len += strlen(component) + 1;  // +1 for '/'
+        }
+    }
+    total_len++;  // for '/'
+
+    if (p->file_name && p->file_name[0] != '\0') {
+        if (total_len > 0 && p->path[total_len - 1] != '/') total_len++;
+        total_len += strlen(p->file_name);
+    }
+    if (p->extension && p->extension[0] != '\0') {
+        total_len += strlen(p->extension) + 1;  // +1 for '.'
+    }
+
+    tc_free(p->path);
+    p->path = (char*)tc_malloc(total_len + 1);
+    p->path[0] = '\0';
+
+    if (p->header && p->header[0] != '\0') {
+        strcpy(p->path, p->header);
+    }
+    strcat(p->path, "/");
+
+    for (size_t i = 0; i < p->components->length; ++i) {
+        char* component = *(char**)arr_get_item(p->components, (int)i);
+        if (component && component[0] != '\0') {
+            if (p->path[0] != '\0' && p->path[strlen(p->path) - 1] != '/') {
+                strcat(p->path, "/");
+            }
+            strcat(p->path, component);
+        }
+    }
+    if (p->path[0] != '\0' && p->path[strlen(p->path) - 1] != '/') {
+        strcat(p->path, "/");
+    }
+
+    if (p->file_name && p->file_name[0] != '\0') {
+        if (p->path[0] != '\0' && p->path[strlen(p->path) - 1] != '/') {
+            strcat(p->path, "/");
+        }
+        strcat(p->path, p->file_name);
+    }
+
+    if (p->extension && p->extension[0] != '\0') {
+        strcat(p->path, ".");
+        strcat(p->path, p->extension);
+    }
+}
 
 Path* path_init(const char* path) {
     Path* p = (Path*)tc_malloc(sizeof(Path));
-    p->path = (char*)tc_malloc(strlen(path) + 1);
-    strcpy(p->path, path);
-    for (size_t i = 0; i < strlen(p->path); i++) {
-        if (p->path[i] == '\\') {
-            p->path[i] = '/';
+    p->path = str_copy(path);
+    for (char* c = p->path; *c; ++c) {
+        if (*c == '\\') *c = '/';
+    }
+
+    char* temp_path = str_copy(p->path);
+    char* rest = temp_path;
+
+    char* first_slash = strchr(rest, '/');
+    if (first_slash) {
+        p->header = str_copy_n(rest, (size_t)(first_slash - rest));
+        rest = first_slash + 1;
+    } else {
+        p->header = str_copy("");
+        rest = temp_path;
+    }
+
+    char* last_slash = strrchr(rest, '/');
+    char* components_str;
+    if (last_slash) {
+        components_str = str_copy_n(rest, (size_t)(last_slash - rest));
+        p->file_name = str_copy(last_slash + 1);
+    } else {
+        components_str = str_copy("");
+        p->file_name = str_copy(rest);
+    }
+
+    p->components = arr_init(sizeof(char*), 8);
+    if (components_str[0] != '\0') {
+        char* component = strtok(components_str, "/");
+        while (component) {
+            char* comp_dup = str_copy(component);
+            arr_push(p->components, &comp_dup);
+            component = strtok(NULL, "/");
         }
     }
-    int have_name = 1;
-    if (p->path[strlen(p->path) - 1] == '/') {
-        have_name = 0;
+
+    if (p->header[0] == '\0' && p->path[0] == '/') {
+        tc_free(p->header);
+        p->header = str_copy("/");
     }
-    char* tp = (char*)tc_malloc(strlen(path) + 1);
-    strcpy(tp, p->path);
-    Array* components = arr_init(sizeof(char**), 4);
-    char* token = strtok(tp, "/");
-    while (token != NULL) {
-        char* comp = (char*)tc_malloc(strlen(token) + 1);
-        strcpy(comp, token);
-        arr_push(components, &comp);
-        token = strtok(NULL, "/");
+
+    char* dot = strrchr(p->file_name, '.');
+    if (dot && dot != p->file_name) {
+        p->extension = str_copy(dot + 1);
+        *dot = '\0';
+    } else {
+        p->extension = str_copy("");
     }
-    if (!have_name) {
-        char* placeholder = (char*)tc_malloc(1);
-        placeholder = "";
-        arr_push(components, &placeholder);
-    }
-#ifdef DEBUG
-    printf("[debug](tc_file): tp: '%s'\n", tp);
-    char** co = (char**)arr_get_all(components);
-    for (size_t i = 0; i < components->length; i++) {
-        printf("'%s', ", co[i]);
-    }
-    printf("\n[debug](tc_file): token: '%s'\n\n", token);
-#endif
-    tc_free(tp);
-    char* file = ((char**)arr_get_all(components))[components->length - 1];
-    char* last_dot = strrchr(file, '.');
-    char* ext = "";
-    if (last_dot != NULL) {
-        size_t len = strlen(last_dot);
-        ext = (char*)tc_malloc(len + 1);
-        strncpy(ext, last_dot, len);
-        ext[len] = '\0';
-    }
-    free(last_dot);
-    size_t len = strlen(file) - strlen(ext);
-    char* file_name = (char*)tc_malloc(len + 1);
-    strncpy(file_name, file, len);
-    file_name[len] = '\0';
-    --components->length;
-    arr_push(components, &file_name);
-    arr_push(components, &ext);
-    p->components = (char**)arr_get_all(components);
-    p->length = components->length;
-    p->extension = (char*)tc_malloc(strlen(ext) + 1);
-    strcpy(p->extension, ext);
-    p->file_name = (char*)tc_malloc(strlen(file_name) + 1);
-    strcpy(p->file_name, file_name);
-    tc_free(components);
-#ifdef DEBUG
-    printf("[debug](tc_file): in path_init extension: '%s'\n", p->extension);
-    printf("[debug](tc_file): in path_init file name: '%s'\n", p->file_name);
-    for (size_t i = 0; i < p->length; i++) {
-        printf("'%s', ", p->components[i]);
-    }
-    printf("{%s}\n", p->path);
-    printf("[debug](tc_file): exit path_init()\n");
-#endif
+
+    tc_free(temp_path);
+    tc_free(components_str);
     return p;
 }
 
-static void path_both(Path* p, size_t index) {
-#ifdef DEBUG
-    printf("[debug](tc_file): call path_both()\n");
-#endif
-    for (size_t i = 1; i < p->length - 1; i++) {
-        strcpy(p->path + index, "/");
-        ++index;
-        strncpy(p->path + index, p->components[i], strlen(p->components[i]));
-        index += strlen(p->components[i]);
+static void path_normalize_windows(Path* p) {
+    if (strcmp(p->header, "") == 0) {
+        tc_free(p->header);
+        p->header = str_copy(".");
+    } else if (strcmp(p->header, "/") == 0) {
+        tc_free(p->header);
+        p->header = str_copy("C:");
+    } else if (strlen(p->header) == 2 && isalpha(p->header[0]) && !isalpha(p->header[1])) {
+        char new_header[3] = {(char)toupper(p->header[0]), ':', '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
+    } else if (strlen(p->header) == 2 && isalpha(p->header[1]) && !isalpha(p->header[0])) {
+        char new_header[3] = {(char)toupper(p->header[1]), ':', '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
+    } else if (strlen(p->header) == 1 && isalpha(p->header[0])) {
+        char new_header[3] = {(char)toupper(p->header[0]), ':', '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
     }
-    char* ext = p->components[p->length - 1];
-    if (strlen(ext) <= 1) {
-        ext = "";
-        return;
-    }
-    if (ext[0] != '.') {
-        tc_realloc(ext, strlen(ext) + 2);
-        memmove(ext + 1, ext, strlen(ext) + 1);
-        ext[0] = '.';
-    }
-    strncpy(p->path + index, ext, strlen(ext));
-    index += strlen(ext);
-    p->path[index] = '\0';
-#ifdef DEBUG
-    printf("[debug] in path_both extension: '%s'\n", p->extension);
-    printf("[debug] in path_both file name: '%s'\n", p->file_name);
-    for (size_t i = 0; i < p->length; i++) {
-        printf("'%s', ", p->components[i]);
-    }
-    printf("{%s}\n", p->path);
-    printf("[debug](tc_file): exit path_both()\n");
-#endif
+    path_rebuild(p);
 }
 
-void path_windows(Path* p) {
-#ifdef DEBUG
-    printf("[debug](tc_file): call path_windows()\n");
-#endif
-    size_t index = 0;
-    if (strlen(p->components[0]) == 2 && p->components[0][1] == ':' && isalpha(p->components[0][0])) {
-        p->components[0][0] = (char)toupper(p->components[0][0]);
-        strncpy(p->path + index, p->components[0], 2);
-        index += 2;
-    } else if (strlen(p->components[0]) == 1 && isalpha(p->components[0][0])) {
-        tc_realloc(p->components[0], 3);
-        p->components[0][0] = (char)toupper(p->components[0][0]);
-        p->components[0][1] = ':';
-        p->components[0][2] = '\0';
-        strncpy(p->path + index, p->components[0], 2);
-        index += 2;
-    } else {
-        strncpy(p->path + index, p->components[0], strlen(p->components[0]));
-        index += strlen(p->components[0]);
+static void path_normalize_linux(Path* p) {
+    if (strcmp(p->header, "") == 0) {
+        tc_free(p->header);
+        p->header = str_copy(".");
+    } else if (strcmp(p->header, "/") == 0) {
+        tc_free(p->header);
+        p->header = str_copy("");
+    } else if (strlen(p->header) == 2 && isalpha(p->header[0]) && !isalpha(p->header[1])) {
+        char new_header[3] = {'/', (char)tolower(p->header[0]), '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
+    } else if (strlen(p->header) == 2 && isalpha(p->header[1]) && !isalpha(p->header[0])) {
+        char new_header[3] = {'/', (char)tolower(p->header[1]), '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
+    } else if (strlen(p->header) == 1 && isalpha(p->header[0])) {
+        char new_header[3] = {'/', (char)tolower(p->header[0]), '\0'};
+        tc_free(p->header);
+        p->header = str_copy(new_header);
     }
-    path_both(p, index);
-#ifdef DEBUG
-    printf("[debug](tc_file): in path_windows extension: '%s'\n", p->extension);
-    printf("[debug](tc_file): in path_windows file name: '%s'\n", p->file_name);
-    for (size_t i = 0; i < p->length; i++) {
-        printf("'%s', ", p->components[i]);
-    }
-    printf("{%s}\n", p->path);
-    printf("\n[debug](tc_file): exit path_windows()\n");
-#endif
+    path_rebuild(p);
 }
 
-void path_linux(Path* p) {
-#ifdef DEBUG
-    printf("[debug](tc_file): call path_linux()\n");
-#endif
-    size_t index = 0;
-    if (strlen(p->components[0]) == 2 && p->components[0][1] == ':' && isalpha(p->components[0][0])) {
-        p->path[index++] = '/';
-        p->path[index++] = (char)tolower(p->components[0][0]);
-    } else if (strlen(p->components[0]) == 1 && isalpha(p->components[0][0])) {
-        p->path[index++] = '/';
-        p->path[index++] = (char)tolower(p->components[0][0]);
-    } else {
-        strncpy(p->path + index, p->components[0], strlen(p->components[0]));
+void path_normalize(Path* p) {
+    Array* normalized_components = arr_init(sizeof(char*), p->components->length);
+    for (size_t i = 0; i < p->components->length; i++) {
+        char* component = *(char**)arr_get_item(p->components, (int)i);
+        if (strcmp(component, ".") == 0) {
+            continue;
+        } else if (strcmp(component, "..") == 0) {
+            if (normalized_components->length > 0) {
+                char* to_free = *(char**)arr_get_item(normalized_components, (int)(normalized_components->length - 1));
+                tc_free(to_free);
+                normalized_components->length--;
+            }
+        } else {
+            char* comp_dup = str_copy(component);
+            arr_push(normalized_components, &comp_dup);
+        }
     }
-    path_both(p, index);
-#ifdef DEBUG
-    printf("[debug](tc_file): in path_linux extension: '%s'\n", p->extension);
-    printf("[debug](tc_file): in path_linux file name: '%s'\n", p->file_name);
-    for (size_t i = 0; i < p->length; i++) {
-        printf("'%s', ", p->components[i]);
+
+    for (size_t i = 0; i < p->components->length; i++) {
+        tc_free(*(char**)arr_get_item(p->components, (int)i));
     }
-    printf("{%s}\n", p->path);
-    printf("[debug](tc_file): exit path_linux()\n");
+    arr_free(p->components);
+    p->components = normalized_components;
+    path_rebuild(p);
+#ifdef PLATFORM_WINDOWS
+    path_normalize_windows(p);
+#elif defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS)
+    path_normalize_linux(p);
 #endif
 }
 
 void path_change_extension(Path* p, const char* new_ext) {
-#ifdef DEBUG
-    printf("[debug](tc_file): call path_change_extension()\n");
-#endif
-    char* old_ext = p->components[p->length - 1];
-    size_t old_ext_len = strlen(old_ext);
-    size_t new_ext_len = strlen(new_ext);
-    if (new_ext[0] != '.') {
-        new_ext_len += 1;
-    }
-    size_t path_len = strlen(p->path);
-    size_t new_path_len = path_len - old_ext_len + new_ext_len;
-    tc_realloc(p->path, new_path_len + 1);
-    p->path[new_path_len] = '\0';
-    strncpy(p->path + path_len - old_ext_len, new_ext, new_ext_len);
-    // tc_free(old_ext);
-    p->components[p->length - 1] = (char*)tc_malloc(new_ext_len + 1);
-    if (new_ext[0] != '.') {
-        p->components[p->length - 1][0] = '.';
-        strcpy(p->components[p->length - 1] + 1, new_ext);
+    tc_free(p->extension);
+    if (new_ext[0] == '.') {
+        p->extension = str_copy(new_ext + 1);
     } else {
-        strcpy(p->components[p->length - 1], new_ext);
+        p->extension = str_copy(new_ext);
     }
-#ifdef DEBUG
-    printf("[debug](tc_file): in path_change_extension extension: '%s'\n", p->extension);
-    printf("[debug](tc_file): in path_change_extension file name: '%s'\n", p->file_name);
-    for (size_t i = 0; i < p->length; i++) {
-        printf("'%s', ", p->components[i]);
-    }
-    printf("{%s}\n", p->path);
-    printf("[debug](tc_file): exit path_change_extension()\n");
-#endif
+    path_rebuild(p);
 }
 
-void path_change_file_name(Path* p, const char* new_name) {
-#ifdef DEBUG
-    printf("[debug](tc_file): call path_change_file_name()\n");
-#endif
-    char* old_name = p->components[p->length - 2];
-    size_t old_name_len = strlen(old_name);
-    size_t new_name_len = strlen(new_name);
-    size_t path_len = strlen(p->path);
-    size_t new_path_len = path_len - old_name_len + new_name_len;
-    tc_realloc(p->path, new_path_len + 1);
-    p->path[new_path_len] = '\0';
-    strncpy(p->path + path_len - old_name_len, new_name, new_name_len);
-    tc_free(old_name);
-    p->components[p->length - 2] = (char*)tc_malloc(new_name_len + 1);
-    strcpy(p->components[p->length - 2], new_name);
-#ifdef DEBUG
-    printf("[debug](tc_file): path_change_file_name extension: '%s'\n", p->extension);
-    printf("[debug](tc_file): path_change_file_name file name: '%s'\n", p->file_name);
-    for (size_t i = 0; i < p->length; i++) {
-        printf("'%s', ", p->components[i]);
+void path_change_file_name(Path* p, const char* new_name, bool replace_extension) {
+    if (replace_extension) {
+        const char* dot = strrchr(new_name, '.');
+        if (dot && dot != new_name) {
+            tc_free(p->file_name);
+            p->file_name = str_copy_n(new_name, (size_t)(dot - new_name));
+            tc_free(p->extension);
+            p->extension = str_copy(dot + 1);
+        } else {
+            tc_free(p->file_name);
+            p->file_name = str_copy(new_name);
+        }
+    } else {
+        tc_free(p->file_name);
+        p->file_name = str_copy(new_name);
     }
-    printf("{%s}\n", p->path);
-    printf("[debug](tc_file): exit path_change_file_name()\n");
-#endif
+    path_rebuild(p);
+}
+
+void path_free(Path* p) {
+    if (!p) return;
+    tc_free(p->components);
+    tc_free(p->header);
+    tc_free(p->file_name);
+    tc_free(p->extension);
+    tc_free(p->path);
+    tc_free(p);
 }
