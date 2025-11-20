@@ -54,24 +54,19 @@ statements = {"statements", [statement, ...], n}
         | continue_statement
     if in_function:
         | return_statement
-expression
-term
-variable_access
-function_call
-get_attribute
-get_sequence
-argument_list
-literal
-integer
-float
-string
-boolean
-return_statement
-break_statement
-continue_statement
-builtin_type
-identifier
-operator
+expression = {"expression", [term, [operator, term, ...]], 1 + 2*m}
+    operator = {operator_symbol, NULL, 0}
+term = {"term", [child_node], 1}
+    child_node = literal | {"expression", [expression], 1} | variable | {"-" or "!", [term], 1}
+literal = {"integer", [value], 1} | {"float", [value], 1} | {"string", [value], 1} | {"keyword", [value], 1} | {value, NULL, 0};
+variable = {"variable", [identifier, [postfix, ...]], 1 + n}
+    postfix = get_attribute | get_sequence | function_call
+function_call = {"function_call", [argument_list], 3}
+get_attribute = {"get_attribute", [identifier], 2}
+get_sequence = {"get_sequence", [index], 2}
+    index = expression
+    type of index is integer for array, key type for map
+argument_list = {"argument_list", [expression, ...], n}
 */
 
 static int loop_level = 0;
@@ -91,9 +86,11 @@ static Node* parser_variable_declaration(const char* filename, size_t* current_i
 static Node* parser_expression(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
 static Node* parser_break_statement(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
 static Node* parser_continue_statement(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
-static Node* parser_statements(const char* filename, size_t* current_indx, Token* tokens, size_t token_count);
+static Node* parser_statements(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
+static Node* parser_term(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
+static Node* parser_variable(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
 
-static Node* node_make(const char* value, size_t child_count) {
+static Node* node_make(char* value, size_t child_count) {
     Node* node = (Node*)tc_malloc(sizeof(Node));
     node->value = value;
     node->child_count = child_count;
@@ -146,26 +143,102 @@ static Token* get_current_token(Token* tokens, size_t current_index, size_t toke
     return &tokens[current_index - 1];
 }
 
-static int token_cmp(const Token* token, TokenType type, const char* content) {
+static bool token_cmp(const Token* token, TokenType type, const char* content) {
     if (token != NULL && token->type == type && (content == NULL || strcmp(token->content, content) == 0)) {
-        return 1;
+        return true;
     }
-    return 0;
+    return false;
 }
 
-static int token_is_type(const Token* token) {
+static bool token_is_type(const Token* token) {
     char** types = (char**)arr_get_all(tc_type);
     for (size_t i = 0; i < 5; i++) {
         if (token_cmp(token, TOKEN_KEYWORD, types[i])) {
-            return 1;
+            return true;
         }
     }
     for (size_t i = 5; i < tc_type->length; i++) {
         if (token_cmp(token, TOKEN_IDENTIFIER, types[i])) {
-            return 1;
+            return true;
         }
     }
-    return 0;
+    return false;
+}
+
+static bool token_is_operator(const Token* token) {
+    if (!token || token->type != TOKEN_SYMBOL) {
+        return false;
+    }
+    const char* operators[19] = {"+", "-", "*", "/", "%", "==", "!=", "<", ">", "<=", ">=", "&&", "||", "=", "+=", "-=", "*=", "/=", "%="};
+    for (size_t i = 0; i < 19; i++) {
+        if (strcmp(token->content, operators[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static Node* parser_variable(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
+    return NULL;  // TODO
+}
+
+static Node* parser_term(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
+    Token* current_token = get_current_token(tokens, *current_index, token_count);
+    Node* term_node = node_make("term", 1);
+    if (token_cmp(current_token, TOKEN_SYMBOL, "(")) {
+        current_token = get_next_token(tokens, current_index, token_count);
+        Node* expression_node = parser_expression(filename, current_index, tokens, token_count);
+        current_token = get_next_token(tokens, current_index, token_count);
+        if (!token_cmp(current_token, TOKEN_SYMBOL, ")")) {
+            tcerr_unexpected_token(filename, current_token->line, current_token->content);
+        }
+        term_node->children[0] = expression_node;
+    } else if (token_cmp(current_token, TOKEN_INTEGER, NULL)) {
+        Node* literal_node = node_make("integer", 1);
+        literal_node->children[0] = node_make(current_token->content, 0);
+        term_node->children[0] = literal_node;
+    } else if (token_cmp(current_token, TOKEN_FLOAT, NULL)) {
+        Node* literal_node = node_make("float", 1);
+        literal_node->children[0] = node_make(current_token->content, 0);
+        term_node->children[0] = literal_node;
+    } else if (token_cmp(current_token, TOKEN_STRING, NULL)) {
+        Node* literal_node = node_make("string", 1);
+        literal_node->children[0] = node_make(current_token->content, 0);
+        term_node->children[0] = literal_node;
+    } else if (token_cmp(current_token, TOKEN_KEYWORD, "true") || token_cmp(current_token, TOKEN_KEYWORD, "false")) {
+        Node* literal_node = node_make("keyword", 1);
+        literal_node->children[0] = node_make(current_token->content, 0);
+        term_node->children[0] = literal_node;
+    } else if (token_cmp(current_token, TOKEN_SYMBOL, "-") || token_cmp(current_token, TOKEN_SYMBOL, "!")) {
+        Node* unary_term_node = node_make(current_token->content, 1);
+        current_token = get_next_token(tokens, current_index, token_count);
+        Node* term_child_node = parser_term(filename, current_index, tokens, token_count);
+        unary_term_node->children[0] = term_child_node;
+        term_node->children[0] = unary_term_node;
+    } else if (token_cmp(current_token, TOKEN_IDENTIFIER, NULL)) {
+        --*current_index;
+        Node* variable_node = parser_variable(filename, current_index, tokens, token_count);
+        term_node->children[0] = variable_node;
+    } else {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    return term_node;
+}
+
+static Node* parser_expression(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
+    Array* buffer = arr_init(sizeof(Node*), 16);
+    arr_push(buffer, parser_term(filename, current_index, tokens, token_count));
+    Token* current_token = get_next_token(tokens, current_index, token_count);
+    while (token_is_operator(current_token)) {
+        arr_push(buffer, node_make(current_token->content, 0));
+        current_token = get_next_token(tokens, current_index, token_count);
+        arr_push(buffer, parser_term(filename, current_index, tokens, token_count));
+        current_token = get_next_token(tokens, current_index, token_count);
+    }
+    --*current_index;
+    Node* expression_node = node_make_with_children("expression", (Node**)arr_get_all(buffer), buffer->length);
+    arr_free(buffer);
+    return expression_node;
 }
 
 static Node* parser_break_statement(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
@@ -371,10 +444,6 @@ static Node* parser_for_statement(const char* filename, size_t* current_index, T
         tcerr_loop_error(filename, current_token->line, "loop level mismatch in parser_for_statement");
     }
     return for_statement_node;
-}
-
-static Node* parser_expression(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
-    return NULL;  // TODO
 }
 
 static Node* parser_variable_declaration(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
