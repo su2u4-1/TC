@@ -3,7 +3,7 @@
 
 #include "tc_lib.h"
 
-typedef enum TokenType {
+typedef enum {
     TOKEN_EOF,
     TOKEN_IDENTIFIER,
     TOKEN_KEYWORD,

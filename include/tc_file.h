@@ -4,10 +4,10 @@
 #include "tc_lib.h"
 #include "tc_mem.h"
 
-typedef struct Path {
+typedef struct {
     char* path;
     char* header;
-    Array* components;
+    Array* components;  // Array of char*
     char* file_name;
     char* extension;
 } Path;

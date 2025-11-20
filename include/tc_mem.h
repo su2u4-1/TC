@@ -8,7 +8,7 @@ void* tc_malloc(size_t size);
 void* tc_realloc(void* ptr, size_t size);
 void tc_free(void* ptr);
 
-typedef struct Array {
+typedef struct {
     void* items;
     size_t length;
     size_t length_max;
