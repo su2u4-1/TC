@@ -61,9 +61,9 @@ term = {"term", [child_node], 1}
 literal = {"integer", [value], 1} | {"float", [value], 1} | {"string", [value], 1} | {"keyword", [value], 1} | {value, NULL, 0};
 variable = {"variable", [identifier, [postfix, ...]], 1 + n}
     postfix = get_attribute | get_sequence | function_call
-function_call = {"function_call", [argument_list], 3}
-get_attribute = {"get_attribute", [identifier], 2}
-get_sequence = {"get_sequence", [index], 2}
+function_call = {"function_call", [argument_list], 1}
+get_attribute = {"get_attribute", [identifier], 1}
+get_sequence = {"get_sequence", [index], 1}
     index = expression
     type of index is integer for array, key type for map
 argument_list = {"argument_list", [expression, ...], n}
@@ -89,6 +89,9 @@ static Node* parser_continue_statement(const char* filename, size_t* current_ind
 static Node* parser_statements(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
 static Node* parser_term(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
 static Node* parser_variable(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
+static Node* parser_get_sequence(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
+static Node* parser_function_call(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
+static Node* parser_get_attribute(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
 
 static Node* node_make(char* value, size_t child_count) {
     Node* node = (Node*)tc_malloc(sizeof(Node));
@@ -178,8 +181,70 @@ static bool token_is_operator(const Token* token) {
     return false;
 }
 
+static Node* parser_get_sequence(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
+    Token* current_token = get_next_token(tokens, current_index, token_count);
+    Node* index_node = parser_expression(filename, current_index, tokens, token_count);
+    current_token = get_next_token(tokens, current_index, token_count);
+    if (!token_cmp(current_token, TOKEN_SYMBOL, "]")) {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    return node_make_with_children("get_sequence", &index_node, 1);
+}
+
+static Node* parser_function_call(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
+    Token* current_token = get_next_token(tokens, current_index, token_count);
+    if (!token_cmp(current_token, TOKEN_SYMBOL, "(")) {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    Array* buffer = arr_init(sizeof(Node*), 16);
+    current_token = get_next_token(tokens, current_index, token_count);
+    while (!token_cmp(current_token, TOKEN_SYMBOL, ")")) {
+        Node* argument_node = parser_expression(filename, current_index, tokens, token_count);
+        arr_push(buffer, argument_node);
+        current_token = get_next_token(tokens, current_index, token_count);
+        if (token_cmp(current_token, TOKEN_SYMBOL, ",")) {
+            current_token = get_next_token(tokens, current_index, token_count);
+        } else if (token_cmp(current_token, TOKEN_SYMBOL, ")")) {
+            break;
+        } else {
+            tcerr_unexpected_token(filename, current_token->line, current_token->content);
+        }
+    }
+    Node* argument_list_node = node_make_with_children("argument_list", (Node**)arr_get_all(buffer), buffer->length);
+    arr_free(buffer);
+    return node_make_with_children("function_call", &argument_list_node, 1);
+}
+
+static Node* parser_get_attribute(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
+    Token* current_token = get_next_token(tokens, current_index, token_count);
+    if (!token_cmp(current_token, TOKEN_IDENTIFIER, NULL)) {
+        tcerr_unexpected_token(filename, current_token->line, current_token->content);
+    }
+    Node* get_attribute_node = node_make("get_attribute", 1);
+    get_attribute_node->children[0] = node_make(current_token->content, 0);
+    return get_attribute_node;
+}
+
 static Node* parser_variable(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
-    return NULL;  // TODO
+    Token* current_token = get_current_token(tokens, *current_index, token_count);
+    Array* buffer = arr_init(sizeof(Node*), 4);
+    arr_push(buffer, node_make(current_token->content, 0));
+    while (true) {
+        current_token = get_next_token(tokens, current_index, token_count);
+        if (token_cmp(current_token, TOKEN_SYMBOL, "[")) {
+            arr_push(buffer, parser_get_sequence(filename, current_index, tokens, token_count));
+        } else if (token_cmp(current_token, TOKEN_SYMBOL, "(")) {
+            arr_push(buffer, parser_function_call(filename, current_index, tokens, token_count));
+        } else if (token_cmp(current_token, TOKEN_SYMBOL, ".")) {
+            arr_push(buffer, parser_get_attribute(filename, current_index, tokens, token_count));
+        } else {
+            --*current_index;
+            break;
+        }
+    }
+    Node* variable_node = node_make_with_children("variable", (Node**)arr_get_all(buffer), buffer->length);
+    arr_free(buffer);
+    return variable_node;
 }
 
 static Node* parser_term(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
