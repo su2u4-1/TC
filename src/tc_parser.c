@@ -71,6 +71,7 @@ argument_list = {"argument_list", [expression, ...], n}
 
 static int loop_level = 0;
 static bool in_function = false;
+static bool in_method = false;
 
 static Node* parser_code(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
 static Node* parser_import(const char* filename, size_t* current_index, Token* tokens, size_t token_count);
@@ -280,8 +281,7 @@ static Node* parser_term(const char* filename, size_t* current_index, Token* tok
         Node* term_child_node = parser_term(filename, current_index, tokens, token_count);
         unary_term_node->children[0] = term_child_node;
         term_node->children[0] = unary_term_node;
-    } else if (token_cmp(current_token, TOKEN_IDENTIFIER, NULL)) {
-        --*current_index;
+    } else if (token_cmp(current_token, TOKEN_IDENTIFIER, NULL) || (in_method && token_cmp(current_token, TOKEN_KEYWORD, "self"))) {
         Node* variable_node = parser_variable(filename, current_index, tokens, token_count);
         term_node->children[0] = variable_node;
     } else {
@@ -634,6 +634,7 @@ static Node* parser_function(const char* filename, size_t* current_index, Token*
 
 static Node* parser_method(const char* filename, size_t* current_index, Token* tokens, size_t token_count) {
     in_function = true;
+    in_method = true;
     Node* return_type_node = NULL;
     Node* method_name_node = NULL;
     Token* current_token = get_next_token(tokens, current_index, token_count);
@@ -677,6 +678,7 @@ static Node* parser_method(const char* filename, size_t* current_index, Token* t
     method_node->children[2] = parameter_list_node;
     method_node->children[3] = body_node;
     in_function = false;
+    in_method = false;
     return method_node;
 }
 
