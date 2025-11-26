@@ -44,7 +44,7 @@ string itoc(int value) {
 }
 
 // int to string
-string itos(int value) {
+func string itos(int value) {
     if (value == 0) {
         return "0";
     }
