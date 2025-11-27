@@ -29,4 +29,11 @@ extern int tc_keywords_count;
 extern char* tc_symbols[];
 extern int tc_symbols_count;
 
+void tc_lib_init(void);
+
+char* tc_strncpy(const char* s, size_t n);
+char* tc_strcpy(const char* s);
+char* intern(const char* s);
+bool tc_strcmp(const char* s1, const char* s2);
+
 #endif  // TC_LIB_H

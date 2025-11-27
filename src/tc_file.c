@@ -4,19 +4,6 @@
 
 #include "tc_mem.h"
 
-static char* str_copy_n(const char* s, size_t n) {
-    if (!s) return NULL;
-    char* d = (char*)tc_malloc(n + 1);
-    strncpy(d, s, n);
-    d[n] = '\0';
-    return d;
-}
-
-static char* str_copy(const char* s) {
-    if (!s) return NULL;
-    return str_copy_n(s, strlen(s));
-}
-
 static void path_rebuild(Path* p) {
     size_t total_len = 0;
     if (p->header && p->header[0] != '\0') {
@@ -77,38 +64,38 @@ static void path_rebuild(Path* p) {
 
 Path* path_init(const char* path) {
     Path* p = (Path*)tc_malloc(sizeof(Path));
-    p->path = str_copy(path);
+    p->path = tc_strcpy(path);
     for (char* c = p->path; *c; ++c) {
         if (*c == '\\') *c = '/';
     }
 
-    char* temp_path = str_copy(p->path);
+    char* temp_path = tc_strcpy(p->path);
     char* rest = temp_path;
 
     char* first_slash = strchr(rest, '/');
     if (first_slash) {
-        p->header = str_copy_n(rest, (size_t)(first_slash - rest));
+        p->header = tc_strncpy(rest, (size_t)(first_slash - rest));
         rest = first_slash + 1;
     } else {
-        p->header = str_copy("");
+        p->header = tc_strcpy("");
         rest = temp_path;
     }
 
     char* last_slash = strrchr(rest, '/');
     char* components_str;
     if (last_slash) {
-        components_str = str_copy_n(rest, (size_t)(last_slash - rest));
-        p->file_name = str_copy(last_slash + 1);
+        components_str = tc_strncpy(rest, (size_t)(last_slash - rest));
+        p->file_name = tc_strcpy(last_slash + 1);
     } else {
-        components_str = str_copy("");
-        p->file_name = str_copy(rest);
+        components_str = tc_strcpy("");
+        p->file_name = tc_strcpy(rest);
     }
 
     p->components = arr_init(sizeof(char*), 8);
     if (components_str[0] != '\0') {
         char* component = strtok(components_str, "/");
         while (component) {
-            char* comp_dup = str_copy(component);
+            char* comp_dup = tc_strcpy(component);
             arr_push(p->components, &comp_dup);
             component = strtok(NULL, "/");
         }
@@ -116,15 +103,15 @@ Path* path_init(const char* path) {
 
     if (p->header[0] == '\0' && p->path[0] == '/') {
         tc_free(p->header);
-        p->header = str_copy("/");
+        p->header = tc_strcpy("/");
     }
 
     char* dot = strrchr(p->file_name, '.');
     if (dot && dot != p->file_name) {
-        p->extension = str_copy(dot + 1);
+        p->extension = tc_strcpy(dot + 1);
         *dot = '\0';
     } else {
-        p->extension = str_copy("");
+        p->extension = tc_strcpy("");
     }
 
     tc_free(temp_path);
@@ -133,47 +120,47 @@ Path* path_init(const char* path) {
 }
 
 static void path_normalize_windows(Path* p) {
-    if (strcmp(p->header, "") == 0) {
+    if (tc_strcmp(p->header, "")) {
         tc_free(p->header);
-        p->header = str_copy(".");
-    } else if (strcmp(p->header, "/") == 0) {
+        p->header = tc_strcpy(".");
+    } else if (tc_strcmp(p->header, "/")) {
         tc_free(p->header);
-        p->header = str_copy("C:");
+        p->header = tc_strcpy("C:");
     } else if (strlen(p->header) == 2 && isalpha(p->header[0]) && !isalpha(p->header[1])) {
         char new_header[3] = {(char)toupper(p->header[0]), ':', '\0'};
         tc_free(p->header);
-        p->header = str_copy(new_header);
+        p->header = tc_strcpy(new_header);
     } else if (strlen(p->header) == 2 && isalpha(p->header[1]) && !isalpha(p->header[0])) {
         char new_header[3] = {(char)toupper(p->header[1]), ':', '\0'};
         tc_free(p->header);
-        p->header = str_copy(new_header);
+        p->header = tc_strcpy(new_header);
     } else if (strlen(p->header) == 1 && isalpha(p->header[0])) {
         char new_header[3] = {(char)toupper(p->header[0]), ':', '\0'};
         tc_free(p->header);
-        p->header = str_copy(new_header);
+        p->header = tc_strcpy(new_header);
     }
     path_rebuild(p);
 }
 
 static void path_normalize_linux(Path* p) {
-    if (strcmp(p->header, "") == 0) {
+    if (tc_strcmp(p->header, "")) {
         tc_free(p->header);
-        p->header = str_copy(".");
-    } else if (strcmp(p->header, "/") == 0) {
+        p->header = tc_strcpy(".");
+    } else if (tc_strcmp(p->header, "/")) {
         tc_free(p->header);
-        p->header = str_copy("");
+        p->header = tc_strcpy("");
     } else if (strlen(p->header) == 2 && isalpha(p->header[0]) && !isalpha(p->header[1])) {
         char new_header[3] = {'/', (char)tolower(p->header[0]), '\0'};
         tc_free(p->header);
-        p->header = str_copy(new_header);
+        p->header = tc_strcpy(new_header);
     } else if (strlen(p->header) == 2 && isalpha(p->header[1]) && !isalpha(p->header[0])) {
         char new_header[3] = {'/', (char)tolower(p->header[1]), '\0'};
         tc_free(p->header);
-        p->header = str_copy(new_header);
+        p->header = tc_strcpy(new_header);
     } else if (strlen(p->header) == 1 && isalpha(p->header[0])) {
         char new_header[3] = {'/', (char)tolower(p->header[0]), '\0'};
         tc_free(p->header);
-        p->header = str_copy(new_header);
+        p->header = tc_strcpy(new_header);
     }
     path_rebuild(p);
 }
@@ -182,16 +169,16 @@ void path_normalize(Path* p) {
     Array* normalized_components = arr_init(sizeof(char*), p->components->length);
     for (size_t i = 0; i < p->components->length; i++) {
         char* component = *(char**)arr_get_item(p->components, (int)i);
-        if (strcmp(component, ".") == 0) {
+        if (tc_strcmp(component, ".")) {
             continue;
-        } else if (strcmp(component, "..") == 0) {
+        } else if (tc_strcmp(component, "..")) {
             if (normalized_components->length > 0) {
                 char* to_free = *(char**)arr_get_item(normalized_components, (int)(normalized_components->length - 1));
                 tc_free(to_free);
                 normalized_components->length--;
             }
         } else {
-            char* comp_dup = str_copy(component);
+            char* comp_dup = tc_strcpy(component);
             arr_push(normalized_components, &comp_dup);
         }
     }
@@ -212,9 +199,9 @@ void path_normalize(Path* p) {
 void path_change_extension(Path* p, const char* new_ext) {
     tc_free(p->extension);
     if (new_ext[0] == '.') {
-        p->extension = str_copy(new_ext + 1);
+        p->extension = tc_strcpy(new_ext + 1);
     } else {
-        p->extension = str_copy(new_ext);
+        p->extension = tc_strcpy(new_ext);
     }
     path_rebuild(p);
 }
@@ -224,16 +211,16 @@ void path_change_file_name(Path* p, const char* new_name, bool replace_extension
         const char* dot = strrchr(new_name, '.');
         if (dot && dot != new_name) {
             tc_free(p->file_name);
-            p->file_name = str_copy_n(new_name, (size_t)(dot - new_name));
+            p->file_name = tc_strncpy(new_name, (size_t)(dot - new_name));
             tc_free(p->extension);
-            p->extension = str_copy(dot + 1);
+            p->extension = tc_strcpy(dot + 1);
         } else {
             tc_free(p->file_name);
-            p->file_name = str_copy(new_name);
+            p->file_name = tc_strcpy(new_name);
         }
     } else {
         tc_free(p->file_name);
-        p->file_name = str_copy(new_name);
+        p->file_name = tc_strcpy(new_name);
     }
     path_rebuild(p);
 }

@@ -15,7 +15,7 @@ static Token get_identifier_token(const char* source, int* index, int line_numbe
     string[char_buffer->length] = '\0';
     arr_free(char_buffer);
     for (int i = 0; i < tc_keywords_count; i++) {
-        if (strcmp(string, tc_keywords[i]) == 0) {
+        if (tc_strcmp(string, tc_keywords[i])) {
             return (Token){TOKEN_KEYWORD, string, line_number};
         }
     }

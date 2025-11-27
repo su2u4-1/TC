@@ -17,15 +17,15 @@ static int flags = 0;
 
 static void handle_parameters(int argc, char* argv[]) {
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "-o") == 0) {
+        if (tc_strcmp(argv[i], "-o")) {
             flags |= 1;
-        } else if (strcmp(argv[i], "-a") == 0) {
+        } else if (tc_strcmp(argv[i], "-a")) {
             flags |= 2;
-        } else if (strcmp(argv[i], "-l") == 0) {
+        } else if (tc_strcmp(argv[i], "-l")) {
             flags |= 4;
-        } else if (strcmp(argv[i], "-s") == 0) {
+        } else if (tc_strcmp(argv[i], "-s")) {
             flags |= 8;
-        } else if (strcmp(argv[i], "-h") == 0) {
+        } else if (tc_strcmp(argv[i], "-h")) {
             flags |= 16;
         } else {
             if (file_path == NULL) {
@@ -41,6 +41,7 @@ static void handle_parameters(int argc, char* argv[]) {
 }
 
 int main(int argc, char* argv[]) {
+    tc_lib_init();
     printf("[info]: handle parameter\n");
     handle_parameters(argc, argv);
     if (flags & 16 || file_path == NULL) {

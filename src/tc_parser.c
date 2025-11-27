@@ -149,7 +149,7 @@ static Token* get_current_token(Token* tokens, size_t current_index, size_t toke
 }
 
 static bool token_cmp(const Token* token, TokenType type, const char* content) {
-    if (token != NULL && token->type == type && (content == NULL || strcmp(token->content, content) == 0)) {
+    if (token != NULL && token->type == type && (content == NULL || tc_strcmp(token->content, content))) {
         return true;
     }
     return false;
@@ -176,7 +176,7 @@ static bool token_is_operator(const Token* token) {
     }
     const char* operators[19] = {"+", "-", "*", "/", "%", "==", "!=", "<", ">", "<=", ">=", "&&", "||", "=", "+=", "-=", "*=", "/=", "%="};
     for (size_t i = 0; i < 19; i++) {
-        if (strcmp(token->content, operators[i])) {
+        if (tc_strcmp(token->content, operators[i])) {
             return true;
         }
     }
@@ -738,6 +738,6 @@ static Node* parser_code(const char* filename, size_t* current_index, Token* tok
 
 Node* tc_parser(const char* filename, Token* tokens, size_t token_count) {
     size_t current_index = 0;
-    SymbolTable* global_symbol_table = symbol_table_init(NULL);
+    SymbolTable* global_symbol_table = symbol_table_init(NULL, "root");
     return parser_code(filename, &current_index, tokens, token_count, global_symbol_table);
 }
