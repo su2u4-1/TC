@@ -95,8 +95,7 @@ tc/
 |   ├── tc_lib.c        # Global data and standard library
 |   ├── tc_main.c       # Main function and entry point
 |   ├── tc_mem.c        # Memory management
-|   ├── tc_parser.c     # Parser
-|   └── tc_type.c       # Type collections
+|   └── tc_parser.c     # Parser
 ├── test/               # Test cases
 |   ├── test1/          # Test case directory
 |   |   ├── test1.tc    # Test source code
@@ -210,8 +209,7 @@ tc/
 |   ├── tc_lib.c        # 全域資料與標準函式庫
 |   ├── tc_main.c       # 主函式與進入點
 |   ├── tc_mem.c        # 記憶體管理
-|   ├── tc_parser.c     # 語法分析器
-|   └── tc_type.c       # 型別集合
+|   └── tc_parser.c     # 語法分析器
 ├── test/               # 測試案例
 |   ├── test1/          # 測試案例目錄
 |   |   ├── test1.tc    # 測試原始碼
