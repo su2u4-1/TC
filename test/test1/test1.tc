@@ -1,0 +1,29 @@
+/*
+ * this test is used to test the lexer.
+ */
+import print from "std"
+
+class Test1 {
+    int a = 10;
+    method Test1 init(self, int value) {
+        self.a = value;
+        return self;
+    }
+    method int get_a(self) {
+        return self.a;
+    }
+    method void set_a(self, int value) {
+        self.a = value;
+    }
+}
+
+// entry point
+func int main() {
+    Test1 t = Test1.init(5);
+    print(t.get_a());
+    t.set_a(20);
+    print(t.get_a());
+    float _abc123 = 30.5;
+    int _def456 = 15;
+    return 0;
+}
