@@ -21,7 +21,7 @@ LinkListItem {
 Symbol {
     name: string,
     kind: enum[VARIABLE_SYMBOL, FUNCTION_SYMBOL, CLASS_SYMBOL, PARAMETER_SYMBOL],
-    type: string,
+    type: Symbol*,
 }
 */
 
@@ -39,10 +39,10 @@ typedef enum {
     PARAMETER_SYMBOL,
 } SymbolKind;
 
-typedef struct {
+typedef struct Symbol {
     char* name;
     SymbolKind kind;
-    char* type;
+    struct Symbol* type;
 } Symbol;
 
 typedef struct LinkListItem {
@@ -58,10 +58,17 @@ typedef struct SymbolTable {
     LinkListItem* symbols;
 } SymbolTable;
 
+void tc_symbol_init(void);
 SymbolTable* symbol_table_init(SymbolTable* parent, const char* name);
-Symbol* symbol_init(const char* name, const char* type);
+Symbol* symbol_init(const char* name, SymbolKind kind, Symbol* type);
 Symbol* symbol_table_get_symbol(SymbolTable* table, const char* name);
 void symbol_table_add_symbol(SymbolTable* table, Symbol* symbol);
 void symbol_table_free(SymbolTable* table);
+
+extern Symbol* type_int;
+extern Symbol* type_float;
+extern Symbol* type_string;
+extern Symbol* type_bool;
+extern Symbol* type_void;
 
 #endif  // TC_SYMBOL_H

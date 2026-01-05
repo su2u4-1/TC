@@ -3,6 +3,7 @@
 #include "tc_lexer.h"
 #include "tc_lib.h"
 #include "tc_mem.h"
+#include "tc_symbol.h"
 
 static Path* file_path = NULL;
 static Path* output_path = NULL;
@@ -42,6 +43,7 @@ static void handle_parameters(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
     tc_lib_init();
+    tc_symbol_init();
     printf("[info]: handle parameter\n");
     handle_parameters(argc, argv);
     if (flags & 16 || file_path == NULL) {

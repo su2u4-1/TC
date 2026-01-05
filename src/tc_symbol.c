@@ -1,5 +1,13 @@
 #include "tc_symbol.h"
 
+void tc_symbol_init(void) {
+    type_int = symbol_init("int", CLASS_SYMBOL, NULL);
+    type_float = symbol_init("float", CLASS_SYMBOL, NULL);
+    type_string = symbol_init("string", CLASS_SYMBOL, NULL);
+    type_bool = symbol_init("bool", CLASS_SYMBOL, NULL);
+    type_void = symbol_init("void", CLASS_SYMBOL, NULL);
+}
+
 SymbolTable* symbol_table_init(SymbolTable* parent, const char* name) {
     SymbolTable* table = (SymbolTable*)tc_malloc(sizeof(SymbolTable));
     table->parent = parent;
@@ -8,10 +16,11 @@ SymbolTable* symbol_table_init(SymbolTable* parent, const char* name) {
     return table;
 }
 
-Symbol* symbol_init(const char* name, const char* type) {
+Symbol* symbol_init(const char* name, SymbolKind kind, Symbol* type) {
     Symbol* symbol = (Symbol*)tc_malloc(sizeof(Symbol));
     symbol->name = tc_strcpy(name);
-    symbol->type = tc_strcpy(type);
+    symbol->kind = kind;
+    symbol->type = type;
     return symbol;
 }
 
