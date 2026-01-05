@@ -3,8 +3,8 @@ import = "import" identifier [ "from" string ] ";" ;
 function = "func" type identifier "(" [ parameter_list ] ")" "{" { statement | return_statement } "}" ;
 class = "class" identifier "{" { attribute | method } "}" ;
 parameter_list = parameter { "," parameter } ;
-parameter = variable_declaration
-attribute = variable_declaration
+parameter = variable_declaration ;
+attribute = variable_declaration ";" ;
 variable_declaration = type identifier [ "=" expression ] ;
 method = "method" type identifier "(" "self" [ "," parameter_list ] ")" "{" { statement | return_statement } "}" ;
 type = builtin_type | identifier ;
@@ -14,10 +14,10 @@ while_statement = "while" "(" expression ")" "{" { statement | break_statement |
 for_statement = "for" "(" [ variable_declaration ] ";" [ expression ] ";" [ expression ] ")" "{" { statement | break_statement | continue_statement } "}" ;
 expression = term { operator term } ;
 term = literal | "(" expression ")" | variable_access | ("-" | "!") term ;
-variable_access = identifier | function_call | get_attribute | get_sequence ;
-function_call = variable_access "(" [ argument_list ] ")" ;
-get_attribute = variable_access "." identifier ;
-get_sequence = variable_access "[" expression "]" ;
+variable_access = ( identifier | "self" ) { function_call | get_attribute | get_sequence } ;
+function_call = "(" [ argument_list ] ")" ;
+get_attribute = "." identifier ;
+get_sequence = "[" expression "]" ;
 argument_list = expression { "," expression } ;
 literal = integer | float | string | boolean ;
 integer = digit { digit } ;
@@ -33,3 +33,6 @@ operator = "+" | "-" | "*" | "/" | "%" | "==" | "!=" | "<" | ">" | "<=" | ">=" |
 digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 alphabet = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" ;
 character = any_character_except_ascii_0x22 ;  # ascii 0x22 = `"`
+
+# "(", ")", "{", "}", ",", "!", ".", "[", "]", "\"", ";", "_", "+", "-", "*", "/", "%", "==", "!=", "<", ">", "<=", ">=", "&&", "||", "=", "+=", "-=", "*=", "/=", "%="
+# "import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void"
