@@ -3,7 +3,7 @@
 #include <string.h>
 
 char* memory = NULL;
-static size_t memorySize = 1048576;
+static size_t memorySize = 1048576;  // 1 MB
 static size_t memoryUsed = 0;
 static char* memoryEnd = NULL;
 bool initialized = false;
@@ -14,15 +14,19 @@ size_t keywordCount = 21;
 StringList* allStrings = NULL;
 
 static void increase_memory_size(void) {
+    char* oldMemory = memory;
     memorySize *= 2;
-    memory = (char*)realloc(memory, memorySize);
-    if (memory == NULL) {
-        char* newMemory = (char*)malloc(memorySize);
-        for (size_t i = 0; i < memoryUsed; i++)
-            newMemory[i] = memory[i];
-        free(memory);
-        memory = newMemory;
+    char* newMemory = (char*)realloc(memory, memorySize);
+    if (newMemory == NULL) {
+        newMemory = (char*)malloc(memorySize);
+        if (newMemory == NULL) {
+            fprintf(stderr, "Fatal: Cannot allocate memory\n");
+            exit(1);
+        }
+        memcpy(newMemory, oldMemory, memoryUsed);
+        free(oldMemory);
     }
+    memory = newMemory;
 }
 
 void init(void) {
@@ -65,20 +69,16 @@ string create_string(const char* data, size_t length) {
     return str;
 }
 
+static size_t memoryBlockCount = 0;
+
 void* alloc_memory(size_t size) {
     if (!initialized) init();
-#ifdef COMPUTE_MEM_BLOCK
-    memoryUsed += sizeof(size_t) + sizeof(char*);
-#endif
     if (memoryUsed + size >= memorySize)
         increase_memory_size();
     char* ptr = &memory[memoryUsed];
-#ifdef COMPUTE_MEM_BLOCK
-    memcpy(&memory[memoryUsed - sizeof(char*) - sizeof(size_t)], &size, sizeof(size_t));
-    memcpy(&memory[memoryUsed - sizeof(char*)], &memoryEnd, sizeof(char*));
-#endif
     memoryUsed += size;
     memoryEnd = ptr;
+    ++memoryBlockCount;
     return ptr;
 }
 
@@ -109,16 +109,6 @@ char* get_info(void) {
         stringCount++;
         current = current->next;
     }
-    size_t memoryBlockCount = 0;
-#ifdef COMPUTE_MEM_BLOCK
-    char* ptr = memoryEnd;
-    while (ptr != NULL && ptr > memory) {
-        memoryBlockCount++;
-        ptr -= sizeof(char*);
-        memcpy(&ptr, ptr, sizeof(char*));
-    }
-    memoryUsed -= memoryBlockCount * (sizeof(size_t) + sizeof(char*));
-#endif
-    sprintf(info, "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: %d %d %d\n    Memory Block Count: %zu, Increased memory consumption: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount, memoryBlockCount * (sizeof(size_t) + sizeof(char*)));
+    sprintf(info, "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: %d %d %d\n    Memory Block Count: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount);
     return info;
 }
