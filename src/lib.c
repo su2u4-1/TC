@@ -3,12 +3,13 @@
 #include <string.h>
 
 char* memory = NULL;
-static size_t memorySize = 1048576;  // 1 MB
+static size_t memorySize = 1024;  // 1 KB
 static size_t memoryUsed = 0;
 static char* memoryEnd = NULL;
 bool initialized = false;
 
-string keywordList[21] = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void"};
+static const char* keywordStrings[21] = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void"};
+offset keywordList[21] = {0};
 size_t keywordCount = 21;
 
 StringList* allStrings = NULL;
@@ -17,8 +18,14 @@ static void increase_memory_size(void) {
     char* oldMemory = memory;
     memorySize *= 2;
     char* newMemory = (char*)realloc(memory, memorySize);
+#ifdef DEBUG
+    printf("Use realloc to increase memory size to %zu bytes\n", memorySize);
+#endif
     if (newMemory == NULL) {
         newMemory = (char*)malloc(memorySize);
+#ifdef DEBUG
+        printf("Use malloc to increase memory size to %zu bytes\n", memorySize);
+#endif
         if (newMemory == NULL) {
             fprintf(stderr, "Fatal: Cannot allocate memory\n");
             exit(1);
@@ -35,38 +42,39 @@ void init(void) {
         memory = (char*)malloc(memorySize);
     initialized = true;
     for (size_t i = 0; i < keywordCount; ++i)
-        keywordList[i] = create_string(keywordList[i], strlen(keywordList[i]));
+        keywordList[i] = create_string(keywordStrings[i], strlen(keywordStrings[i]));
 }
 
-string create_string(const char* data, size_t length) {
+offset create_string(const char* data, size_t length) {
     if (!initialized) init();
-    if (data == NULL || length == 0) return NULL;
+    if (data == NULL || length == 0) return 0;
 
     StringList* current = allStrings;
-    string existing = NULL;
+    offset existing = 0;
     while (current != NULL) {
-        if (current->length == length && strncmp(current->str, data, length) == 0)
+        if (current->length == length && strncmp(offset_to_ptr(current->str), data, length) == 0)
             existing = current->str;
         current = current->next;
     }
 
-    if (existing != NULL)
+    if (existing != 0)
         return existing;
     if (memoryUsed + length >= memorySize)
         increase_memory_size();
 
+    offset off = memoryUsed;
     string str = &memory[memoryUsed];
     strncpy(str, data, length);
     str[length] = '\0';
     memoryUsed += length + 1;
 
     StringList* newString = (StringList*)alloc_memory(sizeof(StringList));
-    newString->str = str;
+    newString->str = off;
     newString->length = length;
     newString->next = allStrings;
     allStrings = newString;
 
-    return str;
+    return off;
 }
 
 static size_t memoryBlockCount = 0;
@@ -82,7 +90,7 @@ void* alloc_memory(size_t size) {
     return ptr;
 }
 
-bool is_keyword(const string str) {
+bool is_keyword(const offset str) {
     if (!initialized) init();
     for (size_t i = 0; i < keywordCount; ++i)
         if (string_equal(str, keywordList[i]))
@@ -92,13 +100,15 @@ bool is_keyword(const string str) {
 
 static int string_compare_count[3] = {0, 0, 0};
 
-bool string_equal(const string a, const string b) {
+bool string_equal(const offset a, const offset b) {
     ++string_compare_count[0];
-    if ((size_t)(a - memory) < memoryUsed && (size_t)(b - memory) < memoryUsed) return a == b;
+    if (a < memoryUsed && b < memoryUsed) return a == b;
+    --string_compare_count[0];
     ++string_compare_count[1];
-    if (a == NULL || b == NULL) return false;
+    if (a == 0 || b == 0) return false;
+    --string_compare_count[1];
     ++string_compare_count[2];
-    return strcmp(a, b) == 0;
+    return strcmp(offset_to_ptr(a), offset_to_ptr(b)) == 0;
 }
 
 char* get_info(void) {
@@ -109,6 +119,18 @@ char* get_info(void) {
         stringCount++;
         current = current->next;
     }
-    sprintf(info, "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: %d %d %d\n    Memory Block Count: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount);
+    sprintf(info, "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: %d %d %d, Memory Block Count: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount);
     return info;
+}
+
+string offset_to_ptr(offset off) {
+    return memory + off;
+}
+
+offset ptr_to_offset(string ptr) {
+    if (ptr < memory || ptr >= memory + memoryUsed) {
+        fprintf(stderr, "Error: ptr_to_offset received invalid pointer: ptr - memory: %lu\n", ptr - memory);
+        return 0;
+    }
+    return (offset)(ptr - memory);
 }

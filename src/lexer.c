@@ -4,7 +4,7 @@
 
 static void push_TokenList(TokenList* list, Token* token) {
 #ifdef DEBUG
-    printf("push token: Type %d, Lexeme '%s'\n", token->type, token->lexeme);
+    printf("push token: Type %d, Lexeme '%s'\n", token->type, offset_to_ptr(token->lexeme));
 #endif
     static TokenList* end = NULL;
     if (list->next == NULL && list->token == NULL) {
@@ -25,7 +25,7 @@ static void push_TokenList(TokenList* list, Token* token) {
     end = newNode;
 }
 
-static Token* create_token(TokenType type, string lexeme, size_t line, size_t column) {
+static Token* create_token(TokenType type, offset lexeme, size_t line, size_t column) {
     Token* token = (Token*)alloc_memory(sizeof(Token));
     token->type = type;
     token->lexeme = lexeme;
@@ -78,7 +78,7 @@ TokenList* lexer(string source) {
                 c = source[++i];
                 ++column;
             }
-            string content = create_string(&source[start], i - start);
+            offset content = create_string(&source[start], i - start);
             if (is_keyword(content))
                 push_TokenList(tokens, create_token(KEYWORD, content, line, start));
             else
@@ -175,7 +175,7 @@ TokenList* lexer(string source) {
             lexer_error("Unexpected character", line, column);
         }
     }
-    push_TokenList(tokens, create_token(EOF_TOKEN, NULL, line, column));
+    push_TokenList(tokens, create_token(EOF_TOKEN, 0, line, column));
 #ifdef DEBUG
     printf("Lexer finished.\n");
 #endif

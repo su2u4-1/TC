@@ -2,11 +2,11 @@
 #define LIB_H
 
 // #define DEBUG
-// #define COMPUTE_MEM_BLOCK
 #define bool int
 #define true 1
 #define false 0
 #define string char*
+#define offset size_t
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #define PLATFORM 1  // WINDOWS
@@ -23,22 +23,24 @@
 #include <string.h>
 
 typedef struct StringList {
-    string str;
+    offset str;
     size_t length;
     struct StringList* next;
 } StringList;
 
 extern char* memory;
-extern string keywordList[21];
+extern offset keywordList[21];
 extern size_t keywordCount;
 extern bool initialized;
 extern StringList* allStrings;
 
 void init(void);
-string create_string(const char* data, size_t length);
+offset create_string(const char* data, size_t length);
 void* alloc_memory(size_t size);
-bool is_keyword(const string str);
-bool string_equal(const string a, const string b);
+bool is_keyword(const offset str);
+bool string_equal(const offset a, const offset b);
 char* get_info(void);
+string offset_to_ptr(offset off);
+offset ptr_to_offset(string ptr);
 
 #endif  // LIB_H

@@ -16,7 +16,7 @@ typedef enum TokenType {
 
 typedef struct Token {
     TokenType type;
-    string lexeme;
+    offset lexeme;
     size_t line, column;
 } Token;
 

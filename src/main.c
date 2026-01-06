@@ -57,8 +57,9 @@ int main(int argc, char* argv[]) {
         else if (token->type == COMMENT)
             fprintf(outfile, "Token(Type: comment,    Line: ");
         fprintf(outfile, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        for (size_t i = 0; i < strlen(token->lexeme); ++i) {
-            char c = token->lexeme[i];
+        string lexeme_ptr = offset_to_ptr(token->lexeme);
+        for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
+            char c = lexeme_ptr[i];
             if (c == '\0')
                 fprintf(outfile, "\\0");
             else if (c == '\n')
@@ -70,7 +71,7 @@ int main(int argc, char* argv[]) {
             else
                 fprintf(outfile, "%c", c);
         }
-        fprintf(outfile, "' (%ld)\n", token->lexeme - memory);
+        fprintf(outfile, "' (%zu)\n", token->lexeme);
     }
     fprintf(outfile, "\ninfo by lib:\n    %s\n", get_info());
     fclose(outfile);
