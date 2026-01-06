@@ -2,33 +2,32 @@
 
 #include "lib.h"
 
-static void push_TokenList(TokenList* list, Token* token) {
-#ifdef DEBUG
-    printf("push token: Type %d, Lexeme '%s'\n", token->type, offset_to_ptr(token->lexeme));
-#endif
-    static TokenList* end = NULL;
-    if (list->next == NULL && list->token == NULL) {
-        list->token = token;
+static void push_TokenList(offset_ptr(TokenList*) list, offset_ptr(Token*) token) {
+    static offset_ptr(TokenList*) end = 0;
+    TokenList* list_ptr = (TokenList*)offset_to_ptr(list);
+    if (list_ptr->next == 0 && list_ptr->token == 0) {
+        list_ptr->token = token;
         end = list;
         return;
     }
-    TokenList* newNode = (TokenList*)alloc_memory(sizeof(TokenList));
-    newNode->token = token;
-    TokenList* current = list;
-    if (end != NULL)
-        current = end;
-    while (current->next != NULL)
-        current = current->next;
+    offset_ptr(TokenList*) newNode = alloc_memory(sizeof(TokenList));
+    ((TokenList*)offset_to_ptr(newNode))->token = token;
+    TokenList* current = list_ptr;
+    if (end != 0)
+        current = (TokenList*)offset_to_ptr(end);
+    while (current->next != 0)
+        current = (TokenList*)offset_to_ptr(current->next);
     current->next = newNode;
     end = newNode;
 }
 
-static Token* create_token(TokenType type, offset lexeme, size_t line, size_t column) {
-    Token* token = (Token*)alloc_memory(sizeof(Token));
-    token->type = type;
-    token->lexeme = lexeme;
-    token->line = line;
-    token->column = column;
+static offset_ptr(Token*) create_token(TokenType type, offset lexeme, size_t line, size_t column) {
+    offset_ptr(Token*) token = alloc_memory(sizeof(Token));
+    Token* token_ptr = (Token*)offset_to_ptr(token);
+    token_ptr->type = type;
+    token_ptr->lexeme = lexeme;
+    token_ptr->line = line;
+    token_ptr->column = column;
     return token;
 }
 
@@ -36,11 +35,8 @@ static void lexer_error(const char* message, size_t line, size_t column) {
     fprintf(stderr, "Lexer Error at Line %zu, Column %zu: %s\n", line + 1, column + 1, message);
 }
 
-TokenList* lexer(string source) {
-#ifdef DEBUG
-    printf("Starting lexer...\n");
-#endif
-    TokenList* tokens = (TokenList*)alloc_memory(sizeof(TokenList));
+offset_ptr(TokenList*) lexer(string source) {
+    offset_ptr(TokenList*) tokens = alloc_memory(sizeof(TokenList));
     char c = ' ', p = ' ';
     size_t line = 0, i = 0, column = 0;
     for (i = 0; p != '\0' && c != '\0'; ++i, ++column) {
@@ -181,8 +177,5 @@ TokenList* lexer(string source) {
         }
     }
     push_TokenList(tokens, create_token(EOF_TOKEN, 0, line, column));
-#ifdef DEBUG
-    printf("Lexer finished.\n");
-#endif
     return tokens;
 }

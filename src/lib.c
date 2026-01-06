@@ -11,7 +11,7 @@ static const char* keywordStrings[21] = {"import", "from", "func", "class", "met
 offset keywordList[21] = {0};
 size_t keywordCount = 21;
 
-StringList* allStrings = NULL;
+offset_ptr(StringList*) allStrings = 0;
 
 static void increase_memory_size(void) {
     char* oldMemory = memory;
@@ -36,30 +36,27 @@ void init(void) {
 offset create_string(const char* data, size_t length) {
     if (!initialized) init();
     if (data == NULL || length == 0) return 0;
-
-    StringList* current = allStrings;
+    StringList* current = (StringList*)offset_to_ptr(allStrings);
     offset existing = 0;
     while (current != NULL) {
-        if (current->length == length && strncmp(offset_to_ptr(current->str), data, length) == 0)
+        if (current->length == length && current->str != 0 && strncmp(offset_to_str(current->str), data, length) == 0)
             existing = current->str;
-        current = current->next;
+        current = (StringList*)offset_to_ptr(current->next);
     }
-
     if (existing != 0)
         return existing;
     if (memoryUsed + length >= memorySize)
         increase_memory_size();
-
     offset off = memoryUsed;
     string str = &memory[memoryUsed];
     strncpy(str, data, length);
     str[length] = '\0';
     memoryUsed += length + 1;
-
-    StringList* newString = (StringList*)alloc_memory(sizeof(StringList));
-    newString->str = off;
-    newString->length = length;
-    newString->next = allStrings;
+    offset_ptr(StringList*) newString = alloc_memory(sizeof(StringList));
+    StringList* ptr = (StringList*)offset_to_ptr(newString);
+    ptr->str = off;
+    ptr->length = length;
+    ptr->next = allStrings;
     allStrings = newString;
 
     return off;
@@ -67,15 +64,14 @@ offset create_string(const char* data, size_t length) {
 
 static size_t memoryBlockCount = 0;
 
-size_t* alloc_memory(size_t size) {
+size_t alloc_memory(size_t size) {
     if (!initialized) init();
     if (memoryUsed + size >= memorySize)
         increase_memory_size();
-    memoryUsed = (memoryUsed + ALIGN_SIZE - 1) & ~(ALIGN_SIZE - 1);
-    void* ptr = (void*)&memory[memoryUsed];
+    size_t ptr = memoryUsed = (memoryUsed + ALIGN_SIZE - 1) & ~(ALIGN_SIZE - 1);
     memoryUsed += size;
     ++memoryBlockCount;
-    return (size_t*)ptr;
+    return ptr;
 }
 
 bool is_keyword(const offset str) {
@@ -96,23 +92,29 @@ bool string_equal(const offset a, const offset b) {
     if (a == 0 || b == 0) return false;
     --string_compare_count[1];
     ++string_compare_count[2];
-    return strcmp(offset_to_ptr(a), offset_to_ptr(b)) == 0;
+    return strcmp(offset_to_str(a), offset_to_str(b)) == 0;
 }
 
 offset get_info(void) {
     offset info = (offset)create_string("", 256);
     size_t stringCount = 0;
-    StringList* current = allStrings;
+    StringList* current = (StringList*)offset_to_ptr(allStrings);
     while (current != NULL) {
         stringCount++;
-        current = current->next;
+        current = (StringList*)offset_to_ptr(current->next);
     }
-    sprintf(offset_to_ptr(info), "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: %d %d %d, Memory Block Count: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount);
+    sprintf(offset_to_str(info), "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: %d %d %d, Memory Block Count: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount);
     return info;
 }
 
-string offset_to_ptr(offset off) {
+string offset_to_str(offset off) {
+    if (off <= 0 || off >= memoryUsed) return NULL;
     return memory + off;
+}
+
+size_t* offset_to_ptr(offset off) {
+    if (off <= 0 || off >= memoryUsed) return NULL;
+    return (size_t*)(void*)(memory + off);
 }
 
 offset ptr_to_offset(string ptr) {

@@ -7,6 +7,7 @@
 #define false 0
 #define string char*
 #define offset size_t
+#define offset_ptr(type) size_t
 #define ALIGN_SIZE (size_t)8
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
@@ -26,22 +27,23 @@
 typedef struct StringList {
     offset str;
     size_t length;
-    struct StringList* next;
+    offset_ptr(StringList*) next;
 } StringList;
 
 extern char* memory;
 extern offset keywordList[21];
 extern size_t keywordCount;
 extern bool initialized;
-extern StringList* allStrings;
+extern offset_ptr(StringList*) allStrings;
 
 void init(void);
 offset create_string(const char* data, size_t length);
-size_t* alloc_memory(size_t size);
+size_t alloc_memory(size_t size);
 bool is_keyword(const offset str);
 bool string_equal(const offset a, const offset b);
 offset get_info(void);
-string offset_to_ptr(offset off);
+string offset_to_str(offset off);
+size_t* offset_to_ptr(offset off);
 offset ptr_to_offset(string ptr);
 
 #endif  // LIB_H

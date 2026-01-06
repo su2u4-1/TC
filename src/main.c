@@ -13,21 +13,17 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "Error opening file: %s\n", filename);
         return 1;
     }
-#ifdef DEBUG
-    printf("Reading file: %s\n", filename);
-#endif
+
     fseek(file, 0, SEEK_END);
     size_t length = (size_t)ftell(file);
     fseek(file, 0, SEEK_SET);
-#ifdef DEBUG
-    printf("File size: %zu bytes\n", length);
-#endif
-    string source = (string)alloc_memory(length + 1);
+
+    string source = offset_to_str(alloc_memory(length + 1));
     fread(source, 1, length, file);
     source[length] = '\0';
     fclose(file);
 
-    TokenList* tokens = lexer(source);
+    offset_ptr(TokenList*) tokens = lexer(source);
 
     char outfilename[256];
     sprintf(outfilename, "%s.token", filename);
@@ -37,8 +33,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    for (TokenList* current = tokens; current != NULL; current = current->next) {
-        Token* token = current->token;
+    for (offset_ptr(TokenList*) current = tokens; current != 0; current = ((TokenList*)offset_to_ptr(current))->next) {
+        Token* token = (Token*)offset_to_ptr(((TokenList*)offset_to_ptr(current))->token);
         if (token->type == EOF_TOKEN) {
             fprintf(outfile, "Token(Type: EOF,        Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
             break;
@@ -57,7 +53,7 @@ int main(int argc, char* argv[]) {
         else if (token->type == COMMENT)
             fprintf(outfile, "Token(Type: comment,    Line: ");
         fprintf(outfile, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        string lexeme_ptr = offset_to_ptr(token->lexeme);
+        string lexeme_ptr = offset_to_str(token->lexeme);
         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
             char c = lexeme_ptr[i];
             if (c == '\0')
@@ -73,7 +69,7 @@ int main(int argc, char* argv[]) {
         }
         fprintf(outfile, "' (%zu)\n", token->lexeme);
     }
-    fprintf(outfile, "\ninfo by lib:\n    %s\n", get_info());
+    fprintf(outfile, "\ninfo by lib:\n    %s\n", offset_to_str(get_info()));
     fclose(outfile);
 
     return 0;

@@ -21,10 +21,10 @@ typedef struct Token {
 } Token;
 
 typedef struct TokenLinkList {
-    Token* token;
-    struct TokenLinkList* next;
+    offset_ptr(Token*) token;
+    offset_ptr(TokenLinkList*) next;
 } TokenList;
 
-TokenList* lexer(string source);
+offset_ptr(TokenList*) lexer(string source);
 
 #endif  // LEXER_H
