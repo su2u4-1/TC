@@ -17,23 +17,12 @@ StringList* allStrings = NULL;
 static void increase_memory_size(void) {
     char* oldMemory = memory;
     memorySize *= 2;
-    char* newMemory = (char*)realloc(memory, memorySize);
-#ifdef DEBUG
-    printf("Use realloc to increase memory size to %zu bytes\n", memorySize);
-#endif
-    if (newMemory == NULL) {
-        newMemory = (char*)malloc(memorySize);
-#ifdef DEBUG
-        printf("Use malloc to increase memory size to %zu bytes\n", memorySize);
-#endif
-        if (newMemory == NULL) {
-            fprintf(stderr, "Fatal: Cannot allocate memory\n");
-            exit(1);
-        }
-        memcpy(newMemory, oldMemory, memoryUsed);
+    memory = (char*)realloc(memory, memorySize);
+    if (memory == NULL) {
+        fprintf(stderr, "Fatal: Cannot allocate memory\n");
         free(oldMemory);
+        exit(1);
     }
-    memory = newMemory;
 }
 
 void init(void) {
