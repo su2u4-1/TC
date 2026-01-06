@@ -39,7 +39,7 @@ offset create_string(const char* data, size_t length);
 void* alloc_memory(size_t size);
 bool is_keyword(const offset str);
 bool string_equal(const offset a, const offset b);
-char* get_info(void);
+offset get_info(void);
 string offset_to_ptr(offset off);
 offset ptr_to_offset(string ptr);
 

@@ -14,14 +14,12 @@ static void push_TokenList(TokenList* list, Token* token) {
     }
     TokenList* newNode = (TokenList*)alloc_memory(sizeof(TokenList));
     newNode->token = token;
-    if (end != NULL && end->next == NULL) {
-        end->next = newNode;
-    } else {
-        TokenList* current = list;
-        while (current->next != NULL)
-            current = current->next;
-        current->next = newNode;
-    }
+    TokenList* current = list;
+    if (end != NULL)
+        current = end;
+    while (current->next != NULL)
+        current = current->next;
+    current->next = newNode;
     end = newNode;
 }
 
@@ -45,7 +43,7 @@ TokenList* lexer(string source) {
     TokenList* tokens = (TokenList*)alloc_memory(sizeof(TokenList));
     char c = ' ', p = ' ';
     size_t line = 0, i = 0, column = 0;
-    for (i = 0; p != '\0'; ++i, ++column) {
+    for (i = 0; p != '\0' && c != '\0'; ++i, ++column) {
         p = source[i + 1];
         c = source[i];
         if (c == ' ' || c == '\t' || c == '\r') {
@@ -148,6 +146,13 @@ TokenList* lexer(string source) {
                     ++line;
                     column = 0;
                 }
+                if (c == '\0') break;
+            }
+            if (c == '\0') {
+                --i;
+                push_TokenList(tokens, create_token(COMMENT, create_string(&source[start], i - start), line, start));
+                lexer_error("Unterminated comment", line, start);
+                break;
             }
             i += 2;
             push_TokenList(tokens, create_token(COMMENT, create_string(&source[start], i - start), line, start));
