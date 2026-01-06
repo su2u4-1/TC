@@ -8,6 +8,12 @@
 #define string char*
 #define offset size_t
 
+// 簡化 offset 操作的輔助宏（如果未來改用 offset 系統）
+#define PTR(off) (offset_to_ptr(off))
+#define OFF(ptr) (ptr_to_offset(ptr))
+#define ALLOC(type) ((type*)alloc_memory(sizeof(type)))
+#define ALLOC_ARR(type, n) ((type*)alloc_memory(sizeof(type) * (n)))
+
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #define PLATFORM 1  // WINDOWS
 #elif defined(__linux__) || defined(__gnu_linux__)
@@ -39,7 +45,7 @@ offset create_string(const char* data, size_t length);
 void* alloc_memory(size_t size);
 bool is_keyword(const offset str);
 bool string_equal(const offset a, const offset b);
-char* get_info(void);
+offset get_info(void);
 string offset_to_ptr(offset off);
 offset ptr_to_offset(string ptr);
 

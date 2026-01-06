@@ -39,7 +39,7 @@ static void increase_memory_size(void) {
 void init(void) {
     if (initialized) return;
     if (memory == NULL)
-        memory = (char*)malloc(memorySize);
+        memory = ALLOC_ARR(char, memorySize);
     initialized = true;
     for (size_t i = 0; i < keywordCount; ++i)
         keywordList[i] = create_string(keywordStrings[i], strlen(keywordStrings[i]));
@@ -52,7 +52,7 @@ offset create_string(const char* data, size_t length) {
     StringList* current = allStrings;
     offset existing = 0;
     while (current != NULL) {
-        if (current->length == length && strncmp(offset_to_ptr(current->str), data, length) == 0)
+        if (current->length == length && strncmp(PTR(current->str), data, length) == 0)
             existing = current->str;
         current = current->next;
     }
@@ -68,7 +68,7 @@ offset create_string(const char* data, size_t length) {
     str[length] = '\0';
     memoryUsed += length + 1;
 
-    StringList* newString = (StringList*)alloc_memory(sizeof(StringList));
+    StringList* newString = ALLOC(StringList);
     newString->str = off;
     newString->length = length;
     newString->next = allStrings;
@@ -108,18 +108,18 @@ bool string_equal(const offset a, const offset b) {
     if (a == 0 || b == 0) return false;
     --string_compare_count[1];
     ++string_compare_count[2];
-    return strcmp(offset_to_ptr(a), offset_to_ptr(b)) == 0;
+    return strcmp(PTR(a), PTR(b)) == 0;
 }
 
-char* get_info(void) {
-    char* info = (char*)malloc(256);
+offset get_info(void) {
+    offset info = (offset)create_string("", 256);
     size_t stringCount = 0;
     StringList* current = allStrings;
     while (current != NULL) {
         stringCount++;
         current = current->next;
     }
-    sprintf(info, "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: %d %d %d, Memory Block Count: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount);
+    sprintf(PTR(info), "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: %d %d %d, Memory Block Count: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount);
     return info;
 }
 

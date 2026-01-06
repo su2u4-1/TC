@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 #ifdef DEBUG
     printf("File size: %zu bytes\n", length);
 #endif
-    string source = (string)alloc_memory(length + 1);
+    string source = ALLOC_ARR(char, length + 1);
     fread(source, 1, length, file);
     source[length] = '\0';
     fclose(file);
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
         else if (token->type == COMMENT)
             fprintf(outfile, "Token(Type: comment,    Line: ");
         fprintf(outfile, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        string lexeme_ptr = offset_to_ptr(token->lexeme);
+        string lexeme_ptr = PTR(token->lexeme);
         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
             char c = lexeme_ptr[i];
             if (c == '\0')
