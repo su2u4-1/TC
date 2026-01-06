@@ -7,6 +7,7 @@
 #define false 0
 #define string char*
 #define offset size_t
+#define ALIGN_SIZE (size_t)8
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #define PLATFORM 1  // WINDOWS
@@ -36,7 +37,7 @@ extern StringList* allStrings;
 
 void init(void);
 offset create_string(const char* data, size_t length);
-void* alloc_memory(size_t size);
+size_t* alloc_memory(size_t size);
 bool is_keyword(const offset str);
 bool string_equal(const offset a, const offset b);
 offset get_info(void);

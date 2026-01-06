@@ -5,7 +5,6 @@
 char* memory = NULL;
 static size_t memorySize = 1024;  // 1 KB
 static size_t memoryUsed = 0;
-static char* memoryEnd = NULL;
 bool initialized = false;
 
 static const char* keywordStrings[21] = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void"};
@@ -68,15 +67,15 @@ offset create_string(const char* data, size_t length) {
 
 static size_t memoryBlockCount = 0;
 
-void* alloc_memory(size_t size) {
+size_t* alloc_memory(size_t size) {
     if (!initialized) init();
     if (memoryUsed + size >= memorySize)
         increase_memory_size();
-    char* ptr = &memory[memoryUsed];
+    memoryUsed = (memoryUsed + ALIGN_SIZE - 1) & ~(ALIGN_SIZE - 1);
+    void* ptr = (void*)&memory[memoryUsed];
     memoryUsed += size;
-    memoryEnd = ptr;
     ++memoryBlockCount;
-    return ptr;
+    return (size_t*)ptr;
 }
 
 bool is_keyword(const offset str) {
