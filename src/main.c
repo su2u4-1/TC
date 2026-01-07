@@ -23,8 +23,7 @@ int main(int argc, char* argv[]) {
     source[length] = '\0';
     fclose(file);
 
-    offset_ptr(TokenList*) tokens = lexer(source);
-
+    offset_ptr(Lexer*) lexer = create_lexer(source, length);
     char outfilename[256];
     sprintf(outfilename, "%s.token", filename);
     FILE* outfile = fopen(outfilename, "w");
@@ -33,8 +32,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    for (offset_ptr(TokenList*) current = tokens; current != 0; current = ((TokenList*)offset_to_ptr(current))->next) {
-        Token* token = (Token*)offset_to_ptr(((TokenList*)offset_to_ptr(current))->token);
+    for (offset_ptr(Token*) current = get_next_token(lexer); current != 0; current = get_next_token(lexer)) {
+        Token* token = (Token*)offset_to_ptr(current);
         if (token->type == EOF_TOKEN) {
             fprintf(outfile, "Token(Type: EOF,        Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
             break;

@@ -2,23 +2,15 @@
 
 #include "lib.h"
 
-static void push_TokenList(offset_ptr(TokenList*) list, offset_ptr(Token*) token) {
-    static offset_ptr(TokenList*) end = 0;
-    TokenList* list_ptr = (TokenList*)offset_to_ptr(list);
-    if (list_ptr->next == 0 && list_ptr->token == 0) {
-        list_ptr->token = token;
-        end = list;
-        return;
-    }
-    offset_ptr(TokenList*) newNode = alloc_memory(sizeof(TokenList));
-    ((TokenList*)offset_to_ptr(newNode))->token = token;
-    TokenList* current = list_ptr;
-    if (end != 0)
-        current = (TokenList*)offset_to_ptr(end);
-    while (current->next != 0)
-        current = (TokenList*)offset_to_ptr(current->next);
-    current->next = newNode;
-    end = newNode;
+offset_ptr(Lexer*) create_lexer(string source, size_t length) {
+    offset_ptr(Lexer*) lexer = alloc_memory(sizeof(Lexer));
+    Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
+    lexer_ptr->source = ptr_to_offset(source);
+    lexer_ptr->position = 0;
+    lexer_ptr->length = length;
+    lexer_ptr->line = 0;
+    lexer_ptr->column = 0;
+    return lexer;
 }
 
 static offset_ptr(Token*) create_token(TokenType type, offset lexeme, size_t line, size_t column) {
@@ -35,147 +27,151 @@ static void lexer_error(const char* message, size_t line, size_t column) {
     fprintf(stderr, "Lexer Error at Line %zu, Column %zu: %s\n", line + 1, column + 1, message);
 }
 
-offset_ptr(TokenList*) lexer(string source) {
-    offset_ptr(TokenList*) tokens = alloc_memory(sizeof(TokenList));
-    char c = ' ', p = ' ';
-    size_t line = 0, i = 0, column = 0;
-    for (i = 0; p != '\0' && c != '\0'; ++i, ++column) {
-        p = source[i + 1];
-        c = source[i];
-        if (c == ' ' || c == '\t' || c == '\r') {
-            continue;
-        } else if (c == '\n') {
-            ++line;
-            column = 0;
-        } else if ('0' <= c && c <= '9') {
-            size_t start = i;
-            while ('0' <= c && c <= '9') {
-                c = source[++i];
-                ++column;
-            }
-            TokenType type = INTEGER;
-            if (c == '.') {
-                c = source[++i];
-                ++column;
-                while ('0' <= c && c <= '9') {
-                    c = source[++i];
-                    ++column;
-                }
-                type = FLOAT;
-            }
-            push_TokenList(tokens, create_token(type, create_string(&source[start], i - start), line, start));
-            --i;
-            --column;
-        } else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') {
-            size_t start = i;
-            while ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_') {
-                c = source[++i];
-                ++column;
-            }
-            offset content = create_string(&source[start], i - start);
-            if (is_keyword(content))
-                push_TokenList(tokens, create_token(KEYWORD, content, line, start));
-            else
-                push_TokenList(tokens, create_token(IDENTIFIER, content, line, start));
-            --i;
-            --column;
-        } else if (c == '=' && p == '=') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string("==", 2), line, column));
-            ++i;
-            ++column;
-        } else if (c == '!' && p == '=') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string("!=", 2), line, column));
-            ++i;
-            ++column;
-        } else if (c == '<' && p == '=') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string("<=", 2), line, column));
-            ++i;
-            ++column;
-        } else if (c == '>' && p == '=') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string(">=", 2), line, column));
-            ++i;
-            ++column;
-        } else if (c == '+' && p == '=') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string("+=", 2), line, column));
-            ++i;
-            ++column;
-        } else if (c == '-' && p == '=') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string("-=", 2), line, column));
-            ++i;
-            ++column;
-        } else if (c == '*' && p == '=') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string("*=", 2), line, column));
-            ++i;
-            ++column;
-        } else if (c == '/' && p == '=') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string("/=", 2), line, column));
-            ++i;
-            ++column;
-        } else if (c == '%' && p == '=') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string("%=", 2), line, column));
-            ++i;
-            ++column;
-        } else if (c == '&' && p == '&') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string("&&", 2), line, column));
-            ++i;
-            ++column;
-        } else if (c == '|' && p == '|') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string("||", 2), line, column));
-            ++i;
-            ++column;
-        } else if (c == '/' && p == '/') {
-            size_t start = i;
-            while (c != '\n' && c != '\0') {
-                c = source[++i];
-                ++column;
-            }
-            push_TokenList(tokens, create_token(COMMENT, create_string(&source[start], i - start), line, column));
-            --i;
-            --column;
+static char get_current_char(offset_ptr(Lexer*) lexer) {
+    Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
+    string source = offset_to_str(lexer_ptr->source);
+    if (lexer_ptr->position >= lexer_ptr->length)
+        return '\0';
+    lexer_ptr->column++;
+    return source[lexer_ptr->position++];
+}
+
+static char peek_next_char(offset_ptr(Lexer*) lexer) {
+    Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
+    string source = offset_to_str(lexer_ptr->source);
+    if (lexer_ptr->position >= lexer_ptr->length)
+        return '\0';
+    return source[lexer_ptr->position];
+}
+
+static void newline(offset_ptr(Lexer*) lexer) {
+    Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
+    lexer_ptr->line++;
+    lexer_ptr->column = 0;
+}
+
+static void move_position(offset_ptr(Lexer*) lexer, int count) {
+    Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
+    if (count >= 0) {
+        lexer_ptr->position += (size_t)count;
+        lexer_ptr->column += (size_t)count;
+    } else {
+        lexer_ptr->position -= (size_t)(-count);
+        lexer_ptr->column -= (size_t)(-count);
+    }
+}
+
+offset_ptr(Token*) get_next_token(offset_ptr(Lexer*) lexer) {
+    Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
+    char c = get_current_char(lexer);
+    if (c == '\0')
+        return create_token(EOF_TOKEN, 0, lexer_ptr->line, lexer_ptr->column);
+    else if (c == ' ' || c == '\t' || c == '\r')
+        return get_next_token(lexer);
+    else if (c == '\n') {
+        newline(lexer);
+        return get_next_token(lexer);
+    } else if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || c == '_') {
+        size_t start = lexer_ptr->position - 1;
+        size_t column_start = lexer_ptr->column - 1;
+        while (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || c == '_')
+            c = get_current_char(lexer);
+        move_position(lexer, -1);
+        offset content = create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start);
+        if (is_keyword(content))
+            return create_token(KEYWORD, content, lexer_ptr->line, column_start);
+        else
+            return create_token(IDENTIFIER, content, lexer_ptr->line, column_start);
+    } else if ('0' <= c && c <= '9') {
+        size_t start = lexer_ptr->position - 1;
+        size_t column_start = lexer_ptr->column - 1;
+        while ('0' <= c && c <= '9')
+            c = get_current_char(lexer);
+        TokenType type = INTEGER;
+        if (c == '.') {
+            c = get_current_char(lexer);
+            while ('0' <= c && c <= '9')
+                c = get_current_char(lexer);
+            type = FLOAT;
+        }
+        move_position(lexer, -1);
+        return create_token(type, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start), lexer_ptr->line, column_start);
+    } else if (c == '"') {
+        size_t start = lexer_ptr->position;
+        size_t column_start = lexer_ptr->column - 1;
+        c = get_current_char(lexer);
+        while (c != '"' && c != '\0' && c != '\n')
+            c = get_current_char(lexer);
+        if (c != '"') {
+            lexer_error("Unterminated string literal", lexer_ptr->line, start - 1);
+            if (c == '\n') newline(lexer);
+            return create_token(STRING, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start - 1), lexer_ptr->line, column_start);
+        }
+        return create_token(STRING, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start - 1), lexer_ptr->line, column_start);
+    } else {
+        char p = peek_next_char(lexer);
+        if (c == '/' && p == '/') {
+            size_t start = lexer_ptr->position + 1;
+            size_t column_start = lexer_ptr->column - 1;
+            while (c != '\n' && c != '\0')
+                c = get_current_char(lexer);
+            move_position(lexer, -1);
+            return create_token(COMMENT, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start), lexer_ptr->line, column_start);
         } else if (c == '/' && p == '*') {
-            size_t start = i;
+            size_t start = lexer_ptr->position + 1;
+            size_t column_start = lexer_ptr->column - 1;
             while (!(c == '*' && p == '/')) {
-                c = source[++i];
-                ++column;
-                p = source[i + 1];
-                if (c == '\n') {
-                    ++line;
-                    column = 0;
-                }
-                if (c == '\0') break;
+                c = get_current_char(lexer);
+                p = peek_next_char(lexer);
+                if (c == '\n') newline(lexer);
+                if (p == '\0') break;
+                assert(c != '\0');
             }
-            if (c == '\0') {
-                --i;
-                push_TokenList(tokens, create_token(COMMENT, create_string(&source[start], i - start), line, start));
-                lexer_error("Unterminated comment", line, start);
-                break;
+            if (p == '\0') {
+                if (c == '\0') move_position(lexer, -1);
+                lexer_error("Unterminated comment", lexer_ptr->line, start);
+                return create_token(COMMENT, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start), lexer_ptr->line, column_start);
             }
-            i += 2;
-            push_TokenList(tokens, create_token(COMMENT, create_string(&source[start], i - start), line, start));
-            --i;
-            --column;
-        } else if (c == '(' || c == ')' || c == '{' || c == '}' || c == ',' || c == '!' || c == '.' || c == '[' || c == ']' || c == '\'' || c == ';' || c == '_' || c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '<' || c == '>' || c == '=') {
-            push_TokenList(tokens, create_token(SYMBOL, create_string(&source[i], 1), line, column));
-        } else if (c == '"') {
-            size_t start = i;
-            c = source[++i];
-            ++column;
-            while (c != '"' && c != '\0' && c != '\n') {
-                c = source[++i];
-                ++column;
-            }
-            if (c == '"') {
-                ++i;
-                ++column;
-                push_TokenList(tokens, create_token(STRING, create_string(&source[start + 1], i - start - 2), line, start));
-            } else {
-                lexer_error("Unterminated string literal", line, start);
-                push_TokenList(tokens, create_token(STRING, create_string(&source[start + 1], i - start - 1), line, start));
-            }
-        } else {
-            lexer_error("Unexpected character", line, column);
+            c = get_current_char(lexer);
+            return create_token(COMMENT, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start - 2), lexer_ptr->line, column_start);
+        } else if (c == '=' && p == '=') {
+            get_current_char(lexer);
+            return create_token(SYMBOL, create_string("==", 2), lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '!' && p == '=') {
+            get_current_char(lexer);
+            return create_token(SYMBOL, create_string("!=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '<' && p == '=') {
+            get_current_char(lexer);
+            return create_token(SYMBOL, create_string("<=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '>' && p == '=') {
+            get_current_char(lexer);
+            return create_token(SYMBOL, create_string(">=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '+' && p == '=') {
+            get_current_char(lexer);
+            return create_token(SYMBOL, create_string("+=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '-' && p == '=') {
+            get_current_char(lexer);
+            return create_token(SYMBOL, create_string("-=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '*' && p == '=') {
+            get_current_char(lexer);
+            return create_token(SYMBOL, create_string("*=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '/' && p == '=') {
+            get_current_char(lexer);
+            return create_token(SYMBOL, create_string("/=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '%' && p == '=') {
+            get_current_char(lexer);
+            return create_token(SYMBOL, create_string("%=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '&' && p == '&') {
+            get_current_char(lexer);
+            return create_token(SYMBOL, create_string("&&", 2), lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '|' && p == '|') {
+            get_current_char(lexer);
+            return create_token(SYMBOL, create_string("||", 2), lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '(' || c == ')' || c == '{' || c == '}' || c == ',' || c == '!' || c == '.' || c == '[' || c == ']' || c == ';' || c == '_' || c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '<' || c == '>' || c == '=')
+            return create_token(SYMBOL, create_string(&offset_to_str(lexer_ptr->source)[lexer_ptr->position - 1], 1), lexer_ptr->line, lexer_ptr->column - 1);
+        else {
+            lexer_error("Unexpected character", lexer_ptr->line, lexer_ptr->column - 1);
+            return create_token(EOF_TOKEN, 0, 0, 0);
         }
     }
-    push_TokenList(tokens, create_token(EOF_TOKEN, 0, line, column));
-    return tokens;
 }

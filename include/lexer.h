@@ -20,11 +20,15 @@ typedef struct Token {
     size_t line, column;
 } Token;
 
-typedef struct TokenLinkList {
-    offset_ptr(Token*) token;
-    offset_ptr(TokenLinkList*) next;
-} TokenList;
+typedef struct Lexer {
+    offset source;
+    size_t position;
+    size_t length;
+    size_t line;
+    size_t column;
+} Lexer;
 
-offset_ptr(TokenList*) lexer(string source);
+offset_ptr(Lexer*) create_lexer(string source, size_t length);
+offset_ptr(Token*) get_next_token(offset_ptr(Lexer*) lexer);
 
 #endif  // LEXER_H
