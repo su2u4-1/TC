@@ -1,0 +1,114 @@
+code {
+    import* imports;
+    function* functions;
+    class* classes;
+    scope* global_scope;
+};
+
+import {
+    string(identifier) name;
+    string source;
+    import* next;
+};
+
+function {
+    string(identifier) name;
+    string(type) return_type;
+    variable* parameters;
+    statement* body;
+    scope* local_scope;
+    function* next;
+};
+
+class {
+    string(identifier) name;
+    function* methods;
+    variable* attributes;
+    scope* local_scope;
+    class* next;
+};
+
+variable {
+    string(type) var_type;
+    string(identifier) name;
+    expression* value;
+    variable* next;
+};
+
+statement {
+    enum StatementType type;
+    union {
+        expression* expr;
+        variable* var_decl;
+        if* if_stmt;
+        while* while_stmt;
+        for* for_stmt;
+        expression* return_stmt;
+    } stmt;
+    statement* next;
+};
+
+expression {
+    primary* prim;
+    enum operatorType operator;
+    expression* left;
+    expression* right;
+};
+
+if {
+    expression* condition;
+    statement* body;
+    if* else_if;
+    statement* else_body;
+};
+
+while {
+    expression* condition;
+    statement* body;
+};
+
+for {
+    variable* init;
+    expression* condition;
+    expression* increment;
+    statement* body;
+};
+
+primary {
+    enum PrimaryType type;
+    union {
+        string int_value;
+        string float_value;
+        string string_value;
+        string bool_value;
+        expression* expr;
+        primary* not_operand;
+        primary* neg_operand;
+        variable_access* var_access;
+    } value;
+};
+
+variable_access {
+    enum BaseType base_type;
+    union {
+        string(identifier) name;
+        variable_access* var;
+    } base;
+    enum AccessType access_type;
+    union {
+        arguments* func_call;
+        string(identifier) get_attr;
+        expression* get_seq;
+    } access;
+};
+
+arguments {
+    expression* args;
+    arguments* next;
+};
+
+scope {
+    string name;
+    type* types;
+    size_t id;
+};
