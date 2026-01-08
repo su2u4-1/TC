@@ -1,7 +1,6 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "lexer.h"
 #include "lib.h"
 
 typedef struct Code {
@@ -84,7 +83,8 @@ typedef enum OperatorType {
     OP_SUB_ASSIGN,  // -=
     OP_MUL_ASSIGN,  // *=
     OP_DIV_ASSIGN,  // /=
-    OP_MOD_ASSIGN   // %=
+    OP_MOD_ASSIGN,  // %=
+    OP_NONE
 } OperatorType;
 
 typedef struct Expression {
@@ -114,7 +114,6 @@ typedef struct For {
 } For;
 
 typedef enum PrimaryType {
-    PRIM_IDENTIFIER,
     PRIM_INTEGER,
     PRIM_FLOAT,
     PRIM_STRING,
@@ -129,9 +128,7 @@ typedef enum PrimaryType {
 typedef struct Primary {
     PrimaryType type;
     union {
-        offset int_v;
-        offset float_v;
-        offset string_v;
+        offset string_value;
         offset_ptr(Expression*) expr;
         offset_ptr(Primary*) operand;
         offset_ptr(VariableAccess*) var_access;
@@ -162,9 +159,41 @@ typedef struct Arguments {
 
 typedef struct Scope {
     offset name;
-    offset_ptr(Type*) types;
+    offset_ptr(Type*) type;
     size_t id;
     offset_ptr(Scope*) next;
 } Scope;
+
+// `Code* parser(Lexer* lexer)`
+offset_ptr(Code*) parser(offset_ptr(Lexer*) lexer);
+
+// `Code* create_code(void)`
+offset_ptr(Code*) create_code(void);
+// `Import* create_import(offset name, offset source)`
+offset_ptr(Import*) create_import(offset name, offset source);
+// `Function* create_function(offset name, offset return_type)`
+offset_ptr(Function*) create_function(offset name, offset return_type);
+// `Class* create_class(offset name)`
+offset_ptr(Class*) create_class(offset name);
+// `Variable* create_variable(offset type, offset name)`
+offset_ptr(Variable*) create_variable(offset type, offset name);
+// `Statement* create_statement(StatementType type)`
+offset_ptr(Statement*) create_statement(StatementType type);
+// `Expression* create_expression(Primary* prim, OperatorType operator)`
+offset_ptr(Expression*) create_expression(offset_ptr(Primary*) prim, OperatorType operator);
+// `If* create_if(void)`
+offset_ptr(If*) create_if(void);
+// `While* create_while(void)`
+offset_ptr(While*) create_while(void);
+// `For* create_for(void)`
+offset_ptr(For*) create_for(void);
+// `Primary* create_primary(PrimaryType type)`
+offset_ptr(Primary*) create_primary(PrimaryType type);
+// `VariableAccess* create_variable_access(AccessType type)`
+offset_ptr(VariableAccess*) create_variable_access(AccessType type);
+// `Arguments* create_arguments(void)`
+offset_ptr(Arguments*) create_arguments(void);
+// `Scope* create_scope(string name, Type* type)`
+offset_ptr(Scope*) create_scope(offset name, offset_ptr(Type*) type);
 
 #endif  // PARSER_H
