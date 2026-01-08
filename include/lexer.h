@@ -28,7 +28,9 @@ typedef struct Lexer {
     size_t column;
 } Lexer;
 
+// `Lexer* create_lexer(string source, size_t length)`
 offset_ptr(Lexer*) create_lexer(string source, size_t length);
+// `Token* get_next_token(Lexer* lexer)`
 offset_ptr(Token*) get_next_token(offset_ptr(Lexer*) lexer);
 
 #endif  // LEXER_H

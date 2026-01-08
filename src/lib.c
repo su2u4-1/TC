@@ -84,7 +84,7 @@ bool is_keyword(const offset str) {
 
 static int string_compare_count[3] = {0, 0, 0};
 
-bool string_equal(const offset a, const offset b) {
+bool string_equal(offset a, offset b) {
     ++string_compare_count[0];
     if (a < memoryUsed && b < memoryUsed) return a == b;
     --string_compare_count[0];
@@ -107,9 +107,9 @@ offset get_info(void) {
     return info;
 }
 
-string offset_to_str(offset off) {
-    if (off <= 0 || off >= memoryUsed) return NULL;
-    return memory + off;
+string offset_to_str(offset str) {
+    if (str <= 0 || str >= memoryUsed) return NULL;
+    return memory + str;
 }
 
 size_t* offset_to_ptr(offset off) {

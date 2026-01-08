@@ -37,14 +37,23 @@ extern size_t keywordCount;
 extern bool initialized;
 extern offset_ptr(StringList*) allStrings;
 
+// `void init(void)`
 void init(void);
+// `string create_string(const char* data, size_t length)`
 offset create_string(const char* data, size_t length);
+// `size_t alloc_memory(size_t size)`
 size_t alloc_memory(size_t size);
+// `bool is_keyword(const offset str)`
 bool is_keyword(const offset str);
-bool string_equal(const offset a, const offset b);
+// `bool string_equal(string a, string b)`
+bool string_equal(offset a, offset b);
+// `string get_info(void)`
 offset get_info(void);
-string offset_to_str(offset off);
+// `char* offset_to_str(string str)`
+string offset_to_str(offset str);
+// `size_t* offset_to_ptr(offset off)`
 size_t* offset_to_ptr(offset off);
+// `string ptr_to_offset(string ptr)`
 offset ptr_to_offset(string ptr);
 
 #endif  // LIB_H
