@@ -75,7 +75,7 @@ typedef enum OperatorType {
     OP_LT,          // <
     OP_GT,          // >
     OP_LE,          // <=
-    OP_GE,          //>=
+    OP_GE,          // >=
     OP_AND,         // &&
     OP_OR,          // ||
     OP_ASSIGN,      // =
@@ -166,34 +166,5 @@ typedef struct Scope {
 
 // `Code* parser(Lexer* lexer)`
 offset(Code*) parser(offset(Lexer*) lexer);
-
-// `Code* create_code(void)`
-offset(Code*) create_code(void);
-// `Import* create_import(string name, string source)`
-offset(Import*) create_import(string name, string source);
-// `Function* create_function(string name, string return_type)`
-offset(Function*) create_function(string name, string return_type);
-// `Class* create_class(string name)`
-offset(Class*) create_class(string name);
-// `Variable* create_variable(string type, string name)`
-offset(Variable*) create_variable(string type, string name);
-// `Statement* create_statement(StatementType type)`
-offset(Statement*) create_statement(StatementType type);
-// `Expression* create_expression(Primary* prim, OperatorType operator)`
-offset(Expression*) create_expression(offset(Primary*) prim, OperatorType operator);
-// `If* create_if(void)`
-offset(If*) create_if(void);
-// `While* create_while(void)`
-offset(While*) create_while(void);
-// `For* create_for(void)`
-offset(For*) create_for(void);
-// `Primary* create_primary(PrimaryType type)`
-offset(Primary*) create_primary(PrimaryType type);
-// `VariableAccess* create_variable_access(AccessType type)`
-offset(VariableAccess*) create_variable_access(AccessType type);
-// `Arguments* create_arguments(void)`
-offset(Arguments*) create_arguments(void);
-// `Scope* create_scope(string name, Type* type)`
-offset(Scope*) create_scope(string name, offset(Type*) type);
 
 #endif  // PARSER_H

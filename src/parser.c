@@ -3,6 +3,60 @@
 #include "lexer.h"
 #include "lib.h"
 
+// `static Code* create_code(void)`
+static offset(Code*) create_code(void);
+// `static Import* create_import(string name, string source)`
+static offset(Import*) create_import(string name, string source);
+// `static Function* create_function(string name, string return_type)`
+static offset(Function*) create_function(string name, string return_type);
+// `static Class* create_class(string name)`
+static offset(Class*) create_class(string name);
+// `static Variable* create_variable(string type, string name)`
+static offset(Variable*) create_variable(string type, string name);
+// `static Statement* create_statement(StatementType type)`
+static offset(Statement*) create_statement(StatementType type);
+// `static Expression* create_expression(Primary* prim, OperatorType operator)`
+static offset(Expression*) create_expression(offset(Primary*) prim, OperatorType operator);
+// `static If* create_if(void)`
+static offset(If*) create_if(void);
+// `static While* create_while(void)`
+static offset(While*) create_while(void);
+// `static For* create_for(void)`
+static offset(For*) create_for(void);
+// `static Primary* create_primary(PrimaryType type)`
+static offset(Primary*) create_primary(PrimaryType type);
+// `static VariableAccess* create_variable_access(AccessType type)`
+static offset(VariableAccess*) create_variable_access(AccessType type);
+// `static Arguments* create_arguments(void)`
+static offset(Arguments*) create_arguments(void);
+// `static Scope* create_scope(string name, Type* type)`
+static offset(Scope*) create_scope(string name, offset(Type*) type);
+
+// `static Import* parse_import(Lexer* lexer)`
+static offset(Import*) parse_import(offset(Lexer*) lexer);
+// `static Function* parse_function(Lexer* lexer)`
+static offset(Function*) parse_function(offset(Lexer*) lexer);
+// `static Class* parse_class(Lexer* lexer)`
+static offset(Class*) parse_class(offset(Lexer*) lexer);
+// `static Variable* parse_variable(Lexer* lexer)`
+static offset(Variable*) parse_variable(offset(Lexer*) lexer);
+// `static Statement* parse_statement(Lexer* lexer)`
+static offset(Statement*) parse_statement(offset(Lexer*) lexer);
+// `static Expression* parse_expression(Lexer* lexer)`
+static offset(Expression*) parse_expression(offset(Lexer*) lexer);
+// `static If* parse_if(Lexer* lexer)`
+static offset(If*) parse_if(offset(Lexer*) lexer);
+// `static While* parse_while(Lexer* lexer)`
+static offset(While*) parse_while(offset(Lexer*) lexer);
+// `static For* parse_for(Lexer* lexer)`
+static offset(For*) parse_for(offset(Lexer*) lexer);
+// `static Primary* parse_primary(Lexer* lexer)`
+static offset(Primary*) parse_primary(offset(Lexer*) lexer);
+// `static VariableAccess* parse_variable_access(Lexer* lexer)`
+static offset(VariableAccess*) parse_variable_access(offset(Lexer*) lexer);
+// `static Arguments* parse_arguments(Lexer* lexer)`
+static offset(Arguments*) parse_arguments(offset(Lexer*) lexer);
+
 offset(Code*) create_code(void) {
     offset(Code*) code = alloc_memory(sizeof(Code));
     Code* code_ptr = (Code*)offset_to_ptr(code);
@@ -163,8 +217,189 @@ offset(Scope*) create_scope(string name, offset(Type*) type) {
     return scope;
 }
 
-offset(Code*) parser(offset(Lexer*) lexer) {
-    offset(Token*) token = get_next_token(lexer);
+// `static size_t parser_error(const char* message, Token* token)`
+static size_t parser_error(const char* message, offset(Token*) token) {
+    Token* token_ptr = (Token*)offset_to_ptr(token);
+    fprintf(stderr, "Parser Error at Line %zu, Column %zu: %s\n", token_ptr->line + 1, token_ptr->column + 1, message);
+    return 0;
+}
 
+static bool is_builtin_type(string type) {
+    return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+}
+
+static offset(Token*) token = 0;
+static Token* token_ptr = NULL;
+
+offset(Code*) parser(offset(Lexer*) lexer) {
+    offset(Import*) imports = 0;
+    offset(Function*) functions = 0;
+    offset(Class*) classes = 0;
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type == KEYWORD) {
+        if (string_equal(token_ptr->lexeme, IMPORT_KEYWORD)) {
+            offset(Import*) import = parse_import(lexer);
+            if (import != 0) {
+                ((Import*)offset_to_ptr(import))->next = imports;
+                imports = import;
+            } else
+                parser_error("Failed to parse import statement", token);
+        } else if (string_equal(token_ptr->lexeme, FUNC_KEYWORD)) {
+            offset(Function*) function = parse_function(lexer);
+            if (function != 0) {
+                ((Function*)offset_to_ptr(function))->next = functions;
+                functions = function;
+            } else
+                parser_error("Failed to parse function declaration", token);
+        } else if (string_equal(token_ptr->lexeme, CLASS_KEYWORD)) {
+            offset(Class*) class = parse_class(lexer);
+            if (class != 0) {
+                ((Class*)offset_to_ptr(class))->next = classes;
+                classes = class;
+            } else
+                parser_error("Failed to parse class declaration", token);
+        }
+    }
+    offset(Code*) code = create_code();
+    Code* code_ptr = (Code*)offset_to_ptr(code);
+    code_ptr->imports = imports;
+    code_ptr->functions = functions;
+    code_ptr->classes = classes;
+    return code;
+}
+
+offset(Import*) parse_import(offset(Lexer*) lexer) {
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != IDENTIFIER)
+        return parser_error("Expected identifier after 'import'", token);
+    string name = token_ptr->lexeme;
+    token = peek_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    string source = 0;
+    if (token_ptr->type == KEYWORD && string_equal(token_ptr->lexeme, FROM_KEYWORD)) {
+        get_next_token(lexer);  // consume 'from'
+        token = get_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+        if (token_ptr->type != STRING)
+            return parser_error("Expected string literal after 'from'", token);
+        source = token_ptr->lexeme;
+    }
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
+        parser_error("Expected ';' at the end of import statement", token);
+    return create_import(name, source);
+}
+
+offset(Function*) parse_function(offset(Lexer*) lexer) {
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    string return_type = 0;
+    if (token_ptr->type == IDENTIFIER || (token_ptr->type == KEYWORD && is_builtin_type(token_ptr->lexeme))) {
+        return_type = token_ptr->lexeme;
+        token = get_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+    }
+    if (return_type == 0)
+        return parser_error("Expected function return type after 'func'", token);
+    if (token_ptr->type != IDENTIFIER)
+        return parser_error("Expected function name after return type", token);
+    string name = token_ptr->lexeme;
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_PAREN_SYMBOL))
+        return parser_error("Expected '(' after function name", token);
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    offset(Variable*) parameters = 0;
+    while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL)) {
+        offset(Variable*) param = parse_variable(lexer);
+        if (param != 0) {
+            Variable* param_ptr = (Variable*)offset_to_ptr(param);
+            if (param_ptr->value != 0)
+                parser_error("Function parameters cannot have default values", token);
+            else {
+                param_ptr->next = parameters;
+                parameters = param;
+            }
+        } else
+            return parser_error("Failed to parse function parameter", token);
+        token = get_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+        if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, COMMA_SYMBOL)) {
+            token = get_next_token(lexer);
+            token_ptr = (Token*)offset_to_ptr(token);
+        } else if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
+            return parser_error("Expected ',' or ')' in function parameter list", token);
+    }
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_BRACE_SYMBOL))
+        return parser_error("Expected '{' to start function body", token);
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    offset(Statement*) body = 0;
+    bool have_return_statement = false;
+    while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
+        offset(Statement*) stmt = parse_statement(lexer);
+        if (stmt != 0) {
+            Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
+            if (stmt_ptr->type == RETURN_STATEMENT)
+                have_return_statement = true;
+            stmt_ptr->next = body;
+            body = stmt;
+        } else
+            return parser_error("Failed to parse statement in function body", token);
+        token = get_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+    }
+    if (!have_return_statement && !string_equal(return_type, VOID_KEYWORD))
+        parser_error("Function missing return statement", token);
+    offset(Function*) function = create_function(name, return_type);
+    Function* function_ptr = (Function*)offset_to_ptr(function);
+    function_ptr->parameters = parameters;
+    function_ptr->body = body;
+    return function;
+}
+
+offset(Class*) parse_class(offset(Lexer*) lexer) {
+    return 0;
+}
+
+offset(Variable*) parse_variable(offset(Lexer*) lexer) {
+    return 0;
+}
+
+offset(Statement*) parse_statement(offset(Lexer*) lexer) {
+    return 0;
+}
+
+offset(Expression*) parse_expression(offset(Lexer*) lexer) {
+    return 0;
+}
+
+offset(If*) parse_if(offset(Lexer*) lexer) {
+    return 0;
+}
+
+offset(While*) parse_while(offset(Lexer*) lexer) {
+    return 0;
+}
+
+offset(For*) parse_for(offset(Lexer*) lexer) {
+    return 0;
+}
+
+offset(Primary*) parse_primary(offset(Lexer*) lexer) {
+    return 0;
+}
+
+offset(VariableAccess*) parse_variable_access(offset(Lexer*) lexer) {
+    return 0;
+}
+
+offset(Arguments*) parse_arguments(offset(Lexer*) lexer) {
     return 0;
 }
