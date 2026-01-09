@@ -136,42 +136,90 @@ offset(Token*) get_next_token(offset(Lexer*) lexer) {
             return create_token(COMMENT, create_string(&string_to_char_ptr(lexer_ptr->source)[start], lexer_ptr->position - start - 2), lexer_ptr->line, column_start);
         } else if (c == '=' && p == '=') {
             get_current_char(lexer);
-            return create_token(SYMBOL, create_string("==", 2), lexer_ptr->line, lexer_ptr->column - 2);
+            return create_token(SYMBOL, EQ_SYMBOL, lexer_ptr->line, lexer_ptr->column - 2);
         } else if (c == '!' && p == '=') {
             get_current_char(lexer);
-            return create_token(SYMBOL, create_string("!=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+            return create_token(SYMBOL, NE_SYMBOL, lexer_ptr->line, lexer_ptr->column - 2);
         } else if (c == '<' && p == '=') {
             get_current_char(lexer);
-            return create_token(SYMBOL, create_string("<=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+            return create_token(SYMBOL, LE_SYMBOL, lexer_ptr->line, lexer_ptr->column - 2);
         } else if (c == '>' && p == '=') {
             get_current_char(lexer);
-            return create_token(SYMBOL, create_string(">=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+            return create_token(SYMBOL, GE_SYMBOL, lexer_ptr->line, lexer_ptr->column - 2);
         } else if (c == '+' && p == '=') {
             get_current_char(lexer);
-            return create_token(SYMBOL, create_string("+=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+            return create_token(SYMBOL, ADD_ASSIGN_SYMBOL, lexer_ptr->line, lexer_ptr->column - 2);
         } else if (c == '-' && p == '=') {
             get_current_char(lexer);
-            return create_token(SYMBOL, create_string("-=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+            return create_token(SYMBOL, SUB_ASSIGN_SYMBOL, lexer_ptr->line, lexer_ptr->column - 2);
         } else if (c == '*' && p == '=') {
             get_current_char(lexer);
-            return create_token(SYMBOL, create_string("*=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+            return create_token(SYMBOL, MUL_ASSIGN_SYMBOL, lexer_ptr->line, lexer_ptr->column - 2);
         } else if (c == '/' && p == '=') {
             get_current_char(lexer);
-            return create_token(SYMBOL, create_string("/=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+            return create_token(SYMBOL, DIV_ASSIGN_SYMBOL, lexer_ptr->line, lexer_ptr->column - 2);
         } else if (c == '%' && p == '=') {
             get_current_char(lexer);
-            return create_token(SYMBOL, create_string("%=", 2), lexer_ptr->line, lexer_ptr->column - 2);
+            return create_token(SYMBOL, MOD_ASSIGN_SYMBOL, lexer_ptr->line, lexer_ptr->column - 2);
         } else if (c == '&' && p == '&') {
             get_current_char(lexer);
-            return create_token(SYMBOL, create_string("&&", 2), lexer_ptr->line, lexer_ptr->column - 2);
+            return create_token(SYMBOL, AND_SYMBOL, lexer_ptr->line, lexer_ptr->column - 2);
         } else if (c == '|' && p == '|') {
             get_current_char(lexer);
-            return create_token(SYMBOL, create_string("||", 2), lexer_ptr->line, lexer_ptr->column - 2);
-        } else if (c == '(' || c == ')' || c == '{' || c == '}' || c == ',' || c == '!' || c == '.' || c == '[' || c == ']' || c == ';' || c == '_' || c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '<' || c == '>' || c == '=')
-            return create_token(SYMBOL, create_string(&string_to_char_ptr(lexer_ptr->source)[lexer_ptr->position - 1], 1), lexer_ptr->line, lexer_ptr->column - 1);
+            return create_token(SYMBOL, OR_SYMBOL, lexer_ptr->line, lexer_ptr->column - 2);
+        } else if (c == '(')
+            return create_token(SYMBOL, L_PAREN_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == ')')
+            return create_token(SYMBOL, R_PAREN_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '{')
+            return create_token(SYMBOL, L_BRACE_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '}')
+            return create_token(SYMBOL, R_BRACE_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == ',')
+            return create_token(SYMBOL, COMMA_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '!')
+            return create_token(SYMBOL, NOT_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '.')
+            return create_token(SYMBOL, DOT_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '[')
+            return create_token(SYMBOL, L_BRACKET_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == ']')
+            return create_token(SYMBOL, R_BRACKET_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == ';')
+            return create_token(SYMBOL, SEMICOLON_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '_')
+            return create_token(SYMBOL, UNDERLINE_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '+')
+            return create_token(SYMBOL, ADD_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '-')
+            return create_token(SYMBOL, SUB_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '*')
+            return create_token(SYMBOL, MUL_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '/')
+            return create_token(SYMBOL, DIV_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '%')
+            return create_token(SYMBOL, MOD_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '<')
+            return create_token(SYMBOL, LT_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '>')
+            return create_token(SYMBOL, GT_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
+        else if (c == '=')
+            return create_token(SYMBOL, ASSIGN_SYMBOL, lexer_ptr->line, lexer_ptr->column - 1);
         else {
             lexer_error("Unexpected character", lexer_ptr->line, lexer_ptr->column - 1);
             return create_token(EOF_TOKEN, 0, 0, 0);
         }
     }
+}
+
+offset(Token*) peek_next_token(offset(Lexer*) lexer) {
+    Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
+    size_t saved_position = lexer_ptr->position;
+    size_t saved_line = lexer_ptr->line;
+    size_t saved_column = lexer_ptr->column;
+    offset(Token*) token = get_next_token(lexer);
+    lexer_ptr->position = saved_position;
+    lexer_ptr->line = saved_line;
+    lexer_ptr->column = saved_column;
+    return token;
 }

@@ -30,11 +30,65 @@ typedef struct StringList {
     offset(StringList*) next;
 } StringList;
 
+#define keywordCount 21
+#define symbolCount 30
 extern char* memory;
-extern string keywordList[21];
-extern size_t keywordCount;
+extern string keywordList[keywordCount];
+extern string symbolList[symbolCount];
 extern bool initialized;
 extern offset(StringList*) allStrings;
+
+extern string IMPORT_KEYWORD;     // keyword `import`
+extern string FROM_KEYWORD;       // keyword `from`
+extern string FUNC_KEYWORD;       // keyword `func`
+extern string CLASS_KEYWORD;      // keyword `class`
+extern string METHOD_KEYWORD;     // keyword `method`
+extern string SELF_KEYWORD;       // keyword `self`
+extern string IF_KEYWORD;         // keyword `if`
+extern string ELIF_KEYWORD;       // keyword `elif`
+extern string ELSE_KEYWORD;       // keyword `else`
+extern string WHILE_KEYWORD;      // keyword `while`
+extern string FOR_KEYWORD;        // keyword `for`
+extern string TRUE_KEYWORD;       // keyword `true`
+extern string FALSE_KEYWORD;      // keyword `false`
+extern string RETURN_KEYWORD;     // keyword `return`
+extern string BREAK_KEYWORD;      // keyword `break`
+extern string CONTINUE_KEYWORD;   // keyword `continue`
+extern string INT_KEYWORD;        // keyword `int`
+extern string FLOAT_KEYWORD;      // keyword `float`
+extern string STRING_KEYWORD;     // keyword `string`
+extern string BOOL_KEYWORD;       // keyword `bool`
+extern string VOID_KEYWORD;       // keyword `void`
+extern string L_PAREN_SYMBOL;     // symbol `(`
+extern string R_PAREN_SYMBOL;     // symbol `)`
+extern string L_BRACE_SYMBOL;     // symbol `{`
+extern string R_BRACE_SYMBOL;     // symbol `}`
+extern string COMMA_SYMBOL;       // symbol `,`
+extern string NOT_SYMBOL;         // symbol `!`
+extern string DOT_SYMBOL;         // symbol `.`
+extern string L_BRACKET_SYMBOL;   // symbol `[`
+extern string R_BRACKET_SYMBOL;   // symbol `]`
+extern string SEMICOLON_SYMBOL;   // symbol `;`
+extern string UNDERLINE_SYMBOL;   // symbol `_`
+extern string ADD_SYMBOL;         // symbol `+`
+extern string SUB_SYMBOL;         // symbol `-`
+extern string MUL_SYMBOL;         // symbol `*`
+extern string DIV_SYMBOL;         // symbol `/`
+extern string MOD_SYMBOL;         // symbol `%`
+extern string LT_SYMBOL;          // symbol `<`
+extern string GT_SYMBOL;          // symbol `>`
+extern string ASSIGN_SYMBOL;      // symbol `=`
+extern string EQ_SYMBOL;          // symbol `==`
+extern string NE_SYMBOL;          // symbol `!=`
+extern string LE_SYMBOL;          // symbol `<=`
+extern string GE_SYMBOL;          // symbol `>=`
+extern string ADD_ASSIGN_SYMBOL;  // symbol `+=`
+extern string SUB_ASSIGN_SYMBOL;  // symbol `-=`
+extern string MUL_ASSIGN_SYMBOL;  // symbol `*=`
+extern string DIV_ASSIGN_SYMBOL;  // symbol `/=`
+extern string MOD_ASSIGN_SYMBOL;  // symbol `%=`
+extern string AND_SYMBOL;         // symbol `&&`
+extern string OR_SYMBOL;          // symbol `||`
 
 // `void init(void)`
 void init(void);
@@ -48,11 +102,13 @@ bool is_keyword(const string str);
 bool string_equal(string a, string b);
 // `string get_info(void)`
 string get_info(void);
-// `char* offset_to_str(string str)`
+// `char* string_to_char_ptr(string str)`
 char* string_to_char_ptr(string str);
-// `size_t* offset_to_ptr(string off)`
+// `size_t* offset_to_ptr(offset off)`
 size_t* offset_to_ptr(offset() off);
-// `string ptr_to_offset(string ptr)`
+// `string ptr_to_offset(char* ptr)`
 string char_ptr_to_string(char* ptr);
+// `offset ptr_to_offset(size_t* ptr)`
+offset() ptr_to_offset(size_t* ptr);
 
 #endif  // LIB_H
