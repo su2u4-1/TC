@@ -5,9 +5,8 @@
 #define bool int
 #define true 1
 #define false 0
-#define string char*
-#define offset size_t
-#define offset_ptr(type) size_t
+#define string size_t
+#define offset(type) size_t
 #define ALIGN_SIZE (size_t)8
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
@@ -26,34 +25,34 @@
 #include <string.h>
 
 typedef struct StringList {
-    offset str;
+    string str;
     size_t length;
-    offset_ptr(StringList*) next;
+    offset(StringList*) next;
 } StringList;
 
 extern char* memory;
-extern offset keywordList[21];
+extern string keywordList[21];
 extern size_t keywordCount;
 extern bool initialized;
-extern offset_ptr(StringList*) allStrings;
+extern offset(StringList*) allStrings;
 
 // `void init(void)`
 void init(void);
 // `string create_string(const char* data, size_t length)`
-offset create_string(const char* data, size_t length);
+string create_string(const char* data, size_t length);
 // `size_t alloc_memory(size_t size)`
 size_t alloc_memory(size_t size);
-// `bool is_keyword(const offset str)`
-bool is_keyword(const offset str);
+// `bool is_keyword(const string str)`
+bool is_keyword(const string str);
 // `bool string_equal(string a, string b)`
-bool string_equal(offset a, offset b);
+bool string_equal(string a, string b);
 // `string get_info(void)`
-offset get_info(void);
+string get_info(void);
 // `char* offset_to_str(string str)`
-string offset_to_str(offset str);
-// `size_t* offset_to_ptr(offset off)`
-size_t* offset_to_ptr(offset off);
+char* string_to_char_ptr(string str);
+// `size_t* offset_to_ptr(string off)`
+size_t* offset_to_ptr(offset() off);
 // `string ptr_to_offset(string ptr)`
-offset ptr_to_offset(string ptr);
+string char_ptr_to_string(char* ptr);
 
 #endif  // LIB_H

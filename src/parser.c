@@ -3,8 +3,8 @@
 #include "lexer.h"
 #include "lib.h"
 
-offset_ptr(Code*) create_code(void) {
-    offset_ptr(Code*) code = alloc_memory(sizeof(Code));
+offset(Code*) create_code(void) {
+    offset(Code*) code = alloc_memory(sizeof(Code));
     Code* code_ptr = (Code*)offset_to_ptr(code);
     code_ptr->imports = 0;
     code_ptr->functions = 0;
@@ -13,8 +13,8 @@ offset_ptr(Code*) create_code(void) {
     return code;
 }
 
-offset_ptr(Import*) create_import(offset name, offset source) {
-    offset_ptr(Import*) import = alloc_memory(sizeof(Import));
+offset(Import*) create_import(string name, string source) {
+    offset(Import*) import = alloc_memory(sizeof(Import));
     Import* import_ptr = (Import*)offset_to_ptr(import);
     import_ptr->name = name;
     import_ptr->source = source;
@@ -22,8 +22,8 @@ offset_ptr(Import*) create_import(offset name, offset source) {
     return import;
 }
 
-offset_ptr(Function*) create_function(offset name, offset return_type) {
-    offset_ptr(Function*) function = alloc_memory(sizeof(Function));
+offset(Function*) create_function(string name, string return_type) {
+    offset(Function*) function = alloc_memory(sizeof(Function));
     Function* function_ptr = (Function*)offset_to_ptr(function);
     function_ptr->name = name;
     function_ptr->return_type = return_type;
@@ -34,8 +34,8 @@ offset_ptr(Function*) create_function(offset name, offset return_type) {
     return function;
 }
 
-offset_ptr(Class*) create_class(offset name) {
-    offset_ptr(Class*) class = alloc_memory(sizeof(Class));
+offset(Class*) create_class(string name) {
+    offset(Class*) class = alloc_memory(sizeof(Class));
     Class* class_ptr = (Class*)offset_to_ptr(class);
     class_ptr->name = name;
     class_ptr->methods = 0;
@@ -45,8 +45,8 @@ offset_ptr(Class*) create_class(offset name) {
     return class;
 }
 
-offset_ptr(Variable*) create_variable(offset type, offset name) {
-    offset_ptr(Variable*) variable = alloc_memory(sizeof(Variable));
+offset(Variable*) create_variable(string type, string name) {
+    offset(Variable*) variable = alloc_memory(sizeof(Variable));
     Variable* variable_ptr = (Variable*)offset_to_ptr(variable);
     variable_ptr->type = type;
     variable_ptr->name = name;
@@ -55,8 +55,8 @@ offset_ptr(Variable*) create_variable(offset type, offset name) {
     return variable;
 }
 
-offset_ptr(Statement*) create_statement(StatementType type) {
-    offset_ptr(Statement*) statement = alloc_memory(sizeof(Statement));
+offset(Statement*) create_statement(StatementType type) {
+    offset(Statement*) statement = alloc_memory(sizeof(Statement));
     Statement* statement_ptr = (Statement*)offset_to_ptr(statement);
     statement_ptr->type = type;
     if (type == EXPRESSION_STATEMENT)
@@ -74,8 +74,8 @@ offset_ptr(Statement*) create_statement(StatementType type) {
     return statement;
 }
 
-offset_ptr(Expression*) create_expression(offset_ptr(Primary*) prim, OperatorType operator) {
-    offset_ptr(Expression*) expression = alloc_memory(sizeof(Expression));
+offset(Expression*) create_expression(offset(Primary*) prim, OperatorType operator) {
+    offset(Expression*) expression = alloc_memory(sizeof(Expression));
     Expression* expression_ptr = (Expression*)offset_to_ptr(expression);
     expression_ptr->prim = prim;
     expression_ptr->operator = operator;
@@ -84,8 +84,8 @@ offset_ptr(Expression*) create_expression(offset_ptr(Primary*) prim, OperatorTyp
     return expression;
 }
 
-offset_ptr(If*) create_if(void) {
-    offset_ptr(If*) if_stmt = alloc_memory(sizeof(If));
+offset(If*) create_if(void) {
+    offset(If*) if_stmt = alloc_memory(sizeof(If));
     If* if_ptr = (If*)offset_to_ptr(if_stmt);
     if_ptr->condition = 0;
     if_ptr->body = 0;
@@ -94,16 +94,16 @@ offset_ptr(If*) create_if(void) {
     return if_stmt;
 }
 
-offset_ptr(While*) create_while(void) {
-    offset_ptr(While*) while_stmt = alloc_memory(sizeof(While));
+offset(While*) create_while(void) {
+    offset(While*) while_stmt = alloc_memory(sizeof(While));
     While* while_ptr = (While*)offset_to_ptr(while_stmt);
     while_ptr->condition = 0;
     while_ptr->body = 0;
     return while_stmt;
 }
 
-offset_ptr(For*) create_for(void) {
-    offset_ptr(For*) for_stmt = alloc_memory(sizeof(For));
+offset(For*) create_for(void) {
+    offset(For*) for_stmt = alloc_memory(sizeof(For));
     For* for_ptr = (For*)offset_to_ptr(for_stmt);
     for_ptr->initialization = 0;
     for_ptr->condition = 0;
@@ -112,8 +112,8 @@ offset_ptr(For*) create_for(void) {
     return for_stmt;
 }
 
-offset_ptr(Primary*) create_primary(PrimaryType type) {
-    offset_ptr(Primary*) primary = alloc_memory(sizeof(Primary));
+offset(Primary*) create_primary(PrimaryType type) {
+    offset(Primary*) primary = alloc_memory(sizeof(Primary));
     Primary* primary_ptr = (Primary*)offset_to_ptr(primary);
     primary_ptr->type = type;
     if (type == PRIM_INTEGER || type == PRIM_FLOAT || type == PRIM_STRING)
@@ -129,8 +129,8 @@ offset_ptr(Primary*) create_primary(PrimaryType type) {
     return primary;
 }
 
-offset_ptr(VariableAccess*) create_variable_access(AccessType type) {
-    offset_ptr(VariableAccess*) var_access = alloc_memory(sizeof(VariableAccess));
+offset(VariableAccess*) create_variable_access(AccessType type) {
+    offset(VariableAccess*) var_access = alloc_memory(sizeof(VariableAccess));
     VariableAccess* var_access_ptr = (VariableAccess*)offset_to_ptr(var_access);
     var_access_ptr->name = 0;
     var_access_ptr->base = 0;
@@ -144,17 +144,17 @@ offset_ptr(VariableAccess*) create_variable_access(AccessType type) {
     return var_access;
 }
 
-offset_ptr(Arguments*) create_arguments(void) {
-    offset_ptr(Arguments*) args = alloc_memory(sizeof(Arguments));
+offset(Arguments*) create_arguments(void) {
+    offset(Arguments*) args = alloc_memory(sizeof(Arguments));
     Arguments* args_ptr = (Arguments*)offset_to_ptr(args);
     args_ptr->args = 0;
     args_ptr->next = 0;
     return args;
 }
 
-offset_ptr(Scope*) create_scope(offset name, offset_ptr(Type*) type) {
+offset(Scope*) create_scope(string name, offset(Type*) type) {
     static size_t scope_id_counter = 0;
-    offset_ptr(Scope*) scope = alloc_memory(sizeof(Scope));
+    offset(Scope*) scope = alloc_memory(sizeof(Scope));
     Scope* scope_ptr = (Scope*)offset_to_ptr(scope);
     scope_ptr->name = name;
     scope_ptr->type = type;
@@ -163,8 +163,8 @@ offset_ptr(Scope*) create_scope(offset name, offset_ptr(Type*) type) {
     return scope;
 }
 
-offset_ptr(Code*) parser(offset_ptr(Lexer*) lexer) {
-    offset_ptr(Token*) token = get_next_token(lexer);
+offset(Code*) parser(offset(Lexer*) lexer) {
+    offset(Token*) token = get_next_token(lexer);
 
     return 0;
 }

@@ -18,12 +18,12 @@ int main(int argc, char* argv[]) {
     size_t length = (size_t)ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    string source = offset_to_str(alloc_memory(length + 1));
+    char* source = string_to_char_ptr(alloc_memory(length + 1));
     fread(source, 1, length, file);
     source[length] = '\0';
     fclose(file);
 
-    offset_ptr(Lexer*) lexer = create_lexer(source, length);
+    offset(Lexer*) lexer = create_lexer(source, length);
     char outfilename[256];
     sprintf(outfilename, "%s.token", filename);
     FILE* outfile = fopen(outfilename, "w");
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    for (offset_ptr(Token*) current = get_next_token(lexer); current != 0; current = get_next_token(lexer)) {
+    for (offset(Token*) current = get_next_token(lexer); current != 0; current = get_next_token(lexer)) {
         Token* token = (Token*)offset_to_ptr(current);
         if (token->type == EOF_TOKEN) {
             fprintf(outfile, "Token(Type: EOF,        Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
         else if (token->type == COMMENT)
             fprintf(outfile, "Token(Type: comment,    Line: ");
         fprintf(outfile, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        string lexeme_ptr = offset_to_str(token->lexeme);
+        char* lexeme_ptr = string_to_char_ptr(token->lexeme);
         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
             char c = lexeme_ptr[i];
             if (c == '\0')
@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
         }
         fprintf(outfile, "' (%zu)\n", token->lexeme);
     }
-    fprintf(outfile, "\ninfo by lib:\n    %s\n", offset_to_str(get_info()));
+    fprintf(outfile, "\ninfo by lib:\n    %s\n", string_to_char_ptr(get_info()));
     fclose(outfile);
 
     return 0;

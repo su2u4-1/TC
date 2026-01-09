@@ -16,12 +16,12 @@ typedef enum TokenType {
 
 typedef struct Token {
     TokenType type;
-    offset lexeme;
+    string lexeme;
     size_t line, column;
 } Token;
 
 typedef struct Lexer {
-    offset source;
+    string source;
     size_t position;
     size_t length;
     size_t line;
@@ -29,8 +29,8 @@ typedef struct Lexer {
 } Lexer;
 
 // `Lexer* create_lexer(string source, size_t length)`
-offset_ptr(Lexer*) create_lexer(string source, size_t length);
+offset(Lexer*) create_lexer(char* source, size_t length);
 // `Token* get_next_token(Lexer* lexer)`
-offset_ptr(Token*) get_next_token(offset_ptr(Lexer*) lexer);
+offset(Token*) get_next_token(offset(Lexer*) lexer);
 
 #endif  // LEXER_H

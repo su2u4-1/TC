@@ -4,40 +4,40 @@
 #include "lib.h"
 
 typedef struct Code {
-    offset_ptr(Import*) imports;
-    offset_ptr(Function*) functions;
-    offset_ptr(Class*) classes;
-    offset_ptr(Scope*) global_scope;
+    offset(Import*) imports;
+    offset(Function*) functions;
+    offset(Class*) classes;
+    offset(Scope*) global_scope;
 } Code;
 
 typedef struct Import {
-    offset name;
-    offset source;
-    offset_ptr(Import*) next;
+    string name;
+    string source;
+    offset(Import*) next;
 } Import;
 
 typedef struct Function {
-    offset name;
-    offset return_type;
-    offset_ptr(Variable*) parameters;
-    offset_ptr(Statement*) body;
-    offset_ptr(Scope*) scope;
-    offset_ptr(Function*) next;
+    string name;
+    string return_type;
+    offset(Variable*) parameters;
+    offset(Statement*) body;
+    offset(Scope*) scope;
+    offset(Function*) next;
 } Function;
 
 typedef struct Class {
-    offset name;
-    offset_ptr(Function*) methods;
-    offset_ptr(Variable*) attributes;
-    offset_ptr(Scope*) local_scope;
-    offset_ptr(Class*) next;
+    string name;
+    offset(Function*) methods;
+    offset(Variable*) attributes;
+    offset(Scope*) local_scope;
+    offset(Class*) next;
 } Class;
 
 typedef struct Variable {
-    offset type;
-    offset name;
-    offset_ptr(Expression*) value;
-    offset_ptr(Variable*) next;
+    string type;
+    string name;
+    offset(Expression*) value;
+    offset(Variable*) next;
 } Variable;
 
 typedef enum StatementType {
@@ -54,14 +54,14 @@ typedef enum StatementType {
 typedef struct Statement {
     StatementType type;
     union {
-        offset_ptr(Expression*) expr;
-        offset_ptr(Variable*) var_decl;
-        offset_ptr(If*) if_stmt;
-        offset_ptr(While*) while_stmt;
-        offset_ptr(For*) for_stmt;
-        offset_ptr(Expression*) return_stmt;
+        offset(Expression*) expr;
+        offset(Variable*) var_decl;
+        offset(If*) if_stmt;
+        offset(While*) while_stmt;
+        offset(For*) for_stmt;
+        offset(Expression*) return_stmt;
     } stmt;
-    offset_ptr(Statement*) next;
+    offset(Statement*) next;
 } Statement;
 
 typedef enum OperatorType {
@@ -88,29 +88,29 @@ typedef enum OperatorType {
 } OperatorType;
 
 typedef struct Expression {
-    offset_ptr(Primary*) prim;
+    offset(Primary*) prim;
     OperatorType operator;
-    offset_ptr(Expression*) left;
-    offset_ptr(Expression*) right;
+    offset(Expression*) left;
+    offset(Expression*) right;
 } Expression;
 
 typedef struct If {
-    offset_ptr(Expression*) condition;
-    offset_ptr(Statement*) body;
-    offset_ptr(If*) else_if;
-    offset_ptr(Statement*) else_body;
+    offset(Expression*) condition;
+    offset(Statement*) body;
+    offset(If*) else_if;
+    offset(Statement*) else_body;
 } If;
 
 typedef struct While {
-    offset_ptr(Expression*) condition;
-    offset_ptr(Statement*) body;
+    offset(Expression*) condition;
+    offset(Statement*) body;
 } While;
 
 typedef struct For {
-    offset_ptr(Variable*) initialization;
-    offset_ptr(Expression*) condition;
-    offset_ptr(Expression*) increment;
-    offset_ptr(Statement*) body;
+    offset(Variable*) initialization;
+    offset(Expression*) condition;
+    offset(Expression*) increment;
+    offset(Statement*) body;
 } For;
 
 typedef enum PrimaryType {
@@ -128,10 +128,10 @@ typedef enum PrimaryType {
 typedef struct Primary {
     PrimaryType type;
     union {
-        offset string_value;
-        offset_ptr(Expression*) expr;
-        offset_ptr(Primary*) operand;
-        offset_ptr(VariableAccess*) var_access;
+        string string_value;
+        offset(Expression*) expr;
+        offset(Primary*) operand;
+        offset(VariableAccess*) var_access;
     } value;
 } Primary;
 
@@ -142,58 +142,58 @@ typedef enum AccessType {
 } AccessType;
 
 typedef struct VariableAccess {
-    offset name;
-    offset_ptr(VariableAccess*) base;
+    string name;
+    offset(VariableAccess*) base;
     AccessType access_type;
     union {
-        offset_ptr(Arguments*) func_call;
-        offset get_attr;
-        offset_ptr(Expression*) get_seq;
+        offset(Arguments*) func_call;
+        string get_attr;
+        offset(Expression*) get_seq;
     } access;
 } VariableAccess;
 
 typedef struct Arguments {
-    offset_ptr(Expression*) args;
-    offset_ptr(Arguments*) next;
+    offset(Expression*) args;
+    offset(Arguments*) next;
 } Arguments;
 
 typedef struct Scope {
-    offset name;
-    offset_ptr(Type*) type;
+    string name;
+    offset(Type*) type;
     size_t id;
-    offset_ptr(Scope*) next;
+    offset(Scope*) next;
 } Scope;
 
 // `Code* parser(Lexer* lexer)`
-offset_ptr(Code*) parser(offset_ptr(Lexer*) lexer);
+offset(Code*) parser(offset(Lexer*) lexer);
 
 // `Code* create_code(void)`
-offset_ptr(Code*) create_code(void);
-// `Import* create_import(offset name, offset source)`
-offset_ptr(Import*) create_import(offset name, offset source);
-// `Function* create_function(offset name, offset return_type)`
-offset_ptr(Function*) create_function(offset name, offset return_type);
-// `Class* create_class(offset name)`
-offset_ptr(Class*) create_class(offset name);
-// `Variable* create_variable(offset type, offset name)`
-offset_ptr(Variable*) create_variable(offset type, offset name);
+offset(Code*) create_code(void);
+// `Import* create_import(string name, string source)`
+offset(Import*) create_import(string name, string source);
+// `Function* create_function(string name, string return_type)`
+offset(Function*) create_function(string name, string return_type);
+// `Class* create_class(string name)`
+offset(Class*) create_class(string name);
+// `Variable* create_variable(string type, string name)`
+offset(Variable*) create_variable(string type, string name);
 // `Statement* create_statement(StatementType type)`
-offset_ptr(Statement*) create_statement(StatementType type);
+offset(Statement*) create_statement(StatementType type);
 // `Expression* create_expression(Primary* prim, OperatorType operator)`
-offset_ptr(Expression*) create_expression(offset_ptr(Primary*) prim, OperatorType operator);
+offset(Expression*) create_expression(offset(Primary*) prim, OperatorType operator);
 // `If* create_if(void)`
-offset_ptr(If*) create_if(void);
+offset(If*) create_if(void);
 // `While* create_while(void)`
-offset_ptr(While*) create_while(void);
+offset(While*) create_while(void);
 // `For* create_for(void)`
-offset_ptr(For*) create_for(void);
+offset(For*) create_for(void);
 // `Primary* create_primary(PrimaryType type)`
-offset_ptr(Primary*) create_primary(PrimaryType type);
+offset(Primary*) create_primary(PrimaryType type);
 // `VariableAccess* create_variable_access(AccessType type)`
-offset_ptr(VariableAccess*) create_variable_access(AccessType type);
+offset(VariableAccess*) create_variable_access(AccessType type);
 // `Arguments* create_arguments(void)`
-offset_ptr(Arguments*) create_arguments(void);
+offset(Arguments*) create_arguments(void);
 // `Scope* create_scope(string name, Type* type)`
-offset_ptr(Scope*) create_scope(offset name, offset_ptr(Type*) type);
+offset(Scope*) create_scope(string name, offset(Type*) type);
 
 #endif  // PARSER_H

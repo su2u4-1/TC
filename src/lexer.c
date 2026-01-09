@@ -2,10 +2,10 @@
 
 #include "lib.h"
 
-offset_ptr(Lexer*) create_lexer(string source, size_t length) {
-    offset_ptr(Lexer*) lexer = alloc_memory(sizeof(Lexer));
+offset(Lexer*) create_lexer(char* source, size_t length) {
+    offset(Lexer*) lexer = alloc_memory(sizeof(Lexer));
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
-    lexer_ptr->source = ptr_to_offset(source);
+    lexer_ptr->source = char_ptr_to_string(source);
     lexer_ptr->position = 0;
     lexer_ptr->length = length;
     lexer_ptr->line = 0;
@@ -13,8 +13,8 @@ offset_ptr(Lexer*) create_lexer(string source, size_t length) {
     return lexer;
 }
 
-static offset_ptr(Token*) create_token(TokenType type, offset lexeme, size_t line, size_t column) {
-    offset_ptr(Token*) token = alloc_memory(sizeof(Token));
+static offset(Token*) create_token(TokenType type, string lexeme, size_t line, size_t column) {
+    offset(Token*) token = alloc_memory(sizeof(Token));
     Token* token_ptr = (Token*)offset_to_ptr(token);
     token_ptr->type = type;
     token_ptr->lexeme = lexeme;
@@ -27,30 +27,30 @@ static void lexer_error(const char* message, size_t line, size_t column) {
     fprintf(stderr, "Lexer Error at Line %zu, Column %zu: %s\n", line + 1, column + 1, message);
 }
 
-static char get_current_char(offset_ptr(Lexer*) lexer) {
+static char get_current_char(offset(Lexer*) lexer) {
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
-    string source = offset_to_str(lexer_ptr->source);
+    char* source = string_to_char_ptr(lexer_ptr->source);
     if (lexer_ptr->position >= lexer_ptr->length)
         return '\0';
     lexer_ptr->column++;
     return source[lexer_ptr->position++];
 }
 
-static char peek_next_char(offset_ptr(Lexer*) lexer) {
+static char peek_next_char(offset(Lexer*) lexer) {
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
-    string source = offset_to_str(lexer_ptr->source);
+    char* source = string_to_char_ptr(lexer_ptr->source);
     if (lexer_ptr->position >= lexer_ptr->length)
         return '\0';
     return source[lexer_ptr->position];
 }
 
-static void newline(offset_ptr(Lexer*) lexer) {
+static void newline(offset(Lexer*) lexer) {
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
     lexer_ptr->line++;
     lexer_ptr->column = 0;
 }
 
-static void move_position(offset_ptr(Lexer*) lexer, int count) {
+static void move_position(offset(Lexer*) lexer, int count) {
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
     if (count >= 0) {
         lexer_ptr->position += (size_t)count;
@@ -61,7 +61,7 @@ static void move_position(offset_ptr(Lexer*) lexer, int count) {
     }
 }
 
-offset_ptr(Token*) get_next_token(offset_ptr(Lexer*) lexer) {
+offset(Token*) get_next_token(offset(Lexer*) lexer) {
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
     char c = get_current_char(lexer);
     if (c == '\0')
@@ -77,7 +77,7 @@ offset_ptr(Token*) get_next_token(offset_ptr(Lexer*) lexer) {
         while (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || c == '_')
             c = get_current_char(lexer);
         move_position(lexer, -1);
-        offset content = create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start);
+        string content = create_string(&string_to_char_ptr(lexer_ptr->source)[start], lexer_ptr->position - start);
         if (is_keyword(content))
             return create_token(KEYWORD, content, lexer_ptr->line, column_start);
         else
@@ -95,7 +95,7 @@ offset_ptr(Token*) get_next_token(offset_ptr(Lexer*) lexer) {
             type = FLOAT;
         }
         move_position(lexer, -1);
-        return create_token(type, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start), lexer_ptr->line, column_start);
+        return create_token(type, create_string(&string_to_char_ptr(lexer_ptr->source)[start], lexer_ptr->position - start), lexer_ptr->line, column_start);
     } else if (c == '"') {
         size_t start = lexer_ptr->position;
         size_t column_start = lexer_ptr->column - 1;
@@ -105,9 +105,9 @@ offset_ptr(Token*) get_next_token(offset_ptr(Lexer*) lexer) {
         if (c != '"') {
             lexer_error("Unterminated string literal", lexer_ptr->line, start - 1);
             if (c == '\n') newline(lexer);
-            return create_token(STRING, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start - 1), lexer_ptr->line, column_start);
+            return create_token(STRING, create_string(&string_to_char_ptr(lexer_ptr->source)[start], lexer_ptr->position - start - 1), lexer_ptr->line, column_start);
         }
-        return create_token(STRING, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start - 1), lexer_ptr->line, column_start);
+        return create_token(STRING, create_string(&string_to_char_ptr(lexer_ptr->source)[start], lexer_ptr->position - start - 1), lexer_ptr->line, column_start);
     } else {
         char p = peek_next_char(lexer);
         if (c == '/' && p == '/') {
@@ -116,7 +116,7 @@ offset_ptr(Token*) get_next_token(offset_ptr(Lexer*) lexer) {
             while (c != '\n' && c != '\0')
                 c = get_current_char(lexer);
             move_position(lexer, -1);
-            return create_token(COMMENT, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start), lexer_ptr->line, column_start);
+            return create_token(COMMENT, create_string(&string_to_char_ptr(lexer_ptr->source)[start], lexer_ptr->position - start), lexer_ptr->line, column_start);
         } else if (c == '/' && p == '*') {
             size_t start = lexer_ptr->position + 1;
             size_t column_start = lexer_ptr->column - 1;
@@ -130,10 +130,10 @@ offset_ptr(Token*) get_next_token(offset_ptr(Lexer*) lexer) {
             if (p == '\0') {
                 if (c == '\0') move_position(lexer, -1);
                 lexer_error("Unterminated comment", lexer_ptr->line, start);
-                return create_token(COMMENT, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start), lexer_ptr->line, column_start);
+                return create_token(COMMENT, create_string(&string_to_char_ptr(lexer_ptr->source)[start], lexer_ptr->position - start), lexer_ptr->line, column_start);
             }
             c = get_current_char(lexer);
-            return create_token(COMMENT, create_string(&offset_to_str(lexer_ptr->source)[start], lexer_ptr->position - start - 2), lexer_ptr->line, column_start);
+            return create_token(COMMENT, create_string(&string_to_char_ptr(lexer_ptr->source)[start], lexer_ptr->position - start - 2), lexer_ptr->line, column_start);
         } else if (c == '=' && p == '=') {
             get_current_char(lexer);
             return create_token(SYMBOL, create_string("==", 2), lexer_ptr->line, lexer_ptr->column - 2);
@@ -168,7 +168,7 @@ offset_ptr(Token*) get_next_token(offset_ptr(Lexer*) lexer) {
             get_current_char(lexer);
             return create_token(SYMBOL, create_string("||", 2), lexer_ptr->line, lexer_ptr->column - 2);
         } else if (c == '(' || c == ')' || c == '{' || c == '}' || c == ',' || c == '!' || c == '.' || c == '[' || c == ']' || c == ';' || c == '_' || c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '<' || c == '>' || c == '=')
-            return create_token(SYMBOL, create_string(&offset_to_str(lexer_ptr->source)[lexer_ptr->position - 1], 1), lexer_ptr->line, lexer_ptr->column - 1);
+            return create_token(SYMBOL, create_string(&string_to_char_ptr(lexer_ptr->source)[lexer_ptr->position - 1], 1), lexer_ptr->line, lexer_ptr->column - 1);
         else {
             lexer_error("Unexpected character", lexer_ptr->line, lexer_ptr->column - 1);
             return create_token(EOF_TOKEN, 0, 0, 0);
