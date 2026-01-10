@@ -166,5 +166,7 @@ typedef struct Scope {
 
 // `Code* parser(Lexer* lexer)`
 offset(Code*) parser(offset(Lexer*) lexer);
+// `int operator_precedence(string op)`
+int operator_precedence(OperatorType op);
 
 #endif  // PARSER_H
