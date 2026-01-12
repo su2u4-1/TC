@@ -30,7 +30,7 @@ typedef struct StringList {
     offset(StringList*) next;
 } StringList;
 
-#define keywordCount 21
+#define keywordCount 22
 #define symbolCount 30
 extern char* memory;
 extern string keywordList[keywordCount];
@@ -59,6 +59,7 @@ extern string FLOAT_KEYWORD;      // keyword `float`
 extern string STRING_KEYWORD;     // keyword `string`
 extern string BOOL_KEYWORD;       // keyword `bool`
 extern string VOID_KEYWORD;       // keyword `void`
+extern string VAR_KEYWORD;        // keyword `var`
 extern string L_PAREN_SYMBOL;     // symbol `(`
 extern string R_PAREN_SYMBOL;     // symbol `)`
 extern string L_BRACE_SYMBOL;     // symbol `{`

@@ -8,12 +8,65 @@ static size_t memorySize = 1024;  // 1 KB
 static size_t memoryUsed = 0;
 bool initialized = false;
 
-static const char* keywordStrings[keywordCount] = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void"};
+static const char* keywordStrings[keywordCount] = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void", "var"};
 string keywordList[keywordCount] = {0};
 static const char* symbolStrings[symbolCount] = {"(", ")", "{", "}", ",", "!", ".", "[", "]", ";", "_", "+", "-", "*", "/", "%", "<", ">", "=", "==", "!=", "<=", ">=", "+=", "-=", "*=", "/=", "%=", "&&", "||"};
 string symbolList[symbolCount] = {0};
 
 offset(StringList*) allStrings = 0;
+
+string IMPORT_KEYWORD = 0;
+string FROM_KEYWORD = 0;
+string FUNC_KEYWORD = 0;
+string CLASS_KEYWORD = 0;
+string METHOD_KEYWORD = 0;
+string SELF_KEYWORD = 0;
+string IF_KEYWORD = 0;
+string ELIF_KEYWORD = 0;
+string ELSE_KEYWORD = 0;
+string WHILE_KEYWORD = 0;
+string FOR_KEYWORD = 0;
+string TRUE_KEYWORD = 0;
+string FALSE_KEYWORD = 0;
+string RETURN_KEYWORD = 0;
+string BREAK_KEYWORD = 0;
+string CONTINUE_KEYWORD = 0;
+string INT_KEYWORD = 0;
+string FLOAT_KEYWORD = 0;
+string STRING_KEYWORD = 0;
+string BOOL_KEYWORD = 0;
+string VOID_KEYWORD = 0;
+string VAR_KEYWORD = 0;
+string L_PAREN_SYMBOL = 0;
+string R_PAREN_SYMBOL = 0;
+string L_BRACE_SYMBOL = 0;
+string R_BRACE_SYMBOL = 0;
+string COMMA_SYMBOL = 0;
+string NOT_SYMBOL = 0;
+string DOT_SYMBOL = 0;
+string L_BRACKET_SYMBOL = 0;
+string R_BRACKET_SYMBOL = 0;
+string SEMICOLON_SYMBOL = 0;
+string UNDERLINE_SYMBOL = 0;
+string ADD_SYMBOL = 0;
+string SUB_SYMBOL = 0;
+string MUL_SYMBOL = 0;
+string DIV_SYMBOL = 0;
+string MOD_SYMBOL = 0;
+string LT_SYMBOL = 0;
+string GT_SYMBOL = 0;
+string ASSIGN_SYMBOL = 0;
+string EQ_SYMBOL = 0;
+string NE_SYMBOL = 0;
+string LE_SYMBOL = 0;
+string GE_SYMBOL = 0;
+string ADD_ASSIGN_SYMBOL = 0;
+string SUB_ASSIGN_SYMBOL = 0;
+string MUL_ASSIGN_SYMBOL = 0;
+string DIV_ASSIGN_SYMBOL = 0;
+string MOD_ASSIGN_SYMBOL = 0;
+string AND_SYMBOL = 0;
+string OR_SYMBOL = 0;
 
 static void increase_memory_size(void) {
     char* oldMemory = memory;
@@ -95,6 +148,7 @@ void init(void) {
     STRING_KEYWORD = keywordList[18];
     BOOL_KEYWORD = keywordList[19];
     VOID_KEYWORD = keywordList[20];
+    VAR_KEYWORD = keywordList[21];
     L_PAREN_SYMBOL = symbolList[0];
     R_PAREN_SYMBOL = symbolList[1];
     L_BRACE_SYMBOL = symbolList[2];

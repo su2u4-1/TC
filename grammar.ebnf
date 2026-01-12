@@ -8,7 +8,7 @@ attribute = variable_declaration ";" ;
 variable_declaration = type identifier [ "=" expression ] ;
 method = "method" type identifier "(" "self" [ "," parameter_list ] ")" "{" { statement | return_statement } "}" ;
 type = builtin_type | identifier ;
-statement = variable_declaration ";" | if_statement | while_statement | for_statement | expression ";" | ";" ;
+statement = "var" variable_declaration ";" | if_statement | while_statement | for_statement | expression ";" | ";" ;
 if_statement = "if" "(" expression ")" "{" { statement } "}" { "elif" "(" expression ")" "{" { statement } "}" } [ "else" "{" { statement } "}" ] ;
 while_statement = "while" "(" expression ")" "{" { statement | break_statement | continue_statement } "}" ;
 for_statement = "for" "(" [ variable_declaration ] ";" [ expression ] ";" [ expression ] ")" "{" { statement | break_statement | continue_statement } "}" ;

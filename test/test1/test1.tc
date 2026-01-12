@@ -4,7 +4,7 @@
 import print from "std"
 
 class Test1 {
-    int a = 10;
+    var int a = 10;
     method Test1 init(self, int value) {
         self.a = value;
         return self;
@@ -19,11 +19,11 @@ class Test1 {
 
 // entry point
 func int main() {
-    Test1 t = Test1.init(5);
+    var Test1 t = Test1.init(5);
     print(t.get_a());
     t.set_a(20);
     print(t.get_a());
-    float _abc123 = 30.5;
-    int _def456 = 15;
+    var float _abc123 = 30.5;
+    var int _def456 = 15;
     return 0;
 }
