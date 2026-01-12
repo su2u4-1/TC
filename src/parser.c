@@ -244,6 +244,7 @@ int operator_precedence(OperatorType op) {
 
 static offset(Token*) token = 0;
 static Token* token_ptr = NULL;
+static bool in_loop = false;
 
 offset(Code*) parser(offset(Lexer*) lexer) {
     offset(Import*) imports = 0;
@@ -585,15 +586,192 @@ offset(Expression*) parse_expression(offset(Lexer*) lexer) {
 }
 
 offset(If*) parse_if(offset(Lexer*) lexer) {
-    return 0;
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_PAREN_SYMBOL))
+        return parser_error("Expected '(' after 'if'", token);
+    token = get_next_token(lexer);
+    offset(Expression*) condition = parse_expression(lexer);
+    if (condition == 0)
+        return parser_error("Failed to parse if statement condition", token);
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
+        return parser_error("Expected ')' after if statement condition", token);
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_BRACE_SYMBOL))
+        return parser_error("Expected '{' to start if statement body", token);
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    offset(Statement*) body = 0;
+    while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
+        offset(Statement*) stmt = parse_statement(lexer);
+        if (stmt != 0) {
+            Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
+            if ((stmt_ptr->type == BREAK_STATEMENT || stmt_ptr->type == CONTINUE_STATEMENT) && !in_loop)
+                parser_error("Break/Continue statement not within a loop", token);
+            else {
+                stmt_ptr->next = body;
+                body = stmt;
+            }
+        } else
+            parser_error("Failed to parse statement in if body", token);
+        token = get_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+    }
+    token = peek_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    offset(Statement*) else_body = 0;
+    offset(If*) elif = 0;
+    if (token_ptr->type == KEYWORD) {
+        if (string_equal(token_ptr->lexeme, ELIF_KEYWORD)) {
+            get_next_token(lexer);  // consume 'elif'
+            elif = parse_if(lexer);
+        } else if (string_equal(token_ptr->lexeme, ELSE_KEYWORD)) {
+            get_next_token(lexer);  // consume 'else'
+            token = get_next_token(lexer);
+            token_ptr = (Token*)offset_to_ptr(token);
+            if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_BRACE_SYMBOL))
+                return parser_error("Expected '{' to start else statement body", token);
+            token = get_next_token(lexer);
+            token_ptr = (Token*)offset_to_ptr(token);
+            while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
+                offset(Statement*) stmt = parse_statement(lexer);
+                if (stmt != 0) {
+                    Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
+                    if ((stmt_ptr->type == BREAK_STATEMENT || stmt_ptr->type == CONTINUE_STATEMENT) && !in_loop)
+                        parser_error("Break/Continue statement not within a loop", token);
+                    else {
+                        stmt_ptr->next = else_body;
+                        else_body = stmt;
+                    }
+                } else
+                    parser_error("Failed to parse statement in else body", token);
+                token = get_next_token(lexer);
+                token_ptr = (Token*)offset_to_ptr(token);
+            }
+        }
+    }
+    offset(If*) if_stmt = create_if();
+    If* if_ptr = (If*)offset_to_ptr(if_stmt);
+    if_ptr->condition = condition;
+    if_ptr->body = body;
+    if_ptr->else_if = elif;
+    if_ptr->else_body = else_body;
+    return if_stmt;
 }
 
 offset(While*) parse_while(offset(Lexer*) lexer) {
-    return 0;
+    in_loop = true;
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_PAREN_SYMBOL))
+        return parser_error("Expected '(' after 'while'", token);
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    offset(Expression*) condition = parse_expression(lexer);
+    if (condition == 0)
+        return parser_error("Failed to parse while statement condition", token);
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
+        return parser_error("Expected ')' after while statement condition", token);
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_BRACE_SYMBOL))
+        return parser_error("Expected '{' to start while statement body", token);
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    offset(Statement*) body = 0;
+    while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
+        offset(Statement*) stmt = parse_statement(lexer);
+        if (stmt != 0) {
+            Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
+            stmt_ptr->next = body;
+            body = stmt;
+        } else
+            parser_error("Failed to parse statement in while body", token);
+        token = get_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+    }
+    offset(While*) while_stmt = create_while();
+    While* while_ptr = (While*)offset_to_ptr(while_stmt);
+    while_ptr->condition = condition;
+    while_ptr->body = body;
+    in_loop = false;
+    return while_stmt;
 }
 
 offset(For*) parse_for(offset(Lexer*) lexer) {
-    return 0;
+    in_loop = true;
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_PAREN_SYMBOL))
+        return parser_error("Expected '(' after 'for'", token);
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(lexer);
+    offset(Variable*) initialization = 0;
+    offset(Expression*) condition = 0;
+    offset(Expression*) increment = 0;
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL)) {
+        initialization = parse_variable(lexer);
+        if (initialization == 0)
+            parser_error("Failed to parse for loop initialization", token);
+        token = get_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+        if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
+            return parser_error("Expected ';' after for loop initialization", token);
+    }
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL)) {
+        condition = parse_expression(lexer);
+        if (condition == 0)
+            parser_error("Failed to parse for loop condition", token);
+        token = get_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+        if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
+            return parser_error("Expected ';' after for loop condition", token);
+    }
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL)) {
+        increment = parse_expression(lexer);
+        if (increment == 0)
+            parser_error("Failed to parse for loop increment", token);
+        token = get_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+        if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
+            return parser_error("Expected ')' after for loop increment", token);
+    }
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_BRACE_SYMBOL))
+        return parser_error("Expected '{' to start for statement body", token);
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    offset(Statement*) body = 0;
+    while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
+        offset(Statement*) stmt = parse_statement(lexer);
+        if (stmt != 0) {
+            Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
+            stmt_ptr->next = body;
+            body = stmt;
+
+        } else
+            parser_error("Failed to parse statement in for body", token);
+        token = get_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+    }
+    offset(For*) for_stmt = create_for();
+    For* for_ptr = (For*)offset_to_ptr(for_stmt);
+    for_ptr->initialization = initialization;
+    for_ptr->condition = condition;
+    for_ptr->increment = increment;
+    for_ptr->body = body;
+    in_loop = false;
+    return for_stmt;
 }
 
 offset(Primary*) parse_primary(offset(Lexer*) lexer) {
