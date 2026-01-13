@@ -4,7 +4,7 @@ function = "func" type identifier "(" [ parameter_list ] ")" "{" { statement | r
 class = "class" identifier "{" { attribute | method } "}" ;
 parameter_list = parameter { "," parameter } ;
 parameter = variable_declaration ;
-attribute = variable_declaration ";" ;
+attribute = "var" variable_declaration ";" ;
 variable_declaration = type identifier [ "=" expression ] ;
 method = "method" type identifier "(" "self" [ "," parameter_list ] ")" "{" { statement | return_statement } "}" ;
 type = builtin_type | identifier ;

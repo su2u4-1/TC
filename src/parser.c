@@ -363,10 +363,14 @@ offset(Function*) parse_function(offset(Lexer*) lexer) {
             Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
             if (stmt_ptr->type == RETURN_STATEMENT)
                 have_return_statement = true;
-            stmt_ptr->next = body;
-            body = stmt;
+            if ((stmt_ptr->type == BREAK_STATEMENT || stmt_ptr->type == CONTINUE_STATEMENT) && !in_loop)
+                parser_error("Break/Continue statement not within a loop", token);
+            else {
+                stmt_ptr->next = body;
+                body = stmt;
+            }
         } else
-            return parser_error("Failed to parse statement in function body", token);
+            parser_error("Failed to parse statement in function body", token);
         token = get_next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
     }
@@ -394,25 +398,30 @@ offset(Class*) parse_class(offset(Lexer*) lexer) {
     offset(Function*) methods = 0;
     offset(Variable*) attributes = 0;
     while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
-        if (token_ptr->type == KEYWORD && string_equal(token_ptr->lexeme, FUNC_KEYWORD)) {
-            offset(Function*) method = parse_function(lexer);
-            if (method != 0) {
-                ((Function*)offset_to_ptr(method))->next = methods;
-                methods = method;
+        if (token_ptr->type == KEYWORD) {
+            if (string_equal(token_ptr->lexeme, FUNC_KEYWORD)) {
+                offset(Function*) method = parse_function(lexer);
+                if (method != 0) {
+                    ((Function*)offset_to_ptr(method))->next = methods;
+                    methods = method;
+                } else
+                    return parser_error("Failed to parse method in class body", token);
+            } else if (string_equal(token_ptr->lexeme, VAR_KEYWORD)) {
+                token = get_next_token(lexer);
+                offset(Variable*) attribute = parse_variable(lexer);
+                if (attribute != 0) {
+                    ((Variable*)offset_to_ptr(attribute))->next = attributes;
+                    attributes = attribute;
+                } else
+                    return parser_error("Failed to parse attribute in class body", token);
+                token = get_next_token(lexer);
+                token_ptr = (Token*)offset_to_ptr(token);
+                if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
+                    parser_error("Expected ';' after class attribute declaration", token);
             } else
-                return parser_error("Failed to parse method in class body", token);
-        } else {
-            offset(Variable*) attribute = parse_variable(lexer);
-            if (attribute != 0) {
-                ((Variable*)offset_to_ptr(attribute))->next = attributes;
-                attributes = attribute;
-            } else
-                return parser_error("Failed to parse attribute in class body", token);
-            token = get_next_token(lexer);
-            token_ptr = (Token*)offset_to_ptr(token);
-            if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
-                parser_error("Expected ';' after class attribute declaration", token);
-        }
+                parser_error("Unexpected keyword in class body", token);
+        } else
+            parser_error("Unexpected token in class body", token);
         token = get_next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
     }
@@ -425,6 +434,7 @@ offset(Class*) parse_class(offset(Lexer*) lexer) {
 
 offset(Variable*) parse_variable(offset(Lexer*) lexer) {
     string var_type = 0;
+    token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type == IDENTIFIER || (token_ptr->type == KEYWORD && is_builtin_type(token_ptr->lexeme)))
         var_type = token_ptr->lexeme;
     else
@@ -453,38 +463,39 @@ offset(Variable*) parse_variable(offset(Lexer*) lexer) {
 
 offset(Statement*) parse_statement(offset(Lexer*) lexer) {
     offset(Statement*) statement = create_statement(EXPRESSION_STATEMENT);
-    Statement* statement_ptr = (Statement*)offset_to_ptr(statement);
+    token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type == KEYWORD) {
         if (string_equal(token_ptr->lexeme, IF_KEYWORD)) {
-            statement_ptr->type = IF_STATEMENT;
-            statement_ptr->stmt.if_stmt = parse_if(lexer);
+            ((Statement*)offset_to_ptr(statement))->type = IF_STATEMENT;
+            ((Statement*)offset_to_ptr(statement))->stmt.if_stmt = parse_if(lexer);
             return statement;
         } else if (string_equal(token_ptr->lexeme, FOR_KEYWORD)) {
-            statement_ptr->type = FOR_STATEMENT;
-            statement_ptr->stmt.for_stmt = parse_for(lexer);
+            ((Statement*)offset_to_ptr(statement))->type = FOR_STATEMENT;
+            ((Statement*)offset_to_ptr(statement))->stmt.for_stmt = parse_for(lexer);
             return statement;
         } else if (string_equal(token_ptr->lexeme, WHILE_KEYWORD)) {
-            statement_ptr->type = WHILE_STATEMENT;
-            statement_ptr->stmt.while_stmt = parse_while(lexer);
+            ((Statement*)offset_to_ptr(statement))->type = WHILE_STATEMENT;
+            ((Statement*)offset_to_ptr(statement))->stmt.while_stmt = parse_while(lexer);
             return statement;
         } else if (string_equal(token_ptr->lexeme, RETURN_KEYWORD)) {
-            statement_ptr->type = RETURN_STATEMENT;
-            get_next_token(lexer);  // consume 'return'
-            statement_ptr->stmt.return_stmt = parse_expression(lexer);
+            ((Statement*)offset_to_ptr(statement))->type = RETURN_STATEMENT;
+            token = get_next_token(lexer);
+            ((Statement*)offset_to_ptr(statement))->stmt.return_stmt = parse_expression(lexer);
         } else if (string_equal(token_ptr->lexeme, BREAK_KEYWORD)) {
-            statement_ptr->type = BREAK_STATEMENT;
-            statement_ptr->stmt.expr = 0;
+            ((Statement*)offset_to_ptr(statement))->type = BREAK_STATEMENT;
+            ((Statement*)offset_to_ptr(statement))->stmt.expr = 0;
         } else if (string_equal(token_ptr->lexeme, CONTINUE_KEYWORD)) {
-            statement_ptr->type = CONTINUE_STATEMENT;
-            statement_ptr->stmt.expr = 0;
-        } else if (is_builtin_type(token_ptr->lexeme)) {
-            statement_ptr->type = VARIABLE_STATEMENT;
-            statement_ptr->stmt.var_decl = parse_variable(lexer);
+            ((Statement*)offset_to_ptr(statement))->type = CONTINUE_STATEMENT;
+            ((Statement*)offset_to_ptr(statement))->stmt.expr = 0;
+        } else if (string_equal(token_ptr->lexeme, VAR_KEYWORD)) {
+            ((Statement*)offset_to_ptr(statement))->type = VARIABLE_STATEMENT;
+            token = get_next_token(lexer);
+            ((Statement*)offset_to_ptr(statement))->stmt.var_decl = parse_variable(lexer);
         } else {
             return parser_error("Unexpected keyword in statement", token);
         }
     } else {
-        statement_ptr->stmt.expr = parse_expression(lexer);
+        ((Statement*)offset_to_ptr(statement))->stmt.expr = parse_expression(lexer);
     }
     token = get_next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
@@ -544,6 +555,8 @@ static offset(Expression*) parse_expr_rhs(offset(Lexer*) lexer, int expr_prec, o
         OperatorType op_type = OP_NONE;
         if (token_ptr->type == SYMBOL)
             op_type = str_to_type(token_ptr->lexeme);
+        if (op_type == OP_NONE)
+            return left;
         int token_prec = operator_precedence(op_type);
 
         if (token_prec < expr_prec)
