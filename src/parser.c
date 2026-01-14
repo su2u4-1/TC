@@ -788,13 +788,145 @@ offset(For*) parse_for(offset(Lexer*) lexer) {
 }
 
 offset(Primary*) parse_primary(offset(Lexer*) lexer) {
-    return 0;
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type == INTEGER || token_ptr->type == FLOAT || token_ptr->type == STRING || (token_ptr->type == KEYWORD && (string_equal(token_ptr->lexeme, TRUE_KEYWORD) || string_equal(token_ptr->lexeme, FALSE_KEYWORD)))) {
+        PrimaryType type;
+        if (token_ptr->type == INTEGER)
+            type = PRIM_INTEGER;
+        else if (token_ptr->type == FLOAT)
+            type = PRIM_FLOAT;
+        else if (token_ptr->type == STRING)
+            type = PRIM_STRING;
+        else
+            type = PRIM_STRING;
+        offset(Primary*) primary = create_primary(type);
+        ((Primary*)offset_to_ptr(primary))->value.string_value = token_ptr->lexeme;
+        return primary;
+    } else if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, L_PAREN_SYMBOL)) {
+        token = get_next_token(lexer);
+        offset(Expression*) expr = parse_expression(lexer);
+        if (expr == 0)
+            return parser_error("Failed to parse expression in parentheses", token);
+        token = get_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+        if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
+            return parser_error("Expected ')' after expression", token);
+        offset(Primary*) primary = create_primary(PRIM_EXPRESSION);
+        ((Primary*)offset_to_ptr(primary))->value.expr = expr;
+        return primary;
+    } else if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, NOT_SYMBOL)) {
+        token = get_next_token(lexer);
+        offset(Primary*) operand = parse_primary(lexer);
+        if (operand == 0)
+            return parser_error("Failed to parse operand for unary '!' operator", token);
+        offset(Primary*) primary = create_primary(PRIM_NOT_OPERAND);
+        ((Primary*)offset_to_ptr(primary))->value.operand = operand;
+        return primary;
+    } else if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, SUB_SYMBOL)) {
+        token = get_next_token(lexer);
+        offset(Primary*) operand = parse_primary(lexer);
+        if (operand == 0)
+            return parser_error("Failed to parse operand for unary '-' operator", token);
+        offset(Primary*) primary = create_primary(PRIM_NEGATE_OPERAND);
+        ((Primary*)offset_to_ptr(primary))->value.operand = operand;
+        return primary;
+    } else if (token_ptr->type == IDENTIFIER) {
+        offset(VariableAccess*) var_access = parse_variable_access(lexer);
+        if (var_access == 0)
+            return parser_error("Failed to parse variable access", token);
+        offset(Primary*) primary = create_primary(PRIM_VARIABLE_ACCESS);
+        ((Primary*)offset_to_ptr(primary))->value.var_access = var_access;
+        return primary;
+    } else
+        return parser_error("Unexpected token in primary expression", token);
 }
 
 offset(VariableAccess*) parse_variable_access(offset(Lexer*) lexer) {
-    return 0;
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type != IDENTIFIER)
+        return parser_error("Expected identifier in variable access", token);
+    offset(VariableAccess*) var_access = create_variable_access(ACCESS_NONE);
+    ((VariableAccess*)offset_to_ptr(var_access))->name = token_ptr->lexeme;
+    while (true) {
+        token = peek_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+        if (token_ptr->type == SYMBOL) {
+            if (string_equal(token_ptr->lexeme, L_PAREN_SYMBOL)) {
+                get_next_token(lexer);  // consume '('
+                offset(Arguments*) args = parse_arguments(lexer);
+                token = get_next_token(lexer);
+                token_ptr = (Token*)offset_to_ptr(token);
+                if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
+                    return parser_error("Expected ')' after function arguments", token);
+                offset(VariableAccess*) func_call = create_variable_access(ACCESS_FUNCTION_CALL);
+                VariableAccess* func_call_ptr = (VariableAccess*)offset_to_ptr(func_call);
+                func_call_ptr->base = var_access;
+                func_call_ptr->access.func_call = args;
+                var_access = func_call;
+            } else if (string_equal(token_ptr->lexeme, L_BRACKET_SYMBOL)) {
+                get_next_token(lexer);  // consume '['
+                token = get_next_token(lexer);
+                offset(Expression*) index_expr = parse_expression(lexer);
+                if (index_expr == 0)
+                    return parser_error("Failed to parse index expression", token);
+                token = get_next_token(lexer);
+                token_ptr = (Token*)offset_to_ptr(token);
+                if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACKET_SYMBOL))
+                    return parser_error("Expected ']' after index expression", token);
+                offset(VariableAccess*) seq_access = create_variable_access(ACCESS_GET_SEQ);
+                VariableAccess* seq_access_ptr = (VariableAccess*)offset_to_ptr(seq_access);
+                seq_access_ptr->base = var_access;
+                seq_access_ptr->access.get_seq = index_expr;
+                var_access = seq_access;
+            } else if (string_equal(token_ptr->lexeme, DOT_SYMBOL)) {
+                get_next_token(lexer);  // consume '.'
+                token = get_next_token(lexer);
+                token_ptr = (Token*)offset_to_ptr(token);
+                if (token_ptr->type != IDENTIFIER)
+                    return parser_error("Expected identifier after '.'", token);
+                offset(VariableAccess*) attr_access = create_variable_access(ACCESS_GET_ATTR);
+                VariableAccess* attr_access_ptr = (VariableAccess*)offset_to_ptr(attr_access);
+                attr_access_ptr->base = var_access;
+                attr_access_ptr->access.get_attr = token_ptr->lexeme;
+                var_access = attr_access;
+            } else
+                break;
+        } else
+            break;
+    }
+    return var_access;
 }
 
 offset(Arguments*) parse_arguments(offset(Lexer*) lexer) {
-    return 0;
+    token = peek_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
+        return 0;
+    offset(Arguments*) args = 0;
+    token = get_next_token(lexer);
+    offset(Expression*) expr = parse_expression(lexer);
+    if (expr == 0)
+        return parser_error("Failed to parse argument expression", token);
+    offset(Arguments*) arg = create_arguments();
+    Arguments* arg_ptr = (Arguments*)offset_to_ptr(arg);
+    arg_ptr->args = expr;
+    arg_ptr->next = args;
+    args = arg;
+    token = peek_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    while (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, COMMA_SYMBOL)) {
+        get_next_token(lexer);  // consume ','
+        token = get_next_token(lexer);
+        expr = parse_expression(lexer);
+        if (expr == 0)
+            return parser_error("Failed to parse argument expression", token);
+        arg = create_arguments();
+        arg_ptr = (Arguments*)offset_to_ptr(arg);
+        arg_ptr->args = expr;
+        arg_ptr->next = args;
+        args = arg;
+        token = peek_next_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+    }
+    return args;
 }

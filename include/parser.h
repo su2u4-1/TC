@@ -138,7 +138,8 @@ typedef struct Primary {
 typedef enum AccessType {
     ACCESS_FUNCTION_CALL,
     ACCESS_GET_ATTR,
-    ACCESS_GET_SEQ
+    ACCESS_GET_SEQ,
+    ACCESS_NONE
 } AccessType;
 
 typedef struct VariableAccess {
