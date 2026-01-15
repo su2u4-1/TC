@@ -399,7 +399,7 @@ offset(Class*) parse_class(offset(Lexer*) lexer) {
     offset(Variable*) attributes = 0;
     while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
         if (token_ptr->type == KEYWORD) {
-            if (string_equal(token_ptr->lexeme, FUNC_KEYWORD)) {
+            if (string_equal(token_ptr->lexeme, METHOD_KEYWORD)) {
                 offset(Function*) method = parse_function(lexer);
                 if (method != 0) {
                     ((Function*)offset_to_ptr(method))->next = methods;
