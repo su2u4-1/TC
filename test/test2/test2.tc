@@ -1,0 +1,27 @@
+import print from "std";
+import arr from "std";
+
+class Test2 {
+    var int x = 1 + 2 * 3 - 8 / 4;  // 1 + 6 - 2 = 5
+    method Test2 init(self) {
+        print(self.x);  // should print 5
+        return self;
+    }
+    method void set_x(self, int value) {
+        self.x = value;
+    }
+    method int get_x(self) {
+        return self.x;
+    }
+}
+
+func int main() {
+    var Test2 t = Test2.init();
+    var arr nums = arr.init(int, 10);
+    nums[0] = 42;
+    t.set_x(2 + t.get_x() * 10);  // 2 + 5 * 10 = 52
+    print(t.get_x());  // should print 52
+    t.set_x(nums[0] + 10 - 2 * 5);  // 42 + 10 - 10 = 42
+    print(t.get_x());  // should print 42
+    return 0;
+}

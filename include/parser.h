@@ -169,5 +169,7 @@ typedef struct Scope {
 offset(Code*) parser(offset(Lexer*) lexer);
 // `int operator_precedence(string op)`
 int operator_precedence(OperatorType op);
+// `void output_ast(Code* ast_node, FILE* outfile, size_t indent)`
+void output_ast(offset(Code*) ast_node, FILE* outfile, size_t indent);
 
 #endif  // PARSER_H

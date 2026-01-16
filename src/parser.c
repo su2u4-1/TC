@@ -57,6 +57,75 @@ static offset(VariableAccess*) parse_variable_access(offset(Lexer*) lexer);
 // `static Arguments* parse_arguments(Lexer* lexer)`
 static offset(Arguments*) parse_arguments(offset(Lexer*) lexer);
 
+// `void output_import(Import* ast_node, FILE* outfile, size_t indent)`
+static void output_import(offset(Import*) ast_node, FILE* outfile, size_t indent);
+// `void output_function(Function* ast_node, FILE* outfile, size_t indent)`
+static void output_function(offset(Function*) ast_node, FILE* outfile, size_t indent);
+// `void output_class(Class* ast_node, FILE* outfile, size_t indent)`
+static void output_class(offset(Class*) ast_node, FILE* outfile, size_t indent);
+// `void output_variable(Variable* ast_node, FILE* outfile, size_t indent)`
+static void output_variable(offset(Variable*) ast_node, FILE* outfile, size_t indent);
+// `void output_statement(Statement* ast_node, FILE* outfile, size_t indent)`
+static void output_statement(offset(Statement*) ast_node, FILE* outfile, size_t indent);
+// `void output_expression(Expression* ast_node, FILE* outfile, size_t indent)`
+static void output_expression(offset(Expression*) ast_node, FILE* outfile, size_t indent);
+// `void output_if(If* ast_node, FILE* outfile, size_t indent)`
+static void output_if(offset(If*) ast_node, FILE* outfile, size_t indent);
+// `void output_while(While* ast_node, FILE* outfile, size_t indent)`
+static void output_while(offset(While*) ast_node, FILE* outfile, size_t indent);
+// `void output_for(For* ast_node, FILE* outfile, size_t indent)`
+static void output_for(offset(For*) ast_node, FILE* outfile, size_t indent);
+// `void output_primary(Primary* ast_node, FILE* outfile, size_t indent)`
+static void output_primary(offset(Primary*) ast_node, FILE* outfile, size_t indent);
+// `void output_variable_access(VariableAccess* ast_node, FILE* outfile, size_t indent)`
+static void output_variable_access(offset(VariableAccess*) ast_node, FILE* outfile, size_t indent);
+// `void output_argument(Argument* ast_node, FILE* outfile, size_t indent)`
+static void output_arguments(offset(Arguments*) ast_node, FILE* outfile, size_t indent);
+
+// `static size_t parser_error(const char* message, Token* token)`
+static size_t parser_error(const char* message, offset(Token*) token) {
+    Token* token_ptr = (Token*)offset_to_ptr(token);
+    fprintf(stderr, "Parser Error at Line %zu, Column %zu: %s\n", token_ptr->line + 1, token_ptr->column + 1, message);
+    return 0;
+}
+
+static bool is_builtin_type(string type) {
+    return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+}
+
+int operator_precedence(OperatorType op) {
+    if (op == OP_ASSIGN || op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN)
+        return 1;
+    if (op == OP_AND || op == OP_OR)
+        return 2;
+    if (op == OP_EQ || op == OP_NE || op == OP_LT || op == OP_GT || op == OP_LE || op == OP_GE)
+        return 3;
+    if (op == OP_ADD || op == OP_SUB)
+        return 4;
+    if (op == OP_MUL || op == OP_DIV || op == OP_MOD)
+        return 5;
+    return 0;
+}
+
+static void indention(FILE* outfile, size_t indent) {
+    for (size_t i = 0; i < indent; ++i)
+        fprintf(outfile, "    ");
+}
+
+static offset(Token*) token = 0;
+static Token* token_ptr = NULL;
+static bool in_loop = false;
+
+static offset(Token*) next_token(offset(Lexer*) lexer) {
+    token = get_next_token(lexer);
+    token_ptr = (Token*)offset_to_ptr(token);
+    if (token_ptr->type == EOF_TOKEN)
+        return 0;
+    else if (token_ptr->type == COMMENT)
+        return next_token(lexer);
+    return token;
+}
+
 offset(Code*) create_code(void) {
     offset(Code*) code = alloc_memory(sizeof(Code));
     Code* code_ptr = (Code*)offset_to_ptr(code);
@@ -217,40 +286,11 @@ offset(Scope*) create_scope(string name, offset(Type*) type) {
     return scope;
 }
 
-// `static size_t parser_error(const char* message, Token* token)`
-static size_t parser_error(const char* message, offset(Token*) token) {
-    Token* token_ptr = (Token*)offset_to_ptr(token);
-    fprintf(stderr, "Parser Error at Line %zu, Column %zu: %s\n", token_ptr->line + 1, token_ptr->column + 1, message);
-    return 0;
-}
-
-static bool is_builtin_type(string type) {
-    return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
-}
-
-int operator_precedence(OperatorType op) {
-    if (op == OP_ASSIGN || op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN)
-        return 1;
-    if (op == OP_AND || op == OP_OR)
-        return 2;
-    if (op == OP_EQ || op == OP_NE || op == OP_LT || op == OP_GT || op == OP_LE || op == OP_GE)
-        return 3;
-    if (op == OP_ADD || op == OP_SUB)
-        return 4;
-    if (op == OP_MUL || op == OP_DIV || op == OP_MOD)
-        return 5;
-    return 0;
-}
-
-static offset(Token*) token = 0;
-static Token* token_ptr = NULL;
-static bool in_loop = false;
-
 offset(Code*) parser(offset(Lexer*) lexer) {
     offset(Import*) imports = 0;
     offset(Function*) functions = 0;
     offset(Class*) classes = 0;
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type == KEYWORD) {
         if (string_equal(token_ptr->lexeme, IMPORT_KEYWORD)) {
@@ -274,18 +314,22 @@ offset(Code*) parser(offset(Lexer*) lexer) {
                 classes = class;
             } else
                 parser_error("Failed to parse class declaration", token);
-        }
-    }
+        } else
+            parser_error("Unexpected keyword at top-level", token);
+    } else
+        parser_error("Unexpected token at top-level", token);
     offset(Code*) code = create_code();
     Code* code_ptr = (Code*)offset_to_ptr(code);
     code_ptr->imports = imports;
     code_ptr->functions = functions;
     code_ptr->classes = classes;
+    // if (imports == 0 || functions == 0 || classes == 0)
+    //     return parser_error("No valid code found in source", token);
     return code;
 }
 
 offset(Import*) parse_import(offset(Lexer*) lexer) {
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != IDENTIFIER)
         return parser_error("Expected identifier after 'import'", token);
@@ -294,14 +338,14 @@ offset(Import*) parse_import(offset(Lexer*) lexer) {
     token_ptr = (Token*)offset_to_ptr(token);
     string source = 0;
     if (token_ptr->type == KEYWORD && string_equal(token_ptr->lexeme, FROM_KEYWORD)) {
-        get_next_token(lexer);  // consume 'from'
-        token = get_next_token(lexer);
+        next_token(lexer);  // consume 'from'
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
         if (token_ptr->type != STRING)
             return parser_error("Expected string literal after 'from'", token);
         source = token_ptr->lexeme;
     }
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
         parser_error("Expected ';' at the end of import statement", token);
@@ -309,12 +353,12 @@ offset(Import*) parse_import(offset(Lexer*) lexer) {
 }
 
 offset(Function*) parse_function(offset(Lexer*) lexer) {
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     string return_type = 0;
     if (token_ptr->type == IDENTIFIER || (token_ptr->type == KEYWORD && is_builtin_type(token_ptr->lexeme))) {
         return_type = token_ptr->lexeme;
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
     }
     if (return_type == 0)
@@ -322,11 +366,11 @@ offset(Function*) parse_function(offset(Lexer*) lexer) {
     if (token_ptr->type != IDENTIFIER)
         return parser_error("Expected function name after return type", token);
     string name = token_ptr->lexeme;
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_PAREN_SYMBOL))
         return parser_error("Expected '(' after function name", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Variable*) parameters = 0;
     while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL)) {
@@ -341,19 +385,19 @@ offset(Function*) parse_function(offset(Lexer*) lexer) {
             }
         } else
             return parser_error("Failed to parse function parameter", token);
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
         if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, COMMA_SYMBOL)) {
-            token = get_next_token(lexer);
+            token = next_token(lexer);
             token_ptr = (Token*)offset_to_ptr(token);
         } else if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
             return parser_error("Expected ',' or ')' in function parameter list", token);
     }
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_BRACE_SYMBOL))
         return parser_error("Expected '{' to start function body", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Statement*) body = 0;
     bool have_return_statement = false;
@@ -373,7 +417,7 @@ offset(Function*) parse_function(offset(Lexer*) lexer) {
                 have_return_statement = true;
         } else
             parser_error("Failed to parse statement in function body", token);
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
     }
     if (!have_return_statement && !string_equal(return_type, VOID_KEYWORD))
@@ -386,16 +430,16 @@ offset(Function*) parse_function(offset(Lexer*) lexer) {
 }
 
 offset(Class*) parse_class(offset(Lexer*) lexer) {
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != IDENTIFIER)
         return parser_error("Expected class name after 'class'", token);
     string name = token_ptr->lexeme;
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_BRACE_SYMBOL))
         return parser_error("Expected '{' to start class body", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Function*) methods = 0;
     offset(Variable*) attributes = 0;
@@ -409,14 +453,14 @@ offset(Class*) parse_class(offset(Lexer*) lexer) {
                 } else
                     return parser_error("Failed to parse method in class body", token);
             } else if (string_equal(token_ptr->lexeme, VAR_KEYWORD)) {
-                token = get_next_token(lexer);
+                token = next_token(lexer);
                 offset(Variable*) attribute = parse_variable(lexer);
                 if (attribute != 0) {
                     ((Variable*)offset_to_ptr(attribute))->next = attributes;
                     attributes = attribute;
                 } else
                     return parser_error("Failed to parse attribute in class body", token);
-                token = get_next_token(lexer);
+                token = next_token(lexer);
                 token_ptr = (Token*)offset_to_ptr(token);
                 if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
                     parser_error("Expected ';' after class attribute declaration", token);
@@ -424,7 +468,7 @@ offset(Class*) parse_class(offset(Lexer*) lexer) {
                 parser_error("Unexpected keyword in class body", token);
         } else
             parser_error("Unexpected token in class body", token);
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
     }
     offset(Class*) class = create_class(name);
@@ -441,7 +485,7 @@ offset(Variable*) parse_variable(offset(Lexer*) lexer) {
         var_type = token_ptr->lexeme;
     else
         return parser_error("Expected variable type in variable declaration", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != IDENTIFIER)
         return parser_error("Expected variable name in variable declaration", token);
@@ -450,12 +494,12 @@ offset(Variable*) parse_variable(offset(Lexer*) lexer) {
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Expression*) var_value = 0;
     if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, ASSIGN_SYMBOL)) {
-        get_next_token(lexer);  // consume '='
+        next_token(lexer);  // consume '='
         var_value = parse_expression(lexer);
         if (var_value == 0)
             parser_error("Failed to parse variable initialization expression", token);
     }
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Variable*) variable = create_variable(var_type, var_name);
     Variable* variable_ptr = (Variable*)offset_to_ptr(variable);
@@ -481,7 +525,7 @@ offset(Statement*) parse_statement(offset(Lexer*) lexer) {
             return statement;
         } else if (string_equal(token_ptr->lexeme, RETURN_KEYWORD)) {
             ((Statement*)offset_to_ptr(statement))->type = RETURN_STATEMENT;
-            token = get_next_token(lexer);
+            token = next_token(lexer);
             ((Statement*)offset_to_ptr(statement))->stmt.return_stmt = parse_expression(lexer);
         } else if (string_equal(token_ptr->lexeme, BREAK_KEYWORD)) {
             ((Statement*)offset_to_ptr(statement))->type = BREAK_STATEMENT;
@@ -491,7 +535,7 @@ offset(Statement*) parse_statement(offset(Lexer*) lexer) {
             ((Statement*)offset_to_ptr(statement))->stmt.expr = 0;
         } else if (string_equal(token_ptr->lexeme, VAR_KEYWORD)) {
             ((Statement*)offset_to_ptr(statement))->type = VARIABLE_STATEMENT;
-            token = get_next_token(lexer);
+            token = next_token(lexer);
             ((Statement*)offset_to_ptr(statement))->stmt.var_decl = parse_variable(lexer);
         } else {
             return parser_error("Unexpected keyword in statement", token);
@@ -499,7 +543,7 @@ offset(Statement*) parse_statement(offset(Lexer*) lexer) {
     } else {
         ((Statement*)offset_to_ptr(statement))->stmt.expr = parse_expression(lexer);
     }
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
         parser_error("Expected ';' after return statement", token);
@@ -563,9 +607,9 @@ static offset(Expression*) parse_expr_rhs(offset(Lexer*) lexer, int expr_prec, o
 
         if (token_prec < expr_prec)
             return left;
-        get_next_token(lexer);  // consume operator
+        next_token(lexer);  // consume operator
 
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
         offset(Expression*) right = parse_primary(lexer);
         if (right == 0)
@@ -601,23 +645,23 @@ offset(Expression*) parse_expression(offset(Lexer*) lexer) {
 }
 
 offset(If*) parse_if(offset(Lexer*) lexer) {
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_PAREN_SYMBOL))
         return parser_error("Expected '(' after 'if'", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     offset(Expression*) condition = parse_expression(lexer);
     if (condition == 0)
         return parser_error("Failed to parse if statement condition", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
         return parser_error("Expected ')' after if statement condition", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_BRACE_SYMBOL))
         return parser_error("Expected '{' to start if statement body", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Statement*) body = 0;
     bool have_return_statement = false;
@@ -637,7 +681,7 @@ offset(If*) parse_if(offset(Lexer*) lexer) {
                 have_return_statement = true;
         } else
             parser_error("Failed to parse statement in if body", token);
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
     }
     token = peek_next_token(lexer);
@@ -646,15 +690,15 @@ offset(If*) parse_if(offset(Lexer*) lexer) {
     offset(If*) elif = 0;
     if (token_ptr->type == KEYWORD) {
         if (string_equal(token_ptr->lexeme, ELIF_KEYWORD)) {
-            get_next_token(lexer);  // consume 'elif'
+            next_token(lexer);  // consume 'elif'
             elif = parse_if(lexer);
         } else if (string_equal(token_ptr->lexeme, ELSE_KEYWORD)) {
-            get_next_token(lexer);  // consume 'else'
-            token = get_next_token(lexer);
+            next_token(lexer);  // consume 'else'
+            token = next_token(lexer);
             token_ptr = (Token*)offset_to_ptr(token);
             if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_BRACE_SYMBOL))
                 return parser_error("Expected '{' to start else statement body", token);
-            token = get_next_token(lexer);
+            token = next_token(lexer);
             token_ptr = (Token*)offset_to_ptr(token);
             have_return_statement = false;
             while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
@@ -673,7 +717,7 @@ offset(If*) parse_if(offset(Lexer*) lexer) {
                         have_return_statement = true;
                 } else
                     parser_error("Failed to parse statement in else body", token);
-                token = get_next_token(lexer);
+                token = next_token(lexer);
                 token_ptr = (Token*)offset_to_ptr(token);
             }
         }
@@ -689,24 +733,24 @@ offset(If*) parse_if(offset(Lexer*) lexer) {
 
 offset(While*) parse_while(offset(Lexer*) lexer) {
     in_loop = true;
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_PAREN_SYMBOL))
         return parser_error("Expected '(' after 'while'", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Expression*) condition = parse_expression(lexer);
     if (condition == 0)
         return parser_error("Failed to parse while statement condition", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
         return parser_error("Expected ')' after while statement condition", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_BRACE_SYMBOL))
         return parser_error("Expected '{' to start while statement body", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Statement*) body = 0;
     bool have_return_statement = false;
@@ -724,7 +768,7 @@ offset(While*) parse_while(offset(Lexer*) lexer) {
             }
         } else
             parser_error("Failed to parse statement in while body", token);
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
     }
     offset(While*) while_stmt = create_while();
@@ -737,11 +781,11 @@ offset(While*) parse_while(offset(Lexer*) lexer) {
 
 offset(For*) parse_for(offset(Lexer*) lexer) {
     in_loop = true;
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_PAREN_SYMBOL))
         return parser_error("Expected '(' after 'for'", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(lexer);
     offset(Variable*) initialization = 0;
     offset(Expression*) condition = 0;
@@ -750,38 +794,38 @@ offset(For*) parse_for(offset(Lexer*) lexer) {
         initialization = parse_variable(lexer);
         if (initialization == 0)
             parser_error("Failed to parse for loop initialization", token);
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
         if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
             return parser_error("Expected ';' after for loop initialization", token);
     }
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL)) {
         condition = parse_expression(lexer);
         if (condition == 0)
             parser_error("Failed to parse for loop condition", token);
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
         if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
             return parser_error("Expected ';' after for loop condition", token);
     }
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL)) {
         increment = parse_expression(lexer);
         if (increment == 0)
             parser_error("Failed to parse for loop increment", token);
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
         if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
             return parser_error("Expected ')' after for loop increment", token);
     }
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, L_BRACE_SYMBOL))
         return parser_error("Expected '{' to start for statement body", token);
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Statement*) body = 0;
     bool have_return_statement = false;
@@ -799,7 +843,7 @@ offset(For*) parse_for(offset(Lexer*) lexer) {
             }
         } else
             parser_error("Failed to parse statement in for body", token);
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
     }
     offset(For*) for_stmt = create_for();
@@ -828,11 +872,11 @@ offset(Primary*) parse_primary(offset(Lexer*) lexer) {
         ((Primary*)offset_to_ptr(primary))->value.string_value = token_ptr->lexeme;
         return primary;
     } else if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, L_PAREN_SYMBOL)) {
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         offset(Expression*) expr = parse_expression(lexer);
         if (expr == 0)
             return parser_error("Failed to parse expression in parentheses", token);
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
         if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
             return parser_error("Expected ')' after expression", token);
@@ -840,7 +884,7 @@ offset(Primary*) parse_primary(offset(Lexer*) lexer) {
         ((Primary*)offset_to_ptr(primary))->value.expr = expr;
         return primary;
     } else if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, NOT_SYMBOL)) {
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         offset(Primary*) operand = parse_primary(lexer);
         if (operand == 0)
             return parser_error("Failed to parse operand for unary '!' operator", token);
@@ -848,7 +892,7 @@ offset(Primary*) parse_primary(offset(Lexer*) lexer) {
         ((Primary*)offset_to_ptr(primary))->value.operand = operand;
         return primary;
     } else if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, SUB_SYMBOL)) {
-        token = get_next_token(lexer);
+        token = next_token(lexer);
         offset(Primary*) operand = parse_primary(lexer);
         if (operand == 0)
             return parser_error("Failed to parse operand for unary '-' operator", token);
@@ -877,9 +921,9 @@ offset(VariableAccess*) parse_variable_access(offset(Lexer*) lexer) {
         token_ptr = (Token*)offset_to_ptr(token);
         if (token_ptr->type == SYMBOL) {
             if (string_equal(token_ptr->lexeme, L_PAREN_SYMBOL)) {
-                get_next_token(lexer);  // consume '('
+                next_token(lexer);  // consume '('
                 offset(Arguments*) args = parse_arguments(lexer);
-                token = get_next_token(lexer);
+                token = next_token(lexer);
                 token_ptr = (Token*)offset_to_ptr(token);
                 if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
                     return parser_error("Expected ')' after function arguments", token);
@@ -889,12 +933,12 @@ offset(VariableAccess*) parse_variable_access(offset(Lexer*) lexer) {
                 func_call_ptr->access.func_call = args;
                 var_access = func_call;
             } else if (string_equal(token_ptr->lexeme, L_BRACKET_SYMBOL)) {
-                get_next_token(lexer);  // consume '['
-                token = get_next_token(lexer);
+                next_token(lexer);  // consume '['
+                token = next_token(lexer);
                 offset(Expression*) index_expr = parse_expression(lexer);
                 if (index_expr == 0)
                     return parser_error("Failed to parse index expression", token);
-                token = get_next_token(lexer);
+                token = next_token(lexer);
                 token_ptr = (Token*)offset_to_ptr(token);
                 if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACKET_SYMBOL))
                     return parser_error("Expected ']' after index expression", token);
@@ -904,8 +948,8 @@ offset(VariableAccess*) parse_variable_access(offset(Lexer*) lexer) {
                 seq_access_ptr->access.get_seq = index_expr;
                 var_access = seq_access;
             } else if (string_equal(token_ptr->lexeme, DOT_SYMBOL)) {
-                get_next_token(lexer);  // consume '.'
-                token = get_next_token(lexer);
+                next_token(lexer);  // consume '.'
+                token = next_token(lexer);
                 token_ptr = (Token*)offset_to_ptr(token);
                 if (token_ptr->type != IDENTIFIER)
                     return parser_error("Expected identifier after '.'", token);
@@ -928,7 +972,7 @@ offset(Arguments*) parse_arguments(offset(Lexer*) lexer) {
     if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, R_PAREN_SYMBOL))
         return 0;
     offset(Arguments*) args = 0;
-    token = get_next_token(lexer);
+    token = next_token(lexer);
     offset(Expression*) expr = parse_expression(lexer);
     if (expr == 0)
         return parser_error("Failed to parse argument expression", token);
@@ -940,8 +984,8 @@ offset(Arguments*) parse_arguments(offset(Lexer*) lexer) {
     token = peek_next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     while (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, COMMA_SYMBOL)) {
-        get_next_token(lexer);  // consume ','
-        token = get_next_token(lexer);
+        next_token(lexer);  // consume ','
+        token = next_token(lexer);
         expr = parse_expression(lexer);
         if (expr == 0)
             return parser_error("Failed to parse argument expression", token);
@@ -954,4 +998,409 @@ offset(Arguments*) parse_arguments(offset(Lexer*) lexer) {
         token_ptr = (Token*)offset_to_ptr(token);
     }
     return args;
+}
+
+void output_ast(offset(Code*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "Code: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "Code {\n");
+    Code* node = (Code*)offset_to_ptr(ast_node);
+    offset(Import*) import = node->imports;
+    while (import != 0) {
+        Import* import_ptr = (Import*)offset_to_ptr(import);
+        output_import(import, outfile, indent + 1);
+        import = import_ptr->next;
+    }
+    offset(Function*) function = node->functions;
+    while (function != 0) {
+        Function* function_ptr = (Function*)offset_to_ptr(function);
+        output_function(function, outfile, indent + 1);
+        function = function_ptr->next;
+    }
+    offset(Class*) class = node->classes;
+    while (class != 0) {
+        Class* class_ptr = (Class*)offset_to_ptr(class);
+        output_class(class, outfile, indent + 1);
+        class = class_ptr->next;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_import(offset(Import*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "Import: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "Import {\n");
+    Import* node = (Import*)offset_to_ptr(ast_node);
+    indention(outfile, indent + 1);
+    fprintf(outfile, "name: '%s'\n", node->name ? string_to_char_ptr(node->name) : "NULL");
+    indention(outfile, indent + 1);
+    fprintf(outfile, "source: '%s'\n", node->name ? string_to_char_ptr(node->source) : "NULL");
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_function(offset(Function*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "Function: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "Function {\n");
+    Function* node = (Function*)offset_to_ptr(ast_node);
+    indention(outfile, indent + 1);
+    fprintf(outfile, "name: '%s'\n", string_to_char_ptr(node->name));
+    indention(outfile, indent + 1);
+    fprintf(outfile, "return_type: '%s'\n", string_to_char_ptr(node->return_type));
+    indention(outfile, indent + 1);
+    fprintf(outfile, "parameters {\n");
+    offset(Variable*) param = node->parameters;
+    while (param != 0) {
+        Variable* param_ptr = (Variable*)offset_to_ptr(param);
+        output_variable(param, outfile, indent + 2);
+        param = param_ptr->next;
+    }
+    indention(outfile, indent + 1);
+    fprintf(outfile, "}\n");
+    indention(outfile, indent + 1);
+    fprintf(outfile, "body {\n");
+    offset(Statement*) body = node->body;
+    while (body != 0) {
+        Statement* body_ptr = (Statement*)offset_to_ptr(body);
+        output_statement(body, outfile, indent + 2);
+        body = body_ptr->next;
+    }
+    indention(outfile, indent + 1);
+    fprintf(outfile, "}\n");
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_class(offset(Class*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "Class: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "Class {\n");
+    Class* node = (Class*)offset_to_ptr(ast_node);
+    indention(outfile, indent + 1);
+    fprintf(outfile, "name: '%s'\n", string_to_char_ptr(node->name));
+    indention(outfile, indent + 1);
+    fprintf(outfile, "methods {\n");
+    offset(Function*) method = node->methods;
+    while (method != 0) {
+        Function* method_ptr = (Function*)offset_to_ptr(method);
+        output_function(method, outfile, indent + 2);
+        method = method_ptr->next;
+    }
+    indention(outfile, indent + 1);
+    fprintf(outfile, "}\n");
+    indention(outfile, indent + 1);
+    fprintf(outfile, "attributes {\n");
+    offset(Variable*) attribute = node->attributes;
+    while (attribute != 0) {
+        Variable* attribute_ptr = (Variable*)offset_to_ptr(attribute);
+        output_variable(attribute, outfile, indent + 2);
+        attribute = attribute_ptr->next;
+    }
+    indention(outfile, indent + 1);
+    fprintf(outfile, "}\n");
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_variable(offset(Variable*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "Variable: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "Variable {\n");
+    Variable* node = (Variable*)offset_to_ptr(ast_node);
+    indention(outfile, indent + 1);
+    fprintf(outfile, "type: '%s'\n", string_to_char_ptr(node->type));
+    indention(outfile, indent + 1);
+    fprintf(outfile, "name: '%s'\n", string_to_char_ptr(node->name));
+    output_expression(node->value, outfile, indent + 1);
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_statement(offset(Statement*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "Statement: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "Statement {\n");
+    Statement* node = (Statement*)offset_to_ptr(ast_node);
+    indention(outfile, indent + 1);
+    if (node->type == EXPRESSION_STATEMENT) {
+        fprintf(outfile, "type: expression\n");
+        output_expression(node->stmt.expr, outfile, indent + 1);
+    } else if (node->type == VARIABLE_STATEMENT) {
+        fprintf(outfile, "type: variable_declaration\n");
+        output_variable(node->stmt.var_decl, outfile, indent + 1);
+    } else if (node->type == IF_STATEMENT) {
+        fprintf(outfile, "type: if_statement\n");
+        output_if(node->stmt.if_stmt, outfile, indent + 1);
+    } else if (node->type == WHILE_STATEMENT) {
+        fprintf(outfile, "type: while_statement\n");
+        output_while(node->stmt.while_stmt, outfile, indent + 1);
+    } else if (node->type == FOR_STATEMENT) {
+        fprintf(outfile, "type: for_statement\n");
+        output_for(node->stmt.for_stmt, outfile, indent + 1);
+    } else if (node->type == RETURN_STATEMENT) {
+        fprintf(outfile, "type: return_statement\n");
+        output_expression(node->stmt.return_stmt, outfile, indent + 1);
+    } else if (node->type == BREAK_STATEMENT)
+        fprintf(outfile, "type: break\n");
+    else if (node->type == CONTINUE_STATEMENT)
+        fprintf(outfile, "type: continue\n");
+
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_expression(offset(Expression*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "Expression: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "Expression {\n");
+    Expression* node = (Expression*)offset_to_ptr(ast_node);
+    if (node->prim != 0) {
+        output_primary(node->prim, outfile, indent + 1);
+    } else {
+        indention(outfile, indent + 1);
+        if (node->operator == OP_ADD) fprintf(outfile, "operator: +\n");
+        else if (node->operator == OP_SUB) fprintf(outfile, "operator: -\n");
+        else if (node->operator == OP_MUL) fprintf(outfile, "operator: *\n");
+        else if (node->operator == OP_DIV) fprintf(outfile, "operator: /\n");
+        else if (node->operator == OP_MOD) fprintf(outfile, "operator: %%\n");
+        else if (node->operator == OP_EQ) fprintf(outfile, "operator: ==\n");
+        else if (node->operator == OP_NE) fprintf(outfile, "operator: !=\n");
+        else if (node->operator == OP_LT) fprintf(outfile, "operator: <\n");
+        else if (node->operator == OP_GT) fprintf(outfile, "operator: >\n");
+        else if (node->operator == OP_LE) fprintf(outfile, "operator: <=\n");
+        else if (node->operator == OP_GE) fprintf(outfile, "operator: >=\n");
+        else if (node->operator == OP_AND) fprintf(outfile, "operator: &&\n");
+        else if (node->operator == OP_OR) fprintf(outfile, "operator: ||\n");
+        else if (node->operator == OP_ASSIGN) fprintf(outfile, "operator: =\n");
+        else if (node->operator == OP_ADD_ASSIGN) fprintf(outfile, "operator: +=\n");
+        else if (node->operator == OP_SUB_ASSIGN) fprintf(outfile, "operator: -=\n");
+        else if (node->operator == OP_MUL_ASSIGN) fprintf(outfile, "operator: *=\n");
+        else if (node->operator == OP_DIV_ASSIGN) fprintf(outfile, "operator: /=\n");
+        else if (node->operator == OP_MOD_ASSIGN) fprintf(outfile, "operator: %%=\n");
+        else fprintf(outfile, "operator: None\n");
+        output_expression(node->left, outfile, indent + 1);
+        output_expression(node->right, outfile, indent + 1);
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_if(offset(If*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "If: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "If{\n");
+    If* node = (If*)offset_to_ptr(ast_node);
+    output_expression(node->condition, outfile, indent + 1);
+    indention(outfile, indent + 1);
+    fprintf(outfile, "body {\n");
+    offset(Statement*) body_stmt = node->body;
+    while (body_stmt != 0) {
+        Statement* body_ptr = (Statement*)offset_to_ptr(body_stmt);
+        output_statement(body_stmt, outfile, indent + 2);
+        body_stmt = body_ptr->next;
+    }
+    indention(outfile, indent + 1);
+    fprintf(outfile, "}\n");
+    output_if(node->else_if, outfile, indent + 1);
+    indention(outfile, indent + 1);
+    fprintf(outfile, "else_body {\n");
+    offset(Statement*) else_body_stmt = node->else_body;
+    while (else_body_stmt != 0) {
+        Statement* else_body_ptr = (Statement*)offset_to_ptr(else_body_stmt);
+        output_statement(else_body_stmt, outfile, indent + 2);
+        else_body_stmt = else_body_ptr->next;
+    }
+    indention(outfile, indent + 1);
+    fprintf(outfile, "}\n");
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_while(offset(While*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "While: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "While {\n");
+    While* node = (While*)offset_to_ptr(ast_node);
+    output_expression(node->condition, outfile, indent + 1);
+    indention(outfile, indent + 1);
+    fprintf(outfile, "body {\n");
+    offset(Statement*) body_stmt = node->body;
+    while (body_stmt != 0) {
+        Statement* body_ptr = (Statement*)offset_to_ptr(body_stmt);
+        output_statement(body_stmt, outfile, indent + 2);
+        body_stmt = body_ptr->next;
+    }
+    indention(outfile, indent + 1);
+    fprintf(outfile, "}\n");
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_for(offset(For*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "For: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "For {\n");
+    For* node = (For*)offset_to_ptr(ast_node);
+    output_variable(node->initialization, outfile, indent + 1);
+    output_expression(node->condition, outfile, indent + 1);
+    output_expression(node->increment, outfile, indent + 1);
+    indention(outfile, indent + 1);
+    fprintf(outfile, "body {\n");
+    offset(Statement*) body_stmt = node->body;
+    while (body_stmt != 0) {
+        Statement* body_ptr = (Statement*)offset_to_ptr(body_stmt);
+        output_statement(body_stmt, outfile, indent + 2);
+        body_stmt = body_ptr->next;
+    }
+    indention(outfile, indent + 1);
+    fprintf(outfile, "}\n");
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_primary(offset(Primary*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "Primary: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "Primary {\n");
+    Primary* node = (Primary*)offset_to_ptr(ast_node);
+    indention(outfile, indent + 1);
+    if (node->type == PRIM_INTEGER) {
+        fprintf(outfile, "type: integer\n");
+        indention(outfile, indent + 1);
+        fprintf(outfile, "value: %s\n", string_to_char_ptr(node->value.string_value));
+    } else if (node->type == PRIM_FLOAT) {
+        fprintf(outfile, "type: float\n");
+        indention(outfile, indent + 1);
+        fprintf(outfile, "value: %s\n", string_to_char_ptr(node->value.string_value));
+    } else if (node->type == PRIM_STRING) {
+        fprintf(outfile, "type: string\n");
+        indention(outfile, indent + 1);
+        fprintf(outfile, "value: '%s'\n", string_to_char_ptr(node->value.string_value));
+    } else if (node->type == PRIM_TRUE)
+        fprintf(outfile, "type: true\n");
+    else if (node->type == PRIM_FALSE)
+        fprintf(outfile, "type: false\n");
+    else if (node->type == PRIM_EXPRESSION) {
+        fprintf(outfile, "type: expression\n");
+        output_expression(node->value.expr, outfile, indent + 1);
+    } else if (node->type == PRIM_NOT_OPERAND) {
+        fprintf(outfile, "type: not_operand\n");
+        output_primary(node->value.operand, outfile, indent + 1);
+    } else if (node->type == PRIM_NEGATE_OPERAND) {
+        fprintf(outfile, "type: negate_operand\n");
+        output_primary(node->value.operand, outfile, indent + 1);
+    } else if (node->type == PRIM_VARIABLE_ACCESS) {
+        fprintf(outfile, "type: variable_access\n");
+        output_variable_access(node->value.var_access, outfile, indent + 1);
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_variable_access(offset(VariableAccess*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "VariableAccess: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "VariableAccess {\n");
+    VariableAccess* node = (VariableAccess*)offset_to_ptr(ast_node);
+    indention(outfile, indent + 1);
+    fprintf(outfile, "name: '%s'\n", string_to_char_ptr(node->name));
+    if (node->base != 0) {
+        indention(outfile, indent + 1);
+        fprintf(outfile, "base {\n");
+        output_variable_access(node->base, outfile, indent + 2);
+        indention(outfile, indent + 1);
+        fprintf(outfile, "}\n");
+    }
+    if (node->access_type == ACCESS_FUNCTION_CALL) {
+        indention(outfile, indent + 1);
+        fprintf(outfile, "access_type: function_call\n");
+        indention(outfile, indent + 1);
+        fprintf(outfile, "arguments {\n");
+        offset(Arguments*) args = node->access.func_call;
+        while (args != 0) {
+            Arguments* args_ptr = (Arguments*)offset_to_ptr(args);
+            output_arguments(args, outfile, indent + 2);
+            args = args_ptr->next;
+        }
+        indention(outfile, indent + 1);
+        fprintf(outfile, "}\n");
+    } else if (node->access_type == ACCESS_GET_SEQ) {
+        indention(outfile, indent + 1);
+        fprintf(outfile, "access_type: get_sequence\n");
+        output_expression(node->access.get_seq, outfile, indent + 1);
+    } else if (node->access_type == ACCESS_GET_ATTR) {
+        indention(outfile, indent + 1);
+        fprintf(outfile, "access_type: get_attribute\n");
+        indention(outfile, indent + 1);
+        fprintf(outfile, "attribute_name: '%s'\n", string_to_char_ptr(node->access.get_attr));
+    } else {
+        indention(outfile, indent + 1);
+        fprintf(outfile, "access_type: none\n");
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
+}
+
+void output_arguments(offset(Arguments*) ast_node, FILE* outfile, size_t indent) {
+    if (ast_node == 0) {
+        indention(outfile, indent);
+        fprintf(outfile, "Arguments: NULL\n");
+        return;
+    }
+    indention(outfile, indent);
+    fprintf(outfile, "Arguments {\n");
+    Arguments* node = (Arguments*)offset_to_ptr(ast_node);
+    output_expression(node->args, outfile, indent + 1);
+    indention(outfile, indent);
+    fprintf(outfile, "}\n");
 }
