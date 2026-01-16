@@ -17,7 +17,7 @@ class Test2 {
 
 func int main() {
     var Test2 t = Test2.init();
-    var arr nums = arr.init(int, 10);
+    var arr nums = arr.init("int", 10);
     nums[0] = 42;
     t.set_x(2 + t.get_x() * 10);  // 2 + 5 * 10 = 52
     print(t.get_x());  // should print 52

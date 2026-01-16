@@ -1,7 +1,7 @@
 /*
  * this test is used to test the lexer.
  */
-import print from "std"
+import print from "std";
 
 class Test1 {
     var int a = 10;
