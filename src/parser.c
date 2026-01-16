@@ -557,13 +557,34 @@ offset(Statement*) parse_statement(offset(Lexer*) lexer) {
             ((Statement*)offset_to_ptr(statement))->stmt.expr = parse_expression(lexer);
         else
             return parser_error("Unexpected keyword in statement", token);
-    } else
-        ((Statement*)offset_to_ptr(statement))->stmt.expr = parse_expression(lexer);
+    } else {
+        offset(Expression*) expr = parse_expression(lexer);
+        ((Statement*)offset_to_ptr(statement))->stmt.expr = expr;
+        // ((Statement*)offset_to_ptr(statement))->stmt.expr = parse_expression(lexer);
+        // ^ error, WHY??????????
+    }
+    Statement* stmt_ptr = (Statement*)offset_to_ptr(statement);
+    if ((stmt_ptr->type == EXPRESSION_STATEMENT && stmt_ptr->stmt.expr == 0))
+        return parser_error("Failed to parse expression statement content", token);
+    if ((stmt_ptr->type == VARIABLE_STATEMENT && stmt_ptr->stmt.var_decl == 0))
+        return parser_error("Failed to parse variable statement content", token);
+    if ((stmt_ptr->type == IF_STATEMENT && stmt_ptr->stmt.if_stmt == 0))
+        return parser_error("Failed to parse if statement content", token);
+    if ((stmt_ptr->type == WHILE_STATEMENT && stmt_ptr->stmt.while_stmt == 0))
+        return parser_error("Failed to parse while statement content", token);
+    if ((stmt_ptr->type == FOR_STATEMENT && stmt_ptr->stmt.for_stmt == 0))
+        return parser_error("Failed to parse for statement content", token);
+    if ((stmt_ptr->type == RETURN_STATEMENT && stmt_ptr->stmt.return_stmt == 0))
+        return parser_error("Failed to parse return statement content", token);
     token = next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
-    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
-        // parser_error("Expected ';' after statement", token);
-        token = next_token(lexer);
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL)) {
+        parser_error("Expected ';' after statement", token);
+        token = peek_token(lexer);
+        token_ptr = (Token*)offset_to_ptr(token);
+        if (token_ptr->type == SYMBOL && string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
+            token = next_token(lexer);  // consume ';'
+    }
     return statement;
 }
 
@@ -618,17 +639,23 @@ static offset(Expression*) parse_expr_rhs(offset(Lexer*) lexer, int expr_prec, o
         OperatorType op_type = OP_NONE;
         if (token_ptr->type == SYMBOL)
             op_type = str_to_type(token_ptr->lexeme);
-        if (op_type == OP_NONE)
+        if (op_type == OP_NONE) {
+            if (left == 0)
+                return parser_error("Failed to parse left-hand side expression", token);
             return left;
+        }
         int token_prec = operator_precedence(op_type);
 
-        if (token_prec < expr_prec)
+        if (token_prec < expr_prec) {
+            if (left == 0)
+                return parser_error("Failed to parse left-hand side expression", token);
             return left;
+        }
         next_token(lexer);  // consume operator
 
         token = next_token(lexer);
         token_ptr = (Token*)offset_to_ptr(token);
-        offset(Expression*) right = parse_primary(lexer);
+        offset(Expression*) right = create_expression(parse_primary(lexer), OP_NONE);
         if (right == 0)
             return parser_error("Failed to parse right-hand side expression", token);
 
@@ -658,7 +685,10 @@ offset(Expression*) parse_expression(offset(Lexer*) lexer) {
     offset(Primary*) prim = parse_primary(lexer);
     if (prim == 0)
         return parser_error("Failed to parse primary", token);
-    return parse_expr_rhs(lexer, 0, create_expression(prim, OP_NONE));
+    offset(Expression*) temp = parse_expr_rhs(lexer, 0, create_expression(prim, OP_NONE));
+    if (temp == 0)
+        return parser_error("Failed to parse expression", token);
+    return temp;
 }
 
 offset(If*) parse_if(offset(Lexer*) lexer) {
@@ -1201,7 +1231,9 @@ void output_expression(offset(Expression*) ast_node, FILE* outfile, size_t inden
     indention(outfile, indent);
     fprintf(outfile, "Expression {\n");
     Expression* node = (Expression*)offset_to_ptr(ast_node);
-    if (node->prim != 0) {
+    if (node->operator == OP_NONE) {
+        indention(outfile, indent + 1);
+        fprintf(outfile, "operator: None\n");
         output_primary(node->prim, outfile, indent + 1);
     } else {
         indention(outfile, indent + 1);
@@ -1224,7 +1256,7 @@ void output_expression(offset(Expression*) ast_node, FILE* outfile, size_t inden
         else if (node->operator == OP_MUL_ASSIGN) fprintf(outfile, "operator: *=\n");
         else if (node->operator == OP_DIV_ASSIGN) fprintf(outfile, "operator: /=\n");
         else if (node->operator == OP_MOD_ASSIGN) fprintf(outfile, "operator: %%=\n");
-        else fprintf(outfile, "operator: None\n");
+        else fprintf(outfile, "operator: UNKNOWN\n");
         output_expression(node->left, outfile, indent + 1);
         output_expression(node->right, outfile, indent + 1);
     }

@@ -77,6 +77,7 @@ static void increase_memory_size(void) {
         free(oldMemory);
         exit(1);
     }
+    fprintf(stderr, "Info: Increased memory size to %zu bytes\n", memorySize);
 }
 
 static string create_string_check(const char* data, size_t length, bool check) {
