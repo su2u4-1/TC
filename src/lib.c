@@ -5,7 +5,7 @@
 
 char* memory = NULL;
 static size_t memorySize = 1024;  // 1 KB
-static size_t memoryUsed = 0;
+static size_t memoryUsed = 8;
 bool initialized = false;
 
 static const char* keywordStrings[keywordCount] = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void", "var"};
