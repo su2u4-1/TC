@@ -1,0 +1,367 @@
+Code {
+    Import {
+        name: 'print'
+        source: 'std'
+    }
+    Function {
+        name: 'main'
+        return_type: 'int'
+        parameters {
+        }
+        body {
+            Statement {
+                type: return_statement
+                Expression {
+                    Primary {
+                        type: integer
+                        value: 0
+                    }
+                }
+            }
+            Statement {
+                type: variable_declaration
+                Variable {
+                    type: 'int'
+                    name: '_def456'
+                    Expression {
+                        Primary {
+                            type: integer
+                            value: 15
+                        }
+                    }
+                }
+            }
+            Statement {
+                type: variable_declaration
+                Variable {
+                    type: 'float'
+                    name: '_abc123'
+                    Expression {
+                        Primary {
+                            type: float
+                            value: 30.5
+                        }
+                    }
+                }
+            }
+            Statement {
+                type: expression
+                Expression {
+                    Primary {
+                        type: variable_access
+                        VariableAccess {
+                            name: '(null)'
+                            base {
+                                VariableAccess {
+                                    name: 'print'
+                                    access_type: none
+                                }
+                            }
+                            access_type: function_call
+                            arguments {
+                                Arguments {
+                                    Expression {
+                                        Primary {
+                                            type: variable_access
+                                            VariableAccess {
+                                                name: '(null)'
+                                                base {
+                                                    VariableAccess {
+                                                        name: '(null)'
+                                                        base {
+                                                            VariableAccess {
+                                                                name: 't'
+                                                                access_type: none
+                                                            }
+                                                        }
+                                                        access_type: get_attribute
+                                                        attribute_name: 'get_a'
+                                                    }
+                                                }
+                                                access_type: function_call
+                                                arguments {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Statement {
+                type: expression
+                Expression {
+                    Primary {
+                        type: variable_access
+                        VariableAccess {
+                            name: '(null)'
+                            base {
+                                VariableAccess {
+                                    name: '(null)'
+                                    base {
+                                        VariableAccess {
+                                            name: 't'
+                                            access_type: none
+                                        }
+                                    }
+                                    access_type: get_attribute
+                                    attribute_name: 'set_a'
+                                }
+                            }
+                            access_type: function_call
+                            arguments {
+                                Arguments {
+                                    Expression {
+                                        Primary {
+                                            type: integer
+                                            value: 20
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Statement {
+                type: expression
+                Expression {
+                    Primary {
+                        type: variable_access
+                        VariableAccess {
+                            name: '(null)'
+                            base {
+                                VariableAccess {
+                                    name: 'print'
+                                    access_type: none
+                                }
+                            }
+                            access_type: function_call
+                            arguments {
+                                Arguments {
+                                    Expression {
+                                        Primary {
+                                            type: variable_access
+                                            VariableAccess {
+                                                name: '(null)'
+                                                base {
+                                                    VariableAccess {
+                                                        name: '(null)'
+                                                        base {
+                                                            VariableAccess {
+                                                                name: 't'
+                                                                access_type: none
+                                                            }
+                                                        }
+                                                        access_type: get_attribute
+                                                        attribute_name: 'get_a'
+                                                    }
+                                                }
+                                                access_type: function_call
+                                                arguments {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Statement {
+                type: variable_declaration
+                Variable {
+                    type: 'Test1'
+                    name: 't'
+                    Expression {
+                        Primary {
+                            type: variable_access
+                            VariableAccess {
+                                name: '(null)'
+                                base {
+                                    VariableAccess {
+                                        name: '(null)'
+                                        base {
+                                            VariableAccess {
+                                                name: 'Test1'
+                                                access_type: none
+                                            }
+                                        }
+                                        access_type: get_attribute
+                                        attribute_name: 'init'
+                                    }
+                                }
+                                access_type: function_call
+                                arguments {
+                                    Arguments {
+                                        Expression {
+                                            Primary {
+                                                type: integer
+                                                value: 5
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    Class {
+        name: 'Test1'
+        methods {
+            Function {
+                name: 'set_a'
+                return_type: 'void'
+                parameters {
+                    Variable {
+                        type: 'int'
+                        name: 'value'
+                        Expression: NULL
+                    }
+                    Variable {
+                        type: 'self'
+                        name: 'self'
+                        Expression: NULL
+                    }
+                }
+                body {
+                    Statement {
+                        type: expression
+                        Expression {
+                            operator: =
+                            Expression {
+                                Primary {
+                                    type: variable_access
+                                    VariableAccess {
+                                        name: '(null)'
+                                        base {
+                                            VariableAccess {
+                                                name: 'self'
+                                                access_type: none
+                                            }
+                                        }
+                                        access_type: get_attribute
+                                        attribute_name: 'a'
+                                    }
+                                }
+                            }
+                            Expression {
+                                Primary {
+                                                                    }
+                            }
+                        }
+                    }
+                }
+            }
+            Function {
+                name: 'get_a'
+                return_type: 'int'
+                parameters {
+                    Variable {
+                        type: 'self'
+                        name: 'self'
+                        Expression: NULL
+                    }
+                }
+                body {
+                    Statement {
+                        type: return_statement
+                        Expression {
+                            Primary {
+                                type: variable_access
+                                VariableAccess {
+                                    name: '(null)'
+                                    base {
+                                        VariableAccess {
+                                            name: 'self'
+                                            access_type: none
+                                        }
+                                    }
+                                    access_type: get_attribute
+                                    attribute_name: 'a'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Function {
+                name: 'init'
+                return_type: 'Test1'
+                parameters {
+                    Variable {
+                        type: 'int'
+                        name: 'value'
+                        Expression: NULL
+                    }
+                    Variable {
+                        type: 'self'
+                        name: 'self'
+                        Expression: NULL
+                    }
+                }
+                body {
+                    Statement {
+                        type: return_statement
+                        Expression {
+                            Primary {
+                                type: variable_access
+                                VariableAccess {
+                                    name: 'self'
+                                    access_type: none
+                                }
+                            }
+                        }
+                    }
+                    Statement {
+                        type: expression
+                        Expression {
+                            operator: =
+                            Expression {
+                                Primary {
+                                    type: variable_access
+                                    VariableAccess {
+                                        name: '(null)'
+                                        base {
+                                            VariableAccess {
+                                                name: 'self'
+                                                access_type: none
+                                            }
+                                        }
+                                        access_type: get_attribute
+                                        attribute_name: 'a'
+                                    }
+                                }
+                            }
+                            Expression {
+                                Primary {
+                                                                    }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        attributes {
+            Variable {
+                type: 'int'
+                name: 'a'
+                Expression {
+                    Primary {
+                        type: integer
+                        value: 10
+                    }
+                }
+            }
+        }
+    }
+}
+
+info by lib:
+    Platform: 1, Memory Used: 16072 bytes, stringCount: 74, string compare count: 2584 0 0, Memory Block Count: 483
