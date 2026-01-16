@@ -361,14 +361,16 @@ offset(Function*) parse_function(offset(Lexer*) lexer) {
         offset(Statement*) stmt = parse_statement(lexer);
         if (stmt != 0) {
             Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
-            if (stmt_ptr->type == RETURN_STATEMENT)
-                have_return_statement = true;
             if ((stmt_ptr->type == BREAK_STATEMENT || stmt_ptr->type == CONTINUE_STATEMENT) && !in_loop)
                 parser_error("Break/Continue statement not within a loop", token);
+            else if (have_return_statement)
+                parser_error("Unreachable code after return statement", token);
             else {
                 stmt_ptr->next = body;
                 body = stmt;
             }
+            if (stmt_ptr->type == RETURN_STATEMENT)
+                have_return_statement = true;
         } else
             parser_error("Failed to parse statement in function body", token);
         token = get_next_token(lexer);
@@ -618,16 +620,21 @@ offset(If*) parse_if(offset(Lexer*) lexer) {
     token = get_next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Statement*) body = 0;
+    bool have_return_statement = false;
     while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
         offset(Statement*) stmt = parse_statement(lexer);
         if (stmt != 0) {
             Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
             if ((stmt_ptr->type == BREAK_STATEMENT || stmt_ptr->type == CONTINUE_STATEMENT) && !in_loop)
                 parser_error("Break/Continue statement not within a loop", token);
+            else if (have_return_statement)
+                parser_error("Unreachable code after return statement", token);
             else {
                 stmt_ptr->next = body;
                 body = stmt;
             }
+            if (stmt_ptr->type == RETURN_STATEMENT)
+                have_return_statement = true;
         } else
             parser_error("Failed to parse statement in if body", token);
         token = get_next_token(lexer);
@@ -649,16 +656,21 @@ offset(If*) parse_if(offset(Lexer*) lexer) {
                 return parser_error("Expected '{' to start else statement body", token);
             token = get_next_token(lexer);
             token_ptr = (Token*)offset_to_ptr(token);
+            have_return_statement = false;
             while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
                 offset(Statement*) stmt = parse_statement(lexer);
                 if (stmt != 0) {
                     Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
                     if ((stmt_ptr->type == BREAK_STATEMENT || stmt_ptr->type == CONTINUE_STATEMENT) && !in_loop)
                         parser_error("Break/Continue statement not within a loop", token);
+                    else if (have_return_statement)
+                        parser_error("Unreachable code after return statement", token);
                     else {
                         stmt_ptr->next = else_body;
                         else_body = stmt;
                     }
+                    if (stmt_ptr->type == RETURN_STATEMENT)
+                        have_return_statement = true;
                 } else
                     parser_error("Failed to parse statement in else body", token);
                 token = get_next_token(lexer);
@@ -697,12 +709,19 @@ offset(While*) parse_while(offset(Lexer*) lexer) {
     token = get_next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Statement*) body = 0;
+    bool have_return_statement = false;
     while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
         offset(Statement*) stmt = parse_statement(lexer);
         if (stmt != 0) {
-            Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
-            stmt_ptr->next = body;
-            body = stmt;
+            if (have_return_statement)
+                parser_error("Unreachable code after return statement", token);
+            else {
+                Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
+                stmt_ptr->next = body;
+                body = stmt;
+                if (stmt_ptr->type == RETURN_STATEMENT)
+                    have_return_statement = true;
+            }
         } else
             parser_error("Failed to parse statement in while body", token);
         token = get_next_token(lexer);
@@ -765,13 +784,19 @@ offset(For*) parse_for(offset(Lexer*) lexer) {
     token = get_next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     offset(Statement*) body = 0;
+    bool have_return_statement = false;
     while (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, R_BRACE_SYMBOL)) {
         offset(Statement*) stmt = parse_statement(lexer);
         if (stmt != 0) {
-            Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
-            stmt_ptr->next = body;
-            body = stmt;
-
+            if (have_return_statement)
+                parser_error("Unreachable code after return statement", token);
+            else {
+                Statement* stmt_ptr = (Statement*)offset_to_ptr(stmt);
+                stmt_ptr->next = body;
+                body = stmt;
+                if (stmt_ptr->type == RETURN_STATEMENT)
+                    have_return_statement = true;
+            }
         } else
             parser_error("Failed to parse statement in for body", token);
         token = get_next_token(lexer);
