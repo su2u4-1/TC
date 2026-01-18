@@ -141,7 +141,6 @@ offset(Code*) create_code(void) {
     code_ptr->imports = 0;
     code_ptr->functions = 0;
     code_ptr->classes = 0;
-    code_ptr->global_scope = 0;
     return code;
 }
 
@@ -161,7 +160,6 @@ offset(Function*) create_function(string name, string return_type) {
     function_ptr->return_type = return_type;
     function_ptr->parameters = 0;
     function_ptr->body = 0;
-    function_ptr->scope = 0;
     function_ptr->next = 0;
     return function;
 }
@@ -172,7 +170,6 @@ offset(Class*) create_class(string name) {
     class_ptr->name = name;
     class_ptr->methods = 0;
     class_ptr->attributes = 0;
-    class_ptr->local_scope = 0;
     class_ptr->next = 0;
     return class;
 }
@@ -282,17 +279,6 @@ offset(Arguments*) create_arguments(void) {
     args_ptr->args = 0;
     args_ptr->next = 0;
     return args;
-}
-
-offset(Scope*) create_scope(string name, offset(Type*) type) {
-    static size_t scope_id_counter = 0;
-    offset(Scope*) scope = alloc_memory(sizeof(Scope));
-    Scope* scope_ptr = (Scope*)offset_to_ptr(scope);
-    scope_ptr->name = name;
-    scope_ptr->type = type;
-    scope_ptr->id = scope_id_counter++;
-    scope_ptr->next = 0;
-    return scope;
 }
 
 offset(Code*) parser(offset(Lexer*) lexer) {

@@ -7,7 +7,6 @@ typedef struct Code {
     offset(Import*) imports;
     offset(Function*) functions;
     offset(Class*) classes;
-    offset(Scope*) global_scope;
 } Code;
 
 typedef struct Import {
@@ -21,7 +20,6 @@ typedef struct Function {
     string return_type;
     offset(Variable*) parameters;
     offset(Statement*) body;
-    offset(Scope*) scope;
     offset(Function*) next;
 } Function;
 
@@ -29,7 +27,6 @@ typedef struct Class {
     string name;
     offset(Function*) methods;
     offset(Variable*) attributes;
-    offset(Scope*) local_scope;
     offset(Class*) next;
 } Class;
 
@@ -157,13 +154,6 @@ typedef struct Arguments {
     offset(Expression*) args;
     offset(Arguments*) next;
 } Arguments;
-
-typedef struct Scope {
-    string name;
-    offset(Type*) type;
-    size_t id;
-    offset(Scope*) next;
-} Scope;
 
 // `Code* parser(Lexer* lexer)`
 offset(Code*) parser(offset(Lexer*) lexer);
