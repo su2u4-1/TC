@@ -246,3 +246,15 @@ string char_ptr_to_string(char* ptr) {
     }
     return (string)(ptr - memory);
 }
+
+void free_memory(void) {
+    if (memory != NULL) {
+        free(memory);
+        memory = NULL;
+        memorySize = 1024;
+        memoryUsed = 8;
+        initialized = false;
+        allStrings = 0;
+        memoryBlockCount = 0;
+    }
+}

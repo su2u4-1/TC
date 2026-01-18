@@ -5,8 +5,9 @@
 #define bool int
 #define true 1
 #define false 0
-#define string size_t
-#define offset(type) size_t
+typedef size_t string;
+typedef size_t offset_;
+#define offset(type) offset_
 #define ALIGN_SIZE (size_t)8
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
@@ -112,5 +113,7 @@ size_t* offset_to_ptr(offset() off);
 string char_ptr_to_string(char* ptr);
 // `offset ptr_to_offset(size_t* ptr)`
 offset() ptr_to_offset(size_t* ptr);
+// `void free_memory(void)`
+void free_memory(void);
 
 #endif  // LIB_H
