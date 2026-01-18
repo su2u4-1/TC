@@ -88,7 +88,8 @@ offset(Token*) get_next_token(offset(Lexer*) lexer) {
         while ('0' <= c && c <= '9')
             c = get_current_char(lexer);
         TokenType type = INTEGER;
-        if (c == '.') {
+        char p = peek_next_char(lexer);
+        if (c == '.' && ('0' <= p && p <= '9')) {
             c = get_current_char(lexer);
             while ('0' <= c && c <= '9')
                 c = get_current_char(lexer);
