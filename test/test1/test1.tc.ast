@@ -12,6 +12,7 @@ Code {
             Statement {
                 type: return_statement
                 Expression {
+                    operator: None
                     Primary {
                         type: integer
                         value: 0
@@ -24,6 +25,7 @@ Code {
                     type: 'int'
                     name: '_def456'
                     Expression {
+                        operator: None
                         Primary {
                             type: integer
                             value: 15
@@ -37,6 +39,7 @@ Code {
                     type: 'float'
                     name: '_abc123'
                     Expression {
+                        operator: None
                         Primary {
                             type: float
                             value: 30.5
@@ -47,6 +50,7 @@ Code {
             Statement {
                 type: expression
                 Expression {
+                    operator: None
                     Primary {
                         type: variable_access
                         VariableAccess {
@@ -61,6 +65,7 @@ Code {
                             arguments {
                                 Arguments {
                                     Expression {
+                                        operator: None
                                         Primary {
                                             type: variable_access
                                             VariableAccess {
@@ -93,6 +98,7 @@ Code {
             Statement {
                 type: expression
                 Expression {
+                    operator: None
                     Primary {
                         type: variable_access
                         VariableAccess {
@@ -114,6 +120,7 @@ Code {
                             arguments {
                                 Arguments {
                                     Expression {
+                                        operator: None
                                         Primary {
                                             type: integer
                                             value: 20
@@ -128,6 +135,7 @@ Code {
             Statement {
                 type: expression
                 Expression {
+                    operator: None
                     Primary {
                         type: variable_access
                         VariableAccess {
@@ -142,6 +150,7 @@ Code {
                             arguments {
                                 Arguments {
                                     Expression {
+                                        operator: None
                                         Primary {
                                             type: variable_access
                                             VariableAccess {
@@ -177,6 +186,7 @@ Code {
                     type: 'Test1'
                     name: 't'
                     Expression {
+                        operator: None
                         Primary {
                             type: variable_access
                             VariableAccess {
@@ -198,6 +208,7 @@ Code {
                                 arguments {
                                     Arguments {
                                         Expression {
+                                            operator: None
                                             Primary {
                                                 type: integer
                                                 value: 5
@@ -236,6 +247,7 @@ Code {
                         Expression {
                             operator: =
                             Expression {
+                                operator: None
                                 Primary {
                                     type: variable_access
                                     VariableAccess {
@@ -252,8 +264,14 @@ Code {
                                 }
                             }
                             Expression {
+                                operator: None
                                 Primary {
-                                                                    }
+                                    type: variable_access
+                                    VariableAccess {
+                                        name: 'value'
+                                        access_type: none
+                                    }
+                                }
                             }
                         }
                     }
@@ -273,6 +291,7 @@ Code {
                     Statement {
                         type: return_statement
                         Expression {
+                            operator: None
                             Primary {
                                 type: variable_access
                                 VariableAccess {
@@ -310,6 +329,7 @@ Code {
                     Statement {
                         type: return_statement
                         Expression {
+                            operator: None
                             Primary {
                                 type: variable_access
                                 VariableAccess {
@@ -324,6 +344,7 @@ Code {
                         Expression {
                             operator: =
                             Expression {
+                                operator: None
                                 Primary {
                                     type: variable_access
                                     VariableAccess {
@@ -340,8 +361,14 @@ Code {
                                 }
                             }
                             Expression {
+                                operator: None
                                 Primary {
-                                                                    }
+                                    type: variable_access
+                                    VariableAccess {
+                                        name: 'value'
+                                        access_type: none
+                                    }
+                                }
                             }
                         }
                     }
@@ -353,6 +380,7 @@ Code {
                 type: 'int'
                 name: 'a'
                 Expression {
+                    operator: None
                     Primary {
                         type: integer
                         value: 10
@@ -364,4 +392,4 @@ Code {
 }
 
 info by lib:
-    Platform: 1, Memory Used: 16072 bytes, stringCount: 74, string compare count: 2584 0 0, Memory Block Count: 483
+    Platform: 1, Memory Used: 16136 bytes, stringCount: 74, string compare count: 2584 0 0, Memory Block Count: 485

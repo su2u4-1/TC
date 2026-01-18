@@ -1,8 +1,5 @@
 #include "lib.h"
 
-#include <stddef.h>
-#include <string.h>
-
 char* memory = NULL;
 static size_t memorySize = 1024;  // 1 KB
 static size_t memoryUsed = 8;
@@ -191,6 +188,7 @@ size_t alloc_memory(size_t size) {
     size_t ptr = memoryUsed = (memoryUsed + ALIGN_SIZE - 1) & ~(ALIGN_SIZE - 1);
     memoryUsed += size;
     ++memoryBlockCount;
+    assert(ptr % ALIGN_SIZE == 0);
     return ptr;
 }
 
@@ -234,6 +232,7 @@ char* string_to_char_ptr(string str) {
 
 size_t* offset_to_ptr(offset() off) {
     if (off <= 0 || off >= memoryUsed) return NULL;
+    assert(off % ALIGN_SIZE == 0);
     return (size_t*)(void*)(memory + off);
 }
 
