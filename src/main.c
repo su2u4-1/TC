@@ -2,6 +2,17 @@
 #include "lib.h"
 #include "parser.h"
 
+#define MAX_FILENAME_SIZE 256
+
+static void string_append(char* dest, const size_t dest_length, const char* src, const char* new) {
+    size_t src_length = strlen(src), new_length = strlen(new);
+    if (dest_length <= src_length + new_length) {
+        size_t max_src_length = dest_length - new_length - 1;
+        snprintf(dest, dest_length, "%.*s%s", (int)max_src_length, src, new);
+    } else
+        sprintf(dest, "%s%s", src, new);
+}
+
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
@@ -26,8 +37,8 @@ int main(int argc, char* argv[]) {
 
     // test lexer
     offset(Lexer*) lexer = create_lexer(source, length);
-    char out_token_name[256];
-    sprintf(out_token_name, "%s.token", filename);
+    char out_token_name[MAX_FILENAME_SIZE];
+    string_append(out_token_name, MAX_FILENAME_SIZE, filename, ".token");
     FILE* out_token = fopen(out_token_name, "w");
     if (out_token == NULL) {
         fprintf(stderr, "Error opening file: %s\n", out_token_name);
@@ -74,8 +85,8 @@ int main(int argc, char* argv[]) {
     fclose(out_token);
 
     // test parser
-    char out_ast_name[256];
-    sprintf(out_ast_name, "%s.ast", filename);
+    char out_ast_name[MAX_FILENAME_SIZE];
+    string_append(out_ast_name, MAX_FILENAME_SIZE, filename, ".ast");
     FILE* out_ast = fopen(out_ast_name, "w");
     if (out_ast == NULL) {
         fprintf(stderr, "Error opening file: %s\n", out_ast_name);
