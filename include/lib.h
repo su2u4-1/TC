@@ -14,7 +14,7 @@
 typedef size_t string;
 typedef size_t offset_;
 #define offset(type) offset_
-#define ALIGN_SIZE (size_t)8
+#define ALIGN_SIZE sizeof(size_t)
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #define PLATFORM 1  // WINDOWS
