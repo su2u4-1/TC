@@ -1,38 +1,45 @@
+code_member {
+    enum CodeMemberType type;
+    union {
+        import* import;
+        function* function;
+        class* class;
+    } content;
+}
+
 code {
-    import* imports;
-    function* functions;
-    class* classes;
-    scope* global_scope;
+    list(code_member) members;
 };
 
 import {
     string(identifier) name;
     string source;
-    import* next;
 };
 
 function {
     string(identifier) name;
     string(type) return_type;
-    variable* parameters;
-    statement* body;
-    scope* local_scope;
-    function* next;
+    list(variable) parameters;
+    list(statement) body;
+};
+
+class_member {
+    enum ClassMemberType type;
+    union {
+        function* method;
+        variable* attribute;
+    } content;
 };
 
 class {
     string(identifier) name;
-    function* methods;
-    variable* attributes;
-    scope* local_scope;
-    class* next;
+    list(class_member) members;
 };
 
 variable {
     string(type) var_type;
     string(identifier) name;
     expression* value;
-    variable* next;
 };
 
 statement {
@@ -45,11 +52,9 @@ statement {
         for* for_stmt;
         expression* return_stmt;
     } stmt;
-    statement* next;
 };
 
 expression {
-    primary* prim;
     enum operatorType operator;
     expression* left;
     expression* right;
@@ -57,21 +62,21 @@ expression {
 
 if {
     expression* condition;
-    statement* body;
-    if* else_if;
-    statement* else_body;
+    list(statement) body;
+    list(if) elif;
+    list(statement) else_body;
 };
 
 while {
     expression* condition;
-    statement* body;
+    list(statement) body;
 };
 
 for {
     variable* init;
     expression* condition;
     expression* increment;
-    statement* body;
+    list(statement) body;
 };
 
 primary {
@@ -89,26 +94,24 @@ primary {
 };
 
 variable_access {
-    enum BaseType base_type;
+    enum AccessType access_type;  // name, func_call, get_attr, get_seq
     union {
         string(identifier) name;
         variable_access* var;
     } base;
-    enum AccessType access_type;
     union {
-        arguments* func_call;
+        list(expression) func_call;
         string(identifier) get_attr;
         expression* get_seq;
     } access;
 };
 
-arguments {
-    expression* args;
-    arguments* next;
+node<T> {
+    T* content;
+    node<T>* next;
 };
 
-scope {
-    string name;
-    type* types;
-    size_t id;
+list<T> {
+    node<T>* head;
+    node<T>* tail;
 };
