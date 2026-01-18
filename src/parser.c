@@ -29,8 +29,6 @@ static offset(Primary*) create_primary(PrimaryType type);
 static offset(VariableAccess*) create_variable_access(AccessType type);
 // `static Arguments* create_arguments(void)`
 static offset(Arguments*) create_arguments(void);
-// `static Scope* create_scope(string name, Type* type)`
-static offset(Scope*) create_scope(string name, offset(Type*) type);
 
 // `static Import* parse_import(Lexer* lexer)`
 static offset(Import*) parse_import(offset(Lexer*) lexer);

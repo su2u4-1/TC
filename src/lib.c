@@ -204,24 +204,29 @@ static int string_compare_count[3] = {0, 0, 0};
 
 bool string_equal(string a, string b) {
     ++string_compare_count[0];
-    if (a < memoryUsed && b < memoryUsed) return a == b;
-    --string_compare_count[0];
-    ++string_compare_count[1];
-    if (a == 0 || b == 0) return false;
+    if (a < memoryUsed && b < memoryUsed) {
+        if (a == b)
+            return true;
+        --string_compare_count[0];
+        ++string_compare_count[1];
+        return false;
+    }
     --string_compare_count[1];
     ++string_compare_count[2];
+    if (a == 0 || b == 0) return false;
     return strcmp(string_to_char_ptr(a), string_to_char_ptr(b)) == 0;
 }
 
 string get_info(void) {
-    string info = (string)create_string_not_check("", 192);
+    string info = (string)create_string_not_check("", 256);
     size_t stringCount = 0;
     StringList* current = (StringList*)offset_to_ptr(allStrings);
     while (current != NULL) {
         stringCount++;
         current = (StringList*)offset_to_ptr(current->next);
     }
-    sprintf(string_to_char_ptr(info), "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: %d %d %d, Memory Block Count: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount);
+    // max: 231 char
+    sprintf(string_to_char_ptr(info), "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: fast-true: %d fast-false: %d fast-not: %d, Memory Block Count: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount);
     return info;
 }
 

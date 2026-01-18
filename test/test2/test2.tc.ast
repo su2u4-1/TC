@@ -608,4 +608,4 @@ Code {
 }
 
 info by lib:
-    Platform: 1, Memory Used: 22504 bytes, stringCount: 81, string compare count: 3115 0 0, Memory Block Count: 688
+    Platform: 1, Memory Used: 22456 bytes, stringCount: 81, string compare count: 187 2928 0, Memory Block Count: 688
