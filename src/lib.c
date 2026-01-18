@@ -239,7 +239,10 @@ size_t* offset_to_ptr(offset() off) {
 
 string char_ptr_to_string(char* ptr) {
     if (ptr < memory || ptr >= memory + memoryUsed) {
-        fprintf(stderr, "Error: ptr_to_string received invalid pointer: ptr - memory: %lu\n", ptr - memory);
+        if (ptr < memory)
+            fprintf(stderr, "Error: ptr_to_string received invalid pointer: memory - ptr: %zu\n", memory - ptr);
+        else
+            fprintf(stderr, "Error: ptr_to_string received invalid pointer: ptr - memory: %zu\n", ptr - memory);
         return 0;
     }
     return (string)(ptr - memory);

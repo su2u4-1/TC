@@ -561,7 +561,6 @@ offset(Statement*) parse_statement(offset(Lexer*) lexer) {
         offset(Expression*) expr = parse_expression(lexer);
         ((Statement*)offset_to_ptr(statement))->stmt.expr = expr;
         // ((Statement*)offset_to_ptr(statement))->stmt.expr = parse_expression(lexer);
-        // ^ error, WHY??????????
     }
     Statement* stmt_ptr = (Statement*)offset_to_ptr(statement);
     if ((stmt_ptr->type == EXPRESSION_STATEMENT && stmt_ptr->stmt.expr == 0))
