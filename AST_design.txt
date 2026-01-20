@@ -8,7 +8,8 @@ code_member {
 }
 
 code {
-    list(code_member) members;
+    list<code_member> members;
+    scope* global_scope;
 };
 
 import {
@@ -19,21 +20,31 @@ import {
 function {
     string(identifier) name;
     string(type) return_type;
-    list(variable) parameters;
-    list(statement) body;
+    list<variable> parameters;
+    list<statement> body;
+    scope* function_scope;
+};
+
+method {
+    string(identifier) name;
+    string(type) return_type;
+    list<variable> parameters;
+    list<statement> body;
+    scope* method_scope;
 };
 
 class_member {
     enum ClassMemberType type;
     union {
-        function* method;
+        method* method;
         variable* attribute;
     } content;
 };
 
 class {
     string(identifier) name;
-    list(class_member) members;
+    list<class_member> members;
+    scope* class_scope;
 };
 
 variable {
@@ -54,42 +65,43 @@ statement {
     } stmt;
 };
 
-expression {
-    enum operatorType operator;
-    expression* left;
-    expression* right;
-};
-
 if {
     expression* condition;
-    list(statement) body;
-    list(if) elif;
-    list(statement) else_body;
+    list<statement> body;
+    list<else_if> else_if;
+    list<statement> else_body;
+};
+
+else_if {
+    expression* condition;
+    list<statement> body;
+};
+
+for {
+    variable* initializer;
+    expression* condition;
+    expression* increment;
+    list<statement> body;
 };
 
 while {
     expression* condition;
-    list(statement) body;
+    list<statement> body;
 };
 
-for {
-    variable* init;
-    expression* condition;
-    expression* increment;
-    list(statement) body;
+expression {
+    enum operatorType operator;
+    (expression* | primary*) left;
+    expression* right;
 };
 
 primary {
     enum PrimaryType type;
     union {
-        string int_value;
-        string float_value;
-        string string_value;
-        string bool_value;
-        expression* expr;
-        primary* not_operand;
-        primary* neg_operand;
-        variable_access* var_access;
+        string literal_value;   // int, float, string, true, false
+        expression* expr;       // expr
+        primary* operand;       // not, neg
+        variable_access* var;   // variable access
     } value;
 };
 
@@ -100,11 +112,16 @@ variable_access {
         variable_access* var;
     } base;
     union {
-        list(expression) func_call;
+        list<expression> func_call;
         string(identifier) get_attr;
         expression* get_seq;
     } access;
 };
+
+scope {
+    scope* parent;
+    map<string, pair<string(type), int>> variables;
+}
 
 node<T> {
     T* content;
