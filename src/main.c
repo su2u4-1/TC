@@ -35,6 +35,12 @@ int main(int argc, char* argv[]) {
     source[length] = '\0';
     fclose(file);
 
+    // preprocess source code
+    for (size_t i = 0; i < length; ++i) {
+        if (source[i] == '\r' || source[i] == '\t')
+            source[i] = ' ';  // normalize line endings and tabs
+    }
+
     // test lexer
     offset(Lexer*) lexer = create_lexer(source, length);
     char out_token_name[MAX_FILENAME_SIZE];
