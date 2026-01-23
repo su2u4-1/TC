@@ -27,6 +27,9 @@ typedef struct Lexer {
     size_t line;
     size_t column;
     offset(Token*) peeked_token;
+    size_t peeked_position;
+    size_t peeked_line;
+    size_t peeked_column;
 } Lexer;
 
 // `Lexer* create_lexer(string source, size_t length)`

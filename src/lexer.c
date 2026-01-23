@@ -11,6 +11,9 @@ offset(Lexer*) create_lexer(char* source, size_t length) {
     lexer_ptr->line = 0;
     lexer_ptr->column = 0;
     lexer_ptr->peeked_token = 0;
+    lexer_ptr->peeked_position = 0;
+    lexer_ptr->peeked_line = 0;
+    lexer_ptr->peeked_column = 0;
     return lexer;
 }
 
@@ -66,6 +69,9 @@ offset(Token*) get_next_token(offset(Lexer*) lexer) {
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
     if (lexer_ptr->peeked_token != 0) {
         offset(Token*) cached_token = lexer_ptr->peeked_token;
+        lexer_ptr->position = lexer_ptr->peeked_position;
+        lexer_ptr->line = lexer_ptr->peeked_line;
+        lexer_ptr->column = lexer_ptr->peeked_column;
         lexer_ptr->peeked_token = 0;
         return cached_token;
     }
@@ -227,6 +233,9 @@ offset(Token*) peek_next_token(offset(Lexer*) lexer) {
     size_t saved_line = lexer_ptr->line;
     size_t saved_column = lexer_ptr->column;
     offset(Token*) token = get_next_token(lexer);
+    lexer_ptr->peeked_position = lexer_ptr->position;
+    lexer_ptr->peeked_line = lexer_ptr->line;
+    lexer_ptr->peeked_column = lexer_ptr->column;
     lexer_ptr->position = saved_position;
     lexer_ptr->line = saved_line;
     lexer_ptr->column = saved_column;
