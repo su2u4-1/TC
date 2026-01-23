@@ -105,8 +105,8 @@ bool is_keyword(const string str);
 bool string_equal(string a, string b);
 // `string get_info(void)`
 string get_info(void);
-// `char* string_to_char_ptr(string str)`
-char* string_to_char_ptr(string str);
+// `char* string_to_cstr(string str)`
+char* string_to_cstr(string str);
 // `size_t* offset_to_ptr(offset off)`
 size_t* offset_to_ptr(offset() off);
 // `string ptr_to_offset(char* ptr)`

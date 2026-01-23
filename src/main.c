@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
     size_t length = (size_t)ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char* source = string_to_char_ptr(alloc_memory(length + 1));
+    char* source = string_to_cstr(alloc_memory(length + 1));
     fread(source, 1, length, file);
     source[length] = '\0';
     fclose(file);
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
         else if (token->type == COMMENT)
             fprintf(out_token, "Token(Type: comment,    Line: ");
         fprintf(out_token, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        char* lexeme_ptr = string_to_char_ptr(token->lexeme);
+        char* lexeme_ptr = string_to_cstr(token->lexeme);
         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
             char c = lexeme_ptr[i];
             if (c == '\0')
@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
         }
         fprintf(out_token, "' (%zu)\n", token->lexeme);
     }
-    fprintf(out_token, "\ninfo by lib:\n    %s\n", string_to_char_ptr(get_info()));
+    fprintf(out_token, "\ninfo by lib:\n    %s\n", string_to_cstr(get_info()));
     fclose(out_token);
 
     // test parser
@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
     lexer = create_lexer(source, length);
     offset(Code*) ast_root = parser(lexer);
     output_ast(ast_root, out_ast, 0);
-    fprintf(out_ast, "\ninfo by lib:\n    %s\n", string_to_char_ptr(get_info()));
+    fprintf(out_ast, "\ninfo by lib:\n    %s\n", string_to_cstr(get_info()));
     fclose(out_ast);
 
     return 0;

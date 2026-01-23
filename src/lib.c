@@ -84,7 +84,7 @@ static string create_string_check(const char* data, size_t length, bool check) {
         StringList* current = (StringList*)offset_to_ptr(allStrings);
         string existing = 0;
         while (current != NULL) {
-            if (current->length == length && current->str != 0 && strncmp(string_to_char_ptr(current->str), data, length) == 0)
+            if (current->length == length && current->str != 0 && strncmp(string_to_cstr(current->str), data, length) == 0)
                 existing = current->str;
             current = (StringList*)offset_to_ptr(current->next);
         }
@@ -214,7 +214,7 @@ bool string_equal(string a, string b) {
     --string_compare_count[1];
     ++string_compare_count[2];
     if (a == 0 || b == 0) return false;
-    return strcmp(string_to_char_ptr(a), string_to_char_ptr(b)) == 0;
+    return strcmp(string_to_cstr(a), string_to_cstr(b)) == 0;
 }
 
 string get_info(void) {
@@ -226,11 +226,11 @@ string get_info(void) {
         current = (StringList*)offset_to_ptr(current->next);
     }
     // max: 231 char
-    sprintf(string_to_char_ptr(info), "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: fast-true: %d fast-false: %d fast-not: %d, Memory Block Count: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount);
+    sprintf(string_to_cstr(info), "Platform: %d, Memory Used: %zu bytes, stringCount: %zu, string compare count: fast-true: %d fast-false: %d fast-not: %d, Memory Block Count: %zu", PLATFORM, memoryUsed, stringCount, string_compare_count[0], string_compare_count[1], string_compare_count[2], memoryBlockCount);
     return info;
 }
 
-char* string_to_char_ptr(string str) {
+char* string_to_cstr(string str) {
     if (str <= 0 || str >= memoryUsed) return NULL;
     return memory + str;
 }
