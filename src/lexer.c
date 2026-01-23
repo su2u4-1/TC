@@ -1,7 +1,5 @@
 #include "lexer.h"
 
-#include "lib.h"
-
 offset(Lexer*) create_lexer(char* source, size_t length) {
     offset(Lexer*) lexer = alloc_memory(sizeof(Lexer));
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
