@@ -83,12 +83,23 @@ static Token* token_ptr = NULL;
 static offset(Token*) current_token = 0;
 // `static Token* get_next_token(Lexer* lexer)`
 static offset(Token*) next_token(offset(Lexer*) lexer) {
-    token = current_token = get_next_token(lexer);
+    while (true) {
+        current_token = get_next_token(lexer);
+        if (current_token == 0) {
+            fprintf(stderr, "Error: get_next_token returned NULL\n");
+            token = 0;
+            token_ptr = NULL;
+            return token;
+        }
+        if (((Token*)offset_to_ptr(current_token))->type != COMMENT)
+            break;
+    }
+    token = current_token;
     token_ptr = (Token*)offset_to_ptr(token);
     return token;
 }
-// `static Token* peek_current_token(Lexer* lexer)`
-static offset(Token*) peek_current_token(offset(Lexer*) lexer) {
+// `static Token* peek_current_token(void)`
+static offset(Token*) peek_current_token(void) {
     token = current_token;
     token_ptr = (Token*)offset_to_ptr(token);
     return token;
@@ -396,6 +407,7 @@ offset(Code*) parse_code(offset(Lexer*) lexer) {
             list_append(members, create_code_member(CODE_CLASS, class_));
         } else
             parser_error("Unexpected token in code member", token);
+        next_token(lexer);
     }
     return create_code(members, global_scope);
 }
@@ -405,15 +417,16 @@ offset(Import*) parse_import(offset(Lexer*) lexer) {
         return parser_error("Expected identifier after 'import'", token);
     string name = token_ptr->lexeme;
     string source = 0;
-    peek_token(lexer);
+    next_token(lexer);
     if (token_ptr->type == KEYWORD && string_equal(token_ptr->lexeme, FROM_KEYWORD)) {
-        next_token(lexer);  // consume 'from'
         next_token(lexer);
         if (token_ptr->type != STRING)
             return parser_error("Expected string literal after 'from'", token);
         source = token_ptr->lexeme;
         next_token(lexer);
     }
+    if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
+        return parser_error("Expected ';' at end of import statement", token);
     return create_import(name, source);
 }
 offset(Function*) parse_function(offset(Lexer*) lexer) {
@@ -550,6 +563,9 @@ offset(Class*) parse_class(offset(Lexer*) lexer) {
             if (variable == 0)
                 parser_error("Failed to parse class variable", token);
             list_append(members, create_class_member(CLASS_VARIABLE, variable));
+            next_token(lexer);
+            if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
+                parser_error("Expected ';' after class variable declaration", token);
         } else
             parser_error("Unexpected token in class member", token);
         next_token(lexer);
@@ -557,7 +573,7 @@ offset(Class*) parse_class(offset(Lexer*) lexer) {
     return create_class(name, members, class_scope);
 }
 offset(Variable*) parse_variable(offset(Lexer*) lexer) {
-    peek_current_token(lexer);
+    peek_current_token();
     if (token_ptr->type != IDENTIFIER && !(token_ptr->type == KEYWORD && is_builtin_type(token_ptr->lexeme)))
         return parser_error("Expected variable type", token);
     string type = token_ptr->lexeme;
@@ -577,7 +593,7 @@ offset(Variable*) parse_variable(offset(Lexer*) lexer) {
     return create_variable(type, name, value);
 }
 offset(Statement*) parse_statement(offset(Lexer*) lexer) {
-    peek_current_token(lexer);
+    peek_current_token();
     offset(Statement*) statement = 0;
     if (token_ptr->type == KEYWORD) {
         if (string_equal(token_ptr->lexeme, IF_KEYWORD))
@@ -678,7 +694,7 @@ offset(If*) parse_if(offset(Lexer*) lexer) {
             next_token(lexer);
         }
     }
-    peek_current_token(lexer);
+    peek_current_token();
     return create_if(condition, body, else_if, else_body);
 }
 offset(For*) parse_for(offset(Lexer*) lexer) {
@@ -781,7 +797,7 @@ static offset(Expression*) parse_expr_prec(offset(Lexer*) lexer, offset(Expressi
         }
         left = create_expression(op, left, right);
     }
-    peek_current_token(lexer);
+    peek_current_token();
     return left;
 }
 offset(Expression*) parse_expression(offset(Lexer*) lexer) {
@@ -791,7 +807,7 @@ offset(Expression*) parse_expression(offset(Lexer*) lexer) {
     return parse_expr_prec(lexer, create_expression(OP_NONE, left_primary, 0), 0);
 }
 offset(Primary*) parse_primary(offset(Lexer*) lexer) {
-    peek_current_token(lexer);
+    peek_current_token();
     PrimaryType type;
     offset(string | Expression * | Primary * | VariableAccess*) value = 0;
     if (token_ptr->type == INTEGER) {
@@ -830,7 +846,7 @@ offset(Primary*) parse_primary(offset(Lexer*) lexer) {
         value = parse_primary(lexer);
         if (value == 0)
             return parser_error("Failed to parse operand of unary '-'", token);
-    } else if (token_ptr->type == IDENTIFIER) {
+    } else if (token_ptr->type == IDENTIFIER || (token_ptr->type == KEYWORD && string_equal(token_ptr->lexeme, SELF_KEYWORD))) {
         type = PRIM_VARIABLE_ACCESS;
         value = parse_variable_access(lexer);
         if (value == 0)
@@ -840,7 +856,7 @@ offset(Primary*) parse_primary(offset(Lexer*) lexer) {
     return create_primary(type, value);
 }
 offset(VariableAccess*) parse_variable_access(offset(Lexer*) lexer) {
-    if (token_ptr->type != IDENTIFIER)
+    if (token_ptr->type != IDENTIFIER && !(token_ptr->type == KEYWORD && string_equal(token_ptr->lexeme, SELF_KEYWORD)))
         return parser_error("Expected variable name in variable access", token);
     offset(VariableAccess*) base = create_variable_access(VAR_NAME, 0, token_ptr->lexeme);
     peek_token(lexer);
@@ -879,6 +895,7 @@ offset(VariableAccess*) parse_variable_access(offset(Lexer*) lexer) {
             base = create_variable_access(VAR_GET_ATTR, base, token_ptr->lexeme);
         } else
             break;
+        peek_token(lexer);
     }
     return base;
 }
