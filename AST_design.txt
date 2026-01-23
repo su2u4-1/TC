@@ -48,7 +48,7 @@ class {
 };
 
 variable {
-    string(type) var_type;
+    string(type) type;
     string(identifier) name;
     expression* value;
 };
