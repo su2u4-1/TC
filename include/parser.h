@@ -210,13 +210,7 @@ typedef struct Node {
 // public functions
 // `Code* parser(Lexer* lexer)`
 offset(Code*) parser(offset(Lexer*) lexer);
-// `int operator_precedence(string op)`
-int operator_precedence(OperatorType op);
 // `void output_ast(Code* ast_node, FILE* outfile, size_t indent)`
 void output_ast(offset(Code*) ast_node, FILE* outfile, size_t indent);
-// `OperatorType string_to_operator(string str)`
-OperatorType string_to_operator(string str);
-
-#undef list
 
 #endif  // PARSER_H
