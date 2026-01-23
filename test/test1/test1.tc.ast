@@ -1,3 +1,196 @@
+├── import
+│   ├── name: "print"
+│   └── source: "std"
+├── class
+│   ├── name: "Test1"
+│   └── members
+│       ├── variable
+│       │   ├── type: "int"
+│       │   ├── name: "a"
+│       │   └── value
+│       │       └── primary
+│       │           ├── type: "integer"
+│       │           └── value: 10
+│       ├── method
+│       │   ├── name: "init"
+│       │   ├── return_type: "Test1"
+│       │   ├── parameters
+│       │   │   ├── parameters[0]
+│       │   │   │   ├── type: "self"
+│       │   │   │   ├── name: "self"
+│       │   │   │   └── value: "NULL"
+│       │   │   └── parameters[1]
+│       │   │       ├── type: "int"
+│       │   │       ├── name: "value"
+│       │   │       └── value: "NULL"
+│       │   └── body
+│       │       ├── expression_statement
+│       │       │   ├── operator: "="
+│       │       │   ├── left
+│       │       │   │   └── primary
+│       │       │   │       ├── type: "variable"
+│       │       │   │       └── value
+│       │       │   │           ├── type: "get_attribute"
+│       │       │   │           ├── object
+│       │       │   │           │   ├── type: "name"
+│       │       │   │           │   └── name: "self"
+│       │       │   │           └── attribute_name: "a"
+│       │       │   └── right
+│       │       │       └── primary
+│       │       │           ├── type: "variable"
+│       │       │           └── value
+│       │       │               ├── type: "name"
+│       │       │               └── name: "value"
+│       │       └── return_statement
+│       │           └── primary
+│       │               ├── type: "variable"
+│       │               └── value
+│       │                   ├── type: "name"
+│       │                   └── name: "self"
+│       ├── method
+│       │   ├── name: "get_a"
+│       │   ├── return_type: "int"
+│       │   ├── parameters
+│       │   │   └── parameters[0]
+│       │   │       ├── type: "self"
+│       │   │       ├── name: "self"
+│       │   │       └── value: "NULL"
+│       │   └── body
+│       │       └── return_statement
+│       │           └── primary
+│       │               ├── type: "variable"
+│       │               └── value
+│       │                   ├── type: "get_attribute"
+│       │                   ├── object
+│       │                   │   ├── type: "name"
+│       │                   │   └── name: "self"
+│       │                   └── attribute_name: "a"
+│       └── method
+│           ├── name: "set_a"
+│           ├── return_type: "void"
+│           ├── parameters
+│           │   ├── parameters[0]
+│           │   │   ├── type: "self"
+│           │   │   ├── name: "self"
+│           │   │   └── value: "NULL"
+│           │   └── parameters[1]
+│           │       ├── type: "int"
+│           │       ├── name: "value"
+│           │       └── value: "NULL"
+│           └── body
+│               └── expression_statement
+│                   ├── operator: "="
+│                   ├── left
+│                   │   └── primary
+│                   │       ├── type: "variable"
+│                   │       └── value
+│                   │           ├── type: "get_attribute"
+│                   │           ├── object
+│                   │           │   ├── type: "name"
+│                   │           │   └── name: "self"
+│                   │           └── attribute_name: "a"
+│                   └── right
+│                       └── primary
+│                           ├── type: "variable"
+│                           └── value
+│                               ├── type: "name"
+│                               └── name: "value"
+└── function
+    ├── name: "main"
+    ├── return_type: "int"
+    ├── parameters
+    └── body
+        ├── variable_declaration_statement
+        │   ├── type: "Test1"
+        │   ├── name: "t"
+        │   └── value
+        │       └── primary
+        │           ├── type: "variable"
+        │           └── value
+        │               ├── type: "function_call"
+        │               ├── function
+        │               │   ├── type: "get_attribute"
+        │               │   ├── object
+        │               │   │   ├── type: "name"
+        │               │   │   └── name: "Test1"
+        │               │   └── attribute_name: "init"
+        │               └── arguments
+        │                   └── primary
+        │                       ├── type: "integer"
+        │                       └── value: 5
+        ├── expression_statement
+        │   └── primary
+        │       ├── type: "variable"
+        │       └── value
+        │           ├── type: "function_call"
+        │           ├── function
+        │           │   ├── type: "name"
+        │           │   └── name: "print"
+        │           └── arguments
+        │               └── primary
+        │                   ├── type: "variable"
+        │                   └── value
+        │                       ├── type: "function_call"
+        │                       ├── function
+        │                       │   ├── type: "get_attribute"
+        │                       │   ├── object
+        │                       │   │   ├── type: "name"
+        │                       │   │   └── name: "t"
+        │                       │   └── attribute_name: "get_a"
+        │                       └── arguments
+        ├── expression_statement
+        │   └── primary
+        │       ├── type: "variable"
+        │       └── value
+        │           ├── type: "function_call"
+        │           ├── function
+        │           │   ├── type: "get_attribute"
+        │           │   ├── object
+        │           │   │   ├── type: "name"
+        │           │   │   └── name: "t"
+        │           │   └── attribute_name: "set_a"
+        │           └── arguments
+        │               └── primary
+        │                   ├── type: "integer"
+        │                   └── value: 20
+        ├── expression_statement
+        │   └── primary
+        │       ├── type: "variable"
+        │       └── value
+        │           ├── type: "function_call"
+        │           ├── function
+        │           │   ├── type: "name"
+        │           │   └── name: "print"
+        │           └── arguments
+        │               └── primary
+        │                   ├── type: "variable"
+        │                   └── value
+        │                       ├── type: "function_call"
+        │                       ├── function
+        │                       │   ├── type: "get_attribute"
+        │                       │   ├── object
+        │                       │   │   ├── type: "name"
+        │                       │   │   └── name: "t"
+        │                       │   └── attribute_name: "get_a"
+        │                       └── arguments
+        ├── variable_declaration_statement
+        │   ├── type: "float"
+        │   ├── name: "_abc123"
+        │   └── value
+        │       └── primary
+        │           ├── type: "float"
+        │           └── value: 30.5
+        ├── variable_declaration_statement
+        │   ├── type: "int"
+        │   ├── name: "_def456"
+        │   └── value
+        │       └── primary
+        │           ├── type: "integer"
+        │           └── value: 15
+        └── return_statement
+            └── primary
+                ├── type: "integer"
+                └── value: 0
 
 info by lib:
-    Platform: 1, Memory Used: 14560 bytes, stringCount: 74, string compare count: fast-true: 154 fast-false: 2346 fast-not: 0, Memory Block Count: 475
+    Platform: 1, Memory Used: 14816 bytes, stringCount: 74, string compare count: fast-true: 154 fast-false: 2346 fast-not: 0, Memory Block Count: 491
