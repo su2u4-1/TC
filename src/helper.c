@@ -1,7 +1,6 @@
 #include "helper.h"
 
 // list helper functions
-// `list<void*> create_list()`
 list() create_list(void) {
     offset(List*) new_list = alloc_memory(sizeof(List));
     List* list_ptr = (List*)offset_to_ptr(new_list);
@@ -9,7 +8,7 @@ list() create_list(void) {
     list_ptr->tail = 0;
     return new_list;
 }
-// `Node* create_node(void* content)`
+
 offset(Node*) create_node(offset() content) {
     offset(Node*) new_node = alloc_memory(sizeof(Node));
     Node* node_ptr = (Node*)offset_to_ptr(new_node);
@@ -17,7 +16,7 @@ offset(Node*) create_node(offset() content) {
     node_ptr->content = content;
     return new_node;
 }
-// `void list_append(list<void*>* list, void* item)`
+
 void list_append(list() list, offset() item) {
     offset(Node*) new_node = create_node(item);
     List* list_ptr = (List*)offset_to_ptr(list);
@@ -30,7 +29,7 @@ void list_append(list() list, offset() item) {
         list_ptr->tail = new_node;
     }
 }
-// `list<void*> list_copy(list<void*>* original)`
+
 list() list_copy(list() original) {
     list() new_list = create_list();
     List* original_ptr = (List*)offset_to_ptr(original);
@@ -39,7 +38,7 @@ list() list_copy(list() original) {
     new_list_ptr->tail = original_ptr->tail;
     return new_list;
 }
-// `void* list_pop(list<void*>* list)`
+
 offset() list_pop(list() lst) {
     List* list_ptr = (List*)offset_to_ptr(lst);
     if (list_ptr->head == 0)
@@ -53,7 +52,6 @@ offset() list_pop(list() lst) {
 }
 
 // parser helper functions
-// `Name* create_name(string name, size_t id)`
 offset(Name*) create_name(string name, size_t id) {
     offset(Name*) new_name = alloc_memory(sizeof(Name));
     Name* name_ptr = (Name*)offset_to_ptr(new_name);
@@ -61,7 +59,7 @@ offset(Name*) create_name(string name, size_t id) {
     name_ptr->id = id;
     return new_name;
 }
-// `Scope* create_scope(offset(Scope*) parent)`
+
 offset(Scope*) create_scope(offset(Scope*) parent) {
     offset(Scope*) new_scope = alloc_memory(sizeof(Scope));
     Scope* scope_ptr = (Scope*)offset_to_ptr(new_scope);
@@ -69,7 +67,7 @@ offset(Scope*) create_scope(offset(Scope*) parent) {
     scope_ptr->names = create_list();
     return new_scope;
 }
-// `Name* search(Scope* scope, string name)`
+
 offset(Name*) search(offset(Scope*) scope, string name) {
     Scope* scope_ptr = (Scope*)offset_to_ptr(scope);
     while (scope_ptr != NULL) {
@@ -86,19 +84,26 @@ offset(Name*) search(offset(Scope*) scope, string name) {
     }
     return 0;
 }
-// `bool is_builtin_type(string type)`
+
 bool is_builtin_type(string type) {
     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 }
-// `size_t parser_error(const char* message, offset(Token*) token_)`
+
 size_t parser_error(const char* message, offset(Token*) token_) {
     Token* ptr = (Token*)offset_to_ptr(token_);
     fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", ptr->line + 1, ptr->column + 1, message);
     return 0;
 }
 
+void indention(FILE* out, size_t indent, bool is_last) {
+    indent_has_next[indent] = !is_last;
+    for (size_t i = 1; i < indent; ++i)
+        fprintf(out, indent_has_next[i] ? "│   " : "    ");
+    if (indent > 0)
+        fprintf(out, is_last ? "└── " : "├── ");
+}
+
 // token helper functions
-// `Token* get_next_token(Lexer* lexer)`
 offset(Token*) next_token(offset(Lexer*) lexer) {
     while (true) {
         current_token = get_next_token(lexer);
@@ -115,30 +120,20 @@ offset(Token*) next_token(offset(Lexer*) lexer) {
     token_ptr = (Token*)offset_to_ptr(token);
     return token;
 }
-// `Token* peek_current_token(void)`
+
 offset(Token*) peek_current_token(void) {
     token = current_token;
     token_ptr = (Token*)offset_to_ptr(token);
     return token;
 }
-// `Token* peek_next_token(Lexer* lexer)`
+
 offset(Token*) peek_token(offset(Lexer*) lexer) {
     token = peek_next_token(lexer);
     token_ptr = (Token*)offset_to_ptr(token);
     return token;
 }
 
-// `void out_indent(FILE* out, size_t indent)`
-void indention(FILE* out, size_t indent, bool is_last) {
-    indent_has_next[indent] = !is_last;
-    for (size_t i = 1; i < indent; ++i)
-        fprintf(out, indent_has_next[i] ? "│   " : "    ");
-    if (indent > 0)
-        fprintf(out, is_last ? "└── " : "├── ");
-}
-
 // operator helper functions
-// `OperatorType string_to_operator(string str)`
 OperatorType string_to_operator(string str) {
     if (string_equal(str, ASSIGN_SYMBOL)) return OP_ASSIGN;
     else if (string_equal(str, ADD_ASSIGN_SYMBOL)) return OP_ADD_ASSIGN;
@@ -161,7 +156,7 @@ OperatorType string_to_operator(string str) {
     else if (string_equal(str, MOD_SYMBOL)) return OP_MOD;
     else return OP_NONE;
 }
-// `int operator_precedence(string op)`
+
 int operator_precedence(OperatorType op) {
     switch (op) {
         case OP_ASSIGN:      // =
@@ -193,7 +188,7 @@ int operator_precedence(OperatorType op) {
             return 0;
     }
 }
-// `string operator_to_string(OperatorType op)`
+
 string operator_to_string(OperatorType op) {
     if (op == OP_ASSIGN) return ASSIGN_SYMBOL;
     else if (op == OP_ADD_ASSIGN) return ADD_ASSIGN_SYMBOL;

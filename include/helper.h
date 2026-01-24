@@ -30,6 +30,8 @@ offset(Name*) search(offset(Scope*) scope, string name);
 bool is_builtin_type(string type);
 // `size_t parser_error(const char* message, offset(Token*) token)`
 size_t parser_error(const char* message, offset(Token*) token);
+// `void out_indent(FILE* out, size_t indent)`
+void indention(FILE* out, size_t indent, bool is_last);
 
 // token helper functions
 // `Token* get_next_token(Lexer* lexer)`
@@ -38,9 +40,6 @@ offset(Token*) next_token(offset(Lexer*) lexer);
 offset(Token*) peek_current_token(void);
 // `Token* peek_next_token(Lexer* lexer)`
 offset(Token*) peek_token(offset(Lexer*) lexer);
-
-// `void out_indent(FILE* out, size_t indent)`
-void indention(FILE* out, size_t indent, bool is_last);
 
 // operator helper functions
 // `OperatorType string_to_operator(string str)`
