@@ -29,7 +29,7 @@ offset(Code*) create_code(list(CodeMember*) members, offset(Scope*) global_scope
     return code;
 }
 
-offset(Import*) create_import(string name, string source) {
+offset(Import*) create_import(offset(Name*) name, string source) {
     if (name == 0) {
         fprintf(stderr, "Error creating import: name is NULL\n");
         return 0;
@@ -41,7 +41,7 @@ offset(Import*) create_import(string name, string source) {
     return import;
 }
 
-offset(Function*) create_function(string name, string return_type, list(Variable*) parameters, list(Statement*) body, offset(Scope*) function_scope) {
+offset(Function*) create_function(offset(Name*) name, offset(Name*) return_type, list(Variable*) parameters, list(Statement*) body, offset(Scope*) function_scope) {
     if (name == 0 || return_type == 0) {
         fprintf(stderr, "Error creating function: name or return_type is NULL\n");
         return 0;
@@ -56,7 +56,7 @@ offset(Function*) create_function(string name, string return_type, list(Variable
     return function;
 }
 
-offset(Method*) create_method(string name, string return_type, list(Variable*) parameters, list(Statement*) body, offset(Scope*) method_scope) {
+offset(Method*) create_method(offset(Name*) name, offset(Name*) return_type, list(Variable*) parameters, list(Statement*) body, offset(Scope*) method_scope) {
     if (name == 0 || return_type == 0) {
         fprintf(stderr, "Error creating method: name or return_type is NULL\n");
         return 0;
@@ -90,7 +90,7 @@ offset(ClassMember*) create_class_member(ClassMemberType type, offset(Method* | 
     return class_member;
 }
 
-offset(Class*) create_class(string name, list(ClassMember*) members, offset(Scope*) class_scope) {
+offset(Class*) create_class(offset(Name*) name, list(ClassMember*) members, offset(Scope*) class_scope) {
     if (name == 0) {
         fprintf(stderr, "Error creating class: name is NULL\n");
         return 0;
@@ -103,7 +103,7 @@ offset(Class*) create_class(string name, list(ClassMember*) members, offset(Scop
     return class;
 }
 
-offset(Variable*) create_variable(string type, string name, offset(Expression*) value) {
+offset(Variable*) create_variable(offset(Name*) type, offset(Name*) name, offset(Expression*) value) {
     if (type == 0 || name == 0) {
         fprintf(stderr, "Error creating variable: type or name is NULL\n");
         return 0;
@@ -217,7 +217,7 @@ offset(Primary*) create_primary(PrimaryType type, offset(string | Expression * |
     return primary;
 }
 
-offset(VariableAccess*) create_variable_access(VariableAccessType type, offset(VariableAccess*) base, offset(string | Expression*) content) {
+offset(VariableAccess*) create_variable_access(VariableAccessType type, offset(VariableAccess*) base, offset(Name* | Expression * | list(Expression*)) content) {
     if ((base == 0) != (type == VAR_NAME)) {
         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
         return 0;

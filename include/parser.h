@@ -5,6 +5,8 @@
 
 #define list(type) offset(List(type)*)
 
+typedef struct Name Name;
+
 typedef enum CodeMemberType {
     CODE_IMPORT,
     CODE_FUNCTION,
@@ -26,21 +28,21 @@ typedef struct Code {
 } Code;
 
 typedef struct Import {
-    string name;
+    offset(Name*) name;
     string source;
 } Import;
 
 typedef struct Function {
-    string name;
-    string return_type;
+    offset(Name*) name;
+    offset(Name*) return_type;
     list(Variable*) parameters;
     list(Statement*) body;
     offset(Scope*) function_scope;
 } Function;
 
 typedef struct Method {
-    string name;
-    string return_type;
+    offset(Name*) name;
+    offset(Name*) return_type;
     list(Variable*) parameters;
     list(Statement*) body;
     offset(Scope*) method_scope;
@@ -60,14 +62,14 @@ typedef struct ClassMember {
 } ClassMember;
 
 typedef struct Class {
-    string name;
+    offset(Name*) name;
     list(ClassMember*) members;
     offset(Scope*) class_scope;
 } Class;
 
 typedef struct Variable {
-    string type;
-    string name;
+    offset(Name*) type;
+    offset(Name*) name;
     offset(Expression*) value;
 } Variable;
 
@@ -180,9 +182,9 @@ typedef struct VariableAccess {
     VariableAccessType type;
     offset(VariableAccess*) base;
     union {
-        string name;
+        offset(Name*) name;
         list(Expression*) args;     // func_call
-        string attr_name;           // get_attr
+        offset(Name*) attr_name;    // get_attr
         offset(Expression*) index;  // get_seq
     } content;
 } VariableAccess;
@@ -192,9 +194,26 @@ typedef struct Scope {
     list(Name*) names;
 } Scope;
 
+typedef enum NameType {
+    NAME_TYPE,
+    NAME_VARIABLE,
+    NAME_FUNCTION,
+    NAME_METHOD,
+    NAME_CLASS,
+    NAME_ATTRIBUTE
+} NameType;
+
 typedef struct Name {
     string name;
     size_t id;
+    NameType kind;
+    union {
+        // variable type, attribute type, function return ntype, method return type
+        offset(Name*) type;
+        // class scope
+        offset(Scope*) scope;
+        // NAME_TYPE: 0
+    } info;
 } Name;
 
 typedef struct List {

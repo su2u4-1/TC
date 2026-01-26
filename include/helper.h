@@ -20,14 +20,16 @@ list() list_copy(list() original);
 offset() list_pop(list() lst);
 
 // parser helper functions
-// `Name* create_name(string name, size_t id)`
-offset(Name*) create_name(string name, size_t id);
+// `Name* create_name(string name, NameType kind, (Name* | Scope*) info, Scope* scope)`
+offset(Name*) create_name(string name, NameType kind, offset(Name* | Scope*) info, offset(Scope*) scope);
 // `Scope* create_scope(offset(Scope*) parent)`
 offset(Scope*) create_scope(offset(Scope*) parent);
 // `Name* search(Scope* scope, string name)`
 offset(Name*) search(offset(Scope*) scope, string name);
 // `bool is_builtin_type(string type)`
 bool is_builtin_type(string type);
+// `bool is_type(Name* type, Scope* scope)`
+bool is_type(offset(Name*) type);
 // `size_t parser_error(const char* message, offset(Token*) token)`
 size_t parser_error(const char* message, offset(Token*) token);
 // `void out_indent(FILE* out, size_t indent)`

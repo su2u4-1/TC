@@ -1,39 +1,43 @@
+#include <stdio.h>
+
 #include "helper.h"
 #include "lib.h"
 #include "parser.h"
 
-// `static void parse_code_member(CodeMember* code_member, FILE* outfile, size_t indent)`
+// `static void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent)`
 static void output_code_member(offset(CodeMember*) code_member, FILE* outfile, size_t indent);
-// `static void parse_code(Code* code, FILE* outfile, size_t indent)`
+// `static void output_code(Code* code, FILE* outfile, size_t indent)`
 static void output_code(offset(Code*) code, FILE* outfile, size_t indent);
-// `static void parse_import(Import* import, FILE* outfile, size_t indent)`
+// `static void output_import(Import* import, FILE* outfile, size_t indent)`
 static void output_import(offset(Import*) import, FILE* outfile, size_t indent);
-// `static void parse_function(Function* function, FILE* outfile, size_t indent)`
+// `static void output_function(Function* function, FILE* outfile, size_t indent)`
 static void output_function(offset(Function*) function, FILE* outfile, size_t indent);
-// `static void parse_method(Method* method, FILE* outfile, size_t indent)`
+// `static void output_method(Method* method, FILE* outfile, size_t indent)`
 static void output_method(offset(Method*) method, FILE* outfile, size_t indent);
-// `static void parse_class_member(ClassMember* class_member, FILE* outfile, size_t indent)`
+// `static void output_class_member(ClassMember* class_member, FILE* outfile, size_t indent)`
 static void output_class_member(offset(ClassMember*) class_member, FILE* outfile, size_t indent);
-// `static void parse_class(Class* class, FILE* outfile, size_t indent)`
+// `static void output_class(Class* class, FILE* outfile, size_t indent)`
 static void output_class(offset(Class*) class, FILE* outfile, size_t indent);
-// `static void parse_variable(Variable* variable, FILE* outfile, size_t indent)`
+// `static void output_variable(Variable* variable, FILE* outfile, size_t indent)`
 static void output_variable(offset(Variable*) variable, FILE* outfile, size_t indent);
-// `static void parse_statement(Statement* statement, FILE* outfile, size_t indent)`
+// `static void output_statement(Statement* statement, FILE* outfile, size_t indent)`
 static void output_statement(offset(Statement*) statement, FILE* outfile, size_t indent);
-// `static void parse_if(If* if_, FILE* outfile, size_t indent)`
+// `static void output_if(If* if_, FILE* outfile, size_t indent)`
 static void output_if(offset(If*) if_, FILE* outfile, size_t indent);
-// `static void parse_else_if(ElseIf* else_if, FILE* outfile, size_t indent)`
+// `static void output_else_if(ElseIf* else_if, FILE* outfile, size_t indent)`
 static void output_else_if(offset(ElseIf*) else_if, FILE* outfile, size_t indent);
-// `static void parse_for(For* for_, FILE* outfile, size_t indent)`
+// `static void output_for(For* for_, FILE* outfile, size_t indent)`
 static void output_for(offset(For*) for_, FILE* outfile, size_t indent);
-// `static void parse_while(While* while_, FILE* outfile, size_t indent)`
+// `static void output_while(While* while_, FILE* outfile, size_t indent)`
 static void output_while(offset(While*) while_, FILE* outfile, size_t indent);
-// `static void parse_expression(Expression* expression, FILE* outfile, size_t indent)`
+// `static void output_expression(Expression* expression, FILE* outfile, size_t indent)`
 static void output_expression(offset(Expression*) expression, FILE* outfile, size_t indent);
-// `static void parse_primary(Primary* primary, FILE* outfile, size_t indent)`
+// `static void output_primary(Primary* primary, FILE* outfile, size_t indent)`
 static void output_primary(offset(Primary*) primary, FILE* outfile, size_t indent);
-// `static void parse_variable_access(VariableAccess* variable_access, FILE* outfile, size_t indent)`
+// `static void output_variable_access(VariableAccess* variable_access, FILE* outfile, size_t indent)`
 static void output_variable_access(offset(VariableAccess*) variable_access, FILE* outfile, size_t indent);
+// `static void output_name(Name* name, FILE* outfile, size_t indent)`
+static void output_name(offset(Name*) name, FILE* outfile, size_t indent);
 
 void output_code_member(offset(CodeMember*) code_member, FILE* outfile, size_t indent) {
     CodeMember* code_member_ptr = (CodeMember*)offset_to_ptr(code_member);
@@ -63,13 +67,16 @@ void output_code(offset(Code*) code, FILE* outfile, size_t indent) {
 }
 void output_import(offset(Import*) import, FILE* outfile, size_t indent) {
     Import* import_ptr = (Import*)offset_to_ptr(import);
-    OUT(0, false, "name: \"%s\"\n", string_to_cstr(import_ptr->name));
+    OUT(0, false, "name\n");
+    output_name(import_ptr->name, outfile, indent + 1);
     OUT(0, true, "source: \"%s\"\n", import_ptr->source != 0 ? string_to_cstr(import_ptr->source) : "NULL");
 }
 void output_function(offset(Function*) function, FILE* outfile, size_t indent) {
     Function* function_ptr = (Function*)offset_to_ptr(function);
-    OUT(0, false, "name: \"%s\"\n", string_to_cstr(function_ptr->name));
-    OUT(0, false, "return_type: \"%s\"\n", string_to_cstr(function_ptr->return_type));
+    OUT(0, false, "name\n");
+    output_name(function_ptr->name, outfile, indent + 1);
+    OUT(0, false, "return_type\n");
+    output_name(function_ptr->return_type, outfile, indent + 1);
     OUT(0, false, "parameters\n");
     list(Variable*) parameters = list_copy(function_ptr->parameters);
     list(Statement*) body = list_copy(function_ptr->body);
@@ -86,17 +93,15 @@ void output_function(offset(Function*) function, FILE* outfile, size_t indent) {
 }
 void output_method(offset(Method*) method, FILE* outfile, size_t indent) {
     Method* method_ptr = (Method*)offset_to_ptr(method);
-    OUT(0, false, "name: \"%s\"\n", string_to_cstr(method_ptr->name));
-    OUT(0, false, "return_type: \"%s\"\n", string_to_cstr(method_ptr->return_type));
+    OUT(0, false, "name\n");
+    output_name(method_ptr->name, outfile, indent + 1);
+    OUT(0, false, "return_type\n");
+    output_name(method_ptr->return_type, outfile, indent + 1);
     OUT(0, false, "parameters\n");
-    OUT(1, false, "parameters[0]\n");
-    OUT(2, false, "type: \"self\"\n");
-    OUT(2, false, "name: \"self\"\n");
-    OUT(2, true, "value: \"NULL\"\n");
     list(Variable*) parameters = list_copy(method_ptr->parameters);
     list(Statement*) body = list_copy(method_ptr->body);
     offset(Variable*) parameter;
-    int index = 0;
+    int index = -1;
     while ((parameter = list_pop(parameters)) != 0) {
         OUT(1, false, "parameters[%d]\n", ++index);
         output_variable(parameter, outfile, indent + 2);
@@ -124,7 +129,8 @@ void output_class_member(offset(ClassMember*) class_member, FILE* outfile, size_
 }
 void output_class(offset(Class*) class, FILE* outfile, size_t indent) {
     Class* class_ptr = (Class*)offset_to_ptr(class);
-    OUT(0, false, "name: \"%s\"\n", string_to_cstr(class_ptr->name));
+    OUT(0, false, "name\n");
+    output_name(class_ptr->name, outfile, indent + 1);
     OUT(0, true, "members\n");
     list(ClassMember*) members = list_copy(class_ptr->members);
     offset(ClassMember*) member;
@@ -133,8 +139,10 @@ void output_class(offset(Class*) class, FILE* outfile, size_t indent) {
 }
 void output_variable(offset(Variable*) variable, FILE* outfile, size_t indent) {
     Variable* variable_ptr = (Variable*)offset_to_ptr(variable);
-    OUT(0, false, "type: \"%s\"\n", string_to_cstr(variable_ptr->type));
-    OUT(0, false, "name: \"%s\"\n", string_to_cstr(variable_ptr->name));
+    OUT(0, false, "type\n");
+    output_name(variable_ptr->type, outfile, indent + 1);
+    OUT(0, false, "name\n");
+    output_name(variable_ptr->name, outfile, indent + 1);
     if (variable_ptr->value != 0) {
         OUT(0, true, "value\n");
         output_expression(variable_ptr->value, outfile, indent + 1);
@@ -317,7 +325,8 @@ void output_variable_access(offset(VariableAccess*) variable_access, FILE* outfi
     switch (var_access_ptr->type) {
         case VAR_NAME:
             OUT(0, false, "type: \"name\"\n");
-            OUT(0, true, "name: \"%s\"\n", string_to_cstr(var_access_ptr->content.name));
+            OUT(0, true, "name\n");
+            output_name(var_access_ptr->content.name, outfile, indent + 1);
             break;
         case VAR_FUNC_CALL:
             args = list_copy(var_access_ptr->content.args);
@@ -340,10 +349,47 @@ void output_variable_access(offset(VariableAccess*) variable_access, FILE* outfi
             OUT(0, false, "type: \"get_attribute\"\n");
             OUT(0, false, "object\n");
             output_variable_access(var_access_ptr->base, outfile, indent + 1);
-            OUT(0, true, "attribute_name: \"%s\"\n", string_to_cstr(var_access_ptr->content.attr_name));
+            OUT(0, true, "attribute_name\n");
+            output_name(var_access_ptr->content.attr_name, outfile, indent + 1);
             break;
         default:
             OUT(0, true, "unknown_VariableAccessType: %d\n", var_access_ptr->type);
+            break;
+    }
+}
+static void output_name(offset(Name*) name, FILE* outfile, size_t indent) {
+    Name* name_ptr = (Name*)offset_to_ptr(name);
+    OUT(0, false, "name: \"%s\"\n", string_to_cstr(name_ptr->name));
+    OUT(0, false, "id: %zu\n", name_ptr->id);
+    switch (name_ptr->kind) {
+        case NAME_TYPE:
+            OUT(0, true, "kind: \"type\"\n");
+            break;
+        case NAME_VARIABLE:
+            OUT(0, false, "kind: \"variable\"\n");
+            OUT(0, true, "type\n");
+            output_name(name_ptr->info.type, outfile, indent + 1);
+            break;
+        case NAME_FUNCTION:
+            OUT(0, false, "kind: \"function\"\n");
+            OUT(0, true, "return_type\n");
+            output_name(name_ptr->info.type, outfile, indent + 1);
+            break;
+        case NAME_METHOD:
+            OUT(0, false, "kind: \"method\"\n");
+            OUT(0, true, "return_type\n");
+            output_name(name_ptr->info.type, outfile, indent + 1);
+            break;
+        case NAME_CLASS:
+            OUT(0, true, "kind: \"class\"\n");
+            break;
+        case NAME_ATTRIBUTE:
+            OUT(0, false, "kind: \"attribute\"\n");
+            OUT(0, true, "type\n");
+            output_name(name_ptr->info.type, outfile, indent + 1);
+            break;
+        default:
+            OUT(0, true, "kind: \"unknown_NameType\"\n");
             break;
     }
 }

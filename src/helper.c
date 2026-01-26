@@ -52,11 +52,24 @@ offset() list_pop(list() lst) {
 }
 
 // parser helper functions
-offset(Name*) create_name(string name, size_t id) {
+offset(Name*) create_name(string name, NameType kind, offset(Name* | Scope*) info, offset(Scope*) scope) {
+    static size_t id_counter = 0;
+    offset(Name*) result = search(scope, name);
+    if (result != 0)
+        return result;
     offset(Name*) new_name = alloc_memory(sizeof(Name));
     Name* name_ptr = (Name*)offset_to_ptr(new_name);
     name_ptr->name = name;
-    name_ptr->id = id;
+    name_ptr->id = ++id_counter;
+    name_ptr->kind = kind;
+    if (kind == NAME_VARIABLE || kind == NAME_ATTRIBUTE || kind == NAME_FUNCTION || kind == NAME_METHOD)
+        name_ptr->info.type = info;
+    else if (kind == NAME_CLASS)
+        name_ptr->info.scope = info;
+    else
+        name_ptr->info.type = 0;
+    Scope* scope_ptr = (Scope*)offset_to_ptr(scope);
+    list_append(scope_ptr->names, new_name);
     return new_name;
 }
 
@@ -87,6 +100,11 @@ offset(Name*) search(offset(Scope*) scope, string name) {
 
 bool is_builtin_type(string type) {
     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+}
+
+bool is_type(offset(Name*) type) {
+    Name* type_ptr = (Name*)offset_to_ptr(type);
+    return type_ptr->kind == NAME_TYPE || type_ptr->kind == NAME_CLASS;
 }
 
 size_t parser_error(const char* message, offset(Token*) token_) {
