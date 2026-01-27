@@ -46,14 +46,13 @@ if not exist "%OUTDIR%" mkdir "%OUTDIR%"
 set "GCC_FLAGS=%FLAG_WALL% %FLAG_WEXTRA% %FLAG_OPTIMIZE% %FLAG_DEBUG%"
 
 rem Show the full command
-echo Command:
-echo    gcc %GCC_FLAGS% -I"%INCDIR%" %SOURCES% -o "%OUTDIR%\%OUTEXE%"
+echo Build command: gcc %GCC_FLAGS% -I"%INCDIR%" %SOURCES% -o "%OUTDIR%\%OUTEXE%"
 
 rem Actually compile using the .c files and the include directory
 gcc %GCC_FLAGS% -I"%INCDIR%" %SOURCES% -o "%OUTDIR%\%OUTEXE%"
 if errorlevel 1 (
     echo Build failed.
-    exit /b %errorlevel%
+    exit /b 1
 )
 
 echo Build succeeded: "%OUTDIR%\%OUTEXE%"
