@@ -84,9 +84,13 @@
 │       │       │   │           ├── object
 │       │       │   │           │   ├── type: "name"
 │       │       │   │           │   └── name
-│       │       │   │           │       ├── name: "(null)"
-│       │       │   │           │       ├── id: 168
-│       │       │   │           │       └── kind: "class"
+│       │       │   │           │       ├── name: "self"
+│       │       │   │           │       ├── id: 9
+│       │       │   │           │       ├── kind: "variable"
+│       │       │   │           │       └── type
+│       │       │   │           │           ├── name: "Test1"
+│       │       │   │           │           ├── id: 7
+│       │       │   │           │           └── kind: "class"
 │       │       │   │           └── attribute_name
 │       │       │   │               ├── name: "a"
 │       │       │   │               ├── id: 8
@@ -101,22 +105,26 @@
 │       │       │           └── value
 │       │       │               ├── type: "name"
 │       │       │               └── name
-│       │       │                   ├── name: "(null)"
-│       │       │                   ├── id: 3280
-│       │       │                   ├── kind: "attribute"
+│       │       │                   ├── name: "value"
+│       │       │                   ├── id: 11
+│       │       │                   ├── kind: "variable"
 │       │       │                   └── type
-│       │       │                       ├── name: "init"
-│       │       │                       ├── id: 4
-│       │       │                       └── kind: "unknown_NameType"
+│       │       │                       ├── name: "int"
+│       │       │                       ├── id: 2
+│       │       │                       └── kind: "type"
 │       │       ├── return_statement
 │       │       │   └── primary
 │       │       │       ├── type: "variable"
 │       │       │       └── value
 │       │       │           ├── type: "name"
 │       │       │           └── name
-│       │       │               ├── name: "(null)"
-│       │       │               ├── id: 168
-│       │       │               └── kind: "class"
+│       │       │               ├── name: "self"
+│       │       │               ├── id: 9
+│       │       │               ├── kind: "variable"
+│       │       │               └── type
+│       │       │                   ├── name: "Test1"
+│       │       │                   ├── id: 7
+│       │       │                   └── kind: "class"
 │       ├── method
 │       │   ├── name
 │       │   │   ├── name: "get_a"
@@ -154,9 +162,13 @@
 │       │       │           ├── object
 │       │       │           │   ├── type: "name"
 │       │       │           │   └── name
-│       │       │           │       ├── name: "(null)"
-│       │       │           │       ├── id: 168
-│       │       │           │       └── kind: "class"
+│       │       │           │       ├── name: "self"
+│       │       │           │       ├── id: 12
+│       │       │           │       ├── kind: "variable"
+│       │       │           │       └── type
+│       │       │           │           ├── name: "Test1"
+│       │       │           │           ├── id: 7
+│       │       │           │           └── kind: "class"
 │       │       │           └── attribute_name
 │       │       │               ├── name: "a"
 │       │       │               ├── id: 8
@@ -218,9 +230,13 @@
 │       │       │   │           ├── object
 │       │       │   │           │   ├── type: "name"
 │       │       │   │           │   └── name
-│       │       │   │           │       ├── name: "(null)"
-│       │       │   │           │       ├── id: 168
-│       │       │   │           │       └── kind: "class"
+│       │       │   │           │       ├── name: "self"
+│       │       │   │           │       ├── id: 14
+│       │       │   │           │       ├── kind: "variable"
+│       │       │   │           │       └── type
+│       │       │   │           │           ├── name: "Test1"
+│       │       │   │           │           ├── id: 7
+│       │       │   │           │           └── kind: "class"
 │       │       │   │           └── attribute_name
 │       │       │   │               ├── name: "a"
 │       │       │   │               ├── id: 8
@@ -235,13 +251,13 @@
 │       │       │           └── value
 │       │       │               ├── type: "name"
 │       │       │               └── name
-│       │       │                   ├── name: "(null)"
-│       │       │                   ├── id: 3280
-│       │       │                   ├── kind: "attribute"
+│       │       │                   ├── name: "value"
+│       │       │                   ├── id: 16
+│       │       │                   ├── kind: "variable"
 │       │       │                   └── type
-│       │       │                       ├── name: "init"
-│       │       │                       ├── id: 4
-│       │       │                       └── kind: "unknown_NameType"
+│       │       │                       ├── name: "int"
+│       │       │                       ├── id: 2
+│       │       │                       └── kind: "type"
 ├── function
 │   ├── name
 │   │   ├── name: "main"
@@ -280,13 +296,9 @@
 │       │               │   ├── object
 │       │               │   │   ├── type: "name"
 │       │               │   │   └── name
-│       │               │   │       ├── name: "(null)"
-│       │               │   │       ├── id: 2672
-│       │               │   │       ├── kind: "attribute"
-│       │               │   │       └── type
-│       │               │   │           ├── name: "std"
-│       │               │   │           ├── id: 3
-│       │               │   │           └── kind: "unknown_NameType"
+│       │               │   │       ├── name: "Test1"
+│       │               │   │       ├── id: 7
+│       │               │   │       └── kind: "class"
 │       │               │   └── attribute_name
 │       │               │       ├── name: "init"
 │       │               │       ├── id: 10
@@ -307,15 +319,13 @@
 │       │           ├── function
 │       │           │   ├── type: "name"
 │       │           │   └── name
-│       │           │       ├── name: "(null)"
-│       │           │       ├── id: 2448
-│       │           │       ├── kind: "attribute"
-│       │           │       └── type
-│       │           │           ├── name: " 
- * this test is used to test the lexer. 
- "
-│       │           │           ├── id: 44
-│       │           │           └── kind: "unknown_NameType"
+│       │           │       ├── name: "print"
+│       │           │       ├── id: 6
+│       │           │       ├── kind: "function"
+│       │           │       └── return_type
+│       │           │           ├── name: "void"
+│       │           │           ├── id: 1
+│       │           │           └── kind: "type"
 │       │           └── arguments
 │       │               └── primary
 │       │                   ├── type: "variable"
@@ -326,13 +336,13 @@
 │       │                       │   ├── object
 │       │                       │   │   ├── type: "name"
 │       │                       │   │   └── name
-│       │                       │   │       ├── name: ""
-│       │                       │   │       ├── id: 5144
+│       │                       │   │       ├── name: "t"
+│       │                       │   │       ├── id: 18
 │       │                       │   │       ├── kind: "variable"
 │       │                       │   │       └── type
-│       │                       │   │           ├── name: "main"
-│       │                       │   │           ├── id: 4
-│       │                       │   │           └── kind: "unknown_NameType"
+│       │                       │   │           ├── name: "Test1"
+│       │                       │   │           ├── id: 7
+│       │                       │   │           └── kind: "class"
 │       │                       │   └── attribute_name
 │       │                       │       ├── name: "get_a"
 │       │                       │       ├── id: 13
@@ -352,13 +362,13 @@
 │       │           │   ├── object
 │       │           │   │   ├── type: "name"
 │       │           │   │   └── name
-│       │           │   │       ├── name: ""
-│       │           │   │       ├── id: 5144
+│       │           │   │       ├── name: "t"
+│       │           │   │       ├── id: 18
 │       │           │   │       ├── kind: "variable"
 │       │           │   │       └── type
-│       │           │   │           ├── name: "main"
-│       │           │   │           ├── id: 4
-│       │           │   │           └── kind: "unknown_NameType"
+│       │           │   │           ├── name: "Test1"
+│       │           │   │           ├── id: 7
+│       │           │   │           └── kind: "class"
 │       │           │   └── attribute_name
 │       │           │       ├── name: "set_a"
 │       │           │       ├── id: 15
@@ -379,15 +389,13 @@
 │       │           ├── function
 │       │           │   ├── type: "name"
 │       │           │   └── name
-│       │           │       ├── name: "(null)"
-│       │           │       ├── id: 2448
-│       │           │       ├── kind: "attribute"
-│       │           │       └── type
-│       │           │           ├── name: " 
- * this test is used to test the lexer. 
- "
-│       │           │           ├── id: 44
-│       │           │           └── kind: "unknown_NameType"
+│       │           │       ├── name: "print"
+│       │           │       ├── id: 6
+│       │           │       ├── kind: "function"
+│       │           │       └── return_type
+│       │           │           ├── name: "void"
+│       │           │           ├── id: 1
+│       │           │           └── kind: "type"
 │       │           └── arguments
 │       │               └── primary
 │       │                   ├── type: "variable"
@@ -398,13 +406,13 @@
 │       │                       │   ├── object
 │       │                       │   │   ├── type: "name"
 │       │                       │   │   └── name
-│       │                       │   │       ├── name: ""
-│       │                       │   │       ├── id: 5144
+│       │                       │   │       ├── name: "t"
+│       │                       │   │       ├── id: 18
 │       │                       │   │       ├── kind: "variable"
 │       │                       │   │       └── type
-│       │                       │   │           ├── name: "main"
-│       │                       │   │           ├── id: 4
-│       │                       │   │           └── kind: "unknown_NameType"
+│       │                       │   │           ├── name: "Test1"
+│       │                       │   │           ├── id: 7
+│       │                       │   │           └── kind: "class"
 │       │                       │   └── attribute_name
 │       │                       │       ├── name: "get_a"
 │       │                       │       ├── id: 13
