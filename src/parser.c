@@ -534,7 +534,7 @@ offset(VariableAccess*) parse_variable_access(offset(Lexer*) lexer, offset(Scope
     offset(Scope*) var_scope = 0;
     Name* base_name_ptr = NULL;
     base_name = search(now_scope, token_ptr->lexeme);
-    offset(VariableAccess*) base = create_variable_access(VAR_NAME, 0, token_ptr->lexeme);
+    offset(VariableAccess*) base = create_variable_access(VAR_NAME, 0, base_name);
     peek_token(lexer);
     while (token_ptr->type == SYMBOL) {
         if (base_name != 0) {
