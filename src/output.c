@@ -7,8 +7,6 @@
 
 // `static void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent)`
 static void output_code_member(offset(CodeMember*) code_member, FILE* outfile, size_t indent, offset(Parser*) parser);
-// `static void output_code(Code* code, FILE* outfile, size_t indent)`
-static void output_code(offset(Code*) code, FILE* outfile, size_t indent, offset(Parser*) parser);
 // `static void output_import(Import* import, FILE* outfile, size_t indent)`
 static void output_import(offset(Import*) import, FILE* outfile, size_t indent, offset(Parser*) parser);
 // `static void output_function(Function* function, FILE* outfile, size_t indent)`
@@ -452,12 +450,4 @@ void output_name(offset(Name*) name, FILE* outfile, size_t indent, offset(Parser
             OUT(0, true, "kind: \"unknown_NameType\"\n");
             break;
     }
-}
-
-// public functions
-void output_ast(offset(Code*) ast_node, FILE* outfile, size_t indent, offset(Parser*) parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_ast\n");
-#endif
-    output_code(ast_node, outfile, indent, parser);
 }
