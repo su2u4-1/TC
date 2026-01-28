@@ -113,11 +113,23 @@ size_t parser_error(const char* message, offset(Token*) token_) {
     return 0;
 }
 
+static void set_bool_list(char bool_list[32], size_t index, bool value) {
+    char word = bool_list[index / 8];
+    if (value)
+        bool_list[index / 8] = (char)(word | (1 << (index % 8)));
+    else
+        bool_list[index / 8] = (char)(word & ~(1 << (index % 8)));
+}
+
+static bool get_bool_list(char bool_list[32], size_t index) {
+    return ((bool_list[index / 8] & (1 << (index % 8))) == 0 ? false : true);
+}
+
 void indention(FILE* out, size_t indent, bool is_last, offset(Parser*) parser) {
     Parser* parser_ptr = (Parser*)offset_to_ptr(parser);
-    parser_ptr->indent_has_next[indent] = !is_last;
+    set_bool_list(parser_ptr->indent_has_next, indent, !is_last);
     for (size_t i = 1; i < indent; ++i)
-        fprintf(out, parser_ptr->indent_has_next[i] ? "│   " : "    ");
+        fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
     if (indent > 0)
         fprintf(out, is_last ? "└── " : "├── ");
 }

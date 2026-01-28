@@ -12,7 +12,7 @@ typedef struct Parser {
     bool in_function;
     bool in_method;
     bool in_loop;
-    bool indent_has_next[256];
+    char indent_has_next[32];
 } Parser;
 
 // list helper functions
