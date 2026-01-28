@@ -88,7 +88,7 @@ offset(Name*) search(offset(Scope*) scope, string name) {
         offset(Node*) current = ((List*)offset_to_ptr(names))->head;
         while (current != 0) {
             Node* node_ptr = (Node*)offset_to_ptr(current);
-            offset(Name*) current_name = (node_ptr)->content;
+            offset(Name*) current_name = node_ptr->content;
             if (string_equal(((Name*)offset_to_ptr(current_name))->name, name))
                 return current_name;
             current = node_ptr->next;
@@ -113,42 +113,95 @@ size_t parser_error(const char* message, offset(Token*) token_) {
     return 0;
 }
 
-void indention(FILE* out, size_t indent, bool is_last) {
-    indent_has_next[indent] = !is_last;
+void indention(FILE* out, size_t indent, bool is_last, offset(Parser*) parser) {
+    Parser* parser_ptr = (Parser*)offset_to_ptr(parser);
+    parser_ptr->indent_has_next[indent] = !is_last;
     for (size_t i = 1; i < indent; ++i)
-        fprintf(out, indent_has_next[i] ? "│   " : "    ");
+        fprintf(out, parser_ptr->indent_has_next[i] ? "│   " : "    ");
     if (indent > 0)
         fprintf(out, is_last ? "└── " : "├── ");
 }
 
+offset(Parser*) create_parser(void) {
+    offset(Parser*) new_parser = alloc_memory(sizeof(Parser));
+    Parser* parser_ptr = (Parser*)offset_to_ptr(new_parser);
+    parser_ptr->current_token = 0;
+    parser_ptr->in_function = false;
+    parser_ptr->in_method = false;
+    parser_ptr->in_loop = false;
+    return new_parser;
+}
+
+offset(Name*) parse_import_std(offset(Name*) import_name, offset(Scope*) scope) {
+    offset(Name*) name = 0;
+    FILE* openfile;
+    // temporary hack to recognize std library imports
+    // temp, need path system
+    if (strcmp(string_to_cstr(import_name), "print") == 0)
+        openfile = fopen("./std/print.tc", "r");
+    else if (strcmp(string_to_cstr(import_name), "arr") == 0) {
+        openfile = fopen("./std/arr.tc", "r");
+    } else
+        return 0;
+    if (openfile == NULL) {
+        fprintf(stderr, "Error opening standard library file for import: %s\n", string_to_cstr(import_name));
+        return 0;
+    }
+    fseek(openfile, 0, SEEK_END);
+    size_t length = (size_t)ftell(openfile);
+    fseek(openfile, 0, SEEK_SET);
+    char* source = string_to_cstr(alloc_memory(length + 1));
+    fread(source, 1, length, openfile);
+    source[length] = '\0';
+    fclose(openfile);
+    offset(Lexer*) lexer = create_lexer(source, length);
+    offset(Parser*) parser = create_parser();
+    offset(Code*) code = parse_code(lexer, 0, parser);
+    if (code == 0) {
+        fprintf(stderr, "Error parsing standard library file for import: %s\n", string_to_cstr(import_name));
+        return 0;
+    }
+    list(Node*) names = ((Scope*)offset_to_ptr(((Code*)offset_to_ptr(code))->global_scope))->names;
+    offset(Node*) current = ((List*)offset_to_ptr(names))->head;
+    while (current != 0) {
+        Node* node_ptr = (Node*)offset_to_ptr(current);
+        offset(Name*) current_name = node_ptr->content;
+        if (string_equal(((Name*)offset_to_ptr(current_name))->name, import_name)) {
+            name = current_name;
+            break;
+        }
+        current = node_ptr->next;
+    }
+    if (name != 0) {
+        Scope* scope_ptr = (Scope*)offset_to_ptr(scope);
+        list_append(scope_ptr->names, name);
+    }
+    return name;
+}
+
 // token helper functions
-offset(Token*) next_token(offset(Lexer*) lexer) {
+offset(Token*) next_token(offset(Lexer*) lexer, offset(Parser*) parser) {
+    offset(Token*) token;
     while (true) {
-        current_token = get_next_token(lexer);
-        if (current_token == 0) {
+        token = get_next_token(lexer);
+        if (token == 0) {
             fprintf(stderr, "Error: get_next_token returned NULL\n");
-            token = 0;
-            token_ptr = NULL;
+            ((Parser*)offset_to_ptr(parser))->current_token = 0;
             return token;
         }
-        if (((Token*)offset_to_ptr(current_token))->type != COMMENT)
+        if (((Token*)offset_to_ptr(token))->type != COMMENT)
             break;
     }
-    token = current_token;
-    token_ptr = (Token*)offset_to_ptr(token);
+    ((Parser*)offset_to_ptr(parser))->current_token = token;
     return token;
 }
 
-offset(Token*) peek_current_token(void) {
-    token = current_token;
-    token_ptr = (Token*)offset_to_ptr(token);
-    return token;
+inline offset(Token*) peek_current_token(offset(Parser*) parser) {
+    return ((Parser*)offset_to_ptr(parser))->current_token;
 }
 
-offset(Token*) peek_token(offset(Lexer*) lexer) {
-    token = peek_next_token(lexer);
-    token_ptr = (Token*)offset_to_ptr(token);
-    return token;
+inline offset(Token*) peek_token(offset(Lexer*) lexer) {
+    return peek_next_token(lexer);
 }
 
 // operator helper functions
@@ -229,12 +282,3 @@ string operator_to_string(OperatorType op) {
     else if (op == OP_MOD) return MOD_SYMBOL;
     else return 0;
 }
-
-// global variables
-offset(Token*) token = 0;
-Token* token_ptr = NULL;
-offset(Token*) current_token = 0;
-bool in_function = false;
-bool in_method = false;
-bool in_loop = false;
-bool indent_has_next[256];

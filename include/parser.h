@@ -227,9 +227,9 @@ typedef struct Node {
 } Node;
 
 // public functions
-// `Code* parser(Lexer* lexer)`
-offset(Code*) parser(offset(Lexer*) lexer);
+// `Code* parse_code(Lexer* lexer, Scope* now_scope, Parser* parser)`
+offset(Code*) parse_code(offset(Lexer*) lexer, offset(Scope*) now_scope, offset(Parser*) parser);
 // `void output_ast(Code* ast_node, FILE* outfile, size_t indent)`
-void output_ast(offset(Code*) ast_node, FILE* outfile, size_t indent);
+void output_ast(offset(Code*) ast_node, FILE* outfile, size_t indent, offset(Parser*) parser);
 
 #endif  // PARSER_H

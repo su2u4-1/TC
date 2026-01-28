@@ -1,3 +1,4 @@
+#include "helper.h"
 #include "lexer.h"
 #include "lib.h"
 #include "parser.h"
@@ -99,8 +100,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     lexer = create_lexer(source, length);
-    offset(Code*) ast_root = parser(lexer);
-    output_ast(ast_root, out_ast, 0);
+    offset(Parser*) parser = create_parser();
+    offset(Code*) ast_root = parse_code(lexer, 0, parser);
+    output_ast(ast_root, out_ast, 0, parser);
     fprintf(out_ast, "\ninfo by lib:\n    %s\n", string_to_cstr(get_info()));
     fclose(out_ast);
 
