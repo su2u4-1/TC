@@ -61,7 +61,7 @@ static void output_token(FILE* file, offset(Lexer*) lexer) {
             else if (c == '\r')
                 fputs("\\r", file);
             else
-                fputs(&c, file);
+                fputc(c, file);
         }
         fprintf(file, "' (%zu)\n", token->lexeme);
     }
@@ -82,18 +82,18 @@ static void parse_file(const char* filename, bool o_token, bool o_ast) {
     char* source = read_source(source_file, &length);
     fclose(source_file);
     offset(Lexer*) lexer = create_lexer(source, length);
-    offset(Parser*) parser = create_parser();
     if (o_token) {
-        offset(Lexer*) lexer_ = create_lexer(source, length);
         char out_token_name[MAX_FILENAME_SIZE];
         string_append(out_token_name, MAX_FILENAME_SIZE, filename, ".token");
         FILE* out_token_file = fopen(out_token_name, "w");
         if (out_token_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_token_name);
         else
-            output_token(out_token_file, lexer_);
+            output_token(out_token_file, lexer);
         fclose(out_token_file);
     }
+    reset_lexer(lexer);
+    offset(Parser*) parser = create_parser();
     if (o_ast) {
         char out_ast_name[MAX_FILENAME_SIZE];
         string_append(out_ast_name, MAX_FILENAME_SIZE, filename, ".ast");

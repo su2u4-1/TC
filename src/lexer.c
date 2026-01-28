@@ -240,3 +240,14 @@ offset(Token*) peek_next_token(offset(Lexer*) lexer) {
     lexer_ptr->peeked_token = token;
     return token;
 }
+
+void reset_lexer(offset(Lexer*) lexer) {
+    Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
+    lexer_ptr->position = 0;
+    lexer_ptr->line = 0;
+    lexer_ptr->column = 0;
+    lexer_ptr->peeked_token = 0;
+    lexer_ptr->peeked_position = 0;
+    lexer_ptr->peeked_line = 0;
+    lexer_ptr->peeked_column = 0;
+}

@@ -38,5 +38,7 @@ offset(Lexer*) create_lexer(char* source, size_t length);
 offset(Token*) get_next_token(offset(Lexer*) lexer);
 // `Token* peek_next_token(Lexer* lexer)`
 offset(Token*) peek_next_token(offset(Lexer*) lexer);
+// `void reset_lexer(Lexer* lexer)`
+void reset_lexer(offset(Lexer*) lexer);
 
 #endif  // LEXER_H
