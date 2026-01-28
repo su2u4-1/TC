@@ -273,24 +273,27 @@ int operator_precedence(OperatorType op) {
 }
 
 string operator_to_string(OperatorType op) {
-    if (op == OP_ASSIGN) return ASSIGN_SYMBOL;
-    else if (op == OP_ADD_ASSIGN) return ADD_ASSIGN_SYMBOL;
-    else if (op == OP_SUB_ASSIGN) return SUB_ASSIGN_SYMBOL;
-    else if (op == OP_MUL_ASSIGN) return MUL_ASSIGN_SYMBOL;
-    else if (op == OP_DIV_ASSIGN) return DIV_ASSIGN_SYMBOL;
-    else if (op == OP_MOD_ASSIGN) return MOD_ASSIGN_SYMBOL;
-    else if (op == OP_AND) return AND_SYMBOL;
-    else if (op == OP_OR) return OR_SYMBOL;
-    else if (op == OP_EQ) return EQ_SYMBOL;
-    else if (op == OP_NE) return NE_SYMBOL;
-    else if (op == OP_LT) return LT_SYMBOL;
-    else if (op == OP_GT) return GT_SYMBOL;
-    else if (op == OP_LE) return LE_SYMBOL;
-    else if (op == OP_GE) return GE_SYMBOL;
-    else if (op == OP_ADD) return ADD_SYMBOL;
-    else if (op == OP_SUB) return SUB_SYMBOL;
-    else if (op == OP_MUL) return MUL_SYMBOL;
-    else if (op == OP_DIV) return DIV_SYMBOL;
-    else if (op == OP_MOD) return MOD_SYMBOL;
-    else return 0;
+    switch (op) {
+        case OP_ASSIGN: return ASSIGN_SYMBOL;
+        case OP_ADD_ASSIGN: return ADD_ASSIGN_SYMBOL;
+        case OP_SUB_ASSIGN: return SUB_ASSIGN_SYMBOL;
+        case OP_MUL_ASSIGN: return MUL_ASSIGN_SYMBOL;
+        case OP_DIV_ASSIGN: return DIV_ASSIGN_SYMBOL;
+        case OP_MOD_ASSIGN: return MOD_ASSIGN_SYMBOL;
+        case OP_AND: return AND_SYMBOL;
+        case OP_OR: return OR_SYMBOL;
+        case OP_EQ: return EQ_SYMBOL;
+        case OP_NE: return NE_SYMBOL;
+        case OP_LT: return LT_SYMBOL;
+        case OP_GT: return GT_SYMBOL;
+        case OP_LE: return LE_SYMBOL;
+        case OP_GE: return GE_SYMBOL;
+        case OP_ADD: return ADD_SYMBOL;
+        case OP_SUB: return SUB_SYMBOL;
+        case OP_MUL: return MUL_SYMBOL;
+        case OP_DIV: return DIV_SYMBOL;
+        case OP_MOD: return MOD_SYMBOL;
+        case OP_NONE:
+        default: return 0;
+    }
 }
