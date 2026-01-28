@@ -1,5 +1,8 @@
 #include "helper.h"
 
+#include "compiler.h"
+#include "lexer.h"
+
 // list helper functions
 list() create_list(void) {
     offset(List*) new_list = alloc_memory(sizeof(List));
@@ -158,16 +161,10 @@ offset(Name*) parse_import_std(offset(Name*) import_name, offset(Scope*) scope) 
         fprintf(stderr, "Error opening standard library file for import: %s\n", string_to_cstr(import_name));
         return 0;
     }
-    fseek(openfile, 0, SEEK_END);
-    size_t length = (size_t)ftell(openfile);
-    fseek(openfile, 0, SEEK_SET);
-    char* source = string_to_cstr(alloc_memory(length + 1));
-    fread(source, 1, length, openfile);
-    source[length] = '\0';
+    size_t length = 0;
+    char* source = read_source(openfile, &length);
     fclose(openfile);
-    offset(Lexer*) lexer = create_lexer(source, length);
-    offset(Parser*) parser = create_parser();
-    offset(Code*) code = parse_code(lexer, 0, parser);
+    offset(Code*) code = parse_code(create_lexer(source, length), 0, create_parser());
     if (code == 0) {
         fprintf(stderr, "Error parsing standard library file for import: %s\n", string_to_cstr(import_name));
         return 0;

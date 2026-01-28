@@ -1,7 +1,6 @@
 #ifndef HELPER_H
 #define HELPER_H
 
-#include "lexer.h"
 #include "lib.h"
 #include "parser.h"
 

@@ -2,6 +2,7 @@
 
 #include "create.h"
 #include "helper.h"
+#include "lexer.h"
 
 // parser functions
 // `static Import* parse_import(Lexer* lexer, Scope* now_scope, Parser* parser)`
