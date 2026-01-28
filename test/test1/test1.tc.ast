@@ -466,4 +466,4 @@
 │       │       └── value: 0
 
 info by lib:
-    Platform: 1, Memory Used: 16896 bytes, stringCount: 74, string compare count: fast-true: 196 fast-false: 2662 fast-not: 0, Memory Block Count: 576
+    Platform: 1, Memory Used: 16832 bytes, stringCount: 74, string compare count: fast-true: 196 fast-false: 2662 fast-not: 0, Memory Block Count: 574

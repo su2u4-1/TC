@@ -29,7 +29,7 @@ static char* read_source(FILE* file, size_t* length) {
     return source;
 }
 static void output_token(FILE* file, offset(Lexer*) lexer) {
-    for (offset(Token*) current = get_next_token(lexer); current != 0; current = get_next_token(lexer)) {
+    for (offset(Token*) current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
         Token* token = (Token*)offset_to_ptr(current);
         if (token->type == EOF_TOKEN) {
             fprintf(file, "Token(Type: EOF,        Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);

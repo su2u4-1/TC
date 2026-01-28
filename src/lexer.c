@@ -1,5 +1,7 @@
 #include "lexer.h"
 
+#include "lib.h"
+
 offset(Lexer*) create_lexer(char* source, size_t length) {
     offset(Lexer*) lexer = alloc_memory(sizeof(Lexer));
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
@@ -12,6 +14,7 @@ offset(Lexer*) create_lexer(char* source, size_t length) {
     lexer_ptr->peeked_position = 0;
     lexer_ptr->peeked_line = 0;
     lexer_ptr->peeked_column = 0;
+    lexer_ptr->current_token = 0;
     return lexer;
 }
 
@@ -63,24 +66,16 @@ static void move_position(offset(Lexer*) lexer, int count) {
     }
 }
 
-offset(Token*) get_next_token(offset(Lexer*) lexer) {
+static offset(Token*) next_token(offset(Lexer*) lexer, bool skip_comment) {
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
-    if (lexer_ptr->peeked_token != 0) {
-        offset(Token*) cached_token = lexer_ptr->peeked_token;
-        lexer_ptr->position = lexer_ptr->peeked_position;
-        lexer_ptr->line = lexer_ptr->peeked_line;
-        lexer_ptr->column = lexer_ptr->peeked_column;
-        lexer_ptr->peeked_token = 0;
-        return cached_token;
-    }
     char c = get_current_char(lexer);
     if (c == '\0')
         return create_token(EOF_TOKEN, 0, lexer_ptr->line, lexer_ptr->column);
     else if (c == ' ' || c == '\t' || c == '\r')
-        return get_next_token(lexer);
+        return next_token(lexer, skip_comment);
     else if (c == '\n') {
         newline(lexer);
-        return get_next_token(lexer);
+        return next_token(lexer, skip_comment);
     } else if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || c == '_') {
         size_t start = lexer_ptr->position - 1;
         size_t column_start = lexer_ptr->column - 1;
@@ -127,6 +122,8 @@ offset(Token*) get_next_token(offset(Lexer*) lexer) {
             while (c != '\n' && c != '\0')
                 c = get_current_char(lexer);
             move_position(lexer, -1);
+            if (skip_comment)
+                return next_token(lexer, skip_comment);
             return create_token(COMMENT, create_string(&string_to_cstr(lexer_ptr->source)[start], lexer_ptr->position - start), lexer_ptr->line, column_start);
         } else if (c == '/' && p == '*') {
             size_t start = lexer_ptr->position + 1;
@@ -141,9 +138,13 @@ offset(Token*) get_next_token(offset(Lexer*) lexer) {
             if (p == '\0') {
                 if (c == '\0') move_position(lexer, -1);
                 lexer_error("Unterminated comment", lexer_ptr->line, start);
+                if (skip_comment)
+                    return next_token(lexer, skip_comment);
                 return create_token(COMMENT, create_string(&string_to_cstr(lexer_ptr->source)[start], lexer_ptr->position - start), lexer_ptr->line, column_start);
             }
             c = get_current_char(lexer);
+            if (skip_comment)
+                return next_token(lexer, skip_comment);
             return create_token(COMMENT, create_string(&string_to_cstr(lexer_ptr->source)[start], lexer_ptr->position - start - 2), lexer_ptr->line, column_start);
         } else if (c == '=' && p == '=') {
             get_current_char(lexer);
@@ -223,14 +224,27 @@ offset(Token*) get_next_token(offset(Lexer*) lexer) {
     }
 }
 
-offset(Token*) peek_next_token(offset(Lexer*) lexer) {
+offset(Token*) get_next_token(offset(Lexer*) lexer, bool skip_comment) {
+    Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
+    if (lexer_ptr->peeked_token != 0) {
+        lexer_ptr->current_token = lexer_ptr->peeked_token;
+        lexer_ptr->position = lexer_ptr->peeked_position;
+        lexer_ptr->line = lexer_ptr->peeked_line;
+        lexer_ptr->column = lexer_ptr->peeked_column;
+        lexer_ptr->peeked_token = 0;
+        return lexer_ptr->current_token;
+    }
+    return lexer_ptr->current_token = next_token(lexer, skip_comment);
+}
+
+offset(Token*) peek_next_token(offset(Lexer*) lexer, bool skip_comment) {
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
     if (lexer_ptr->peeked_token != 0)
         return lexer_ptr->peeked_token;
     size_t saved_position = lexer_ptr->position;
     size_t saved_line = lexer_ptr->line;
     size_t saved_column = lexer_ptr->column;
-    offset(Token*) token = get_next_token(lexer);
+    offset(Token*) token = get_next_token(lexer, skip_comment);
     lexer_ptr->peeked_position = lexer_ptr->position;
     lexer_ptr->peeked_line = lexer_ptr->line;
     lexer_ptr->peeked_column = lexer_ptr->column;
@@ -239,6 +253,10 @@ offset(Token*) peek_next_token(offset(Lexer*) lexer) {
     lexer_ptr->column = saved_column;
     lexer_ptr->peeked_token = token;
     return token;
+}
+
+inline offset(Token*) peek_current_token(offset(Lexer*) lexer) {
+    return ((Lexer*)offset_to_ptr(lexer))->current_token;
 }
 
 void reset_lexer(offset(Lexer*) lexer) {
@@ -250,4 +268,5 @@ void reset_lexer(offset(Lexer*) lexer) {
     lexer_ptr->peeked_position = 0;
     lexer_ptr->peeked_line = 0;
     lexer_ptr->peeked_column = 0;
+    lexer_ptr->current_token = 0;
 }

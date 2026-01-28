@@ -137,7 +137,6 @@ void indention(FILE* out, size_t indent, bool is_last, offset(Parser*) parser) {
 offset(Parser*) create_parser(void) {
     offset(Parser*) new_parser = alloc_memory(sizeof(Parser));
     Parser* parser_ptr = (Parser*)offset_to_ptr(new_parser);
-    parser_ptr->current_token = 0;
     parser_ptr->in_function = false;
     parser_ptr->in_method = false;
     parser_ptr->in_loop = false;
@@ -189,31 +188,6 @@ offset(Name*) parse_import_std(offset(Name*) import_name, offset(Scope*) scope) 
         list_append(scope_ptr->names, name);
     }
     return name;
-}
-
-// token helper functions
-offset(Token*) next_token(offset(Lexer*) lexer, offset(Parser*) parser) {
-    offset(Token*) token;
-    while (true) {
-        token = get_next_token(lexer);
-        if (token == 0) {
-            fprintf(stderr, "Error: get_next_token returned NULL\n");
-            ((Parser*)offset_to_ptr(parser))->current_token = 0;
-            return token;
-        }
-        if (((Token*)offset_to_ptr(token))->type != COMMENT)
-            break;
-    }
-    ((Parser*)offset_to_ptr(parser))->current_token = token;
-    return token;
-}
-
-inline offset(Token*) peek_current_token(offset(Parser*) parser) {
-    return ((Parser*)offset_to_ptr(parser))->current_token;
-}
-
-inline offset(Token*) peek_token(offset(Lexer*) lexer) {
-    return peek_next_token(lexer);
 }
 
 // operator helper functions

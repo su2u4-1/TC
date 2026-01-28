@@ -8,7 +8,6 @@
 #define OUT(x, is_last, ...) indention(outfile, indent + x, is_last, parser), fprintf(outfile, __VA_ARGS__)
 
 typedef struct Parser {
-    offset(Token*) current_token;
     bool in_function;
     bool in_method;
     bool in_loop;
@@ -46,14 +45,6 @@ void indention(FILE* out, size_t indent, bool is_last, offset(Parser*) parser);
 offset(Parser*) create_parser(void);
 // `Name* parse_import_std(Name* import_name, Scope* scope)`
 offset(Name*) parse_import_std(offset(Name*) import_name, offset(Scope*) scope);
-
-// token helper functions
-// `Token* get_next_token(Lexer* lexer, Parser* parser)`
-offset(Token*) next_token(offset(Lexer*) lexer, offset(Parser*) parser);
-// `inline Token* peek_current_token(Parser* parser)`
-offset(Token*) peek_current_token(offset(Parser*) parser);
-// `inline Token* peek_next_token(Lexer* lexer)`
-offset(Token*) peek_token(offset(Lexer*) lexer);
 
 // operator helper functions
 // `OperatorType string_to_operator(string str)`
