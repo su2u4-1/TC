@@ -8,7 +8,7 @@
 #include <string.h>
 
 // #define DEBUG
-#define bool int
+#define bool char
 #define true 1
 #define false 0
 typedef size_t string;
