@@ -242,17 +242,18 @@ char* string_to_cstr(string str) {
 }
 
 size_t* offset_to_ptr(offset() off) {
-    if (off <= 0 || off >= memoryUsed) return NULL;
+    if (off >= memoryUsed) {
+        fprintf(stderr, "Error: offset_to_ptr received invalid offset: %zu\n", off);
+        return NULL;
+    }
+    if (off == 0) return NULL;
     assert(off % ALIGN_SIZE == 0);
     return (size_t*)(void*)(memory + off);
 }
 
 string char_ptr_to_string(char* ptr) {
     if (ptr < memory || ptr >= memory + memoryUsed) {
-        if (ptr < memory)
-            fprintf(stderr, "Error: ptr_to_string received invalid pointer: memory - ptr: %zu\n", memory - ptr);
-        else
-            fprintf(stderr, "Error: ptr_to_string received invalid pointer: ptr - memory: %zu\n", ptr - memory);
+        fprintf(stderr, "Error: ptr_to_string received invalid pointer: ptr: %p, memory: %p\n", ptr, memory);
         return 0;
     }
     return (string)(ptr - memory);

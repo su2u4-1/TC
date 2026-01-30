@@ -14,12 +14,12 @@ typedef enum CodeMemberType {
 } CodeMemberType;
 
 typedef struct CodeMember {
-    CodeMemberType type;
     union {
         offset(Import*) import;
         offset(Function*) function;
         offset(Class*) class_;
     } content;
+    CodeMemberType type;
 } CodeMember;
 
 typedef struct Code {
@@ -54,11 +54,11 @@ typedef enum ClassMemberType {
 } ClassMemberType;
 
 typedef struct ClassMember {
-    ClassMemberType type;
     union {
         offset(Method*) method;
         offset(Variable*) variable;
     } content;
+    ClassMemberType type;
 } ClassMember;
 
 typedef struct Class {
@@ -85,7 +85,6 @@ typedef enum StatementType {
 } StatementType;
 
 typedef struct Statement {
-    StatementType type;
     union {
         offset(Expression*) expr;
         offset(Variable*) var;
@@ -94,6 +93,7 @@ typedef struct Statement {
         offset(For*) for_stmt;
         offset(Expression*) return_expr;
     } stmt;
+    StatementType type;
 } Statement;
 
 typedef struct If {
@@ -144,9 +144,9 @@ typedef enum OperatorType {
 } OperatorType;
 
 typedef struct Expression {
-    OperatorType operator;
     offset(Expression* | Primary*) left;
     offset(Expression*) right;
+    OperatorType operator;
 } Expression;
 
 typedef enum PrimaryType {
@@ -162,13 +162,13 @@ typedef enum PrimaryType {
 } PrimaryType;
 
 typedef struct Primary {
-    PrimaryType type;
     union {
         string literal_value;         // int, float, string, true, false
         offset(Expression*) expr;     // expr
         offset(Primary*) operand;     // not, neg
         offset(VariableAccess*) var;  // variable access
     } value;
+    PrimaryType type;
 } Primary;
 
 typedef enum VariableAccessType {
@@ -179,7 +179,6 @@ typedef enum VariableAccessType {
 } VariableAccessType;
 
 typedef struct VariableAccess {
-    VariableAccessType type;
     offset(VariableAccess*) base;
     union {
         offset(Name*) name;
@@ -187,6 +186,7 @@ typedef struct VariableAccess {
         offset(Name*) attr_name;    // get_attr
         offset(Expression*) index;  // get_seq
     } content;
+    VariableAccessType type;
 } VariableAccess;
 
 typedef struct Scope {
@@ -206,7 +206,6 @@ typedef enum NameType {
 typedef struct Name {
     string name;
     size_t id;
-    NameType kind;
     union {
         // variable type, attribute type, function return ntype, method return type
         offset(Name*) type;
@@ -214,6 +213,7 @@ typedef struct Name {
         offset(Scope*) scope;
         // NAME_TYPE: 0
     } info;
+    NameType kind;
 } Name;
 
 typedef struct List {

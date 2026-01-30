@@ -15,9 +15,9 @@ typedef enum TokenType {
 } TokenType;
 
 typedef struct Token {
-    TokenType type;
     string lexeme;
     size_t line, column;
+    TokenType type;
 } Token;
 
 typedef struct Lexer {
