@@ -64,6 +64,12 @@ string DIV_ASSIGN_SYMBOL = 0;
 string MOD_ASSIGN_SYMBOL = 0;
 string AND_SYMBOL = 0;
 string OR_SYMBOL = 0;
+offset(Name*) name_void = 0;
+offset(Name*) name_int = 0;
+offset(Name*) name_float = 0;
+offset(Name*) name_string = 0;
+offset(Name*) name_bool = 0;
+offset(Scope*) builtin_scope = 0;
 
 static void increase_memory_size(void) {
     char* oldMemory = memory;

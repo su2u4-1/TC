@@ -93,6 +93,13 @@ extern string MOD_ASSIGN_SYMBOL;  // symbol `%=`
 extern string AND_SYMBOL;         // symbol `&&`
 extern string OR_SYMBOL;          // symbol `||`
 
+extern offset(Name*) name_void;
+extern offset(Name*) name_int;
+extern offset(Name*) name_float;
+extern offset(Name*) name_string;
+extern offset(Name*) name_bool;
+extern offset(Scope*) builtin_scope;
+
 // `void init(void)`
 void init(void);
 // `string create_string(const char* data, size_t length)`

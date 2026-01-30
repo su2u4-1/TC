@@ -30,25 +30,24 @@ static offset(Primary*) parse_primary(offset(Lexer*) lexer, offset(Scope*) now_s
 // `static VariableAccess* parse_variable_access(Lexer* lexer, Scope* now_scope, Parser* parser)`
 static offset(VariableAccess*) parse_variable_access(offset(Lexer*) lexer, offset(Scope*) now_scope, offset(Parser*) parser);
 
-static offset(Name*) name_void = 0;
-static offset(Name*) name_int = 0;
-static offset(Name*) name_float = 0;
-static offset(Name*) name_string = 0;
-static offset(Name*) name_bool = 0;
-
 offset(Code*) parse_code(offset(Lexer*) lexer, offset(Scope*) now_scope, offset(Parser*) parser) {
 #ifdef DEBUG
     fprintf(stderr, "into parse_code\n");
 #endif
+    if (builtin_scope == 0) {
+        builtin_scope = create_scope(0);
+        name_void = create_name(VOID_KEYWORD, NAME_TYPE, 0, builtin_scope);
+        name_int = create_name(INT_KEYWORD, NAME_TYPE, 0, builtin_scope);
+        name_float = create_name(FLOAT_KEYWORD, NAME_TYPE, 0, builtin_scope);
+        name_string = create_name(STRING_KEYWORD, NAME_TYPE, 0, builtin_scope);
+        name_bool = create_name(BOOL_KEYWORD, NAME_TYPE, 0, builtin_scope);
+    }
+    if (now_scope == 0)
+        now_scope = builtin_scope;
     offset(Token*) token = 0;
     Token* token_ptr = NULL;
     list(CodeMember*) members = create_list();
     offset(Scope*) global_scope = create_scope(now_scope);
-    name_void = create_name(VOID_KEYWORD, NAME_TYPE, 0, global_scope);
-    name_int = create_name(INT_KEYWORD, NAME_TYPE, 0, global_scope);
-    name_float = create_name(FLOAT_KEYWORD, NAME_TYPE, 0, global_scope);
-    name_string = create_name(STRING_KEYWORD, NAME_TYPE, 0, global_scope);
-    name_bool = create_name(BOOL_KEYWORD, NAME_TYPE, 0, global_scope);
     token = get_next_token(lexer, true);
     token_ptr = (Token*)offset_to_ptr(token);
     while (token != 0 && token_ptr->type != EOF_TOKEN) {
@@ -171,7 +170,7 @@ offset(Function*) parse_function(offset(Lexer*) lexer, offset(Scope*) now_scope,
         token_ptr = (Token*)offset_to_ptr(token);
     }
     ((Parser*)offset_to_ptr(parser))->in_function = false;
-    if (!have_return && !string_equal(return_type, VOID_KEYWORD))
+    if (!have_return && return_type != name_void)
         parser_error("Function missing return statement", token);
     return create_function(name, return_type, parameters, body, function_scope);
 }

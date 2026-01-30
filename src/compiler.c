@@ -67,7 +67,7 @@ void output_token(FILE* file, offset(Lexer*) lexer) {
     fprintf(file, "\ninfo by lib:\n    %s\n", string_to_cstr(get_info()));
 }
 void output_ast(FILE* file, offset(Lexer*) lexer, offset(Parser*) parser) {
-    offset(Code*) ast_root = parse_code(lexer, 0, parser);
+    offset(Code*) ast_root = parse_code(lexer, builtin_scope, parser);
     output_code(ast_root, file, 0, parser);
     fprintf(file, "\ninfo by lib:\n    %s\n", string_to_cstr(get_info()));
 }

@@ -161,10 +161,12 @@ offset(Name*) parse_import_std(offset(Name*) import_name, offset(Scope*) scope) 
         fprintf(stderr, "Error opening standard library file for import: %s\n", string_to_cstr(import_name));
         return 0;
     }
+    printf("Info: Starting parsing std lib file for import: %s\n", string_to_cstr(import_name));
     size_t length = 0;
     char* source = read_source(openfile, &length);
     fclose(openfile);
-    offset(Code*) code = parse_code(create_lexer(source, length), 0, create_parser());
+    offset(Code*) code = parse_code(create_lexer(source, length), builtin_scope, create_parser());
+    printf("Info: Finished parsing std lib file for import: %s\n", string_to_cstr(import_name));
     if (code == 0) {
         fprintf(stderr, "Error parsing standard library file for import: %s\n", string_to_cstr(import_name));
         return 0;

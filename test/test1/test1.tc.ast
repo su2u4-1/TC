@@ -1,17 +1,17 @@
 ├── import
 │   ├── name
 │   │   ├── name: "print"
-│   │   ├── id: 11
+│   │   ├── id: 6
 │   │   ├── kind: "function"
 │   │   └── return_type
 │   │       ├── name: "void"
-│   │       ├── id: 6
+│   │       ├── id: 1
 │   │       └── kind: "type"
 │   └── source: "std"
 ├── class
 │   ├── name
 │   │   ├── name: "Test1"
-│   │   ├── id: 13
+│   │   ├── id: 8
 │   │   └── kind: "class"
 │   └── members
 │       ├── variable
@@ -21,7 +21,7 @@
 │       │   │   └── kind: "type"
 │       │   ├── name
 │       │   │   ├── name: "a"
-│       │   │   ├── id: 14
+│       │   │   ├── id: 9
 │       │   │   ├── kind: "variable"
 │       │   │   └── type
 │       │   │       ├── name: "int"
@@ -34,21 +34,167 @@
 │       ├── method
 │       │   ├── name
 │       │   │   ├── name: "init"
-│       │   │   ├── id: 16
+│       │   │   ├── id: 11
 │       │   │   ├── kind: "method"
 │       │   │   └── return_type
 │       │   │       ├── name: "Test1"
-│       │   │       ├── id: 13
+│       │   │       ├── id: 8
 │       │   │       └── kind: "class"
 │       │   ├── return_type
 │       │   │   ├── name: "Test1"
-│       │   │   ├── id: 13
+│       │   │   ├── id: 8
 │       │   │   └── kind: "class"
 │       │   ├── parameters
 │       │   │   ├── parameters[0]
 │       │   │   │   ├── type
 │       │   │   │   │   ├── name: "Test1"
+│       │   │   │   │   ├── id: 8
+│       │   │   │   │   └── kind: "class"
+│       │   │   │   ├── name
+│       │   │   │   │   ├── name: "self"
+│       │   │   │   │   ├── id: 10
+│       │   │   │   │   ├── kind: "variable"
+│       │   │   │   │   └── type
+│       │   │   │   │       ├── name: "Test1"
+│       │   │   │   │       ├── id: 8
+│       │   │   │   │       └── kind: "class"
+│       │   │   │   └── value: "NULL"
+│       │   │   ├── parameters[1]
+│       │   │   │   ├── type
+│       │   │   │   │   ├── name: "int"
+│       │   │   │   │   ├── id: 2
+│       │   │   │   │   └── kind: "type"
+│       │   │   │   ├── name
+│       │   │   │   │   ├── name: "value"
+│       │   │   │   │   ├── id: 12
+│       │   │   │   │   ├── kind: "variable"
+│       │   │   │   │   └── type
+│       │   │   │   │       ├── name: "int"
+│       │   │   │   │       ├── id: 2
+│       │   │   │   │       └── kind: "type"
+│       │   │   │   └── value: "NULL"
+│       │   └── body
+│       │       ├── expression_statement
+│       │       │   ├── operator: "="
+│       │       │   ├── left
+│       │       │   │   └── primary
+│       │       │   │       ├── type: "variable"
+│       │       │   │       └── value
+│       │       │   │           ├── type: "get_attribute"
+│       │       │   │           ├── object
+│       │       │   │           │   ├── type: "name"
+│       │       │   │           │   └── name
+│       │       │   │           │       ├── name: "self"
+│       │       │   │           │       ├── id: 10
+│       │       │   │           │       ├── kind: "variable"
+│       │       │   │           │       └── type
+│       │       │   │           │           ├── name: "Test1"
+│       │       │   │           │           ├── id: 8
+│       │       │   │           │           └── kind: "class"
+│       │       │   │           └── attribute_name
+│       │       │   │               ├── name: "a"
+│       │       │   │               ├── id: 9
+│       │       │   │               ├── kind: "variable"
+│       │       │   │               └── type
+│       │       │   │                   ├── name: "int"
+│       │       │   │                   ├── id: 2
+│       │       │   │                   └── kind: "type"
+│       │       │   └── right
+│       │       │       └── primary
+│       │       │           ├── type: "variable"
+│       │       │           └── value
+│       │       │               ├── type: "name"
+│       │       │               └── name
+│       │       │                   ├── name: "value"
+│       │       │                   ├── id: 12
+│       │       │                   ├── kind: "variable"
+│       │       │                   └── type
+│       │       │                       ├── name: "int"
+│       │       │                       ├── id: 2
+│       │       │                       └── kind: "type"
+│       │       ├── return_statement
+│       │       │   └── primary
+│       │       │       ├── type: "variable"
+│       │       │       └── value
+│       │       │           ├── type: "name"
+│       │       │           └── name
+│       │       │               ├── name: "self"
+│       │       │               ├── id: 10
+│       │       │               ├── kind: "variable"
+│       │       │               └── type
+│       │       │                   ├── name: "Test1"
+│       │       │                   ├── id: 8
+│       │       │                   └── kind: "class"
+│       ├── method
+│       │   ├── name
+│       │   │   ├── name: "get_a"
+│       │   │   ├── id: 14
+│       │   │   ├── kind: "method"
+│       │   │   └── return_type
+│       │   │       ├── name: "int"
+│       │   │       ├── id: 2
+│       │   │       └── kind: "type"
+│       │   ├── return_type
+│       │   │   ├── name: "int"
+│       │   │   ├── id: 2
+│       │   │   └── kind: "type"
+│       │   ├── parameters
+│       │   │   ├── parameters[0]
+│       │   │   │   ├── type
+│       │   │   │   │   ├── name: "Test1"
+│       │   │   │   │   ├── id: 8
+│       │   │   │   │   └── kind: "class"
+│       │   │   │   ├── name
+│       │   │   │   │   ├── name: "self"
 │       │   │   │   │   ├── id: 13
+│       │   │   │   │   ├── kind: "variable"
+│       │   │   │   │   └── type
+│       │   │   │   │       ├── name: "Test1"
+│       │   │   │   │       ├── id: 8
+│       │   │   │   │       └── kind: "class"
+│       │   │   │   └── value: "NULL"
+│       │   └── body
+│       │       ├── return_statement
+│       │       │   └── primary
+│       │       │       ├── type: "variable"
+│       │       │       └── value
+│       │       │           ├── type: "get_attribute"
+│       │       │           ├── object
+│       │       │           │   ├── type: "name"
+│       │       │           │   └── name
+│       │       │           │       ├── name: "self"
+│       │       │           │       ├── id: 13
+│       │       │           │       ├── kind: "variable"
+│       │       │           │       └── type
+│       │       │           │           ├── name: "Test1"
+│       │       │           │           ├── id: 8
+│       │       │           │           └── kind: "class"
+│       │       │           └── attribute_name
+│       │       │               ├── name: "a"
+│       │       │               ├── id: 9
+│       │       │               ├── kind: "variable"
+│       │       │               └── type
+│       │       │                   ├── name: "int"
+│       │       │                   ├── id: 2
+│       │       │                   └── kind: "type"
+│       ├── method
+│       │   ├── name
+│       │   │   ├── name: "set_a"
+│       │   │   ├── id: 16
+│       │   │   ├── kind: "method"
+│       │   │   └── return_type
+│       │   │       ├── name: "void"
+│       │   │       ├── id: 1
+│       │   │       └── kind: "type"
+│       │   ├── return_type
+│       │   │   ├── name: "void"
+│       │   │   ├── id: 1
+│       │   │   └── kind: "type"
+│       │   ├── parameters
+│       │   │   ├── parameters[0]
+│       │   │   │   ├── type
+│       │   │   │   │   ├── name: "Test1"
+│       │   │   │   │   ├── id: 8
 │       │   │   │   │   └── kind: "class"
 │       │   │   │   ├── name
 │       │   │   │   │   ├── name: "self"
@@ -56,7 +202,7 @@
 │       │   │   │   │   ├── kind: "variable"
 │       │   │   │   │   └── type
 │       │   │   │   │       ├── name: "Test1"
-│       │   │   │   │       ├── id: 13
+│       │   │   │   │       ├── id: 8
 │       │   │   │   │       └── kind: "class"
 │       │   │   │   └── value: "NULL"
 │       │   │   ├── parameters[1]
@@ -89,11 +235,11 @@
 │       │       │   │           │       ├── kind: "variable"
 │       │       │   │           │       └── type
 │       │       │   │           │           ├── name: "Test1"
-│       │       │   │           │           ├── id: 13
+│       │       │   │           │           ├── id: 8
 │       │       │   │           │           └── kind: "class"
 │       │       │   │           └── attribute_name
 │       │       │   │               ├── name: "a"
-│       │       │   │               ├── id: 14
+│       │       │   │               ├── id: 9
 │       │       │   │               ├── kind: "variable"
 │       │       │   │               └── type
 │       │       │   │                   ├── name: "int"
@@ -112,156 +258,10 @@
 │       │       │                       ├── name: "int"
 │       │       │                       ├── id: 2
 │       │       │                       └── kind: "type"
-│       │       ├── return_statement
-│       │       │   └── primary
-│       │       │       ├── type: "variable"
-│       │       │       └── value
-│       │       │           ├── type: "name"
-│       │       │           └── name
-│       │       │               ├── name: "self"
-│       │       │               ├── id: 15
-│       │       │               ├── kind: "variable"
-│       │       │               └── type
-│       │       │                   ├── name: "Test1"
-│       │       │                   ├── id: 13
-│       │       │                   └── kind: "class"
-│       ├── method
-│       │   ├── name
-│       │   │   ├── name: "get_a"
-│       │   │   ├── id: 19
-│       │   │   ├── kind: "method"
-│       │   │   └── return_type
-│       │   │       ├── name: "int"
-│       │   │       ├── id: 2
-│       │   │       └── kind: "type"
-│       │   ├── return_type
-│       │   │   ├── name: "int"
-│       │   │   ├── id: 2
-│       │   │   └── kind: "type"
-│       │   ├── parameters
-│       │   │   ├── parameters[0]
-│       │   │   │   ├── type
-│       │   │   │   │   ├── name: "Test1"
-│       │   │   │   │   ├── id: 13
-│       │   │   │   │   └── kind: "class"
-│       │   │   │   ├── name
-│       │   │   │   │   ├── name: "self"
-│       │   │   │   │   ├── id: 18
-│       │   │   │   │   ├── kind: "variable"
-│       │   │   │   │   └── type
-│       │   │   │   │       ├── name: "Test1"
-│       │   │   │   │       ├── id: 13
-│       │   │   │   │       └── kind: "class"
-│       │   │   │   └── value: "NULL"
-│       │   └── body
-│       │       ├── return_statement
-│       │       │   └── primary
-│       │       │       ├── type: "variable"
-│       │       │       └── value
-│       │       │           ├── type: "get_attribute"
-│       │       │           ├── object
-│       │       │           │   ├── type: "name"
-│       │       │           │   └── name
-│       │       │           │       ├── name: "self"
-│       │       │           │       ├── id: 18
-│       │       │           │       ├── kind: "variable"
-│       │       │           │       └── type
-│       │       │           │           ├── name: "Test1"
-│       │       │           │           ├── id: 13
-│       │       │           │           └── kind: "class"
-│       │       │           └── attribute_name
-│       │       │               ├── name: "a"
-│       │       │               ├── id: 14
-│       │       │               ├── kind: "variable"
-│       │       │               └── type
-│       │       │                   ├── name: "int"
-│       │       │                   ├── id: 2
-│       │       │                   └── kind: "type"
-│       ├── method
-│       │   ├── name
-│       │   │   ├── name: "set_a"
-│       │   │   ├── id: 21
-│       │   │   ├── kind: "method"
-│       │   │   └── return_type
-│       │   │       ├── name: "void"
-│       │   │       ├── id: 1
-│       │   │       └── kind: "type"
-│       │   ├── return_type
-│       │   │   ├── name: "void"
-│       │   │   ├── id: 1
-│       │   │   └── kind: "type"
-│       │   ├── parameters
-│       │   │   ├── parameters[0]
-│       │   │   │   ├── type
-│       │   │   │   │   ├── name: "Test1"
-│       │   │   │   │   ├── id: 13
-│       │   │   │   │   └── kind: "class"
-│       │   │   │   ├── name
-│       │   │   │   │   ├── name: "self"
-│       │   │   │   │   ├── id: 20
-│       │   │   │   │   ├── kind: "variable"
-│       │   │   │   │   └── type
-│       │   │   │   │       ├── name: "Test1"
-│       │   │   │   │       ├── id: 13
-│       │   │   │   │       └── kind: "class"
-│       │   │   │   └── value: "NULL"
-│       │   │   ├── parameters[1]
-│       │   │   │   ├── type
-│       │   │   │   │   ├── name: "int"
-│       │   │   │   │   ├── id: 2
-│       │   │   │   │   └── kind: "type"
-│       │   │   │   ├── name
-│       │   │   │   │   ├── name: "value"
-│       │   │   │   │   ├── id: 22
-│       │   │   │   │   ├── kind: "variable"
-│       │   │   │   │   └── type
-│       │   │   │   │       ├── name: "int"
-│       │   │   │   │       ├── id: 2
-│       │   │   │   │       └── kind: "type"
-│       │   │   │   └── value: "NULL"
-│       │   └── body
-│       │       ├── expression_statement
-│       │       │   ├── operator: "="
-│       │       │   ├── left
-│       │       │   │   └── primary
-│       │       │   │       ├── type: "variable"
-│       │       │   │       └── value
-│       │       │   │           ├── type: "get_attribute"
-│       │       │   │           ├── object
-│       │       │   │           │   ├── type: "name"
-│       │       │   │           │   └── name
-│       │       │   │           │       ├── name: "self"
-│       │       │   │           │       ├── id: 20
-│       │       │   │           │       ├── kind: "variable"
-│       │       │   │           │       └── type
-│       │       │   │           │           ├── name: "Test1"
-│       │       │   │           │           ├── id: 13
-│       │       │   │           │           └── kind: "class"
-│       │       │   │           └── attribute_name
-│       │       │   │               ├── name: "a"
-│       │       │   │               ├── id: 14
-│       │       │   │               ├── kind: "variable"
-│       │       │   │               └── type
-│       │       │   │                   ├── name: "int"
-│       │       │   │                   ├── id: 2
-│       │       │   │                   └── kind: "type"
-│       │       │   └── right
-│       │       │       └── primary
-│       │       │           ├── type: "variable"
-│       │       │           └── value
-│       │       │               ├── type: "name"
-│       │       │               └── name
-│       │       │                   ├── name: "value"
-│       │       │                   ├── id: 22
-│       │       │                   ├── kind: "variable"
-│       │       │                   └── type
-│       │       │                       ├── name: "int"
-│       │       │                       ├── id: 2
-│       │       │                       └── kind: "type"
 ├── function
 │   ├── name
 │   │   ├── name: "main"
-│   │   ├── id: 23
+│   │   ├── id: 18
 │   │   ├── kind: "function"
 │   │   └── return_type
 │   │       ├── name: "int"
@@ -276,15 +276,15 @@
 │       ├── variable_declaration_statement
 │       │   ├── type
 │       │   │   ├── name: "Test1"
-│       │   │   ├── id: 13
+│       │   │   ├── id: 8
 │       │   │   └── kind: "class"
 │       │   ├── name
 │       │   │   ├── name: "t"
-│       │   │   ├── id: 24
+│       │   │   ├── id: 19
 │       │   │   ├── kind: "variable"
 │       │   │   └── type
 │       │   │       ├── name: "Test1"
-│       │   │       ├── id: 13
+│       │   │       ├── id: 8
 │       │   │       └── kind: "class"
 │       │   └── value
 │       │       └── primary
@@ -297,15 +297,15 @@
 │       │               │   │   ├── type: "name"
 │       │               │   │   └── name
 │       │               │   │       ├── name: "Test1"
-│       │               │   │       ├── id: 13
+│       │               │   │       ├── id: 8
 │       │               │   │       └── kind: "class"
 │       │               │   └── attribute_name
 │       │               │       ├── name: "init"
-│       │               │       ├── id: 16
+│       │               │       ├── id: 11
 │       │               │       ├── kind: "method"
 │       │               │       └── return_type
 │       │               │           ├── name: "Test1"
-│       │               │           ├── id: 13
+│       │               │           ├── id: 8
 │       │               │           └── kind: "class"
 │       │               └── arguments
 │       │                   ├── arguments[0]
@@ -321,11 +321,11 @@
 │       │           │   ├── type: "name"
 │       │           │   └── name
 │       │           │       ├── name: "print"
-│       │           │       ├── id: 11
+│       │           │       ├── id: 6
 │       │           │       ├── kind: "function"
 │       │           │       └── return_type
 │       │           │           ├── name: "void"
-│       │           │           ├── id: 6
+│       │           │           ├── id: 1
 │       │           │           └── kind: "type"
 │       │           └── arguments
 │       │               ├── arguments[0]
@@ -339,15 +339,15 @@
 │       │               │           │   │   ├── type: "name"
 │       │               │           │   │   └── name
 │       │               │           │   │       ├── name: "t"
-│       │               │           │   │       ├── id: 24
+│       │               │           │   │       ├── id: 19
 │       │               │           │   │       ├── kind: "variable"
 │       │               │           │   │       └── type
 │       │               │           │   │           ├── name: "Test1"
-│       │               │           │   │           ├── id: 13
+│       │               │           │   │           ├── id: 8
 │       │               │           │   │           └── kind: "class"
 │       │               │           │   └── attribute_name
 │       │               │           │       ├── name: "get_a"
-│       │               │           │       ├── id: 19
+│       │               │           │       ├── id: 14
 │       │               │           │       ├── kind: "method"
 │       │               │           │       └── return_type
 │       │               │           │           ├── name: "int"
@@ -365,15 +365,15 @@
 │       │           │   │   ├── type: "name"
 │       │           │   │   └── name
 │       │           │   │       ├── name: "t"
-│       │           │   │       ├── id: 24
+│       │           │   │       ├── id: 19
 │       │           │   │       ├── kind: "variable"
 │       │           │   │       └── type
 │       │           │   │           ├── name: "Test1"
-│       │           │   │           ├── id: 13
+│       │           │   │           ├── id: 8
 │       │           │   │           └── kind: "class"
 │       │           │   └── attribute_name
 │       │           │       ├── name: "set_a"
-│       │           │       ├── id: 21
+│       │           │       ├── id: 16
 │       │           │       ├── kind: "method"
 │       │           │       └── return_type
 │       │           │           ├── name: "void"
@@ -393,11 +393,11 @@
 │       │           │   ├── type: "name"
 │       │           │   └── name
 │       │           │       ├── name: "print"
-│       │           │       ├── id: 11
+│       │           │       ├── id: 6
 │       │           │       ├── kind: "function"
 │       │           │       └── return_type
 │       │           │           ├── name: "void"
-│       │           │           ├── id: 6
+│       │           │           ├── id: 1
 │       │           │           └── kind: "type"
 │       │           └── arguments
 │       │               ├── arguments[0]
@@ -411,15 +411,15 @@
 │       │               │           │   │   ├── type: "name"
 │       │               │           │   │   └── name
 │       │               │           │   │       ├── name: "t"
-│       │               │           │   │       ├── id: 24
+│       │               │           │   │       ├── id: 19
 │       │               │           │   │       ├── kind: "variable"
 │       │               │           │   │       └── type
 │       │               │           │   │           ├── name: "Test1"
-│       │               │           │   │           ├── id: 13
+│       │               │           │   │           ├── id: 8
 │       │               │           │   │           └── kind: "class"
 │       │               │           │   └── attribute_name
 │       │               │           │       ├── name: "get_a"
-│       │               │           │       ├── id: 19
+│       │               │           │       ├── id: 14
 │       │               │           │       ├── kind: "method"
 │       │               │           │       └── return_type
 │       │               │           │           ├── name: "int"
@@ -433,7 +433,7 @@
 │       │   │   └── kind: "type"
 │       │   ├── name
 │       │   │   ├── name: "_abc123"
-│       │   │   ├── id: 25
+│       │   │   ├── id: 20
 │       │   │   ├── kind: "variable"
 │       │   │   └── type
 │       │   │       ├── name: "float"
@@ -450,7 +450,7 @@
 │       │   │   └── kind: "type"
 │       │   ├── name
 │       │   │   ├── name: "_def456"
-│       │   │   ├── id: 26
+│       │   │   ├── id: 21
 │       │   │   ├── kind: "variable"
 │       │   │   └── type
 │       │   │       ├── name: "int"
@@ -466,4 +466,4 @@
 │       │       └── value: 0
 
 info by lib:
-    Platform: 1, Memory Used: 16832 bytes, stringCount: 74, string compare count: fast-true: 196 fast-false: 2662 fast-not: 0, Memory Block Count: 574
+    Platform: 1, Memory Used: 16624 bytes, stringCount: 74, string compare count: fast-true: 196 fast-false: 2640 fast-not: 0, Memory Block Count: 566
