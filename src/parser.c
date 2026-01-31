@@ -99,11 +99,8 @@ offset(Import*) parse_import(offset(Lexer*) lexer, offset(Scope*) now_scope) {
     if (token_ptr->type != SYMBOL || !string_equal(token_ptr->lexeme, SEMICOLON_SYMBOL))
         return parser_error("Expected ';' at end of import statement", token);
     offset(Name*) name;
-    if (strcmp(string_to_cstr(source), "std") == 0) {
-        name = parse_import_std(import_name, now_scope);
-        if (name == 0)
-            name = create_name(import_name, NAME_VARIABLE, name_void, now_scope);
-    } else
+    name = parse_import_file(import_name, source, now_scope);
+    if (name == 0)
         name = create_name(import_name, NAME_VARIABLE, name_void, now_scope);
     return create_import(name, source);
 }

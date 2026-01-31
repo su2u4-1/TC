@@ -42,8 +42,8 @@ size_t parser_error(const char* message, offset(Token*) token);
 void indention(FILE* out, size_t indent, bool is_last, offset(Parser*) parser);
 // `Parser* create_parser()`
 offset(Parser*) create_parser(void);
-// `Name* parse_import_std(Name* import_name, Scope* scope)`
-offset(Name*) parse_import_std(offset(Name*) import_name, offset(Scope*) scope);
+// `Name* parse_import_std(Name* import_name, string score, Scope* scope)`
+offset(Name*) parse_import_file(offset(Name*) import_name, string score, offset(Scope*) scope);
 
 // operator helper functions
 // `OperatorType string_to_operator(string str)`

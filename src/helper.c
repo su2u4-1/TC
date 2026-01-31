@@ -1,5 +1,7 @@
 #include "helper.h"
 
+#include <stdio.h>
+
 #include "compiler.h"
 #include "lexer.h"
 
@@ -146,29 +148,40 @@ offset(Parser*) create_parser(void) {
     return new_parser;
 }
 
-offset(Name*) parse_import_std(offset(Name*) import_name, offset(Scope*) scope) {
+offset(Name*) parse_import_file(offset(Name*) import_name, string score, offset(Scope*) scope) {
     offset(Name*) name = 0;
     FILE* openfile;
-    // temporary hack to recognize std library imports
-    // temp, need path system
-    if (strcmp(string_to_cstr(import_name), "print") == 0)
-        openfile = fopen("./std/print.tc", "r");
-    else if (strcmp(string_to_cstr(import_name), "arr") == 0) {
-        openfile = fopen("./std/arr.tc", "r");
-    } else
-        return 0;
+    // temporary hack, need path system
+    char filename[MAX_FILENAME_SIZE];
+    filename[0] = '\0';
+    if (score == 0) {
+        if (strcmp(string_to_cstr(import_name), "print") == 0)
+            strcpy(filename, "./std/print.tc");
+        else if (strcmp(string_to_cstr(import_name), "arr") == 0)
+            strcpy(filename, "./std/arr.tc");
+        else {
+            fprintf(stderr, "Error: Standard library file for import not found: %s\n", filename);
+            return 0;
+        }
+    } else {
+        string_append(filename, MAX_FILENAME_SIZE, filename, string_to_cstr(score));
+        string_append(filename, MAX_FILENAME_SIZE, filename, "/");
+        string_append(filename, MAX_FILENAME_SIZE, filename, string_to_cstr(import_name));
+        string_append(filename, MAX_FILENAME_SIZE, filename, ".tc");
+    }
+    openfile = fopen(filename, "r");
     if (openfile == NULL) {
-        fprintf(stderr, "Error opening standard library file for import: %s\n", string_to_cstr(import_name));
+        fprintf(stderr, "Error opening library file for import: %s\n", filename);
         return 0;
     }
-    printf("Info: Starting parsing std lib file for import: %s\n", string_to_cstr(import_name));
+    printf("Info: Starting parsing lib file for import: %s\n", filename);
     size_t length = 0;
     char* source = read_source(openfile, &length);
     fclose(openfile);
     offset(Code*) code = parse_code(create_lexer(source, length), builtin_scope, create_parser());
-    printf("Info: Finished parsing std lib file for import: %s\n", string_to_cstr(import_name));
+    printf("Info: Finished parsing lib file for import: %s\n", filename);
     if (code == 0) {
-        fprintf(stderr, "Error parsing standard library file for import: %s\n", string_to_cstr(import_name));
+        fprintf(stderr, "Error parsing library file for import: %s\n", filename);
         return 0;
     }
     list(Node*) names = ((Scope*)offset_to_ptr(((Code*)offset_to_ptr(code))->global_scope))->names;

@@ -7,7 +7,7 @@
 │   │       ├── name: "void"
 │   │       ├── id: 1
 │   │       └── kind: "type"
-│   └── source: "std"
+│   └── source: "./std"
 ├── class
 │   ├── name
 │   │   ├── name: "Test1"
@@ -466,4 +466,4 @@
 │       │       └── value: 0
 
 info by lib:
-    Platform: 1, Memory Used: 16624 bytes, stringCount: 74, string compare count: fast-true: 196 fast-false: 2640 fast-not: 0, Memory Block Count: 566
+    Platform: 1, Memory Used: 16632 bytes, stringCount: 74, string compare count: fast-true: 196 fast-false: 2640 fast-not: 0, Memory Block Count: 566
