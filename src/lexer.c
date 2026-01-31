@@ -232,7 +232,8 @@ offset(Token*) get_next_token(offset(Lexer*) lexer, bool skip_comment) {
         lexer_ptr->peeked_token = 0;
         return lexer_ptr->current_token;
     }
-    return lexer_ptr->current_token = next_token(lexer, skip_comment);
+    offset(Token*) token = next_token(lexer, skip_comment);
+    return ((Lexer*)offset_to_ptr(lexer))->current_token = token;
 }
 
 offset(Token*) peek_next_token(offset(Lexer*) lexer, bool skip_comment) {
