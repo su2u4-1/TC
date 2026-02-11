@@ -17,11 +17,15 @@ typedef size_t offset_;
 #define ALIGN_SIZE sizeof(size_t)
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
-#define PLATFORM 1  // WINDOWS
+#ifdef _MSC_VER
+#define PLATFORM 1  // MSVC
+#else
+#define PLATFORM 2  // MinGW
+#endif
 #elif defined(__linux__) || defined(__gnu_linux__)
-#define PLATFORM 2  // LINUX
+#define PLATFORM 3  // LINUX
 #elif defined(__APPLE__) && defined(__MACH__)
-#define PLATFORM 3  // MACOS
+#define PLATFORM 4  // MACOS
 #else
 #define PLATFORM 0  // UNKNOWN
 #endif
