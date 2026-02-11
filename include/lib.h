@@ -30,19 +30,40 @@ typedef size_t offset_;
 #define PLATFORM 0  // UNKNOWN
 #endif
 
-typedef struct StringList {
+typedef struct StringMemoryBlock StringMemoryBlock;
+struct StringMemoryBlock {
+    size_t size;
+    size_t used;
+    StringMemoryBlock* next;
+    char* block;
+};
+
+typedef struct StructMemoryBlock StructMemoryBlock;
+struct StructMemoryBlock {
+    size_t size;
+    size_t used;
+    StructMemoryBlock* next;
+    size_t* block;
+};
+
+typedef struct StringList StringList;
+struct StringList {
     string str;
     size_t length;
     offset(StringList*) next;
-} StringList;
+};
 
 #define keywordCount 22
 #define symbolCount 30
-extern char* memory;
 extern string keywordList[keywordCount];
 extern string symbolList[symbolCount];
+
+#define defaultMemorySize 1024 * 1024  // 1 MB
+extern StructMemoryBlock* struct_memory;
+extern StringMemoryBlock* string_memory;
 extern bool initialized;
-extern offset(StringList*) allStrings;
+
+extern offset(StringList*) all_string_list;
 
 extern string IMPORT_KEYWORD;     // keyword `import`
 extern string FROM_KEYWORD;       // keyword `from`
@@ -104,27 +125,14 @@ extern offset(Name*) name_string;
 extern offset(Name*) name_bool;
 extern offset(Scope*) builtin_scope;
 
-// `void init(void)`
 void init(void);
-// `string create_string(const char* data, size_t length)`
 string create_string(const char* data, size_t length);
-// `size_t alloc_memory(size_t size)`
 size_t alloc_memory(size_t size);
-// `bool is_keyword(const string str)`
 bool is_keyword(const string str);
-// `bool string_equal(string a, string b)`
 bool string_equal(string a, string b);
-// `string get_info(void)`
 string get_info(void);
-// `char* string_to_cstr(string str)`
 char* string_to_cstr(string str);
-// `size_t* offset_to_ptr(offset off)`
 size_t* offset_to_ptr(offset() off);
-// `string ptr_to_offset(char* ptr)`
-string char_ptr_to_string(char* ptr);
-// `offset ptr_to_offset(size_t* ptr)`
 offset() ptr_to_offset(size_t* ptr);
-// `void free_memory(void)`
-void free_memory(void);
 
 #endif  // LIB_H
