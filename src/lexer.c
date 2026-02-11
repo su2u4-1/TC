@@ -3,7 +3,7 @@
 offset(Lexer*) create_lexer(char* source, size_t length) {
     offset(Lexer*) lexer = alloc_memory(sizeof(Lexer));
     Lexer* lexer_ptr = (Lexer*)offset_to_ptr(lexer);
-    lexer_ptr->source = char_ptr_to_string(source);
+    lexer_ptr->source = create_string(source, length);
     lexer_ptr->position = 0;
     lexer_ptr->length = length;
     lexer_ptr->line = 0;

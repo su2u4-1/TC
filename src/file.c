@@ -200,7 +200,7 @@ void normalize_path(offset(File*) file) {
     size_t path_len = strlen(original_path);
 
     // Make a copy to work with
-    char* path_copy = (char*)malloc(path_len + 1);
+    char* path_copy = string_to_cstr(create_string("", path_len + 1));
     strcpy(path_copy, original_path);
 
     offset(StrNode*) dirs_head = 0;

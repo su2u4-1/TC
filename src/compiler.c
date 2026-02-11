@@ -17,7 +17,7 @@ char* read_source(FILE* file, size_t* length) {
     *length = (size_t)ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char* source = string_to_cstr(alloc_memory(*length + 1));
+    char* source = string_to_cstr(create_string("", *length + 1));
     fread(source, 1, *length, file);
     source[*length] = '\0';
 
