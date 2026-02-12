@@ -72,8 +72,8 @@ Scope* builtin_scope = 0;
 
 static size_t struct_memory_used = 0;
 static size_t string_memory_used = 0;
-static size_t struct_memory_block_count = 0;
-static size_t string_memory_block_count = 0;
+static size_t struct_memory_count = 0;
+static size_t string_memory_count = 0;
 
 static void increase_memory_size(bool for_struct) {
     if (for_struct) {
@@ -97,7 +97,7 @@ static void increase_memory_size(bool for_struct) {
         struct_memory_used += struct_memory->used;
         new_block->next = struct_memory;
         struct_memory = new_block;
-        struct_memory_block_count++;
+        struct_memory_count += defaultMemorySize;
         fprintf(stderr, "Info: Add new memory block for struct\n");
     } else {
         StringMemoryBlock* new_block = (StringMemoryBlock*)malloc(sizeof(StringMemoryBlock));
@@ -120,15 +120,16 @@ static void increase_memory_size(bool for_struct) {
         string_memory_used += string_memory->used;
         new_block->next = string_memory;
         string_memory = new_block;
-        string_memory_block_count++;
+        string_memory_count += defaultMemorySize;
         fprintf(stderr, "Info: Add new memory block for string\n");
     }
 }
 
 static string alloc_big_memory(size_t size) {
-    string_memory_block_count += size;
+    string_memory_count += size;
     string_memory_used += size;
     char* block = (char*)malloc(size);
+    fprintf(stderr, "Info: Allocate big memory block of size %zu bytes\n", size);
     if (block == NULL) {
         fprintf(stderr, "Fatal: Cannot allocate memory\n");
         exit(1);
@@ -181,7 +182,7 @@ void init(void) {
         struct_memory->size = defaultMemorySize;
         struct_memory->used = 0;
         struct_memory->next = NULL;
-        struct_memory_block_count = 1;
+        struct_memory_count = defaultMemorySize;
     }
     if (string_memory == NULL) {
         string_memory = (StringMemoryBlock*)malloc(sizeof(StringMemoryBlock));
@@ -189,7 +190,7 @@ void init(void) {
         string_memory->size = defaultMemorySize;
         string_memory->used = 0;
         string_memory->next = NULL;
-        string_memory_block_count = 1;
+        string_memory_count = defaultMemorySize;
     }
     initialized = true;
     for (size_t i = 0; i < keywordCount; ++i)
@@ -283,10 +284,10 @@ string get_info(void) {
     }
     // max: 47 char
     string struct_memory_used_str = create_string_check("", 48, false);
-    sprintf(struct_memory_used_str, "%zu/%zu bytes", struct_memory_used + struct_memory->used, struct_memory_block_count * defaultMemorySize);
+    sprintf(struct_memory_used_str, "%zu/%zu bytes", struct_memory_used + struct_memory->used, struct_memory_count);
     // max: 47 char
     string string_memory_used_str = create_string_check("", 48, false);
-    sprintf(string_memory_used_str, "%zu/%zu bytes", string_memory_used + string_memory->used, string_memory_block_count * defaultMemorySize);
+    sprintf(string_memory_used_str, "%zu/%zu bytes", string_memory_used + string_memory->used, string_memory_count);
     // max: 239 char
     string info = (string)create_string_check("", 240, false);
     sprintf(info, "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu", PLATFORM, struct_memory_used_str, string_memory_used_str, stringCount, memoryBlockCount);
