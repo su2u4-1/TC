@@ -2,7 +2,7 @@
 
 Lexer* create_lexer(char* source, size_t length) {
     Lexer* lexer = (Lexer*)alloc_memory(sizeof(Lexer));
-    lexer->source = create_string(source, length);
+    lexer->source = source;
     lexer->position = 0;
     lexer->length = length;
     lexer->line = 0;
