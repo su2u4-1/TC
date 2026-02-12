@@ -1,0 +1,53 @@
+/*
+ * this test is used to test big memory allocate.
+ */
+import print from "./std";
+
+class Test1 {
+    var int a = 10;
+    method Test1 init(self, int value) {
+        self.a = value;
+        return self;
+    }
+    method int get_a(self) {
+        return self.a;
+    }
+    method void set_a(self, int value) {
+        self.a = value;
+    }
+}
+
+import arr from "./std";
+
+class Test2 {
+    var int x = 1 + 2 * 3 - 8 / 4;  // 1 + 6 - 2 = 5
+    method Test2 init(self) {
+        print(self.x);  // should print 5
+        return self;
+    }
+    method void set_x(self, int value) {
+        self.x = value;
+    }
+    method int get_x(self) {
+        return self.x;
+    }
+}
+
+// entry point
+func int main() {
+    var Test1 t = Test1.init(5);
+    print(t.get_a());
+    t.set_a(20);
+    print(t.get_a());
+    var float _abc123 = 30.5;
+    var int _def456 = 15;
+
+    var Test2 t2 = Test2.init();
+    var arr nums = arr.init("int", 10);
+    nums[0] = 42;
+    t2.set_x(2 + t2.get_x() * 10);  // 2 + 5 * 10 = 52
+    print(t2.get_x());  // should print 52
+    t2.set_x(nums[0] + 10 - 2 * 5);  // 42 + 10 - 10 = 42
+    print(t2.get_x());  // should print 42
+    return 0;
+}

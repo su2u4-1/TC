@@ -12,6 +12,7 @@ REM Parse command line arguments
 set "RUN_ALL=1"
 set "RUN_TEST1=0"
 set "RUN_TEST2=0"
+set "RUN_TEST3=0"
 set "CLEAR_SCREEN=0"
 
 if "%~1"=="" goto run_tests
@@ -22,6 +23,7 @@ if "%~1"=="" goto run_tests
 if "%~1"=="-c" set "CLEAR_SCREEN=1"
 if "%~1"=="-1" set "RUN_TEST1=1"
 if "%~1"=="-2" set "RUN_TEST2=1"
+if "%~1"=="-3" set "RUN_TEST3=1"
 shift
 goto parse_args
 
@@ -37,6 +39,7 @@ echo ========================================
 if "%RUN_ALL%"=="1" (
     set "RUN_TEST1=1"
     set "RUN_TEST2=1"
+    set "RUN_TEST3=1"
     echo Running all tests...
     echo ========================================
 )
@@ -57,6 +60,16 @@ if "%RUN_TEST2%"=="1" (
     .\build\program.exe .\test\test2\test2.tc
     if errorlevel 1 (
         echo ERROR: Test 2 failed!
+        set "HAS_ERROR=1"
+    )
+)
+
+if "%RUN_TEST3%"=="1" (
+    echo.
+    echo [Test 3]
+    .\build\program.exe .\test\test3\test3.tc
+    if errorlevel 1 (
+        echo ERROR: Test 3 failed!
         set "HAS_ERROR=1"
     )
 )
