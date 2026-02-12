@@ -179,7 +179,7 @@ void init(void) {
         struct_memory = (StructMemoryBlock*)malloc(sizeof(StructMemoryBlock));
         struct_memory->block = (size_t*)malloc(defaultMemorySize);
         struct_memory->size = defaultMemorySize;
-        struct_memory->used = 8;
+        struct_memory->used = 0;
         struct_memory->next = NULL;
         struct_memory_block_count = 1;
     }
@@ -187,7 +187,7 @@ void init(void) {
         string_memory = (StringMemoryBlock*)malloc(sizeof(StringMemoryBlock));
         string_memory->block = (char*)malloc(defaultMemorySize);
         string_memory->size = defaultMemorySize;
-        string_memory->used = 8;
+        string_memory->used = 0;
         string_memory->next = NULL;
         string_memory_block_count = 1;
     }

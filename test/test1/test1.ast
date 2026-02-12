@@ -466,4 +466,4 @@
 │       │       └── value: 0
 
 info by lib:
-    Platform: 2, Structure Memory Used: 15694/16384 bytes, String Memory Used: 1701/2048 bytes, stringCount: 96, Memory Block Count: 596
+    Platform: 2, Structure Memory Used: 15686/16384 bytes, String Memory Used: 1693/2048 bytes, stringCount: 96, Memory Block Count: 596
