@@ -9,7 +9,7 @@ StructMemoryBlock* struct_memory = NULL;
 StringMemoryBlock* string_memory = NULL;
 bool initialized = false;
 
-offset(StringList*) all_string_list = 0;
+StringList* all_string_list = 0;
 
 string IMPORT_KEYWORD = 0;
 string FROM_KEYWORD = 0;
@@ -63,12 +63,12 @@ string DIV_ASSIGN_SYMBOL = 0;
 string MOD_ASSIGN_SYMBOL = 0;
 string AND_SYMBOL = 0;
 string OR_SYMBOL = 0;
-offset(Name*) name_void = 0;
-offset(Name*) name_int = 0;
-offset(Name*) name_float = 0;
-offset(Name*) name_string = 0;
-offset(Name*) name_bool = 0;
-offset(Scope*) builtin_scope = 0;
+Name* name_void = 0;
+Name* name_int = 0;
+Name* name_float = 0;
+Name* name_string = 0;
+Name* name_bool = 0;
+Scope* builtin_scope = 0;
 
 static size_t struct_memory_used = 0;
 static size_t string_memory_used = 0;

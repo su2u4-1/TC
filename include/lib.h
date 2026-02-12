@@ -13,7 +13,6 @@
 #define false 0
 typedef char* string;
 typedef size_t* pointer;
-#define offset(type) type
 #define ALIGN_SIZE sizeof(size_t)
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
@@ -50,7 +49,7 @@ typedef struct StringList StringList;
 struct StringList {
     string str;
     size_t length;
-    offset(StringList*) next;
+    StringList* next;
 };
 
 #define keywordCount 22
@@ -63,7 +62,7 @@ extern StructMemoryBlock* struct_memory;
 extern StringMemoryBlock* string_memory;
 extern bool initialized;
 
-extern offset(StringList*) all_string_list;
+extern StringList* all_string_list;
 
 extern string IMPORT_KEYWORD;     // keyword `import`
 extern string FROM_KEYWORD;       // keyword `from`
@@ -120,12 +119,12 @@ extern string OR_SYMBOL;          // symbol `||`
 
 typedef struct Name Name;
 typedef struct Scope Scope;
-extern offset(Name*) name_void;
-extern offset(Name*) name_int;
-extern offset(Name*) name_float;
-extern offset(Name*) name_string;
-extern offset(Name*) name_bool;
-extern offset(Scope*) builtin_scope;
+extern Name* name_void;
+extern Name* name_int;
+extern Name* name_float;
+extern Name* name_string;
+extern Name* name_bool;
+extern Scope* builtin_scope;
 
 void init(void);
 string create_string(const char* data, size_t length);
