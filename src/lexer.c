@@ -1,6 +1,6 @@
 #include "lexer.h"
 
-Lexer* create_lexer(char* source, size_t length) {
+Lexer* create_lexer(string source, size_t length) {
     Lexer* lexer = (Lexer*)alloc_memory(sizeof(Lexer));
     lexer->source = source;
     lexer->position = 0;
@@ -24,7 +24,7 @@ static Token* create_token(TokenType type, string lexeme, size_t line, size_t co
     return token;
 }
 
-static void lexer_error(const char* message, size_t line, size_t column) {
+static void lexer_error(const string message, size_t line, size_t column) {
     fprintf(stderr, "Lexer Error at Line %zu, Column %zu: %s\n", line + 1, column + 1, message);
 }
 

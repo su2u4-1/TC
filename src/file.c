@@ -6,7 +6,7 @@
 #include <unistd.h>  // MinGW or LINUX or MACOS
 #endif
 
-char* get_cwd(void) {
+string get_cwd(void) {
 #if PLATFORM == 1
     return _getcwd(NULL, 0);  // MSVC
 #elif PLATFORM == 2 || PLATFORM == 3 || PLATFORM == 4
@@ -18,8 +18,7 @@ char* get_cwd(void) {
 
 File* create_file(const string path) {
     File* file = (File*)alloc_memory(sizeof(File));
-    File* file_ptr = file;
-    file_ptr->path = absolute_path(path);
+    file->path = absolute_path(path);
     normalize_path(file);
     return file;
 }
@@ -40,19 +39,17 @@ string absolute_path(string path) {
         }
     }
 #if PLATFORM == 1
-    if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':') {
+    if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':')
         return path;
-    }
 #else
-    if (path_len > 0 && path[0] == '/') {
+    if (path_len > 0 && path[0] == '/')
         return path;
-    }
 #endif
-    char* cwd = get_cwd();
+    string cwd = get_cwd();
     if (cwd == NULL)
         return path;
     size_t total_len = strlen(cwd) + 1 + path_len + 1;
-    char* abs_path = create_string("", total_len);
+    string abs_path = create_string("", total_len);
     sprintf(abs_path, "%s/%s", cwd, path);
     free(cwd);
     return create_string(abs_path, total_len);
@@ -67,51 +64,44 @@ string get_file_extension(File* path) {
 }
 
 string get_file_dir(File* path) {
-    File* file_ptr = path;
-    if (file_ptr->dirs == 0) return 0;
+    if (path->dirs == 0) return 0;
 
     // Calculate total length needed
     size_t total_len = 0;
-    StrNode* current = file_ptr->dirs;
     size_t node_count = 0;
-
+    StrNode* current = path->dirs;
     while (current != 0) {
-        StrNode* node_ptr = current;
-        if (node_ptr->next != 0) {  // Not the last element (which is the filename)
-            size_t dir_len = strlen((node_ptr->dir));
+        if (current->next != 0) {  // Not the last element (which is the filename)
+            size_t dir_len = strlen((current->dir));
             total_len += dir_len;
             node_count++;
         }
-        current = node_ptr->next;
+        current = current->next;
     }
 
     if (node_count == 0) return 0;
 
     // Add space for separators (but not after root '/' or drive letter)
-    if (node_count > 1) {
-        total_len += (node_count - 1);
-    }
+    if (node_count > 1)
+        total_len += node_count - 1;
 
     // Build the directory path
-    char* dir_path = create_string("", total_len + 1);
+    string dir_path = create_string("", total_len + 1);
     dir_path[0] = '\0';
 
-    current = file_ptr->dirs;
+    current = path->dirs;
     bool first = true;
     while (current != 0) {
-        StrNode* node_ptr = current;
-        if (node_ptr->next != 0) {  // Not the last element
-            char* dir_cstr = (node_ptr->dir);
-            if (!first && strcmp(dir_cstr, "/") != 0) {
+        if (current->next != 0) {  // Not the last element
+            if (!first && strcmp(current->dir, "/") != 0)
                 // Add separator before non-root components
-                if (strlen(dir_path) > 0 && dir_path[strlen(dir_path) - 1] != '/') {
+                if (strlen(dir_path) > 0 && dir_path[strlen(dir_path) - 1] != '/')
                     strcat(dir_path, "/");
-                }
-            }
-            strcat(dir_path, dir_cstr);
+
+            strcat(dir_path, current->dir);
             first = false;
         }
-        current = node_ptr->next;
+        current = current->next;
     }
 
     return create_string(dir_path, strlen(dir_path));
@@ -122,85 +112,74 @@ string get_full_path(File* path) {
 }
 
 void change_file_extension(File* file, const string new_extension) {
-    File* file_ptr = file;
-    file_ptr->extension = new_extension;
+    file->extension = new_extension;
 
     // Rebuild the full path
     string dir = get_file_dir(file);
-    char* dir_cstr = dir != 0 ? (dir) : "";
-    char* name_cstr = (file_ptr->name);
-    char* ext_cstr = new_extension != 0 ? (new_extension) : "";
+    string dir_cstr = dir != NULL ? dir : "";
+    string ext_cstr = new_extension != NULL ? new_extension : "";
 
-    size_t path_len = strlen(dir_cstr) + 1 + strlen(name_cstr);
+    size_t path_len = strlen(dir_cstr) + 1 + strlen(file->name);
     if (new_extension != 0) path_len += strlen(ext_cstr);
 
-    char* new_path = create_string("", path_len + 1);
-    if (dir != 0 && strlen(dir_cstr) > 0) {
-        sprintf(new_path, "%s/%s", dir_cstr, name_cstr);
-    } else {
-        sprintf(new_path, "%s", name_cstr);
-    }
+    string new_path = create_string("", path_len + 1);
+    if (dir != 0 && strlen(dir_cstr) > 0)
+        sprintf(new_path, "%s/%s", dir_cstr, file->name);
+    else
+        sprintf(new_path, "%s", file->name);
 
-    if (new_extension != 0) {
-        strcat(new_path, (new_extension));
-    }
+    if (new_extension != 0)
+        strcat(new_path, new_extension);
 
-    file_ptr->path = create_string(new_path, strlen(new_path));
+    file->path = create_string(new_path, strlen(new_path));
 }
 
 void change_file_name(File* file, const string new_name) {
-    File* file_ptr = file;
-    file_ptr->name = new_name;
+    file->name = new_name;
 
     // Update the last node in dirs list
-    if (file_ptr->dirs != 0) {
-        StrNode* current = file_ptr->dirs;
+    if (file->dirs != 0) {
+        StrNode* current = file->dirs;
 
         while (current != 0) {
-            StrNode* node_ptr = current;
-            if (node_ptr->next == 0) {
+            if (current->next == 0) {
                 // This is the last node - update it
-                char* name_cstr = (new_name);
-                char* ext_cstr = file_ptr->extension != 0 ? (file_ptr->extension) : "";
-                size_t full_name_len = strlen(name_cstr);
-                if (file_ptr->extension != 0) full_name_len += strlen(ext_cstr);
+                string ext_cstr = file->extension != NULL ? file->extension : "";
+                size_t full_name_len = strlen(new_name);
+                if (file->extension != 0) full_name_len += strlen(ext_cstr);
 
-                char* full_name = create_string("", full_name_len + 1);
-                sprintf(full_name, "%s%s", name_cstr, ext_cstr);
-                node_ptr->dir = create_string(full_name, strlen(full_name));
+                string full_name = create_string("", full_name_len + 1);
+                sprintf(full_name, "%s%s", new_name, ext_cstr);
+                current->dir = create_string(full_name, strlen(full_name));
                 break;
             }
-            current = node_ptr->next;
+            current = current->next;
         }
     }
 
     // Rebuild the full path
     string dir = get_file_dir(file);
-    char* dir_cstr = dir != 0 ? (dir) : "";
-    char* name_cstr = (new_name);
-    char* ext_cstr = file_ptr->extension != 0 ? (file_ptr->extension) : "";
+    string dir_cstr = dir != NULL ? dir : "";
+    string ext_cstr = file->extension != 0 ? (file->extension) : "";
 
-    size_t path_len = strlen(dir_cstr) + 1 + strlen(name_cstr);
-    if (file_ptr->extension != 0) path_len += strlen(ext_cstr);
+    size_t path_len = strlen(dir_cstr) + 1 + strlen(new_name);
+    if (file->extension != 0) path_len += strlen(ext_cstr);
 
-    char* new_path = create_string("", path_len + 1);
-    if (dir != 0 && strlen(dir_cstr) > 0) {
-        sprintf(new_path, "%s/%s%s", dir_cstr, name_cstr, ext_cstr);
-    } else {
-        sprintf(new_path, "%s%s", name_cstr, ext_cstr);
-    }
+    string new_path = create_string("", path_len + 1);
+    if (dir != NULL && strlen(dir_cstr) > 0)
+        sprintf(new_path, "%s/%s%s", dir_cstr, new_name, ext_cstr);
+    else
+        sprintf(new_path, "%s%s", new_name, ext_cstr);
 
-    file_ptr->path = create_string(new_path, strlen(new_path));
+    file->path = create_string(new_path, strlen(new_path));
 }
 
 void normalize_path(File* file) {
-    File* file_ptr = file;
-    char* original_path = (file_ptr->path);
-    size_t path_len = strlen(original_path);
+    size_t path_len = strlen(file->path);
 
     // Make a copy to work with
-    char* path_copy = (create_string("", path_len + 1));
-    strcpy(path_copy, original_path);
+    string path_copy = create_string("", path_len + 1);
+    strcpy(path_copy, file->path);
 
     StrNode* dirs_head = 0;
     StrNode* dirs_tail = 0;
@@ -247,24 +226,21 @@ void normalize_path(File* file) {
                 } else if (strcmp(component, "..") == 0) {
                     // Go up one directory
                     if (dirs_tail != 0 && dirs_tail != dirs_head) {
-                        StrNode* tail_ptr = dirs_tail;
-                        char* tail_dir = (tail_ptr->dir);
-
                         // Don't collapse ".." if the last component is also ".."
-                        if (strcmp(tail_dir, "..") == 0) {
+                        if (strcmp(dirs_tail->dir, "..") == 0) {
                             StrNode* node = (StrNode*)alloc_memory(sizeof(StrNode));
                             node->dir = create_string("..", 2);
                             node->next = 0;
-                            tail_ptr->next = node;
+                            dirs_tail->next = node;
                             dirs_tail = node;
                         } else {
                             // Remove the last directory
                             StrNode* prev = dirs_head;
-                            while (prev != 0 && (prev)->next != dirs_tail) {
-                                prev = (prev)->next;
-                            }
+                            while (prev != 0 && prev->next != dirs_tail)
+                                prev = prev->next;
+
                             if (prev != 0) {
-                                (prev)->next = 0;
+                                prev->next = 0;
                                 dirs_tail = prev;
                             }
                         }
@@ -282,9 +258,9 @@ void normalize_path(File* file) {
                     node->dir = create_string(component, comp_len);
                     node->next = 0;
 
-                    if (dirs_tail != 0) {
+                    if (dirs_tail != 0)
                         (dirs_tail)->next = node;
-                    }
+
                     dirs_tail = node;
                     if (dirs_head == 0) dirs_head = node;
                 }
@@ -294,31 +270,26 @@ void normalize_path(File* file) {
         i++;
     }
 
-    free(path_copy);
-
     // Set the dirs list
-    file_ptr = file;
-    file_ptr->dirs = dirs_head;
+    file->dirs = dirs_head;
 
     // Extract filename and extension from the last node
     if (dirs_tail != 0) {
-        StrNode* tail_ptr = dirs_tail;
-        char* last_component = (tail_ptr->dir);
-        char* dot = strrchr(last_component, '.');
+        string dot = strrchr(dirs_tail->dir, '.');
 
-        if (dot != NULL && dot != last_component) {
+        if (dot != NULL && dot != dirs_tail->dir) {
             // Has extension
-            size_t name_len = (size_t)(dot - last_component);
-            file_ptr->name = create_string(last_component, name_len);
-            file_ptr->extension = create_string(dot, strlen(dot));
+            size_t name_len = (size_t)(dot - dirs_tail->dir);
+            file->name = create_string(dirs_tail->dir, name_len);
+            file->extension = create_string(dot, strlen(dot));
         } else {
             // No extension
-            file_ptr->name = tail_ptr->dir;
-            file_ptr->extension = 0;
+            file->name = dirs_tail->dir;
+            file->extension = 0;
         }
     } else {
-        file_ptr->name = 0;
-        file_ptr->extension = 0;
+        file->name = 0;
+        file->extension = 0;
     }
 
     // Rebuild the full path
@@ -327,37 +298,31 @@ void normalize_path(File* file) {
     size_t node_count = 0;
 
     while (current != 0) {
-        StrNode* node_ptr = current;
-        char* dir_cstr = (node_ptr->dir);
-        full_path_len += strlen(dir_cstr);
+        full_path_len += strlen(current->dir);
         node_count++;
-        current = node_ptr->next;
+        current = current->next;
     }
 
     // Add space for separators between components
-    if (node_count > 1) {
+    if (node_count > 1)
         full_path_len += (node_count - 1);
-    }
 
-    char* full_path_cstr = create_string("", full_path_len + 1);
-    full_path_cstr[0] = '\0';
+    string full_path = create_string("", full_path_len + 1);
+    full_path[0] = '\0';
 
     current = dirs_head;
     bool is_first = true;
     while (current != 0) {
-        StrNode* node_ptr = current;
-        char* dir_cstr = (node_ptr->dir);
-
-        if (!is_first && strcmp(dir_cstr, "/") != 0) {
+        if (!is_first && strcmp(current->dir, "/") != 0) {
             // Add separator before non-root components
-            if (strlen(full_path_cstr) > 0 && full_path_cstr[strlen(full_path_cstr) - 1] != '/') {
-                strcat(full_path_cstr, "/");
+            if (strlen(full_path) > 0 && full_path[strlen(full_path) - 1] != '/') {
+                strcat(full_path, "/");
             }
         }
-        strcat(full_path_cstr, dir_cstr);
+        strcat(full_path, current->dir);
         is_first = false;
-        current = node_ptr->next;
+        current = current->next;
     }
 
-    file_ptr->path = create_string(full_path_cstr, strlen(full_path_cstr));
+    file->path = create_string(full_path, strlen(full_path));
 }

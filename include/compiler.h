@@ -7,10 +7,10 @@
 
 typedef struct Lexer Lexer;
 typedef struct Parser Parser;
-void string_append(char* dest, const size_t dest_length, const char* src, const char* new);
-char* read_source(FILE* file, size_t* length);
+void string_append(string dest, const size_t dest_length, const string src, const string new);
+string read_source(FILE* file, size_t* length);
 void output_token(FILE* file, Lexer* lexer);
 void output_ast(FILE* file, Lexer* lexer, Parser* parser);
-void parse_file(const char* filename, bool o_token, bool o_ast);
+void parse_file(const string name, bool o_token, bool o_ast);
 
 #endif  // COMPILER_H

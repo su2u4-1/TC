@@ -16,7 +16,7 @@ typedef struct File {
     string path;
 } File;
 
-char* get_cwd(void);
+string get_cwd(void);
 File* create_file(const string path);
 string absolute_path(string path);
 string get_file_name(File* path);

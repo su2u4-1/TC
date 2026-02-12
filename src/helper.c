@@ -111,7 +111,7 @@ bool is_type(Name* type) {
     return type_ptr->kind == NAME_TYPE || type_ptr->kind == NAME_CLASS;
 }
 
-void parser_error(const char* message, Token* token) {
+void parser_error(const string message, Token* token) {
     fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", token->line + 1, token->column + 1, message);
 }
 
@@ -173,7 +173,7 @@ Name* parse_import_file(string import_name, string score, Scope* scope) {
     }
     printf("Info: Starting parsing lib file for import: %s\n", filename);
     size_t length = 0;
-    char* source = read_source(openfile, &length);
+    string source = read_source(openfile, &length);
     fclose(openfile);
     Code* code = parse_code(create_lexer(source, length), builtin_scope, create_parser());
     printf("Info: Finished parsing lib file for import: %s\n", filename);

@@ -28,7 +28,7 @@ Scope* create_scope(Scope* parent);
 Name* search(Scope* scope, string name);
 bool is_builtin_type(string type);
 bool is_type(Name* type);
-void parser_error(const char* message, Token* token);
+void parser_error(const string message, Token* token);
 void indention(FILE* out, size_t indent, bool is_last, Parser* parser);
 Parser* create_parser(void);
 Name* parse_import_file(string import_name, string score, Scope* scope);

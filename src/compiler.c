@@ -1,10 +1,11 @@
 #include "compiler.h"
 
+#include "file.h"
 #include "helper.h"
 #include "lexer.h"
 #include "parser.h"
 
-void string_append(char* dest, const size_t dest_length, const char* src, const char* new) {
+void string_append(string dest, const size_t dest_length, const string src, const string new) {
     size_t src_length = strlen(src), new_length = strlen(new);
     if (dest_length <= src_length + new_length) {
         size_t max_src_length = dest_length - new_length - 1;
@@ -12,12 +13,12 @@ void string_append(char* dest, const size_t dest_length, const char* src, const 
     } else
         sprintf(dest, "%s%s", src, new);
 }
-char* read_source(FILE* file, size_t* length) {
+string read_source(FILE* file, size_t* length) {
     fseek(file, 0, SEEK_END);
     *length = (size_t)ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char* source = create_string("", *length + 1);
+    string source = create_string("", *length + 1);
     fread(source, 1, *length, file);
     source[*length] = '\0';
 
@@ -48,7 +49,7 @@ void output_token(FILE* file, Lexer* lexer) {
         else if (token->type == COMMENT)
             fprintf(file, "Token(Type: comment,     Line: ");
         fprintf(file, "%zu, Column: %zu)\t(%p)\tLexeme: '", token->line + 1, token->column + 1, token->lexeme);
-        char* lexeme_ptr = token->lexeme;
+        string lexeme_ptr = token->lexeme;
         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
             char c = lexeme_ptr[i];
             if (c == '\0')
@@ -71,19 +72,22 @@ void output_ast(FILE* file, Lexer* lexer, Parser* parser) {
     output_code(ast_root, file, 0, parser);
     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 }
-void parse_file(const char* filename, bool o_token, bool o_ast) {
+void parse_file(const string name, bool o_token, bool o_ast) {
+    File* file = create_file(name);
+    string filename = get_full_path(file);
     size_t length = 0;
     FILE* source_file = fopen(filename, "r");
     if (source_file == NULL) {
         fprintf(stderr, "Error opening file: %s", filename);
         return;
     }
-    char* source = read_source(source_file, &length);
+    string source = read_source(source_file, &length);
     fclose(source_file);
     Lexer* lexer = create_lexer(source, length);
     if (o_token) {
-        char out_token_name[MAX_FILENAME_SIZE];
-        string_append(out_token_name, MAX_FILENAME_SIZE, filename, ".token");
+        // string_append(out_token_name, MAX_FILENAME_SIZE, filename, ".token");
+        change_file_extension(file, create_string(".token", 6));
+        string out_token_name = get_full_path(file);
         FILE* out_token_file = fopen(out_token_name, "w");
         if (out_token_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_token_name);
@@ -94,8 +98,9 @@ void parse_file(const char* filename, bool o_token, bool o_ast) {
     reset_lexer(lexer);
     Parser* parser = create_parser();
     if (o_ast) {
-        char out_ast_name[MAX_FILENAME_SIZE];
-        string_append(out_ast_name, MAX_FILENAME_SIZE, filename, ".ast");
+        // string_append(out_ast_name, MAX_FILENAME_SIZE, filename, ".ast");
+        change_file_extension(file, create_string(".ast", 4));
+        string out_ast_name = get_full_path(file);
         FILE* out_ast_file = fopen(out_ast_name, "w");
         if (out_ast_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
