@@ -125,30 +125,28 @@ static string create_string_check(const char* data, size_t length, bool check) {
     if (!initialized) init();
     if (data == NULL || length == 0) return 0;
     if (check) {
-        StringList* current = (StringList*)offset_to_ptr(all_string_list);
-        string existing = 0;
+        StringList* current = all_string_list;
+        string existing = NULL;
         while (current != NULL) {
-            if (current->length == length && current->str != 0 && strncmp(string_to_cstr(current->str), data, length) == 0)
+            if (current->length == length && current->str != 0 && strncmp(current->str, data, length) == 0)
                 existing = current->str;
-            current = (StringList*)offset_to_ptr(current->next);
+            current = current->next;
         }
-        if (existing != 0)
+        if (existing != NULL)
             return existing;
     }
     if (string_memory->used + length >= string_memory->size)
         increase_memory_size(false);
-    string off = string_memory->used;
-    char* str = &((char*)string_memory->block)[string_memory->used];
+    char* str = &string_memory->block[string_memory->used];
     strncpy(str, data, length);
     str[length] = '\0';
     string_memory->used += length + 1;
-    offset(StringList*) new_str = alloc_memory(sizeof(StringList));
-    StringList* ptr = (StringList*)offset_to_ptr(new_str);
-    ptr->str = off;
-    ptr->length = length;
-    ptr->next = all_string_list;
+    StringList* new_str = (StringList*)alloc_memory(sizeof(StringList));
+    new_str->str = str;
+    new_str->length = length;
+    new_str->next = all_string_list;
     all_string_list = new_str;
-    return off;
+    return str;
 }
 
 string create_string(const char* data, size_t length) {
@@ -232,14 +230,14 @@ void init(void) {
 
 static size_t memoryBlockCount = 0;
 
-size_t alloc_memory(size_t size) {
+pointer alloc_memory(size_t size) {
     if (!initialized) init();
     if (struct_memory->used + size >= struct_memory->size)
         increase_memory_size(true);
-    size_t ptr = struct_memory->used = (struct_memory->used + ALIGN_SIZE - 1) & ~(ALIGN_SIZE - 1);
+    struct_memory->used = (struct_memory->used + ALIGN_SIZE - 1) & ~(ALIGN_SIZE - 1);
+    size_t* ptr = struct_memory->block + (struct_memory->used / sizeof(size_t));
     struct_memory->used += size;
     ++memoryBlockCount;
-    assert(ptr % ALIGN_SIZE == 0);
     return ptr;
 }
 
@@ -258,27 +256,12 @@ bool string_equal(string a, string b) {
 string get_info(void) {
     string info = (string)create_string_check("", 256, false);
     size_t stringCount = 0;
-    StringList* current = (StringList*)offset_to_ptr(all_string_list);
+    StringList* current = all_string_list;
     while (current != NULL) {
         stringCount++;
-        current = (StringList*)offset_to_ptr(current->next);
+        current = current->next;
     }
     // max: 198 char
-    sprintf(string_to_cstr(info), "Platform: %d, Structure Memory Used: %zu bytes, String Memory Used: %zu bytes, stringCount: %zu, Memory Block Count: %zu", PLATFORM, struct_memory_used + struct_memory->used, string_memory_used + string_memory->used, stringCount, memoryBlockCount);
+    sprintf(info, "Platform: %d, Structure Memory Used: %zu bytes, String Memory Used: %zu bytes, stringCount: %zu, Memory Block Count: %zu", PLATFORM, struct_memory_used + struct_memory->used, string_memory_used + string_memory->used, stringCount, memoryBlockCount);
     return info;
-}
-
-char* string_to_cstr(string str) {
-    if (str <= 0 || str >= string_memory->used) return NULL;
-    return string_memory->block + str;
-}
-
-size_t* offset_to_ptr(offset() off) {
-    if (off >= struct_memory->used) {
-        fprintf(stderr, "Error: offset_to_ptr received invalid offset: %zu\n", off);
-        return NULL;
-    }
-    if (off == 0) return NULL;
-    assert(off % ALIGN_SIZE == 0);
-    return struct_memory->block + off;
 }

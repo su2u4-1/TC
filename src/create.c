@@ -1,53 +1,51 @@
 #include "create.h"
 
-offset(CodeMember*) create_code_member(CodeMemberType type, offset(Import* | Function * | Class*) content) {
-    if (content == 0) {
-        fprintf(stderr, "Error creating code member: content is NULL\n");
-        return 0;
-    }
-    offset(CodeMember*) code_member = alloc_memory(sizeof(CodeMember));
-    CodeMember* code_member_ptr = (CodeMember*)offset_to_ptr(code_member);
-    code_member_ptr->type = type;
-    if (type == CODE_IMPORT)
-        code_member_ptr->content.import = content;
-    else if (type == CODE_FUNCTION)
-        code_member_ptr->content.function = content;
-    else if (type == CODE_CLASS)
-        code_member_ptr->content.class_ = content;
+CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content) {
+    CodeMember* code_member = (CodeMember*)alloc_memory(sizeof(CodeMember));
+    code_member->type = type;
+    if (type == CODE_IMPORT && import_content != NULL)
+        code_member->content.import = import_content;
+    else if (type == CODE_FUNCTION && function_content != NULL)
+        code_member->content.function = function_content;
+    else if (type == CODE_CLASS && class_content != NULL)
+        code_member->content.class_ = class_content;
     else {
-        fprintf(stderr, "Error creating code member: unknown type %d\n", type);
+        if (import_content == 0 && function_content == 0 && class_content == 0)
+            fprintf(stderr, "Error creating code member: content is NULL\n");
+        else
+            fprintf(stderr, "Error creating code member: unknown type %d\n", type);
         return 0;
     }
     return code_member;
 }
 
-offset(Code*) create_code(list(CodeMember*) members, offset(Scope*) global_scope) {
-    offset(Code*) code = alloc_memory(sizeof(Code));
-    Code* code_ptr = (Code*)offset_to_ptr(code);
+Code* create_code(list(CodeMember*) members, Scope* global_scope) {
+    Code* code = (Code*)alloc_memory(sizeof(Code));
+    Code* code_ptr = code;
     code_ptr->members = members;
     code_ptr->global_scope = global_scope;
     return code;
 }
 
-offset(Import*) create_import(offset(Name*) name, string source) {
+Import* create_import(Name* name, string source) {
     if (name == 0) {
         fprintf(stderr, "Error creating import: name is NULL\n");
         return 0;
     }
-    offset(Import*) import = alloc_memory(sizeof(Import));
-    Import* import_ptr = (Import*)offset_to_ptr(import);
+    Import* import = (Import*)alloc_memory(sizeof(Import));
+    Import* import_ptr = import;
     import_ptr->name = name;
     import_ptr->source = source;
     return import;
 }
 
-offset(Function*) create_function(offset(Name*) name, offset(Name*) return_type, list(Variable*) parameters, list(Statement*) body, offset(Scope*) function_scope) {
+Function* create_function(Name* name, Name* return_type, list(Variable*) parameters, list(Statement*) body, Scope* function_scope) {
     if (name == 0 || return_type == 0) {
         fprintf(stderr, "Error creating function: name or return_type is NULL\n");
         return 0;
     }
-    offset(Function*) function = alloc_memory(sizeof(Function));
-    Function* function_ptr = (Function*)offset_to_ptr(function);
+    Function* function = (Function*)alloc_memory(sizeof(Function));
+    Function* function_ptr = function;
     function_ptr->name = name;
     function_ptr->return_type = return_type;
     function_ptr->parameters = parameters;
@@ -56,13 +54,13 @@ offset(Function*) create_function(offset(Name*) name, offset(Name*) return_type,
     return function;
 }
 
-offset(Method*) create_method(offset(Name*) name, offset(Name*) return_type, list(Variable*) parameters, list(Statement*) body, offset(Scope*) method_scope) {
+Method* create_method(Name* name, Name* return_type, list(Variable*) parameters, list(Statement*) body, Scope* method_scope) {
     if (name == 0 || return_type == 0) {
         fprintf(stderr, "Error creating method: name or return_type is NULL\n");
         return 0;
     }
-    offset(Method*) method = alloc_memory(sizeof(Method));
-    Method* method_ptr = (Method*)offset_to_ptr(method);
+    Method* method = (Method*)alloc_memory(sizeof(Method));
+    Method* method_ptr = method;
     method_ptr->name = name;
     method_ptr->return_type = return_type;
     method_ptr->parameters = parameters;
@@ -71,83 +69,85 @@ offset(Method*) create_method(offset(Name*) name, offset(Name*) return_type, lis
     return method;
 }
 
-offset(ClassMember*) create_class_member(ClassMemberType type, offset(Method* | Variable*) content) {
-    if (content == 0) {
-        fprintf(stderr, "Error creating class member: content is NULL\n");
-        return 0;
-    }
-    offset(ClassMember*) class_member = alloc_memory(sizeof(ClassMember));
-    ClassMember* class_member_ptr = (ClassMember*)offset_to_ptr(class_member);
+ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content) {
+    ClassMember* class_member = (ClassMember*)alloc_memory(sizeof(ClassMember));
+    ClassMember* class_member_ptr = class_member;
     class_member_ptr->type = type;
-    if (type == CLASS_METHOD)
-        class_member_ptr->content.method = content;
-    else if (type == CLASS_VARIABLE)
-        class_member_ptr->content.variable = content;
+    if (type == CLASS_METHOD && method_content != NULL)
+        class_member_ptr->content.method = method_content;
+    else if (type == CLASS_VARIABLE && variable_content != NULL)
+        class_member_ptr->content.variable = variable_content;
     else {
-        fprintf(stderr, "Error creating class member: unknown type %d\n", type);
+        if (method_content == 0 && variable_content == 0)
+            fprintf(stderr, "Error creating class member: content is NULL\n");
+        else
+            fprintf(stderr, "Error creating class member: unknown type %d\n", type);
         return 0;
     }
     return class_member;
 }
 
-offset(Class*) create_class(offset(Name*) name, list(ClassMember*) members, offset(Scope*) class_scope) {
+Class* create_class(Name* name, list(ClassMember*) members, Scope* class_scope) {
     if (name == 0) {
         fprintf(stderr, "Error creating class: name is NULL\n");
         return 0;
     }
-    offset(Class*) class = alloc_memory(sizeof(Class));
-    Class* class_ptr = (Class*)offset_to_ptr(class);
+    Class* class = (Class*)alloc_memory(sizeof(Class));
+    Class* class_ptr = class;
     class_ptr->name = name;
     class_ptr->members = members;
     class_ptr->class_scope = class_scope;
     return class;
 }
 
-offset(Variable*) create_variable(offset(Name*) type, offset(Name*) name, offset(Expression*) value) {
+Variable* create_variable(Name* type, Name* name, Expression* value) {
     if (type == 0 || name == 0) {
         fprintf(stderr, "Error creating variable: type or name is NULL\n");
         return 0;
     }
-    offset(Variable*) variable = alloc_memory(sizeof(Variable));
-    Variable* variable_ptr = (Variable*)offset_to_ptr(variable);
+    Variable* variable = (Variable*)alloc_memory(sizeof(Variable));
+    Variable* variable_ptr = variable;
     variable_ptr->type = type;
     variable_ptr->name = name;
     variable_ptr->value = value;
     return variable;
 }
 
-offset(Statement*) create_statement(StatementType type, offset(If* | While * | For * | Expression * | Variable*) stmt) {
-    offset(Statement*) statement = alloc_memory(sizeof(Statement));
-    Statement* statement_ptr = (Statement*)offset_to_ptr(statement);
+Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt) {
+    Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
+    Statement* statement_ptr = statement;
     statement_ptr->type = type;
-    if (type == EXPRESSION_STATEMENT)
-        statement_ptr->stmt.expr = stmt;
-    else if (type == VARIABLE_STATEMENT)
-        statement_ptr->stmt.var = stmt;
-    else if (type == IF_STATEMENT)
-        statement_ptr->stmt.if_stmt = stmt;
-    else if (type == WHILE_STATEMENT)
-        statement_ptr->stmt.while_stmt = stmt;
-    else if (type == FOR_STATEMENT)
-        statement_ptr->stmt.for_stmt = stmt;
-    else if (type == RETURN_STATEMENT)
-        statement_ptr->stmt.return_expr = stmt;
+    if (type == EXPRESSION_STATEMENT && expr != 0)
+        statement_ptr->stmt.expr = expr;
+    else if (type == VARIABLE_STATEMENT && var_stmt != 0)
+        statement_ptr->stmt.var = var_stmt;
+    else if (type == IF_STATEMENT && if_stmt != 0)
+        statement_ptr->stmt.if_stmt = if_stmt;
+    else if (type == WHILE_STATEMENT && while_stmt != 0)
+        statement_ptr->stmt.while_stmt = while_stmt;
+    else if (type == FOR_STATEMENT && for_stmt != 0)
+        statement_ptr->stmt.for_stmt = for_stmt;
+    else if (type == RETURN_STATEMENT && expr != 0)
+        statement_ptr->stmt.return_expr = expr;
     else if (type == BREAK_STATEMENT || type == CONTINUE_STATEMENT)
         statement_ptr->stmt.expr = 0;
     else {
-        fprintf(stderr, "Error creating statement: unknown type %d\n", type);
+        if (if_stmt == 0 && while_stmt == 0 && for_stmt == 0 && expr == 0 && var_stmt == 0)
+            fprintf(stderr, "Error creating statement: content is NULL\n");
+        else
+            fprintf(stderr, "Error creating statement: unknown type %d\n", type);
         return 0;
     }
     return statement;
 }
 
-offset(If*) create_if(offset(Expression*) condition, list(Statement*) body, list(ElseIf*) else_if, list(Statement*) else_body) {
+If* create_if(Expression* condition, list(Statement*) body, list(ElseIf*) else_if, list(Statement*) else_body) {
     if (condition == 0) {
         fprintf(stderr, "Error creating if statement: condition is NULL\n");
         return 0;
     }
-    offset(If*) if_ = alloc_memory(sizeof(If));
-    If* if_ptr = (If*)offset_to_ptr(if_);
+    If* if_ = (If*)alloc_memory(sizeof(If));
+    If* if_ptr = if_;
     if_ptr->condition = condition;
     if_ptr->body = body;
     if_ptr->else_if = else_if;
@@ -155,21 +155,21 @@ offset(If*) create_if(offset(Expression*) condition, list(Statement*) body, list
     return if_;
 }
 
-offset(ElseIf*) create_else_if(offset(Expression*) condition, list(Statement*) body) {
+ElseIf* create_else_if(Expression* condition, list(Statement*) body) {
     if (condition == 0) {
         fprintf(stderr, "Error creating else-if statement: condition is NULL\n");
         return 0;
     }
-    offset(ElseIf*) else_if = alloc_memory(sizeof(ElseIf));
-    ElseIf* else_if_ptr = (ElseIf*)offset_to_ptr(else_if);
+    ElseIf* else_if = (ElseIf*)alloc_memory(sizeof(ElseIf));
+    ElseIf* else_if_ptr = else_if;
     else_if_ptr->condition = condition;
     else_if_ptr->body = body;
     return else_if;
 }
 
-offset(For*) create_for(offset(Variable*) initializer, offset(Expression*) condition, offset(Expression*) increment, list(Statement*) body) {
-    offset(For*) for_ = alloc_memory(sizeof(For));
-    For* for_ptr = (For*)offset_to_ptr(for_);
+For* create_for(Variable* initializer, Expression* condition, Expression* increment, list(Statement*) body) {
+    For* for_ = (For*)alloc_memory(sizeof(For));
+    For* for_ptr = for_;
     for_ptr->initializer = initializer;
     for_ptr->condition = condition;
     for_ptr->increment = increment;
@@ -177,65 +177,82 @@ offset(For*) create_for(offset(Variable*) initializer, offset(Expression*) condi
     return for_;
 }
 
-offset(While*) create_while(offset(Expression*) condition, list(Statement*) body) {
-    offset(While*) while_ = alloc_memory(sizeof(While));
-    While* while_ptr = (While*)offset_to_ptr(while_);
+While* create_while(Expression* condition, list(Statement*) body) {
+    While* while_ = (While*)alloc_memory(sizeof(While));
+    While* while_ptr = while_;
     while_ptr->condition = condition;
     while_ptr->body = body;
     return while_;
 }
 
-offset(Expression*) create_expression(OperatorType operator, offset(Expression* | Primary*) left, offset(Expression*) right) {
-    if ((operator == OP_NONE) != (right == 0) || left == 0) {
-        fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, left == 0: %s, right == 0: %s\n", operator == OP_NONE ? "true" : "false", left == 0 ? "true" : "false", right == 0 ? "true" : "false");
+Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
+    if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
+        fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
+                operator == OP_NONE ? "true" : "false",
+                expr_left == 0 ? "true" : "false",
+                prim_left == 0 ? "true" : "false",
+                right == 0 ? "true" : "false");
         return 0;
     }
-    offset(Expression*) expression = alloc_memory(sizeof(Expression));
-    Expression* expression_ptr = (Expression*)offset_to_ptr(expression);
+    Expression* expression = (Expression*)alloc_memory(sizeof(Expression));
+    Expression* expression_ptr = expression;
     expression_ptr->operator = operator;
-    expression_ptr->left = left;
+    if (expr_left != 0)
+        expression_ptr->expr_left = expr_left;
+    else if (prim_left != 0)
+        expression_ptr->prim_left = prim_left;
+    else {
+        fprintf(stderr, "Error creating expression: both expr_left and prim_left are NULL\n");
+        return 0;
+    }
     expression_ptr->right = right;
     return expression;
 }
 
-offset(Primary*) create_primary(PrimaryType type, offset(string | Expression * | Primary * | VariableAccess*) value) {
-    offset(Primary*) primary = alloc_memory(sizeof(Primary));
-    Primary* primary_ptr = (Primary*)offset_to_ptr(primary);
+Primary* create_primary(PrimaryType type, string str_value, Expression* expr_value, Primary* prim_value, VariableAccess* variable_value) {
+    Primary* primary = (Primary*)alloc_memory(sizeof(Primary));
+    Primary* primary_ptr = primary;
     primary_ptr->type = type;
-    if (type == PRIM_INTEGER || type == PRIM_FLOAT || type == PRIM_STRING || type == PRIM_TRUE || type == PRIM_FALSE)
-        primary_ptr->value.literal_value = value;
-    else if (type == PRIM_EXPRESSION)
-        primary_ptr->value.expr = value;
-    else if (type == PRIM_NOT_OPERAND || type == PRIM_NEG_OPERAND)
-        primary_ptr->value.operand = value;
-    else if (type == PRIM_VARIABLE_ACCESS)
-        primary_ptr->value.var = value;
+    if ((type == PRIM_INTEGER || type == PRIM_FLOAT || type == PRIM_STRING || type == PRIM_TRUE || type == PRIM_FALSE) && str_value != 0)
+        primary_ptr->value.literal_value = str_value;
+    else if (type == PRIM_EXPRESSION && expr_value != 0)
+        primary_ptr->value.expr = expr_value;
+    else if ((type == PRIM_NOT_OPERAND || type == PRIM_NEG_OPERAND) && prim_value != 0)
+        primary_ptr->value.operand = prim_value;
+    else if (type == PRIM_VARIABLE_ACCESS && variable_value != 0)
+        primary_ptr->value.var = variable_value;
     else {
-        fprintf(stderr, "Error creating primary: unknown type %d\n", type);
+        if (str_value == 0 && expr_value == 0 && prim_value == 0 && variable_value == 0)
+            fprintf(stderr, "Error creating primary: value is NULL\n");
+        else
+            fprintf(stderr, "Error creating primary: unknown type %d\n", type);
         return 0;
     }
     return primary;
 }
 
-offset(VariableAccess*) create_variable_access(VariableAccessType type, offset(VariableAccess*) base, offset(Name* | Expression * | list(Expression*)) content) {
+VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Name* name_content, Expression* expr_content, list(Expression*) args_content) {
     if ((base == 0) != (type == VAR_NAME)) {
         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
         return 0;
     }
-    offset(VariableAccess*) variable_access = alloc_memory(sizeof(VariableAccess));
-    VariableAccess* variable_access_ptr = (VariableAccess*)offset_to_ptr(variable_access);
+    VariableAccess* variable_access = (VariableAccess*)alloc_memory(sizeof(VariableAccess));
+    VariableAccess* variable_access_ptr = variable_access;
     variable_access_ptr->type = type;
     variable_access_ptr->base = base;
-    if (type == VAR_NAME)
-        variable_access_ptr->content.name = content;
-    else if (type == VAR_FUNC_CALL)
-        variable_access_ptr->content.args = content;
-    else if (type == VAR_GET_SEQ)
-        variable_access_ptr->content.index = content;
-    else if (type == VAR_GET_ATTR)
-        variable_access_ptr->content.attr_name = content;
+    if (type == VAR_NAME && name_content != 0)
+        variable_access_ptr->content.name = name_content;
+    else if (type == VAR_FUNC_CALL && args_content != 0)
+        variable_access_ptr->content.args = args_content;
+    else if (type == VAR_GET_SEQ && expr_content != 0)
+        variable_access_ptr->content.index = expr_content;
+    else if (type == VAR_GET_ATTR && name_content != 0)
+        variable_access_ptr->content.attr_name = name_content;
     else {
-        fprintf(stderr, "Error creating variable access: unknown type %d\n", type);
+        if (name_content == 0 && expr_content == 0 && args_content == 0)
+            fprintf(stderr, "Error creating variable access: content is NULL\n");
+        else
+            fprintf(stderr, "Error creating variable access: unknown type %d\n", type);
         return 0;
     }
     return variable_access;

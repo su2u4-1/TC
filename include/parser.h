@@ -3,76 +3,17 @@
 
 #include "lib.h"
 
-#define list(type) offset(List(type)*)
-
-typedef struct Name Name;
+#define list(type) List*
 
 typedef enum CodeMemberType {
     CODE_IMPORT,
     CODE_FUNCTION,
     CODE_CLASS
 } CodeMemberType;
-
-typedef struct CodeMember {
-    union {
-        offset(Import*) import;
-        offset(Function*) function;
-        offset(Class*) class_;
-    } content;
-    CodeMemberType type;
-} CodeMember;
-
-typedef struct Code {
-    list(CodeMember*) members;
-    offset(Scope*) global_scope;
-} Code;
-
-typedef struct Import {
-    offset(Name*) name;
-    string source;
-} Import;
-
-typedef struct Function {
-    offset(Name*) name;
-    offset(Name*) return_type;
-    list(Variable*) parameters;
-    list(Statement*) body;
-    offset(Scope*) function_scope;
-} Function;
-
-typedef struct Method {
-    offset(Name*) name;
-    offset(Name*) return_type;
-    list(Variable*) parameters;
-    list(Statement*) body;
-    offset(Scope*) method_scope;
-} Method;
-
 typedef enum ClassMemberType {
     CLASS_METHOD,
     CLASS_VARIABLE
 } ClassMemberType;
-
-typedef struct ClassMember {
-    union {
-        offset(Method*) method;
-        offset(Variable*) variable;
-    } content;
-    ClassMemberType type;
-} ClassMember;
-
-typedef struct Class {
-    offset(Name*) name;
-    list(ClassMember*) members;
-    offset(Scope*) class_scope;
-} Class;
-
-typedef struct Variable {
-    offset(Name*) type;
-    offset(Name*) name;
-    offset(Expression*) value;
-} Variable;
-
 typedef enum StatementType {
     EXPRESSION_STATEMENT,
     VARIABLE_STATEMENT,
@@ -83,43 +24,6 @@ typedef enum StatementType {
     BREAK_STATEMENT,
     CONTINUE_STATEMENT
 } StatementType;
-
-typedef struct Statement {
-    union {
-        offset(Expression*) expr;
-        offset(Variable*) var;
-        offset(If*) if_stmt;
-        offset(While*) while_stmt;
-        offset(For*) for_stmt;
-        offset(Expression*) return_expr;
-    } stmt;
-    StatementType type;
-} Statement;
-
-typedef struct If {
-    offset(Expression*) condition;
-    list(Statement*) body;
-    list(ElseIf*) else_if;
-    list(Statement*) else_body;
-} If;
-
-typedef struct ElseIf {
-    offset(Expression*) condition;
-    list(Statement*) body;
-} ElseIf;
-
-typedef struct For {
-    offset(Variable*) initializer;
-    offset(Expression*) condition;
-    offset(Expression*) increment;
-    list(Statement*) body;
-} For;
-
-typedef struct While {
-    offset(Expression*) condition;
-    list(Statement*) body;
-} While;
-
 typedef enum OperatorType {
     OP_ADD,         // +
     OP_SUB,         // -
@@ -142,13 +46,6 @@ typedef enum OperatorType {
     OP_MOD_ASSIGN,  // %=
     OP_NONE
 } OperatorType;
-
-typedef struct Expression {
-    offset(Expression* | Primary*) left;
-    offset(Expression*) right;
-    OperatorType operator;
-} Expression;
-
 typedef enum PrimaryType {
     PRIM_INTEGER,
     PRIM_FLOAT,
@@ -160,40 +57,12 @@ typedef enum PrimaryType {
     PRIM_NEG_OPERAND,
     PRIM_VARIABLE_ACCESS
 } PrimaryType;
-
-typedef struct Primary {
-    union {
-        string literal_value;         // int, float, string, true, false
-        offset(Expression*) expr;     // expr
-        offset(Primary*) operand;     // not, neg
-        offset(VariableAccess*) var;  // variable access
-    } value;
-    PrimaryType type;
-} Primary;
-
 typedef enum VariableAccessType {
     VAR_NAME,
     VAR_FUNC_CALL,
     VAR_GET_ATTR,
     VAR_GET_SEQ
 } VariableAccessType;
-
-typedef struct VariableAccess {
-    offset(VariableAccess*) base;
-    union {
-        offset(Name*) name;
-        list(Expression*) args;     // func_call
-        offset(Name*) attr_name;    // get_attr
-        offset(Expression*) index;  // get_seq
-    } content;
-    VariableAccessType type;
-} VariableAccess;
-
-typedef struct Scope {
-    offset(Scope*) parent;
-    list(Name*) names;
-} Scope;
-
 typedef enum NameType {
     NAME_TYPE,
     NAME_VARIABLE,
@@ -203,33 +72,161 @@ typedef enum NameType {
     NAME_ATTRIBUTE
 } NameType;
 
-typedef struct Name {
+typedef struct CodeMember CodeMember;
+typedef struct Code Code;
+typedef struct Import Import;
+typedef struct Function Function;
+typedef struct Method Method;
+typedef struct ClassMember ClassMember;
+typedef struct Class Class;
+typedef struct Variable Variable;
+typedef struct Statement Statement;
+typedef struct If If;
+typedef struct ElseIf ElseIf;
+typedef struct For For;
+typedef struct While While;
+typedef struct Expression Expression;
+typedef struct Primary Primary;
+typedef struct VariableAccess VariableAccess;
+typedef struct Scope Scope;
+typedef struct Name Name;
+typedef struct List List;
+typedef struct Node Node;
+
+struct CodeMember {
+    union {
+        Import* import;
+        Function* function;
+        Class* class_;
+    } content;
+    CodeMemberType type;
+};
+struct Code {
+    list(CodeMember*) members;
+    Scope* global_scope;
+};
+struct Import {
+    Name* name;
+    string source;
+};
+struct Function {
+    Name* name;
+    Name* return_type;
+    list(Variable*) parameters;
+    list(Statement*) body;
+    Scope* function_scope;
+};
+struct Method {
+    Name* name;
+    Name* return_type;
+    list(Variable*) parameters;
+    list(Statement*) body;
+    Scope* method_scope;
+};
+struct ClassMember {
+    union {
+        Method* method;
+        Variable* variable;
+    } content;
+    ClassMemberType type;
+};
+struct Class {
+    Name* name;
+    list(ClassMember*) members;
+    Scope* class_scope;
+};
+
+struct Variable {
+    Name* type;
+    Name* name;
+    Expression* value;
+};
+struct Statement {
+    union {
+        Expression* expr;
+        Variable* var;
+        If* if_stmt;
+        While* while_stmt;
+        For* for_stmt;
+        Expression* return_expr;
+    } stmt;
+    StatementType type;
+};
+struct If {
+    Expression* condition;
+    list(Statement*) body;
+    list(ElseIf*) else_if;
+    list(Statement*) else_body;
+};
+struct ElseIf {
+    Expression* condition;
+    list(Statement*) body;
+};
+struct For {
+    Variable* initializer;
+    Expression* condition;
+    Expression* increment;
+    list(Statement*) body;
+};
+struct While {
+    Expression* condition;
+    list(Statement*) body;
+};
+struct Expression {
+    Expression* expr_left;
+    Primary* prim_left;
+    Expression* right;
+    OperatorType operator;
+};
+struct Primary {
+    union {
+        string literal_value;  // int, float, string, true, false
+        Expression* expr;      // expr
+        Primary* operand;      // not, neg
+        VariableAccess* var;   // variable access
+    } value;
+    PrimaryType type;
+};
+struct VariableAccess {
+    VariableAccess* base;
+    union {
+        Name* name;
+        list(Expression*) args;  // func_call
+        Name* attr_name;         // get_attr
+        Expression* index;       // get_seq
+    } content;
+    VariableAccessType type;
+};
+struct Scope {
+    Scope* parent;
+    list(Name*) names;
+};
+struct Name {
     string name;
     size_t id;
     union {
         // variable type, attribute type, function return ntype, method return type
-        offset(Name*) type;
+        Name* type;
         // class scope
-        offset(Scope*) scope;
+        Scope* scope;
         // NAME_TYPE: 0
     } info;
     NameType kind;
-} Name;
+};
+struct List {
+    Node* head;
+    Node* tail;
+};
+struct Node {
+    Node* next;
+    pointer content;
+};
 
-typedef struct List {
-    offset(Node*) head;
-    offset(Node*) tail;
-} List;
-
-typedef struct Node {
-    offset(Node*) next;
-    offset() content;
-} Node;
+typedef struct Lexer Lexer;
+typedef struct Parser Parser;
 
 // public functions
-// `Code* parse_code(Lexer* lexer, Scope* now_scope, Parser* parser)`
-offset(Code*) parse_code(offset(Lexer*) lexer, offset(Scope*) now_scope, offset(Parser*) parser);
-// `void output_code(Code* code, FILE* outfile, size_t indent)`
-void output_code(offset(Code*) code, FILE* outfile, size_t indent, offset(Parser*) parser);
+Code* parse_code(Lexer* lexer, Scope* now_scope, Parser* parser);
+void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser);
 
 #endif  // PARSER_H

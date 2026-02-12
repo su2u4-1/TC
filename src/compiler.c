@@ -17,7 +17,7 @@ char* read_source(FILE* file, size_t* length) {
     *length = (size_t)ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char* source = string_to_cstr(create_string("", *length + 1));
+    char* source = create_string("", *length + 1);
     fread(source, 1, *length, file);
     source[*length] = '\0';
 
@@ -27,28 +27,28 @@ char* read_source(FILE* file, size_t* length) {
     }
     return source;
 }
-void output_token(FILE* file, offset(Lexer*) lexer) {
-    for (offset(Token*) current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
-        Token* token = (Token*)offset_to_ptr(current);
+void output_token(FILE* file, Lexer* lexer) {
+    for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
+        Token* token = current;
         if (token->type == EOF_TOKEN) {
-            fprintf(file, "Token(Type: EOF,        Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+            fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
             break;
         } else if (token->type == IDENTIFIER)
-            fprintf(file, "Token(Type: identifier, Line: ");
+            fprintf(file, "Token(Type: identifier,  Line: ");
         else if (token->type == INTEGER)
-            fprintf(file, "Token(Type: integer,    Line: ");
+            fprintf(file, "Token(Type: integer,     Line: ");
         else if (token->type == FLOAT)
-            fprintf(file, "Token(Type: float,      Line: ");
+            fprintf(file, "Token(Type: float,       Line: ");
         else if (token->type == STRING)
-            fprintf(file, "Token(Type: string,     Line: ");
+            fprintf(file, "Token(Type: string,      Line: ");
         else if (token->type == SYMBOL)
-            fprintf(file, "Token(Type: symbol,     Line: ");
+            fprintf(file, "Token(Type: symbol,      Line: ");
         else if (token->type == KEYWORD)
-            fprintf(file, "Token(Type: keyword,    Line: ");
+            fprintf(file, "Token(Type: keyword,     Line: ");
         else if (token->type == COMMENT)
-            fprintf(file, "Token(Type: comment,    Line: ");
-        fprintf(file, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        char* lexeme_ptr = string_to_cstr(token->lexeme);
+            fprintf(file, "Token(Type: comment,     Line: ");
+        fprintf(file, "%zu, Column: %zu)\t(%p)\tLexeme: '", token->line + 1, token->column + 1, token->lexeme);
+        char* lexeme_ptr = token->lexeme;
         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
             char c = lexeme_ptr[i];
             if (c == '\0')
@@ -62,14 +62,14 @@ void output_token(FILE* file, offset(Lexer*) lexer) {
             else
                 fputc(c, file);
         }
-        fprintf(file, "' (%zu)\n", token->lexeme);
+        fprintf(file, "'\n");
     }
-    fprintf(file, "\ninfo by lib:\n    %s\n", string_to_cstr(get_info()));
+    fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 }
-void output_ast(FILE* file, offset(Lexer*) lexer, offset(Parser*) parser) {
-    offset(Code*) ast_root = parse_code(lexer, builtin_scope, parser);
+void output_ast(FILE* file, Lexer* lexer, Parser* parser) {
+    Code* ast_root = parse_code(lexer, builtin_scope, parser);
     output_code(ast_root, file, 0, parser);
-    fprintf(file, "\ninfo by lib:\n    %s\n", string_to_cstr(get_info()));
+    fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 }
 void parse_file(const char* filename, bool o_token, bool o_ast) {
     size_t length = 0;
@@ -80,7 +80,7 @@ void parse_file(const char* filename, bool o_token, bool o_ast) {
     }
     char* source = read_source(source_file, &length);
     fclose(source_file);
-    offset(Lexer*) lexer = create_lexer(source, length);
+    Lexer* lexer = create_lexer(source, length);
     if (o_token) {
         char out_token_name[MAX_FILENAME_SIZE];
         string_append(out_token_name, MAX_FILENAME_SIZE, filename, ".token");
@@ -92,7 +92,7 @@ void parse_file(const char* filename, bool o_token, bool o_ast) {
         fclose(out_token_file);
     }
     reset_lexer(lexer);
-    offset(Parser*) parser = create_parser();
+    Parser* parser = create_parser();
     if (o_ast) {
         char out_ast_name[MAX_FILENAME_SIZE];
         string_append(out_ast_name, MAX_FILENAME_SIZE, filename, ".ast");

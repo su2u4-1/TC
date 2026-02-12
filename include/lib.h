@@ -11,9 +11,9 @@
 #define bool char
 #define true 1
 #define false 0
-typedef size_t string;
-typedef size_t offset_;
-#define offset(type) offset_
+typedef char* string;
+typedef size_t* pointer;
+#define offset(type) type
 #define ALIGN_SIZE sizeof(size_t)
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
@@ -58,7 +58,7 @@ struct StringList {
 extern string keywordList[keywordCount];
 extern string symbolList[symbolCount];
 
-#define defaultMemorySize 1024 * 1024  // 1 MB
+#define defaultMemorySize 1024  // 1 KB
 extern StructMemoryBlock* struct_memory;
 extern StringMemoryBlock* string_memory;
 extern bool initialized;
@@ -118,6 +118,8 @@ extern string MOD_ASSIGN_SYMBOL;  // symbol `%=`
 extern string AND_SYMBOL;         // symbol `&&`
 extern string OR_SYMBOL;          // symbol `||`
 
+typedef struct Name Name;
+typedef struct Scope Scope;
 extern offset(Name*) name_void;
 extern offset(Name*) name_int;
 extern offset(Name*) name_float;
@@ -127,12 +129,9 @@ extern offset(Scope*) builtin_scope;
 
 void init(void);
 string create_string(const char* data, size_t length);
-size_t alloc_memory(size_t size);
+pointer alloc_memory(size_t size);
 bool is_keyword(const string str);
 bool string_equal(string a, string b);
 string get_info(void);
-char* string_to_cstr(string str);
-size_t* offset_to_ptr(offset() off);
-offset() ptr_to_offset(size_t* ptr);
 
 #endif  // LIB_H

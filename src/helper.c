@@ -7,98 +7,97 @@
 
 // list helper functions
 list() create_list(void) {
-    offset(List*) new_list = alloc_memory(sizeof(List));
-    List* list_ptr = (List*)offset_to_ptr(new_list);
-    list_ptr->head = 0;
-    list_ptr->tail = 0;
+    List* new_list = (List*)alloc_memory(sizeof(List));
+    new_list->head = 0;
+    new_list->tail = 0;
     return new_list;
 }
 
-offset(Node*) create_node(offset() content) {
-    offset(Node*) new_node = alloc_memory(sizeof(Node));
-    Node* node_ptr = (Node*)offset_to_ptr(new_node);
-    node_ptr->next = 0;
-    node_ptr->content = content;
+Node* create_node(pointer content) {
+    Node* new_node = (Node*)alloc_memory(sizeof(Node));
+    new_node->next = 0;
+    new_node->content = content;
     return new_node;
 }
 
-void list_append(list() list, offset() item) {
-    offset(Node*) new_node = create_node(item);
-    List* list_ptr = (List*)offset_to_ptr(list);
-    if (list_ptr->head == 0) {
-        list_ptr->head = new_node;
-        list_ptr->tail = new_node;
+void list_append(list() list, pointer item) {
+    Node* new_node = create_node(item);
+    if (list->head == 0) {
+        list->head = new_node;
+        list->tail = new_node;
     } else {
-        Node* tail_ptr = (Node*)offset_to_ptr(list_ptr->tail);
-        tail_ptr->next = new_node;
-        list_ptr->tail = new_node;
+        list->tail->next = new_node;
+        list->tail = new_node;
     }
 }
 
 list() list_copy(list() original) {
     list() new_list = create_list();
-    List* original_ptr = (List*)offset_to_ptr(original);
-    List* new_list_ptr = (List*)offset_to_ptr(new_list);
-    new_list_ptr->head = original_ptr->head;
-    new_list_ptr->tail = original_ptr->tail;
+    new_list->head = original->head;
+    new_list->tail = original->tail;
     return new_list;
 }
 
-offset() list_pop(list() lst) {
-    List* list_ptr = (List*)offset_to_ptr(lst);
-    if (list_ptr->head == 0)
+pointer list_pop(list() list) {
+    if (list->head == 0)
         return 0;
-    offset(Node*) head_node = list_ptr->head;
-    Node* head_node_ptr = (Node*)offset_to_ptr(head_node);
-    list_ptr->head = head_node_ptr->next;
-    if (list_ptr->head == 0)
-        list_ptr->tail = 0;
-    return head_node_ptr->content;
+    Node* head_node = list->head;
+    list->head = head_node->next;
+    if (list->head == 0)
+        list->tail = 0;
+    return head_node->content;
 }
 
 // parser helper functions
-offset(Name*) create_name(string name, NameType kind, offset(Name* | Scope*) info, offset(Scope*) scope) {
+Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info, Scope* scope) {
     static size_t id_counter = 0;
-    offset(Name*) result = search(scope, name);
+    Name* result = search(scope, name);
     if (result != 0)
         return result;
-    offset(Name*) new_name = alloc_memory(sizeof(Name));
-    Name* name_ptr = (Name*)offset_to_ptr(new_name);
+    Name* new_name = (Name*)alloc_memory(sizeof(Name));
+    Name* name_ptr = (new_name);
     name_ptr->name = name;
     name_ptr->id = ++id_counter;
     name_ptr->kind = kind;
-    if (kind == NAME_VARIABLE || kind == NAME_ATTRIBUTE || kind == NAME_FUNCTION || kind == NAME_METHOD)
-        name_ptr->info.type = info;
-    else if (kind == NAME_CLASS)
-        name_ptr->info.scope = info;
-    else
+    if ((kind == NAME_VARIABLE || kind == NAME_ATTRIBUTE || kind == NAME_FUNCTION || kind == NAME_METHOD) && name_info != 0)
+        name_ptr->info.type = name_info;
+    else if (kind == NAME_CLASS && scope_info != 0)
+        name_ptr->info.scope = scope_info;
+    else if (kind == NAME_TYPE)
         name_ptr->info.type = 0;
-    Scope* scope_ptr = (Scope*)offset_to_ptr(scope);
-    list_append(scope_ptr->names, new_name);
+    else {
+        if (name_info == 0 && scope_info == 0 && kind != NAME_TYPE)
+            fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %d\n", kind);
+        else
+            fprintf(stderr, "Error creating name: unknown NameType %d\n", kind);
+        return 0;
+    }
+    Scope* scope_ptr = (scope);
+    list_append(scope_ptr->names, (pointer)new_name);
     return new_name;
 }
 
-offset(Scope*) create_scope(offset(Scope*) parent) {
-    offset(Scope*) new_scope = alloc_memory(sizeof(Scope));
-    Scope* scope_ptr = (Scope*)offset_to_ptr(new_scope);
+Scope* create_scope(Scope* parent) {
+    Scope* new_scope = (Scope*)alloc_memory(sizeof(Scope));
+    Scope* scope_ptr = (new_scope);
     scope_ptr->parent = parent;
     scope_ptr->names = create_list();
     return new_scope;
 }
 
-offset(Name*) search(offset(Scope*) scope, string name) {
-    Scope* scope_ptr = (Scope*)offset_to_ptr(scope);
+Name* search(Scope* scope, string name) {
+    Scope* scope_ptr = (scope);
     while (scope_ptr != NULL) {
         list(Name*) names = scope_ptr->names;
-        offset(Node*) current = ((List*)offset_to_ptr(names))->head;
+        Node* current = ((names))->head;
         while (current != 0) {
-            Node* node_ptr = (Node*)offset_to_ptr(current);
-            offset(Name*) current_name = node_ptr->content;
-            if (string_equal(((Name*)offset_to_ptr(current_name))->name, name))
+            Node* node_ptr = (current);
+            Name* current_name = (Name*)node_ptr->content;
+            if (string_equal(current_name->name, name))
                 return current_name;
             current = node_ptr->next;
         }
-        scope_ptr = (Scope*)offset_to_ptr(scope_ptr->parent);
+        scope_ptr = (scope_ptr->parent);
     }
     return 0;
 }
@@ -107,15 +106,13 @@ bool is_builtin_type(string type) {
     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 }
 
-bool is_type(offset(Name*) type) {
-    Name* type_ptr = (Name*)offset_to_ptr(type);
+bool is_type(Name* type) {
+    Name* type_ptr = (type);
     return type_ptr->kind == NAME_TYPE || type_ptr->kind == NAME_CLASS;
 }
 
-size_t parser_error(const char* message, offset(Token*) token_) {
-    Token* ptr = (Token*)offset_to_ptr(token_);
-    fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", ptr->line + 1, ptr->column + 1, message);
-    return 0;
+void parser_error(const char* message, Token* token) {
+    fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", token->line + 1, token->column + 1, message);
 }
 
 static void set_bool_list(char bool_list[32], size_t index, bool value) {
@@ -130,8 +127,8 @@ static bool get_bool_list(char bool_list[32], size_t index) {
     return ((bool_list[index / 8] & (1 << (index % 8))) == 0 ? false : true);
 }
 
-void indention(FILE* out, size_t indent, bool is_last, offset(Parser*) parser) {
-    Parser* parser_ptr = (Parser*)offset_to_ptr(parser);
+void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
+    Parser* parser_ptr = (parser);
     set_bool_list(parser_ptr->indent_has_next, indent, !is_last);
     for (size_t i = 1; i < indent; ++i)
         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
@@ -139,34 +136,34 @@ void indention(FILE* out, size_t indent, bool is_last, offset(Parser*) parser) {
         fprintf(out, is_last ? "└── " : "├── ");
 }
 
-offset(Parser*) create_parser(void) {
-    offset(Parser*) new_parser = alloc_memory(sizeof(Parser));
-    Parser* parser_ptr = (Parser*)offset_to_ptr(new_parser);
+Parser* create_parser(void) {
+    Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
+    Parser* parser_ptr = (new_parser);
     parser_ptr->in_function = false;
     parser_ptr->in_method = false;
     parser_ptr->in_loop = false;
     return new_parser;
 }
 
-offset(Name*) parse_import_file(offset(Name*) import_name, string score, offset(Scope*) scope) {
-    offset(Name*) name = 0;
+Name* parse_import_file(string import_name, string score, Scope* scope) {
+    Name* name = 0;
     FILE* openfile;
     // temporary hack, need path system
     char filename[MAX_FILENAME_SIZE];
     filename[0] = '\0';
     if (score == 0) {
-        if (strcmp(string_to_cstr(import_name), "print") == 0)
+        if (strcmp(import_name, "print") == 0)
             strcpy(filename, "./std/print.tc");
-        else if (strcmp(string_to_cstr(import_name), "arr") == 0)
+        else if (strcmp(import_name, "arr") == 0)
             strcpy(filename, "./std/arr.tc");
         else {
             fprintf(stderr, "Error: Standard library file for import not found: %s\n", filename);
             return 0;
         }
     } else {
-        string_append(filename, MAX_FILENAME_SIZE, filename, string_to_cstr(score));
+        string_append(filename, MAX_FILENAME_SIZE, filename, score);
         string_append(filename, MAX_FILENAME_SIZE, filename, "/");
-        string_append(filename, MAX_FILENAME_SIZE, filename, string_to_cstr(import_name));
+        string_append(filename, MAX_FILENAME_SIZE, filename, import_name);
         string_append(filename, MAX_FILENAME_SIZE, filename, ".tc");
     }
     openfile = fopen(filename, "r");
@@ -178,26 +175,26 @@ offset(Name*) parse_import_file(offset(Name*) import_name, string score, offset(
     size_t length = 0;
     char* source = read_source(openfile, &length);
     fclose(openfile);
-    offset(Code*) code = parse_code(create_lexer(source, length), builtin_scope, create_parser());
+    Code* code = parse_code(create_lexer(source, length), builtin_scope, create_parser());
     printf("Info: Finished parsing lib file for import: %s\n", filename);
     if (code == 0) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
         return 0;
     }
-    list(Node*) names = ((Scope*)offset_to_ptr(((Code*)offset_to_ptr(code))->global_scope))->names;
-    offset(Node*) current = ((List*)offset_to_ptr(names))->head;
+    list(Node*) names = ((((code))->global_scope))->names;
+    Node* current = ((names))->head;
     while (current != 0) {
-        Node* node_ptr = (Node*)offset_to_ptr(current);
-        offset(Name*) current_name = node_ptr->content;
-        if (string_equal(((Name*)offset_to_ptr(current_name))->name, import_name)) {
+        Node* node_ptr = (current);
+        Name* current_name = (Name*)node_ptr->content;
+        if (string_equal(current_name->name, import_name)) {
             name = current_name;
             break;
         }
         current = node_ptr->next;
     }
     if (name != 0) {
-        Scope* scope_ptr = (Scope*)offset_to_ptr(scope);
-        list_append(scope_ptr->names, name);
+        Scope* scope_ptr = (scope);
+        list_append(scope_ptr->names, (pointer)name);
     }
     return name;
 }

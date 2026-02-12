@@ -33,15 +33,10 @@ typedef struct Lexer {
     offset(Token*) current_token;
 } Lexer;
 
-// `Lexer* create_lexer(string source, size_t length)`
 offset(Lexer*) create_lexer(char* source, size_t length);
-// `Token* get_next_token(Lexer* lexer)`
 offset(Token*) get_next_token(offset(Lexer*) lexer, bool skip_comment);
-// `Token* peek_next_token(Lexer* lexer)`
 offset(Token*) peek_next_token(offset(Lexer*) lexer, bool skip_comment);
-// `void reset_lexer(Lexer* lexer)`
 void reset_lexer(offset(Lexer*) lexer);
-// `Token* peek_current_token(Lexer* lexer)`
 offset(Token*) peek_current_token(offset(Lexer*) lexer);
 
 #endif  // LEXER_H
