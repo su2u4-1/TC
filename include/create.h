@@ -1,7 +1,6 @@
 #ifndef CREATE_H
 #define CREATE_H
 
-#include "lib.h"
 #include "parser.h"
 
 // create struct functions

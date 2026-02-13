@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-
 #include "helper.h"
-#include "lib.h"
-#include "parser.h"
 
 static void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, Parser* parser);
 static void output_import(Import* import, FILE* outfile, size_t indent, Parser* parser);

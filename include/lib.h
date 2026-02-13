@@ -28,6 +28,12 @@
 #define PLATFORM 0  // UNKNOWN
 #endif
 
+#if PLATFORM == 1
+#include <direct.h>  // MSVC
+#elif PLATFORM == 2 || PLATFORM == 3 || PLATFORM == 4
+#include <unistd.h>  // MinGW or LINUX or MACOS
+#endif
+
 typedef char* string;
 typedef size_t* pointer;
 

@@ -3,7 +3,6 @@
 #include "file.h"
 #include "helper.h"
 #include "lexer.h"
-#include "parser.h"
 
 void string_append(string dest, const size_t dest_length, const string src, const string new) {
     size_t src_length = strlen(src), new_length = strlen(new);

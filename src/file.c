@@ -1,11 +1,5 @@
 #include "file.h"
 
-#if PLATFORM == 1
-#include <direct.h>  // MSVC
-#elif PLATFORM == 2 || PLATFORM == 3 || PLATFORM == 4
-#include <unistd.h>  // MinGW or LINUX or MACOS
-#endif
-
 string get_cwd(void) {
 #if PLATFORM == 1
     return _getcwd(NULL, 0);  // MSVC
