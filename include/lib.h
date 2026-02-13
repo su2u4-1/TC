@@ -29,20 +29,12 @@ typedef size_t* pointer;
 #define PLATFORM 0  // UNKNOWN
 #endif
 
-typedef struct StringMemoryBlock StringMemoryBlock;
-struct StringMemoryBlock {
+typedef struct MemoryBlock MemoryBlock;
+struct MemoryBlock {
     size_t size;
     size_t used;
-    StringMemoryBlock* next;
-    char* block;
-};
-
-typedef struct StructMemoryBlock StructMemoryBlock;
-struct StructMemoryBlock {
-    size_t size;
-    size_t used;
-    StructMemoryBlock* next;
-    size_t* block;
+    MemoryBlock* next;
+    pointer block;
 };
 
 typedef struct StringList StringList;
@@ -58,8 +50,8 @@ extern string keywordList[keywordCount];
 extern string symbolList[symbolCount];
 
 #define defaultMemorySize 1024  // 1 KB
-extern StructMemoryBlock* struct_memory;
-extern StringMemoryBlock* string_memory;
+extern MemoryBlock* struct_memory;
+extern MemoryBlock* string_memory;
 extern bool initialized;
 
 extern StringList* all_string_list;
