@@ -11,9 +11,8 @@
 #define bool char
 #define true 1
 #define false 0
-typedef char* string;
-typedef size_t* pointer;
 #define ALIGN_SIZE sizeof(size_t)
+#define defaultMemorySize 1024  // 1 KB
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #ifdef _MSC_VER
@@ -28,6 +27,9 @@ typedef size_t* pointer;
 #else
 #define PLATFORM 0  // UNKNOWN
 #endif
+
+typedef char* string;
+typedef size_t* pointer;
 
 typedef struct MemoryBlock MemoryBlock;
 struct MemoryBlock {
@@ -49,7 +51,6 @@ struct StringList {
 extern string keywordList[keywordCount];
 extern string symbolList[symbolCount];
 
-#define defaultMemorySize 1024  // 1 KB
 extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern bool initialized;

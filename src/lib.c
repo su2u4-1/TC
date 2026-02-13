@@ -98,13 +98,17 @@ static void increase_memory_size(bool for_struct) {
         new_block->next = struct_memory;
         struct_memory = new_block;
         struct_memory_count += defaultMemorySize;
-        fprintf(stderr, "Info: Add new memory block for struct\n");
+#ifdef DEBUG
+        fprintf(stderr, "[DEBUG]: Add new memory block for struct\n");
+#endif
     } else {
         string_memory_used += string_memory->used;
         new_block->next = string_memory;
         string_memory = new_block;
         string_memory_count += defaultMemorySize;
-        fprintf(stderr, "Info: Add new memory block for string\n");
+#ifdef DEBUG
+        fprintf(stderr, "[DEBUG]: Add new memory block for string\n");
+#endif
     }
 }
 
@@ -250,7 +254,9 @@ pointer alloc_memory(size_t size) {
     if (!initialized) init();
     if (struct_memory->used + size >= struct_memory->size)
         increase_memory_size(true);
-    size_t* ptr = struct_memory->block + (struct_memory->used / sizeof(size_t));
+    size = (size + ALIGN_SIZE - 1) & ~(ALIGN_SIZE - 1);
+    assert(struct_memory->used % ALIGN_SIZE == 0);
+    size_t* ptr = struct_memory->block + (struct_memory->used / ALIGN_SIZE);
     struct_memory->used += size;
     ++memoryBlockCount;
     return ptr;

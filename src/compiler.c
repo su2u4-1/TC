@@ -48,7 +48,7 @@ void output_token(FILE* file, Lexer* lexer) {
             fprintf(file, "Token(Type: keyword,     Line: ");
         else if (token->type == COMMENT)
             fprintf(file, "Token(Type: comment,     Line: ");
-        fprintf(file, "%zu, Column: %zu)\t(%p)\tLexeme: '", token->line + 1, token->column + 1, token->lexeme);
+        fprintf(file, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
         string lexeme_ptr = token->lexeme;
         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
             char c = lexeme_ptr[i];
