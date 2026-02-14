@@ -50,28 +50,50 @@ pointer list_pop(list() list) {
 Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info, Scope* scope) {
     static size_t id_counter = 0;
     Name* result = search(scope, name);
-    if (result != 0)
-        return result;
+    if (result != NULL) {
+        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, returning existing name, kind: ", name);
+        switch (result->kind) {
+            case NAME_TYPE:
+                fprintf(stderr, "type\n");
+                break;
+            case NAME_VARIABLE:
+                fprintf(stderr, "variable\n");
+                break;
+            case NAME_FUNCTION:
+                fprintf(stderr, "function\n");
+                break;
+            case NAME_METHOD:
+                fprintf(stderr, "method\n");
+                break;
+            case NAME_CLASS:
+                fprintf(stderr, "class\n");
+                break;
+            case NAME_ATTRIBUTE:
+                fprintf(stderr, "attribute\n");
+                break;
+            default:
+                fprintf(stderr, "unknown\n");
+                break;
+        }
+    }
     Name* new_name = (Name*)alloc_memory(sizeof(Name));
-    Name* name_ptr = (new_name);
-    name_ptr->name = name;
-    name_ptr->id = ++id_counter;
-    name_ptr->kind = kind;
-    if ((kind == NAME_VARIABLE || kind == NAME_ATTRIBUTE || kind == NAME_FUNCTION || kind == NAME_METHOD) && name_info != 0)
-        name_ptr->info.type = name_info;
-    else if (kind == NAME_CLASS && scope_info != 0)
-        name_ptr->info.scope = scope_info;
+    new_name->name = name;
+    new_name->id = ++id_counter;
+    new_name->kind = kind;
+    if ((kind == NAME_VARIABLE || kind == NAME_ATTRIBUTE || kind == NAME_FUNCTION || kind == NAME_METHOD) && name_info != NULL)
+        new_name->info.type = name_info;
+    else if (kind == NAME_CLASS && scope_info != NULL)
+        new_name->info.scope = scope_info;
     else if (kind == NAME_TYPE)
-        name_ptr->info.type = 0;
+        new_name->info.type = NULL;
     else {
-        if (name_info == 0 && scope_info == 0 && kind != NAME_TYPE)
+        if (name_info == NULL && scope_info == NULL && kind != NAME_TYPE)
             fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %d\n", kind);
         else
             fprintf(stderr, "Error creating name: unknown NameType %d\n", kind);
-        return 0;
+        return NULL;
     }
-    Scope* scope_ptr = (scope);
-    list_append(scope_ptr->names, (pointer)new_name);
+    list_append(scope->names, (pointer)new_name);
     return new_name;
 }
 
@@ -97,7 +119,7 @@ Name* search(Scope* scope, string name) {
         }
         scope_ptr = (scope_ptr->parent);
     }
-    return 0;
+    return NULL;
 }
 
 bool is_builtin_type(string type) {
