@@ -1,0 +1,362 @@
+#include <assert.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+typedef char* string;
+typedef size_t* pointer;
+typedef struct MemoryBlock MemoryBlock;
+struct MemoryBlock {
+    size_t size;
+    size_t used;
+    MemoryBlock* next;
+    pointer block;
+};
+typedef struct StringList StringList;
+struct StringList {
+    string str;
+    size_t length;
+    StringList* next;
+};
+extern string keywordList[22];
+extern string symbolList[30];
+extern MemoryBlock* struct_memory;
+extern MemoryBlock* string_memory;
+extern char initialized;
+extern StringList* all_string_list;
+extern string IMPORT_KEYWORD;
+extern string FROM_KEYWORD;
+extern string FUNC_KEYWORD;
+extern string CLASS_KEYWORD;
+extern string METHOD_KEYWORD;
+extern string SELF_KEYWORD;
+extern string IF_KEYWORD;
+extern string ELIF_KEYWORD;
+extern string ELSE_KEYWORD;
+extern string WHILE_KEYWORD;
+extern string FOR_KEYWORD;
+extern string TRUE_KEYWORD;
+extern string FALSE_KEYWORD;
+extern string RETURN_KEYWORD;
+extern string BREAK_KEYWORD;
+extern string CONTINUE_KEYWORD;
+extern string INT_KEYWORD;
+extern string FLOAT_KEYWORD;
+extern string STRING_KEYWORD;
+extern string BOOL_KEYWORD;
+extern string VOID_KEYWORD;
+extern string VAR_KEYWORD;
+extern string L_PAREN_SYMBOL;
+extern string R_PAREN_SYMBOL;
+extern string L_BRACE_SYMBOL;
+extern string R_BRACE_SYMBOL;
+extern string COMMA_SYMBOL;
+extern string NOT_SYMBOL;
+extern string DOT_SYMBOL;
+extern string L_BRACKET_SYMBOL;
+extern string R_BRACKET_SYMBOL;
+extern string SEMICOLON_SYMBOL;
+extern string UNDERLINE_SYMBOL;
+extern string ADD_SYMBOL;
+extern string SUB_SYMBOL;
+extern string MUL_SYMBOL;
+extern string DIV_SYMBOL;
+extern string MOD_SYMBOL;
+extern string LT_SYMBOL;
+extern string GT_SYMBOL;
+extern string ASSIGN_SYMBOL;
+extern string EQ_SYMBOL;
+extern string NE_SYMBOL;
+extern string LE_SYMBOL;
+extern string GE_SYMBOL;
+extern string ADD_ASSIGN_SYMBOL;
+extern string SUB_ASSIGN_SYMBOL;
+extern string MUL_ASSIGN_SYMBOL;
+extern string DIV_ASSIGN_SYMBOL;
+extern string MOD_ASSIGN_SYMBOL;
+extern string AND_SYMBOL;
+extern string OR_SYMBOL;
+typedef struct Name Name;
+typedef struct Scope Scope;
+extern Name* name_void;
+extern Name* name_int;
+extern Name* name_float;
+extern Name* name_string;
+extern Name* name_bool;
+extern Scope* builtin_scope;
+void init(void);
+string create_string(const char* data, size_t length);
+pointer alloc_memory(size_t size);
+char is_keyword(const string str);
+char string_equal(string a, string b);
+string get_info(void);
+static const char* keywordStrings[22] = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void", "var"};
+string keywordList[22] = {0};
+static const char* symbolStrings[30] = {"(", ")", "{", "}", ",", "!", ".", "[", "]", ";", "_", "+", "-", "*", "/", "%", "<", ">", "=", "==", "!=", "<=", ">=", "+=", "-=", "*=", "/=", "%=", "&&", "||"};
+string symbolList[30] = {0};
+MemoryBlock* struct_memory = NULL;
+MemoryBlock* string_memory = NULL;
+char initialized = 0;
+StringList* all_string_list = 0;
+string IMPORT_KEYWORD = 0;
+string FROM_KEYWORD = 0;
+string FUNC_KEYWORD = 0;
+string CLASS_KEYWORD = 0;
+string METHOD_KEYWORD = 0;
+string SELF_KEYWORD = 0;
+string IF_KEYWORD = 0;
+string ELIF_KEYWORD = 0;
+string ELSE_KEYWORD = 0;
+string WHILE_KEYWORD = 0;
+string FOR_KEYWORD = 0;
+string TRUE_KEYWORD = 0;
+string FALSE_KEYWORD = 0;
+string RETURN_KEYWORD = 0;
+string BREAK_KEYWORD = 0;
+string CONTINUE_KEYWORD = 0;
+string INT_KEYWORD = 0;
+string FLOAT_KEYWORD = 0;
+string STRING_KEYWORD = 0;
+string BOOL_KEYWORD = 0;
+string VOID_KEYWORD = 0;
+string VAR_KEYWORD = 0;
+string L_PAREN_SYMBOL = 0;
+string R_PAREN_SYMBOL = 0;
+string L_BRACE_SYMBOL = 0;
+string R_BRACE_SYMBOL = 0;
+string COMMA_SYMBOL = 0;
+string NOT_SYMBOL = 0;
+string DOT_SYMBOL = 0;
+string L_BRACKET_SYMBOL = 0;
+string R_BRACKET_SYMBOL = 0;
+string SEMICOLON_SYMBOL = 0;
+string UNDERLINE_SYMBOL = 0;
+string ADD_SYMBOL = 0;
+string SUB_SYMBOL = 0;
+string MUL_SYMBOL = 0;
+string DIV_SYMBOL = 0;
+string MOD_SYMBOL = 0;
+string LT_SYMBOL = 0;
+string GT_SYMBOL = 0;
+string ASSIGN_SYMBOL = 0;
+string EQ_SYMBOL = 0;
+string NE_SYMBOL = 0;
+string LE_SYMBOL = 0;
+string GE_SYMBOL = 0;
+string ADD_ASSIGN_SYMBOL = 0;
+string SUB_ASSIGN_SYMBOL = 0;
+string MUL_ASSIGN_SYMBOL = 0;
+string DIV_ASSIGN_SYMBOL = 0;
+string MOD_ASSIGN_SYMBOL = 0;
+string AND_SYMBOL = 0;
+string OR_SYMBOL = 0;
+Name* name_void = 0;
+Name* name_int = 0;
+Name* name_float = 0;
+Name* name_string = 0;
+Name* name_bool = 0;
+Scope* builtin_scope = 0;
+static size_t struct_memory_used = 0;
+static size_t string_memory_used = 0;
+static size_t struct_memory_count = 0;
+static size_t string_memory_count = 0;
+static void increase_memory_size(char for_struct) {
+    MemoryBlock* new_block = (MemoryBlock*)malloc(sizeof(MemoryBlock));
+    if (new_block == NULL) {
+        fprintf(stderr, "Fatal: Cannot allocate memory\n");
+        MemoryBlock* current = string_memory;
+        while (current != NULL) {
+            MemoryBlock* next = current->next;
+            free(current->block);
+            free(current);
+            current = next;
+        }
+        initialized = 0;
+        exit(1);
+    }
+    new_block->block = (pointer)malloc(1024);
+    new_block->size = 1024;
+    new_block->used = 0;
+    new_block->next = NULL;
+    if (for_struct) {
+        struct_memory_used += struct_memory->used;
+        new_block->next = struct_memory;
+        struct_memory = new_block;
+        struct_memory_count += 1024;
+    } else {
+        string_memory_used += string_memory->used;
+        new_block->next = string_memory;
+        string_memory = new_block;
+        string_memory_count += 1024;
+    }
+}
+static string alloc_big_memory(size_t size) {
+    string_memory_count += size;
+    string_memory_used += size;
+    char* block = (char*)malloc(size);
+    fprintf(stderr, "Info: Allocate big memory block of size %zu bytes\n", size);
+    if (block == NULL) {
+        fprintf(stderr, "Fatal: Cannot allocate memory\n");
+        exit(1);
+    }
+    return block;
+}
+static string create_string_check(const char* data, size_t length, char check) {
+    if (!initialized) init();
+    if (data == NULL || length == 0) return 0;
+    if (check) {
+        StringList* current = all_string_list;
+        string existing = NULL;
+        while (current != NULL) {
+            if (current->length == length && current->str != 0 && strncmp(current->str, data, length) == 0)
+                existing = current->str;
+            current = current->next;
+        }
+        if (existing != NULL)
+            return existing;
+    }
+    char* str;
+    if (length >= 1024 - 1)
+        str = alloc_big_memory(length + 1);
+    else {
+        if (string_memory->used + length >= string_memory->size)
+            increase_memory_size(0);
+        str = &((char*)(string_memory->block))[string_memory->used];
+        string_memory->used += length + 1;
+    }
+    strncpy(str, data, length);
+    str[length] = '\0';
+    StringList* new_str = (StringList*)alloc_memory(sizeof(StringList));
+    new_str->str = str;
+    new_str->length = length;
+    new_str->next = all_string_list;
+    all_string_list = new_str;
+    return str;
+}
+string create_string(const char* data, size_t length) {
+    return create_string_check(data, length, 1);
+}
+void init(void) {
+    if (initialized) return;
+    if (struct_memory == NULL) {
+        struct_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
+        if (struct_memory == NULL) {
+            fprintf(stderr, "Fatal: Cannot allocate memory\n");
+            initialized = 0;
+            exit(1);
+        }
+        struct_memory->block = (size_t*)malloc(1024);
+        struct_memory->size = 1024;
+        struct_memory->used = 0;
+        struct_memory->next = NULL;
+        struct_memory_count = 1024;
+    }
+    if (string_memory == NULL) {
+        string_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
+        if (string_memory == NULL) {
+            fprintf(stderr, "Fatal: Cannot allocate memory\n");
+            initialized = 0;
+            exit(1);
+        }
+        string_memory->block = (pointer)malloc(1024);
+        string_memory->size = 1024;
+        string_memory->used = 0;
+        string_memory->next = NULL;
+        string_memory_count = 1024;
+    }
+    initialized = 1;
+    for (size_t i = 0; i < 22; ++i)
+        keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), 0);
+    for (size_t i = 0; i < 30; ++i)
+        symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), 0);
+    IMPORT_KEYWORD = keywordList[0];
+    FROM_KEYWORD = keywordList[1];
+    FUNC_KEYWORD = keywordList[2];
+    CLASS_KEYWORD = keywordList[3];
+    METHOD_KEYWORD = keywordList[4];
+    SELF_KEYWORD = keywordList[5];
+    IF_KEYWORD = keywordList[6];
+    ELIF_KEYWORD = keywordList[7];
+    ELSE_KEYWORD = keywordList[8];
+    WHILE_KEYWORD = keywordList[9];
+    FOR_KEYWORD = keywordList[10];
+    TRUE_KEYWORD = keywordList[11];
+    FALSE_KEYWORD = keywordList[12];
+    RETURN_KEYWORD = keywordList[13];
+    BREAK_KEYWORD = keywordList[14];
+    CONTINUE_KEYWORD = keywordList[15];
+    INT_KEYWORD = keywordList[16];
+    FLOAT_KEYWORD = keywordList[17];
+    STRING_KEYWORD = keywordList[18];
+    BOOL_KEYWORD = keywordList[19];
+    VOID_KEYWORD = keywordList[20];
+    VAR_KEYWORD = keywordList[21];
+    L_PAREN_SYMBOL = symbolList[0];
+    R_PAREN_SYMBOL = symbolList[1];
+    L_BRACE_SYMBOL = symbolList[2];
+    R_BRACE_SYMBOL = symbolList[3];
+    COMMA_SYMBOL = symbolList[4];
+    NOT_SYMBOL = symbolList[5];
+    DOT_SYMBOL = symbolList[6];
+    L_BRACKET_SYMBOL = symbolList[7];
+    R_BRACKET_SYMBOL = symbolList[8];
+    SEMICOLON_SYMBOL = symbolList[9];
+    UNDERLINE_SYMBOL = symbolList[10];
+    ADD_SYMBOL = symbolList[11];
+    SUB_SYMBOL = symbolList[12];
+    MUL_SYMBOL = symbolList[13];
+    DIV_SYMBOL = symbolList[14];
+    MOD_SYMBOL = symbolList[15];
+    LT_SYMBOL = symbolList[16];
+    GT_SYMBOL = symbolList[17];
+    ASSIGN_SYMBOL = symbolList[18];
+    EQ_SYMBOL = symbolList[19];
+    NE_SYMBOL = symbolList[20];
+    LE_SYMBOL = symbolList[21];
+    GE_SYMBOL = symbolList[22];
+    ADD_ASSIGN_SYMBOL = symbolList[23];
+    SUB_ASSIGN_SYMBOL = symbolList[24];
+    MUL_ASSIGN_SYMBOL = symbolList[25];
+    DIV_ASSIGN_SYMBOL = symbolList[26];
+    MOD_ASSIGN_SYMBOL = symbolList[27];
+    AND_SYMBOL = symbolList[28];
+    OR_SYMBOL = symbolList[29];
+}
+static size_t memoryBlockCount = 0;
+pointer alloc_memory(size_t size) {
+    if (!initialized) init();
+    if (struct_memory->used + size >= struct_memory->size)
+        increase_memory_size(1);
+    size = (size + sizeof(size_t) - 1) & ~(sizeof(size_t) - 1);
+    assert(struct_memory->used % sizeof(size_t) == 0);
+    size_t* ptr = struct_memory->block + (struct_memory->used / sizeof(size_t));
+    struct_memory->used += size;
+    ++memoryBlockCount;
+    return ptr;
+}
+char is_keyword(const string str) {
+    if (!initialized) init();
+    for (size_t i = 0; i < 22; ++i)
+        if (string_equal(str, keywordList[i]))
+            return 1;
+    return 0;
+}
+char string_equal(string a, string b) {
+    return a == b;
+}
+string get_info(void) {
+    size_t stringCount = 0;
+    StringList* current = all_string_list;
+    while (current != NULL) {
+        stringCount++;
+        current = current->next;
+    }
+    string struct_memory_used_str = create_string_check("", 48, 0);
+    sprintf(struct_memory_used_str, "%zu/%zu bytes", struct_memory_used + struct_memory->used, struct_memory_count);
+    string string_memory_used_str = create_string_check("", 48, 0);
+    sprintf(string_memory_used_str, "%zu/%zu bytes", string_memory_used + string_memory->used, string_memory_count);
+    string info = (string)create_string_check("", 240, 0);
+    sprintf(info, "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu", 2, struct_memory_used_str, string_memory_used_str, stringCount, memoryBlockCount);
+    return info;
+}
