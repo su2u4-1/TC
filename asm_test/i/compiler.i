@@ -472,9 +472,10 @@ void parse_file(const string name, char o_token, char o_ast) {
         FILE* out_token_file = fopen(out_token_name, "w");
         if (out_token_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_token_name);
-        else
+        else {
             output_token(out_token_file, lexer);
-        fclose(out_token_file);
+            fclose(out_token_file);
+        }
     }
     reset_lexer(lexer);
     Parser* parser = create_parser();
@@ -484,8 +485,9 @@ void parse_file(const string name, char o_token, char o_ast) {
         FILE* out_ast_file = fopen(out_ast_name, "w");
         if (out_ast_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
-        else
+        else {
             output_ast(out_ast_file, lexer, parser);
-        fclose(out_ast_file);
+            fclose(out_ast_file);
+        }
     }
 }

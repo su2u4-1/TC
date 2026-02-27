@@ -476,7 +476,7 @@ parse_file:
 	call	fopen
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L49
+	je	.L48
 	leaq	40(%rsp), %rdx
 	movq	%rax, %rcx
 	call	read_source
@@ -488,14 +488,14 @@ parse_file:
 	call	create_lexer
 	movq	%rax, %rbx
 	testb	%r12b, %r12b
-	jne	.L50
+	jne	.L49
 .L43:
 	movq	%rbx, %rcx
 	call	reset_lexer
 	call	create_parser
 	movq	%rax, %rdi
 	testb	%bpl, %bpl
-	jne	.L51
+	jne	.L50
 	addq	$48, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -505,7 +505,7 @@ parse_file:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L50:
+.L49:
 	movl	$6, %edx
 	leaq	.LC20(%rip), %rcx
 	call	create_string
@@ -520,17 +520,16 @@ parse_file:
 	call	fopen
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	je	.L52
+	je	.L51
 	movq	%rbx, %rdx
 	movq	%rax, %rcx
 	call	output_token
-.L45:
 	movq	%rdi, %rcx
 	call	fclose
 	jmp	.L43
 	.p2align 4,,10
 	.p2align 3
-.L51:
+.L50:
 	movl	$4, %edx
 	leaq	.LC23(%rip), %rcx
 	call	create_string
@@ -545,23 +544,22 @@ parse_file:
 	call	fopen
 	movq	%rax, %rsi
 	testq	%rax, %rax
-	je	.L53
+	je	.L52
 	movq	.refptr.builtin_scope(%rip), %rax
 	movq	%rdi, %r8
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
 	call	parse_code
+	movq	%rdi, %r9
 	xorl	%r8d, %r8d
 	movq	%rsi, %rdx
-	movq	%rdi, %r9
 	movq	%rax, %rcx
 	call	output_code
 	call	get_info
-	leaq	.LC17(%rip), %rdx
 	movq	%rsi, %rcx
+	leaq	.LC17(%rip), %rdx
 	movq	%rax, %r8
 	call	fprintf
-.L48:
 	movq	%rsi, %rcx
 	addq	$48, %rsp
 	popq	%rbx
@@ -572,25 +570,30 @@ parse_file:
 	jmp	fclose
 	.p2align 4,,10
 	.p2align 3
-.L53:
+.L52:
 	call	__getreent
 	movq	%rbp, %r8
 	leaq	.LC22(%rip), %rdx
 	movq	24(%rax), %rcx
-	call	fprintf
-	jmp	.L48
+	addq	$48, %rsp
+	popq	%rbx
+	popq	%rsi
+	popq	%rdi
+	popq	%rbp
+	popq	%r12
+	jmp	fprintf
 	.p2align 4,,10
 	.p2align 3
-.L52:
+.L51:
 	call	__getreent
 	movq	%r12, %r8
 	leaq	.LC22(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
-	jmp	.L45
+	jmp	.L43
 	.p2align 4,,10
 	.p2align 3
-.L49:
+.L48:
 	call	__getreent
 	movq	%rdi, %r8
 	leaq	.LC19(%rip), %rdx

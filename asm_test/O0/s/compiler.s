@@ -568,13 +568,12 @@ parse_file:
 	leaq	.LC22(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
-	jmp	.L36
+	jmp	.L34
 .L35:
 	movq	-40(%rbp), %rdx
 	movq	-56(%rbp), %rax
 	movq	%rax, %rcx
 	call	output_token
-.L36:
 	movq	-56(%rbp), %rax
 	movq	%rax, %rcx
 	call	fclose
@@ -604,7 +603,7 @@ parse_file:
 	call	fopen
 	movq	%rax, -80(%rbp)
 	cmpq	$0, -80(%rbp)
-	jne	.L38
+	jne	.L37
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	-72(%rbp), %rdx
@@ -612,15 +611,14 @@ parse_file:
 	leaq	.LC22(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
-	jmp	.L39
-.L38:
+	jmp	.L31
+.L37:
 	movq	-64(%rbp), %rcx
 	movq	-40(%rbp), %rdx
 	movq	-80(%rbp), %rax
 	movq	%rcx, %r8
 	movq	%rax, %rcx
 	call	output_ast
-.L39:
 	movq	-80(%rbp), %rax
 	movq	%rax, %rcx
 	call	fclose

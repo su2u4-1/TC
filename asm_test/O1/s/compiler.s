@@ -440,7 +440,7 @@ parse_file:
 	call	fopen
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L45
+	je	.L43
 	leaq	40(%rsp), %rdx
 	movq	%rax, %rcx
 	call	read_source
@@ -452,14 +452,14 @@ parse_file:
 	call	create_lexer
 	movq	%rax, %rbx
 	testb	%r12b, %r12b
-	jne	.L46
+	jne	.L44
 .L39:
 	movq	%rbx, %rcx
 	call	reset_lexer
 	call	create_parser
 	movq	%rax, %rdi
 	testb	%bpl, %bpl
-	jne	.L47
+	jne	.L45
 .L36:
 	addq	$48, %rsp
 	popq	%rbx
@@ -468,14 +468,14 @@ parse_file:
 	popq	%rbp
 	popq	%r12
 	ret
-.L45:
+.L43:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%rdi, %r8
 	leaq	.LC19(%rip), %rdx
 	call	fprintf
 	jmp	.L36
-.L46:
+.L44:
 	movl	$6, %edx
 	leaq	.LC20(%rip), %rcx
 	call	create_string
@@ -490,22 +490,21 @@ parse_file:
 	call	fopen
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	je	.L48
+	je	.L46
 	movq	%rbx, %rdx
 	movq	%rax, %rcx
 	call	output_token
-.L41:
 	movq	%rdi, %rcx
 	call	fclose
 	jmp	.L39
-.L48:
+.L46:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%r12, %r8
 	leaq	.LC22(%rip), %rdx
 	call	fprintf
-	jmp	.L41
-.L47:
+	jmp	.L39
+.L45:
 	movl	$4, %edx
 	leaq	.LC23(%rip), %rcx
 	call	create_string
@@ -520,22 +519,21 @@ parse_file:
 	call	fopen
 	movq	%rax, %rsi
 	testq	%rax, %rax
-	je	.L49
+	je	.L47
 	movq	%rdi, %r8
 	movq	%rbx, %rdx
 	movq	%rax, %rcx
 	call	output_ast
-.L44:
 	movq	%rsi, %rcx
 	call	fclose
 	jmp	.L36
-.L49:
+.L47:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%rbp, %r8
 	leaq	.LC22(%rip), %rdx
 	call	fprintf
-	jmp	.L44
+	jmp	.L36
 	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	strlen;	.scl	2;	.type	32;	.endef

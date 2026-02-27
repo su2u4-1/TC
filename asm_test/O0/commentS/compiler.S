@@ -656,49 +656,48 @@ parse_file:
  ; D:\TC\src\compiler.c:86:     if (o_token) {
 	cmpb	$0, 24(%rbp)	 ;, o_token
 	je	.L34	 ;,
- ; D:\TC\src\compiler.c:88:         change_file_extension(file, create_string(".token", 6));
+ ; D:\TC\src\compiler.c:87:         change_file_extension(file, create_string(".token", 6));
 	movl	$6, %edx	 ;,
 	leaq	.LC20(%rip), %rax	 ;, tmp110
 	movq	%rax, %rcx	 ; tmp110,
 	call	create_string	 ;
 	movq	%rax, %rdx	 ;, _4
- ; D:\TC\src\compiler.c:88:         change_file_extension(file, create_string(".token", 6));
+ ; D:\TC\src\compiler.c:87:         change_file_extension(file, create_string(".token", 6));
 	movq	-8(%rbp), %rax	 ; file, tmp111
 	movq	%rax, %rcx	 ; tmp111,
 	call	change_file_extension	 ;
- ; D:\TC\src\compiler.c:89:         string out_token_name = get_full_path(file);
+ ; D:\TC\src\compiler.c:88:         string out_token_name = get_full_path(file);
 	movq	-8(%rbp), %rax	 ; file, tmp112
 	movq	%rax, %rcx	 ; tmp112,
 	call	get_full_path	 ;
 	movq	%rax, -48(%rbp)	 ; tmp113, out_token_name
- ; D:\TC\src\compiler.c:90:         FILE* out_token_file = fopen(out_token_name, "w");
+ ; D:\TC\src\compiler.c:89:         FILE* out_token_file = fopen(out_token_name, "w");
 	movq	-48(%rbp), %rax	 ; out_token_name, tmp114
 	leaq	.LC21(%rip), %rdx	 ;, tmp115
 	movq	%rax, %rcx	 ; tmp114,
 	call	fopen	 ;
 	movq	%rax, -56(%rbp)	 ; tmp116, out_token_file
- ; D:\TC\src\compiler.c:91:         if (out_token_file == NULL)
+ ; D:\TC\src\compiler.c:90:         if (out_token_file == NULL)
 	cmpq	$0, -56(%rbp)	 ;, out_token_file
 	jne	.L35	 ;,
- ; D:\TC\src\compiler.c:92:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
+ ; D:\TC\src\compiler.c:91:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
 	call	__getreent	 ;
- ; D:\TC\src\compiler.c:92:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
+ ; D:\TC\src\compiler.c:91:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
 	movq	24(%rax), %rax	 ; _5->_stderr, _6
- ; D:\TC\src\compiler.c:92:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
+ ; D:\TC\src\compiler.c:91:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
 	movq	-48(%rbp), %rdx	 ; out_token_name, tmp117
 	movq	%rdx, %r8	 ; tmp117,
 	leaq	.LC22(%rip), %rdx	 ;, tmp118
 	movq	%rax, %rcx	 ; _6,
 	call	fprintf	 ;
-	jmp	.L36	 ;
+	jmp	.L34	 ;
 .L35:
- ; D:\TC\src\compiler.c:94:             output_token(out_token_file, lexer);
+ ; D:\TC\src\compiler.c:93:             output_token(out_token_file, lexer);
 	movq	-40(%rbp), %rdx	 ; lexer, tmp119
 	movq	-56(%rbp), %rax	 ; out_token_file, tmp120
 	movq	%rax, %rcx	 ; tmp120,
 	call	output_token	 ;
-.L36:
- ; D:\TC\src\compiler.c:95:         fclose(out_token_file);
+ ; D:\TC\src\compiler.c:94:             fclose(out_token_file);
 	movq	-56(%rbp), %rax	 ; out_token_file, tmp121
 	movq	%rax, %rcx	 ; tmp121,
 	call	fclose	 ;
@@ -713,51 +712,50 @@ parse_file:
  ; D:\TC\src\compiler.c:99:     if (o_ast) {
 	cmpb	$0, 32(%rbp)	 ;, o_ast
 	je	.L31	 ;,
- ; D:\TC\src\compiler.c:101:         change_file_extension(file, create_string(".ast", 4));
+ ; D:\TC\src\compiler.c:100:         change_file_extension(file, create_string(".ast", 4));
 	movl	$4, %edx	 ;,
 	leaq	.LC23(%rip), %rax	 ;, tmp124
 	movq	%rax, %rcx	 ; tmp124,
 	call	create_string	 ;
 	movq	%rax, %rdx	 ;, _7
- ; D:\TC\src\compiler.c:101:         change_file_extension(file, create_string(".ast", 4));
+ ; D:\TC\src\compiler.c:100:         change_file_extension(file, create_string(".ast", 4));
 	movq	-8(%rbp), %rax	 ; file, tmp125
 	movq	%rax, %rcx	 ; tmp125,
 	call	change_file_extension	 ;
- ; D:\TC\src\compiler.c:102:         string out_ast_name = get_full_path(file);
+ ; D:\TC\src\compiler.c:101:         string out_ast_name = get_full_path(file);
 	movq	-8(%rbp), %rax	 ; file, tmp126
 	movq	%rax, %rcx	 ; tmp126,
 	call	get_full_path	 ;
 	movq	%rax, -72(%rbp)	 ; tmp127, out_ast_name
- ; D:\TC\src\compiler.c:103:         FILE* out_ast_file = fopen(out_ast_name, "w");
+ ; D:\TC\src\compiler.c:102:         FILE* out_ast_file = fopen(out_ast_name, "w");
 	movq	-72(%rbp), %rax	 ; out_ast_name, tmp128
 	leaq	.LC21(%rip), %rdx	 ;, tmp129
 	movq	%rax, %rcx	 ; tmp128,
 	call	fopen	 ;
 	movq	%rax, -80(%rbp)	 ; tmp130, out_ast_file
- ; D:\TC\src\compiler.c:104:         if (out_ast_file == NULL)
+ ; D:\TC\src\compiler.c:103:         if (out_ast_file == NULL)
 	cmpq	$0, -80(%rbp)	 ;, out_ast_file
-	jne	.L38	 ;,
- ; D:\TC\src\compiler.c:105:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
+	jne	.L37	 ;,
+ ; D:\TC\src\compiler.c:104:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
 	call	__getreent	 ;
- ; D:\TC\src\compiler.c:105:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
+ ; D:\TC\src\compiler.c:104:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
 	movq	24(%rax), %rax	 ; _8->_stderr, _9
- ; D:\TC\src\compiler.c:105:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
+ ; D:\TC\src\compiler.c:104:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
 	movq	-72(%rbp), %rdx	 ; out_ast_name, tmp131
 	movq	%rdx, %r8	 ; tmp131,
 	leaq	.LC22(%rip), %rdx	 ;, tmp132
 	movq	%rax, %rcx	 ; _9,
 	call	fprintf	 ;
-	jmp	.L39	 ;
-.L38:
- ; D:\TC\src\compiler.c:107:             output_ast(out_ast_file, lexer, parser);
+	jmp	.L31	 ;
+.L37:
+ ; D:\TC\src\compiler.c:106:             output_ast(out_ast_file, lexer, parser);
 	movq	-64(%rbp), %rcx	 ; parser, tmp133
 	movq	-40(%rbp), %rdx	 ; lexer, tmp134
 	movq	-80(%rbp), %rax	 ; out_ast_file, tmp135
 	movq	%rcx, %r8	 ; tmp133,
 	movq	%rax, %rcx	 ; tmp135,
 	call	output_ast	 ;
-.L39:
- ; D:\TC\src\compiler.c:108:         fclose(out_ast_file);
+ ; D:\TC\src\compiler.c:107:             fclose(out_ast_file);
 	movq	-80(%rbp), %rax	 ; out_ast_file, tmp136
 	movq	%rax, %rcx	 ; tmp136,
 	call	fclose	 ;

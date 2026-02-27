@@ -387,13 +387,7 @@ parse_file:
 	movq	%rdi, %r8
 	leaq	.LC19(%rip), %rdx
 	movq	24(%rax), %rcx
-	addq	$64, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbp
-	popq	%r12
-	jmp	fprintf
+	jmp	.L42
 .L37:
 	leaq	56(%rsp), %rdx
 	movq	%rax, %rcx
@@ -427,12 +421,11 @@ parse_file:
 	leaq	.LC22(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
-	jmp	.L40
+	jmp	.L38
 .L39:
-	movq	%rsi, %rdx
 	movq	%rax, %rcx
+	movq	%rsi, %rdx
 	call	output_token
-.L40:
 	movq	%rdi, %rcx
 	call	fclose
 .L38:
@@ -457,18 +450,23 @@ parse_file:
 	movq	40(%rsp), %r8
 	testq	%rax, %rax
 	movq	%rax, %rbx
-	jne	.L42
+	jne	.L41
 	call	__getreent
 	movq	%rdi, %r8
 	leaq	.LC22(%rip), %rdx
 	movq	24(%rax), %rcx
-	call	fprintf
-	jmp	.L43
 .L42:
-	movq	%rsi, %rdx
+	addq	$64, %rsp
+	popq	%rbx
+	popq	%rsi
+	popq	%rdi
+	popq	%rbp
+	popq	%r12
+	jmp	fprintf
+.L41:
 	movq	%rax, %rcx
+	movq	%rsi, %rdx
 	call	output_ast
-.L43:
 	movq	%rbx, %rcx
 	addq	$64, %rsp
 	popq	%rbx
