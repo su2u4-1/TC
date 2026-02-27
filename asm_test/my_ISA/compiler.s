@@ -396,7 +396,7 @@ f.parse_file:
     call f.fopen 2
     mov  r3 rv  ; r3: source_file
     ; if (source_file == NULL) {
-    cmp  r3 0
+    cmpu r3 0
     jmp  l.if_end_4 ne
     ; fprintf(stderr, "Error opening file: %s", filename);
     push g.stderr  ; Since this symbol has not yet been processed, we will temporarily use g. to represent it.
@@ -423,7 +423,7 @@ l.if_end_4:
     call f.create_lexer 2
     mov  r5 rv  ; r5: lexer
     ; if (o_token) {
-    cmp  a1 0
+    cmpu a1 0
     jmp  l.if_end_5 eq
     ; change_file_extension(file, create_string(".token", 6));
     push r0
@@ -442,7 +442,7 @@ l.if_end_4:
     call f.fopen 2
     mov  r7 rv  ; r7: out_token_file
     ; if (out_token_file == NULL) {
-    cmp  r7 0
+    cmpu r7 0
     jmp  l.if_else_6 ne
     ; fprintf(stderr, "Error opening file: %s\n", out_token_name);
     push g.stderr  ; Since this symbol has not yet been processed, we will temporarily use g. to represent it.
@@ -471,7 +471,7 @@ l.if_end_5:
     call f.create_parser 0
     mov  r8 rv  ; r8: parser
     ; if (o_ast) {
-    cmp  a2 0
+    cmpu a2 0
     jmp  l.if_end_7 eq
     ; change_file_extension(file, create_string(".ast", 4));
     push r0
@@ -490,7 +490,7 @@ l.if_end_5:
     call f.fopen 2
     mov  r10 rv  ; r10: out_ast_file
     ; if (out_ast_file == NULL) {
-    cmp  r10 0
+    cmpu r10 0
     jmp  l.if_else_8 ne
     ; fprintf(stderr, "Error opening file: %s\n", out_ast_name);
     push g.stderr  ; Since this symbol has not yet been processed, we will temporarily use g. to represent it.
