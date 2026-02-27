@@ -30,7 +30,7 @@ bool is_type(Name* type);
 void parser_error(const string message, Token* token);
 void indention(FILE* out, size_t indent, bool is_last, Parser* parser);
 Parser* create_parser(void);
-Name* parse_import_file(string import_name, string score, Scope* scope);
+Name* parse_import_file(string import_name, string source, Scope* scope);
 
 // operator helper functions
 OperatorType string_to_operator(string str);
