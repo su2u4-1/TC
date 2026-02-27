@@ -357,6 +357,6 @@ string get_info(void) {
     string string_memory_used_str = create_string_check("", 48, 0);
     sprintf(string_memory_used_str, "%zu/%zu bytes", string_memory_used + string_memory->used, string_memory_count);
     string info = (string)create_string_check("", 240, 0);
-    sprintf(info, "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu", 3, struct_memory_used_str, string_memory_used_str, stringCount, memoryBlockCount);
+    sprintf(info, "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu", 2, struct_memory_used_str, string_memory_used_str, stringCount, memoryBlockCount);
     return info;
 }

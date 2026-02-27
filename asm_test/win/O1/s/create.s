@@ -6,7 +6,7 @@
 	.ascii "Error creating code member: content is NULL\12\0"
 	.align 8
 .LC1:
-	.ascii "Error creating code member: unknown type %d\12\0"
+	.ascii "Error creating code member: unknown type %u\12\0"
 	.text
 	.globl	create_code_member
 	.def	create_code_member;	.scl	2;	.type	32;	.endef
@@ -251,7 +251,7 @@ create_method:
 	.ascii "Error creating class member: content is NULL\12\0"
 	.align 8
 .LC6:
-	.ascii "Error creating class member: unknown type %d\12\0"
+	.ascii "Error creating class member: unknown type %u\12\0"
 	.text
 	.globl	create_class_member
 	.def	create_class_member;	.scl	2;	.type	32;	.endef
@@ -406,7 +406,7 @@ create_variable:
 	.ascii "Error creating statement: content is NULL\12\0"
 	.align 8
 .LC10:
-	.ascii "Error creating statement: unknown type %d\12\0"
+	.ascii "Error creating statement: unknown type %u\12\0"
 	.text
 	.globl	create_statement
 	.def	create_statement;	.scl	2;	.type	32;	.endef
@@ -772,7 +772,7 @@ create_expression:
 	.ascii "Error creating primary: value is NULL\12\0"
 	.align 8
 .LC18:
-	.ascii "Error creating primary: unknown type %d\12\0"
+	.ascii "Error creating primary: unknown type %u\12\0"
 	.text
 	.globl	create_primary
 	.def	create_primary;	.scl	2;	.type	32;	.endef
@@ -865,7 +865,7 @@ create_primary:
 	.ascii "Error creating variable access: content is NULL\12\0"
 	.align 8
 .LC21:
-	.ascii "Error creating variable access: unknown type %d\12\0"
+	.ascii "Error creating variable access: unknown type %u\12\0"
 	.text
 	.globl	create_variable_access
 	.def	create_variable_access;	.scl	2;	.type	32;	.endef

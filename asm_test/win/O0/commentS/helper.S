@@ -220,10 +220,10 @@ list_pop:
 	.ascii "unknown\12\0"
 	.align 8
 .LC8:
-	.ascii "Error creating name: name_info and scope_info are both NULL for kind %d\12\0"
+	.ascii "Error creating name: name_info and scope_info are both NULL for kind %u\12\0"
 	.align 8
 .LC9:
-	.ascii "Error creating name: unknown NameType %d\12\0"
+	.ascii "Error creating name: unknown NameType %u\12\0"
 	.text
 	.globl	create_name
 	.def	create_name;	.scl	2;	.type	32;	.endef
@@ -453,24 +453,24 @@ create_name:
  ; D:\TC\src\helper.c:90:         if (name_info == NULL && scope_info == NULL && kind != NAME_TYPE)
 	cmpl	$0, 24(%rbp)	 ;, kind
 	je	.L30	 ;,
- ; D:\TC\src\helper.c:91:             fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %d\n", kind);
+ ; D:\TC\src\helper.c:91:             fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %u\n", kind);
 	call	__getreent	 ;
- ; D:\TC\src\helper.c:91:             fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %d\n", kind);
+ ; D:\TC\src\helper.c:91:             fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %u\n", kind);
 	movq	24(%rax), %rax	 ; _21->_stderr, _22
- ; D:\TC\src\helper.c:91:             fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %d\n", kind);
+ ; D:\TC\src\helper.c:91:             fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %u\n", kind);
 	movl	24(%rbp), %edx	 ; kind, tmp140
 	movl	%edx, %r8d	 ; tmp140,
 	leaq	.LC8(%rip), %rdx	 ;, tmp141
 	movq	%rax, %rcx	 ; _22,
 	call	fprintf	 ;
- ; D:\TC\src\helper.c:91:             fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %d\n", kind);
+ ; D:\TC\src\helper.c:91:             fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %u\n", kind);
 	jmp	.L31	 ;
 .L30:
- ; D:\TC\src\helper.c:93:             fprintf(stderr, "Error creating name: unknown NameType %d\n", kind);
+ ; D:\TC\src\helper.c:93:             fprintf(stderr, "Error creating name: unknown NameType %u\n", kind);
 	call	__getreent	 ;
- ; D:\TC\src\helper.c:93:             fprintf(stderr, "Error creating name: unknown NameType %d\n", kind);
+ ; D:\TC\src\helper.c:93:             fprintf(stderr, "Error creating name: unknown NameType %u\n", kind);
 	movq	24(%rax), %rax	 ; _23->_stderr, _24
- ; D:\TC\src\helper.c:93:             fprintf(stderr, "Error creating name: unknown NameType %d\n", kind);
+ ; D:\TC\src\helper.c:93:             fprintf(stderr, "Error creating name: unknown NameType %u\n", kind);
 	movl	24(%rbp), %edx	 ; kind, tmp142
 	movl	%edx, %r8d	 ; tmp142,
 	leaq	.LC9(%rip), %rdx	 ;, tmp143
@@ -1056,14 +1056,14 @@ parse_import_file:
 	.seh_setframe	%rbp, 128
 	.seh_endprologue
 	movq	%rcx, 1056(%rbp)	 ; import_name, import_name
-	movq	%rdx, 1064(%rbp)	 ; score, score
+	movq	%rdx, 1064(%rbp)	 ; source, source
 	movq	%r8, 1072(%rbp)	 ; scope, scope
  ; D:\TC\src\helper.c:169:     Name* name = 0;
 	movq	$0, 1016(%rbp)	 ;, name
  ; D:\TC\src\helper.c:173:     filename[0] = '\0';
 	movb	$0, -80(%rbp)	 ;, filename[0]
- ; D:\TC\src\helper.c:174:     if (score == 0) {
-	cmpq	$0, 1064(%rbp)	 ;, score
+ ; D:\TC\src\helper.c:174:     if (source == 0) {
+	cmpq	$0, 1064(%rbp)	 ;, source
 	jne	.L71	 ;,
  ; D:\TC\src\helper.c:175:         if (strcmp(import_name, "print") == 0)
 	movq	1056(%rbp), %rax	 ; import_name, tmp100
@@ -1111,8 +1111,8 @@ parse_import_file:
 	movl	$0, %eax	 ;, _19
 	jmp	.L83	 ;
 .L71:
- ; D:\TC\src\helper.c:184:         string_append(filename, MAX_FILENAME_SIZE, filename, score);
-	movq	1064(%rbp), %rcx	 ; score, tmp108
+ ; D:\TC\src\helper.c:184:         string_append(filename, MAX_FILENAME_SIZE, filename, source);
+	movq	1064(%rbp), %rcx	 ; source, tmp108
 	leaq	-80(%rbp), %rdx	 ;, tmp109
 	leaq	-80(%rbp), %rax	 ;, tmp110
 	movq	%rcx, %r9	 ; tmp108,
@@ -1177,27 +1177,27 @@ parse_import_file:
 	call	printf	 ;
  ; D:\TC\src\helper.c:195:     size_t length = 0;
 	movq	$0, -88(%rbp)	 ;, length
- ; D:\TC\src\helper.c:196:     string source = read_source(openfile, &length);
+ ; D:\TC\src\helper.c:196:     string source_code = read_source(openfile, &length);
 	leaq	-88(%rbp), %rdx	 ;, tmp125
 	movq	1000(%rbp), %rax	 ; openfile, tmp126
 	movq	%rax, %rcx	 ; tmp126,
 	call	read_source	 ;
-	movq	%rax, 992(%rbp)	 ; tmp127, source
+	movq	%rax, 992(%rbp)	 ; tmp127, source_code
  ; D:\TC\src\helper.c:197:     fclose(openfile);
 	movq	1000(%rbp), %rax	 ; openfile, tmp128
 	movq	%rax, %rcx	 ; tmp128,
 	call	fclose	 ;
- ; D:\TC\src\helper.c:198:     Code* code = parse_code(create_lexer(source, length), builtin_scope, create_parser());
+ ; D:\TC\src\helper.c:198:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser());
 	call	create_parser	 ;
 	movq	%rax, %rsi	 ;, _7
- ; D:\TC\src\helper.c:198:     Code* code = parse_code(create_lexer(source, length), builtin_scope, create_parser());
+ ; D:\TC\src\helper.c:198:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser());
 	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp129
 	movq	(%rax), %rbx	 ; builtin_scope, builtin_scope.11_8
 	movq	-88(%rbp), %rdx	 ; length, length.12_9
-	movq	992(%rbp), %rax	 ; source, tmp130
+	movq	992(%rbp), %rax	 ; source_code, tmp130
 	movq	%rax, %rcx	 ; tmp130,
 	call	create_lexer	 ;
- ; D:\TC\src\helper.c:198:     Code* code = parse_code(create_lexer(source, length), builtin_scope, create_parser());
+ ; D:\TC\src\helper.c:198:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser());
 	movq	%rsi, %r8	 ; _7,
 	movq	%rbx, %rdx	 ; builtin_scope.11_8,
 	movq	%rax, %rcx	 ; _10,

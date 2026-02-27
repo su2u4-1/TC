@@ -264,7 +264,7 @@ output_name:
 .LC25:
 	.ascii "type: \"variable\"\12\0"
 .LC26:
-	.ascii "unknown_PrimaryType: %d\12\0"
+	.ascii "unknown_PrimaryType: %u\12\0"
 .LC27:
 	.ascii "operator: \"%s\"\12\0"
 .LC28:
@@ -732,7 +732,7 @@ output_variable:
 	.ascii "attribute_name\12\0"
 	.align 8
 .LC44:
-	.ascii "unknown_VariableAccessType: %d\12\0"
+	.ascii "unknown_VariableAccessType: %u\12\0"
 	.text
 	.p2align 4
 	.def	output_variable_access;	.scl	3;	.type	32;	.endef
@@ -1039,7 +1039,7 @@ output_variable_access:
 .LC63:
 	.ascii "expression_statement\12\0"
 .LC64:
-	.ascii "unknown_StatementType: %d\12\0"
+	.ascii "unknown_StatementType: %u\12\0"
 	.text
 	.p2align 4
 	.def	output_statement;	.scl	3;	.type	32;	.endef
@@ -1565,9 +1565,9 @@ output_statement:
 .LC73:
 	.ascii "variable\12\0"
 .LC74:
-	.ascii "unknown_ClassMemberType: %d\12\0"
+	.ascii "unknown_ClassMemberType: %u\12\0"
 .LC75:
-	.ascii "unknown_CodeMemberType: %d\12\0"
+	.ascii "unknown_CodeMemberType: %u\12\0"
 	.text
 	.p2align 4
 	.globl	output_code

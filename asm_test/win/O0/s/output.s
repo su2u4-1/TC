@@ -8,7 +8,7 @@
 .LC2:
 	.ascii "class\12\0"
 .LC3:
-	.ascii "unknown_CodeMemberType: %d\12\0"
+	.ascii "unknown_CodeMemberType: %u\12\0"
 	.text
 	.def	output_code_member;	.scl	3;	.type	32;	.endef
 	.seh_proc	output_code_member
@@ -579,7 +579,7 @@ output_method:
 .LC12:
 	.ascii "variable\12\0"
 .LC13:
-	.ascii "unknown_ClassMemberType: %d\12\0"
+	.ascii "unknown_ClassMemberType: %u\12\0"
 	.text
 	.def	output_class_member;	.scl	3;	.type	32;	.endef
 	.seh_proc	output_class_member
@@ -903,7 +903,7 @@ output_variable:
 .LC27:
 	.ascii "expression_statement\12\0"
 .LC28:
-	.ascii "unknown_StatementType: %d\12\0"
+	.ascii "unknown_StatementType: %u\12\0"
 	.text
 	.def	output_statement;	.scl	3;	.type	32;	.endef
 	.seh_proc	output_statement
@@ -1872,7 +1872,7 @@ output_expression:
 .LC53:
 	.ascii "type: \"variable\"\12\0"
 .LC54:
-	.ascii "unknown_PrimaryType: %d\12\0"
+	.ascii "unknown_PrimaryType: %u\12\0"
 	.text
 	.def	output_primary;	.scl	3;	.type	32;	.endef
 	.seh_proc	output_primary
@@ -2266,7 +2266,7 @@ output_primary:
 	.ascii "attribute_name\12\0"
 	.align 8
 .LC65:
-	.ascii "unknown_VariableAccessType: %d\12\0"
+	.ascii "unknown_VariableAccessType: %u\12\0"
 	.text
 	.def	output_variable_access;	.scl	3;	.type	32;	.endef
 	.seh_proc	output_variable_access

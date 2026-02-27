@@ -11,7 +11,7 @@
 	.ascii "Error creating code member: content is NULL\12\0"
 	.align 8
 .LC1:
-	.ascii "Error creating code member: unknown type %d\12\0"
+	.ascii "Error creating code member: unknown type %u\12\0"
 	.text
 	.globl	create_code_member
 	.def	create_code_member;	.scl	2;	.type	32;	.endef
@@ -76,9 +76,9 @@ create_code_member:
 	orq	%rdi, %r9	 ; function_content, class_content
 	orq	%rsi, %r9	 ; import_content, tmp131
 	je	.L7	 ;,
- ; D:\TC\src\create.c:16:             fprintf(stderr, "Error creating code member: unknown type %d\n", type);
+ ; D:\TC\src\create.c:16:             fprintf(stderr, "Error creating code member: unknown type %u\n", type);
 	call	__getreent	 ;
- ; D:\TC\src\create.c:16:             fprintf(stderr, "Error creating code member: unknown type %d\n", type);
+ ; D:\TC\src\create.c:16:             fprintf(stderr, "Error creating code member: unknown type %u\n", type);
 	movq	24(%rax), %rcx	 ; _15->_stderr, _15->_stderr
 	movl	%ebx, %r8d	 ; type,
 	leaq	.LC1(%rip), %rdx	 ;, tmp122
@@ -307,7 +307,7 @@ create_method:
 	.ascii "Error creating class member: content is NULL\12\0"
 	.align 8
 .LC6:
-	.ascii "Error creating class member: unknown type %d\12\0"
+	.ascii "Error creating class member: unknown type %u\12\0"
 	.text
 	.globl	create_class_member
 	.def	create_class_member;	.scl	2;	.type	32;	.endef
@@ -369,9 +369,9 @@ create_class_member:
 	movl	$0, %eax	 ;, <retval>
 	jmp	.L23	 ;
 .L27:
- ; D:\TC\src\create.c:84:             fprintf(stderr, "Error creating class member: unknown type %d\n", type);
+ ; D:\TC\src\create.c:84:             fprintf(stderr, "Error creating class member: unknown type %u\n", type);
 	call	__getreent	 ;
- ; D:\TC\src\create.c:84:             fprintf(stderr, "Error creating class member: unknown type %d\n", type);
+ ; D:\TC\src\create.c:84:             fprintf(stderr, "Error creating class member: unknown type %u\n", type);
 	movq	24(%rax), %rcx	 ; _12->_stderr, _12->_stderr
 	movl	%ebx, %r8d	 ; type,
 	leaq	.LC6(%rip), %rdx	 ;, tmp111
@@ -494,7 +494,7 @@ create_variable:
 	.ascii "Error creating statement: content is NULL\12\0"
 	.align 8
 .LC10:
-	.ascii "Error creating statement: unknown type %d\12\0"
+	.ascii "Error creating statement: unknown type %u\12\0"
 	.text
 	.globl	create_statement
 	.def	create_statement;	.scl	2;	.type	32;	.endef
@@ -605,9 +605,9 @@ create_statement:
 	orq	120(%rsp), %rax	 ; var_stmt, tmp143
 	orq	%rbp, %rax	 ; expr, tmp158
 	je	.L47	 ;,
- ; D:\TC\src\create.c:138:             fprintf(stderr, "Error creating statement: unknown type %d\n", type);
+ ; D:\TC\src\create.c:138:             fprintf(stderr, "Error creating statement: unknown type %u\n", type);
 	call	__getreent	 ;
- ; D:\TC\src\create.c:138:             fprintf(stderr, "Error creating statement: unknown type %d\n", type);
+ ; D:\TC\src\create.c:138:             fprintf(stderr, "Error creating statement: unknown type %u\n", type);
 	movq	24(%rax), %rcx	 ; _27->_stderr, _27->_stderr
 	movl	%ebx, %r8d	 ; type,
 	leaq	.LC10(%rip), %rdx	 ;, tmp149
@@ -943,7 +943,7 @@ create_expression:
 	.ascii "Error creating primary: value is NULL\12\0"
 	.align 8
 .LC18:
-	.ascii "Error creating primary: unknown type %d\12\0"
+	.ascii "Error creating primary: unknown type %u\12\0"
 	.text
 	.globl	create_primary
 	.def	create_primary;	.scl	2;	.type	32;	.endef
@@ -1036,9 +1036,9 @@ create_primary:
  ; D:\TC\src\create.c:226:             fprintf(stderr, "Error creating primary: value is NULL\n");
 	jmp	.L77	 ;
 .L83:
- ; D:\TC\src\create.c:228:             fprintf(stderr, "Error creating primary: unknown type %d\n", type);
+ ; D:\TC\src\create.c:228:             fprintf(stderr, "Error creating primary: unknown type %u\n", type);
 	call	__getreent	 ;
- ; D:\TC\src\create.c:228:             fprintf(stderr, "Error creating primary: unknown type %d\n", type);
+ ; D:\TC\src\create.c:228:             fprintf(stderr, "Error creating primary: unknown type %u\n", type);
 	movq	24(%rax), %rcx	 ; _19->_stderr, _19->_stderr
 	movl	%ebx, %r8d	 ; type,
 	leaq	.LC18(%rip), %rdx	 ;, tmp135
@@ -1056,7 +1056,7 @@ create_primary:
 	.ascii "Error creating variable access: content is NULL\12\0"
 	.align 8
 .LC21:
-	.ascii "Error creating variable access: unknown type %d\12\0"
+	.ascii "Error creating variable access: unknown type %u\12\0"
 	.text
 	.globl	create_variable_access
 	.def	create_variable_access;	.scl	2;	.type	32;	.endef
@@ -1168,9 +1168,9 @@ create_variable_access:
 	movq	%rdi, %r9	 ; expr_content, tmp129
 	orq	%rbp, %r9	 ; name_content, tmp148
 	je	.L98	 ;,
- ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %d\n", type);
+ ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %u\n", type);
 	call	__getreent	 ;
- ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %d\n", type);
+ ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %u\n", type);
 	movq	24(%rax), %rcx	 ; _20->_stderr, _20->_stderr
 	movl	%ebx, %r8d	 ; type,
 	leaq	.LC21(%rip), %rdx	 ;, tmp134

@@ -132,10 +132,10 @@ list_pop:
 	.ascii "unknown\12\0"
 	.align 8
 .LC7:
-	.ascii "Error creating name: name_info and scope_info are both NULL for kind %d\12\0"
+	.ascii "Error creating name: name_info and scope_info are both NULL for kind %u\12\0"
 	.align 8
 .LC8:
-	.ascii "Error creating name: unknown NameType %d\12\0"
+	.ascii "Error creating name: unknown NameType %u\12\0"
 	.align 8
 .LC9:
 	.ascii "Warning: Name '%s' already exists in the current scope, returning existing name, kind: \0"

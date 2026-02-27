@@ -186,9 +186,9 @@ search:
 .LC7:
 	.ascii "unknown\12\0"
 .LC8:
-	.ascii "Error creating name: name_info and scope_info are both NULL for kind %d\12\0"
+	.ascii "Error creating name: name_info and scope_info are both NULL for kind %u\12\0"
 .LC9:
-	.ascii "Error creating name: unknown NameType %d\12\0"
+	.ascii "Error creating name: unknown NameType %u\12\0"
 	.text
 	.globl	create_name
 	.def	create_name;	.scl	2;	.type	32;	.endef

@@ -13,7 +13,7 @@
 .LC2:
 	.ascii "class\12\0"
 .LC3:
-	.ascii "unknown_CodeMemberType: %d\12\0"
+	.ascii "unknown_CodeMemberType: %u\12\0"
 	.text
 	.def	output_code_member;	.scl	3;	.type	32;	.endef
 	.seh_proc	output_code_member
@@ -133,7 +133,7 @@ output_code_member:
  ; D:\TC\src\output.c:37:             break;
 	jmp	.L6	 ;
 .L3:
- ; D:\TC\src\output.c:39:             OUT(0, false, "unknown_CodeMemberType: %d\n", code_member_ptr->type);
+ ; D:\TC\src\output.c:39:             OUT(0, false, "unknown_CodeMemberType: %u\n", code_member_ptr->type);
 	movq	40(%rbp), %rcx	 ; parser, tmp119
 	movq	32(%rbp), %rdx	 ; indent, tmp120
 	movq	24(%rbp), %rax	 ; outfile, tmp121
@@ -141,7 +141,7 @@ output_code_member:
 	movl	$0, %r8d	 ;,
 	movq	%rax, %rcx	 ; tmp121,
 	call	indention	 ;
- ; D:\TC\src\output.c:39:             OUT(0, false, "unknown_CodeMemberType: %d\n", code_member_ptr->type);
+ ; D:\TC\src\output.c:39:             OUT(0, false, "unknown_CodeMemberType: %u\n", code_member_ptr->type);
 	movq	-8(%rbp), %rax	 ; code_member_ptr, tmp122
 	movl	8(%rax), %edx	 ; code_member_ptr_11->type, _8
 	movq	24(%rbp), %rax	 ; outfile, tmp123
@@ -668,7 +668,7 @@ output_method:
 .LC12:
 	.ascii "variable\12\0"
 .LC13:
-	.ascii "unknown_ClassMemberType: %d\12\0"
+	.ascii "unknown_ClassMemberType: %u\12\0"
 	.text
 	.def	output_class_member;	.scl	3;	.type	32;	.endef
 	.seh_proc	output_class_member
@@ -755,7 +755,7 @@ output_class_member:
  ; D:\TC\src\output.c:120:             break;
 	jmp	.L27	 ;
 .L28:
- ; D:\TC\src\output.c:122:             OUT(0, false, "unknown_ClassMemberType: %d\n", class_member_ptr->type);
+ ; D:\TC\src\output.c:122:             OUT(0, false, "unknown_ClassMemberType: %u\n", class_member_ptr->type);
 	movq	40(%rbp), %rcx	 ; parser, tmp108
 	movq	32(%rbp), %rdx	 ; indent, tmp109
 	movq	24(%rbp), %rax	 ; outfile, tmp110
@@ -763,7 +763,7 @@ output_class_member:
 	movl	$0, %r8d	 ;,
 	movq	%rax, %rcx	 ; tmp110,
 	call	indention	 ;
- ; D:\TC\src\output.c:122:             OUT(0, false, "unknown_ClassMemberType: %d\n", class_member_ptr->type);
+ ; D:\TC\src\output.c:122:             OUT(0, false, "unknown_ClassMemberType: %u\n", class_member_ptr->type);
 	movq	-8(%rbp), %rax	 ; class_member_ptr, tmp111
 	movl	8(%rax), %edx	 ; class_member_ptr_9->type, _6
 	movq	24(%rbp), %rax	 ; outfile, tmp112
@@ -1035,7 +1035,7 @@ output_variable:
 .LC27:
 	.ascii "expression_statement\12\0"
 .LC28:
-	.ascii "unknown_StatementType: %d\12\0"
+	.ascii "unknown_StatementType: %u\12\0"
 	.text
 	.def	output_statement;	.scl	3;	.type	32;	.endef
 	.seh_proc	output_statement
@@ -1343,7 +1343,7 @@ output_statement:
  ; D:\TC\src\output.c:197:             break;
 	jmp	.L36	 ;
 .L37:
- ; D:\TC\src\output.c:199:             OUT(0, false, "unknown_StatementType: %d\n", statement_ptr->type);
+ ; D:\TC\src\output.c:199:             OUT(0, false, "unknown_StatementType: %u\n", statement_ptr->type);
 	movq	40(%rbp), %rcx	 ; parser, tmp183
 	movq	32(%rbp), %rdx	 ; indent, tmp184
 	movq	24(%rbp), %rax	 ; outfile, tmp185
@@ -1351,7 +1351,7 @@ output_statement:
 	movl	$0, %r8d	 ;,
 	movq	%rax, %rcx	 ; tmp185,
 	call	indention	 ;
- ; D:\TC\src\output.c:199:             OUT(0, false, "unknown_StatementType: %d\n", statement_ptr->type);
+ ; D:\TC\src\output.c:199:             OUT(0, false, "unknown_StatementType: %u\n", statement_ptr->type);
 	movq	-8(%rbp), %rax	 ; statement_ptr, tmp186
 	movl	8(%rax), %edx	 ; statement_ptr_19->type, _16
 	movq	24(%rbp), %rax	 ; outfile, tmp187
@@ -2150,7 +2150,7 @@ output_expression:
 .LC53:
 	.ascii "type: \"variable\"\12\0"
 .LC54:
-	.ascii "unknown_PrimaryType: %d\12\0"
+	.ascii "unknown_PrimaryType: %u\12\0"
 	.text
 	.def	output_primary;	.scl	3;	.type	32;	.endef
 	.seh_proc	output_primary
@@ -2552,7 +2552,7 @@ output_primary:
  ; D:\TC\src\output.c:339:             break;
 	jmp	.L90	 ;
 .L79:
- ; D:\TC\src\output.c:341:             OUT(0, true, "unknown_PrimaryType: %d\n", primary_ptr->type);
+ ; D:\TC\src\output.c:341:             OUT(0, true, "unknown_PrimaryType: %u\n", primary_ptr->type);
 	movq	40(%rbp), %rcx	 ; parser, tmp213
 	movq	32(%rbp), %rdx	 ; indent, tmp214
 	movq	24(%rbp), %rax	 ; outfile, tmp215
@@ -2560,7 +2560,7 @@ output_primary:
 	movl	$1, %r8d	 ;,
 	movq	%rax, %rcx	 ; tmp215,
 	call	indention	 ;
- ; D:\TC\src\output.c:341:             OUT(0, true, "unknown_PrimaryType: %d\n", primary_ptr->type);
+ ; D:\TC\src\output.c:341:             OUT(0, true, "unknown_PrimaryType: %u\n", primary_ptr->type);
 	movq	-8(%rbp), %rax	 ; primary_ptr, tmp216
 	movl	8(%rax), %edx	 ; primary_ptr_16->type, _13
 	movq	24(%rbp), %rax	 ; outfile, tmp217
@@ -2600,7 +2600,7 @@ output_primary:
 	.ascii "attribute_name\12\0"
 	.align 8
 .LC65:
-	.ascii "unknown_VariableAccessType: %d\12\0"
+	.ascii "unknown_VariableAccessType: %u\12\0"
 	.text
 	.def	output_variable_access;	.scl	3;	.type	32;	.endef
 	.seh_proc	output_variable_access
@@ -2931,7 +2931,7 @@ output_variable_access:
  ; D:\TC\src\output.c:384:             break;
 	jmp	.L97	 ;
 .L93:
- ; D:\TC\src\output.c:386:             OUT(0, true, "unknown_VariableAccessType: %d\n", var_access_ptr->type);
+ ; D:\TC\src\output.c:386:             OUT(0, true, "unknown_VariableAccessType: %u\n", var_access_ptr->type);
 	movq	40(%rbp), %rcx	 ; parser, tmp194
 	movq	32(%rbp), %rdx	 ; indent, tmp195
 	movq	24(%rbp), %rax	 ; outfile, tmp196
@@ -2939,7 +2939,7 @@ output_variable_access:
 	movl	$1, %r8d	 ;,
 	movq	%rax, %rcx	 ; tmp196,
 	call	indention	 ;
- ; D:\TC\src\output.c:386:             OUT(0, true, "unknown_VariableAccessType: %d\n", var_access_ptr->type);
+ ; D:\TC\src\output.c:386:             OUT(0, true, "unknown_VariableAccessType: %u\n", var_access_ptr->type);
 	movq	-16(%rbp), %rax	 ; var_access_ptr, tmp197
 	movl	16(%rax), %edx	 ; var_access_ptr_22->type, _17
 	movq	24(%rbp), %rax	 ; outfile, tmp198

@@ -11,7 +11,7 @@
 	.ascii "Error creating code member: content is NULL\12\0"
 	.align 8
 .LC1:
-	.ascii "Error creating code member: unknown type %d\12\0"
+	.ascii "Error creating code member: unknown type %u\12\0"
 	.text
 	.p2align 4
 	.globl	create_code_member
@@ -98,9 +98,9 @@ create_code_member:
 	orq	%rdi, %r9	 ; function_content, class_content
 	orq	%r9, %rsi	 ; tmp117, tmp131
 	je	.L28	 ;,
- ; D:\TC\src\create.c:16:             fprintf(stderr, "Error creating code member: unknown type %d\n", type);
+ ; D:\TC\src\create.c:16:             fprintf(stderr, "Error creating code member: unknown type %u\n", type);
 	call	__getreent	 ;
- ; D:\TC\src\create.c:16:             fprintf(stderr, "Error creating code member: unknown type %d\n", type);
+ ; D:\TC\src\create.c:16:             fprintf(stderr, "Error creating code member: unknown type %u\n", type);
 	movl	%ebx, %r8d	 ; type,
 	leaq	.LC1(%rip), %rdx	 ;, tmp122
 	movq	24(%rax), %rcx	 ; _15->_stderr, _15->_stderr
@@ -356,7 +356,7 @@ create_method:
 	.ascii "Error creating class member: content is NULL\12\0"
 	.align 8
 .LC6:
-	.ascii "Error creating class member: unknown type %d\12\0"
+	.ascii "Error creating class member: unknown type %u\12\0"
 	.text
 	.p2align 4
 	.globl	create_class_member
@@ -433,9 +433,9 @@ create_class_member:
 	.p2align 4,,10
 	.p2align 3
 .L49:
- ; D:\TC\src\create.c:84:             fprintf(stderr, "Error creating class member: unknown type %d\n", type);
+ ; D:\TC\src\create.c:84:             fprintf(stderr, "Error creating class member: unknown type %u\n", type);
 	call	__getreent	 ;
- ; D:\TC\src\create.c:84:             fprintf(stderr, "Error creating class member: unknown type %d\n", type);
+ ; D:\TC\src\create.c:84:             fprintf(stderr, "Error creating class member: unknown type %u\n", type);
 	movl	%ebx, %r8d	 ; type,
 	leaq	.LC6(%rip), %rdx	 ;, tmp111
 	movq	24(%rax), %rcx	 ; _12->_stderr, _12->_stderr
@@ -570,7 +570,7 @@ create_variable:
 	.ascii "Error creating statement: content is NULL\12\0"
 	.align 8
 .LC10:
-	.ascii "Error creating statement: unknown type %d\12\0"
+	.ascii "Error creating statement: unknown type %u\12\0"
 	.text
 	.p2align 4
 	.globl	create_statement
@@ -709,9 +709,9 @@ create_statement:
 	orq	%rdx, %rax	 ; tmp143, tmp143
 	orq	%rdi, %rax	 ; expr, tmp158
 	je	.L121	 ;,
- ; D:\TC\src\create.c:138:             fprintf(stderr, "Error creating statement: unknown type %d\n", type);
+ ; D:\TC\src\create.c:138:             fprintf(stderr, "Error creating statement: unknown type %u\n", type);
 	call	__getreent	 ;
- ; D:\TC\src\create.c:138:             fprintf(stderr, "Error creating statement: unknown type %d\n", type);
+ ; D:\TC\src\create.c:138:             fprintf(stderr, "Error creating statement: unknown type %u\n", type);
 	movl	%ebx, %r8d	 ; type,
 	leaq	.LC10(%rip), %rdx	 ;, tmp149
 	movq	24(%rax), %rcx	 ; _27->_stderr, _27->_stderr
@@ -1077,7 +1077,7 @@ create_expression:
 	.ascii "Error creating primary: value is NULL\12\0"
 	.align 8
 .LC18:
-	.ascii "Error creating primary: unknown type %d\12\0"
+	.ascii "Error creating primary: unknown type %u\12\0"
 	.text
 	.p2align 4
 	.globl	create_primary
@@ -1191,9 +1191,9 @@ create_primary:
 	.p2align 4,,10
 	.p2align 3
 .L157:
- ; D:\TC\src\create.c:228:             fprintf(stderr, "Error creating primary: unknown type %d\n", type);
+ ; D:\TC\src\create.c:228:             fprintf(stderr, "Error creating primary: unknown type %u\n", type);
 	call	__getreent	 ;
- ; D:\TC\src\create.c:228:             fprintf(stderr, "Error creating primary: unknown type %d\n", type);
+ ; D:\TC\src\create.c:228:             fprintf(stderr, "Error creating primary: unknown type %u\n", type);
 	movl	%ebx, %r8d	 ; type,
 	leaq	.LC18(%rip), %rdx	 ;, tmp128
 	movq	24(%rax), %rcx	 ; _19->_stderr, _19->_stderr
@@ -1211,7 +1211,7 @@ create_primary:
 	.ascii "Error creating variable access: content is NULL\12\0"
 	.align 8
 .LC21:
-	.ascii "Error creating variable access: unknown type %d\12\0"
+	.ascii "Error creating variable access: unknown type %u\12\0"
 	.text
 	.p2align 4
 	.globl	create_variable_access
@@ -1343,9 +1343,9 @@ create_variable_access:
 	orq	%rbp, %r9	 ; expr_content, expr_content
 	orq	%r9, %rdi	 ; tmp129, name_content
 	je	.L222	 ;,
- ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %d\n", type);
+ ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %u\n", type);
 	call	__getreent	 ;
- ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %d\n", type);
+ ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %u\n", type);
 	movl	%ebx, %r8d	 ; type,
 	leaq	.LC21(%rip), %rdx	 ;, tmp134
 	movq	24(%rax), %rcx	 ; _21->_stderr, _21->_stderr
