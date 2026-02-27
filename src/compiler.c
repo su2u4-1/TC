@@ -84,27 +84,27 @@ void parse_file(const string name, bool o_token, bool o_ast) {
     fclose(source_file);
     Lexer* lexer = create_lexer(source, length);
     if (o_token) {
-        // string_append(out_token_name, MAX_FILENAME_SIZE, filename, ".token");
         change_file_extension(file, create_string(".token", 6));
         string out_token_name = get_full_path(file);
         FILE* out_token_file = fopen(out_token_name, "w");
         if (out_token_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_token_name);
-        else
+        else {
             output_token(out_token_file, lexer);
-        fclose(out_token_file);
+            fclose(out_token_file);
+        }
     }
     reset_lexer(lexer);
     Parser* parser = create_parser();
     if (o_ast) {
-        // string_append(out_ast_name, MAX_FILENAME_SIZE, filename, ".ast");
         change_file_extension(file, create_string(".ast", 4));
         string out_ast_name = get_full_path(file);
         FILE* out_ast_file = fopen(out_ast_name, "w");
         if (out_ast_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
-        else
+        else {
             output_ast(out_ast_file, lexer, parser);
-        fclose(out_ast_file);
+            fclose(out_ast_file);
+        }
     }
 }
