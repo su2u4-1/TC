@@ -88,9 +88,9 @@ Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info
         new_name->info.type = NULL;
     else {
         if (name_info == NULL && scope_info == NULL && kind != NAME_TYPE)
-            fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %d\n", kind);
+            fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %u\n", kind);
         else
-            fprintf(stderr, "Error creating name: unknown NameType %d\n", kind);
+            fprintf(stderr, "Error creating name: unknown NameType %u\n", kind);
         return NULL;
     }
     list_append(scope->names, (pointer)new_name);
@@ -165,13 +165,13 @@ Parser* create_parser(void) {
     return new_parser;
 }
 
-Name* parse_import_file(string import_name, string score, Scope* scope) {
+Name* parse_import_file(string import_name, string source, Scope* scope) {
     Name* name = 0;
     FILE* openfile;
     // temporary hack, need path system
     char filename[MAX_FILENAME_SIZE];
     filename[0] = '\0';
-    if (score == 0) {
+    if (source == 0) {
         if (strcmp(import_name, "print") == 0)
             strcpy(filename, "./std/print.tc");
         else if (strcmp(import_name, "arr") == 0)
@@ -181,7 +181,7 @@ Name* parse_import_file(string import_name, string score, Scope* scope) {
             return 0;
         }
     } else {
-        string_append(filename, MAX_FILENAME_SIZE, filename, score);
+        string_append(filename, MAX_FILENAME_SIZE, filename, source);
         string_append(filename, MAX_FILENAME_SIZE, filename, "/");
         string_append(filename, MAX_FILENAME_SIZE, filename, import_name);
         string_append(filename, MAX_FILENAME_SIZE, filename, ".tc");
@@ -193,9 +193,9 @@ Name* parse_import_file(string import_name, string score, Scope* scope) {
     }
     printf("Info: Starting parsing lib file for import: %s\n", filename);
     size_t length = 0;
-    string source = read_source(openfile, &length);
+    string source_code = read_source(openfile, &length);
     fclose(openfile);
-    Code* code = parse_code(create_lexer(source, length), builtin_scope, create_parser());
+    Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser());
     printf("Info: Finished parsing lib file for import: %s\n", filename);
     if (code == 0) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);

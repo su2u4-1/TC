@@ -36,7 +36,7 @@ void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, P
             output_class(code_member_ptr->content.class_, outfile, indent + 1, parser);
             break;
         default:
-            OUT(0, false, "unknown_CodeMemberType: %d\n", code_member_ptr->type);
+            OUT(0, false, "unknown_CodeMemberType: %u\n", code_member_ptr->type);
             break;
     }
 }
@@ -119,7 +119,7 @@ void output_class_member(ClassMember* class_member, FILE* outfile, size_t indent
             output_variable(class_member_ptr->content.variable, outfile, indent + 1, parser);
             break;
         default:
-            OUT(0, false, "unknown_ClassMemberType: %d\n", class_member_ptr->type);
+            OUT(0, false, "unknown_ClassMemberType: %u\n", class_member_ptr->type);
             break;
     }
 }
@@ -196,7 +196,7 @@ void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser
             output_expression(statement_ptr->stmt.expr, outfile, indent + 1, parser);
             break;
         default:
-            OUT(0, false, "unknown_StatementType: %d\n", statement_ptr->type);
+            OUT(0, false, "unknown_StatementType: %u\n", statement_ptr->type);
             return;
     }
 }
@@ -338,7 +338,7 @@ void output_primary(Primary* primary, FILE* outfile, size_t indent, Parser* pars
             output_variable_access(primary_ptr->value.var, outfile, indent + 1, parser);
             break;
         default:
-            OUT(0, true, "unknown_PrimaryType: %d\n", primary_ptr->type);
+            OUT(0, true, "unknown_PrimaryType: %u\n", primary_ptr->type);
             break;
     }
 }
@@ -383,7 +383,7 @@ void output_variable_access(VariableAccess* variable_access, FILE* outfile, size
             output_name(var_access_ptr->content.attr_name, outfile, indent + 1, parser);
             break;
         default:
-            OUT(0, true, "unknown_VariableAccessType: %d\n", var_access_ptr->type);
+            OUT(0, true, "unknown_VariableAccessType: %u\n", var_access_ptr->type);
             break;
     }
 }

@@ -9,8 +9,10 @@ void string_append(string dest, const size_t dest_length, const string src, cons
     if (dest_length <= src_length + new_length) {
         size_t max_src_length = dest_length - new_length - 1;
         snprintf(dest, dest_length, "%.*s%s", (int)max_src_length, src, new);
-    } else
-        sprintf(dest, "%s%s", src, new);
+    } else if (src == dest)
+        snprintf(dest + src_length, dest_length - src_length, "%s", new);
+    else
+        snprintf(dest, dest_length, "%s%s", src, new);
 }
 string read_source(FILE* file, size_t* length) {
     fseek(file, 0, SEEK_END);
@@ -18,8 +20,9 @@ string read_source(FILE* file, size_t* length) {
     fseek(file, 0, SEEK_SET);
 
     string source = create_string("", *length + 1);
-    fread(source, 1, *length, file);
-    source[*length] = '\0';
+    size_t bytes_read = fread(source, 1, *length, file);
+    source[bytes_read] = '\0';
+    *length = bytes_read;
 
     for (size_t i = 0; i < *length; ++i) {
         if (source[i] == '\r' || source[i] == '\t')
