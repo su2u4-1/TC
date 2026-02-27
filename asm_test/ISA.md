@@ -111,37 +111,37 @@ user: 1, 4, 5, 6
 ### `aN` and `rN` register
 `aN` and `rN` registers are syntactic sugar for stack access.  
 They are mapped to the stack frame by `ap` and `lp` pointers.  
-`aN = memory[ap + N * word_size]`  
+`aN = memory[ap + N * size]`  
 get `aN` value:
 ```asm
 mov  t0 ap
-sub  t0 t0 N * word_size
+sub  t0 t0 N * size
 load aN t0
 ```
 save value to `aN`:
 ```asm
 mov  t0 ap
-sub  t0 t0 N * word_size
+sub  t0 t0 N * size
 save aN t0
 ```
-`rN = memory[lp + N * word_size]`  
+`rN = memory[lp + N * size]`  
 get `rN` value:
 ```asm
 mov  t0 lp
-sub  t0 t0 N * word_size
+sub  t0 t0 N * size
 load rN t0
 ```
 save value to `rN`:
 ```asm
 mov  t0 lp
-sub  t0 t0 N * word_size
+sub  t0 t0 N * size
 save rN t0
 ```
 ### `ret` and `call` instructions
 N is the number of arguments.  
 `call f.name N`:
 ```asm
-add  t0 sp N * word_size
+add  t0 sp N * size
 mov  t1 sp
 push l.f_name  ; return address
 push t0  ; stack pointer
@@ -171,11 +171,11 @@ jmp  t0 always
 `push source`:
 ```asm
 save source sp
-sub  sp sp word_size
+sub  sp sp size
 ```
 `pop target`:
 ```asm
-add  sp sp word_size
+add  sp sp size
 load target sp
 ```
 ### size
