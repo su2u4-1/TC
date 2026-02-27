@@ -325,7 +325,7 @@ char is_type(Name* type);
 void parser_error(const string message, Token* token);
 void indention(FILE* out, size_t indent, char is_last, Parser* parser);
 Parser* create_parser(void);
-Name* parse_import_file(string import_name, string score, Scope* scope);
+Name* parse_import_file(string import_name, string source, Scope* scope);
 OperatorType string_to_operator(string str);
 int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);
@@ -361,7 +361,7 @@ void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, P
             output_class(code_member_ptr->content.class_, outfile, indent + 1, parser);
             break;
         default:
-            indention(outfile, indent + 0, 0, parser), fprintf(outfile, "unknown_CodeMemberType: %d\n", code_member_ptr->type);
+            indention(outfile, indent + 0, 0, parser), fprintf(outfile, "unknown_CodeMemberType: %u\n", code_member_ptr->type);
             break;
     }
 }
@@ -429,7 +429,7 @@ void output_class_member(ClassMember* class_member, FILE* outfile, size_t indent
             output_variable(class_member_ptr->content.variable, outfile, indent + 1, parser);
             break;
         default:
-            indention(outfile, indent + 0, 0, parser), fprintf(outfile, "unknown_ClassMemberType: %d\n", class_member_ptr->type);
+            indention(outfile, indent + 0, 0, parser), fprintf(outfile, "unknown_ClassMemberType: %u\n", class_member_ptr->type);
             break;
     }
 }
@@ -497,7 +497,7 @@ void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser
             output_expression(statement_ptr->stmt.expr, outfile, indent + 1, parser);
             break;
         default:
-            indention(outfile, indent + 0, 0, parser), fprintf(outfile, "unknown_StatementType: %d\n", statement_ptr->type);
+            indention(outfile, indent + 0, 0, parser), fprintf(outfile, "unknown_StatementType: %u\n", statement_ptr->type);
             return;
     }
 }
@@ -621,7 +621,7 @@ void output_primary(Primary* primary, FILE* outfile, size_t indent, Parser* pars
             output_variable_access(primary_ptr->value.var, outfile, indent + 1, parser);
             break;
         default:
-            indention(outfile, indent + 0, 1, parser), fprintf(outfile, "unknown_PrimaryType: %d\n", primary_ptr->type);
+            indention(outfile, indent + 0, 1, parser), fprintf(outfile, "unknown_PrimaryType: %u\n", primary_ptr->type);
             break;
     }
 }
@@ -663,7 +663,7 @@ void output_variable_access(VariableAccess* variable_access, FILE* outfile, size
             output_name(var_access_ptr->content.attr_name, outfile, indent + 1, parser);
             break;
         default:
-            indention(outfile, indent + 0, 1, parser), fprintf(outfile, "unknown_VariableAccessType: %d\n", var_access_ptr->type);
+            indention(outfile, indent + 0, 1, parser), fprintf(outfile, "unknown_VariableAccessType: %u\n", var_access_ptr->type);
             break;
     }
 }

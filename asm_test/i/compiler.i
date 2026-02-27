@@ -353,7 +353,7 @@ char is_type(Name* type);
 void parser_error(const string message, Token* token);
 void indention(FILE* out, size_t indent, char is_last, Parser* parser);
 Parser* create_parser(void);
-Name* parse_import_file(string import_name, string score, Scope* scope);
+Name* parse_import_file(string import_name, string source, Scope* scope);
 OperatorType string_to_operator(string str);
 int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);
@@ -394,16 +394,19 @@ void string_append(string dest, const size_t dest_length, const string src, cons
     if (dest_length <= src_length + new_length) {
         size_t max_src_length = dest_length - new_length - 1;
         snprintf(dest, dest_length, "%.*s%s", (int)max_src_length, src, new);
-    } else
-        sprintf(dest, "%s%s", src, new);
+    } else if (src == dest)
+        snprintf(dest + src_length, dest_length - src_length, "%s", new);
+    else
+        snprintf(dest, dest_length, "%s%s", src, new);
 }
 string read_source(FILE* file, size_t* length) {
     fseek(file, 0, SEEK_END);
     *length = (size_t)ftell(file);
     fseek(file, 0, SEEK_SET);
     string source = create_string("", *length + 1);
-    fread(source, 1, *length, file);
-    source[*length] = '\0';
+    size_t bytes_read = fread(source, 1, *length, file);
+    source[bytes_read] = '\0';
+    *length = bytes_read;
     for (size_t i = 0; i < *length; ++i) {
         if (source[i] == '\r' || source[i] == '\t')
             source[i] = ' ';

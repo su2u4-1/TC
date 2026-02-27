@@ -334,7 +334,7 @@ CodeMember* create_code_member(CodeMemberType type, Import* import_content, Func
         if (import_content == 0 && function_content == 0 && class_content == 0)
             fprintf(stderr, "Error creating code member: content is NULL\n");
         else
-            fprintf(stderr, "Error creating code member: unknown type %d\n", type);
+            fprintf(stderr, "Error creating code member: unknown type %u\n", type);
         return 0;
     }
     return code_member;
@@ -397,7 +397,7 @@ ClassMember* create_class_member(ClassMemberType type, Method* method_content, V
         if (method_content == 0 && variable_content == 0)
             fprintf(stderr, "Error creating class member: content is NULL\n");
         else
-            fprintf(stderr, "Error creating class member: unknown type %d\n", type);
+            fprintf(stderr, "Error creating class member: unknown type %u\n", type);
         return 0;
     }
     return class_member;
@@ -448,7 +448,7 @@ Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, 
         if (if_stmt == 0 && while_stmt == 0 && for_stmt == 0 && expr == 0 && var_stmt == 0)
             fprintf(stderr, "Error creating statement: content is NULL\n");
         else
-            fprintf(stderr, "Error creating statement: unknown type %d\n", type);
+            fprintf(stderr, "Error creating statement: unknown type %u\n", type);
         return 0;
     }
     return statement;
@@ -532,7 +532,7 @@ Primary* create_primary(PrimaryType type, string str_value, Expression* expr_val
         if (str_value == 0 && expr_value == 0 && prim_value == 0 && variable_value == 0)
             fprintf(stderr, "Error creating primary: value is NULL\n");
         else
-            fprintf(stderr, "Error creating primary: unknown type %d\n", type);
+            fprintf(stderr, "Error creating primary: unknown type %u\n", type);
         return 0;
     }
     return primary;
@@ -558,7 +558,7 @@ VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* 
         if (name_content == 0 && expr_content == 0 && args_content == 0)
             fprintf(stderr, "Error creating variable access: content is NULL\n");
         else
-            fprintf(stderr, "Error creating variable access: unknown type %d\n", type);
+            fprintf(stderr, "Error creating variable access: unknown type %u\n", type);
         return 0;
     }
     return variable_access;

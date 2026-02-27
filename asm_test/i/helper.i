@@ -325,7 +325,7 @@ char is_type(Name* type);
 void parser_error(const string message, Token* token);
 void indention(FILE* out, size_t indent, char is_last, Parser* parser);
 Parser* create_parser(void);
-Name* parse_import_file(string import_name, string score, Scope* scope);
+Name* parse_import_file(string import_name, string source, Scope* scope);
 OperatorType string_to_operator(string str);
 int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);
@@ -446,9 +446,9 @@ Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info
         new_name->info.type = NULL;
     else {
         if (name_info == NULL && scope_info == NULL && kind != NAME_TYPE)
-            fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %d\n", kind);
+            fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %u\n", kind);
         else
-            fprintf(stderr, "Error creating name: unknown NameType %d\n", kind);
+            fprintf(stderr, "Error creating name: unknown NameType %u\n", kind);
         return NULL;
     }
     list_append(scope->names, (pointer)new_name);
@@ -513,12 +513,12 @@ Parser* create_parser(void) {
     parser_ptr->in_loop = 0;
     return new_parser;
 }
-Name* parse_import_file(string import_name, string score, Scope* scope) {
+Name* parse_import_file(string import_name, string source, Scope* scope) {
     Name* name = 0;
     FILE* openfile;
     char filename[1024];
     filename[0] = '\0';
-    if (score == 0) {
+    if (source == 0) {
         if (strcmp(import_name, "print") == 0)
             strcpy(filename, "./std/print.tc");
         else if (strcmp(import_name, "arr") == 0)
@@ -528,7 +528,7 @@ Name* parse_import_file(string import_name, string score, Scope* scope) {
             return 0;
         }
     } else {
-        string_append(filename, 1024, filename, score);
+        string_append(filename, 1024, filename, source);
         string_append(filename, 1024, filename, "/");
         string_append(filename, 1024, filename, import_name);
         string_append(filename, 1024, filename, ".tc");
@@ -540,9 +540,9 @@ Name* parse_import_file(string import_name, string score, Scope* scope) {
     }
     printf("Info: Starting parsing lib file for import: %s\n", filename);
     size_t length = 0;
-    string source = read_source(openfile, &length);
+    string source_code = read_source(openfile, &length);
     fclose(openfile);
-    Code* code = parse_code(create_lexer(source, length), builtin_scope, create_parser());
+    Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser());
     printf("Info: Finished parsing lib file for import: %s\n", filename);
     if (code == 0) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
