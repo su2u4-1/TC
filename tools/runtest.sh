@@ -65,7 +65,7 @@ fi
 if [ $RUN_TEST1 -eq 1 ]; then
     echo ""
     echo "[Test 1]"
-    ./build/program.exe ./test/test1/test1.tc
+    ./build/program ./test/test1/test1.tc
     if [ $? -ne 0 ]; then
         echo "ERROR: Test 1 failed!"
         HAS_ERROR=1
@@ -75,7 +75,7 @@ fi
 if [ $RUN_TEST2 -eq 1 ]; then
     echo ""
     echo "[Test 2]"
-    ./build/program.exe ./test/test2/test2.tc
+    ./build/program ./test/test2/test2.tc
     if [ $? -ne 0 ]; then
         echo "ERROR: Test 2 failed!"
         HAS_ERROR=1
@@ -85,7 +85,7 @@ fi
 if [ $RUN_TEST3 -eq 1 ]; then
     echo ""
     echo "[Test 3]"
-    ./build/program.exe ./test/test3/test3.tc
+    ./build/program ./test/test3/test3.tc
     if [ $? -ne 0 ]; then
         echo "ERROR: Test 3 failed!"
         HAS_ERROR=1

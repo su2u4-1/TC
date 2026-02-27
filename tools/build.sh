@@ -45,8 +45,7 @@ for flag in "$FLAG_WALL" "$FLAG_WEXTRA" "$FLAG_OPTIMIZE" "$FLAG_DEBUG"; do
 done
 
 # Show the full command
-echo "Command:"
-echo "   gcc$GCC_FLAGS -I\"$INCDIR\" $SOURCES -o \"$OUTDIR/$OUTEXE\""
+echo "Build command: gcc$GCC_FLAGS -I\"$INCDIR\" $SOURCES -o \"$OUTDIR/$OUTEXE\""
 
 # Actually compile
 gcc $GCC_FLAGS -I"$INCDIR" $SOURCES -o "$OUTDIR/$OUTEXE"
