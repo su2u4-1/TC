@@ -1,7 +1,7 @@
 .LC0:
         .string "Error creating code member: content is NULL\n"
 .LC1:
-        .string "Error creating code member: unknown type %d\n"
+        .string "Error creating code member: unknown type %u\n"
 create_code_member:
         push    rbp
         mov     rbp, rsp
@@ -226,7 +226,7 @@ create_method:
 .LC5:
         .string "Error creating class member: content is NULL\n"
 .LC6:
-        .string "Error creating class member: unknown type %d\n"
+        .string "Error creating class member: unknown type %u\n"
 create_class_member:
         push    rbp
         mov     rbp, rsp
@@ -368,7 +368,7 @@ create_variable:
 .LC9:
         .string "Error creating statement: content is NULL\n"
 .LC10:
-        .string "Error creating statement: unknown type %d\n"
+        .string "Error creating statement: unknown type %u\n"
 create_statement:
         push    rbp
         mov     rbp, rsp
@@ -713,7 +713,7 @@ create_expression:
 .LC17:
         .string "Error creating primary: value is NULL\n"
 .LC18:
-        .string "Error creating primary: unknown type %d\n"
+        .string "Error creating primary: unknown type %u\n"
 create_primary:
         push    rbp
         mov     rbp, rsp
@@ -814,7 +814,7 @@ create_primary:
 .LC20:
         .string "Error creating variable access: content is NULL\n"
 .LC21:
-        .string "Error creating variable access: unknown type %d\n"
+        .string "Error creating variable access: unknown type %u\n"
 create_variable_access:
         push    rbp
         mov     rbp, rsp

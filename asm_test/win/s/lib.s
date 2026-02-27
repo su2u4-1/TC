@@ -1,47 +1,47 @@
 .LC0:
-        .string "import"
+        .ascii "import\0"
 .LC1:
-        .string "from"
+        .ascii "from\0"
 .LC2:
-        .string "func"
+        .ascii "func\0"
 .LC3:
-        .string "class"
+        .ascii "class\0"
 .LC4:
-        .string "method"
+        .ascii "method\0"
 .LC5:
-        .string "self"
+        .ascii "self\0"
 .LC6:
-        .string "if"
+        .ascii "if\0"
 .LC7:
-        .string "elif"
+        .ascii "elif\0"
 .LC8:
-        .string "else"
+        .ascii "else\0"
 .LC9:
-        .string "while"
+        .ascii "while\0"
 .LC10:
-        .string "for"
+        .ascii "for\0"
 .LC11:
-        .string "true"
+        .ascii "true\0"
 .LC12:
-        .string "false"
+        .ascii "false\0"
 .LC13:
-        .string "return"
+        .ascii "return\0"
 .LC14:
-        .string "break"
+        .ascii "break\0"
 .LC15:
-        .string "continue"
+        .ascii "continue\0"
 .LC16:
-        .string "int"
+        .ascii "int\0"
 .LC17:
-        .string "float"
+        .ascii "float\0"
 .LC18:
-        .string "string"
+        .ascii "string\0"
 .LC19:
-        .string "bool"
+        .ascii "bool\0"
 .LC20:
-        .string "void"
+        .ascii "void\0"
 .LC21:
-        .string "var"
+        .ascii "var\0"
 keywordStrings:
         .quad   .LC0
         .quad   .LC1
@@ -66,67 +66,67 @@ keywordStrings:
         .quad   .LC20
         .quad   .LC21
 keywordList:
-        .zero   176
+        .space 176
 .LC22:
-        .string "("
+        .ascii "(\0"
 .LC23:
-        .string ")"
+        .ascii ")\0"
 .LC24:
-        .string "{"
+        .ascii "{\0"
 .LC25:
-        .string "}"
+        .ascii "}\0"
 .LC26:
-        .string ","
+        .ascii ",\0"
 .LC27:
-        .string "!"
+        .ascii "!\0"
 .LC28:
-        .string "."
+        .ascii ".\0"
 .LC29:
-        .string "["
+        .ascii "[\0"
 .LC30:
-        .string "]"
+        .ascii "]\0"
 .LC31:
-        .string ";"
+        .ascii ";\0"
 .LC32:
-        .string "_"
+        .ascii "_\0"
 .LC33:
-        .string "+"
+        .ascii "+\0"
 .LC34:
-        .string "-"
+        .ascii "-\0"
 .LC35:
-        .string "*"
+        .ascii "*\0"
 .LC36:
-        .string "/"
+        .ascii "/\0"
 .LC37:
-        .string "%"
+        .ascii "%\0"
 .LC38:
-        .string "<"
+        .ascii "<\0"
 .LC39:
-        .string ">"
+        .ascii ">\0"
 .LC40:
-        .string "="
+        .ascii "=\0"
 .LC41:
-        .string "=="
+        .ascii "==\0"
 .LC42:
-        .string "!="
+        .ascii "!=\0"
 .LC43:
-        .string "<="
+        .ascii "<=\0"
 .LC44:
-        .string ">="
+        .ascii ">=\0"
 .LC45:
-        .string "+="
+        .ascii "+=\0"
 .LC46:
-        .string "-="
+        .ascii "-=\0"
 .LC47:
-        .string "*="
+        .ascii "*=\0"
 .LC48:
-        .string "/="
+        .ascii "/=\0"
 .LC49:
-        .string "%="
+        .ascii "%=\0"
 .LC50:
-        .string "&&"
+        .ascii "&&\0"
 .LC51:
-        .string "||"
+        .ascii "||\0"
 symbolStrings:
         .quad   .LC22
         .quad   .LC23
@@ -159,195 +159,198 @@ symbolStrings:
         .quad   .LC50
         .quad   .LC51
 symbolList:
-        .zero   240
+        .space 240
 struct_memory:
-        .zero   8
+        .space 8
 string_memory:
-        .zero   8
+        .space 8
 initialized:
-        .zero   1
+        .space 1
 all_string_list:
-        .zero   8
+        .space 8
 IMPORT_KEYWORD:
-        .zero   8
+        .space 8
 FROM_KEYWORD:
-        .zero   8
+        .space 8
 FUNC_KEYWORD:
-        .zero   8
+        .space 8
 CLASS_KEYWORD:
-        .zero   8
+        .space 8
 METHOD_KEYWORD:
-        .zero   8
+        .space 8
 SELF_KEYWORD:
-        .zero   8
+        .space 8
 IF_KEYWORD:
-        .zero   8
+        .space 8
 ELIF_KEYWORD:
-        .zero   8
+        .space 8
 ELSE_KEYWORD:
-        .zero   8
+        .space 8
 WHILE_KEYWORD:
-        .zero   8
+        .space 8
 FOR_KEYWORD:
-        .zero   8
+        .space 8
 TRUE_KEYWORD:
-        .zero   8
+        .space 8
 FALSE_KEYWORD:
-        .zero   8
+        .space 8
 RETURN_KEYWORD:
-        .zero   8
+        .space 8
 BREAK_KEYWORD:
-        .zero   8
+        .space 8
 CONTINUE_KEYWORD:
-        .zero   8
+        .space 8
 INT_KEYWORD:
-        .zero   8
+        .space 8
 FLOAT_KEYWORD:
-        .zero   8
+        .space 8
 STRING_KEYWORD:
-        .zero   8
+        .space 8
 BOOL_KEYWORD:
-        .zero   8
+        .space 8
 VOID_KEYWORD:
-        .zero   8
+        .space 8
 VAR_KEYWORD:
-        .zero   8
+        .space 8
 L_PAREN_SYMBOL:
-        .zero   8
+        .space 8
 R_PAREN_SYMBOL:
-        .zero   8
+        .space 8
 L_BRACE_SYMBOL:
-        .zero   8
+        .space 8
 R_BRACE_SYMBOL:
-        .zero   8
+        .space 8
 COMMA_SYMBOL:
-        .zero   8
+        .space 8
 NOT_SYMBOL:
-        .zero   8
+        .space 8
 DOT_SYMBOL:
-        .zero   8
+        .space 8
 L_BRACKET_SYMBOL:
-        .zero   8
+        .space 8
 R_BRACKET_SYMBOL:
-        .zero   8
+        .space 8
 SEMICOLON_SYMBOL:
-        .zero   8
+        .space 8
 UNDERLINE_SYMBOL:
-        .zero   8
+        .space 8
 ADD_SYMBOL:
-        .zero   8
+        .space 8
 SUB_SYMBOL:
-        .zero   8
+        .space 8
 MUL_SYMBOL:
-        .zero   8
+        .space 8
 DIV_SYMBOL:
-        .zero   8
+        .space 8
 MOD_SYMBOL:
-        .zero   8
+        .space 8
 LT_SYMBOL:
-        .zero   8
+        .space 8
 GT_SYMBOL:
-        .zero   8
+        .space 8
 ASSIGN_SYMBOL:
-        .zero   8
+        .space 8
 EQ_SYMBOL:
-        .zero   8
+        .space 8
 NE_SYMBOL:
-        .zero   8
+        .space 8
 LE_SYMBOL:
-        .zero   8
+        .space 8
 GE_SYMBOL:
-        .zero   8
+        .space 8
 ADD_ASSIGN_SYMBOL:
-        .zero   8
+        .space 8
 SUB_ASSIGN_SYMBOL:
-        .zero   8
+        .space 8
 MUL_ASSIGN_SYMBOL:
-        .zero   8
+        .space 8
 DIV_ASSIGN_SYMBOL:
-        .zero   8
+        .space 8
 MOD_ASSIGN_SYMBOL:
-        .zero   8
+        .space 8
 AND_SYMBOL:
-        .zero   8
+        .space 8
 OR_SYMBOL:
-        .zero   8
+        .space 8
 name_void:
-        .zero   8
+        .space 8
 name_int:
-        .zero   8
+        .space 8
 name_float:
-        .zero   8
+        .space 8
 name_string:
-        .zero   8
+        .space 8
 name_bool:
-        .zero   8
+        .space 8
 builtin_scope:
-        .zero   8
+        .space 8
 .LC52:
-        .string "Fatal: Cannot allocate memory\n"
+        .ascii "Fatal: Cannot allocate memory\12\0"
 increase_memory_size:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 48
-        mov     eax, edi
-        mov     BYTE PTR [rbp-36], al
-        mov     edi, 32
+        sub     rsp, 64
+        mov     eax, ecx
+        mov     BYTE PTR 16[rbp], al
+        mov     ecx, 32
         call    malloc
-        mov     QWORD PTR [rbp-16], rax
-        cmp     QWORD PTR [rbp-16], 0
+        mov     QWORD PTR -16[rbp], rax
+        cmp     QWORD PTR -16[rbp], 0
         jne     .L2
-        mov     rax, QWORD PTR stderr[rip]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     r9, rax
+        mov     r8d, 30
+        mov     edx, 1
+        lea     rax, .LC52[rip]
         mov     rcx, rax
-        mov     edx, 30
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC52
         call    fwrite
         mov     rax, QWORD PTR string_memory[rip]
-        mov     QWORD PTR [rbp-8], rax
+        mov     QWORD PTR -8[rbp], rax
         jmp     .L3
 .L4:
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
-        mov     QWORD PTR [rbp-24], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+24]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     QWORD PTR -24[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 24[rax]
+        mov     rcx, rax
         call    free
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rcx, rax
         call    free
-        mov     rax, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rbp-8], rax
+        mov     rax, QWORD PTR -24[rbp]
+        mov     QWORD PTR -8[rbp], rax
 .L3:
-        cmp     QWORD PTR [rbp-8], 0
+        cmp     QWORD PTR -8[rbp], 0
         jne     .L4
         mov     BYTE PTR initialized[rip], 0
-        mov     edi, 1
+        mov     ecx, 1
         call    exit
 .L2:
-        mov     edi, 1024
+        mov     ecx, 1024
         call    malloc
         mov     rdx, rax
-        mov     rax, QWORD PTR [rbp-16]
-        mov     QWORD PTR [rax+24], rdx
-        mov     rax, QWORD PTR [rbp-16]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     QWORD PTR 24[rax], rdx
+        mov     rax, QWORD PTR -16[rbp]
         mov     QWORD PTR [rax], 1024
-        mov     rax, QWORD PTR [rbp-16]
-        mov     QWORD PTR [rax+8], 0
-        mov     rax, QWORD PTR [rbp-16]
-        mov     QWORD PTR [rax+16], 0
-        cmp     BYTE PTR [rbp-36], 0
+        mov     rax, QWORD PTR -16[rbp]
+        mov     QWORD PTR 8[rax], 0
+        mov     rax, QWORD PTR -16[rbp]
+        mov     QWORD PTR 16[rax], 0
+        cmp     BYTE PTR 16[rbp], 0
         je      .L5
         mov     rax, QWORD PTR struct_memory[rip]
-        mov     rdx, QWORD PTR [rax+8]
+        mov     rdx, QWORD PTR 8[rax]
         mov     rax, QWORD PTR struct_memory_used[rip]
         add     rax, rdx
         mov     QWORD PTR struct_memory_used[rip], rax
         mov     rdx, QWORD PTR struct_memory[rip]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     QWORD PTR [rax+16], rdx
-        mov     rax, QWORD PTR [rbp-16]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     QWORD PTR 16[rax], rdx
+        mov     rax, QWORD PTR -16[rbp]
         mov     QWORD PTR struct_memory[rip], rax
         mov     rax, QWORD PTR struct_memory_count[rip]
         add     rax, 1024
@@ -355,307 +358,332 @@ increase_memory_size:
         jmp     .L7
 .L5:
         mov     rax, QWORD PTR string_memory[rip]
-        mov     rdx, QWORD PTR [rax+8]
+        mov     rdx, QWORD PTR 8[rax]
         mov     rax, QWORD PTR string_memory_used[rip]
         add     rax, rdx
         mov     QWORD PTR string_memory_used[rip], rax
         mov     rdx, QWORD PTR string_memory[rip]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     QWORD PTR [rax+16], rdx
-        mov     rax, QWORD PTR [rbp-16]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     QWORD PTR 16[rax], rdx
+        mov     rax, QWORD PTR -16[rbp]
         mov     QWORD PTR string_memory[rip], rax
         mov     rax, QWORD PTR string_memory_count[rip]
         add     rax, 1024
         mov     QWORD PTR string_memory_count[rip], rax
 .L7:
         nop
-        leave
+        add     rsp, 64
+        pop     rbp
         ret
 .LC53:
-        .string "Info: Allocate big memory block of size %zu bytes\n"
+        .ascii "Info: Allocate big memory block of size %zu bytes\12\0"
 alloc_big_memory:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 32
-        mov     QWORD PTR [rbp-24], rdi
+        sub     rsp, 48
+        mov     QWORD PTR 16[rbp], rcx
         mov     rdx, QWORD PTR string_memory_count[rip]
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR 16[rbp]
         add     rax, rdx
         mov     QWORD PTR string_memory_count[rip], rax
         mov     rdx, QWORD PTR string_memory_used[rip]
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR 16[rbp]
         add     rax, rdx
         mov     QWORD PTR string_memory_used[rip], rax
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rdi, rax
-        call    malloc
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR stderr[rip]
-        mov     rdx, QWORD PTR [rbp-24]
-        mov     esi, OFFSET FLAT:.LC53
-        mov     rdi, rax
-        mov     eax, 0
-        call    fprintf
-        cmp     QWORD PTR [rbp-8], 0
-        jne     .L9
-        mov     rax, QWORD PTR stderr[rip]
+        mov     rax, QWORD PTR 16[rbp]
         mov     rcx, rax
-        mov     edx, 30
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC52
+        call    malloc
+        mov     QWORD PTR -8[rbp], rax
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r8, rax
+        lea     rax, .LC53[rip]
+        mov     rdx, rax
+        call    fprintf
+        cmp     QWORD PTR -8[rbp], 0
+        jne     .L9
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     r9, rax
+        mov     r8d, 30
+        mov     edx, 1
+        lea     rax, .LC52[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     edi, 1
+        mov     ecx, 1
         call    exit
 .L9:
-        mov     rax, QWORD PTR [rbp-8]
-        leave
+        mov     rax, QWORD PTR -8[rbp]
+        add     rsp, 48
+        pop     rbp
         ret
 create_string_check:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 64
-        mov     QWORD PTR [rbp-40], rdi
-        mov     QWORD PTR [rbp-48], rsi
-        mov     eax, edx
-        mov     BYTE PTR [rbp-52], al
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     eax, r8d
+        mov     BYTE PTR 32[rbp], al
         movzx   eax, BYTE PTR initialized[rip]
         test    al, al
         jne     .L12
         call    init
 .L12:
-        cmp     QWORD PTR [rbp-40], 0
+        cmp     QWORD PTR 16[rbp], 0
         je      .L13
-        cmp     QWORD PTR [rbp-48], 0
+        cmp     QWORD PTR 24[rbp], 0
         jne     .L14
 .L13:
         mov     eax, 0
         jmp     .L15
 .L14:
-        cmp     BYTE PTR [rbp-52], 0
+        cmp     BYTE PTR 32[rbp], 0
         je      .L16
         mov     rax, QWORD PTR all_string_list[rip]
-        mov     QWORD PTR [rbp-8], rax
-        mov     QWORD PTR [rbp-16], 0
+        mov     QWORD PTR -8[rbp], rax
+        mov     QWORD PTR -16[rbp], 0
         jmp     .L17
 .L19:
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
-        cmp     QWORD PTR [rbp-48], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        cmp     QWORD PTR 24[rbp], rax
         jne     .L18
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
         test    rax, rax
         je      .L18
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rcx, QWORD PTR [rbp-40]
-        mov     rsi, rcx
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 24[rbp]
+        mov     rdx, QWORD PTR 16[rbp]
+        mov     r8, rcx
+        mov     rcx, rax
         call    strncmp
         test    eax, eax
         jne     .L18
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     QWORD PTR [rbp-16], rax
+        mov     QWORD PTR -16[rbp], rax
 .L18:
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
-        mov     QWORD PTR [rbp-8], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     QWORD PTR -8[rbp], rax
 .L17:
-        cmp     QWORD PTR [rbp-8], 0
+        cmp     QWORD PTR -8[rbp], 0
         jne     .L19
-        cmp     QWORD PTR [rbp-16], 0
+        cmp     QWORD PTR -16[rbp], 0
         je      .L16
-        mov     rax, QWORD PTR [rbp-16]
+        mov     rax, QWORD PTR -16[rbp]
         jmp     .L15
 .L16:
-        cmp     QWORD PTR [rbp-48], 1022
+        cmp     QWORD PTR 24[rbp], 1022
         jbe     .L20
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rax, QWORD PTR 24[rbp]
         add     rax, 1
-        mov     rdi, rax
+        mov     rcx, rax
         call    alloc_big_memory
-        mov     QWORD PTR [rbp-24], rax
+        mov     QWORD PTR -24[rbp], rax
         jmp     .L21
 .L20:
         mov     rax, QWORD PTR string_memory[rip]
-        mov     rdx, QWORD PTR [rax+8]
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rdx, QWORD PTR 8[rax]
+        mov     rax, QWORD PTR 24[rbp]
         add     rdx, rax
         mov     rax, QWORD PTR string_memory[rip]
         mov     rax, QWORD PTR [rax]
         cmp     rdx, rax
         jb      .L22
-        mov     edi, 0
+        mov     ecx, 0
         call    increase_memory_size
 .L22:
         mov     rax, QWORD PTR string_memory[rip]
-        mov     rdx, QWORD PTR [rax+24]
+        mov     rdx, QWORD PTR 24[rax]
         mov     rax, QWORD PTR string_memory[rip]
-        mov     rax, QWORD PTR [rax+8]
+        mov     rax, QWORD PTR 8[rax]
         add     rax, rdx
-        mov     QWORD PTR [rbp-24], rax
+        mov     QWORD PTR -24[rbp], rax
         mov     rax, QWORD PTR string_memory[rip]
-        mov     rdx, QWORD PTR [rax+8]
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rdx, QWORD PTR 8[rax]
+        mov     rax, QWORD PTR 24[rbp]
         add     rdx, rax
         mov     rax, QWORD PTR string_memory[rip]
         add     rdx, 1
-        mov     QWORD PTR [rax+8], rdx
+        mov     QWORD PTR 8[rax], rdx
 .L21:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rcx, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rsi, rcx
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 24[rbp]
+        mov     rdx, QWORD PTR 16[rbp]
+        mov     rax, QWORD PTR -24[rbp]
+        mov     r8, rcx
+        mov     rcx, rax
         call    strncpy
-        mov     rdx, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rdx, QWORD PTR -24[rbp]
+        mov     rax, QWORD PTR 24[rbp]
         add     rax, rdx
         mov     BYTE PTR [rax], 0
-        mov     edi, 24
+        mov     ecx, 24
         call    alloc_memory
-        mov     QWORD PTR [rbp-32], rax
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rdx, QWORD PTR [rbp-24]
+        mov     QWORD PTR -32[rbp], rax
+        mov     rax, QWORD PTR -32[rbp]
+        mov     rdx, QWORD PTR -24[rbp]
         mov     QWORD PTR [rax], rdx
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     QWORD PTR [rax+8], rdx
+        mov     rax, QWORD PTR -32[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     QWORD PTR 8[rax], rdx
         mov     rdx, QWORD PTR all_string_list[rip]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     QWORD PTR [rax+16], rdx
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rax, QWORD PTR -32[rbp]
+        mov     QWORD PTR 16[rax], rdx
+        mov     rax, QWORD PTR -32[rbp]
         mov     QWORD PTR all_string_list[rip], rax
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR -24[rbp]
 .L15:
-        leave
+        add     rsp, 64
+        pop     rbp
         ret
 create_string:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 16
-        mov     QWORD PTR [rbp-8], rdi
-        mov     QWORD PTR [rbp-16], rsi
-        mov     rcx, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     edx, 1
-        mov     rsi, rcx
-        mov     rdi, rax
+        sub     rsp, 32
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r8d, 1
+        mov     rcx, rax
         call    create_string_check
-        leave
+        add     rsp, 32
+        pop     rbp
         ret
 init:
         push    rbp
-        mov     rbp, rsp
         push    rbx
-        sub     rsp, 24
+        sub     rsp, 56
+        lea     rbp, 48[rsp]
         movzx   eax, BYTE PTR initialized[rip]
         test    al, al
         jne     .L36
         mov     rax, QWORD PTR struct_memory[rip]
         test    rax, rax
         jne     .L28
-        mov     edi, 32
+        mov     ecx, 32
         call    malloc
         mov     QWORD PTR struct_memory[rip], rax
         mov     rax, QWORD PTR struct_memory[rip]
         test    rax, rax
         jne     .L29
-        mov     rax, QWORD PTR stderr[rip]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     r9, rax
+        mov     r8d, 30
+        mov     edx, 1
+        lea     rax, .LC52[rip]
         mov     rcx, rax
-        mov     edx, 30
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC52
         call    fwrite
         mov     BYTE PTR initialized[rip], 0
-        mov     edi, 1
+        mov     ecx, 1
         call    exit
 .L29:
         mov     rbx, QWORD PTR struct_memory[rip]
-        mov     edi, 1024
+        mov     ecx, 1024
         call    malloc
-        mov     QWORD PTR [rbx+24], rax
+        mov     QWORD PTR 24[rbx], rax
         mov     rax, QWORD PTR struct_memory[rip]
         mov     QWORD PTR [rax], 1024
         mov     rax, QWORD PTR struct_memory[rip]
-        mov     QWORD PTR [rax+8], 0
+        mov     QWORD PTR 8[rax], 0
         mov     rax, QWORD PTR struct_memory[rip]
-        mov     QWORD PTR [rax+16], 0
+        mov     QWORD PTR 16[rax], 0
         mov     QWORD PTR struct_memory_count[rip], 1024
 .L28:
         mov     rax, QWORD PTR string_memory[rip]
         test    rax, rax
         jne     .L30
-        mov     edi, 32
+        mov     ecx, 32
         call    malloc
         mov     QWORD PTR string_memory[rip], rax
         mov     rax, QWORD PTR string_memory[rip]
         test    rax, rax
         jne     .L31
-        mov     rax, QWORD PTR stderr[rip]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     r9, rax
+        mov     r8d, 30
+        mov     edx, 1
+        lea     rax, .LC52[rip]
         mov     rcx, rax
-        mov     edx, 30
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC52
         call    fwrite
         mov     BYTE PTR initialized[rip], 0
-        mov     edi, 1
+        mov     ecx, 1
         call    exit
 .L31:
         mov     rbx, QWORD PTR string_memory[rip]
-        mov     edi, 1024
+        mov     ecx, 1024
         call    malloc
-        mov     QWORD PTR [rbx+24], rax
+        mov     QWORD PTR 24[rbx], rax
         mov     rax, QWORD PTR string_memory[rip]
         mov     QWORD PTR [rax], 1024
         mov     rax, QWORD PTR string_memory[rip]
-        mov     QWORD PTR [rax+8], 0
+        mov     QWORD PTR 8[rax], 0
         mov     rax, QWORD PTR string_memory[rip]
-        mov     QWORD PTR [rax+16], 0
+        mov     QWORD PTR 16[rax], 0
         mov     QWORD PTR string_memory_count[rip], 1024
 .L30:
         mov     BYTE PTR initialized[rip], 1
-        mov     QWORD PTR [rbp-24], 0
+        mov     QWORD PTR -8[rbp], 0
         jmp     .L32
 .L33:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR keywordStrings[0+rax*8]
-        mov     rdi, rax
-        call    strlen
+        mov     rax, QWORD PTR -8[rbp]
+        lea     rdx, 0[0+rax*8]
+        lea     rax, keywordStrings[rip]
+        mov     rax, QWORD PTR [rdx+rax]
         mov     rcx, rax
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR keywordStrings[0+rax*8]
-        mov     edx, 0
-        mov     rsi, rcx
-        mov     rdi, rax
+        call    strlen
+        mov     rdx, rax
+        mov     rax, QWORD PTR -8[rbp]
+        lea     rcx, 0[0+rax*8]
+        lea     rax, keywordStrings[rip]
+        mov     rax, QWORD PTR [rcx+rax]
+        mov     r8d, 0
+        mov     rcx, rax
         call    create_string_check
-        mov     rdx, QWORD PTR [rbp-24]
-        mov     QWORD PTR keywordList[0+rdx*8], rax
-        add     QWORD PTR [rbp-24], 1
+        mov     rdx, QWORD PTR -8[rbp]
+        lea     rcx, 0[0+rdx*8]
+        lea     rdx, keywordList[rip]
+        mov     QWORD PTR [rcx+rdx], rax
+        add     QWORD PTR -8[rbp], 1
 .L32:
-        cmp     QWORD PTR [rbp-24], 21
+        cmp     QWORD PTR -8[rbp], 21
         jbe     .L33
-        mov     QWORD PTR [rbp-32], 0
+        mov     QWORD PTR -16[rbp], 0
         jmp     .L34
 .L35:
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rax, QWORD PTR symbolStrings[0+rax*8]
-        mov     rdi, rax
-        call    strlen
+        mov     rax, QWORD PTR -16[rbp]
+        lea     rdx, 0[0+rax*8]
+        lea     rax, symbolStrings[rip]
+        mov     rax, QWORD PTR [rdx+rax]
         mov     rcx, rax
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rax, QWORD PTR symbolStrings[0+rax*8]
-        mov     edx, 0
-        mov     rsi, rcx
-        mov     rdi, rax
+        call    strlen
+        mov     rdx, rax
+        mov     rax, QWORD PTR -16[rbp]
+        lea     rcx, 0[0+rax*8]
+        lea     rax, symbolStrings[rip]
+        mov     rax, QWORD PTR [rcx+rax]
+        mov     r8d, 0
+        mov     rcx, rax
         call    create_string_check
-        mov     rdx, QWORD PTR [rbp-32]
-        mov     QWORD PTR symbolList[0+rdx*8], rax
-        add     QWORD PTR [rbp-32], 1
+        mov     rdx, QWORD PTR -16[rbp]
+        lea     rcx, 0[0+rdx*8]
+        lea     rdx, symbolList[rip]
+        mov     QWORD PTR [rcx+rdx], rax
+        add     QWORD PTR -16[rbp], 1
 .L34:
-        cmp     QWORD PTR [rbp-32], 29
+        cmp     QWORD PTR -16[rbp], 29
         jbe     .L35
         mov     rax, QWORD PTR keywordList[rip]
         mov     QWORD PTR IMPORT_KEYWORD[rip], rax
@@ -765,189 +793,192 @@ init:
 .L36:
         nop
 .L25:
-        mov     rbx, QWORD PTR [rbp-8]
-        leave
+        add     rsp, 56
+        pop     rbx
+        pop     rbp
         ret
 .LC54:
-        .string "/app/example.c"
+        .ascii "C:\\Windows\\TEMP\\compiler-explorer-compiler4fFsnT\\example.c\0"
 .LC55:
-        .string "struct_memory->used % sizeof(size_t) == 0"
+        .ascii "struct_memory->used % sizeof(size_t) == 0\0"
 alloc_memory:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 32
-        mov     QWORD PTR [rbp-24], rdi
+        sub     rsp, 48
+        mov     QWORD PTR 16[rbp], rcx
         movzx   eax, BYTE PTR initialized[rip]
         test    al, al
         jne     .L38
         call    init
 .L38:
         mov     rax, QWORD PTR struct_memory[rip]
-        mov     rdx, QWORD PTR [rax+8]
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rdx, QWORD PTR 8[rax]
+        mov     rax, QWORD PTR 16[rbp]
         add     rdx, rax
         mov     rax, QWORD PTR struct_memory[rip]
         mov     rax, QWORD PTR [rax]
         cmp     rdx, rax
         jb      .L39
-        mov     edi, 1
+        mov     ecx, 1
         call    increase_memory_size
 .L39:
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR 16[rbp]
         add     rax, 7
         and     rax, -8
-        mov     QWORD PTR [rbp-24], rax
+        mov     QWORD PTR 16[rbp], rax
         mov     rax, QWORD PTR struct_memory[rip]
-        mov     rax, QWORD PTR [rax+8]
+        mov     rax, QWORD PTR 8[rax]
         and     eax, 7
         test    rax, rax
         je      .L40
-        mov     ecx, OFFSET FLAT:__PRETTY_FUNCTION__.0
-        mov     edx, 332
-        mov     esi, OFFSET FLAT:.LC54
-        mov     edi, OFFSET FLAT:.LC55
-        call    __assert_fail
+        mov     r8d, 332
+        lea     rax, .LC54[rip]
+        mov     rdx, rax
+        lea     rax, .LC55[rip]
+        mov     rcx, rax
+        mov     rax, QWORD PTR __imp__assert[rip]
+        call    rax
 .L40:
         mov     rax, QWORD PTR struct_memory[rip]
-        mov     rdx, QWORD PTR [rax+24]
+        mov     rdx, QWORD PTR 24[rax]
         mov     rax, QWORD PTR struct_memory[rip]
-        mov     rax, QWORD PTR [rax+8]
+        mov     rax, QWORD PTR 8[rax]
         and     rax, -8
         add     rax, rdx
-        mov     QWORD PTR [rbp-8], rax
+        mov     QWORD PTR -8[rbp], rax
         mov     rax, QWORD PTR struct_memory[rip]
-        mov     rcx, QWORD PTR [rax+8]
+        mov     rcx, QWORD PTR 8[rax]
         mov     rax, QWORD PTR struct_memory[rip]
-        mov     rdx, QWORD PTR [rbp-24]
+        mov     rdx, QWORD PTR 16[rbp]
         add     rdx, rcx
-        mov     QWORD PTR [rax+8], rdx
+        mov     QWORD PTR 8[rax], rdx
         mov     rax, QWORD PTR memoryBlockCount[rip]
         add     rax, 1
         mov     QWORD PTR memoryBlockCount[rip], rax
-        mov     rax, QWORD PTR [rbp-8]
-        leave
+        mov     rax, QWORD PTR -8[rbp]
+        add     rsp, 48
+        pop     rbp
         ret
 is_keyword:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 32
-        mov     QWORD PTR [rbp-24], rdi
+        sub     rsp, 48
+        mov     QWORD PTR 16[rbp], rcx
         movzx   eax, BYTE PTR initialized[rip]
         test    al, al
         jne     .L43
         call    init
 .L43:
-        mov     QWORD PTR [rbp-8], 0
+        mov     QWORD PTR -8[rbp], 0
         jmp     .L44
 .L47:
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rdx, QWORD PTR keywordList[0+rax*8]
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR -8[rbp]
+        lea     rdx, 0[0+rax*8]
+        lea     rax, keywordList[rip]
+        mov     rdx, QWORD PTR [rdx+rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L45
         mov     eax, 1
         jmp     .L46
 .L45:
-        add     QWORD PTR [rbp-8], 1
+        add     QWORD PTR -8[rbp], 1
 .L44:
-        cmp     QWORD PTR [rbp-8], 21
+        cmp     QWORD PTR -8[rbp], 21
         jbe     .L47
         mov     eax, 0
 .L46:
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 string_equal:
         push    rbp
         mov     rbp, rsp
-        mov     QWORD PTR [rbp-8], rdi
-        mov     QWORD PTR [rbp-16], rsi
-        mov     rax, QWORD PTR [rbp-8]
-        cmp     rax, QWORD PTR [rbp-16]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     rax, QWORD PTR 16[rbp]
+        cmp     rax, QWORD PTR 24[rbp]
         sete    al
         pop     rbp
         ret
 .LC56:
-        .string ""
+        .ascii "\0"
 .LC57:
-        .string "%zu/%zu bytes"
+        .ascii "%zu/%zu bytes\0"
 .LC58:
-        .string "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu"
+        .ascii "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu\0"
 get_info:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 48
-        mov     QWORD PTR [rbp-8], 0
+        sub     rsp, 112
+        mov     QWORD PTR -8[rbp], 0
         mov     rax, QWORD PTR all_string_list[rip]
-        mov     QWORD PTR [rbp-16], rax
+        mov     QWORD PTR -16[rbp], rax
         jmp     .L51
 .L52:
-        add     QWORD PTR [rbp-8], 1
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+16]
-        mov     QWORD PTR [rbp-16], rax
+        add     QWORD PTR -8[rbp], 1
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     QWORD PTR -16[rbp], rax
 .L51:
-        cmp     QWORD PTR [rbp-16], 0
+        cmp     QWORD PTR -16[rbp], 0
         jne     .L52
-        mov     edx, 0
-        mov     esi, 48
-        mov     edi, OFFSET FLAT:.LC56
+        mov     r8d, 0
+        mov     edx, 48
+        lea     rax, .LC56[rip]
+        mov     rcx, rax
         call    create_string_check
-        mov     QWORD PTR [rbp-24], rax
-        mov     rdx, QWORD PTR struct_memory_count[rip]
+        mov     QWORD PTR -24[rbp], rax
+        mov     rcx, QWORD PTR struct_memory_count[rip]
         mov     rax, QWORD PTR struct_memory[rip]
-        mov     rcx, QWORD PTR [rax+8]
+        mov     rdx, QWORD PTR 8[rax]
         mov     rax, QWORD PTR struct_memory_used[rip]
-        lea     rsi, [rcx+rax]
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rcx, rdx
-        mov     rdx, rsi
-        mov     esi, OFFSET FLAT:.LC57
-        mov     rdi, rax
-        mov     eax, 0
+        add     rdx, rax
+        mov     rax, QWORD PTR -24[rbp]
+        mov     r9, rcx
+        mov     r8, rdx
+        lea     rdx, .LC57[rip]
+        mov     rcx, rax
         call    sprintf
-        mov     edx, 0
-        mov     esi, 48
-        mov     edi, OFFSET FLAT:.LC56
+        mov     r8d, 0
+        mov     edx, 48
+        lea     rax, .LC56[rip]
+        mov     rcx, rax
         call    create_string_check
-        mov     QWORD PTR [rbp-32], rax
-        mov     rdx, QWORD PTR string_memory_count[rip]
+        mov     QWORD PTR -32[rbp], rax
+        mov     rcx, QWORD PTR string_memory_count[rip]
         mov     rax, QWORD PTR string_memory[rip]
-        mov     rcx, QWORD PTR [rax+8]
+        mov     rdx, QWORD PTR 8[rax]
         mov     rax, QWORD PTR string_memory_used[rip]
-        lea     rsi, [rcx+rax]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rsi
-        mov     esi, OFFSET FLAT:.LC57
-        mov     rdi, rax
-        mov     eax, 0
+        add     rdx, rax
+        mov     rax, QWORD PTR -32[rbp]
+        mov     r9, rcx
+        mov     r8, rdx
+        lea     rdx, .LC57[rip]
+        mov     rcx, rax
         call    sprintf
-        mov     edx, 0
-        mov     esi, 240
-        mov     edi, OFFSET FLAT:.LC56
+        mov     r8d, 0
+        mov     edx, 240
+        lea     rax, .LC56[rip]
+        mov     rcx, rax
         call    create_string_check
-        mov     QWORD PTR [rbp-40], rax
-        mov     rcx, QWORD PTR memoryBlockCount[rip]
-        mov     rdi, QWORD PTR [rbp-8]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rdx, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR [rbp-40]
-        sub     rsp, 8
-        push    rcx
-        mov     r9, rdi
-        mov     r8, rsi
-        mov     rcx, rdx
-        mov     edx, 2
-        mov     esi, OFFSET FLAT:.LC58
-        mov     rdi, rax
-        mov     eax, 0
+        mov     QWORD PTR -40[rbp], rax
+        mov     rdx, QWORD PTR memoryBlockCount[rip]
+        mov     rcx, QWORD PTR -24[rbp]
+        mov     rax, QWORD PTR -40[rbp]
+        mov     QWORD PTR 48[rsp], rdx
+        mov     rdx, QWORD PTR -8[rbp]
+        mov     QWORD PTR 40[rsp], rdx
+        mov     rdx, QWORD PTR -32[rbp]
+        mov     QWORD PTR 32[rsp], rdx
+        mov     r9, rcx
+        mov     r8d, 2
+        lea     rdx, .LC58[rip]
+        mov     rcx, rax
         call    sprintf
-        add     rsp, 16
-        mov     rax, QWORD PTR [rbp-40]
-        leave
+        mov     rax, QWORD PTR -40[rbp]
+        add     rsp, 112
+        pop     rbp
         ret
-__PRETTY_FUNCTION__.0:
-        .string "alloc_memory"

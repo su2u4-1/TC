@@ -940,7 +940,7 @@ get_info:
         mov     r9, rdi
         mov     r8, rsi
         mov     rcx, rdx
-        mov     edx, 2
+        mov     edx, 3
         mov     esi, OFFSET FLAT:.LC58
         mov     rdi, rax
         mov     eax, 0

@@ -1,551 +1,601 @@
 .LC0:
-        .string "%.*s%s"
+        .ascii "%.*s%s\0"
 .LC1:
-        .string "%s%s"
+        .ascii "%s\0"
+.LC2:
+        .ascii "%s%s\0"
 string_append:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 64
-        mov     QWORD PTR [rbp-40], rdi
-        mov     QWORD PTR [rbp-48], rsi
-        mov     QWORD PTR [rbp-56], rdx
-        mov     QWORD PTR [rbp-64], rcx
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rdi, rax
+        sub     rsp, 80
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 32[rbp]
+        mov     rcx, rax
         call    strlen
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rdi, rax
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR 40[rbp]
+        mov     rcx, rax
         call    strlen
-        mov     QWORD PTR [rbp-16], rax
-        mov     rdx, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rbp-16]
+        mov     QWORD PTR -16[rbp], rax
+        mov     rdx, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR -16[rbp]
         add     rax, rdx
-        cmp     rax, QWORD PTR [rbp-48]
+        cmp     rax, QWORD PTR 24[rbp]
         jb      .L2
-        mov     rax, QWORD PTR [rbp-48]
-        sub     rax, QWORD PTR [rbp-16]
+        mov     rax, QWORD PTR 24[rbp]
+        sub     rax, QWORD PTR -16[rbp]
         sub     rax, 1
-        mov     QWORD PTR [rbp-24], rax
-        mov     rax, QWORD PTR [rbp-24]
-        mov     edi, eax
-        mov     rcx, QWORD PTR [rbp-64]
-        mov     rdx, QWORD PTR [rbp-56]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rax, QWORD PTR [rbp-40]
-        mov     r9, rcx
-        mov     r8, rdx
-        mov     ecx, edi
-        mov     edx, OFFSET FLAT:.LC0
-        mov     rdi, rax
-        mov     eax, 0
+        mov     QWORD PTR -24[rbp], rax
+        mov     rax, QWORD PTR -24[rbp]
+        mov     r8d, eax
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     QWORD PTR 40[rsp], rcx
+        mov     rcx, QWORD PTR 32[rbp]
+        mov     QWORD PTR 32[rsp], rcx
+        mov     r9d, r8d
+        lea     r8, .LC0[rip]
+        mov     rcx, rax
         call    snprintf
-        jmp     .L4
+        jmp     .L5
 .L2:
-        mov     rcx, QWORD PTR [rbp-64]
-        mov     rdx, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-40]
-        mov     esi, OFFSET FLAT:.LC1
-        mov     rdi, rax
-        mov     eax, 0
-        call    sprintf
+        mov     rax, QWORD PTR 32[rbp]
+        cmp     rax, QWORD PTR 16[rbp]
+        jne     .L4
+        mov     rax, QWORD PTR 24[rbp]
+        sub     rax, QWORD PTR -8[rbp]
+        mov     rcx, QWORD PTR 16[rbp]
+        mov     rdx, QWORD PTR -8[rbp]
+        add     rcx, rdx
+        mov     rdx, QWORD PTR 40[rbp]
+        mov     r9, rdx
+        lea     r8, .LC1[rip]
+        mov     rdx, rax
+        call    snprintf
+        jmp     .L5
 .L4:
+        mov     r8, QWORD PTR 32[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     QWORD PTR 32[rsp], rcx
+        mov     r9, r8
+        lea     r8, .LC2[rip]
+        mov     rcx, rax
+        call    snprintf
+.L5:
         nop
-        leave
+        add     rsp, 80
+        pop     rbp
         ret
-.LC2:
-        .string ""
+.LC3:
+        .ascii "\0"
 read_source:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 32
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     rax, QWORD PTR [rbp-24]
-        mov     edx, 2
-        mov     esi, 0
-        mov     rdi, rax
-        call    fseek
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rdi, rax
-        call    ftell
-        mov     rdx, rax
-        mov     rax, QWORD PTR [rbp-32]
-        mov     QWORD PTR [rax], rdx
-        mov     rax, QWORD PTR [rbp-24]
+        sub     rsp, 64
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r8d, 2
         mov     edx, 0
-        mov     esi, 0
-        mov     rdi, rax
+        mov     rcx, rax
         call    fseek
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
+        call    ftell
+        movsx   rdx, eax
+        mov     rax, QWORD PTR 24[rbp]
+        mov     QWORD PTR [rax], rdx
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r8d, 0
+        mov     edx, 0
+        mov     rcx, rax
+        call    fseek
+        mov     rax, QWORD PTR 24[rbp]
         mov     rax, QWORD PTR [rax]
         add     rax, 1
-        mov     rsi, rax
-        mov     edi, OFFSET FLAT:.LC2
+        mov     rdx, rax
+        lea     rax, .LC3[rip]
+        mov     rcx, rax
         call    create_string
-        mov     QWORD PTR [rbp-16], rax
-        mov     rax, QWORD PTR [rbp-32]
+        mov     QWORD PTR -16[rbp], rax
+        mov     rax, QWORD PTR 24[rbp]
         mov     rdx, QWORD PTR [rax]
-        mov     rcx, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     esi, 1
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 16[rbp]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     r9, rcx
+        mov     r8, rdx
+        mov     edx, 1
+        mov     rcx, rax
         call    fread
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rdx, QWORD PTR [rax]
-        mov     rax, QWORD PTR [rbp-16]
+        mov     QWORD PTR -24[rbp], rax
+        mov     rdx, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR -24[rbp]
         add     rax, rdx
         mov     BYTE PTR [rax], 0
-        mov     QWORD PTR [rbp-8], 0
-        jmp     .L6
-.L9:
-        mov     rdx, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     rdx, QWORD PTR -24[rbp]
+        mov     QWORD PTR [rax], rdx
+        mov     QWORD PTR -8[rbp], 0
+        jmp     .L7
+.L10:
+        mov     rdx, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR -8[rbp]
         add     rax, rdx
         movzx   eax, BYTE PTR [rax]
         cmp     al, 13
-        je      .L7
-        mov     rdx, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rbp-8]
+        je      .L8
+        mov     rdx, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR -8[rbp]
         add     rax, rdx
         movzx   eax, BYTE PTR [rax]
         cmp     al, 9
-        jne     .L8
-.L7:
-        mov     rdx, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rbp-8]
+        jne     .L9
+.L8:
+        mov     rdx, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR -8[rbp]
         add     rax, rdx
         mov     BYTE PTR [rax], 32
-.L8:
-        add     QWORD PTR [rbp-8], 1
-.L6:
-        mov     rax, QWORD PTR [rbp-32]
+.L9:
+        add     QWORD PTR -8[rbp], 1
+.L7:
+        mov     rax, QWORD PTR 24[rbp]
         mov     rax, QWORD PTR [rax]
-        cmp     QWORD PTR [rbp-8], rax
-        jb      .L9
-        mov     rax, QWORD PTR [rbp-16]
-        leave
+        cmp     QWORD PTR -8[rbp], rax
+        jb      .L10
+        mov     rax, QWORD PTR -16[rbp]
+        add     rsp, 64
+        pop     rbp
         ret
-.LC3:
-        .string "Token(Type: EOF,         Line: %zu, Column: %zu)\n"
 .LC4:
-        .string "Token(Type: identifier,  Line: "
+        .ascii "Token(Type: EOF,         Line: %zu, Column: %zu)\12\0"
 .LC5:
-        .string "Token(Type: integer,     Line: "
+        .ascii "Token(Type: identifier,  Line: \0"
 .LC6:
-        .string "Token(Type: float,       Line: "
+        .ascii "Token(Type: integer,     Line: \0"
 .LC7:
-        .string "Token(Type: string,      Line: "
+        .ascii "Token(Type: float,       Line: \0"
 .LC8:
-        .string "Token(Type: symbol,      Line: "
+        .ascii "Token(Type: string,      Line: \0"
 .LC9:
-        .string "Token(Type: keyword,     Line: "
+        .ascii "Token(Type: symbol,      Line: \0"
 .LC10:
-        .string "Token(Type: comment,     Line: "
+        .ascii "Token(Type: keyword,     Line: \0"
 .LC11:
-        .string "%zu, Column: %zu)\tLexeme: '"
+        .ascii "Token(Type: comment,     Line: \0"
 .LC12:
-        .string "\\0"
+        .ascii "%zu, Column: %zu)\11Lexeme: '\0"
 .LC13:
-        .string "\\n"
+        .ascii "\\0\0"
 .LC14:
-        .string "\\t"
+        .ascii "\\n\0"
 .LC15:
-        .string "\\r"
+        .ascii "\\t\0"
 .LC16:
-        .string "'\n"
+        .ascii "\\r\0"
 .LC17:
-        .string "\ninfo by lib:\n    %s\n"
+        .ascii "'\12\0"
+.LC18:
+        .ascii "\12info by lib:\12    %s\12\0"
 output_token:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 64
-        mov     QWORD PTR [rbp-56], rdi
-        mov     QWORD PTR [rbp-64], rsi
-        mov     rax, QWORD PTR [rbp-64]
-        mov     esi, 0
-        mov     rdi, rax
+        sub     rsp, 80
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     rax, QWORD PTR 24[rbp]
+        mov     edx, 0
+        mov     rcx, rax
         call    get_next_token
-        mov     QWORD PTR [rbp-8], rax
-        jmp     .L12
-.L29:
-        mov     rax, QWORD PTR [rbp-8]
-        mov     QWORD PTR [rbp-24], rax
-        mov     rax, QWORD PTR [rbp-24]
-        mov     eax, DWORD PTR [rax+24]
+        mov     QWORD PTR -8[rbp], rax
+        jmp     .L13
+.L30:
+        mov     rax, QWORD PTR -8[rbp]
+        mov     QWORD PTR -24[rbp], rax
+        mov     rax, QWORD PTR -24[rbp]
+        mov     eax, DWORD PTR 24[rax]
         test    eax, eax
-        jne     .L13
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR [rax+16]
-        lea     rcx, [rax+1]
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR [rax+8]
-        lea     rdx, [rax+1]
-        mov     rax, QWORD PTR [rbp-56]
-        mov     esi, OFFSET FLAT:.LC3
-        mov     rdi, rax
-        mov     eax, 0
+        jne     .L14
+        mov     rax, QWORD PTR -24[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        lea     rcx, 1[rax]
+        mov     rax, QWORD PTR -24[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        lea     rdx, 1[rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rcx
+        mov     r8, rdx
+        lea     rdx, .LC4[rip]
+        mov     rcx, rax
         call    fprintf
-        jmp     .L14
-.L13:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     eax, DWORD PTR [rax+24]
+        jmp     .L15
+.L14:
+        mov     rax, QWORD PTR -24[rbp]
+        mov     eax, DWORD PTR 24[rax]
         cmp     eax, 1
-        jne     .L15
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rcx, rax
-        mov     edx, 31
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC4
-        call    fwrite
-        jmp     .L16
-.L15:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     eax, DWORD PTR [rax+24]
-        cmp     eax, 2
-        jne     .L17
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rcx, rax
-        mov     edx, 31
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC5
-        call    fwrite
-        jmp     .L16
-.L17:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     eax, DWORD PTR [rax+24]
-        cmp     eax, 3
-        jne     .L18
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rcx, rax
-        mov     edx, 31
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC6
-        call    fwrite
-        jmp     .L16
-.L18:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     eax, DWORD PTR [rax+24]
-        cmp     eax, 4
-        jne     .L19
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rcx, rax
-        mov     edx, 31
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC7
-        call    fwrite
-        jmp     .L16
-.L19:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     eax, DWORD PTR [rax+24]
-        cmp     eax, 5
-        jne     .L20
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rcx, rax
-        mov     edx, 31
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC8
-        call    fwrite
-        jmp     .L16
-.L20:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     eax, DWORD PTR [rax+24]
-        cmp     eax, 6
-        jne     .L21
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rcx, rax
-        mov     edx, 31
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC9
-        call    fwrite
-        jmp     .L16
-.L21:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     eax, DWORD PTR [rax+24]
-        cmp     eax, 7
         jne     .L16
-        mov     rax, QWORD PTR [rbp-56]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 31
+        mov     edx, 1
+        lea     rax, .LC5[rip]
         mov     rcx, rax
-        mov     edx, 31
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC10
         call    fwrite
+        jmp     .L17
 .L16:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR [rax+16]
-        lea     rcx, [rax+1]
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR [rax+8]
-        lea     rdx, [rax+1]
-        mov     rax, QWORD PTR [rbp-56]
-        mov     esi, OFFSET FLAT:.LC11
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR -24[rbp]
+        mov     eax, DWORD PTR 24[rax]
+        cmp     eax, 2
+        jne     .L18
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 31
+        mov     edx, 1
+        lea     rax, .LC6[rip]
+        mov     rcx, rax
+        call    fwrite
+        jmp     .L17
+.L18:
+        mov     rax, QWORD PTR -24[rbp]
+        mov     eax, DWORD PTR 24[rax]
+        cmp     eax, 3
+        jne     .L19
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 31
+        mov     edx, 1
+        lea     rax, .LC7[rip]
+        mov     rcx, rax
+        call    fwrite
+        jmp     .L17
+.L19:
+        mov     rax, QWORD PTR -24[rbp]
+        mov     eax, DWORD PTR 24[rax]
+        cmp     eax, 4
+        jne     .L20
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 31
+        mov     edx, 1
+        lea     rax, .LC8[rip]
+        mov     rcx, rax
+        call    fwrite
+        jmp     .L17
+.L20:
+        mov     rax, QWORD PTR -24[rbp]
+        mov     eax, DWORD PTR 24[rax]
+        cmp     eax, 5
+        jne     .L21
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 31
+        mov     edx, 1
+        lea     rax, .LC9[rip]
+        mov     rcx, rax
+        call    fwrite
+        jmp     .L17
+.L21:
+        mov     rax, QWORD PTR -24[rbp]
+        mov     eax, DWORD PTR 24[rax]
+        cmp     eax, 6
+        jne     .L22
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 31
+        mov     edx, 1
+        lea     rax, .LC10[rip]
+        mov     rcx, rax
+        call    fwrite
+        jmp     .L17
+.L22:
+        mov     rax, QWORD PTR -24[rbp]
+        mov     eax, DWORD PTR 24[rax]
+        cmp     eax, 7
+        jne     .L17
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 31
+        mov     edx, 1
+        lea     rax, .LC11[rip]
+        mov     rcx, rax
+        call    fwrite
+.L17:
+        mov     rax, QWORD PTR -24[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        lea     rcx, 1[rax]
+        mov     rax, QWORD PTR -24[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        lea     rdx, 1[rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rcx
+        mov     r8, rdx
+        lea     rdx, .LC12[rip]
+        mov     rcx, rax
         call    fprintf
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR -24[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     QWORD PTR [rbp-32], rax
-        mov     QWORD PTR [rbp-16], 0
-        jmp     .L22
-.L28:
-        mov     rdx, QWORD PTR [rbp-32]
-        mov     rax, QWORD PTR [rbp-16]
+        mov     QWORD PTR -32[rbp], rax
+        mov     QWORD PTR -16[rbp], 0
+        jmp     .L23
+.L29:
+        mov     rdx, QWORD PTR -32[rbp]
+        mov     rax, QWORD PTR -16[rbp]
         add     rax, rdx
         movzx   eax, BYTE PTR [rax]
-        mov     BYTE PTR [rbp-33], al
-        cmp     BYTE PTR [rbp-33], 0
-        jne     .L23
-        mov     rax, QWORD PTR [rbp-56]
+        mov     BYTE PTR -33[rbp], al
+        cmp     BYTE PTR -33[rbp], 0
+        jne     .L24
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 2
+        mov     edx, 1
+        lea     rax, .LC13[rip]
         mov     rcx, rax
-        mov     edx, 2
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC12
         call    fwrite
-        jmp     .L24
-.L23:
-        cmp     BYTE PTR [rbp-33], 10
-        jne     .L25
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rcx, rax
-        mov     edx, 2
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC13
-        call    fwrite
-        jmp     .L24
-.L25:
-        cmp     BYTE PTR [rbp-33], 9
-        jne     .L26
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rcx, rax
-        mov     edx, 2
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC14
-        call    fwrite
-        jmp     .L24
-.L26:
-        cmp     BYTE PTR [rbp-33], 13
-        jne     .L27
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rcx, rax
-        mov     edx, 2
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC15
-        call    fwrite
-        jmp     .L24
-.L27:
-        movsx   eax, BYTE PTR [rbp-33]
-        mov     rdx, QWORD PTR [rbp-56]
-        mov     rsi, rdx
-        mov     edi, eax
-        call    fputc
+        jmp     .L25
 .L24:
-        add     QWORD PTR [rbp-16], 1
-.L22:
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rdi, rax
-        call    strlen
-        cmp     QWORD PTR [rbp-16], rax
-        jb      .L28
-        mov     rax, QWORD PTR [rbp-56]
+        cmp     BYTE PTR -33[rbp], 10
+        jne     .L26
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 2
+        mov     edx, 1
+        lea     rax, .LC14[rip]
         mov     rcx, rax
-        mov     edx, 2
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC16
         call    fwrite
-        mov     rax, QWORD PTR [rbp-64]
-        mov     esi, 0
-        mov     rdi, rax
+        jmp     .L25
+.L26:
+        cmp     BYTE PTR -33[rbp], 9
+        jne     .L27
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 2
+        mov     edx, 1
+        lea     rax, .LC15[rip]
+        mov     rcx, rax
+        call    fwrite
+        jmp     .L25
+.L27:
+        cmp     BYTE PTR -33[rbp], 13
+        jne     .L28
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 2
+        mov     edx, 1
+        lea     rax, .LC16[rip]
+        mov     rcx, rax
+        call    fwrite
+        jmp     .L25
+.L28:
+        movsx   eax, BYTE PTR -33[rbp]
+        mov     rdx, QWORD PTR 16[rbp]
+        mov     ecx, eax
+        call    fputc
+.L25:
+        add     QWORD PTR -16[rbp], 1
+.L23:
+        mov     rax, QWORD PTR -32[rbp]
+        mov     rcx, rax
+        call    strlen
+        cmp     QWORD PTR -16[rbp], rax
+        jb      .L29
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r9, rax
+        mov     r8d, 2
+        mov     edx, 1
+        lea     rax, .LC17[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 24[rbp]
+        mov     edx, 0
+        mov     rcx, rax
         call    get_next_token
-        mov     QWORD PTR [rbp-8], rax
-.L12:
-        cmp     QWORD PTR [rbp-8], 0
-        jne     .L29
-.L14:
+        mov     QWORD PTR -8[rbp], rax
+.L13:
+        cmp     QWORD PTR -8[rbp], 0
+        jne     .L30
+.L15:
         call    get_info
         mov     rdx, rax
-        mov     rax, QWORD PTR [rbp-56]
-        mov     esi, OFFSET FLAT:.LC17
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r8, rdx
+        lea     rdx, .LC18[rip]
+        mov     rcx, rax
         call    fprintf
         nop
-        leave
+        add     rsp, 80
+        pop     rbp
         ret
 output_ast:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     QWORD PTR [rbp-40], rdx
-        mov     rcx, QWORD PTR builtin_scope[rip]
-        mov     rdx, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rsi, rcx
-        mov     rdi, rax
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     rax, QWORD PTR .refptr.builtin_scope[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rcx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8, rcx
+        mov     rcx, rax
         call    parse_code
-        mov     QWORD PTR [rbp-8], rax
-        mov     rdx, QWORD PTR [rbp-40]
-        mov     rsi, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
+        mov     QWORD PTR -8[rbp], rax
+        mov     rcx, QWORD PTR 32[rbp]
+        mov     rdx, QWORD PTR 16[rbp]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
         call    output_code
         call    get_info
         mov     rdx, rax
-        mov     rax, QWORD PTR [rbp-24]
-        mov     esi, OFFSET FLAT:.LC17
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r8, rdx
+        lea     rdx, .LC18[rip]
+        mov     rcx, rax
         call    fprintf
         nop
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
-.LC18:
-        .string "r"
 .LC19:
-        .string "Error opening file: %s"
+        .ascii "r\0"
 .LC20:
-        .string ".token"
+        .ascii "Error opening file: %s\0"
 .LC21:
-        .string "w"
+        .ascii ".token\0"
 .LC22:
-        .string "Error opening file: %s\n"
+        .ascii "w\0"
 .LC23:
-        .string ".ast"
+        .ascii "Error opening file: %s\12\0"
+.LC24:
+        .ascii ".ast\0"
 parse_file:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 112
-        mov     QWORD PTR [rbp-104], rdi
-        mov     ecx, esi
+        add     rsp, -128
+        mov     QWORD PTR 16[rbp], rcx
         mov     eax, edx
-        mov     edx, ecx
-        mov     BYTE PTR [rbp-108], dl
-        mov     BYTE PTR [rbp-112], al
-        mov     rax, QWORD PTR [rbp-104]
-        mov     rdi, rax
+        mov     edx, r8d
+        mov     BYTE PTR 24[rbp], al
+        mov     eax, edx
+        mov     BYTE PTR 32[rbp], al
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    create_file
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rdi, rax
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rcx, rax
         call    get_full_path
-        mov     QWORD PTR [rbp-16], rax
-        mov     QWORD PTR [rbp-88], 0
-        mov     rax, QWORD PTR [rbp-16]
-        mov     esi, OFFSET FLAT:.LC18
-        mov     rdi, rax
+        mov     QWORD PTR -16[rbp], rax
+        mov     QWORD PTR -88[rbp], 0
+        mov     rax, QWORD PTR -16[rbp]
+        lea     rdx, .LC19[rip]
+        mov     rcx, rax
         call    fopen
-        mov     QWORD PTR [rbp-24], rax
-        cmp     QWORD PTR [rbp-24], 0
-        jne     .L32
-        mov     rax, QWORD PTR stderr[rip]
-        mov     rdx, QWORD PTR [rbp-16]
-        mov     esi, OFFSET FLAT:.LC19
-        mov     rdi, rax
-        mov     eax, 0
+        mov     QWORD PTR -24[rbp], rax
+        cmp     QWORD PTR -24[rbp], 0
+        jne     .L33
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        mov     rax, QWORD PTR -16[rbp]
+        mov     r8, rax
+        lea     rax, .LC20[rip]
+        mov     rdx, rax
         call    fprintf
-        jmp     .L31
-.L32:
-        lea     rdx, [rbp-88]
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rsi, rdx
-        mov     rdi, rax
+        jmp     .L32
+.L33:
+        lea     rdx, -88[rbp]
+        mov     rax, QWORD PTR -24[rbp]
+        mov     rcx, rax
         call    read_source
-        mov     QWORD PTR [rbp-32], rax
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rdi, rax
+        mov     QWORD PTR -32[rbp], rax
+        mov     rax, QWORD PTR -24[rbp]
+        mov     rcx, rax
         call    fclose
-        mov     rdx, QWORD PTR [rbp-88]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rdx, QWORD PTR -88[rbp]
+        mov     rax, QWORD PTR -32[rbp]
+        mov     rcx, rax
         call    create_lexer
-        mov     QWORD PTR [rbp-40], rax
-        cmp     BYTE PTR [rbp-108], 0
-        je      .L34
-        mov     esi, 6
-        mov     edi, OFFSET FLAT:.LC20
+        mov     QWORD PTR -40[rbp], rax
+        cmp     BYTE PTR 24[rbp], 0
+        je      .L35
+        mov     edx, 6
+        lea     rax, .LC21[rip]
+        mov     rcx, rax
         call    create_string
         mov     rdx, rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rcx, rax
         call    change_file_extension
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rcx, rax
         call    get_full_path
-        mov     QWORD PTR [rbp-48], rax
-        mov     rax, QWORD PTR [rbp-48]
-        mov     esi, OFFSET FLAT:.LC21
-        mov     rdi, rax
+        mov     QWORD PTR -48[rbp], rax
+        mov     rax, QWORD PTR -48[rbp]
+        lea     rdx, .LC22[rip]
+        mov     rcx, rax
         call    fopen
-        mov     QWORD PTR [rbp-56], rax
-        cmp     QWORD PTR [rbp-56], 0
-        jne     .L35
-        mov     rax, QWORD PTR stderr[rip]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     esi, OFFSET FLAT:.LC22
-        mov     rdi, rax
-        mov     eax, 0
+        mov     QWORD PTR -56[rbp], rax
+        cmp     QWORD PTR -56[rbp], 0
+        jne     .L36
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        mov     rax, QWORD PTR -48[rbp]
+        mov     r8, rax
+        lea     rax, .LC23[rip]
+        mov     rdx, rax
         call    fprintf
-        jmp     .L36
-.L35:
-        mov     rdx, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rsi, rdx
-        mov     rdi, rax
-        call    output_token
+        jmp     .L35
 .L36:
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rdi, rax
+        mov     rdx, QWORD PTR -40[rbp]
+        mov     rax, QWORD PTR -56[rbp]
+        mov     rcx, rax
+        call    output_token
+        mov     rax, QWORD PTR -56[rbp]
+        mov     rcx, rax
         call    fclose
-.L34:
-        mov     rax, QWORD PTR [rbp-40]
-        mov     rdi, rax
+.L35:
+        mov     rax, QWORD PTR -40[rbp]
+        mov     rcx, rax
         call    reset_lexer
         call    create_parser
-        mov     QWORD PTR [rbp-64], rax
-        cmp     BYTE PTR [rbp-112], 0
-        je      .L31
-        mov     esi, 4
-        mov     edi, OFFSET FLAT:.LC23
+        mov     QWORD PTR -64[rbp], rax
+        cmp     BYTE PTR 32[rbp], 0
+        je      .L32
+        mov     edx, 4
+        lea     rax, .LC24[rip]
+        mov     rcx, rax
         call    create_string
         mov     rdx, rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rcx, rax
         call    change_file_extension
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rcx, rax
         call    get_full_path
-        mov     QWORD PTR [rbp-72], rax
-        mov     rax, QWORD PTR [rbp-72]
-        mov     esi, OFFSET FLAT:.LC21
-        mov     rdi, rax
+        mov     QWORD PTR -72[rbp], rax
+        mov     rax, QWORD PTR -72[rbp]
+        lea     rdx, .LC22[rip]
+        mov     rcx, rax
         call    fopen
-        mov     QWORD PTR [rbp-80], rax
-        cmp     QWORD PTR [rbp-80], 0
+        mov     QWORD PTR -80[rbp], rax
+        cmp     QWORD PTR -80[rbp], 0
         jne     .L38
-        mov     rax, QWORD PTR stderr[rip]
-        mov     rdx, QWORD PTR [rbp-72]
-        mov     esi, OFFSET FLAT:.LC22
-        mov     rdi, rax
-        mov     eax, 0
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        mov     rax, QWORD PTR -72[rbp]
+        mov     r8, rax
+        lea     rax, .LC23[rip]
+        mov     rdx, rax
         call    fprintf
-        jmp     .L39
+        jmp     .L32
 .L38:
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rcx, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-80]
-        mov     rsi, rcx
-        mov     rdi, rax
+        mov     rcx, QWORD PTR -64[rbp]
+        mov     rdx, QWORD PTR -40[rbp]
+        mov     rax, QWORD PTR -80[rbp]
+        mov     r8, rcx
+        mov     rcx, rax
         call    output_ast
-.L39:
-        mov     rax, QWORD PTR [rbp-80]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -80[rbp]
+        mov     rcx, rax
         call    fclose
-.L31:
-        leave
+        nop
+.L32:
+        sub     rsp, -128
+        pop     rbp
         ret
+.refptr.builtin_scope:
+        .quad   builtin_scope

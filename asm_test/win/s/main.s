@@ -1,32 +1,39 @@
 .LC0:
-        .string "Usage: %s <filename>\n"
+        .ascii "Usage: %s <filename>\12\0"
 main:
         push    rbp
-        mov     rbp, rsp
-        sub     rsp, 32
-        mov     DWORD PTR [rbp-20], edi
-        mov     QWORD PTR [rbp-32], rsi
-        cmp     DWORD PTR [rbp-20], 1
+        push    rbx
+        sub     rsp, 56
+        lea     rbp, 48[rsp]
+        mov     DWORD PTR 32[rbp], ecx
+        mov     QWORD PTR 40[rbp], rdx
+        call    __main
+        cmp     DWORD PTR 32[rbp], 1
         jg      .L2
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rdx, QWORD PTR [rax]
-        mov     rax, QWORD PTR stderr[rip]
-        mov     esi, OFFSET FLAT:.LC0
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR 40[rbp]
+        mov     rbx, QWORD PTR [rax]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        mov     r8, rbx
+        lea     rax, .LC0[rip]
+        mov     rdx, rax
         call    fprintf
         mov     eax, 1
         jmp     .L3
 .L2:
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rax, QWORD PTR [rax+8]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 40[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     r8d, 1
         mov     edx, 1
-        mov     esi, 1
-        mov     rdi, rax
+        mov     rcx, rax
         call    parse_file
         mov     eax, 0
 .L3:
-        leave
+        add     rsp, 56
+        pop     rbx
+        pop     rbp
         ret

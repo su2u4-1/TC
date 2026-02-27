@@ -1,414 +1,454 @@
 create_list:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 16
-        mov     edi, 16
+        sub     rsp, 48
+        mov     ecx, 16
         call    alloc_memory
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
         mov     QWORD PTR [rax], 0
-        mov     rax, QWORD PTR [rbp-8]
-        mov     QWORD PTR [rax+8], 0
-        mov     rax, QWORD PTR [rbp-8]
-        leave
+        mov     rax, QWORD PTR -8[rbp]
+        mov     QWORD PTR 8[rax], 0
+        mov     rax, QWORD PTR -8[rbp]
+        add     rsp, 48
+        pop     rbp
         ret
 create_node:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 32
-        mov     QWORD PTR [rbp-24], rdi
-        mov     edi, 16
+        sub     rsp, 48
+        mov     QWORD PTR 16[rbp], rcx
+        mov     ecx, 16
         call    alloc_memory
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
         mov     QWORD PTR [rax], 0
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rdx, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rax+8], rdx
-        mov     rax, QWORD PTR [rbp-8]
-        leave
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rdx, QWORD PTR 16[rbp]
+        mov     QWORD PTR 8[rax], rdx
+        mov     rax, QWORD PTR -8[rbp]
+        add     rsp, 48
+        pop     rbp
         ret
 list_append:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 32
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rdi, rax
+        sub     rsp, 48
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     rax, QWORD PTR 24[rbp]
+        mov     rcx, rax
         call    create_node
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-24]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR 16[rbp]
         mov     rax, QWORD PTR [rax]
         test    rax, rax
         jne     .L6
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rdx, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rdx, QWORD PTR -8[rbp]
         mov     QWORD PTR [rax], rdx
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rdx, QWORD PTR [rbp-8]
-        mov     QWORD PTR [rax+8], rdx
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rdx, QWORD PTR -8[rbp]
+        mov     QWORD PTR 8[rax], rdx
         jmp     .L8
 .L6:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdx, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rdx, QWORD PTR -8[rbp]
         mov     QWORD PTR [rax], rdx
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rdx, QWORD PTR [rbp-8]
-        mov     QWORD PTR [rax+8], rdx
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rdx, QWORD PTR -8[rbp]
+        mov     QWORD PTR 8[rax], rdx
 .L8:
         nop
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 list_copy:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 32
-        mov     QWORD PTR [rbp-24], rdi
+        sub     rsp, 48
+        mov     QWORD PTR 16[rbp], rcx
         call    create_list
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-24]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR 16[rbp]
         mov     rdx, QWORD PTR [rax]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR -8[rbp]
         mov     QWORD PTR [rax], rdx
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rdx, QWORD PTR [rax+8]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     QWORD PTR [rax+8], rdx
-        mov     rax, QWORD PTR [rbp-8]
-        leave
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rdx, QWORD PTR 8[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     QWORD PTR 8[rax], rdx
+        mov     rax, QWORD PTR -8[rbp]
+        add     rsp, 48
+        pop     rbp
         ret
 list_pop:
         push    rbp
         mov     rbp, rsp
-        mov     QWORD PTR [rbp-24], rdi
-        mov     rax, QWORD PTR [rbp-24]
+        sub     rsp, 16
+        mov     QWORD PTR 16[rbp], rcx
+        mov     rax, QWORD PTR 16[rbp]
         mov     rax, QWORD PTR [rax]
         test    rax, rax
         jne     .L12
         mov     eax, 0
         jmp     .L13
 .L12:
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR 16[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
         mov     rdx, QWORD PTR [rax]
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR 16[rbp]
         mov     QWORD PTR [rax], rdx
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR 16[rbp]
         mov     rax, QWORD PTR [rax]
         test    rax, rax
         jne     .L14
-        mov     rax, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rax+8], 0
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR 8[rax], 0
 .L14:
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
 .L13:
+        add     rsp, 16
         pop     rbp
         ret
 .LC0:
-        .string "Warning: Name '%s' already exists in the current scope, returning existing name, kind: "
+        .ascii "Warning: Name '%s' already exists in the current scope, returning existing name, kind: \0"
 .LC1:
-        .string "type\n"
+        .ascii "type\12\0"
 .LC2:
-        .string "variable\n"
+        .ascii "variable\12\0"
 .LC3:
-        .string "function\n"
+        .ascii "function\12\0"
 .LC4:
-        .string "method\n"
+        .ascii "method\12\0"
 .LC5:
-        .string "class\n"
+        .ascii "class\12\0"
 .LC6:
-        .string "attribute\n"
+        .ascii "attribute\12\0"
 .LC7:
-        .string "unknown\n"
+        .ascii "unknown\12\0"
 .LC8:
-        .string "Error creating name: name_info and scope_info are both NULL for kind %d\n"
+        .ascii "Error creating name: name_info and scope_info are both NULL for kind %u\12\0"
 .LC9:
-        .string "Error creating name: unknown NameType %d\n"
+        .ascii "Error creating name: unknown NameType %u\12\0"
 create_name:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 64
-        mov     QWORD PTR [rbp-24], rdi
-        mov     DWORD PTR [rbp-28], esi
-        mov     QWORD PTR [rbp-40], rdx
-        mov     QWORD PTR [rbp-48], rcx
-        mov     QWORD PTR [rbp-56], r8
-        mov     rdx, QWORD PTR [rbp-24]
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rsi, rdx
-        mov     rdi, rax
+        sub     rsp, 48
+        mov     QWORD PTR 16[rbp], rcx
+        mov     DWORD PTR 24[rbp], edx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rdx, QWORD PTR 16[rbp]
+        mov     rax, QWORD PTR 48[rbp]
+        mov     rcx, rax
         call    search
-        mov     QWORD PTR [rbp-8], rax
-        cmp     QWORD PTR [rbp-8], 0
+        mov     QWORD PTR -8[rbp], rax
+        cmp     QWORD PTR -8[rbp], 0
         je      .L16
-        mov     rax, QWORD PTR stderr[rip]
-        mov     rdx, QWORD PTR [rbp-24]
-        mov     esi, OFFSET FLAT:.LC0
-        mov     rdi, rax
-        mov     eax, 0
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        mov     rax, QWORD PTR 16[rbp]
+        mov     r8, rax
+        lea     rax, .LC0[rip]
+        mov     rdx, rax
         call    fprintf
-        mov     rax, QWORD PTR [rbp-8]
-        mov     eax, DWORD PTR [rax+24]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     eax, DWORD PTR 24[rax]
         cmp     eax, 5
         ja      .L17
         mov     eax, eax
-        mov     rax, QWORD PTR .L19[0+rax*8]
+        lea     rdx, 0[0+rax*4]
+        lea     rax, .L19[rip]
+        mov     eax, DWORD PTR [rdx+rax]
+        cdqe
+        lea     rdx, .L19[rip]
+        add     rax, rdx
         jmp     rax
 .L19:
-        .quad   .L24
-        .quad   .L23
-        .quad   .L22
-        .quad   .L21
-        .quad   .L20
-        .quad   .L18
+        .long   .L24-.L19
+        .long   .L23-.L19
+        .long   .L22-.L19
+        .long   .L21-.L19
+        .long   .L20-.L19
+        .long   .L18-.L19
 .L24:
-        mov     rax, QWORD PTR stderr[rip]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC1[rip]
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC1
         call    fwrite
         jmp     .L16
 .L23:
-        mov     rax, QWORD PTR stderr[rip]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     r9, rax
+        mov     r8d, 9
+        mov     edx, 1
+        lea     rax, .LC2[rip]
         mov     rcx, rax
-        mov     edx, 9
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC2
         call    fwrite
         jmp     .L16
 .L22:
-        mov     rax, QWORD PTR stderr[rip]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     r9, rax
+        mov     r8d, 9
+        mov     edx, 1
+        lea     rax, .LC3[rip]
         mov     rcx, rax
-        mov     edx, 9
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC3
         call    fwrite
         jmp     .L16
 .L21:
-        mov     rax, QWORD PTR stderr[rip]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     r9, rax
+        mov     r8d, 7
+        mov     edx, 1
+        lea     rax, .LC4[rip]
         mov     rcx, rax
-        mov     edx, 7
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC4
         call    fwrite
         jmp     .L16
 .L20:
-        mov     rax, QWORD PTR stderr[rip]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     r9, rax
+        mov     r8d, 6
+        mov     edx, 1
+        lea     rax, .LC5[rip]
         mov     rcx, rax
-        mov     edx, 6
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC5
         call    fwrite
         jmp     .L16
 .L18:
-        mov     rax, QWORD PTR stderr[rip]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     r9, rax
+        mov     r8d, 10
+        mov     edx, 1
+        lea     rax, .LC6[rip]
         mov     rcx, rax
-        mov     edx, 10
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC6
         call    fwrite
         jmp     .L16
 .L17:
-        mov     rax, QWORD PTR stderr[rip]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     r9, rax
+        mov     r8d, 8
+        mov     edx, 1
+        lea     rax, .LC7[rip]
         mov     rcx, rax
-        mov     edx, 8
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC7
         call    fwrite
         nop
 .L16:
-        mov     edi, 32
+        mov     ecx, 32
         call    alloc_memory
-        mov     QWORD PTR [rbp-16], rax
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rdx, QWORD PTR [rbp-24]
+        mov     QWORD PTR -16[rbp], rax
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rdx, QWORD PTR 16[rbp]
         mov     QWORD PTR [rax], rdx
         mov     rax, QWORD PTR id_counter.0[rip]
         add     rax, 1
         mov     QWORD PTR id_counter.0[rip], rax
         mov     rdx, QWORD PTR id_counter.0[rip]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     QWORD PTR [rax+8], rdx
-        mov     rax, QWORD PTR [rbp-16]
-        mov     edx, DWORD PTR [rbp-28]
-        mov     DWORD PTR [rax+24], edx
-        cmp     DWORD PTR [rbp-28], 1
+        mov     rax, QWORD PTR -16[rbp]
+        mov     QWORD PTR 8[rax], rdx
+        mov     rax, QWORD PTR -16[rbp]
+        mov     edx, DWORD PTR 24[rbp]
+        mov     DWORD PTR 24[rax], edx
+        cmp     DWORD PTR 24[rbp], 1
         je      .L25
-        cmp     DWORD PTR [rbp-28], 5
+        cmp     DWORD PTR 24[rbp], 5
         je      .L25
-        cmp     DWORD PTR [rbp-28], 2
+        cmp     DWORD PTR 24[rbp], 2
         je      .L25
-        cmp     DWORD PTR [rbp-28], 3
+        cmp     DWORD PTR 24[rbp], 3
         jne     .L26
 .L25:
-        cmp     QWORD PTR [rbp-40], 0
+        cmp     QWORD PTR 32[rbp], 0
         je      .L26
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rdx, QWORD PTR [rbp-40]
-        mov     QWORD PTR [rax+16], rdx
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     QWORD PTR 16[rax], rdx
         jmp     .L27
 .L26:
-        cmp     DWORD PTR [rbp-28], 4
+        cmp     DWORD PTR 24[rbp], 4
         jne     .L28
-        cmp     QWORD PTR [rbp-48], 0
+        cmp     QWORD PTR 40[rbp], 0
         je      .L28
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     QWORD PTR [rax+16], rdx
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rdx, QWORD PTR 40[rbp]
+        mov     QWORD PTR 16[rax], rdx
         jmp     .L27
 .L28:
-        cmp     DWORD PTR [rbp-28], 0
+        cmp     DWORD PTR 24[rbp], 0
         jne     .L29
-        mov     rax, QWORD PTR [rbp-16]
-        mov     QWORD PTR [rax+16], 0
+        mov     rax, QWORD PTR -16[rbp]
+        mov     QWORD PTR 16[rax], 0
         jmp     .L27
 .L29:
-        cmp     QWORD PTR [rbp-40], 0
+        cmp     QWORD PTR 32[rbp], 0
         jne     .L30
-        cmp     QWORD PTR [rbp-48], 0
+        cmp     QWORD PTR 40[rbp], 0
         jne     .L30
-        cmp     DWORD PTR [rbp-28], 0
+        cmp     DWORD PTR 24[rbp], 0
         je      .L30
-        mov     rax, QWORD PTR stderr[rip]
-        mov     edx, DWORD PTR [rbp-28]
-        mov     esi, OFFSET FLAT:.LC8
-        mov     rdi, rax
-        mov     eax, 0
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        mov     eax, DWORD PTR 24[rbp]
+        mov     r8d, eax
+        lea     rax, .LC8[rip]
+        mov     rdx, rax
         call    fprintf
         jmp     .L31
 .L30:
-        mov     rax, QWORD PTR stderr[rip]
-        mov     edx, DWORD PTR [rbp-28]
-        mov     esi, OFFSET FLAT:.LC9
-        mov     rdi, rax
-        mov     eax, 0
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        mov     eax, DWORD PTR 24[rbp]
+        mov     r8d, eax
+        lea     rax, .LC9[rip]
+        mov     rdx, rax
         call    fprintf
 .L31:
         mov     eax, 0
         jmp     .L32
 .L27:
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdx, QWORD PTR [rbp-16]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR 48[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rdx, QWORD PTR -16[rbp]
+        mov     rcx, rax
         call    list_append
-        mov     rax, QWORD PTR [rbp-16]
+        mov     rax, QWORD PTR -16[rbp]
 .L32:
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 create_scope:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 32
-        mov     QWORD PTR [rbp-24], rdi
-        mov     edi, 16
+        sub     rsp, 48
+        mov     QWORD PTR 16[rbp], rcx
+        mov     ecx, 16
         call    alloc_memory
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     QWORD PTR [rbp-16], rax
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rdx, QWORD PTR [rbp-24]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     QWORD PTR -16[rbp], rax
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rdx, QWORD PTR 16[rbp]
         mov     QWORD PTR [rax], rdx
         call    create_list
-        mov     rdx, QWORD PTR [rbp-16]
-        mov     QWORD PTR [rdx+8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        leave
+        mov     rdx, QWORD PTR -16[rbp]
+        mov     QWORD PTR 8[rdx], rax
+        mov     rax, QWORD PTR -8[rbp]
+        add     rsp, 48
+        pop     rbp
         ret
 search:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 64
-        mov     QWORD PTR [rbp-56], rdi
-        mov     QWORD PTR [rbp-64], rsi
-        mov     rax, QWORD PTR [rbp-56]
-        mov     QWORD PTR [rbp-8], rax
+        sub     rsp, 80
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
         jmp     .L36
 .L41:
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
-        mov     QWORD PTR [rbp-24], rax
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     QWORD PTR -24[rbp], rax
+        mov     rax, QWORD PTR -24[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     QWORD PTR [rbp-16], rax
+        mov     QWORD PTR -16[rbp], rax
         jmp     .L37
 .L40:
-        mov     rax, QWORD PTR [rbp-16]
-        mov     QWORD PTR [rbp-32], rax
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rax, QWORD PTR [rax+8]
-        mov     QWORD PTR [rbp-40], rax
-        mov     rax, QWORD PTR [rbp-40]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     QWORD PTR -32[rbp], rax
+        mov     rax, QWORD PTR -32[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     QWORD PTR -40[rbp], rax
+        mov     rax, QWORD PTR -40[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L38
-        mov     rax, QWORD PTR [rbp-40]
+        mov     rax, QWORD PTR -40[rbp]
         jmp     .L39
 .L38:
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rax, QWORD PTR -32[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     QWORD PTR [rbp-16], rax
+        mov     QWORD PTR -16[rbp], rax
 .L37:
-        cmp     QWORD PTR [rbp-16], 0
+        cmp     QWORD PTR -16[rbp], 0
         jne     .L40
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     QWORD PTR [rbp-8], rax
+        mov     QWORD PTR -8[rbp], rax
 .L36:
-        cmp     QWORD PTR [rbp-8], 0
+        cmp     QWORD PTR -8[rbp], 0
         jne     .L41
         mov     eax, 0
 .L39:
-        leave
+        add     rsp, 80
+        pop     rbp
         ret
 is_builtin_type:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 16
-        mov     QWORD PTR [rbp-8], rdi
-        mov     rdx, QWORD PTR INT_KEYWORD[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        sub     rsp, 32
+        mov     QWORD PTR 16[rbp], rcx
+        mov     rax, QWORD PTR .refptr.INT_KEYWORD[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         jne     .L43
-        mov     rdx, QWORD PTR FLOAT_KEYWORD[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.FLOAT_KEYWORD[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         jne     .L43
-        mov     rdx, QWORD PTR STRING_KEYWORD[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.STRING_KEYWORD[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         jne     .L43
-        mov     rdx, QWORD PTR BOOL_KEYWORD[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.BOOL_KEYWORD[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         jne     .L43
-        mov     rdx, QWORD PTR VOID_KEYWORD[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.VOID_KEYWORD[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L44
@@ -418,20 +458,22 @@ is_builtin_type:
 .L44:
         mov     eax, 0
 .L45:
-        leave
+        add     rsp, 32
+        pop     rbp
         ret
 is_type:
         push    rbp
         mov     rbp, rsp
-        mov     QWORD PTR [rbp-24], rdi
-        mov     rax, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     eax, DWORD PTR [rax+24]
+        sub     rsp, 16
+        mov     QWORD PTR 16[rbp], rcx
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     eax, DWORD PTR 24[rax]
         test    eax, eax
         je      .L48
-        mov     rax, QWORD PTR [rbp-8]
-        mov     eax, DWORD PTR [rax+24]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     eax, DWORD PTR 24[rax]
         cmp     eax, 4
         jne     .L49
 .L48:
@@ -440,96 +482,108 @@ is_type:
 .L49:
         mov     eax, 0
 .L50:
+        add     rsp, 16
         pop     rbp
         ret
 .LC10:
-        .string "Parser Error at line %zu, column %zu: %s\n"
+        .ascii "Parser Error at line %zu, column %zu: %s\12\0"
 parser_error:
         push    rbp
-        mov     rbp, rsp
-        sub     rsp, 16
-        mov     QWORD PTR [rbp-8], rdi
-        mov     QWORD PTR [rbp-16], rsi
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+16]
-        lea     rcx, [rax+1]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+8]
-        lea     rdx, [rax+1]
-        mov     rax, QWORD PTR stderr[rip]
-        mov     rsi, QWORD PTR [rbp-8]
-        mov     r8, rsi
-        mov     esi, OFFSET FLAT:.LC10
-        mov     rdi, rax
-        mov     eax, 0
+        push    rsi
+        push    rbx
+        sub     rsp, 48
+        lea     rbp, 48[rsp]
+        mov     QWORD PTR 32[rbp], rcx
+        mov     QWORD PTR 40[rbp], rdx
+        mov     rax, QWORD PTR 40[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        lea     rsi, 1[rax]
+        mov     rax, QWORD PTR 40[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        lea     rbx, 1[rax]
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        mov     rax, QWORD PTR 32[rbp]
+        mov     QWORD PTR 32[rsp], rax
+        mov     r9, rsi
+        mov     r8, rbx
+        lea     rax, .LC10[rip]
+        mov     rdx, rax
         call    fprintf
         nop
-        leave
+        add     rsp, 48
+        pop     rbx
+        pop     rsi
+        pop     rbp
         ret
 set_bool_list:
         push    rbp
         mov     rbp, rsp
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     eax, edx
-        mov     BYTE PTR [rbp-36], al
-        mov     rax, QWORD PTR [rbp-32]
+        sub     rsp, 16
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     eax, r8d
+        mov     BYTE PTR 32[rbp], al
+        mov     rax, QWORD PTR 24[rbp]
         shr     rax, 3
         mov     rdx, rax
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR 16[rbp]
         add     rax, rdx
         movzx   eax, BYTE PTR [rax]
-        mov     BYTE PTR [rbp-1], al
-        cmp     BYTE PTR [rbp-36], 0
+        mov     BYTE PTR -1[rbp], al
+        cmp     BYTE PTR 32[rbp], 0
         je      .L54
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rax, QWORD PTR 24[rbp]
         and     eax, 7
         mov     edx, 1
         mov     ecx, eax
         sal     edx, cl
         mov     eax, edx
         mov     ecx, eax
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rax, QWORD PTR 24[rbp]
         shr     rax, 3
         mov     rdx, rax
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR 16[rbp]
         add     rdx, rax
         mov     eax, ecx
-        or      al, BYTE PTR [rbp-1]
+        or      al, BYTE PTR -1[rbp]
         mov     BYTE PTR [rdx], al
         jmp     .L56
 .L54:
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rax, QWORD PTR 24[rbp]
         and     eax, 7
         mov     edx, 1
         mov     ecx, eax
         sal     edx, cl
         mov     eax, edx
         not     eax
-        mov     rdx, QWORD PTR [rbp-32]
+        mov     rdx, QWORD PTR 24[rbp]
         mov     rcx, rdx
         shr     rcx, 3
-        mov     rdx, QWORD PTR [rbp-24]
+        mov     rdx, QWORD PTR 16[rbp]
         add     rdx, rcx
-        and     al, BYTE PTR [rbp-1]
+        and     al, BYTE PTR -1[rbp]
         mov     BYTE PTR [rdx], al
 .L56:
         nop
+        add     rsp, 16
         pop     rbp
         ret
 get_bool_list:
         push    rbp
         mov     rbp, rsp
-        mov     QWORD PTR [rbp-8], rdi
-        mov     QWORD PTR [rbp-16], rsi
-        mov     rax, QWORD PTR [rbp-16]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     rax, QWORD PTR 24[rbp]
         shr     rax, 3
         mov     rdx, rax
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 16[rbp]
         add     rax, rdx
         movzx   eax, BYTE PTR [rax]
         movsx   edx, al
-        mov     rax, QWORD PTR [rbp-16]
+        mov     rax, QWORD PTR 24[rbp]
         and     eax, 7
         mov     ecx, eax
         sar     edx, cl
@@ -540,488 +594,497 @@ get_bool_list:
         pop     rbp
         ret
 .LC11:
-        .string "\342\224\202   "
+        .ascii "\342\224\202   \0"
 .LC12:
-        .string "    "
+        .ascii "    \0"
 .LC13:
-        .string "\342\224\224\342\224\200\342\224\200 "
+        .ascii "\342\224\224\342\224\200\342\224\200 \0"
 .LC14:
-        .string "\342\224\234\342\224\200\342\224\200 "
+        .ascii "\342\224\234\342\224\200\342\224\200 \0"
 indention:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     eax, edx
-        mov     QWORD PTR [rbp-48], rcx
-        mov     BYTE PTR [rbp-36], al
-        mov     rax, QWORD PTR [rbp-48]
-        mov     QWORD PTR [rbp-16], rax
-        cmp     BYTE PTR [rbp-36], 0
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     eax, r8d
+        mov     QWORD PTR 40[rbp], r9
+        mov     BYTE PTR 32[rbp], al
+        mov     rax, QWORD PTR 40[rbp]
+        mov     QWORD PTR -16[rbp], rax
+        cmp     BYTE PTR 32[rbp], 0
         sete    al
         movzx   edx, al
-        mov     rax, QWORD PTR [rbp-16]
-        lea     rcx, [rax+3]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rsi, rax
-        mov     rdi, rcx
+        mov     rax, QWORD PTR -16[rbp]
+        lea     rcx, 3[rax]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8d, edx
+        mov     rdx, rax
         call    set_bool_list
-        mov     QWORD PTR [rbp-8], 1
+        mov     QWORD PTR -8[rbp], 1
         jmp     .L60
 .L63:
-        mov     rax, QWORD PTR [rbp-16]
-        lea     rdx, [rax+3]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rax
-        mov     rdi, rdx
+        mov     rax, QWORD PTR -16[rbp]
+        lea     rcx, 3[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rdx, rax
         call    get_bool_list
         test    al, al
         je      .L61
-        mov     edx, OFFSET FLAT:.LC11
+        lea     rax, .LC11[rip]
         jmp     .L62
 .L61:
-        mov     edx, OFFSET FLAT:.LC12
+        lea     rax, .LC12[rip]
 .L62:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rsi, rdx
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rcx, QWORD PTR 16[rbp]
+        mov     rdx, rax
         call    fprintf
-        add     QWORD PTR [rbp-8], 1
+        add     QWORD PTR -8[rbp], 1
 .L60:
-        mov     rax, QWORD PTR [rbp-8]
-        cmp     rax, QWORD PTR [rbp-32]
+        mov     rax, QWORD PTR -8[rbp]
+        cmp     rax, QWORD PTR 24[rbp]
         jb      .L63
-        cmp     QWORD PTR [rbp-32], 0
+        cmp     QWORD PTR 24[rbp], 0
         je      .L67
-        cmp     BYTE PTR [rbp-36], 0
+        cmp     BYTE PTR 32[rbp], 0
         je      .L65
-        mov     edx, OFFSET FLAT:.LC13
+        lea     rax, .LC13[rip]
         jmp     .L66
 .L65:
-        mov     edx, OFFSET FLAT:.LC14
+        lea     rax, .LC14[rip]
 .L66:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rsi, rdx
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rcx, QWORD PTR 16[rbp]
+        mov     rdx, rax
         call    fprintf
 .L67:
         nop
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 create_parser:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 16
-        mov     edi, 35
+        sub     rsp, 48
+        mov     ecx, 35
         call    alloc_memory
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     QWORD PTR [rbp-16], rax
-        mov     rax, QWORD PTR [rbp-16]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     QWORD PTR -16[rbp], rax
+        mov     rax, QWORD PTR -16[rbp]
         mov     BYTE PTR [rax], 0
-        mov     rax, QWORD PTR [rbp-16]
-        mov     BYTE PTR [rax+1], 0
-        mov     rax, QWORD PTR [rbp-16]
-        mov     BYTE PTR [rax+2], 0
-        mov     rax, QWORD PTR [rbp-8]
-        leave
+        mov     rax, QWORD PTR -16[rbp]
+        mov     BYTE PTR 1[rax], 0
+        mov     rax, QWORD PTR -16[rbp]
+        mov     BYTE PTR 2[rax], 0
+        mov     rax, QWORD PTR -8[rbp]
+        add     rsp, 48
+        pop     rbp
         ret
 .LC15:
-        .string "print"
+        .ascii "print\0"
 .LC16:
-        .string "arr"
+        .ascii "arr\0"
 .LC17:
-        .string "Error: Standard library file for import not found: %s\n"
+        .ascii "Error: Standard library file for import not found: %s\12\0"
 .LC18:
-        .string "/"
+        .ascii "/\0"
 .LC19:
-        .string ".tc"
+        .ascii ".tc\0"
 .LC20:
-        .string "r"
+        .ascii "r\0"
 .LC21:
-        .string "Error opening library file for import: %s\n"
+        .ascii "Error opening library file for import: %s\12\0"
 .LC22:
-        .string "Info: Starting parsing lib file for import: %s\n"
+        .ascii "Info: Starting parsing lib file for import: %s\12\0"
 .LC23:
-        .string "Info: Finished parsing lib file for import: %s\n"
+        .ascii "Info: Finished parsing lib file for import: %s\12\0"
 .LC24:
-        .string "Error parsing library file for import: %s\n"
+        .ascii "Error parsing library file for import: %s\12\0"
 parse_import_file:
         push    rbp
-        mov     rbp, rsp
-        push    r12
+        push    rsi
         push    rbx
         sub     rsp, 1152
-        mov     QWORD PTR [rbp-1144], rdi
-        mov     QWORD PTR [rbp-1152], rsi
-        mov     QWORD PTR [rbp-1160], rdx
-        mov     QWORD PTR [rbp-24], 0
-        mov     BYTE PTR [rbp-1120], 0
-        cmp     QWORD PTR [rbp-1152], 0
+        lea     rbp, 128[rsp]
+        mov     QWORD PTR 1056[rbp], rcx
+        mov     QWORD PTR 1064[rbp], rdx
+        mov     QWORD PTR 1072[rbp], r8
+        mov     QWORD PTR 1016[rbp], 0
+        mov     BYTE PTR -80[rbp], 0
+        cmp     QWORD PTR 1064[rbp], 0
         jne     .L71
-        mov     rax, QWORD PTR [rbp-1144]
-        mov     esi, OFFSET FLAT:.LC15
-        mov     rdi, rax
+        mov     rax, QWORD PTR 1056[rbp]
+        lea     rdx, .LC15[rip]
+        mov     rcx, rax
         call    strcmp
         test    eax, eax
         jne     .L72
-        lea     rax, [rbp-1120]
+        lea     rax, -80[rbp]
         movabs  rbx, 8246143026212319022
         mov     QWORD PTR [rax], rbx
-        movabs  rbx, 27993765565065586
-        mov     QWORD PTR [rax+7], rbx
+        movabs  rsi, 27993765565065586
+        mov     QWORD PTR 7[rax], rsi
         jmp     .L73
 .L72:
-        mov     rax, QWORD PTR [rbp-1144]
-        mov     esi, OFFSET FLAT:.LC16
-        mov     rdi, rax
+        mov     rax, QWORD PTR 1056[rbp]
+        lea     rdx, .LC16[rip]
+        mov     rcx, rax
         call    strcmp
         test    eax, eax
         jne     .L74
-        lea     rax, [rbp-1120]
+        lea     rax, -80[rbp]
         movabs  rbx, 8241920901561659182
         mov     QWORD PTR [rax], rbx
-        movabs  rcx, 27993765531771183
-        mov     QWORD PTR [rax+5], rcx
+        movabs  rsi, 27993765531771183
+        mov     QWORD PTR 5[rax], rsi
         jmp     .L73
 .L74:
-        mov     rax, QWORD PTR stderr[rip]
-        lea     rdx, [rbp-1120]
-        mov     esi, OFFSET FLAT:.LC17
-        mov     rdi, rax
-        mov     eax, 0
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        lea     rax, -80[rbp]
+        mov     r8, rax
+        lea     rax, .LC17[rip]
+        mov     rdx, rax
         call    fprintf
         mov     eax, 0
         jmp     .L83
 .L71:
-        mov     rcx, QWORD PTR [rbp-1152]
-        lea     rdx, [rbp-1120]
-        lea     rax, [rbp-1120]
-        mov     esi, 1024
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 1064[rbp]
+        lea     rdx, -80[rbp]
+        lea     rax, -80[rbp]
+        mov     r9, rcx
+        mov     r8, rdx
+        mov     edx, 1024
+        mov     rcx, rax
         call    string_append
-        lea     rdx, [rbp-1120]
-        lea     rax, [rbp-1120]
-        mov     ecx, OFFSET FLAT:.LC18
-        mov     esi, 1024
-        mov     rdi, rax
+        lea     rdx, -80[rbp]
+        lea     rax, -80[rbp]
+        lea     r9, .LC18[rip]
+        mov     r8, rdx
+        mov     edx, 1024
+        mov     rcx, rax
         call    string_append
-        mov     rcx, QWORD PTR [rbp-1144]
-        lea     rdx, [rbp-1120]
-        lea     rax, [rbp-1120]
-        mov     esi, 1024
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 1056[rbp]
+        lea     rdx, -80[rbp]
+        lea     rax, -80[rbp]
+        mov     r9, rcx
+        mov     r8, rdx
+        mov     edx, 1024
+        mov     rcx, rax
         call    string_append
-        lea     rdx, [rbp-1120]
-        lea     rax, [rbp-1120]
-        mov     ecx, OFFSET FLAT:.LC19
-        mov     esi, 1024
-        mov     rdi, rax
+        lea     rdx, -80[rbp]
+        lea     rax, -80[rbp]
+        lea     r9, .LC19[rip]
+        mov     r8, rdx
+        mov     edx, 1024
+        mov     rcx, rax
         call    string_append
 .L73:
-        lea     rax, [rbp-1120]
-        mov     esi, OFFSET FLAT:.LC20
-        mov     rdi, rax
+        lea     rax, -80[rbp]
+        lea     rdx, .LC20[rip]
+        mov     rcx, rax
         call    fopen
-        mov     QWORD PTR [rbp-40], rax
-        cmp     QWORD PTR [rbp-40], 0
+        mov     QWORD PTR 1000[rbp], rax
+        cmp     QWORD PTR 1000[rbp], 0
         jne     .L76
-        mov     rax, QWORD PTR stderr[rip]
-        lea     rdx, [rbp-1120]
-        mov     esi, OFFSET FLAT:.LC21
-        mov     rdi, rax
-        mov     eax, 0
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        lea     rax, -80[rbp]
+        mov     r8, rax
+        lea     rax, .LC21[rip]
+        mov     rdx, rax
         call    fprintf
         mov     eax, 0
         jmp     .L83
 .L76:
-        lea     rax, [rbp-1120]
-        mov     rsi, rax
-        mov     edi, OFFSET FLAT:.LC22
-        mov     eax, 0
+        lea     rax, -80[rbp]
+        mov     rdx, rax
+        lea     rax, .LC22[rip]
+        mov     rcx, rax
         call    printf
-        mov     QWORD PTR [rbp-1128], 0
-        lea     rdx, [rbp-1128]
-        mov     rax, QWORD PTR [rbp-40]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     QWORD PTR -88[rbp], 0
+        lea     rdx, -88[rbp]
+        mov     rax, QWORD PTR 1000[rbp]
+        mov     rcx, rax
         call    read_source
-        mov     QWORD PTR [rbp-48], rax
-        mov     rax, QWORD PTR [rbp-40]
-        mov     rdi, rax
+        mov     QWORD PTR 992[rbp], rax
+        mov     rax, QWORD PTR 1000[rbp]
+        mov     rcx, rax
         call    fclose
         call    create_parser
-        mov     r12, rax
-        mov     rbx, QWORD PTR builtin_scope[rip]
-        mov     rdx, QWORD PTR [rbp-1128]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rsi, rdx
-        mov     rdi, rax
-        call    create_lexer
-        mov     rdx, r12
-        mov     rsi, rbx
-        mov     rdi, rax
-        call    parse_code
-        mov     QWORD PTR [rbp-56], rax
-        lea     rax, [rbp-1120]
         mov     rsi, rax
-        mov     edi, OFFSET FLAT:.LC23
-        mov     eax, 0
+        mov     rax, QWORD PTR .refptr.builtin_scope[rip]
+        mov     rbx, QWORD PTR [rax]
+        mov     rdx, QWORD PTR -88[rbp]
+        mov     rax, QWORD PTR 992[rbp]
+        mov     rcx, rax
+        call    create_lexer
+        mov     r8, rsi
+        mov     rdx, rbx
+        mov     rcx, rax
+        call    parse_code
+        mov     QWORD PTR 984[rbp], rax
+        lea     rax, -80[rbp]
+        mov     rdx, rax
+        lea     rax, .LC23[rip]
+        mov     rcx, rax
         call    printf
-        cmp     QWORD PTR [rbp-56], 0
+        cmp     QWORD PTR 984[rbp], 0
         jne     .L77
-        mov     rax, QWORD PTR stderr[rip]
-        lea     rdx, [rbp-1120]
-        mov     esi, OFFSET FLAT:.LC24
-        mov     rdi, rax
-        mov     eax, 0
+        mov     ecx, 2
+        mov     rax, QWORD PTR __imp___acrt_iob_func[rip]
+        call    rax
+        mov     rcx, rax
+        lea     rax, -80[rbp]
+        mov     r8, rax
+        lea     rax, .LC24[rip]
+        mov     rdx, rax
         call    fprintf
         mov     eax, 0
         jmp     .L83
 .L77:
-        mov     rax, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rax, QWORD PTR [rax+8]
-        mov     QWORD PTR [rbp-64], rax
-        mov     rax, QWORD PTR [rbp-64]
+        mov     rax, QWORD PTR 984[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rax, QWORD PTR 8[rax]
+        mov     QWORD PTR 976[rbp], rax
+        mov     rax, QWORD PTR 976[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     QWORD PTR [rbp-32], rax
+        mov     QWORD PTR 1008[rbp], rax
         jmp     .L78
 .L81:
-        mov     rax, QWORD PTR [rbp-32]
-        mov     QWORD PTR [rbp-72], rax
-        mov     rax, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rax+8]
-        mov     QWORD PTR [rbp-80], rax
-        mov     rax, QWORD PTR [rbp-80]
+        mov     rax, QWORD PTR 1008[rbp]
+        mov     QWORD PTR 968[rbp], rax
+        mov     rax, QWORD PTR 968[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     QWORD PTR 960[rbp], rax
+        mov     rax, QWORD PTR 960[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-1144]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rdx, QWORD PTR 1056[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L79
-        mov     rax, QWORD PTR [rbp-80]
-        mov     QWORD PTR [rbp-24], rax
+        mov     rax, QWORD PTR 960[rbp]
+        mov     QWORD PTR 1016[rbp], rax
         jmp     .L80
 .L79:
-        mov     rax, QWORD PTR [rbp-72]
+        mov     rax, QWORD PTR 968[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     QWORD PTR [rbp-32], rax
+        mov     QWORD PTR 1008[rbp], rax
 .L78:
-        cmp     QWORD PTR [rbp-32], 0
+        cmp     QWORD PTR 1008[rbp], 0
         jne     .L81
 .L80:
-        cmp     QWORD PTR [rbp-24], 0
+        cmp     QWORD PTR 1016[rbp], 0
         je      .L82
-        mov     rax, QWORD PTR [rbp-1160]
-        mov     QWORD PTR [rbp-88], rax
-        mov     rax, QWORD PTR [rbp-88]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdx, QWORD PTR [rbp-24]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR 1072[rbp]
+        mov     QWORD PTR 952[rbp], rax
+        mov     rax, QWORD PTR 952[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rdx, QWORD PTR 1016[rbp]
+        mov     rcx, rax
         call    list_append
 .L82:
-        mov     rax, QWORD PTR [rbp-24]
+        mov     rax, QWORD PTR 1016[rbp]
 .L83:
         add     rsp, 1152
         pop     rbx
-        pop     r12
+        pop     rsi
         pop     rbp
         ret
 string_to_operator:
         push    rbp
         mov     rbp, rsp
-        sub     rsp, 16
-        mov     QWORD PTR [rbp-8], rdi
-        mov     rdx, QWORD PTR ASSIGN_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        sub     rsp, 32
+        mov     QWORD PTR 16[rbp], rcx
+        mov     rax, QWORD PTR .refptr.ASSIGN_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L85
         mov     eax, 13
         jmp     .L86
 .L85:
-        mov     rdx, QWORD PTR ADD_ASSIGN_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.ADD_ASSIGN_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L87
         mov     eax, 14
         jmp     .L86
 .L87:
-        mov     rdx, QWORD PTR SUB_ASSIGN_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.SUB_ASSIGN_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L88
         mov     eax, 15
         jmp     .L86
 .L88:
-        mov     rdx, QWORD PTR MUL_ASSIGN_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.MUL_ASSIGN_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L89
         mov     eax, 16
         jmp     .L86
 .L89:
-        mov     rdx, QWORD PTR DIV_ASSIGN_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.DIV_ASSIGN_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L90
         mov     eax, 17
         jmp     .L86
 .L90:
-        mov     rdx, QWORD PTR MOD_ASSIGN_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.MOD_ASSIGN_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L91
         mov     eax, 18
         jmp     .L86
 .L91:
-        mov     rdx, QWORD PTR AND_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.AND_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L92
         mov     eax, 11
         jmp     .L86
 .L92:
-        mov     rdx, QWORD PTR OR_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.OR_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L93
         mov     eax, 12
         jmp     .L86
 .L93:
-        mov     rdx, QWORD PTR EQ_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.EQ_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L94
         mov     eax, 5
         jmp     .L86
 .L94:
-        mov     rdx, QWORD PTR NE_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.NE_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L95
         mov     eax, 6
         jmp     .L86
 .L95:
-        mov     rdx, QWORD PTR LT_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.LT_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L96
         mov     eax, 7
         jmp     .L86
 .L96:
-        mov     rdx, QWORD PTR GT_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.GT_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L97
         mov     eax, 8
         jmp     .L86
 .L97:
-        mov     rdx, QWORD PTR LE_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.LE_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L98
         mov     eax, 9
         jmp     .L86
 .L98:
-        mov     rdx, QWORD PTR GE_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.GE_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L99
         mov     eax, 10
         jmp     .L86
 .L99:
-        mov     rdx, QWORD PTR ADD_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.ADD_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L100
         mov     eax, 0
         jmp     .L86
 .L100:
-        mov     rdx, QWORD PTR SUB_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.SUB_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L101
         mov     eax, 1
         jmp     .L86
 .L101:
-        mov     rdx, QWORD PTR MUL_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.MUL_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L102
         mov     eax, 2
         jmp     .L86
 .L102:
-        mov     rdx, QWORD PTR DIV_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.DIV_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L103
         mov     eax, 3
         jmp     .L86
 .L103:
-        mov     rdx, QWORD PTR MOD_SYMBOL[rip]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rsi, rdx
-        mov     rdi, rax
+        mov     rax, QWORD PTR .refptr.MOD_SYMBOL[rip]
+        mov     rdx, QWORD PTR [rax]
+        mov     rax, QWORD PTR 16[rbp]
+        mov     rcx, rax
         call    string_equal
         test    al, al
         je      .L104
@@ -1030,37 +1093,43 @@ string_to_operator:
 .L104:
         mov     eax, 19
 .L86:
-        leave
+        add     rsp, 32
+        pop     rbp
         ret
 operator_precedence:
         push    rbp
         mov     rbp, rsp
-        mov     DWORD PTR [rbp-4], edi
-        cmp     DWORD PTR [rbp-4], 18
+        mov     DWORD PTR 16[rbp], ecx
+        cmp     DWORD PTR 16[rbp], 18
         ja      .L106
-        mov     eax, DWORD PTR [rbp-4]
-        mov     rax, QWORD PTR .L108[0+rax*8]
+        mov     eax, DWORD PTR 16[rbp]
+        lea     rdx, 0[0+rax*4]
+        lea     rax, .L108[rip]
+        mov     eax, DWORD PTR [rdx+rax]
+        cdqe
+        lea     rdx, .L108[rip]
+        add     rax, rdx
         jmp     rax
 .L108:
-        .quad   .L112
-        .quad   .L112
-        .quad   .L111
-        .quad   .L111
-        .quad   .L111
-        .quad   .L110
-        .quad   .L110
-        .quad   .L110
-        .quad   .L110
-        .quad   .L110
-        .quad   .L110
-        .quad   .L109
-        .quad   .L109
-        .quad   .L107
-        .quad   .L107
-        .quad   .L107
-        .quad   .L107
-        .quad   .L107
-        .quad   .L107
+        .long   .L112-.L108
+        .long   .L112-.L108
+        .long   .L111-.L108
+        .long   .L111-.L108
+        .long   .L111-.L108
+        .long   .L110-.L108
+        .long   .L110-.L108
+        .long   .L110-.L108
+        .long   .L110-.L108
+        .long   .L110-.L108
+        .long   .L110-.L108
+        .long   .L109-.L108
+        .long   .L109-.L108
+        .long   .L107-.L108
+        .long   .L107-.L108
+        .long   .L107-.L108
+        .long   .L107-.L108
+        .long   .L107-.L108
+        .long   .L107-.L108
 .L107:
         mov     eax, 1
         jmp     .L113
@@ -1084,91 +1153,165 @@ operator_precedence:
 operator_to_string:
         push    rbp
         mov     rbp, rsp
-        mov     DWORD PTR [rbp-4], edi
-        cmp     DWORD PTR [rbp-4], 18
+        mov     DWORD PTR 16[rbp], ecx
+        cmp     DWORD PTR 16[rbp], 18
         ja      .L115
-        mov     eax, DWORD PTR [rbp-4]
-        mov     rax, QWORD PTR .L117[0+rax*8]
+        mov     eax, DWORD PTR 16[rbp]
+        lea     rdx, 0[0+rax*4]
+        lea     rax, .L117[rip]
+        mov     eax, DWORD PTR [rdx+rax]
+        cdqe
+        lea     rdx, .L117[rip]
+        add     rax, rdx
         jmp     rax
 .L117:
-        .quad   .L135
-        .quad   .L134
-        .quad   .L133
-        .quad   .L132
-        .quad   .L131
-        .quad   .L130
-        .quad   .L129
-        .quad   .L128
-        .quad   .L127
-        .quad   .L126
-        .quad   .L125
-        .quad   .L124
-        .quad   .L123
-        .quad   .L122
-        .quad   .L121
-        .quad   .L120
-        .quad   .L119
-        .quad   .L118
-        .quad   .L116
+        .long   .L135-.L117
+        .long   .L134-.L117
+        .long   .L133-.L117
+        .long   .L132-.L117
+        .long   .L131-.L117
+        .long   .L130-.L117
+        .long   .L129-.L117
+        .long   .L128-.L117
+        .long   .L127-.L117
+        .long   .L126-.L117
+        .long   .L125-.L117
+        .long   .L124-.L117
+        .long   .L123-.L117
+        .long   .L122-.L117
+        .long   .L121-.L117
+        .long   .L120-.L117
+        .long   .L119-.L117
+        .long   .L118-.L117
+        .long   .L116-.L117
 .L122:
-        mov     rax, QWORD PTR ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L121:
-        mov     rax, QWORD PTR ADD_ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.ADD_ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L120:
-        mov     rax, QWORD PTR SUB_ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.SUB_ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L119:
-        mov     rax, QWORD PTR MUL_ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.MUL_ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L118:
-        mov     rax, QWORD PTR DIV_ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.DIV_ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L116:
-        mov     rax, QWORD PTR MOD_ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.MOD_ASSIGN_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L124:
-        mov     rax, QWORD PTR AND_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.AND_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L123:
-        mov     rax, QWORD PTR OR_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.OR_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L130:
-        mov     rax, QWORD PTR EQ_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.EQ_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L129:
-        mov     rax, QWORD PTR NE_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.NE_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L128:
-        mov     rax, QWORD PTR LT_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.LT_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L127:
-        mov     rax, QWORD PTR GT_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.GT_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L126:
-        mov     rax, QWORD PTR LE_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.LE_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L125:
-        mov     rax, QWORD PTR GE_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.GE_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L135:
-        mov     rax, QWORD PTR ADD_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.ADD_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L134:
-        mov     rax, QWORD PTR SUB_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.SUB_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L133:
-        mov     rax, QWORD PTR MUL_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.MUL_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L132:
-        mov     rax, QWORD PTR DIV_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.DIV_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L131:
-        mov     rax, QWORD PTR MOD_SYMBOL[rip]
+        mov     rax, QWORD PTR .refptr.MOD_SYMBOL[rip]
+        mov     rax, QWORD PTR [rax]
         jmp     .L136
 .L115:
         mov     eax, 0
 .L136:
         pop     rbp
         ret
+.refptr.MOD_SYMBOL:
+        .quad   MOD_SYMBOL
+.refptr.DIV_SYMBOL:
+        .quad   DIV_SYMBOL
+.refptr.MUL_SYMBOL:
+        .quad   MUL_SYMBOL
+.refptr.SUB_SYMBOL:
+        .quad   SUB_SYMBOL
+.refptr.ADD_SYMBOL:
+        .quad   ADD_SYMBOL
+.refptr.GE_SYMBOL:
+        .quad   GE_SYMBOL
+.refptr.LE_SYMBOL:
+        .quad   LE_SYMBOL
+.refptr.GT_SYMBOL:
+        .quad   GT_SYMBOL
+.refptr.LT_SYMBOL:
+        .quad   LT_SYMBOL
+.refptr.NE_SYMBOL:
+        .quad   NE_SYMBOL
+.refptr.EQ_SYMBOL:
+        .quad   EQ_SYMBOL
+.refptr.OR_SYMBOL:
+        .quad   OR_SYMBOL
+.refptr.AND_SYMBOL:
+        .quad   AND_SYMBOL
+.refptr.MOD_ASSIGN_SYMBOL:
+        .quad   MOD_ASSIGN_SYMBOL
+.refptr.DIV_ASSIGN_SYMBOL:
+        .quad   DIV_ASSIGN_SYMBOL
+.refptr.MUL_ASSIGN_SYMBOL:
+        .quad   MUL_ASSIGN_SYMBOL
+.refptr.SUB_ASSIGN_SYMBOL:
+        .quad   SUB_ASSIGN_SYMBOL
+.refptr.ADD_ASSIGN_SYMBOL:
+        .quad   ADD_ASSIGN_SYMBOL
+.refptr.ASSIGN_SYMBOL:
+        .quad   ASSIGN_SYMBOL
+.refptr.builtin_scope:
+        .quad   builtin_scope
+.refptr.VOID_KEYWORD:
+        .quad   VOID_KEYWORD
+.refptr.BOOL_KEYWORD:
+        .quad   BOOL_KEYWORD
+.refptr.STRING_KEYWORD:
+        .quad   STRING_KEYWORD
+.refptr.FLOAT_KEYWORD:
+        .quad   FLOAT_KEYWORD
+.refptr.INT_KEYWORD:
+        .quad   INT_KEYWORD

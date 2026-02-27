@@ -126,9 +126,9 @@ list_pop:
 .LC7:
         .string "unknown\n"
 .LC8:
-        .string "Error creating name: name_info and scope_info are both NULL for kind %d\n"
+        .string "Error creating name: name_info and scope_info are both NULL for kind %u\n"
 .LC9:
-        .string "Error creating name: unknown NameType %d\n"
+        .string "Error creating name: unknown NameType %u\n"
 create_name:
         push    rbp
         mov     rbp, rsp

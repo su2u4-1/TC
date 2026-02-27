@@ -1,23 +1,23 @@
 .LC0:
-        .string "import\n"
+        .ascii "import\12\0"
 .LC1:
-        .string "function\n"
+        .ascii "function\12\0"
 .LC2:
-        .string "class\n"
+        .ascii "class\12\0"
 .LC3:
-        .string "unknown_CodeMemberType: %d\n"
+        .ascii "unknown_CodeMemberType: %u\12\0"
 output_code_member:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     QWORD PTR [rbp-40], rdx
-        mov     QWORD PTR [rbp-48], rcx
-        mov     rax, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     eax, DWORD PTR [rax+8]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     eax, DWORD PTR 8[rax]
         cmp     eax, 2
         je      .L2
         cmp     eax, 2
@@ -28,2077 +28,2118 @@ output_code_member:
         je      .L5
         jmp     .L3
 .L4:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 7
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC0
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 7
+        mov     edx, 1
+        lea     rax, .LC0[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_import
         jmp     .L6
 .L5:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 9
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC1
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 9
+        mov     edx, 1
+        lea     rax, .LC1[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_function
         jmp     .L6
 .L2:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 6
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC2
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 6
+        mov     edx, 1
+        lea     rax, .LC2[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_class
         jmp     .L6
 .L3:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-8]
-        mov     edx, DWORD PTR [rax+8]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     esi, OFFSET FLAT:.LC3
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR -8[rbp]
+        mov     edx, DWORD PTR 8[rax]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8d, edx
+        lea     rdx, .LC3[rip]
+        mov     rcx, rax
         call    fprintf
         nop
 .L6:
         nop
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 output_code:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     QWORD PTR [rbp-40], rdx
-        mov     QWORD PTR [rbp-48], rcx
-        mov     rax, QWORD PTR [rbp-24]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdi, rax
+        mov     rcx, rax
         call    list_copy
-        mov     QWORD PTR [rbp-8], rax
+        mov     QWORD PTR -8[rbp], rax
         jmp     .L8
 .L9:
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_code_member
 .L8:
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rcx, rax
         call    list_pop
-        mov     QWORD PTR [rbp-16], rax
-        cmp     QWORD PTR [rbp-16], 0
+        mov     QWORD PTR -16[rbp], rax
+        cmp     QWORD PTR -16[rbp], 0
         jne     .L9
         nop
         nop
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 .LC4:
-        .string "name\n"
+        .ascii "name\12\0"
 .LC5:
-        .string "NULL"
+        .ascii "NULL\0"
 .LC6:
-        .string "source: \"%s\"\n"
+        .ascii "source: \"%s\"\12\0"
 output_import:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     QWORD PTR [rbp-40], rdx
-        mov     QWORD PTR [rbp-48], rcx
-        mov     rax, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC4
-        call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_name
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC4[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR [rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
+        call    output_name
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
         test    rax, rax
         je      .L11
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
         jmp     .L12
 .L11:
-        mov     eax, OFFSET FLAT:.LC5
+        lea     rax, .LC5[rip]
 .L12:
-        mov     rcx, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 24[rbp]
+        mov     r8, rax
+        lea     rax, .LC6[rip]
         mov     rdx, rax
-        mov     esi, OFFSET FLAT:.LC6
-        mov     rdi, rcx
-        mov     eax, 0
         call    fprintf
         nop
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 .LC7:
-        .string "return_type\n"
+        .ascii "return_type\12\0"
 .LC8:
-        .string "parameters\n"
+        .ascii "parameters\12\0"
 .LC9:
-        .string "parameters[%d]\n"
+        .ascii "parameters[%d]\12\0"
 .LC10:
-        .string "body\n"
+        .ascii "body\12\0"
 output_function:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 80
-        mov     QWORD PTR [rbp-56], rdi
-        mov     QWORD PTR [rbp-64], rsi
-        mov     QWORD PTR [rbp-72], rdx
-        mov     QWORD PTR [rbp-80], rcx
-        mov     rax, QWORD PTR [rbp-56]
-        mov     QWORD PTR [rbp-16], rax
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -16[rbp], rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC4
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC4[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-16]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -16[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_name
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
         mov     rcx, rax
-        mov     edx, 12
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC7
-        call    fwrite
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
         call    output_name
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 11
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC8
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 12
+        mov     edx, 1
+        lea     rax, .LC7[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+16]
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
+        call    output_name
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 11
+        mov     edx, 1
+        lea     rax, .LC8[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     rcx, rax
         call    list_copy
-        mov     QWORD PTR [rbp-24], rax
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+24]
-        mov     rdi, rax
+        mov     QWORD PTR -24[rbp], rax
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR 24[rax]
+        mov     rcx, rax
         call    list_copy
-        mov     QWORD PTR [rbp-32], rax
-        mov     DWORD PTR [rbp-4], -1
+        mov     QWORD PTR -32[rbp], rax
+        mov     DWORD PTR -4[rbp], -1
         jmp     .L14
 .L15:
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rsi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     rdx, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
         call    indention
-        add     DWORD PTR [rbp-4], 1
-        mov     edx, DWORD PTR [rbp-4]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     esi, OFFSET FLAT:.LC9
-        mov     rdi, rax
-        mov     eax, 0
+        add     DWORD PTR -4[rbp], 1
+        mov     edx, DWORD PTR -4[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8d, edx
+        lea     rdx, .LC9[rip]
+        mov     rcx, rax
         call    fprintf
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+2]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rax, QWORD PTR [rbp-40]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 2[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -40[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_variable
 .L14:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rdi, rax
-        call    list_pop
-        mov     QWORD PTR [rbp-40], rax
-        cmp     QWORD PTR [rbp-40], 0
-        jne     .L15
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     rax, QWORD PTR -24[rbp]
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC10
+        call    list_pop
+        mov     QWORD PTR -40[rbp], rax
+        cmp     QWORD PTR -40[rbp], 0
+        jne     .L15
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC10[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L16
 .L17:
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -48[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_statement
 .L16:
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -32[rbp]
+        mov     rcx, rax
         call    list_pop
-        mov     QWORD PTR [rbp-48], rax
-        cmp     QWORD PTR [rbp-48], 0
+        mov     QWORD PTR -48[rbp], rax
+        cmp     QWORD PTR -48[rbp], 0
         jne     .L17
         nop
         nop
-        leave
+        add     rsp, 80
+        pop     rbp
         ret
 output_method:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 80
-        mov     QWORD PTR [rbp-56], rdi
-        mov     QWORD PTR [rbp-64], rsi
-        mov     QWORD PTR [rbp-72], rdx
-        mov     QWORD PTR [rbp-80], rcx
-        mov     rax, QWORD PTR [rbp-56]
-        mov     QWORD PTR [rbp-16], rax
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -16[rbp], rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC4
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC4[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-16]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -16[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_name
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
         mov     rcx, rax
-        mov     edx, 12
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC7
-        call    fwrite
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
         call    output_name
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 11
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC8
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 12
+        mov     edx, 1
+        lea     rax, .LC7[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+16]
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
+        call    output_name
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 11
+        mov     edx, 1
+        lea     rax, .LC8[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     rcx, rax
         call    list_copy
-        mov     QWORD PTR [rbp-24], rax
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+24]
-        mov     rdi, rax
+        mov     QWORD PTR -24[rbp], rax
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR 24[rax]
+        mov     rcx, rax
         call    list_copy
-        mov     QWORD PTR [rbp-32], rax
-        mov     DWORD PTR [rbp-4], -1
+        mov     QWORD PTR -32[rbp], rax
+        mov     DWORD PTR -4[rbp], -1
         jmp     .L19
 .L20:
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rsi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     rdx, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
         call    indention
-        add     DWORD PTR [rbp-4], 1
-        mov     edx, DWORD PTR [rbp-4]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     esi, OFFSET FLAT:.LC9
-        mov     rdi, rax
-        mov     eax, 0
+        add     DWORD PTR -4[rbp], 1
+        mov     edx, DWORD PTR -4[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8d, edx
+        lea     rdx, .LC9[rip]
+        mov     rcx, rax
         call    fprintf
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+2]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rax, QWORD PTR [rbp-40]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 2[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -40[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_variable
 .L19:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rdi, rax
-        call    list_pop
-        mov     QWORD PTR [rbp-40], rax
-        cmp     QWORD PTR [rbp-40], 0
-        jne     .L20
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     rax, QWORD PTR -24[rbp]
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC10
+        call    list_pop
+        mov     QWORD PTR -40[rbp], rax
+        cmp     QWORD PTR -40[rbp], 0
+        jne     .L20
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC10[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L21
 .L22:
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -48[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_statement
 .L21:
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -32[rbp]
+        mov     rcx, rax
         call    list_pop
-        mov     QWORD PTR [rbp-48], rax
-        cmp     QWORD PTR [rbp-48], 0
+        mov     QWORD PTR -48[rbp], rax
+        cmp     QWORD PTR -48[rbp], 0
         jne     .L22
         nop
         nop
-        leave
+        add     rsp, 80
+        pop     rbp
         ret
 .LC11:
-        .string "method\n"
+        .ascii "method\12\0"
 .LC12:
-        .string "variable\n"
+        .ascii "variable\12\0"
 .LC13:
-        .string "unknown_ClassMemberType: %d\n"
+        .ascii "unknown_ClassMemberType: %u\12\0"
 output_class_member:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     QWORD PTR [rbp-40], rdx
-        mov     QWORD PTR [rbp-48], rcx
-        mov     rax, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     eax, DWORD PTR [rax+8]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     eax, DWORD PTR 8[rax]
         test    eax, eax
         je      .L24
         cmp     eax, 1
         je      .L25
         jmp     .L28
 .L24:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 7
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC11
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 7
+        mov     edx, 1
+        lea     rax, .LC11[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_method
         jmp     .L27
 .L25:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 9
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC12
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 9
+        mov     edx, 1
+        lea     rax, .LC12[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_variable
         jmp     .L27
 .L28:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-8]
-        mov     edx, DWORD PTR [rax+8]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     esi, OFFSET FLAT:.LC13
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR -8[rbp]
+        mov     edx, DWORD PTR 8[rax]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8d, edx
+        lea     rdx, .LC13[rip]
+        mov     rcx, rax
         call    fprintf
         nop
 .L27:
         nop
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 .LC14:
-        .string "members\n"
+        .ascii "members\12\0"
 output_class:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 64
-        mov     QWORD PTR [rbp-40], rdi
-        mov     QWORD PTR [rbp-48], rsi
-        mov     QWORD PTR [rbp-56], rdx
-        mov     QWORD PTR [rbp-64], rcx
-        mov     rax, QWORD PTR [rbp-40]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC4
-        call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_name
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        lea     rax, .LC4[rip]
         mov     rcx, rax
-        mov     edx, 8
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC14
         call    fwrite
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR [rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
+        call    output_name
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 8
+        mov     edx, 1
+        lea     rax, .LC14[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, rax
         call    list_copy
-        mov     QWORD PTR [rbp-16], rax
+        mov     QWORD PTR -16[rbp], rax
         jmp     .L30
 .L31:
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_class_member
 .L30:
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rcx, rax
         call    list_pop
-        mov     QWORD PTR [rbp-24], rax
-        cmp     QWORD PTR [rbp-24], 0
+        mov     QWORD PTR -24[rbp], rax
+        cmp     QWORD PTR -24[rbp], 0
         jne     .L31
         nop
         nop
-        leave
+        add     rsp, 64
+        pop     rbp
         ret
 .LC15:
-        .string "type\n"
+        .ascii "type\12\0"
 .LC16:
-        .string "value\n"
+        .ascii "value\12\0"
 .LC17:
-        .string "value: \"NULL\"\n"
+        .ascii "value: \"NULL\"\12\0"
 output_variable:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     QWORD PTR [rbp-40], rdx
-        mov     QWORD PTR [rbp-48], rcx
-        mov     rax, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC15
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC15[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_name
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC4
-        call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
         call    output_name
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC4[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
+        call    output_name
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
         test    rax, rax
         je      .L33
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
         mov     rcx, rax
-        mov     edx, 6
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC16
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 6
+        mov     edx, 1
+        lea     rax, .LC16[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_expression
         jmp     .L35
 .L33:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
         mov     rcx, rax
-        mov     edx, 14
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC17
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 14
+        mov     edx, 1
+        lea     rax, .LC17[rip]
+        mov     rcx, rax
         call    fwrite
 .L35:
         nop
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 .LC18:
-        .string "if_statement\n"
+        .ascii "if_statement\12\0"
 .LC19:
-        .string "for_statement\n"
+        .ascii "for_statement\12\0"
 .LC20:
-        .string "while_statement\n"
+        .ascii "while_statement\12\0"
 .LC21:
-        .string "variable_declaration_statement\n"
+        .ascii "variable_declaration_statement\12\0"
 .LC22:
-        .string "return_statement: \"NULL\"\n"
+        .ascii "return_statement: \"NULL\"\12\0"
 .LC23:
-        .string "return_statement\n"
+        .ascii "return_statement\12\0"
 .LC24:
-        .string "break_statement: \"NULL\"\n"
+        .ascii "break_statement: \"NULL\"\12\0"
 .LC25:
-        .string "continue_statement: \"NULL\"\n"
+        .ascii "continue_statement: \"NULL\"\12\0"
 .LC26:
-        .string "expression_statement: \"NULL\"\n"
+        .ascii "expression_statement: \"NULL\"\12\0"
 .LC27:
-        .string "expression_statement\n"
+        .ascii "expression_statement\12\0"
 .LC28:
-        .string "unknown_StatementType: %d\n"
+        .ascii "unknown_StatementType: %u\12\0"
 output_statement:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     QWORD PTR [rbp-40], rdx
-        mov     QWORD PTR [rbp-48], rcx
-        mov     rax, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     eax, DWORD PTR [rax+8]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     eax, DWORD PTR 8[rax]
         cmp     eax, 7
         ja      .L37
         mov     eax, eax
-        mov     rax, QWORD PTR .L39[0+rax*8]
+        lea     rdx, 0[0+rax*4]
+        lea     rax, .L39[rip]
+        mov     eax, DWORD PTR [rdx+rax]
+        cdqe
+        lea     rdx, .L39[rip]
+        add     rax, rdx
         jmp     rax
 .L39:
-        .quad   .L46
-        .quad   .L45
-        .quad   .L44
-        .quad   .L43
-        .quad   .L42
-        .quad   .L41
-        .quad   .L40
-        .quad   .L38
+        .long   .L46-.L39
+        .long   .L45-.L39
+        .long   .L44-.L39
+        .long   .L43-.L39
+        .long   .L42-.L39
+        .long   .L41-.L39
+        .long   .L40-.L39
+        .long   .L38-.L39
 .L44:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 13
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC18
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 13
+        mov     edx, 1
+        lea     rax, .LC18[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_if
         jmp     .L36
 .L42:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 14
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC19
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 14
+        mov     edx, 1
+        lea     rax, .LC19[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_for
         jmp     .L36
 .L43:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 16
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC20
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 16
+        mov     edx, 1
+        lea     rax, .LC20[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_while
         jmp     .L36
 .L45:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 31
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC21
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 31
+        mov     edx, 1
+        lea     rax, .LC21[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_variable
         jmp     .L36
 .L41:
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
         test    rax, rax
         jne     .L48
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 25
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC22
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 25
+        mov     edx, 1
+        lea     rax, .LC22[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L36
 .L48:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 17
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC23
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 17
+        mov     edx, 1
+        lea     rax, .LC23[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_expression
         jmp     .L36
 .L40:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 24
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC24
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 24
+        mov     edx, 1
+        lea     rax, .LC24[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L36
 .L38:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 27
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC25
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 27
+        mov     edx, 1
+        lea     rax, .LC25[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L36
 .L46:
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
         test    rax, rax
         jne     .L49
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 29
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC26
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 29
+        mov     edx, 1
+        lea     rax, .LC26[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L36
 .L49:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 21
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC27
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 21
+        mov     edx, 1
+        lea     rax, .LC27[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_expression
         jmp     .L36
 .L37:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-8]
-        mov     edx, DWORD PTR [rax+8]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     esi, OFFSET FLAT:.LC28
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR -8[rbp]
+        mov     edx, DWORD PTR 8[rax]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8d, edx
+        lea     rdx, .LC28[rip]
+        mov     rcx, rax
         call    fprintf
         nop
 .L36:
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 .LC29:
-        .string "condition\n"
+        .ascii "condition\12\0"
 .LC30:
-        .string "else_if\n"
+        .ascii "else_if\12\0"
 .LC31:
-        .string "else_body\n"
+        .ascii "else_body\12\0"
 output_if:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 80
-        mov     QWORD PTR [rbp-56], rdi
-        mov     QWORD PTR [rbp-64], rsi
-        mov     QWORD PTR [rbp-72], rdx
-        mov     QWORD PTR [rbp-80], rcx
-        mov     rax, QWORD PTR [rbp-56]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdi, rax
-        call    list_copy
-        mov     QWORD PTR [rbp-16], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
-        mov     rdi, rax
-        call    list_copy
-        mov     QWORD PTR [rbp-24], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+24]
-        mov     rdi, rax
-        call    list_copy
-        mov     QWORD PTR [rbp-32], rax
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
         mov     rcx, rax
-        mov     edx, 10
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC29
+        call    list_copy
+        mov     QWORD PTR -16[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     rcx, rax
+        call    list_copy
+        mov     QWORD PTR -24[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 24[rax]
+        mov     rcx, rax
+        call    list_copy
+        mov     QWORD PTR -32[rbp], rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 10
+        mov     edx, 1
+        lea     rax, .LC29[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_expression
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC10
+        call    output_expression
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC10[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L51
 .L52:
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rax, QWORD PTR [rbp-40]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -40[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_statement
 .L51:
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rdi, rax
-        call    list_pop
-        mov     QWORD PTR [rbp-40], rax
-        cmp     QWORD PTR [rbp-40], 0
-        jne     .L52
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     rax, QWORD PTR -16[rbp]
         mov     rcx, rax
-        mov     edx, 8
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC30
+        call    list_pop
+        mov     QWORD PTR -40[rbp], rax
+        cmp     QWORD PTR -40[rbp], 0
+        jne     .L52
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 8
+        mov     edx, 1
+        lea     rax, .LC30[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L53
 .L54:
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -48[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_else_if
 .L53:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rdi, rax
-        call    list_pop
-        mov     QWORD PTR [rbp-48], rax
-        cmp     QWORD PTR [rbp-48], 0
-        jne     .L54
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-72]
-        mov     rax, QWORD PTR [rbp-64]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-64]
+        mov     rax, QWORD PTR -24[rbp]
         mov     rcx, rax
-        mov     edx, 10
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC31
+        call    list_pop
+        mov     QWORD PTR -48[rbp], rax
+        cmp     QWORD PTR -48[rbp], 0
+        jne     .L54
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 10
+        mov     edx, 1
+        lea     rax, .LC31[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L55
 .L56:
-        mov     rax, QWORD PTR [rbp-72]
-        lea     rdi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-80]
-        mov     rsi, QWORD PTR [rbp-64]
-        mov     rax, QWORD PTR [rbp-40]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -40[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_statement
 .L55:
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -32[rbp]
+        mov     rcx, rax
         call    list_pop
-        mov     QWORD PTR [rbp-40], rax
-        cmp     QWORD PTR [rbp-40], 0
+        mov     QWORD PTR -40[rbp], rax
+        cmp     QWORD PTR -40[rbp], 0
         jne     .L56
         nop
         nop
-        leave
+        add     rsp, 80
+        pop     rbp
         ret
 output_else_if:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 64
-        mov     QWORD PTR [rbp-40], rdi
-        mov     QWORD PTR [rbp-48], rsi
-        mov     QWORD PTR [rbp-56], rdx
-        mov     QWORD PTR [rbp-64], rcx
-        mov     rax, QWORD PTR [rbp-40]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdi, rax
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, rax
         call    list_copy
-        mov     QWORD PTR [rbp-16], rax
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     QWORD PTR -16[rbp], rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 10
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC29
-        call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_expression
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 10
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        lea     rax, .LC29[rip]
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC10
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR [rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
+        call    output_expression
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC10[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L58
 .L59:
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_statement
 .L58:
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rcx, rax
         call    list_pop
-        mov     QWORD PTR [rbp-24], rax
-        cmp     QWORD PTR [rbp-24], 0
+        mov     QWORD PTR -24[rbp], rax
+        cmp     QWORD PTR -24[rbp], 0
         jne     .L59
         nop
         nop
-        leave
+        add     rsp, 64
+        pop     rbp
         ret
 .LC32:
-        .string "initializer\n"
+        .ascii "initializer\12\0"
 .LC33:
-        .string "initializer: \"NULL\"\n"
+        .ascii "initializer: \"NULL\"\12\0"
 .LC34:
-        .string "condition: \"NULL\"\n"
+        .ascii "condition: \"NULL\"\12\0"
 .LC35:
-        .string "increment\n"
+        .ascii "increment\12\0"
 .LC36:
-        .string "increment: \"NULL\"\n"
+        .ascii "increment: \"NULL\"\12\0"
 output_for:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 64
-        mov     QWORD PTR [rbp-40], rdi
-        mov     QWORD PTR [rbp-48], rsi
-        mov     QWORD PTR [rbp-56], rdx
-        mov     QWORD PTR [rbp-64], rcx
-        mov     rax, QWORD PTR [rbp-40]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+24]
-        mov     rdi, rax
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 24[rax]
+        mov     rcx, rax
         call    list_copy
-        mov     QWORD PTR [rbp-16], rax
-        mov     rax, QWORD PTR [rbp-8]
+        mov     QWORD PTR -16[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
         test    rax, rax
         je      .L61
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 12
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC32
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 12
+        mov     edx, 1
+        lea     rax, .LC32[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_variable
         jmp     .L62
 .L61:
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 20
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC33
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 20
+        mov     edx, 1
+        lea     rax, .LC33[rip]
+        mov     rcx, rax
         call    fwrite
 .L62:
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
         test    rax, rax
         je      .L63
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 10
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC29
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 10
+        mov     edx, 1
+        lea     rax, .LC29[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_expression
         jmp     .L64
 .L63:
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 18
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC34
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 18
+        mov     edx, 1
+        lea     rax, .LC34[rip]
+        mov     rcx, rax
         call    fwrite
 .L64:
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
         test    rax, rax
         je      .L65
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 10
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC35
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 10
+        mov     edx, 1
+        lea     rax, .LC35[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_expression
         jmp     .L66
 .L65:
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 18
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC36
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 18
+        mov     edx, 1
+        lea     rax, .LC36[rip]
+        mov     rcx, rax
         call    fwrite
 .L66:
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC10
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC10[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L67
 .L68:
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_statement
 .L67:
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rcx, rax
         call    list_pop
-        mov     QWORD PTR [rbp-24], rax
-        cmp     QWORD PTR [rbp-24], 0
+        mov     QWORD PTR -24[rbp], rax
+        cmp     QWORD PTR -24[rbp], 0
         jne     .L68
         nop
         nop
-        leave
+        add     rsp, 64
+        pop     rbp
         ret
 output_while:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 64
-        mov     QWORD PTR [rbp-40], rdi
-        mov     QWORD PTR [rbp-48], rsi
-        mov     QWORD PTR [rbp-56], rdx
-        mov     QWORD PTR [rbp-64], rcx
-        mov     rax, QWORD PTR [rbp-40]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdi, rax
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, rax
         call    list_copy
-        mov     QWORD PTR [rbp-16], rax
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     QWORD PTR -16[rbp], rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 10
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC29
-        call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_expression
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 10
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        lea     rax, .LC29[rip]
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC10
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR [rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
+        call    output_expression
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC10[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L70
 .L71:
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_statement
 .L70:
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rcx, rax
         call    list_pop
-        mov     QWORD PTR [rbp-24], rax
-        cmp     QWORD PTR [rbp-24], 0
+        mov     QWORD PTR -24[rbp], rax
+        cmp     QWORD PTR -24[rbp], 0
         jne     .L71
         nop
         nop
-        leave
+        add     rsp, 64
+        pop     rbp
         ret
 .LC37:
-        .string "primary\n"
+        .ascii "primary\12\0"
 .LC38:
-        .string "UNKNOWN_OPERATOR"
+        .ascii "UNKNOWN_OPERATOR\0"
 .LC39:
-        .string "operator: \"%s\"\n"
+        .ascii "operator: \"%s\"\12\0"
 .LC40:
-        .string "left\n"
+        .ascii "left\12\0"
 .LC41:
-        .string "right\n"
+        .ascii "right\12\0"
 output_expression:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     QWORD PTR [rbp-40], rdx
-        mov     QWORD PTR [rbp-48], rcx
-        mov     rax, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     eax, DWORD PTR [rax+24]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     eax, DWORD PTR 24[rax]
         cmp     eax, 19
         jne     .L73
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
         mov     rcx, rax
-        mov     edx, 8
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC37
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 8
+        mov     edx, 1
+        lea     rax, .LC37[rip]
+        mov     rcx, rax
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_primary
         jmp     .L77
 .L73:
-        mov     rax, QWORD PTR [rbp-8]
-        mov     eax, DWORD PTR [rax+24]
-        mov     edi, eax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     eax, DWORD PTR 24[rax]
+        mov     ecx, eax
         call    operator_to_string
-        mov     QWORD PTR [rbp-16], rax
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
+        mov     QWORD PTR -16[rbp], rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
         call    indention
-        cmp     QWORD PTR [rbp-16], 0
+        cmp     QWORD PTR -16[rbp], 0
         je      .L75
-        mov     rax, QWORD PTR [rbp-16]
+        mov     rax, QWORD PTR -16[rbp]
         jmp     .L76
 .L75:
-        mov     eax, OFFSET FLAT:.LC38
+        lea     rax, .LC38[rip]
 .L76:
-        mov     rcx, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 24[rbp]
+        mov     r8, rax
+        lea     rax, .LC39[rip]
         mov     rdx, rax
-        mov     esi, OFFSET FLAT:.LC39
-        mov     rdi, rcx
-        mov     eax, 0
         call    fprintf
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC40
-        call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_expression
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        lea     rax, .LC40[rip]
         mov     rcx, rax
-        mov     edx, 6
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC41
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR [rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
+        call    output_expression
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 6
+        mov     edx, 1
+        lea     rax, .LC41[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_expression
 .L77:
         nop
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 .LC42:
-        .string "type: \"integer\"\n"
+        .ascii "type: \"integer\"\12\0"
 .LC43:
-        .string "value: %s\n"
+        .ascii "value: %s\12\0"
 .LC44:
-        .string "type: \"float\"\n"
+        .ascii "type: \"float\"\12\0"
 .LC45:
-        .string "type: \"string\"\n"
+        .ascii "type: \"string\"\12\0"
 .LC46:
-        .string "value: \"%s\"\n"
+        .ascii "value: \"%s\"\12\0"
 .LC47:
-        .string "type: \"boolean\"\n"
+        .ascii "type: \"boolean\"\12\0"
 .LC48:
-        .string "value: \"true\"\n"
+        .ascii "value: \"true\"\12\0"
 .LC49:
-        .string "value: \"false\"\n"
+        .ascii "value: \"false\"\12\0"
 .LC50:
-        .string "type: \"expression\"\n"
+        .ascii "type: \"expression\"\12\0"
 .LC51:
-        .string "type: \"!\"\n"
+        .ascii "type: \"!\"\12\0"
 .LC52:
-        .string "type: \"-\"\n"
+        .ascii "type: \"-\"\12\0"
 .LC53:
-        .string "type: \"variable\"\n"
+        .ascii "type: \"variable\"\12\0"
 .LC54:
-        .string "unknown_PrimaryType: %d\n"
+        .ascii "unknown_PrimaryType: %u\12\0"
 output_primary:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     QWORD PTR [rbp-40], rdx
-        mov     QWORD PTR [rbp-48], rcx
-        mov     rax, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rbp-8], rax
-        mov     rax, QWORD PTR [rbp-8]
-        mov     eax, DWORD PTR [rax+8]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        mov     rax, QWORD PTR -8[rbp]
+        mov     eax, DWORD PTR 8[rax]
         cmp     eax, 8
         ja      .L79
         mov     eax, eax
-        mov     rax, QWORD PTR .L81[0+rax*8]
+        lea     rdx, 0[0+rax*4]
+        lea     rax, .L81[rip]
+        mov     eax, DWORD PTR [rdx+rax]
+        cdqe
+        lea     rdx, .L81[rip]
+        add     rax, rdx
         jmp     rax
 .L81:
-        .quad   .L89
-        .quad   .L88
-        .quad   .L87
-        .quad   .L86
-        .quad   .L85
-        .quad   .L84
-        .quad   .L83
-        .quad   .L82
-        .quad   .L80
+        .long   .L89-.L81
+        .long   .L88-.L81
+        .long   .L87-.L81
+        .long   .L86-.L81
+        .long   .L85-.L81
+        .long   .L84-.L81
+        .long   .L83-.L81
+        .long   .L82-.L81
+        .long   .L80-.L81
 .L89:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 16
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC42
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 16
+        mov     edx, 1
+        lea     rax, .LC42[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR -8[rbp]
         mov     rdx, QWORD PTR [rax]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     esi, OFFSET FLAT:.LC43
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8, rdx
+        lea     rdx, .LC43[rip]
+        mov     rcx, rax
         call    fprintf
         jmp     .L90
 .L88:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 14
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC44
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 14
+        mov     edx, 1
+        lea     rax, .LC44[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR -8[rbp]
         mov     rdx, QWORD PTR [rax]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     esi, OFFSET FLAT:.LC43
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8, rdx
+        lea     rdx, .LC43[rip]
+        mov     rcx, rax
         call    fprintf
         jmp     .L90
 .L87:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 15
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC45
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 15
+        mov     edx, 1
+        lea     rax, .LC45[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR -8[rbp]
         mov     rdx, QWORD PTR [rax]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     esi, OFFSET FLAT:.LC46
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8, rdx
+        lea     rdx, .LC46[rip]
+        mov     rcx, rax
         call    fprintf
         jmp     .L90
 .L86:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 16
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC47
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 16
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        lea     rax, .LC47[rip]
         mov     rcx, rax
-        mov     edx, 14
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC48
+        call    fwrite
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 14
+        mov     edx, 1
+        lea     rax, .LC48[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L90
 .L85:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 16
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC47
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 16
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        lea     rax, .LC47[rip]
         mov     rcx, rax
-        mov     edx, 15
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC49
+        call    fwrite
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 15
+        mov     edx, 1
+        lea     rax, .LC49[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L90
 .L84:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 19
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC50
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 19
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        lea     rax, .LC50[rip]
         mov     rcx, rax
-        mov     edx, 6
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC16
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 6
+        mov     edx, 1
+        lea     rax, .LC16[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_expression
         jmp     .L90
 .L83:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 10
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC51
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 10
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        lea     rax, .LC51[rip]
         mov     rcx, rax
-        mov     edx, 6
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC16
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 6
+        mov     edx, 1
+        lea     rax, .LC16[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_primary
         jmp     .L90
 .L82:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 10
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC52
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 10
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        lea     rax, .LC52[rip]
         mov     rcx, rax
-        mov     edx, 6
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC16
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 6
+        mov     edx, 1
+        lea     rax, .LC16[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_primary
         jmp     .L90
 .L80:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 17
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC53
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 17
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        lea     rax, .LC53[rip]
         mov     rcx, rax
-        mov     edx, 6
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC16
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 6
+        mov     edx, 1
+        lea     rax, .LC16[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_variable_access
         jmp     .L90
 .L79:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-8]
-        mov     edx, DWORD PTR [rax+8]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     esi, OFFSET FLAT:.LC54
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR -8[rbp]
+        mov     edx, DWORD PTR 8[rax]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8d, edx
+        lea     rdx, .LC54[rip]
+        mov     rcx, rax
         call    fprintf
         nop
 .L90:
         nop
-        leave
+        add     rsp, 48
+        pop     rbp
         ret
 .LC55:
-        .string "type: \"name\"\n"
+        .ascii "type: \"name\"\12\0"
 .LC56:
-        .string "type: \"function_call\"\n"
+        .ascii "type: \"function_call\"\12\0"
 .LC57:
-        .string "arguments\n"
+        .ascii "arguments\12\0"
 .LC58:
-        .string "arguments[%d]\n"
+        .ascii "arguments[%d]\12\0"
 .LC59:
-        .string "type: \"get sequence_element\"\n"
+        .ascii "type: \"get sequence_element\"\12\0"
 .LC60:
-        .string "sequence\n"
+        .ascii "sequence\12\0"
 .LC61:
-        .string "index\n"
+        .ascii "index\12\0"
 .LC62:
-        .string "type: \"get_attribute\"\n"
+        .ascii "type: \"get_attribute\"\12\0"
 .LC63:
-        .string "object\n"
+        .ascii "object\12\0"
 .LC64:
-        .string "attribute_name\n"
+        .ascii "attribute_name\12\0"
 .LC65:
-        .string "unknown_VariableAccessType: %d\n"
+        .ascii "unknown_VariableAccessType: %u\12\0"
 output_variable_access:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 64
-        mov     QWORD PTR [rbp-40], rdi
-        mov     QWORD PTR [rbp-48], rsi
-        mov     QWORD PTR [rbp-56], rdx
-        mov     QWORD PTR [rbp-64], rcx
-        mov     rax, QWORD PTR [rbp-40]
-        mov     QWORD PTR [rbp-16], rax
-        mov     rax, QWORD PTR [rbp-16]
-        mov     eax, DWORD PTR [rax+16]
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -16[rbp], rax
+        mov     rax, QWORD PTR -16[rbp]
+        mov     eax, DWORD PTR 16[rax]
         cmp     eax, 3
         je      .L92
         cmp     eax, 3
@@ -2113,561 +2154,580 @@ output_variable_access:
         je      .L96
         jmp     .L93
 .L95:
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 13
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC55
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 13
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        lea     rax, .LC55[rip]
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC4
         call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC4[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_name
         jmp     .L97
 .L96:
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, rax
         call    list_copy
-        mov     QWORD PTR [rbp-24], rax
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     QWORD PTR -24[rbp], rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 22
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC56
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rax
-        mov     edx, 9
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC1
-        call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_variable_access
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 22
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        lea     rax, .LC56[rip]
         mov     rcx, rax
-        mov     edx, 10
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC57
         call    fwrite
-        mov     DWORD PTR [rbp-4], -1
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 9
+        mov     edx, 1
+        lea     rax, .LC1[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR [rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
+        call    output_variable_access
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 10
+        mov     edx, 1
+        lea     rax, .LC57[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     DWORD PTR -4[rbp], -1
         jmp     .L98
 .L99:
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rsi, [rax+1]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     rdx, 1[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
         call    indention
-        add     DWORD PTR [rbp-4], 1
-        mov     edx, DWORD PTR [rbp-4]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     esi, OFFSET FLAT:.LC58
-        mov     rdi, rax
-        mov     eax, 0
+        add     DWORD PTR -4[rbp], 1
+        mov     edx, DWORD PTR -4[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8d, edx
+        lea     rdx, .LC58[rip]
+        mov     rcx, rax
         call    fprintf
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+2]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 2[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     rax, QWORD PTR -32[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_expression
 .L98:
-        mov     rax, QWORD PTR [rbp-24]
-        mov     rdi, rax
+        mov     rax, QWORD PTR -24[rbp]
+        mov     rcx, rax
         call    list_pop
-        mov     QWORD PTR [rbp-32], rax
-        cmp     QWORD PTR [rbp-32], 0
+        mov     QWORD PTR -32[rbp], rax
+        cmp     QWORD PTR -32[rbp], 0
         jne     .L99
         jmp     .L97
 .L92:
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 29
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC59
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rax
-        mov     edx, 9
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC60
-        call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_variable_access
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 29
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        lea     rax, .LC59[rip]
         mov     rcx, rax
-        mov     edx, 6
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC61
         call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 9
+        mov     edx, 1
+        lea     rax, .LC60[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR [rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
+        call    output_variable_access
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 6
+        mov     edx, 1
+        lea     rax, .LC61[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_expression
         jmp     .L97
 .L94:
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 22
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC62
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rax
-        mov     edx, 7
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC63
-        call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
-        call    output_variable_access
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 22
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-48]
+        lea     rax, .LC62[rip]
         mov     rcx, rax
-        mov     edx, 15
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC64
         call    fwrite
-        mov     rax, QWORD PTR [rbp-56]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-16]
-        mov     rax, QWORD PTR [rax+8]
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 7
+        mov     edx, 1
+        lea     rax, .LC63[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR [rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
+        call    output_variable_access
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 15
+        mov     edx, 1
+        lea     rax, .LC64[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -16[rbp]
+        mov     rax, QWORD PTR 8[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_name
         jmp     .L97
 .L93:
-        mov     rdx, QWORD PTR [rbp-64]
-        mov     rsi, QWORD PTR [rbp-56]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-16]
-        mov     edx, DWORD PTR [rax+16]
-        mov     rax, QWORD PTR [rbp-48]
-        mov     esi, OFFSET FLAT:.LC65
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR -16[rbp]
+        mov     edx, DWORD PTR 16[rax]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8d, edx
+        lea     rdx, .LC65[rip]
+        mov     rcx, rax
         call    fprintf
         nop
 .L97:
         nop
-        leave
+        add     rsp, 64
+        pop     rbp
         ret
 .LC66:
-        .string "Name pointer: \"NULL\"\n"
+        .ascii "Name pointer: \"NULL\"\12\0"
 .LC67:
-        .string "name: \"%s\"\n"
+        .ascii "name: \"%s\"\12\0"
 .LC68:
-        .string "id: %zu\n"
+        .ascii "id: %zu\12\0"
 .LC69:
-        .string "kind: \"type\"\n"
+        .ascii "kind: \"type\"\12\0"
 .LC70:
-        .string "kind: \"variable\"\n"
+        .ascii "kind: \"variable\"\12\0"
 .LC71:
-        .string "kind: \"function\"\n"
+        .ascii "kind: \"function\"\12\0"
 .LC72:
-        .string "kind: \"method\"\n"
+        .ascii "kind: \"method\"\12\0"
 .LC73:
-        .string "kind: \"class\"\n"
+        .ascii "kind: \"class\"\12\0"
 .LC74:
-        .string "kind: \"attribute\"\n"
+        .ascii "kind: \"attribute\"\12\0"
 .LC75:
-        .string "kind: \"unknown_NameType\"\n"
+        .ascii "kind: \"unknown_NameType\"\12\0"
 output_name:
         push    rbp
         mov     rbp, rsp
         sub     rsp, 48
-        mov     QWORD PTR [rbp-24], rdi
-        mov     QWORD PTR [rbp-32], rsi
-        mov     QWORD PTR [rbp-40], rdx
-        mov     QWORD PTR [rbp-48], rcx
-        mov     rax, QWORD PTR [rbp-24]
-        mov     QWORD PTR [rbp-8], rax
-        cmp     QWORD PTR [rbp-8], 0
+        mov     QWORD PTR 16[rbp], rcx
+        mov     QWORD PTR 24[rbp], rdx
+        mov     QWORD PTR 32[rbp], r8
+        mov     QWORD PTR 40[rbp], r9
+        mov     rax, QWORD PTR 16[rbp]
+        mov     QWORD PTR -8[rbp], rax
+        cmp     QWORD PTR -8[rbp], 0
         jne     .L101
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
         mov     rcx, rax
-        mov     edx, 21
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC66
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 21
+        mov     edx, 1
+        lea     rax, .LC66[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L100
 .L101:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-8]
+        mov     rax, QWORD PTR -8[rbp]
         mov     rdx, QWORD PTR [rax]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     esi, OFFSET FLAT:.LC67
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8, rdx
+        lea     rdx, .LC67[rip]
+        mov     rcx, rax
         call    fprintf
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
+        mov     rcx, rax
         call    indention
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rdx, QWORD PTR [rax+8]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     esi, OFFSET FLAT:.LC68
-        mov     rdi, rax
-        mov     eax, 0
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rdx, QWORD PTR 8[rax]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r8, rdx
+        lea     rdx, .LC68[rip]
+        mov     rcx, rax
         call    fprintf
-        mov     rax, QWORD PTR [rbp-8]
-        mov     eax, DWORD PTR [rax+24]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     eax, DWORD PTR 24[rax]
         cmp     eax, 5
         ja      .L103
         mov     eax, eax
-        mov     rax, QWORD PTR .L105[0+rax*8]
+        lea     rdx, 0[0+rax*4]
+        lea     rax, .L105[rip]
+        mov     eax, DWORD PTR [rdx+rax]
+        cdqe
+        lea     rdx, .L105[rip]
+        add     rax, rdx
         jmp     rax
 .L105:
-        .quad   .L110
-        .quad   .L109
-        .quad   .L108
-        .quad   .L107
-        .quad   .L106
-        .quad   .L104
+        .long   .L110-.L105
+        .long   .L109-.L105
+        .long   .L108-.L105
+        .long   .L107-.L105
+        .long   .L106-.L105
+        .long   .L104-.L105
 .L110:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
         mov     rcx, rax
-        mov     edx, 13
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC69
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 13
+        mov     edx, 1
+        lea     rax, .LC69[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L100
 .L109:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 17
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC70
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 17
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        lea     rax, .LC70[rip]
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC15
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC15[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_name
         jmp     .L100
 .L108:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 17
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC71
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 17
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        lea     rax, .LC71[rip]
         mov     rcx, rax
-        mov     edx, 12
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC7
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 12
+        mov     edx, 1
+        lea     rax, .LC7[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_name
         jmp     .L100
 .L107:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 15
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC72
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 15
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        lea     rax, .LC72[rip]
         mov     rcx, rax
-        mov     edx, 12
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC7
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 12
+        mov     edx, 1
+        lea     rax, .LC7[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_name
         jmp     .L100
 .L106:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
         mov     rcx, rax
-        mov     edx, 14
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC73
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 14
+        mov     edx, 1
+        lea     rax, .LC73[rip]
+        mov     rcx, rax
         call    fwrite
         jmp     .L100
 .L104:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 0
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 0
         mov     rcx, rax
-        mov     edx, 18
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC74
-        call    fwrite
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 18
         mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        lea     rax, .LC74[rip]
         mov     rcx, rax
-        mov     edx, 5
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC15
         call    fwrite
-        mov     rax, QWORD PTR [rbp-40]
-        lea     rdi, [rax+1]
-        mov     rax, QWORD PTR [rbp-8]
-        mov     rax, QWORD PTR [rax+16]
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     rdx, rdi
-        mov     rdi, rax
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
+        mov     rcx, rax
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 5
+        mov     edx, 1
+        lea     rax, .LC15[rip]
+        mov     rcx, rax
+        call    fwrite
+        mov     rax, QWORD PTR 32[rbp]
+        lea     r8, 1[rax]
+        mov     rax, QWORD PTR -8[rbp]
+        mov     rax, QWORD PTR 16[rax]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     rcx, rax
         call    output_name
         jmp     .L100
 .L103:
-        mov     rdx, QWORD PTR [rbp-48]
-        mov     rsi, QWORD PTR [rbp-40]
-        mov     rax, QWORD PTR [rbp-32]
-        mov     rcx, rdx
-        mov     edx, 1
-        mov     rdi, rax
-        call    indention
-        mov     rax, QWORD PTR [rbp-32]
+        mov     rcx, QWORD PTR 40[rbp]
+        mov     rdx, QWORD PTR 32[rbp]
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rcx
+        mov     r8d, 1
         mov     rcx, rax
-        mov     edx, 25
-        mov     esi, 1
-        mov     edi, OFFSET FLAT:.LC75
+        call    indention
+        mov     rax, QWORD PTR 24[rbp]
+        mov     r9, rax
+        mov     r8d, 25
+        mov     edx, 1
+        lea     rax, .LC75[rip]
+        mov     rcx, rax
         call    fwrite
         nop
 .L100:
-        leave
+        add     rsp, 48
+        pop     rbp
         ret

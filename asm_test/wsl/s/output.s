@@ -5,7 +5,7 @@
 .LC2:
         .string "class\n"
 .LC3:
-        .string "unknown_CodeMemberType: %d\n"
+        .string "unknown_CodeMemberType: %u\n"
 output_code_member:
         push    rbp
         mov     rbp, rsp
@@ -531,7 +531,7 @@ output_method:
 .LC12:
         .string "variable\n"
 .LC13:
-        .string "unknown_ClassMemberType: %d\n"
+        .string "unknown_ClassMemberType: %u\n"
 output_class_member:
         push    rbp
         mov     rbp, rsp
@@ -823,7 +823,7 @@ output_variable:
 .LC27:
         .string "expression_statement\n"
 .LC28:
-        .string "unknown_StatementType: %d\n"
+        .string "unknown_StatementType: %u\n"
 output_statement:
         push    rbp
         mov     rbp, rsp
@@ -1722,7 +1722,7 @@ output_expression:
 .LC53:
         .string "type: \"variable\"\n"
 .LC54:
-        .string "unknown_PrimaryType: %d\n"
+        .string "unknown_PrimaryType: %u\n"
 output_primary:
         push    rbp
         mov     rbp, rsp
@@ -2086,7 +2086,7 @@ output_primary:
 .LC64:
         .string "attribute_name\n"
 .LC65:
-        .string "unknown_VariableAccessType: %d\n"
+        .string "unknown_VariableAccessType: %u\n"
 output_variable_access:
         push    rbp
         mov     rbp, rsp
