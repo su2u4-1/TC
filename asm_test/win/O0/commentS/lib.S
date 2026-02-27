@@ -3,7 +3,7 @@
  ;	compiled by GNU C version 13.2.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
  ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
- ; options passed: -mtune=generic -march=nocona -O0
+ ; options passed: -mtune=generic -march=nocona -O0 -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt
 	.text
 	.section .rdata,"dr"
 .LC0:
@@ -436,15 +436,10 @@ builtin_scope:
 	.ascii "Fatal: Cannot allocate memory\12\0"
 	.text
 	.def	increase_memory_size;	.scl	3;	.type	32;	.endef
-	.seh_proc	increase_memory_size
 increase_memory_size:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$64, %rsp	 ;,
-	.seh_stackalloc	64
-	.seh_endprologue
 	movl	%ecx, %eax	 ; for_struct, tmp100
 	movb	%al, 16(%rbp)	 ; tmp101, for_struct
  ; D:\TC\src\lib.c:79:     MemoryBlock* new_block = (MemoryBlock*)malloc(sizeof(MemoryBlock));
@@ -559,25 +554,18 @@ increase_memory_size:
 .L7:
  ; D:\TC\src\lib.c:113: }
 	nop	
-	addq	$64, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC53:
 	.ascii "Info: Allocate big memory block of size %zu bytes\12\0"
 	.text
 	.def	alloc_big_memory;	.scl	3;	.type	32;	.endef
-	.seh_proc	alloc_big_memory
 alloc_big_memory:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; size, size
  ; D:\TC\src\lib.c:116:     string_memory_count += size;
 	movq	string_memory_count(%rip), %rdx	 ; string_memory_count, string_memory_count.8_1
@@ -625,20 +613,13 @@ alloc_big_memory:
  ; D:\TC\src\lib.c:124:     return block;
 	movq	-8(%rbp), %rax	 ; block, _17
  ; D:\TC\src\lib.c:125: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.def	create_string_check;	.scl	3;	.type	32;	.endef
-	.seh_proc	create_string_check
 create_string_check:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$64, %rsp	 ;,
-	.seh_stackalloc	64
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; data, data
 	movq	%rdx, 24(%rbp)	 ; length, length
 	movl	%r8d, %eax	 ; check, tmp106
@@ -802,21 +783,14 @@ create_string_check:
 	movq	-24(%rbp), %rax	 ; str, _27
 .L15:
  ; D:\TC\src\lib.c:158: }
-	addq	$64, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	create_string
 	.def	create_string;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_string
 create_string:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$32, %rsp	 ;,
-	.seh_stackalloc	32
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; data, data
 	movq	%rdx, 24(%rbp)	 ; length, length
  ; D:\TC\src\lib.c:161:     return create_string_check(data, length, true);
@@ -826,23 +800,15 @@ create_string:
 	movq	%rax, %rcx	 ; tmp85,
 	call	create_string_check	 ;
  ; D:\TC\src\lib.c:162: }
-	addq	$32, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	init
 	.def	init;	.scl	2;	.type	32;	.endef
-	.seh_proc	init
 init:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
+	movq	%rsp, %rbp	 ;,
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
 	subq	$56, %rsp	 ;,
-	.seh_stackalloc	56
-	leaq	48(%rsp), %rbp	 ;,
-	.seh_setframe	%rbp, 48
-	.seh_endprologue
  ; D:\TC\src\lib.c:165:     if (initialized) return;
 	movzbl	initialized(%rip), %eax	 ; initialized, initialized.18_1
  ; D:\TC\src\lib.c:165:     if (initialized) return;
@@ -959,12 +925,12 @@ init:
  ; D:\TC\src\lib.c:192:     initialized = true;
 	movb	$1, initialized(%rip)	 ;, initialized
  ; D:\TC\src\lib.c:193:     for (size_t i = 0; i < keywordCount; ++i)
-	movq	$0, -8(%rbp)	 ;, i
+	movq	$0, -24(%rbp)	 ;, i
  ; D:\TC\src\lib.c:193:     for (size_t i = 0; i < keywordCount; ++i)
 	jmp	.L32	 ;
 .L33:
  ; D:\TC\src\lib.c:194:         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
-	movq	-8(%rbp), %rax	 ; i, tmp169
+	movq	-24(%rbp), %rax	 ; i, tmp169
 	leaq	0(,%rax,8), %rdx	 ;, tmp170
 	leaq	keywordStrings(%rip), %rax	 ;, tmp171
 	movq	(%rdx,%rax), %rax	 ; keywordStrings[i_82], _22
@@ -972,7 +938,7 @@ init:
 	call	strlen	 ;
 	movq	%rax, %rdx	 ;, _23
  ; D:\TC\src\lib.c:194:         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
-	movq	-8(%rbp), %rax	 ; i, tmp172
+	movq	-24(%rbp), %rax	 ; i, tmp172
 	leaq	0(,%rax,8), %rcx	 ;, tmp173
 	leaq	keywordStrings(%rip), %rax	 ;, tmp174
 	movq	(%rcx,%rax), %rax	 ; keywordStrings[i_82], _24
@@ -980,23 +946,23 @@ init:
 	movq	%rax, %rcx	 ; _24,
 	call	create_string_check	 ;
  ; D:\TC\src\lib.c:194:         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
-	movq	-8(%rbp), %rdx	 ; i, tmp175
+	movq	-24(%rbp), %rdx	 ; i, tmp175
 	leaq	0(,%rdx,8), %rcx	 ;, tmp176
 	leaq	keywordList(%rip), %rdx	 ;, tmp177
 	movq	%rax, (%rcx,%rdx)	 ; _25, keywordList[i_82]
  ; D:\TC\src\lib.c:193:     for (size_t i = 0; i < keywordCount; ++i)
-	addq	$1, -8(%rbp)	 ;, i
+	addq	$1, -24(%rbp)	 ;, i
 .L32:
  ; D:\TC\src\lib.c:193:     for (size_t i = 0; i < keywordCount; ++i)
-	cmpq	$21, -8(%rbp)	 ;, i
+	cmpq	$21, -24(%rbp)	 ;, i
 	jbe	.L33	 ;,
  ; D:\TC\src\lib.c:195:     for (size_t i = 0; i < symbolCount; ++i)
-	movq	$0, -16(%rbp)	 ;, i
+	movq	$0, -32(%rbp)	 ;, i
  ; D:\TC\src\lib.c:195:     for (size_t i = 0; i < symbolCount; ++i)
 	jmp	.L34	 ;
 .L35:
  ; D:\TC\src\lib.c:196:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
-	movq	-16(%rbp), %rax	 ; i, tmp178
+	movq	-32(%rbp), %rax	 ; i, tmp178
 	leaq	0(,%rax,8), %rdx	 ;, tmp179
 	leaq	symbolStrings(%rip), %rax	 ;, tmp180
 	movq	(%rdx,%rax), %rax	 ; symbolStrings[i_83], _26
@@ -1004,7 +970,7 @@ init:
 	call	strlen	 ;
 	movq	%rax, %rdx	 ;, _27
  ; D:\TC\src\lib.c:196:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
-	movq	-16(%rbp), %rax	 ; i, tmp181
+	movq	-32(%rbp), %rax	 ; i, tmp181
 	leaq	0(,%rax,8), %rcx	 ;, tmp182
 	leaq	symbolStrings(%rip), %rax	 ;, tmp183
 	movq	(%rcx,%rax), %rax	 ; symbolStrings[i_83], _28
@@ -1012,15 +978,15 @@ init:
 	movq	%rax, %rcx	 ; _28,
 	call	create_string_check	 ;
  ; D:\TC\src\lib.c:196:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
-	movq	-16(%rbp), %rdx	 ; i, tmp184
+	movq	-32(%rbp), %rdx	 ; i, tmp184
 	leaq	0(,%rdx,8), %rcx	 ;, tmp185
 	leaq	symbolList(%rip), %rdx	 ;, tmp186
 	movq	%rax, (%rcx,%rdx)	 ; _29, symbolList[i_83]
  ; D:\TC\src\lib.c:195:     for (size_t i = 0; i < symbolCount; ++i)
-	addq	$1, -16(%rbp)	 ;, i
+	addq	$1, -32(%rbp)	 ;, i
 .L34:
  ; D:\TC\src\lib.c:195:     for (size_t i = 0; i < symbolCount; ++i)
-	cmpq	$29, -16(%rbp)	 ;, i
+	cmpq	$29, -32(%rbp)	 ;, i
 	jbe	.L35	 ;,
  ; D:\TC\src\lib.c:197:     IMPORT_KEYWORD = keywordList[0];
 	movq	keywordList(%rip), %rax	 ; keywordList[0], _30
@@ -1236,11 +1202,9 @@ init:
 	nop	
 .L25:
  ; D:\TC\src\lib.c:249: }
-	addq	$56, %rsp	 ;,
-	popq	%rbx	 ;
-	popq	%rbp	 ;
+	movq	-8(%rbp), %rbx	 ;,
+	leave	
 	ret	
-	.seh_endproc
 .lcomm memoryBlockCount,8,8
 	.section .rdata,"dr"
 	.align 8
@@ -1251,15 +1215,10 @@ init:
 	.text
 	.globl	alloc_memory
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
-	.seh_proc	alloc_memory
 alloc_memory:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; size, size
  ; D:\TC\src\lib.c:254:     if (!initialized) init();
 	movzbl	initialized(%rip), %eax	 ; initialized, initialized.31_1
@@ -1331,21 +1290,14 @@ alloc_memory:
  ; D:\TC\src\lib.c:262:     return ptr;
 	movq	-8(%rbp), %rax	 ; ptr, _32
  ; D:\TC\src\lib.c:263: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	is_keyword
 	.def	is_keyword;	.scl	2;	.type	32;	.endef
-	.seh_proc	is_keyword
 is_keyword:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; str, str
  ; D:\TC\src\lib.c:266:     if (!initialized) init();
 	movzbl	initialized(%rip), %eax	 ; initialized, initialized.40_1
@@ -1385,19 +1337,13 @@ is_keyword:
 	movl	$0, %eax	 ;, _5
 .L46:
  ; D:\TC\src\lib.c:271: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	string_equal
 	.def	string_equal;	.scl	2;	.type	32;	.endef
-	.seh_proc	string_equal
 string_equal:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; a, a
 	movq	%rdx, 24(%rbp)	 ; b, b
  ; D:\TC\src\lib.c:274:     return a == b;
@@ -1407,7 +1353,6 @@ string_equal:
  ; D:\TC\src\lib.c:275: }
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC56:
 	.ascii "\0"
@@ -1419,15 +1364,10 @@ string_equal:
 	.text
 	.globl	get_info
 	.def	get_info;	.scl	2;	.type	32;	.endef
-	.seh_proc	get_info
 get_info:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$112, %rsp	 ;,
-	.seh_stackalloc	112
-	.seh_endprologue
  ; D:\TC\src\lib.c:278:     size_t stringCount = 0;
 	movq	$0, -8(%rbp)	 ;, stringCount
  ; D:\TC\src\lib.c:279:     StringList* current = all_string_list;
@@ -1512,10 +1452,8 @@ get_info:
  ; D:\TC\src\lib.c:293:     return info;
 	movq	-40(%rbp), %rax	 ; info, _26
  ; D:\TC\src\lib.c:294: }
-	addq	$112, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

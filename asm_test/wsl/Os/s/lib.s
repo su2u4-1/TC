@@ -6,43 +6,36 @@
 	.text
 	.type	increase_memory_size, @function
 increase_memory_size:
-.LFB50:
-	.cfi_startproc
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movl	%edi, %ebp
 	movl	$32, %edi
 	pushq	%rbx
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	pushq	%rcx
-	.cfi_def_cfa_offset 32
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	testq	%rax, %rax
 	jne	.L2
 	movq	stderr(%rip), %rsi
 	leaq	.LC0(%rip), %rdi
-	call	fputs@PLT
+	call	*fputs@GOTPCREL(%rip)
 	movq	string_memory(%rip), %rbx
 .L3:
 	testq	%rbx, %rbx
 	je	.L9
-	movq	24(%rbx), %rdi
 	movq	16(%rbx), %rbp
-	call	free@PLT
+	movq	24(%rbx), %rdi
+	call	*free@GOTPCREL(%rip)
 	movq	%rbx, %rdi
+	call	*free@GOTPCREL(%rip)
 	movq	%rbp, %rbx
-	call	free@PLT
 	jmp	.L3
 .L9:
-	movl	$1, %edi
 	movb	$0, initialized(%rip)
-	call	exit@PLT
+	movl	$1, %edi
+	call	*exit@GOTPCREL(%rip)
 .L2:
-	movl	$1024, %edi
 	movq	%rax, %rbx
-	call	malloc@PLT
+	movl	$1024, %edi
+	call	*malloc@GOTPCREL(%rip)
 	xorl	%edx, %edx
 	movq	$1024, (%rbx)
 	movq	%rax, 24(%rbx)
@@ -66,14 +59,9 @@ increase_memory_size:
 	movq	%rax, 16(%rbx)
 .L1:
 	popq	%rax
-	.cfi_def_cfa_offset 24
 	popq	%rbx
-	.cfi_def_cfa_offset 16
 	popq	%rbp
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE50:
 	.size	increase_memory_size, .-increase_memory_size
 	.section	.rodata.str1.1
 .LC1:
@@ -84,13 +72,8 @@ increase_memory_size:
 	.globl	alloc_memory
 	.type	alloc_memory, @function
 alloc_memory:
-.LFB55:
-	.cfi_startproc
-	endbr64
 	cmpb	$0, initialized(%rip)
 	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
 	movq	%rdi, %rbx
 	jne	.L11
 	call	init
@@ -113,7 +96,7 @@ alloc_memory:
 	movl	$258, %edx
 	leaq	.LC1(%rip), %rsi
 	leaq	.LC2(%rip), %rdi
-	call	__assert_fail@PLT
+	call	*__assert_fail@GOTPCREL(%rip)
 .L13:
 	movq	%rdx, %rax
 	addq	%rbx, %rdx
@@ -121,11 +104,8 @@ alloc_memory:
 	movq	%rdx, 8(%rcx)
 	andq	$-8, %rax
 	popq	%rbx
-	.cfi_def_cfa_offset 8
 	addq	24(%rcx), %rax
 	ret
-	.cfi_endproc
-.LFE55:
 	.size	alloc_memory, .-alloc_memory
 	.section	.rodata.str1.1
 .LC3:
@@ -133,26 +113,14 @@ alloc_memory:
 	.text
 	.type	create_string_check, @function
 create_string_check:
-.LFB52:
-	.cfi_startproc
 	cmpb	$0, initialized(%rip)
 	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	movq	%rdi, %r12
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	movq	%rsi, %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 	movl	%edx, %ebx
 	jne	.L16
 	call	init
@@ -176,7 +144,7 @@ create_string_check:
 	movq	%rbp, %rdx
 	movq	%r12, %rsi
 	movq	%r14, %rdi
-	call	strncmp@PLT
+	call	*strncmp@GOTPCREL(%rip)
 	testl	%eax, %eax
 	cmove	%r14, %rbx
 .L20:
@@ -190,23 +158,23 @@ create_string_check:
 	jbe	.L22
 	leaq	1(%rbp), %r13
 	addq	%r13, string_memory_count(%rip)
-	movq	%r13, %rdi
 	addq	%r13, string_memory_used(%rip)
-	call	malloc@PLT
+	movq	%r13, %rdi
+	call	*malloc@GOTPCREL(%rip)
 	movq	stderr(%rip), %rdi
 	movq	%r13, %rcx
 	leaq	.LC3(%rip), %rdx
 	movq	%rax, %rbx
 	movl	$2, %esi
 	xorl	%eax, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	testq	%rbx, %rbx
 	jne	.L23
-	movq	stderr(%rip), %rsi
 	leaq	.LC0(%rip), %rdi
-	call	fputs@PLT
+	movq	stderr(%rip), %rsi
+	call	*fputs@GOTPCREL(%rip)
 	movl	$1, %edi
-	call	exit@PLT
+	call	*exit@GOTPCREL(%rip)
 .L22:
 	movq	string_memory(%rip), %rax
 	movq	8(%rax), %rdx
@@ -226,7 +194,7 @@ create_string_check:
 	movq	%rbp, %rdx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	strncpy@PLT
+	call	*strncpy@GOTPCREL(%rip)
 	movb	$0, (%rbx,%rbp)
 	movl	$24, %edi
 	call	alloc_memory
@@ -241,69 +209,45 @@ create_string_check:
 .L15:
 	movq	%rbx, %rax
 	popq	%rbx
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE52:
 	.size	create_string_check, .-create_string_check
 	.globl	create_string
 	.type	create_string, @function
 create_string:
-.LFB53:
-	.cfi_startproc
-	endbr64
 	movl	$1, %edx
 	jmp	create_string_check
-	.cfi_endproc
-.LFE53:
 	.size	create_string, .-create_string
 	.globl	init
 	.type	init, @function
 init:
-.LFB54:
-	.cfi_startproc
-	endbr64
 	cmpb	$0, initialized(%rip)
 	jne	.L44
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	pushq	%rsi
-	.cfi_def_cfa_offset 48
 	cmpq	$0, struct_memory(%rip)
 	jne	.L35
 	movl	$32, %edi
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	movq	%rax, struct_memory(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	jne	.L36
-	movq	stderr(%rip), %rsi
 	leaq	.LC0(%rip), %rdi
-	call	fputs@PLT
-	movl	$1, %edi
+	movq	stderr(%rip), %rsi
+	call	*fputs@GOTPCREL(%rip)
 	movb	$0, initialized(%rip)
-	call	exit@PLT
+	movl	$1, %edi
+	call	*exit@GOTPCREL(%rip)
 .L36:
 	movl	$1024, %edi
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	xorl	%ecx, %ecx
 	movq	$1024, (%rbx)
 	movq	%rax, 24(%rbx)
@@ -314,20 +258,20 @@ init:
 	cmpq	$0, string_memory(%rip)
 	jne	.L37
 	movl	$32, %edi
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	movq	%rax, string_memory(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	jne	.L38
-	movq	stderr(%rip), %rsi
 	leaq	.LC0(%rip), %rdi
-	call	fputs@PLT
-	movl	$1, %edi
+	movq	stderr(%rip), %rsi
+	call	*fputs@GOTPCREL(%rip)
 	movb	$0, initialized(%rip)
-	call	exit@PLT
+	movl	$1, %edi
+	call	*exit@GOTPCREL(%rip)
 .L38:
 	movl	$1024, %edi
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	xorl	%edx, %edx
 	movq	$1024, (%rbx)
 	movq	%rax, 24(%rbx)
@@ -344,7 +288,7 @@ init:
 	addq	$8, %rbx
 	addq	$8, %rbp
 	movq	%r12, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	xorl	%edx, %edx
 	movq	%r12, %rdi
 	movq	%rax, %rsi
@@ -360,7 +304,7 @@ init:
 	addq	$8, %rbx
 	addq	$8, %rbp
 	movq	%r12, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	xorl	%edx, %edx
 	movq	%r12, %rdi
 	movq	%rax, %rsi
@@ -473,35 +417,19 @@ init:
 	movq	232+symbolList(%rip), %rax
 	movq	%rax, OR_SYMBOL(%rip)
 	popq	%rax
-	.cfi_def_cfa_offset 40
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
 .L44:
-	.cfi_restore 3
-	.cfi_restore 6
-	.cfi_restore 12
-	.cfi_restore 13
 	ret
-	.cfi_endproc
-.LFE54:
 	.size	init, .-init
 	.globl	is_keyword
 	.type	is_keyword, @function
 is_keyword:
-.LFB56:
-	.cfi_startproc
-	endbr64
 	cmpb	$0, initialized(%rip)
 	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
 	movq	%rdi, %rbx
 	jne	.L48
 	call	init
@@ -520,22 +448,14 @@ is_keyword:
 	movb	$1, %al
 .L47:
 	popq	%rbx
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE56:
 	.size	is_keyword, .-is_keyword
 	.globl	string_equal
 	.type	string_equal, @function
 string_equal:
-.LFB57:
-	.cfi_startproc
-	endbr64
 	cmpq	%rdi, %rsi
 	sete	%al
 	ret
-	.cfi_endproc
-.LFE57:
 	.size	string_equal, .-string_equal
 	.section	.rodata.str1.1
 .LC4:
@@ -548,26 +468,13 @@ string_equal:
 	.globl	get_info
 	.type	get_info, @function
 get_info:
-.LFB58:
-	.cfi_startproc
-	endbr64
 	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	movq	all_string_list(%rip), %rax
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	xorl	%r13d, %r13d
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 .L56:
 	testq	%rax, %rax
 	je	.L59
@@ -581,32 +488,32 @@ get_info:
 	movq	%rbx, %rdi
 	leaq	.LC5(%rip), %r14
 	call	create_string_check
-	movq	struct_memory_count(%rip), %r9
 	movq	%r14, %rcx
-	orq	$-1, %rdx
+	movq	struct_memory_count(%rip), %r9
+	movq	struct_memory_used(%rip), %r8
 	movq	%rax, %rbp
 	movq	struct_memory(%rip), %rax
-	movq	struct_memory_used(%rip), %r8
+	orq	$-1, %rdx
 	movl	$2, %esi
 	movq	%rbp, %rdi
 	addq	8(%rax), %r8
 	xorl	%eax, %eax
-	call	__sprintf_chk@PLT
+	call	*__sprintf_chk@GOTPCREL(%rip)
 	movq	%rbx, %rdi
 	xorl	%edx, %edx
 	movl	$48, %esi
 	call	create_string_check
-	movq	string_memory_count(%rip), %r9
 	movq	%r14, %rcx
-	orq	$-1, %rdx
+	movq	string_memory_count(%rip), %r9
+	movq	string_memory_used(%rip), %r8
 	movq	%rax, %r12
 	movq	string_memory(%rip), %rax
-	movq	string_memory_used(%rip), %r8
+	orq	$-1, %rdx
 	movl	$2, %esi
 	movq	%r12, %rdi
 	addq	8(%rax), %r8
 	xorl	%eax, %eax
-	call	__sprintf_chk@PLT
+	call	*__sprintf_chk@GOTPCREL(%rip)
 	movq	%rbx, %rdi
 	xorl	%edx, %edx
 	movl	$240, %esi
@@ -616,34 +523,22 @@ get_info:
 	leaq	.LC6(%rip), %rcx
 	movq	%rax, %rbx
 	pushq	%rax
-	.cfi_def_cfa_offset 56
 	orq	$-1, %rdx
 	movl	$2, %esi
 	pushq	memoryBlockCount(%rip)
-	.cfi_def_cfa_offset 64
 	movq	%rbx, %rdi
 	xorl	%eax, %eax
 	pushq	%r13
-	.cfi_def_cfa_offset 72
 	pushq	%r12
-	.cfi_def_cfa_offset 80
-	call	__sprintf_chk@PLT
-	addq	$32, %rsp
-	.cfi_def_cfa_offset 48
+	call	*__sprintf_chk@GOTPCREL(%rip)
 	movq	%rbx, %rax
+	addq	$32, %rsp
 	popq	%rbx
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE58:
 	.size	get_info, .-get_info
 	.section	.rodata
 	.align 8
@@ -1216,19 +1111,3 @@ keywordStrings:
 	.quad	.LC58
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

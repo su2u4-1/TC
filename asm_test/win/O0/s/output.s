@@ -11,15 +11,10 @@
 	.ascii "unknown_CodeMemberType: %u\12\0"
 	.text
 	.def	output_code_member;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_code_member
 output_code_member:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -130,21 +125,14 @@ output_code_member:
 	nop
 .L6:
 	nop
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	output_code
 	.def	output_code;	.scl	2;	.type	32;	.endef
-	.seh_proc	output_code
 output_code:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -173,10 +161,8 @@ output_code:
 	jne	.L9
 	nop
 	nop
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC4:
 	.ascii "name\12\0"
@@ -186,15 +172,10 @@ output_code:
 	.ascii "source: \"%s\"\12\0"
 	.text
 	.def	output_import;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_import
 output_import:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -247,10 +228,8 @@ output_import:
 	movq	%rax, %rdx
 	call	fprintf
 	nop
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC7:
 	.ascii "return_type\12\0"
@@ -262,15 +241,10 @@ output_import:
 	.ascii "body\12\0"
 	.text
 	.def	output_function;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_function
 output_function:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -413,20 +387,13 @@ output_function:
 	jne	.L17
 	nop
 	nop
-	addq	$80, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.def	output_method;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_method
 output_method:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -569,10 +536,8 @@ output_method:
 	jne	.L22
 	nop
 	nop
-	addq	$80, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC11:
 	.ascii "method\12\0"
@@ -582,15 +547,10 @@ output_method:
 	.ascii "unknown_ClassMemberType: %u\12\0"
 	.text
 	.def	output_class_member;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_class_member
 output_class_member:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -672,24 +632,17 @@ output_class_member:
 	nop
 .L27:
 	nop
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC14:
 	.ascii "members\12\0"
 	.text
 	.def	output_class;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_class
 output_class:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$64, %rsp
-	.seh_stackalloc	64
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -757,10 +710,8 @@ output_class:
 	jne	.L31
 	nop
 	nop
-	addq	$64, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC15:
 	.ascii "type\12\0"
@@ -770,15 +721,10 @@ output_class:
 	.ascii "value: \"NULL\"\12\0"
 	.text
 	.def	output_variable;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_variable
 output_variable:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -876,10 +822,8 @@ output_variable:
 	call	fwrite
 .L35:
 	nop
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC18:
 	.ascii "if_statement\12\0"
@@ -906,15 +850,10 @@ output_variable:
 	.ascii "unknown_StatementType: %u\12\0"
 	.text
 	.def	output_statement;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_statement
 output_statement:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1184,10 +1123,8 @@ output_statement:
 	call	fprintf
 	nop
 .L36:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC29:
 	.ascii "condition\12\0"
@@ -1197,15 +1134,10 @@ output_statement:
 	.ascii "else_body\12\0"
 	.text
 	.def	output_if;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_if
 output_if:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1345,20 +1277,13 @@ output_if:
 	jne	.L56
 	nop
 	nop
-	addq	$80, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.def	output_else_if;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_else_if
 output_else_if:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$64, %rsp
-	.seh_stackalloc	64
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1426,10 +1351,8 @@ output_else_if:
 	jne	.L59
 	nop
 	nop
-	addq	$64, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC32:
 	.ascii "initializer\12\0"
@@ -1443,15 +1366,10 @@ output_else_if:
 	.ascii "increment: \"NULL\"\12\0"
 	.text
 	.def	output_for;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_for
 output_for:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$64, %rsp
-	.seh_stackalloc	64
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1628,20 +1546,13 @@ output_for:
 	jne	.L68
 	nop
 	nop
-	addq	$64, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.def	output_while;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_while
 output_while:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$64, %rsp
-	.seh_stackalloc	64
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1709,10 +1620,8 @@ output_while:
 	jne	.L71
 	nop
 	nop
-	addq	$64, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC37:
 	.ascii "primary\12\0"
@@ -1726,15 +1635,10 @@ output_while:
 	.ascii "right\12\0"
 	.text
 	.def	output_expression;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_expression
 output_expression:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1842,10 +1746,8 @@ output_expression:
 	call	output_expression
 .L77:
 	nop
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC42:
 	.ascii "type: \"integer\"\12\0"
@@ -1875,15 +1777,10 @@ output_expression:
 	.ascii "unknown_PrimaryType: %u\12\0"
 	.text
 	.def	output_primary;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_primary
 output_primary:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -2239,10 +2136,8 @@ output_primary:
 	nop
 .L90:
 	nop
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC55:
 	.ascii "type: \"name\"\12\0"
@@ -2269,15 +2164,10 @@ output_primary:
 	.ascii "unknown_VariableAccessType: %u\12\0"
 	.text
 	.def	output_variable_access;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_variable_access
 output_variable_access:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$64, %rsp
-	.seh_stackalloc	64
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -2571,10 +2461,8 @@ output_variable_access:
 	nop
 .L97:
 	nop
-	addq	$64, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC66:
 	.ascii "Name pointer: \"NULL\"\12\0"
@@ -2598,15 +2486,10 @@ output_variable_access:
 	.ascii "kind: \"unknown_NameType\"\12\0"
 	.text
 	.def	output_name;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_name
 output_name:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -2886,10 +2769,8 @@ output_name:
 	call	fwrite
 	nop
 .L100:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	indention;	.scl	2;	.type	32;	.endef
 	.def	fwrite;	.scl	2;	.type	32;	.endef

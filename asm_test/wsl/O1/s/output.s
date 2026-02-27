@@ -28,22 +28,11 @@
 	.text
 	.type	output_name, @function
 output_name:
-.LFB81:
-	.cfi_startproc
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
 	movq	%rsi, %rbx
 	movq	%rdx, %r12
 	movq	%rcx, %r13
@@ -53,31 +42,31 @@ output_name:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	0(%rbp), %rcx
 	leaq	.LC1(%rip), %rdx
 	movl	$2, %esi
 	movq	%rbx, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	8(%rbp), %rcx
 	leaq	.LC2(%rip), %rdx
 	movl	$2, %esi
 	movq	%rbx, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	cmpl	$5, 24(%rbp)
 	ja	.L4
 	movl	24(%rbp), %eax
 	leaq	.L6(%rip), %rdx
 	movslq	(%rdx,%rax,4), %rax
 	addq	%rdx, %rax
-	notrack jmp	*%rax
+	jmp	*%rax
 	.section	.rodata
 	.align 4
 	.align 4
@@ -93,59 +82,52 @@ output_name:
 	movl	$1, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$21, %edx
 	movl	$1, %esi
 	leaq	.LC0(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 .L1:
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
 .L11:
-	.cfi_restore_state
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$13, %edx
 	movl	$1, %esi
 	leaq	.LC3(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L1
 .L10:
 	movq	%r13, %rcx
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$17, %edx
 	movl	$1, %esi
 	leaq	.LC4(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC5(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r12), %rdx
 	movq	16(%rbp), %rdi
 	movq	%r13, %rcx
@@ -157,22 +139,22 @@ output_name:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$17, %edx
 	movl	$1, %esi
 	leaq	.LC6(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$12, %edx
 	movl	$1, %esi
 	leaq	.LC7(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r12), %rdx
 	movq	16(%rbp), %rdi
 	movq	%r13, %rcx
@@ -184,22 +166,22 @@ output_name:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$15, %edx
 	movl	$1, %esi
 	leaq	.LC8(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$12, %edx
 	movl	$1, %esi
 	leaq	.LC7(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r12), %rdx
 	movq	16(%rbp), %rdi
 	movq	%r13, %rcx
@@ -211,34 +193,34 @@ output_name:
 	movl	$1, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$14, %edx
 	movl	$1, %esi
 	leaq	.LC9(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L1
 .L5:
 	movq	%r13, %rcx
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$18, %edx
 	movl	$1, %esi
 	leaq	.LC10(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC5(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r12), %rdx
 	movq	16(%rbp), %rdi
 	movq	%r13, %rcx
@@ -250,15 +232,13 @@ output_name:
 	movl	$1, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$25, %edx
 	movl	$1, %esi
 	leaq	.LC11(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L1
-	.cfi_endproc
-.LFE81:
 	.size	output_name, .-output_name
 	.section	.rodata.str1.1
 .LC12:
@@ -292,22 +272,11 @@ output_name:
 	.text
 	.type	output_primary, @function
 output_primary:
-.LFB79:
-	.cfi_startproc
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
 	movq	%rdi, %r12
 	movq	%rsi, %rbx
 	movq	%rdx, %rbp
@@ -318,7 +287,7 @@ output_primary:
 	leaq	.L17(%rip), %rdx
 	movslq	(%rdx,%rax,4), %rax
 	addq	%rdx, %rax
-	notrack jmp	*%rax
+	jmp	*%rax
 	.section	.rodata
 	.align 4
 	.align 4
@@ -337,143 +306,136 @@ output_primary:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$16, %edx
 	movl	$1, %esi
 	leaq	.LC12(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	(%r12), %rcx
 	leaq	.LC13(%rip), %rdx
 	movl	$2, %esi
 	movq	%rbx, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 .L14:
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
 .L24:
-	.cfi_restore_state
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$14, %edx
 	movl	$1, %esi
 	leaq	.LC14(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	(%r12), %rcx
 	leaq	.LC13(%rip), %rdx
 	movl	$2, %esi
 	movq	%rbx, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L14
 .L23:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$15, %edx
 	movl	$1, %esi
 	leaq	.LC15(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	(%r12), %rcx
 	leaq	.LC16(%rip), %rdx
 	movl	$2, %esi
 	movq	%rbx, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L14
 .L22:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$16, %edx
 	movl	$1, %esi
 	leaq	.LC17(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$14, %edx
 	movl	$1, %esi
 	leaq	.LC18(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L14
 .L21:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$16, %edx
 	movl	$1, %esi
 	leaq	.LC17(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$15, %edx
 	movl	$1, %esi
 	leaq	.LC19(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L14
 .L20:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$19, %edx
 	movl	$1, %esi
 	leaq	.LC20(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$6, %edx
 	movl	$1, %esi
 	leaq	.LC21(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%rbp), %rdx
 	movq	(%r12), %rdi
 	movq	%r13, %rcx
@@ -484,22 +446,22 @@ output_primary:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$10, %edx
 	movl	$1, %esi
 	leaq	.LC22(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$6, %edx
 	movl	$1, %esi
 	leaq	.LC21(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%rbp), %rdx
 	movq	(%r12), %rdi
 	movq	%r13, %rcx
@@ -510,22 +472,22 @@ output_primary:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$10, %edx
 	movl	$1, %esi
 	leaq	.LC23(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$6, %edx
 	movl	$1, %esi
 	leaq	.LC21(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%rbp), %rdx
 	movq	(%r12), %rdi
 	movq	%r13, %rcx
@@ -536,22 +498,22 @@ output_primary:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$17, %edx
 	movl	$1, %esi
 	leaq	.LC24(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$6, %edx
 	movl	$1, %esi
 	leaq	.LC21(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%rbp), %rdx
 	movq	(%r12), %rdi
 	movq	%r13, %rcx
@@ -562,16 +524,14 @@ output_primary:
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movl	8(%r12), %ecx
 	leaq	.LC25(%rip), %rdx
 	movl	$2, %esi
 	movq	%rbx, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L14
-	.cfi_endproc
-.LFE79:
 	.size	output_primary, .-output_primary
 	.section	.rodata.str1.1
 .LC26:
@@ -587,23 +547,11 @@ output_primary:
 	.text
 	.type	output_expression, @function
 output_expression:
-.LFB78:
-	.cfi_startproc
 	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 	movq	%rdi, %r13
 	movq	%rsi, %rbx
 	movq	%rdx, %rbp
@@ -611,13 +559,13 @@ output_expression:
 	movl	24(%rdi), %edi
 	cmpl	$19, %edi
 	je	.L34
-	call	operator_to_string@PLT
+	call	*operator_to_string@GOTPCREL(%rip)
 	movq	%rax, %r14
 	movq	%r12, %rcx
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	testq	%r14, %r14
 	leaq	.LC26(%rip), %rax
 	cmove	%rax, %r14
@@ -626,17 +574,17 @@ output_expression:
 	movl	$2, %esi
 	movq	%rbx, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movq	%r12, %rcx
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC29(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%rbp), %r14
 	movq	0(%r13), %rdi
 	movq	%r12, %rcx
@@ -647,12 +595,12 @@ output_expression:
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$6, %edx
 	movl	$1, %esi
 	leaq	.LC30(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	16(%r13), %rdi
 	movq	%r12, %rcx
 	movq	%r14, %rdx
@@ -660,36 +608,27 @@ output_expression:
 	call	output_expression
 .L28:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
 .L34:
-	.cfi_restore_state
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$8, %edx
 	movl	$1, %esi
 	leaq	.LC27(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%rbp), %rdx
 	movq	8(%r13), %rdi
 	movq	%r12, %rcx
 	movq	%rbx, %rsi
 	call	output_primary
 	jmp	.L28
-	.cfi_endproc
-.LFE78:
 	.size	output_expression, .-output_expression
 	.section	.rodata.str1.1
 .LC31:
@@ -699,23 +638,11 @@ output_expression:
 	.text
 	.type	output_variable, @function
 output_variable:
-.LFB72:
-	.cfi_startproc
 	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 	movq	%rdi, %r13
 	movq	%rsi, %rbx
 	movq	%rdx, %r12
@@ -723,12 +650,12 @@ output_variable:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC5(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r12), %r14
 	movq	0(%r13), %rdi
 	movq	%rbp, %rcx
@@ -739,12 +666,12 @@ output_variable:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC31(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	8(%r13), %rdi
 	movq	%rbp, %rcx
 	movq	%r14, %rdx
@@ -756,12 +683,12 @@ output_variable:
 	movl	$1, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$6, %edx
 	movl	$1, %esi
 	leaq	.LC21(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	16(%r13), %rdi
 	movq	%rbp, %rcx
 	movq	%r14, %rdx
@@ -769,32 +696,23 @@ output_variable:
 	call	output_expression
 .L35:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
 .L36:
-	.cfi_restore_state
 	movq	%rbp, %rcx
 	movl	$1, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$14, %edx
 	movl	$1, %esi
 	leaq	.LC32(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L35
-	.cfi_endproc
-.LFE72:
 	.size	output_variable, .-output_variable
 	.section	.rodata.str1.1
 .LC33:
@@ -826,28 +744,13 @@ output_variable:
 	.text
 	.type	output_variable_access, @function
 output_variable_access:
-.LFB80:
-	.cfi_startproc
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	subq	$24, %rsp
-	.cfi_def_cfa_offset 80
 	movq	%rdi, %r12
 	movq	%rsi, %rbx
 	movq	%rdx, %r13
@@ -859,28 +762,28 @@ output_variable_access:
 	testl	%eax, %eax
 	je	.L52
 	movq	8(%rdi), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, 8(%rsp)
 	movq	%rbp, %rcx
 	movl	$0, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$22, %edx
 	movl	$1, %esi
 	leaq	.LC34(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%rbp, %rcx
 	movl	$0, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$9, %edx
 	movl	$1, %esi
 	leaq	.LC35(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r13), %r15
 	movq	(%r12), %rdi
 	movq	%rbp, %rcx
@@ -891,12 +794,12 @@ output_variable_access:
 	movl	$1, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$10, %edx
 	movl	$1, %esi
 	leaq	.LC36(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movl	$-1, %r14d
 	jmp	.L47
 .L41:
@@ -905,22 +808,22 @@ output_variable_access:
 	movl	$0, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$29, %edx
 	movl	$1, %esi
 	leaq	.LC38(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%rbp, %rcx
 	movl	$0, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$9, %edx
 	movl	$1, %esi
 	leaq	.LC39(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r13), %r14
 	movq	(%r12), %rdi
 	movq	%rbp, %rcx
@@ -931,12 +834,12 @@ output_variable_access:
 	movl	$1, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$6, %edx
 	movl	$1, %esi
 	leaq	.LC40(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	8(%r12), %rdi
 	movq	%rbp, %rcx
 	movq	%r14, %rdx
@@ -947,22 +850,22 @@ output_variable_access:
 	movl	$0, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$13, %edx
 	movl	$1, %esi
 	leaq	.LC33(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%rbp, %rcx
 	movl	$1, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC31(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r13), %rdx
 	movq	8(%r12), %rdi
 	movq	%rbp, %rcx
@@ -970,35 +873,26 @@ output_variable_access:
 	call	output_name
 .L39:
 	addq	$24, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 .L48:
-	.cfi_restore_state
 	movq	%rbp, %rcx
 	movl	$0, %edx
 	movq	%r15, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	addl	$1, %r14d
 	movl	%r14d, %ecx
 	leaq	.LC37(%rip), %rdx
 	movl	$2, %esi
 	movq	%rbx, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	leaq	2(%r13), %rdx
 	movq	%rbp, %rcx
 	movq	%rbx, %rsi
@@ -1006,7 +900,7 @@ output_variable_access:
 	call	output_expression
 .L47:
 	movq	8(%rsp), %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %r12
 	testq	%rax, %rax
 	jne	.L48
@@ -1015,22 +909,22 @@ output_variable_access:
 	movl	$0, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$22, %edx
 	movl	$1, %esi
 	leaq	.LC41(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%rbp, %rcx
 	movl	$0, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$7, %edx
 	movl	$1, %esi
 	leaq	.LC42(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r13), %r14
 	movq	(%r12), %rdi
 	movq	%rbp, %rcx
@@ -1041,12 +935,12 @@ output_variable_access:
 	movl	$1, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$15, %edx
 	movl	$1, %esi
 	leaq	.LC43(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	8(%r12), %rdi
 	movq	%rbp, %rcx
 	movq	%r14, %rdx
@@ -1057,16 +951,14 @@ output_variable_access:
 	movl	$1, %edx
 	movq	%r13, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movl	16(%r12), %ecx
 	leaq	.LC44(%rip), %rdx
 	movl	$2, %esi
 	movq	%rbx, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L39
-	.cfi_endproc
-.LFE80:
 	.size	output_variable_access, .-output_variable_access
 	.section	.rodata.str1.1
 .LC45:
@@ -1115,28 +1007,13 @@ output_variable_access:
 	.text
 	.type	output_statement, @function
 output_statement:
-.LFB73:
-	.cfi_startproc
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	subq	$40, %rsp
-	.cfi_def_cfa_offset 96
 	movq	%rdi, %r13
 	movq	%rsi, %rbx
 	movq	%rdx, %r12
@@ -1147,7 +1024,7 @@ output_statement:
 	leaq	.L57(%rip), %rdx
 	movslq	(%rdx,%rax,4), %rax
 	addq	%rdx, %rax
-	notrack jmp	*%rax
+	jmp	*%rax
 	.section	.rodata
 	.align 4
 	.align 4
@@ -1165,34 +1042,34 @@ output_statement:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$13, %edx
 	movl	$1, %esi
 	leaq	.LC45(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r12), %r14
 	movq	0(%r13), %r15
 	movq	8(%r15), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, %r13
 	movq	16(%r15), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, 8(%rsp)
 	movq	24(%r15), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, 16(%rsp)
 	movq	%rbp, %rcx
 	movl	$0, %edx
 	movq	%r14, 24(%rsp)
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$10, %edx
 	movl	$1, %esi
 	leaq	.LC46(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	2(%r12), %r14
 	movq	(%r15), %rdi
 	movq	%rbp, %rcx
@@ -1203,15 +1080,15 @@ output_statement:
 	movl	$0, %edx
 	movq	24(%rsp), %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC47(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 .L65:
 	movq	%r13, %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	testq	%rax, %rax
 	je	.L87
@@ -1225,32 +1102,32 @@ output_statement:
 	movl	$0, %edx
 	movq	24(%rsp), %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$8, %edx
 	movl	$1, %esi
 	leaq	.LC48(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	3(%r12), %r13
 .L67:
 	movq	8(%rsp), %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %r15
 	testq	%rax, %rax
 	je	.L88
 	movq	8(%r15), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, %r12
 	movq	%rbp, %rcx
 	movl	$0, %edx
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$10, %edx
 	movl	$1, %esi
 	leaq	.LC46(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	(%r15), %rdi
 	movq	%rbp, %rcx
 	movq	%r13, %rdx
@@ -1260,15 +1137,15 @@ output_statement:
 	movl	$1, %edx
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC47(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 .L68:
 	movq	%r12, %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	testq	%rax, %rax
 	je	.L67
 	movq	%rbp, %rcx
@@ -1282,15 +1159,15 @@ output_statement:
 	movl	$1, %edx
 	movq	24(%rsp), %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$10, %edx
 	movl	$1, %esi
 	leaq	.LC49(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 .L71:
 	movq	16(%rsp), %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	testq	%rax, %rax
 	je	.L54
@@ -1303,16 +1180,16 @@ output_statement:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$14, %edx
 	movl	$1, %esi
 	leaq	.LC50(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r12), %r14
 	movq	0(%r13), %r15
 	movq	24(%r15), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, %r13
 	cmpq	$0, (%r15)
 	je	.L74
@@ -1320,12 +1197,12 @@ output_statement:
 	movl	$0, %edx
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$12, %edx
 	movl	$1, %esi
 	leaq	.LC51(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	2(%r12), %rdx
 	movq	(%r15), %rdi
 	movq	%rbp, %rcx
@@ -1338,12 +1215,12 @@ output_statement:
 	movl	$0, %edx
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$10, %edx
 	movl	$1, %esi
 	leaq	.LC46(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	2(%r12), %rdx
 	movq	8(%r15), %rdi
 	movq	%rbp, %rcx
@@ -1356,12 +1233,12 @@ output_statement:
 	movl	$0, %edx
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$10, %edx
 	movl	$1, %esi
 	leaq	.LC54(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	2(%r12), %rdx
 	movq	16(%r15), %rdi
 	movq	%rbp, %rcx
@@ -1372,16 +1249,16 @@ output_statement:
 	movl	$1, %edx
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC47(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	addq	$2, %r12
 .L80:
 	movq	%r13, %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	testq	%rax, %rax
 	je	.L54
@@ -1395,62 +1272,62 @@ output_statement:
 	movl	$0, %edx
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$20, %edx
 	movl	$1, %esi
 	leaq	.LC52(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L75
 .L76:
 	movq	%rbp, %rcx
 	movl	$0, %edx
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$18, %edx
 	movl	$1, %esi
 	leaq	.LC53(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L77
 .L78:
 	movq	%rbp, %rcx
 	movl	$0, %edx
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$18, %edx
 	movl	$1, %esi
 	leaq	.LC55(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L79
 .L61:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$16, %edx
 	movl	$1, %esi
 	leaq	.LC56(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r12), %r14
 	movq	0(%r13), %r15
 	movq	8(%r15), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, %r13
 	movq	%rbp, %rcx
 	movl	$0, %edx
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$10, %edx
 	movl	$1, %esi
 	leaq	.LC46(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	addq	$2, %r12
 	movq	(%r15), %rdi
 	movq	%rbp, %rcx
@@ -1461,15 +1338,15 @@ output_statement:
 	movl	$1, %edx
 	movq	%r14, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC47(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 .L82:
 	movq	%r13, %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	testq	%rax, %rax
 	je	.L54
@@ -1482,12 +1359,12 @@ output_statement:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$31, %edx
 	movl	$1, %esi
 	leaq	.LC57(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r12), %rdx
 	movq	0(%r13), %rdi
 	movq	%rbp, %rcx
@@ -1495,34 +1372,25 @@ output_statement:
 	call	output_variable
 .L54:
 	addq	$40, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 .L59:
-	.cfi_restore_state
 	cmpq	$0, (%rdi)
 	je	.L89
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$17, %edx
 	movl	$1, %esi
 	leaq	.LC59(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r12), %rdx
 	movq	0(%r13), %rdi
 	movq	%rbp, %rcx
@@ -1533,34 +1401,34 @@ output_statement:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$25, %edx
 	movl	$1, %esi
 	leaq	.LC58(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L54
 .L58:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$24, %edx
 	movl	$1, %esi
 	leaq	.LC60(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L54
 .L56:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$27, %edx
 	movl	$1, %esi
 	leaq	.LC61(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L54
 .L64:
 	cmpq	$0, (%rdi)
@@ -1568,12 +1436,12 @@ output_statement:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$21, %edx
 	movl	$1, %esi
 	leaq	.LC63(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	1(%r12), %rdx
 	movq	0(%r13), %rdi
 	movq	%rbp, %rcx
@@ -1584,27 +1452,25 @@ output_statement:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%rbx, %rcx
 	movl	$29, %edx
 	movl	$1, %esi
 	leaq	.LC62(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L54
 .L55:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movl	8(%r13), %ecx
 	leaq	.LC64(%rip), %rdx
 	movl	$2, %esi
 	movq	%rbx, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L54
-	.cfi_endproc
-.LFE73:
 	.size	output_statement, .-output_statement
 	.section	.rodata.str1.1
 .LC65:
@@ -1633,34 +1499,18 @@ output_statement:
 	.globl	output_code
 	.type	output_code, @function
 output_code:
-.LFB66:
-	.cfi_startproc
-	endbr64
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	subq	$56, %rsp
-	.cfi_def_cfa_offset 112
 	movq	%rsi, %r14
 	movq	%rdx, %r13
 	movq	%rcx, %r15
 	movq	(%rdi), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, 40(%rsp)
 	movq	%r15, %rax
 	movq	%r14, %r15
@@ -1670,12 +1520,12 @@ output_code:
 	movq	%r14, %rcx
 	movl	$0, %edx
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$9, %edx
 	movl	$1, %esi
 	leaq	.LC35(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	2(%r13), %rbp
 	movq	%rbp, 8(%rsp)
 	movq	(%rbx), %rbx
@@ -1683,12 +1533,12 @@ output_code:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC31(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	3(%r13), %r12
 	movq	(%rbx), %rdi
 	movq	%r14, %rcx
@@ -1699,12 +1549,12 @@ output_code:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$12, %edx
 	movl	$1, %esi
 	leaq	.LC7(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	8(%rbx), %rdi
 	movq	%r14, %rcx
 	movq	%r12, %rdx
@@ -1714,22 +1564,22 @@ output_code:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$11, %edx
 	movl	$1, %esi
 	leaq	.LC68(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	16(%rbx), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, (%rsp)
 	movq	24(%rbx), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movl	$-1, %ebp
 	movq	%rax, 16(%rsp)
 .L98:
 	movq	(%rsp), %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	je	.L115
@@ -1737,14 +1587,14 @@ output_code:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	addl	$1, %ebp
 	movl	%ebp, %ecx
 	leaq	.LC69(%rip), %rdx
 	movl	$2, %esi
 	movq	%r15, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	leaq	4(%r13), %rdx
 	movq	%r14, %rcx
 	movq	%r15, %rsi
@@ -1757,15 +1607,15 @@ output_code:
 	movl	$1, %edx
 	movq	8(%rsp), %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC47(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 .L100:
 	movq	%rbx, %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	testq	%rax, %rax
 	je	.L92
@@ -1778,24 +1628,24 @@ output_code:
 	movq	%r14, %rcx
 	movl	$0, %edx
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$6, %edx
 	movl	$1, %esi
 	leaq	.LC70(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	2(%r13), %rbp
 	movq	(%rbx), %rbx
 	movq	%r14, %rcx
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC31(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	3(%r13), %rax
 	movq	%rax, 16(%rsp)
 	movq	(%rbx), %rdi
@@ -1807,14 +1657,14 @@ output_code:
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$8, %edx
 	movl	$1, %esi
 	leaq	.LC71(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	8(%rbx), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, 8(%rsp)
 	jmp	.L102
 .L103:
@@ -1822,12 +1672,12 @@ output_code:
 	movl	$0, %edx
 	movq	16(%rsp), %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$7, %edx
 	movl	$1, %esi
 	leaq	.LC72(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	4(%r13), %rbp
 	movq	%rbp, 24(%rsp)
 	movq	(%rbx), %rbx
@@ -1835,12 +1685,12 @@ output_code:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC31(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	5(%r13), %r12
 	movq	(%rbx), %rdi
 	movq	%r14, %rcx
@@ -1851,12 +1701,12 @@ output_code:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$12, %edx
 	movl	$1, %esi
 	leaq	.LC7(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	8(%rbx), %rdi
 	movq	%r14, %rcx
 	movq	%r12, %rdx
@@ -1866,17 +1716,17 @@ output_code:
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$11, %edx
 	movl	$1, %esi
 	leaq	.LC68(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	16(%rbx), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, (%rsp)
 	movq	24(%rbx), %rdi
-	call	list_copy@PLT
+	call	*list_copy@GOTPCREL(%rip)
 	movl	$-1, %ebp
 	movq	%rax, 32(%rsp)
 	jmp	.L106
@@ -1885,14 +1735,14 @@ output_code:
 	movl	$0, %edx
 	movq	%r12, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	addl	$1, %ebp
 	movl	%ebp, %ecx
 	leaq	.LC69(%rip), %rdx
 	movl	$2, %esi
 	movq	%r15, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	leaq	6(%r13), %rdx
 	movq	%r14, %rcx
 	movq	%r15, %rsi
@@ -1900,7 +1750,7 @@ output_code:
 	call	output_variable
 .L106:
 	movq	(%rsp), %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	jne	.L107
@@ -1909,12 +1759,12 @@ output_code:
 	movl	$1, %edx
 	movq	24(%rsp), %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC47(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L108
 .L109:
 	movq	%r14, %rcx
@@ -1923,13 +1773,13 @@ output_code:
 	call	output_statement
 .L108:
 	movq	%rbx, %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	testq	%rax, %rax
 	jne	.L109
 .L102:
 	movq	8(%rsp), %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	je	.L92
@@ -1942,25 +1792,25 @@ output_code:
 	movl	$0, %edx
 	movq	16(%rsp), %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movl	8(%rbx), %ecx
 	leaq	.LC74(%rip), %rdx
 	movl	$2, %esi
 	movq	%r15, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L102
 .L104:
 	movq	%r14, %rcx
 	movl	$0, %edx
 	movq	16(%rsp), %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$9, %edx
 	movl	$1, %esi
 	leaq	.LC73(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	4(%r13), %rdx
 	movq	(%rbx), %rdi
 	movq	%r14, %rcx
@@ -1971,16 +1821,16 @@ output_code:
 	movq	%r14, %rcx
 	movl	$0, %edx
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movl	8(%rbx), %ecx
 	leaq	.LC75(%rip), %rdx
 	movl	$2, %esi
 	movq	%r15, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 .L92:
 	movq	40(%rsp), %rdi
-	call	list_pop@PLT
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	je	.L116
@@ -1995,24 +1845,24 @@ output_code:
 	movq	%r14, %rcx
 	movl	$0, %edx
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$7, %edx
 	movl	$1, %esi
 	leaq	.LC66(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	2(%r13), %rbp
 	movq	(%rbx), %rbx
 	movq	%r14, %rcx
 	movl	$0, %edx
 	movq	%rbp, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	%r15, %rcx
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC31(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	leaq	3(%r13), %rdx
 	movq	(%rbx), %rdi
 	movq	%r14, %rcx
@@ -2022,7 +1872,7 @@ output_code:
 	movl	$1, %edx
 	movq	%rbp, %rsi
 	movq	%r15, %rdi
-	call	indention@PLT
+	call	*indention@GOTPCREL(%rip)
 	movq	8(%rbx), %rcx
 	testq	%rcx, %rcx
 	leaq	.LC65(%rip), %rax
@@ -2031,42 +1881,17 @@ output_code:
 	movl	$2, %esi
 	movq	%r15, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L92
 .L116:
 	addq	$56, %rsp
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE66:
 	.size	output_code, .-output_code
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

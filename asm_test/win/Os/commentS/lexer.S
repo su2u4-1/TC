@@ -3,16 +3,14 @@
  ;	compiled by GNU C version 13.2.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
  ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
- ; options passed: -mtune=generic -march=nocona -Os
+ ; options passed: -mtune=generic -march=nocona -Os -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt
 	.text
 	.def	get_current_char;	.scl	3;	.type	32;	.endef
-	.seh_proc	get_current_char
 get_current_char:
-	.seh_endprologue
- ; D:\TC\src\lexer.c:33:         return '\0';
-	xorl	%edx, %edx	 ; <retval>
  ; D:\TC\src\lexer.c:32:     if (lexer->position >= lexer->length)
 	movq	8(%rcx), %rax	 ; lexer_11(D)->position, _1
+ ; D:\TC\src\lexer.c:33:         return '\0';
+	xorl	%edx, %edx	 ; <retval>
  ; D:\TC\src\lexer.c:32:     if (lexer->position >= lexer->length)
 	cmpq	16(%rcx), %rax	 ; lexer_11(D)->length, _1
 	jnb	.L1	 ;,
@@ -30,29 +28,20 @@ get_current_char:
  ; D:\TC\src\lexer.c:36: }
 	movl	%edx, %eax	 ; <retval>,
 	ret	
-	.seh_endproc
 	.def	create_token;	.scl	3;	.type	32;	.endef
-	.seh_proc	create_token
 create_token:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
-	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
-	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\lexer.c:18: static Token* create_token(TokenType type, string lexeme, size_t line, size_t column) {
 	movl	%ecx, %ebp	 ; tmp88, type
  ; D:\TC\src\lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	movl	$32, %ecx	 ;,
  ; D:\TC\src\lexer.c:18: static Token* create_token(TokenType type, string lexeme, size_t line, size_t column) {
+	pushq	%rdi	 ;
 	movq	%rdx, %rdi	 ; tmp89, lexeme
+	pushq	%rsi	 ;
 	movq	%r8, %rsi	 ; tmp90, line
+	pushq	%rbx	 ;
 	movq	%r9, %rbx	 ; tmp91, column
+	subq	$40, %rsp	 ;,
  ; D:\TC\src\lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	call	alloc_memory	 ;
  ; D:\TC\src\lexer.c:20:     token->type = type;
@@ -70,27 +59,19 @@ create_token:
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC0:
 	.ascii "Lexer Error at Line %zu, Column %zu: %s\12\0"
 	.text
 	.def	lexer_error;	.scl	3;	.type	32;	.endef
-	.seh_proc	lexer_error
 lexer_error:
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
-	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
- ; D:\TC\src\lexer.c:27: static void lexer_error(const string message, size_t line, size_t column) {
 	movq	%rcx, %rdi	 ; tmp93, message
-	movq	%rdx, %rbx	 ; tmp94, line
+	pushq	%rsi	 ;
 	movq	%r8, %rsi	 ; tmp95, column
+	pushq	%rbx	 ;
+	movq	%rdx, %rbx	 ; tmp94, line
+	subq	$48, %rsp	 ;,
  ; D:\TC\src\lexer.c:28:     fprintf(stderr, "Lexer Error at Line %zu, Column %zu: %s\n", line + 1, column + 1, message);
 	call	__getreent	 ;
  ; D:\TC\src\lexer.c:28:     fprintf(stderr, "Lexer Error at Line %zu, Column %zu: %s\n", line + 1, column + 1, message);
@@ -100,14 +81,12 @@ lexer_error:
 	movq	%rdi, 32(%rsp)	 ; message,
 	leaq	.LC0(%rip), %rdx	 ;, tmp92
 	call	fprintf	 ;
-	nop	
  ; D:\TC\src\lexer.c:29: }
 	addq	$48, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC1:
 	.ascii "Unterminated string literal\0"
@@ -121,57 +100,49 @@ lexer_error:
 	.ascii "Unexpected character\0"
 	.text
 	.def	next_token;	.scl	3;	.type	32;	.endef
-	.seh_proc	next_token
 next_token:
 	pushq	%r12	 ;
-	.seh_pushreg	%r12
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
-	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
- ; D:\TC\src\lexer.c:59: static Token* next_token(Lexer* lexer, bool skip_comment) {
-	movq	%rcx, %rbx	 ; tmp505, lexer
 	movl	%edx, %edi	 ; tmp506, skip_comment
+	pushq	%rsi	 ;
+	pushq	%rbx	 ;
+	movq	%rcx, %rbx	 ; tmp505, lexer
+	subq	$48, %rsp	 ;,
  ; D:\TC\src\lexer.c:60:     char c = get_current_char(lexer);
 	call	get_current_char	 ;
  ; D:\TC\src\lexer.c:61:     if (c == '\0')
 	testb	%al, %al	 ; c
-	jne	.L8	 ;,
+	jne	.L10	 ;,
  ; D:\TC\src\lexer.c:62:         return create_token(EOF_TOKEN, 0, lexer->line, lexer->column);
 	movq	32(%rcx), %r9	 ; lexer_269(D)->column,
 	movq	24(%rcx), %r8	 ; lexer_269(D)->line,
-	jmp	.L181	 ;
-.L8:
+	jmp	.L184	 ;
+.L10:
  ; D:\TC\src\lexer.c:63:     else if (c == ' ' || c == '\t' || c == '\r')
 	movl	%eax, %edx	 ; c, tmp321
 	andl	$-5, %edx	 ;, tmp321
  ; D:\TC\src\lexer.c:63:     else if (c == ' ' || c == '\t' || c == '\r')
 	cmpb	$9, %dl	 ;, tmp321
-	je	.L182	 ;,
+	je	.L185	 ;,
 	cmpb	$32, %al	 ;, c
-	je	.L182	 ;,
+	je	.L185	 ;,
  ; D:\TC\src\lexer.c:65:     else if (c == '\n') {
 	cmpb	$10, %al	 ;, c
-	jne	.L11	 ;,
+	jne	.L13	 ;,
  ; D:\TC\src\lexer.c:46:     lexer->column = 0;
 	xorl	%r9d, %r9d	 ;
  ; D:\TC\src\lexer.c:45:     lexer->line++;
 	incq	24(%rcx)	 ; lexer_269(D)->line
  ; D:\TC\src\lexer.c:46:     lexer->column = 0;
 	movq	%r9, 32(%rcx)	 ;, lexer_269(D)->column
-.L182:
+.L185:
+ ; D:\TC\src\lexer.c:214: }
+	addq	$48, %rsp	 ;,
  ; D:\TC\src\lexer.c:67:         return next_token(lexer, skip_comment);
 	movsbl	%dil, %edx	 ; skip_comment, skip_comment
 	movq	%rbx, %rcx	 ; lexer,
  ; D:\TC\src\lexer.c:214: }
-	addq	$48, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
@@ -179,15 +150,15 @@ next_token:
 	popq	%r12	 ;
  ; D:\TC\src\lexer.c:67:         return next_token(lexer, skip_comment);
 	jmp	next_token	 ;
-.L11:
+.L13:
  ; D:\TC\src\lexer.c:69:         size_t start = lexer->position - 1;
 	movq	8(%rcx), %rsi	 ; lexer_269(D)->position, pretmp_452
 	cmpb	$57, %al	 ;, c
-	jg	.L12	 ;,
+	jg	.L14	 ;,
 	cmpb	$47, %al	 ;, c
-	jg	.L13	 ;,
+	jg	.L15	 ;,
 	cmpb	$34, %al	 ;, c
-	jne	.L15	 ;,
+	jne	.L17	 ;,
  ; D:\TC\src\lexer.c:98:         while (c != '"' && c != '\0' && c != '\n')
 	movabsq	$-17179870210, %r9	 ;, tmp503
  ; D:\TC\src\lexer.c:96:         size_t column_start = lexer->column - 1;
@@ -197,37 +168,37 @@ next_token:
 	call	get_current_char	 ;
 	movl	%eax, %edi	 ; tmp515, c
  ; D:\TC\src\lexer.c:98:         while (c != '"' && c != '\0' && c != '\n')
-	jmp	.L28	 ;
-.L12:
+	jmp	.L30	 ;
+.L14:
 	leal	-65(%rax), %edx	 ;, _230
 	cmpb	$57, %dl	 ;, _230
-	ja	.L15	 ;,
+	ja	.L17	 ;,
 	movabsq	$288230372997595135, %r11	 ;, tmp330
 	btq	%rdx, %r11	 ; _230, tmp330
-	jnc	.L15	 ;,
+	jnc	.L17	 ;,
  ; D:\TC\src\lexer.c:70:         size_t column_start = lexer->column - 1;
 	movq	32(%rbx), %rdi	 ; lexer_269(D)->column, tmp526
  ; D:\TC\src\lexer.c:69:         size_t start = lexer->position - 1;
 	leaq	-1(%rsi), %r10	 ;, start
  ; D:\TC\src\lexer.c:70:         size_t column_start = lexer->column - 1;
 	leaq	-1(%rdi), %r9	 ;, column_start
-.L18:
-	cmpb	$57, %al	 ;, c
-	jg	.L19	 ;,
-	cmpb	$47, %al	 ;, c
-	jle	.L21	 ;,
 .L20:
+	cmpb	$57, %al	 ;, c
+	jg	.L21	 ;,
+	cmpb	$47, %al	 ;, c
+	jle	.L23	 ;,
+.L22:
  ; D:\TC\src\lexer.c:72:             c = get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
-	jmp	.L18	 ;
-.L19:
+	jmp	.L20	 ;
+.L21:
 	subl	$65, %eax	 ;, _234
 	cmpb	$57, %al	 ;, _234
-	ja	.L21	 ;,
+	ja	.L23	 ;,
 	btq	%rax, %r11	 ; _234, tmp330
-	jc	.L20	 ;,
-.L21:
+	jc	.L22	 ;,
+.L23:
  ; D:\TC\src\lexer.c:54:         lexer->position -= (size_t)(-count);
 	movq	8(%rbx), %rdx	 ; lexer_269(D)->position, _425
  ; D:\TC\src\lexer.c:74:         string content = create_string(&lexer->source[start], lexer->position - start);
@@ -257,25 +228,25 @@ next_token:
  ; D:\TC\src\lexer.c:75:         if (is_keyword(content))
 	testb	%al, %al	 ; tmp510
 	movq	40(%rsp), %r9	 ; %sfp, column_start
-	jne	.L183	 ;,
+	jne	.L186	 ;,
  ; D:\TC\src\lexer.c:78:             return create_token(IDENTIFIER, content, lexer->line, column_start);
 	movl	$1, %ecx	 ;,
-	jmp	.L183	 ;
-.L13:
+	jmp	.L186	 ;
+.L15:
  ; D:\TC\src\lexer.c:81:         size_t column_start = lexer->column - 1;
 	movq	32(%rcx), %rax	 ; lexer_269(D)->column, tmp528
  ; D:\TC\src\lexer.c:80:         size_t start = lexer->position - 1;
 	leaq	-1(%rsi), %r10	 ;, start
  ; D:\TC\src\lexer.c:81:         size_t column_start = lexer->column - 1;
 	leaq	-1(%rax), %rdi	 ;, column_start
-.L24:
+.L26:
  ; D:\TC\src\lexer.c:83:             c = get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
  ; D:\TC\src\lexer.c:82:         while ('0' <= c && c <= '9')
 	leal	-48(%rax), %edx	 ;, tmp344
 	cmpb	$9, %dl	 ;, tmp344
-	jbe	.L24	 ;,
+	jbe	.L26	 ;,
  ; D:\TC\src\lexer.c:39:     if (lexer->position >= lexer->length)
 	movq	8(%rbx), %rdx	 ; lexer_269(D)->position, _431
  ; D:\TC\src\lexer.c:74:         string content = create_string(&lexer->source[start], lexer->position - start);
@@ -284,30 +255,30 @@ next_token:
 	movl	$2, %ebp	 ;, type
  ; D:\TC\src\lexer.c:39:     if (lexer->position >= lexer->length)
 	cmpq	16(%rbx), %rdx	 ; lexer_269(D)->length, _431
-	jnb	.L25	 ;,
+	jnb	.L27	 ;,
  ; D:\TC\src\lexer.c:86:         if (c == '.' && ('0' <= p && p <= '9')) {
 	cmpb	$46, %al	 ;, c
-	jne	.L25	 ;,
+	jne	.L27	 ;,
  ; D:\TC\src\lexer.c:86:         if (c == '.' && ('0' <= p && p <= '9')) {
 	movb	(%r9,%rdx), %al	 ; *_434, *_434
 	subl	$48, %eax	 ;, tmp345
  ; D:\TC\src\lexer.c:86:         if (c == '.' && ('0' <= p && p <= '9')) {
 	cmpb	$9, %al	 ;, tmp345
-	ja	.L25	 ;,
-.L180:
+	ja	.L27	 ;,
+.L183:
  ; D:\TC\src\lexer.c:89:                 c = get_current_char(lexer);
 	call	get_current_char	 ;
  ; D:\TC\src\lexer.c:88:             while ('0' <= c && c <= '9')
 	subl	$48, %eax	 ;, tmp347
 	cmpb	$9, %al	 ;, tmp347
-	ja	.L188	 ;,
+	ja	.L191	 ;,
  ; D:\TC\src\lexer.c:89:                 c = get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
-	jmp	.L180	 ;
-.L188:
+	jmp	.L183	 ;
+.L191:
  ; D:\TC\src\lexer.c:90:             type = FLOAT;
 	movl	$3, %ebp	 ;, type
-.L25:
+.L27:
  ; D:\TC\src\lexer.c:54:         lexer->position -= (size_t)(-count);
 	movq	8(%rbx), %rdx	 ; lexer_269(D)->position, _437
  ; D:\TC\src\lexer.c:55:         lexer->column -= (size_t)(-count);
@@ -331,27 +302,27 @@ next_token:
 	movl	%ebp, %ecx	 ; type,
  ; D:\TC\src\lexer.c:93:         return create_token(type, create_string(&lexer->source[start], lexer->position - start), lexer->line, column_start);
 	movq	%rax, %rdx	 ; tmp514, _42
-	jmp	.L183	 ;
-.L190:
+	jmp	.L186	 ;
+.L193:
  ; D:\TC\src\lexer.c:98:         while (c != '"' && c != '\0' && c != '\n')
 	btq	%rdi, %r9	 ; c, tmp503
-	jnc	.L189	 ;,
-.L29:
+	jnc	.L192	 ;,
+.L31:
  ; D:\TC\src\lexer.c:99:             c = get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
 	movl	%eax, %edi	 ; tmp516, c
-.L28:
+.L30:
  ; D:\TC\src\lexer.c:98:         while (c != '"' && c != '\0' && c != '\n')
 	cmpb	$34, %dil	 ;, c
-	ja	.L29	 ;,
-	jmp	.L190	 ;
-.L189:
+	ja	.L31	 ;,
+	jmp	.L193	 ;
+.L192:
  ; D:\TC\src\lexer.c:62:         return create_token(EOF_TOKEN, 0, lexer->line, lexer->column);
 	movq	24(%rbx), %r12	 ; lexer_269(D)->line, pretmp_483
  ; D:\TC\src\lexer.c:100:         if (c != '"') {
 	cmpb	$34, %dil	 ;, c
-	je	.L30	 ;,
+	je	.L32	 ;,
  ; D:\TC\src\lexer.c:101:             lexer_error("Unterminated string literal", lexer->line, start - 1);
 	leaq	-1(%rsi), %r8	 ;,
 	movq	%r12, %rdx	 ; pretmp_483,
@@ -359,14 +330,14 @@ next_token:
 	call	lexer_error	 ;
  ; D:\TC\src\lexer.c:102:             if (c == '\n') newline(lexer);
 	cmpb	$10, %dil	 ;, c
-	jne	.L31	 ;,
+	jne	.L33	 ;,
  ; D:\TC\src\lexer.c:46:     lexer->column = 0;
 	xorl	%r8d, %r8d	 ;
  ; D:\TC\src\lexer.c:45:     lexer->line++;
 	incq	24(%rbx)	 ; lexer_269(D)->line
  ; D:\TC\src\lexer.c:46:     lexer->column = 0;
 	movq	%r8, 32(%rbx)	 ;, lexer_269(D)->column
-.L31:
+.L33:
  ; D:\TC\src\lexer.c:103:             return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line, _49
 	movq	%rsi, %rdx	 ; pretmp_452, tmp358
@@ -385,8 +356,8 @@ next_token:
 	movq	%rbp, %r9	 ; column_start,
  ; D:\TC\src\lexer.c:103:             return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
 	movq	%rax, %rdx	 ; tmp517, _55
-	jmp	.L185	 ;
-.L30:
+	jmp	.L188	 ;
+.L32:
  ; D:\TC\src\lexer.c:105:         return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
 	movq	%rsi, %rdx	 ; pretmp_452, tmp363
  ; D:\TC\src\lexer.c:105:         return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
@@ -403,42 +374,42 @@ next_token:
 	movq	%r12, %r8	 ; pretmp_483,
  ; D:\TC\src\lexer.c:105:         return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
 	movq	%rax, %rdx	 ; tmp518, _62
-.L185:
+.L188:
  ; D:\TC\src\lexer.c:105:         return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
 	movl	$4, %ecx	 ;,
-	jmp	.L183	 ;
-.L15:
+	jmp	.L186	 ;
+.L17:
  ; D:\TC\src\lexer.c:39:     if (lexer->position >= lexer->length)
 	movq	16(%rbx), %r9	 ; lexer_269(D)->length, _446
  ; D:\TC\src\lexer.c:40:         return '\0';
 	xorl	%ecx, %ecx	 ; _450
  ; D:\TC\src\lexer.c:39:     if (lexer->position >= lexer->length)
 	cmpq	%r9, %rsi	 ; _446, pretmp_452
-	jnb	.L32	 ;,
+	jnb	.L34	 ;,
  ; D:\TC\src\lexer.c:41:     return lexer->source[lexer->position];
 	movq	(%rbx), %rdx	 ; lexer_269(D)->source, lexer_269(D)->source
 	movb	(%rdx,%rsi), %cl	 ; *_448, _450
-.L32:
+.L34:
  ; D:\TC\src\lexer.c:108:         if (c == '/' && p == '/') {
 	cmpb	$47, %al	 ;, c
 	sete	%r8b	 ;, tmp369
  ; D:\TC\src\lexer.c:108:         if (c == '/' && p == '/') {
 	cmpb	$47, %cl	 ;, _450
-	jne	.L33	 ;,
+	jne	.L35	 ;,
 	testb	%r8b, %r8b	 ; tmp369
-	je	.L33	 ;,
+	je	.L35	 ;,
  ; D:\TC\src\lexer.c:110:             size_t column_start = lexer->column - 1;
 	movq	32(%rbx), %rbp	 ; lexer_269(D)->column, _67
-.L34:
+.L36:
  ; D:\TC\src\lexer.c:112:                 c = get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
  ; D:\TC\src\lexer.c:111:             while (c != '\n' && c != '\0')
 	cmpb	$10, %al	 ;, c
-	je	.L89	 ;,
+	je	.L91	 ;,
 	testb	%al, %al	 ; c
-	jne	.L34	 ;,
-.L89:
+	jne	.L36	 ;,
+.L91:
  ; D:\TC\src\lexer.c:54:         lexer->position -= (size_t)(-count);
 	movq	8(%rbx), %rax	 ; lexer_269(D)->position, tmp534
  ; D:\TC\src\lexer.c:55:         lexer->column -= (size_t)(-count);
@@ -448,7 +419,7 @@ next_token:
 	movq	%rdx, 8(%rbx)	 ; _454, lexer_269(D)->position
  ; D:\TC\src\lexer.c:114:             if (skip_comment)
 	testb	%dil, %dil	 ; skip_comment
-	jne	.L182	 ;,
+	jne	.L185	 ;,
  ; D:\TC\src\lexer.c:116:             return create_token(COMMENT, create_string(&lexer->source[start], lexer->position - start), lexer->line, column_start);
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line, _72
  ; D:\TC\src\lexer.c:109:             size_t start = lexer->position + 1;
@@ -464,13 +435,13 @@ next_token:
 	leaq	-1(%rbp), %r9	 ;,
  ; D:\TC\src\lexer.c:116:             return create_token(COMMENT, create_string(&lexer->source[start], lexer->position - start), lexer->line, column_start);
 	movq	%rax, %rdx	 ; tmp520, _77
-	jmp	.L186	 ;
-.L33:
+	jmp	.L189	 ;
+.L35:
  ; D:\TC\src\lexer.c:117:         } else if (c == '/' && p == '*') {
 	cmpb	$42, %cl	 ;, _450
-	jne	.L37	 ;,
+	jne	.L39	 ;,
 	testb	%r8b, %r8b	 ; tmp369
-	je	.L37	 ;,
+	je	.L39	 ;,
  ; D:\TC\src\lexer.c:119:             size_t column_start = lexer->column - 1;
 	movq	32(%rbx), %rax	 ; lexer_269(D)->column, tmp535
  ; D:\TC\src\lexer.c:118:             size_t start = lexer->position + 1;
@@ -481,11 +452,11 @@ next_token:
 	leaq	-1(%rax), %rbp	 ;, column_start
  ; D:\TC\src\lexer.c:60:     char c = get_current_char(lexer);
 	movb	$47, %al	 ;, c
-.L38:
+.L40:
  ; D:\TC\src\lexer.c:120:             while (!(c == '*' && p == '/')) {
 	cmpb	$42, %al	 ;, c
-	je	.L191	 ;,
-.L42:
+	je	.L194	 ;,
+.L44:
  ; D:\TC\src\lexer.c:121:                 c = get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -493,53 +464,53 @@ next_token:
 	movq	8(%rbx), %rdx	 ; lexer_269(D)->position, _457
  ; D:\TC\src\lexer.c:39:     if (lexer->position >= lexer->length)
 	cmpq	%r9, %rdx	 ; _446, _457
-	jnb	.L39	 ;,
+	jnb	.L41	 ;,
  ; D:\TC\src\lexer.c:41:     return lexer->source[lexer->position];
 	movq	(%rbx), %rcx	 ; lexer_269(D)->source, lexer_269(D)->source
 	movb	(%rcx,%rdx), %dl	 ; *_460, p
  ; D:\TC\src\lexer.c:123:                 if (c == '\n') newline(lexer);
 	cmpb	$10, %al	 ;, c
-	jne	.L40	 ;,
-	jmp	.L78	 ;
-.L39:
+	jne	.L42	 ;,
+	jmp	.L80	 ;
+.L41:
 	cmpb	$10, %al	 ;, c
-	jne	.L41	 ;,
+	jne	.L43	 ;,
  ; D:\TC\src\lexer.c:40:         return '\0';
 	xorl	%edx, %edx	 ; p
-.L78:
+.L80:
  ; D:\TC\src\lexer.c:46:     lexer->column = 0;
 	xorl	%ecx, %ecx	 ;
  ; D:\TC\src\lexer.c:45:     lexer->line++;
 	incq	24(%rbx)	 ; lexer_269(D)->line
  ; D:\TC\src\lexer.c:46:     lexer->column = 0;
 	movq	%rcx, 32(%rbx)	 ;, lexer_269(D)->column
-.L40:
+.L42:
  ; D:\TC\src\lexer.c:124:                 if (p == '\0') break;
 	testb	%dl, %dl	 ; p
-	je	.L41	 ;,
+	je	.L43	 ;,
  ; D:\TC\src\lexer.c:125:                 assert(c != '\0');
 	testb	%al, %al	 ; c
-	jne	.L38	 ;,
+	jne	.L40	 ;,
  ; D:\TC\src\lexer.c:125:                 assert(c != '\0');
 	leaq	.LC2(%rip), %r9	 ;,
 	leaq	__func__.0(%rip), %r8	 ;,
 	movl	$125, %edx	 ;,
 	leaq	.LC3(%rip), %rcx	 ;, tmp386
 	call	__assert_func	 ;
-.L191:
+.L194:
  ; D:\TC\src\lexer.c:120:             while (!(c == '*' && p == '/')) {
 	cmpb	$47, %dl	 ;, p
-	jne	.L42	 ;,
-	jmp	.L192	 ;
-.L41:
+	jne	.L44	 ;,
+	jmp	.L195	 ;
+.L43:
  ; D:\TC\src\lexer.c:128:                 if (c == '\0') move_position(lexer, -1);
 	testb	%al, %al	 ; c
-	jne	.L82	 ;,
+	jne	.L84	 ;,
  ; D:\TC\src\lexer.c:54:         lexer->position -= (size_t)(-count);
 	decq	8(%rbx)	 ; lexer_269(D)->position
  ; D:\TC\src\lexer.c:55:         lexer->column -= (size_t)(-count);
 	decq	32(%rbx)	 ; lexer_269(D)->column
-.L82:
+.L84:
  ; D:\TC\src\lexer.c:129:                 lexer_error("Unterminated comment", lexer->line, start);
 	movq	24(%rbx), %rdx	 ; lexer_269(D)->line, lexer_269(D)->line
 	movq	%rsi, %r8	 ; start,
@@ -547,12 +518,12 @@ next_token:
 	call	lexer_error	 ;
  ; D:\TC\src\lexer.c:130:                 if (skip_comment)
 	testb	%dil, %dil	 ; skip_comment
-	jne	.L182	 ;,
+	jne	.L185	 ;,
  ; D:\TC\src\lexer.c:132:                 return create_token(COMMENT, create_string(&lexer->source[start], lexer->position - start), lexer->line, column_start);
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line, _87
 	movq	8(%rbx), %rdx	 ; lexer_269(D)->position, tmp394
 	movq	%r8, 32(%rsp)	 ; _87, %sfp
-.L187:
+.L190:
  ; D:\TC\src\lexer.c:137:             return create_token(COMMENT, create_string(&lexer->source[start], lexer->position - start - 2), lexer->line, column_start);
 	subq	%rsi, %rdx	 ; start, tmp401
  ; D:\TC\src\lexer.c:137:             return create_token(COMMENT, create_string(&lexer->source[start], lexer->position - start - 2), lexer->line, column_start);
@@ -564,20 +535,20 @@ next_token:
 	movq	%rbp, %r9	 ; column_start,
  ; D:\TC\src\lexer.c:137:             return create_token(COMMENT, create_string(&lexer->source[start], lexer->position - start - 2), lexer->line, column_start);
 	movq	%rax, %rdx	 ; tmp523, _100
-.L186:
+.L189:
  ; D:\TC\src\lexer.c:137:             return create_token(COMMENT, create_string(&lexer->source[start], lexer->position - start - 2), lexer->line, column_start);
 	movq	32(%rsp), %r8	 ; %sfp, _94
 	movl	$7, %ecx	 ;,
-	jmp	.L183	 ;
-.L37:
+	jmp	.L186	 ;
+.L39:
  ; D:\TC\src\lexer.c:138:         } else if (c == '=' && p == '=') {
 	cmpb	$61, %cl	 ;, _450
 	sete	%dl	 ;, tmp404
  ; D:\TC\src\lexer.c:138:         } else if (c == '=' && p == '=') {
 	cmpb	$61, %al	 ;, c
-	jne	.L45	 ;,
+	jne	.L47	 ;,
 	testb	%dl, %dl	 ; tmp404
-	je	.L45	 ;,
+	je	.L47	 ;,
  ; D:\TC\src\lexer.c:139:             get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -586,13 +557,13 @@ next_token:
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line,
 	leaq	-2(%rax), %r9	 ;,
 	movq	.refptr.EQ_SYMBOL(%rip), %rax	 ;, tmp410
-	jmp	.L184	 ;
-.L45:
+	jmp	.L187	 ;
+.L47:
  ; D:\TC\src\lexer.c:141:         } else if (c == '!' && p == '=') {
 	cmpb	$33, %al	 ;, c
-	jne	.L46	 ;,
+	jne	.L48	 ;,
 	testb	%dl, %dl	 ; tmp404
-	je	.L46	 ;,
+	je	.L48	 ;,
  ; D:\TC\src\lexer.c:142:             get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -601,13 +572,13 @@ next_token:
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line,
 	leaq	-2(%rax), %r9	 ;,
 	movq	.refptr.NE_SYMBOL(%rip), %rax	 ;, tmp416
-	jmp	.L184	 ;
-.L46:
+	jmp	.L187	 ;
+.L48:
  ; D:\TC\src\lexer.c:144:         } else if (c == '<' && p == '=') {
 	cmpb	$60, %al	 ;, c
-	jne	.L47	 ;,
+	jne	.L49	 ;,
 	testb	%dl, %dl	 ; tmp404
-	je	.L47	 ;,
+	je	.L49	 ;,
  ; D:\TC\src\lexer.c:145:             get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -616,13 +587,13 @@ next_token:
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line,
 	leaq	-2(%rax), %r9	 ;,
 	movq	.refptr.LE_SYMBOL(%rip), %rax	 ;, tmp422
-	jmp	.L184	 ;
-.L47:
+	jmp	.L187	 ;
+.L49:
  ; D:\TC\src\lexer.c:147:         } else if (c == '>' && p == '=') {
 	cmpb	$62, %al	 ;, c
-	jne	.L48	 ;,
+	jne	.L50	 ;,
 	testb	%dl, %dl	 ; tmp404
-	je	.L48	 ;,
+	je	.L50	 ;,
  ; D:\TC\src\lexer.c:148:             get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -631,13 +602,13 @@ next_token:
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line,
 	leaq	-2(%rax), %r9	 ;,
 	movq	.refptr.GE_SYMBOL(%rip), %rax	 ;, tmp428
-	jmp	.L184	 ;
-.L48:
+	jmp	.L187	 ;
+.L50:
  ; D:\TC\src\lexer.c:150:         } else if (c == '+' && p == '=') {
 	cmpb	$43, %al	 ;, c
-	jne	.L49	 ;,
+	jne	.L51	 ;,
 	testb	%dl, %dl	 ; tmp404
-	je	.L49	 ;,
+	je	.L51	 ;,
  ; D:\TC\src\lexer.c:151:             get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -646,13 +617,13 @@ next_token:
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line,
 	leaq	-2(%rax), %r9	 ;,
 	movq	.refptr.ADD_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp434
-	jmp	.L184	 ;
-.L49:
+	jmp	.L187	 ;
+.L51:
  ; D:\TC\src\lexer.c:153:         } else if (c == '-' && p == '=') {
 	cmpb	$45, %al	 ;, c
-	jne	.L50	 ;,
+	jne	.L52	 ;,
 	testb	%dl, %dl	 ; tmp404
-	je	.L50	 ;,
+	je	.L52	 ;,
  ; D:\TC\src\lexer.c:154:             get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -661,13 +632,13 @@ next_token:
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line,
 	leaq	-2(%rax), %r9	 ;,
 	movq	.refptr.SUB_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp440
-	jmp	.L184	 ;
-.L50:
+	jmp	.L187	 ;
+.L52:
  ; D:\TC\src\lexer.c:156:         } else if (c == '*' && p == '=') {
 	cmpb	$42, %al	 ;, c
-	jne	.L51	 ;,
+	jne	.L53	 ;,
 	testb	%dl, %dl	 ; tmp404
-	je	.L51	 ;,
+	je	.L53	 ;,
  ; D:\TC\src\lexer.c:157:             get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -676,13 +647,13 @@ next_token:
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line,
 	leaq	-2(%rax), %r9	 ;,
 	movq	.refptr.MUL_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp446
-	jmp	.L184	 ;
-.L51:
+	jmp	.L187	 ;
+.L53:
  ; D:\TC\src\lexer.c:159:         } else if (c == '/' && p == '=') {
 	testb	%r8b, %r8b	 ; tmp369
-	je	.L52	 ;,
+	je	.L54	 ;,
 	testb	%dl, %dl	 ; tmp404
-	je	.L52	 ;,
+	je	.L54	 ;,
  ; D:\TC\src\lexer.c:160:             get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -691,13 +662,13 @@ next_token:
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line,
 	leaq	-2(%rax), %r9	 ;,
 	movq	.refptr.DIV_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp450
-	jmp	.L184	 ;
-.L52:
+	jmp	.L187	 ;
+.L54:
  ; D:\TC\src\lexer.c:162:         } else if (c == '%' && p == '=') {
 	cmpb	$37, %al	 ;, c
-	jne	.L53	 ;,
+	jne	.L55	 ;,
 	testb	%dl, %dl	 ; tmp404
-	je	.L53	 ;,
+	je	.L55	 ;,
  ; D:\TC\src\lexer.c:163:             get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -706,13 +677,13 @@ next_token:
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line,
 	leaq	-2(%rax), %r9	 ;,
 	movq	.refptr.MOD_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp456
-	jmp	.L184	 ;
-.L53:
+	jmp	.L187	 ;
+.L55:
  ; D:\TC\src\lexer.c:165:         } else if (c == '&' && p == '&') {
 	cmpb	$38, %al	 ;, c
-	jne	.L54	 ;,
+	jne	.L56	 ;,
 	cmpb	$38, %cl	 ;, _450
-	jne	.L54	 ;,
+	jne	.L56	 ;,
  ; D:\TC\src\lexer.c:166:             get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -721,13 +692,13 @@ next_token:
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line,
 	leaq	-2(%rax), %r9	 ;,
 	movq	.refptr.AND_SYMBOL(%rip), %rax	 ;, tmp464
-	jmp	.L184	 ;
-.L54:
+	jmp	.L187	 ;
+.L56:
  ; D:\TC\src\lexer.c:168:         } else if (c == '|' && p == '|') {
 	cmpb	$124, %al	 ;, c
-	jne	.L55	 ;,
+	jne	.L57	 ;,
 	cmpb	$124, %cl	 ;, _450
-	jne	.L55	 ;,
+	jne	.L57	 ;,
  ; D:\TC\src\lexer.c:169:             get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
@@ -736,8 +707,8 @@ next_token:
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line,
 	leaq	-2(%rax), %r9	 ;,
 	movq	.refptr.OR_SYMBOL(%rip), %rax	 ;, tmp472
-	jmp	.L184	 ;
-.L55:
+	jmp	.L187	 ;
+.L57:
  ; D:\TC\src\lexer.c:172:             return create_token(SYMBOL, L_PAREN_SYMBOL, lexer->line, lexer->column - 1);
 	movq	32(%rbx), %rdi	 ; lexer_269(D)->column, tmp540
  ; D:\TC\src\lexer.c:62:         return create_token(EOF_TOKEN, 0, lexer->line, lexer->column);
@@ -745,154 +716,154 @@ next_token:
  ; D:\TC\src\lexer.c:172:             return create_token(SYMBOL, L_PAREN_SYMBOL, lexer->line, lexer->column - 1);
 	leaq	-1(%rdi), %r9	 ;, _466
 	cmpb	$62, %al	 ;, c
-	jg	.L56	 ;,
+	jg	.L58	 ;,
 	cmpb	$32, %al	 ;, c
-	jle	.L57	 ;,
+	jle	.L59	 ;,
 	subl	$33, %eax	 ;, tmp474
 	cmpb	$29, %al	 ;, tmp474
-	ja	.L57	 ;,
-	leaq	.L59(%rip), %rcx	 ;, tmp476
+	ja	.L59	 ;,
+	leaq	.L61(%rip), %rcx	 ;, tmp476
 	movzbl	%al, %eax	 ; tmp474, tmp475
 	movslq	(%rcx,%rax,4), %rax	 ;, tmp478
 	addq	%rcx, %rax	 ; tmp476, tmp479
 	jmp	*%rax	 ; tmp479
 	.section .rdata,"dr"
 	.align 4
-.L59:
-	.long	.L72-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L71-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L70-.L59
-	.long	.L69-.L59
-	.long	.L68-.L59
-	.long	.L67-.L59
-	.long	.L66-.L59
-	.long	.L65-.L59
-	.long	.L64-.L59
-	.long	.L63-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L57-.L59
-	.long	.L62-.L59
-	.long	.L61-.L59
-	.long	.L60-.L59
-	.long	.L58-.L59
+.L61:
+	.long	.L74-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L73-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L72-.L61
+	.long	.L71-.L61
+	.long	.L70-.L61
+	.long	.L69-.L61
+	.long	.L68-.L61
+	.long	.L67-.L61
+	.long	.L66-.L61
+	.long	.L65-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L59-.L61
+	.long	.L64-.L61
+	.long	.L63-.L61
+	.long	.L62-.L61
+	.long	.L60-.L61
 	.text
-.L56:
+.L58:
 	cmpb	$123, %al	 ;, c
-	je	.L73	 ;,
-	jg	.L74	 ;,
-	cmpb	$91, %al	 ;, c
 	je	.L75	 ;,
+	jg	.L76	 ;,
+	cmpb	$91, %al	 ;, c
+	je	.L77	 ;,
 	cmpb	$93, %al	 ;, c
-	jne	.L57	 ;,
+	jne	.L59	 ;,
  ; D:\TC\src\lexer.c:188:             return create_token(SYMBOL, R_BRACKET_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.R_BRACKET_SYMBOL(%rip), %rax	 ;, tmp489
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L74:
+	jmp	.L187	 ;
+.L76:
 	cmpb	$125, %al	 ;, c
-	jne	.L57	 ;,
+	jne	.L59	 ;,
  ; D:\TC\src\lexer.c:178:             return create_token(SYMBOL, R_BRACE_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax	 ;, tmp484
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L70:
+	jmp	.L187	 ;
+.L72:
  ; D:\TC\src\lexer.c:172:             return create_token(SYMBOL, L_PAREN_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax	 ;, tmp481
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L69:
+	jmp	.L187	 ;
+.L71:
  ; D:\TC\src\lexer.c:174:             return create_token(SYMBOL, R_PAREN_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax	 ;, tmp482
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L73:
+	jmp	.L187	 ;
+.L75:
  ; D:\TC\src\lexer.c:176:             return create_token(SYMBOL, L_BRACE_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax	 ;, tmp483
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L66:
+	jmp	.L187	 ;
+.L68:
  ; D:\TC\src\lexer.c:180:             return create_token(SYMBOL, COMMA_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.COMMA_SYMBOL(%rip), %rax	 ;, tmp485
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L72:
+	jmp	.L187	 ;
+.L74:
  ; D:\TC\src\lexer.c:182:             return create_token(SYMBOL, NOT_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.NOT_SYMBOL(%rip), %rax	 ;, tmp486
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L64:
+	jmp	.L187	 ;
+.L66:
  ; D:\TC\src\lexer.c:184:             return create_token(SYMBOL, DOT_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.DOT_SYMBOL(%rip), %rax	 ;, tmp487
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L75:
+	jmp	.L187	 ;
+.L77:
  ; D:\TC\src\lexer.c:186:             return create_token(SYMBOL, L_BRACKET_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.L_BRACKET_SYMBOL(%rip), %rax	 ;, tmp488
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L62:
+	jmp	.L187	 ;
+.L64:
  ; D:\TC\src\lexer.c:190:             return create_token(SYMBOL, SEMICOLON_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax	 ;, tmp490
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L67:
+	jmp	.L187	 ;
+.L69:
  ; D:\TC\src\lexer.c:194:             return create_token(SYMBOL, ADD_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.ADD_SYMBOL(%rip), %rax	 ;, tmp491
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L65:
+	jmp	.L187	 ;
+.L67:
  ; D:\TC\src\lexer.c:196:             return create_token(SYMBOL, SUB_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.SUB_SYMBOL(%rip), %rax	 ;, tmp492
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L68:
+	jmp	.L187	 ;
+.L70:
  ; D:\TC\src\lexer.c:198:             return create_token(SYMBOL, MUL_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.MUL_SYMBOL(%rip), %rax	 ;, tmp493
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L63:
+	jmp	.L187	 ;
+.L65:
  ; D:\TC\src\lexer.c:200:             return create_token(SYMBOL, DIV_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.DIV_SYMBOL(%rip), %rax	 ;, tmp494
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L71:
+	jmp	.L187	 ;
+.L73:
  ; D:\TC\src\lexer.c:202:             return create_token(SYMBOL, MOD_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.MOD_SYMBOL(%rip), %rax	 ;, tmp495
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L61:
+	jmp	.L187	 ;
+.L63:
  ; D:\TC\src\lexer.c:204:             return create_token(SYMBOL, LT_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.LT_SYMBOL(%rip), %rax	 ;, tmp496
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L58:
+	jmp	.L187	 ;
+.L60:
  ; D:\TC\src\lexer.c:206:             return create_token(SYMBOL, GT_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.GT_SYMBOL(%rip), %rax	 ;, tmp497
 	movq	%rdx, %r8	 ; pretmp_467,
-	jmp	.L184	 ;
-.L60:
+	jmp	.L187	 ;
+.L62:
  ; D:\TC\src\lexer.c:208:             return create_token(SYMBOL, ASSIGN_SYMBOL, lexer->line, lexer->column - 1);
 	movq	.refptr.ASSIGN_SYMBOL(%rip), %rax	 ;, tmp498
 	movq	%rdx, %r8	 ; pretmp_467,
-.L184:
+.L187:
 	movq	(%rax), %rdx	 ;,
 	movl	$5, %ecx	 ;,
-	jmp	.L183	 ;
-.L57:
+	jmp	.L186	 ;
+.L59:
  ; D:\TC\src\lexer.c:210:             lexer_error("Unexpected character", lexer->line, lexer->column - 1);
 	movq	%r9, %r8	 ; _466,
 	leaq	.LC5(%rip), %rcx	 ;, tmp499
@@ -900,10 +871,10 @@ next_token:
  ; D:\TC\src\lexer.c:211:             return create_token(EOF_TOKEN, 0, 0, 0);
 	xorl	%r9d, %r9d	 ;
 	xorl	%r8d, %r8d	 ;
-.L181:
+.L184:
 	xorl	%edx, %edx	 ;
 	xorl	%ecx, %ecx	 ;
-.L183:
+.L186:
  ; D:\TC\src\lexer.c:214: }
 	addq	$48, %rsp	 ;,
 	popq	%rbx	 ;
@@ -913,37 +884,30 @@ next_token:
 	popq	%r12	 ;
  ; D:\TC\src\lexer.c:211:             return create_token(EOF_TOKEN, 0, 0, 0);
 	jmp	create_token	 ;
-.L192:
+.L195:
  ; D:\TC\src\lexer.c:134:             c = get_current_char(lexer);
 	movq	%rbx, %rcx	 ; lexer,
 	call	get_current_char	 ;
  ; D:\TC\src\lexer.c:135:             if (skip_comment)
 	testb	%dil, %dil	 ; skip_comment
-	jne	.L182	 ;,
+	jne	.L185	 ;,
  ; D:\TC\src\lexer.c:137:             return create_token(COMMENT, create_string(&lexer->source[start], lexer->position - start - 2), lexer->line, column_start);
 	movq	24(%rbx), %r8	 ; lexer_269(D)->line, _94
 	movq	8(%rbx), %rax	 ; lexer_269(D)->position, tmp538
 	movq	%r8, 32(%rsp)	 ; _94, %sfp
 	leaq	-2(%rax), %rdx	 ;, tmp399
-	jmp	.L187	 ;
-	.seh_endproc
+	jmp	.L190	 ;
 	.globl	create_lexer
 	.def	create_lexer;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_lexer
 create_lexer:
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\lexer.c:3: Lexer* create_lexer(string source, size_t length) {
 	movq	%rcx, %rsi	 ; tmp86, source
  ; D:\TC\src\lexer.c:4:     Lexer* lexer = (Lexer*)alloc_memory(sizeof(Lexer));
 	movl	$80, %ecx	 ;,
  ; D:\TC\src\lexer.c:3: Lexer* create_lexer(string source, size_t length) {
+	pushq	%rbx	 ;
 	movq	%rdx, %rbx	 ; tmp87, length
+	subq	$40, %rsp	 ;,
  ; D:\TC\src\lexer.c:4:     Lexer* lexer = (Lexer*)alloc_memory(sizeof(Lexer));
 	call	alloc_memory	 ;
  ; D:\TC\src\lexer.c:11:     lexer->peeked_position = 0;
@@ -971,23 +935,17 @@ create_lexer:
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	ret	
-	.seh_endproc
 	.globl	get_next_token
 	.def	get_next_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	get_next_token
 get_next_token:
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
+	movq	%rcx, %rbx	 ; tmp95, lexer
 	subq	$32, %rsp	 ;,
-	.seh_stackalloc	32
-	.seh_endprologue
  ; D:\TC\src\lexer.c:217:     if (lexer->peeked_token != 0) {
 	movq	40(%rcx), %rax	 ; lexer_8(D)->peeked_token, <retval>
- ; D:\TC\src\lexer.c:216: Token* get_next_token(Lexer* lexer, bool skip_comment) {
-	movq	%rcx, %rbx	 ; tmp95, lexer
  ; D:\TC\src\lexer.c:217:     if (lexer->peeked_token != 0) {
 	testq	%rax, %rax	 ; <retval>
-	je	.L195	 ;,
+	je	.L199	 ;,
  ; D:\TC\src\lexer.c:219:         lexer->position = lexer->peeked_position;
 	movq	48(%rcx), %rdx	 ; lexer_8(D)->peeked_position, lexer_8(D)->peeked_position
  ; D:\TC\src\lexer.c:218:         lexer->current_token = lexer->peeked_token;
@@ -1004,43 +962,36 @@ get_next_token:
 	xorl	%edx, %edx	 ;
 	movq	%rdx, 40(%rcx)	 ;, lexer_8(D)->peeked_token
  ; D:\TC\src\lexer.c:223:         return lexer->current_token;
-	jmp	.L194	 ;
-.L195:
+	jmp	.L198	 ;
+.L199:
  ; D:\TC\src\lexer.c:225:     Token* token = next_token(lexer, skip_comment);
 	movsbl	%dl, %edx	 ; skip_comment, skip_comment
 	call	next_token	 ;
  ; D:\TC\src\lexer.c:226:     return lexer->current_token = token;
 	movq	%rax, 72(%rbx)	 ; <retval>, lexer_8(D)->current_token
-.L194:
+.L198:
  ; D:\TC\src\lexer.c:227: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
 	ret	
-	.seh_endproc
 	.globl	peek_next_token
 	.def	peek_next_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	peek_next_token
 peek_next_token:
-	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
-	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
-	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
  ; D:\TC\src\lexer.c:230:     if (lexer->peeked_token != 0)
 	movq	40(%rcx), %rax	 ; lexer_9(D)->peeked_token, <retval>
- ; D:\TC\src\lexer.c:229: Token* peek_next_token(Lexer* lexer, bool skip_comment) {
-	movq	%rcx, %rbx	 ; tmp98, lexer
  ; D:\TC\src\lexer.c:230:     if (lexer->peeked_token != 0)
 	testq	%rax, %rax	 ; <retval>
-	jne	.L197	 ;,
+	jne	.L205	 ;,
+ ; D:\TC\src\lexer.c:229: Token* peek_next_token(Lexer* lexer, bool skip_comment) {
+	pushq	%rbp	 ;
  ; D:\TC\src\lexer.c:235:     Token* token = get_next_token(lexer, skip_comment);
 	movsbl	%dl, %edx	 ; skip_comment, skip_comment
+ ; D:\TC\src\lexer.c:229: Token* peek_next_token(Lexer* lexer, bool skip_comment) {
+	pushq	%rdi	 ;
+	pushq	%rsi	 ;
+	pushq	%rbx	 ;
+	movq	%rcx, %rbx	 ; tmp98, lexer
+	subq	$40, %rsp	 ;,
  ; D:\TC\src\lexer.c:232:     size_t saved_position = lexer->position;
 	movq	8(%rcx), %rbp	 ; lexer_9(D)->position, saved_position
  ; D:\TC\src\lexer.c:233:     size_t saved_line = lexer->line;
@@ -1069,7 +1020,6 @@ peek_next_token:
 	movq	%rsi, 32(%rbx)	 ; saved_column, lexer_9(D)->column
  ; D:\TC\src\lexer.c:238:     lexer->peeked_column = lexer->column;
 	movq	%rdx, 64(%rbx)	 ; lexer_9(D)->column, lexer_9(D)->peeked_column
-.L197:
  ; D:\TC\src\lexer.c:244: }
 	addq	$40, %rsp	 ;,
 	popq	%rbx	 ;
@@ -1077,22 +1027,18 @@ peek_next_token:
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
+.L205:
+	ret	
 	.globl	peek_current_token
 	.def	peek_current_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	peek_current_token
 peek_current_token:
-	.seh_endprologue
  ; D:\TC\src\lexer.c:247:     return lexer->current_token;
 	movq	72(%rcx), %rax	 ; lexer_2(D)->current_token, lexer_2(D)->current_token
  ; D:\TC\src\lexer.c:248: }
 	ret	
-	.seh_endproc
 	.globl	reset_lexer
 	.def	reset_lexer;	.scl	2;	.type	32;	.endef
-	.seh_proc	reset_lexer
 reset_lexer:
-	.seh_endprologue
  ; D:\TC\src\lexer.c:254:     lexer->peeked_token = 0;
 	xorl	%eax, %eax	 ;
 	movq	%rax, 8(%rcx)	 ;, lexer_2(D)->position
@@ -1106,7 +1052,6 @@ reset_lexer:
 	movq	%rax, 72(%rcx)	 ;, lexer_2(D)->current_token
  ; D:\TC\src\lexer.c:259: }
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

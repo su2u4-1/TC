@@ -3,7 +3,7 @@
  ;	compiled by GNU C version 13.2.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
  ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
- ; options passed: -mtune=generic -march=nocona -O0
+ ; options passed: -mtune=generic -march=nocona -O0 -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt
 	.text
 	.section .rdata,"dr"
 	.align 8
@@ -15,15 +15,10 @@
 	.text
 	.globl	create_code_member
 	.def	create_code_member;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_code_member
 create_code_member:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)	 ; type, type
 	movq	%rdx, 24(%rbp)	 ; import_content, import_content
 	movq	%r8, 32(%rbp)	 ; function_content, function_content
@@ -114,21 +109,14 @@ create_code_member:
 	movq	-8(%rbp), %rax	 ; code_member, _5
 .L8:
  ; D:\TC\src\create.c:20: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	create_code
 	.def	create_code;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_code
 create_code:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; members, members
 	movq	%rdx, 24(%rbp)	 ; global_scope, global_scope
  ; D:\TC\src\create.c:23:     Code* code = (Code*)alloc_memory(sizeof(Code));
@@ -149,10 +137,8 @@ create_code:
  ; D:\TC\src\create.c:27:     return code;
 	movq	-8(%rbp), %rax	 ; code, _9
  ; D:\TC\src\create.c:28: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC2:
@@ -160,15 +146,10 @@ create_code:
 	.text
 	.globl	create_import
 	.def	create_import;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_import
 create_import:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; name, name
 	movq	%rdx, 24(%rbp)	 ; source, source
  ; D:\TC\src\create.c:31:     if (name == 0) {
@@ -208,10 +189,8 @@ create_import:
 	movq	-8(%rbp), %rax	 ; import, _3
 .L13:
  ; D:\TC\src\create.c:40: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC3:
@@ -219,15 +198,10 @@ create_import:
 	.text
 	.globl	create_function
 	.def	create_function;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_function
 create_function:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; name, name
 	movq	%rdx, 24(%rbp)	 ; return_type, return_type
 	movq	%r8, 32(%rbp)	 ; parameters, parameters
@@ -285,10 +259,8 @@ create_function:
 	movq	-8(%rbp), %rax	 ; function, _3
 .L17:
  ; D:\TC\src\create.c:55: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC4:
@@ -296,15 +268,10 @@ create_function:
 	.text
 	.globl	create_method
 	.def	create_method;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_method
 create_method:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; name, name
 	movq	%rdx, 24(%rbp)	 ; return_type, return_type
 	movq	%r8, 32(%rbp)	 ; parameters, parameters
@@ -362,10 +329,8 @@ create_method:
 	movq	-8(%rbp), %rax	 ; method, _3
 .L21:
  ; D:\TC\src\create.c:70: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC5:
@@ -376,15 +341,10 @@ create_method:
 	.text
 	.globl	create_class_member
 	.def	create_class_member;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_class_member
 create_class_member:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)	 ; type, type
 	movq	%rdx, 24(%rbp)	 ; method_content, method_content
 	movq	%r8, 32(%rbp)	 ; variable_content, variable_content
@@ -462,10 +422,8 @@ create_class_member:
 	movq	-8(%rbp), %rax	 ; class_member, _5
 .L28:
  ; D:\TC\src\create.c:88: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC7:
@@ -473,15 +431,10 @@ create_class_member:
 	.text
 	.globl	create_class
 	.def	create_class;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_class
 create_class:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; name, name
 	movq	%rdx, 24(%rbp)	 ; members, members
 	movq	%r8, 32(%rbp)	 ; class_scope, class_scope
@@ -526,10 +479,8 @@ create_class:
 	movq	-8(%rbp), %rax	 ; class, _3
 .L31:
  ; D:\TC\src\create.c:101: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC8:
@@ -537,15 +488,10 @@ create_class:
 	.text
 	.globl	create_variable
 	.def	create_variable;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_variable
 create_variable:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; type, type
 	movq	%rdx, 24(%rbp)	 ; name, name
 	movq	%r8, 32(%rbp)	 ; value, value
@@ -594,10 +540,8 @@ create_variable:
 	movq	-8(%rbp), %rax	 ; variable, _3
 .L35:
  ; D:\TC\src\create.c:114: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC9:
@@ -608,15 +552,10 @@ create_variable:
 	.text
 	.globl	create_statement
 	.def	create_statement;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_statement
 create_statement:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)	 ; type, type
 	movq	%rdx, 24(%rbp)	 ; if_stmt, if_stmt
 	movq	%r8, 32(%rbp)	 ; while_stmt, while_stmt
@@ -764,10 +703,8 @@ create_statement:
 	movq	-8(%rbp), %rax	 ; statement, _5
 .L48:
  ; D:\TC\src\create.c:142: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC11:
@@ -775,15 +712,10 @@ create_statement:
 	.text
 	.globl	create_if
 	.def	create_if;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_if
 create_if:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; condition, condition
 	movq	%rdx, 24(%rbp)	 ; body, body
 	movq	%r8, 32(%rbp)	 ; else_if, else_if
@@ -833,10 +765,8 @@ create_if:
 	movq	-8(%rbp), %rax	 ; if_, _3
 .L51:
  ; D:\TC\src\create.c:156: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC12:
@@ -844,15 +774,10 @@ create_if:
 	.text
 	.globl	create_else_if
 	.def	create_else_if;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_else_if
 create_else_if:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; condition, condition
 	movq	%rdx, 24(%rbp)	 ; body, body
  ; D:\TC\src\create.c:159:     if (condition == 0) {
@@ -892,21 +817,14 @@ create_else_if:
 	movq	-8(%rbp), %rax	 ; else_if, _3
 .L54:
  ; D:\TC\src\create.c:168: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	create_for
 	.def	create_for;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_for
 create_for:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; initializer, initializer
 	movq	%rdx, 24(%rbp)	 ; condition, condition
 	movq	%r8, 32(%rbp)	 ; increment, increment
@@ -937,21 +855,14 @@ create_for:
  ; D:\TC\src\create.c:177:     return for_;
 	movq	-8(%rbp), %rax	 ; for_, _13
  ; D:\TC\src\create.c:178: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	create_while
 	.def	create_while;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_while
 create_while:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; condition, condition
 	movq	%rdx, 24(%rbp)	 ; body, body
  ; D:\TC\src\create.c:181:     While* while_ = (While*)alloc_memory(sizeof(While));
@@ -972,10 +883,8 @@ create_while:
  ; D:\TC\src\create.c:185:     return while_;
 	movq	-8(%rbp), %rax	 ; while_, _9
  ; D:\TC\src\create.c:186: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC13:
 	.ascii "true\0"
@@ -990,45 +899,36 @@ create_while:
 	.text
 	.globl	create_expression
 	.def	create_expression;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_expression
 create_expression:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
+	movq	%rsp, %rbp	 ;,
 	pushq	%r12	 ;
-	.seh_pushreg	%r12
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
 	subq	$64, %rsp	 ;,
-	.seh_stackalloc	64
-	leaq	64(%rsp), %rbp	 ;,
-	.seh_setframe	%rbp, 64
-	.seh_endprologue
-	movl	%ecx, 48(%rbp)	 ; operator, operator
-	movq	%rdx, 56(%rbp)	 ; expr_left, expr_left
-	movq	%r8, 64(%rbp)	 ; prim_left, prim_left
-	movq	%r9, 72(%rbp)	 ; right, right
+	movl	%ecx, 16(%rbp)	 ; operator, operator
+	movq	%rdx, 24(%rbp)	 ; expr_left, expr_left
+	movq	%r8, 32(%rbp)	 ; prim_left, prim_left
+	movq	%r9, 40(%rbp)	 ; right, right
  ; D:\TC\src\create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
-	cmpl	$19, 48(%rbp)	 ;, operator
+	cmpl	$19, 16(%rbp)	 ;, operator
 	sete	%dl	 ;, _1
-	cmpq	$0, 72(%rbp)	 ;, right
+	cmpq	$0, 40(%rbp)	 ;, right
 	sete	%al	 ;, _2
 	xorl	%edx, %eax	 ; _1, _3
  ; D:\TC\src\create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
 	testb	%al, %al	 ; _3
 	jne	.L60	 ;,
  ; D:\TC\src\create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
-	cmpq	$0, 56(%rbp)	 ;, expr_left
+	cmpq	$0, 24(%rbp)	 ;, expr_left
 	jne	.L61	 ;,
  ; D:\TC\src\create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
-	cmpq	$0, 64(%rbp)	 ;, prim_left
+	cmpq	$0, 32(%rbp)	 ;, prim_left
 	jne	.L61	 ;,
 .L60:
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
-	cmpq	$0, 72(%rbp)	 ;, right
+	cmpq	$0, 40(%rbp)	 ;, right
 	jne	.L62	 ;,
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	leaq	.LC13(%rip), %rsi	 ;, iftmp.0_8
@@ -1038,7 +938,7 @@ create_expression:
 	leaq	.LC14(%rip), %rsi	 ;, iftmp.0_8
 .L63:
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
-	cmpq	$0, 64(%rbp)	 ;, prim_left
+	cmpq	$0, 32(%rbp)	 ;, prim_left
 	jne	.L64	 ;,
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	leaq	.LC13(%rip), %rbx	 ;, iftmp.1_9
@@ -1048,7 +948,7 @@ create_expression:
 	leaq	.LC14(%rip), %rbx	 ;, iftmp.1_9
 .L65:
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
-	cmpq	$0, 56(%rbp)	 ;, expr_left
+	cmpq	$0, 24(%rbp)	 ;, expr_left
 	jne	.L66	 ;,
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	leaq	.LC13(%rip), %r12	 ;, iftmp.2_10
@@ -1058,7 +958,7 @@ create_expression:
 	leaq	.LC14(%rip), %r12	 ;, iftmp.2_10
 .L67:
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
-	cmpl	$19, 48(%rbp)	 ;, operator
+	cmpl	$19, 16(%rbp)	 ;, operator
 	jne	.L68	 ;,
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	leaq	.LC13(%rip), %rdi	 ;, iftmp.3_11
@@ -1086,29 +986,29 @@ create_expression:
  ; D:\TC\src\create.c:197:     Expression* expression = (Expression*)alloc_memory(sizeof(Expression));
 	movl	$32, %ecx	 ;,
 	call	alloc_memory	 ;
-	movq	%rax, -8(%rbp)	 ; tmp96, expression
+	movq	%rax, -40(%rbp)	 ; tmp96, expression
  ; D:\TC\src\create.c:198:     Expression* expression_ptr = expression;
-	movq	-8(%rbp), %rax	 ; expression, tmp97
-	movq	%rax, -16(%rbp)	 ; tmp97, expression_ptr
+	movq	-40(%rbp), %rax	 ; expression, tmp97
+	movq	%rax, -48(%rbp)	 ; tmp97, expression_ptr
  ; D:\TC\src\create.c:199:     expression_ptr->operator = operator;
-	movq	-16(%rbp), %rax	 ; expression_ptr, tmp98
-	movl	48(%rbp), %edx	 ; operator, tmp99
+	movq	-48(%rbp), %rax	 ; expression_ptr, tmp98
+	movl	16(%rbp), %edx	 ; operator, tmp99
 	movl	%edx, 24(%rax)	 ; tmp99, expression_ptr_22->operator
  ; D:\TC\src\create.c:200:     if (expr_left != 0)
-	cmpq	$0, 56(%rbp)	 ;, expr_left
+	cmpq	$0, 24(%rbp)	 ;, expr_left
 	je	.L71	 ;,
  ; D:\TC\src\create.c:201:         expression_ptr->expr_left = expr_left;
-	movq	-16(%rbp), %rax	 ; expression_ptr, tmp100
-	movq	56(%rbp), %rdx	 ; expr_left, tmp101
+	movq	-48(%rbp), %rax	 ; expression_ptr, tmp100
+	movq	24(%rbp), %rdx	 ; expr_left, tmp101
 	movq	%rdx, (%rax)	 ; tmp101, expression_ptr_22->expr_left
 	jmp	.L72	 ;
 .L71:
  ; D:\TC\src\create.c:202:     else if (prim_left != 0)
-	cmpq	$0, 64(%rbp)	 ;, prim_left
+	cmpq	$0, 32(%rbp)	 ;, prim_left
 	je	.L73	 ;,
  ; D:\TC\src\create.c:203:         expression_ptr->prim_left = prim_left;
-	movq	-16(%rbp), %rax	 ; expression_ptr, tmp102
-	movq	64(%rbp), %rdx	 ; prim_left, tmp103
+	movq	-48(%rbp), %rax	 ; expression_ptr, tmp102
+	movq	32(%rbp), %rdx	 ; prim_left, tmp103
 	movq	%rdx, 8(%rax)	 ; tmp103, expression_ptr_22->prim_left
 	jmp	.L72	 ;
 .L73:
@@ -1128,11 +1028,11 @@ create_expression:
 	jmp	.L70	 ;
 .L72:
  ; D:\TC\src\create.c:208:     expression_ptr->right = right;
-	movq	-16(%rbp), %rax	 ; expression_ptr, tmp105
-	movq	72(%rbp), %rdx	 ; right, tmp106
+	movq	-48(%rbp), %rax	 ; expression_ptr, tmp105
+	movq	40(%rbp), %rdx	 ; right, tmp106
 	movq	%rdx, 16(%rax)	 ; tmp106, expression_ptr_22->right
  ; D:\TC\src\create.c:209:     return expression;
-	movq	-8(%rbp), %rax	 ; expression, _12
+	movq	-40(%rbp), %rax	 ; expression, _12
 .L70:
  ; D:\TC\src\create.c:210: }
 	addq	$64, %rsp	 ;,
@@ -1142,7 +1042,6 @@ create_expression:
 	popq	%r12	 ;
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC17:
@@ -1153,15 +1052,10 @@ create_expression:
 	.text
 	.globl	create_primary
 	.def	create_primary;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_primary
 create_primary:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)	 ; type, type
 	movq	%rdx, 24(%rbp)	 ; str_value, str_value
 	movq	%r8, 32(%rbp)	 ; expr_value, expr_value
@@ -1287,10 +1181,8 @@ create_primary:
 	movq	-8(%rbp), %rax	 ; primary, _5
 .L84:
  ; D:\TC\src\create.c:232: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC19:
@@ -1304,34 +1196,27 @@ create_primary:
 	.text
 	.globl	create_variable_access
 	.def	create_variable_access;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_variable_access
 create_variable_access:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
+	movq	%rsp, %rbp	 ;,
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	leaq	48(%rsp), %rbp	 ;,
-	.seh_setframe	%rbp, 48
-	.seh_endprologue
-	movl	%ecx, 32(%rbp)	 ; type, type
-	movq	%rdx, 40(%rbp)	 ; base, base
-	movq	%r8, 48(%rbp)	 ; name_content, name_content
-	movq	%r9, 56(%rbp)	 ; expr_content, expr_content
+	movl	%ecx, 16(%rbp)	 ; type, type
+	movq	%rdx, 24(%rbp)	 ; base, base
+	movq	%r8, 32(%rbp)	 ; name_content, name_content
+	movq	%r9, 40(%rbp)	 ; expr_content, expr_content
  ; D:\TC\src\create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
-	cmpq	$0, 40(%rbp)	 ;, base
+	cmpq	$0, 24(%rbp)	 ;, base
 	sete	%dl	 ;, _1
-	cmpl	$0, 32(%rbp)	 ;, type
+	cmpl	$0, 16(%rbp)	 ;, type
 	sete	%al	 ;, _2
 	xorl	%edx, %eax	 ; _1, _3
  ; D:\TC\src\create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
 	testb	%al, %al	 ; _3
 	je	.L86	 ;,
  ; D:\TC\src\create.c:236:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
-	cmpl	$0, 32(%rbp)	 ;, type
+	cmpl	$0, 16(%rbp)	 ;, type
 	jne	.L87	 ;,
  ; D:\TC\src\create.c:236:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
 	leaq	.LC13(%rip), %rsi	 ;, iftmp.4_10
@@ -1341,7 +1226,7 @@ create_variable_access:
 	leaq	.LC14(%rip), %rsi	 ;, iftmp.4_10
 .L88:
  ; D:\TC\src\create.c:236:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
-	cmpq	$0, 40(%rbp)	 ;, base
+	cmpq	$0, 24(%rbp)	 ;, base
 	jne	.L89	 ;,
  ; D:\TC\src\create.c:236:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
 	leaq	.LC13(%rip), %rbx	 ;, iftmp.5_11
@@ -1367,74 +1252,74 @@ create_variable_access:
  ; D:\TC\src\create.c:239:     VariableAccess* variable_access = (VariableAccess*)alloc_memory(sizeof(VariableAccess));
 	movl	$24, %ecx	 ;,
 	call	alloc_memory	 ;
-	movq	%rax, -8(%rbp)	 ; tmp96, variable_access
+	movq	%rax, -24(%rbp)	 ; tmp96, variable_access
  ; D:\TC\src\create.c:240:     VariableAccess* variable_access_ptr = variable_access;
-	movq	-8(%rbp), %rax	 ; variable_access, tmp97
-	movq	%rax, -16(%rbp)	 ; tmp97, variable_access_ptr
+	movq	-24(%rbp), %rax	 ; variable_access, tmp97
+	movq	%rax, -32(%rbp)	 ; tmp97, variable_access_ptr
  ; D:\TC\src\create.c:241:     variable_access_ptr->type = type;
-	movq	-16(%rbp), %rax	 ; variable_access_ptr, tmp98
-	movl	32(%rbp), %edx	 ; type, tmp99
+	movq	-32(%rbp), %rax	 ; variable_access_ptr, tmp98
+	movl	16(%rbp), %edx	 ; type, tmp99
 	movl	%edx, 16(%rax)	 ; tmp99, variable_access_ptr_21->type
  ; D:\TC\src\create.c:242:     variable_access_ptr->base = base;
-	movq	-16(%rbp), %rax	 ; variable_access_ptr, tmp100
-	movq	40(%rbp), %rdx	 ; base, tmp101
+	movq	-32(%rbp), %rax	 ; variable_access_ptr, tmp100
+	movq	24(%rbp), %rdx	 ; base, tmp101
 	movq	%rdx, (%rax)	 ; tmp101, variable_access_ptr_21->base
  ; D:\TC\src\create.c:243:     if (type == VAR_NAME && name_content != 0)
-	cmpl	$0, 32(%rbp)	 ;, type
+	cmpl	$0, 16(%rbp)	 ;, type
 	jne	.L92	 ;,
  ; D:\TC\src\create.c:243:     if (type == VAR_NAME && name_content != 0)
-	cmpq	$0, 48(%rbp)	 ;, name_content
+	cmpq	$0, 32(%rbp)	 ;, name_content
 	je	.L92	 ;,
  ; D:\TC\src\create.c:244:         variable_access_ptr->content.name = name_content;
-	movq	-16(%rbp), %rax	 ; variable_access_ptr, tmp102
-	movq	48(%rbp), %rdx	 ; name_content, tmp103
+	movq	-32(%rbp), %rax	 ; variable_access_ptr, tmp102
+	movq	32(%rbp), %rdx	 ; name_content, tmp103
 	movq	%rdx, 8(%rax)	 ; tmp103, variable_access_ptr_21->content.name
 	jmp	.L93	 ;
 .L92:
  ; D:\TC\src\create.c:245:     else if (type == VAR_FUNC_CALL && args_content != 0)
-	cmpl	$1, 32(%rbp)	 ;, type
+	cmpl	$1, 16(%rbp)	 ;, type
 	jne	.L94	 ;,
  ; D:\TC\src\create.c:245:     else if (type == VAR_FUNC_CALL && args_content != 0)
-	cmpq	$0, 64(%rbp)	 ;, args_content
+	cmpq	$0, 48(%rbp)	 ;, args_content
 	je	.L94	 ;,
  ; D:\TC\src\create.c:246:         variable_access_ptr->content.args = args_content;
-	movq	-16(%rbp), %rax	 ; variable_access_ptr, tmp104
-	movq	64(%rbp), %rdx	 ; args_content, tmp105
+	movq	-32(%rbp), %rax	 ; variable_access_ptr, tmp104
+	movq	48(%rbp), %rdx	 ; args_content, tmp105
 	movq	%rdx, 8(%rax)	 ; tmp105, variable_access_ptr_21->content.args
 	jmp	.L93	 ;
 .L94:
  ; D:\TC\src\create.c:247:     else if (type == VAR_GET_SEQ && expr_content != 0)
-	cmpl	$3, 32(%rbp)	 ;, type
+	cmpl	$3, 16(%rbp)	 ;, type
 	jne	.L95	 ;,
  ; D:\TC\src\create.c:247:     else if (type == VAR_GET_SEQ && expr_content != 0)
-	cmpq	$0, 56(%rbp)	 ;, expr_content
+	cmpq	$0, 40(%rbp)	 ;, expr_content
 	je	.L95	 ;,
  ; D:\TC\src\create.c:248:         variable_access_ptr->content.index = expr_content;
-	movq	-16(%rbp), %rax	 ; variable_access_ptr, tmp106
-	movq	56(%rbp), %rdx	 ; expr_content, tmp107
+	movq	-32(%rbp), %rax	 ; variable_access_ptr, tmp106
+	movq	40(%rbp), %rdx	 ; expr_content, tmp107
 	movq	%rdx, 8(%rax)	 ; tmp107, variable_access_ptr_21->content.index
 	jmp	.L93	 ;
 .L95:
  ; D:\TC\src\create.c:249:     else if (type == VAR_GET_ATTR && name_content != 0)
-	cmpl	$2, 32(%rbp)	 ;, type
+	cmpl	$2, 16(%rbp)	 ;, type
 	jne	.L96	 ;,
  ; D:\TC\src\create.c:249:     else if (type == VAR_GET_ATTR && name_content != 0)
-	cmpq	$0, 48(%rbp)	 ;, name_content
+	cmpq	$0, 32(%rbp)	 ;, name_content
 	je	.L96	 ;,
  ; D:\TC\src\create.c:250:         variable_access_ptr->content.attr_name = name_content;
-	movq	-16(%rbp), %rax	 ; variable_access_ptr, tmp108
-	movq	48(%rbp), %rdx	 ; name_content, tmp109
+	movq	-32(%rbp), %rax	 ; variable_access_ptr, tmp108
+	movq	32(%rbp), %rdx	 ; name_content, tmp109
 	movq	%rdx, 8(%rax)	 ; tmp109, variable_access_ptr_21->content.attr_name
 	jmp	.L93	 ;
 .L96:
  ; D:\TC\src\create.c:252:         if (name_content == 0 && expr_content == 0 && args_content == 0)
-	cmpq	$0, 48(%rbp)	 ;, name_content
+	cmpq	$0, 32(%rbp)	 ;, name_content
 	jne	.L97	 ;,
  ; D:\TC\src\create.c:252:         if (name_content == 0 && expr_content == 0 && args_content == 0)
-	cmpq	$0, 56(%rbp)	 ;, expr_content
+	cmpq	$0, 40(%rbp)	 ;, expr_content
 	jne	.L97	 ;,
  ; D:\TC\src\create.c:252:         if (name_content == 0 && expr_content == 0 && args_content == 0)
-	cmpq	$0, 64(%rbp)	 ;, args_content
+	cmpq	$0, 48(%rbp)	 ;, args_content
 	jne	.L97	 ;,
  ; D:\TC\src\create.c:253:             fprintf(stderr, "Error creating variable access: content is NULL\n");
 	call	__getreent	 ;
@@ -1455,7 +1340,7 @@ create_variable_access:
  ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %u\n", type);
 	movq	24(%rax), %rax	 ; _8->_stderr, _9
  ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %u\n", type);
-	movl	32(%rbp), %edx	 ; type, tmp111
+	movl	16(%rbp), %edx	 ; type, tmp111
 	movl	%edx, %r8d	 ; tmp111,
 	leaq	.LC21(%rip), %rdx	 ;, tmp112
 	movq	%rax, %rcx	 ; _9,
@@ -1466,7 +1351,7 @@ create_variable_access:
 	jmp	.L91	 ;
 .L93:
  ; D:\TC\src\create.c:258:     return variable_access;
-	movq	-8(%rbp), %rax	 ; variable_access, _12
+	movq	-24(%rbp), %rax	 ; variable_access, _12
 .L91:
  ; D:\TC\src\create.c:259: }
 	addq	$48, %rsp	 ;,
@@ -1474,7 +1359,6 @@ create_variable_access:
 	popq	%rsi	 ;
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
 	.def	__getreent;	.scl	2;	.type	32;	.endef

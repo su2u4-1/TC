@@ -3,7 +3,7 @@
 ;	compiled by GNU C version 13.3.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
 ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-; options passed: -mtune=generic -march=x86-64 -O3 -fasynchronous-unwind-tables -fstack-protector-strong -fstack-clash-protection -fcf-protection
+; options passed: -mtune=generic -march=x86-64 -O3 -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -fstack-clash-protection
 	.text
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC0:
@@ -25,27 +25,14 @@
 	.p2align 4
 	.type	next_token, @function
 next_token:
-.LFB72:
-	.cfi_startproc
 	pushq	%r14	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	movl	%esi, %r13d	; tmp534, skip_comment
 	pushq	%r12	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 	movq	%rdi, %rbx	; tmp533, lexer
 	subq	$32, %rsp	;,
-	.cfi_def_cfa_offset 80
 ; src/lexer.c:32:     if (lexer->position >= lexer->length)
 	movq	8(%rdi), %rdi	; lexer_215(D)->position, _218
 ; src/lexer.c:32:     if (lexer->position >= lexer->length)
@@ -75,7 +62,7 @@ next_token:
 	movzbl	%dl, %r8d	; _246, _246
 	movslq	(%r10,%r8,4), %r8	;, tmp347
 	addq	%r10, %r8	; tmp345, tmp348
-	notrack jmp	*%r8	; tmp348
+	jmp	*%r8	; tmp348
 	.section	.rodata
 	.align 4
 	.align 4
@@ -127,7 +114,7 @@ next_token:
 	movl	$32, %edi	;,
 	punpcklqdq	%xmm1, %xmm0	; prephitmp_744, tmp350
 	movaps	%xmm0, (%rsp)	; tmp350, %sfp
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm0	; %sfp, tmp350
 ; src/lexer.c:20:     token->type = type;
@@ -139,23 +126,15 @@ next_token:
 .L1:
 ; src/lexer.c:214: }
 	addq	$32, %rsp	;,
-	.cfi_remember_state
-	.cfi_def_cfa_offset 48
 	popq	%rbx	;
-	.cfi_def_cfa_offset 40
 	popq	%rbp	;
-	.cfi_def_cfa_offset 32
 	popq	%r12	;
-	.cfi_def_cfa_offset 24
 	popq	%r13	;
-	.cfi_def_cfa_offset 16
 	popq	%r14	;
-	.cfi_def_cfa_offset 8
 	ret	
 	.p2align 4,,10
 	.p2align 3
 .L6:
-	.cfi_restore_state
 ; src/lexer.c:45:     lexer->line++;
 	addq	$1, 24(%rbx)	;, lexer_215(D)->line
 ; src/lexer.c:46:     lexer->column = 0;
@@ -163,28 +142,20 @@ next_token:
 .L205:
 ; src/lexer.c:214: }
 	addq	$32, %rsp	;,
-	.cfi_remember_state
-	.cfi_def_cfa_offset 48
 ; src/lexer.c:136:                 return next_token(lexer, skip_comment);
 	movsbl	%r13b, %esi	; skip_comment, skip_comment
 	movq	%rbx, %rdi	; lexer,
 ; src/lexer.c:214: }
 	popq	%rbx	;
-	.cfi_def_cfa_offset 40
 	popq	%rbp	;
-	.cfi_def_cfa_offset 32
 	popq	%r12	;
-	.cfi_def_cfa_offset 24
 	popq	%r13	;
-	.cfi_def_cfa_offset 16
 	popq	%r14	;
-	.cfi_def_cfa_offset 8
 ; src/lexer.c:136:                 return next_token(lexer, skip_comment);
 	jmp	next_token	;
 	.p2align 4,,10
 	.p2align 3
 .L3:
-	.cfi_restore_state
 	cmpb	$90, %dl	;, _246
 	jg	.L8	;,
 	cmpb	$64, %dl	;, _246
@@ -226,29 +197,29 @@ next_token:
 ; src/lexer.c:84:         TokenType type = INTEGER;
 	movl	$2, %r13d	;, type
 .L23:
+	movq	24(%rbx), %xmm0	; lexer_215(D)->line, lexer_215(D)->line
+	movq	%r12, %xmm4	; prephitmp_744, prephitmp_744
 ; src/lexer.c:54:         lexer->position -= (size_t)(-count);
 	leaq	-1(%rbp), %rsi	;, _672
 ; src/lexer.c:55:         lexer->column -= (size_t)(-count);
 	subq	$1, %rax	;, tmp374
-	movq	24(%rbx), %xmm0	; lexer_215(D)->line, lexer_215(D)->line
-	movq	%r12, %xmm4	; prephitmp_744, prephitmp_744
 ; src/lexer.c:54:         lexer->position -= (size_t)(-count);
 	movq	%rsi, 8(%rbx)	; _672, lexer_215(D)->position
 ; src/lexer.c:93:         return create_token(type, create_string(&lexer->source[start], lexer->position - start), lexer->line, column_start);
 	subq	%rdi, %rsi	; _218, tmp377
 	movq	%r9, %rdi	; _245,
+	punpcklqdq	%xmm4, %xmm0	; prephitmp_744, tmp375
 ; src/lexer.c:55:         lexer->column -= (size_t)(-count);
 	movq	%rax, 32(%rbx)	; tmp374, lexer_215(D)->column
-	punpcklqdq	%xmm4, %xmm0	; prephitmp_744, tmp375
 	movaps	%xmm0, (%rsp)	; tmp375, %sfp
 ; src/lexer.c:93:         return create_token(type, create_string(&lexer->source[start], lexer->position - start), lexer->line, column_start);
-	call	create_string@PLT	;
+	call	*create_string@GOTPCREL(%rip)	;
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	movl	$32, %edi	;,
 ; src/lexer.c:93:         return create_token(type, create_string(&lexer->source[start], lexer->position - start), lexer->line, column_start);
 	movq	%rax, %rbx	; tmp540, _35
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm0	; %sfp, tmp375
 ; src/lexer.c:20:     token->type = type;
@@ -305,13 +276,11 @@ next_token:
 ; src/lexer.c:55:         lexer->column -= (size_t)(-count);
 	movq	%rax, 32(%rbx)	; tmp362, lexer_215(D)->column
 ; src/lexer.c:74:         string content = create_string(&lexer->source[start], lexer->position - start);
-	call	create_string@PLT	;
-; src/lexer.c:75:         if (is_keyword(content))
-	movq	%rax, %rdi	; content,
-; src/lexer.c:74:         string content = create_string(&lexer->source[start], lexer->position - start);
+	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rbp	; tmp536, content
 ; src/lexer.c:75:         if (is_keyword(content))
-	call	is_keyword@PLT	;
+	movq	%rax, %rdi	; content,
+	call	*is_keyword@GOTPCREL(%rip)	;
 	movq	24(%rbx), %xmm0	; lexer_215(D)->line, lexer_215(D)->line
 ; src/lexer.c:75:         if (is_keyword(content))
 	testb	%al, %al	; tmp537
@@ -321,7 +290,7 @@ next_token:
 	movl	$32, %edi	;,
 	punpcklqdq	%xmm2, %xmm0	; prephitmp_744, tmp364
 	movaps	%xmm0, (%rsp)	; tmp364, %sfp
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm0	; %sfp, tmp364
 ; src/lexer.c:20:     token->type = type;
@@ -381,7 +350,7 @@ next_token:
 .L200:
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	movl	$32, %edi	;,
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	16(%rsp), %xmm6	; %sfp, tmp530
 ; src/lexer.c:20:     token->type = type;
@@ -400,7 +369,7 @@ next_token:
 	movl	$32, %edi	;,
 	punpcklqdq	%xmm3, %xmm0	; prephitmp_744, tmp366
 	movaps	%xmm0, (%rsp)	; tmp366, %sfp
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm0	; %sfp, tmp366
 ; src/lexer.c:20:     token->type = type;
@@ -461,8 +430,8 @@ next_token:
 	cmpb	$34, %r13b	;, _289
 	je	.L30	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rdi	; stderr,
 	xorl	%eax, %eax	;
+	movq	stderr(%rip), %rdi	; stderr,
 ; src/lexer.c:28:     fprintf(stderr, "Lexer Error at Line %zu, Column %zu: %s\n", line + 1, column + 1, message);
 	leaq	1(%r14), %rcx	;, tmp385
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
@@ -470,7 +439,7 @@ next_token:
 	leaq	.LC0(%rip), %r9	;,
 	leaq	.LC1(%rip), %rdx	;, tmp387
 	movl	$2, %esi	;,
-	call	__fprintf_chk@PLT	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 ; src/lexer.c:102:             if (c == '\n') newline(lexer);
 	cmpb	$10, %r13b	;, _289
 	je	.L31	;,
@@ -485,17 +454,17 @@ next_token:
 	punpcklqdq	%xmm5, %xmm0	; prephitmp_744, tmp389
 	notq	%rsi	; tmp390
 	addq	8(%rbx), %rsi	; lexer_215(D)->position, tmp392
-; src/lexer.c:103:             return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
-	addq	%rbp, %rdi	; ivtmp.172, ivtmp.172
 	movaps	%xmm0, (%rsp)	; tmp389, %sfp
 ; src/lexer.c:103:             return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
-	call	create_string@PLT	;
+	addq	%rbp, %rdi	; ivtmp.172, ivtmp.172
+; src/lexer.c:103:             return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
+	call	*create_string@GOTPCREL(%rip)	;
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	movl	$32, %edi	;,
 ; src/lexer.c:103:             return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
 	movq	%rax, %rbx	; tmp542, _46
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm0	; %sfp, tmp389
 ; src/lexer.c:20:     token->type = type;
@@ -580,13 +549,13 @@ next_token:
 	movaps	%xmm0, (%rsp)	; tmp411, %sfp
 .L199:
 ; src/lexer.c:132:                 return create_token(COMMENT, create_string(&lexer->source[start], lexer->position - start), lexer->line, column_start);
-	call	create_string@PLT	;
+	call	*create_string@GOTPCREL(%rip)	;
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	movl	$32, %edi	;,
 ; src/lexer.c:132:                 return create_token(COMMENT, create_string(&lexer->source[start], lexer->position - start), lexer->line, column_start);
 	movq	%rax, %rbx	; tmp548, _78
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm0	; %sfp, tmp430
 ; src/lexer.c:20:     token->type = type;
@@ -605,13 +574,13 @@ next_token:
 ; src/lexer.c:105:         return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
 	notq	%rsi	; tmp395
 	addq	8(%rbx), %rsi	; lexer_215(D)->position, tmp397
-	call	create_string@PLT	;
+	call	*create_string@GOTPCREL(%rip)	;
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	movl	$32, %edi	;,
 ; src/lexer.c:105:         return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
 	movq	%rax, %rbx	; tmp544, _52
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movq	%r14, %xmm0	; pretmp_745, tmp399
 	movq	%r12, %xmm7	; prephitmp_744, prephitmp_744
@@ -677,7 +646,7 @@ next_token:
 .L201:
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	movl	$32, %edi	;,
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm0	; %sfp, tmp465
 ; src/lexer.c:20:     token->type = type;
@@ -775,7 +744,7 @@ next_token:
 	movl	$125, %edx	;,
 	leaq	.LC2(%rip), %rsi	;, tmp419
 	leaq	.LC3(%rip), %rdi	;, tmp420
-	call	__assert_fail@PLT	;
+	call	*__assert_fail@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
 .L216:
@@ -790,17 +759,16 @@ next_token:
 	addq	$1, %rax	;, prephitmp_19
 	movq	%rax, 24(%rbx)	; prephitmp_19, lexer_215(D)->line
 .L46:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	3(%rdi), %r8	;,
 ; src/lexer.c:28:     fprintf(stderr, "Lexer Error at Line %zu, Column %zu: %s\n", line + 1, column + 1, message);
 	leaq	1(%rax), %rcx	;, tmp426
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	leaq	3(%rdi), %r8	;,
 	xorl	%eax, %eax	;
 	movq	stderr(%rip), %rdi	; stderr,
 	leaq	.LC4(%rip), %r9	;,
 	leaq	.LC1(%rip), %rdx	;, tmp428
 	movl	$2, %esi	;,
-	call	__fprintf_chk@PLT	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 ; src/lexer.c:130:                 if (skip_comment)
 	testb	%r13b, %r13b	; skip_comment
 	jne	.L205	;,
@@ -998,7 +966,7 @@ next_token:
 	movzbl	%dl, %edx	; tmp512, tmp513
 	movslq	(%rcx,%rdx,4), %rdx	;, tmp516
 	addq	%rcx, %rdx	; tmp514, tmp517
-	notrack jmp	*%rdx	; tmp517
+	jmp	*%rdx	; tmp517
 	.section	.rodata
 	.align 4
 	.align 4
@@ -1122,7 +1090,7 @@ next_token:
 ; src/lexer.c:146:             return create_token(SYMBOL, LE_SYMBOL, lexer->line, lexer->column - 2);
 	movq	LE_SYMBOL(%rip), %rbx	; LE_SYMBOL, LE_SYMBOL.11_104
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	16(%rsp), %xmm5	; %sfp, tmp530
 ; src/lexer.c:20:     token->type = type;
@@ -1151,7 +1119,7 @@ next_token:
 .L204:
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	movl	$32, %edi	;,
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm5	; %sfp, _608
 ; src/lexer.c:20:     token->type = type;
@@ -1194,7 +1162,7 @@ next_token:
 .L202:
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	movl	$32, %edi	;,
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm7	; %sfp, _608
 ; src/lexer.c:20:     token->type = type;
@@ -1215,7 +1183,7 @@ next_token:
 .L203:
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	movl	$32, %edi	;,
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm6	; %sfp, _608
 ; src/lexer.c:20:     token->type = type;
@@ -1227,12 +1195,11 @@ next_token:
 ; src/lexer.c:200:             return create_token(SYMBOL, DIV_SYMBOL, lexer->line, lexer->column - 1);
 	jmp	.L1	;
 .L75:
-; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
-	movl	$32, %edi	;,
 ; src/lexer.c:206:             return create_token(SYMBOL, GT_SYMBOL, lexer->line, lexer->column - 1);
 	movq	GT_SYMBOL(%rip), %rbx	; GT_SYMBOL, GT_SYMBOL.37_187
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
-	call	alloc_memory@PLT	;
+	movl	$32, %edi	;,
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm3	; %sfp, _608
 ; src/lexer.c:20:     token->type = type;
@@ -1244,12 +1211,11 @@ next_token:
 ; src/lexer.c:206:             return create_token(SYMBOL, GT_SYMBOL, lexer->line, lexer->column - 1);
 	jmp	.L1	;
 .L76:
-; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
-	movl	$32, %edi	;,
 ; src/lexer.c:208:             return create_token(SYMBOL, ASSIGN_SYMBOL, lexer->line, lexer->column - 1);
 	movq	ASSIGN_SYMBOL(%rip), %rbx	; ASSIGN_SYMBOL, ASSIGN_SYMBOL.38_189
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
-	call	alloc_memory@PLT	;
+	movl	$32, %edi	;,
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm4	; %sfp, _608
 ; src/lexer.c:20:     token->type = type;
@@ -1261,12 +1227,11 @@ next_token:
 ; src/lexer.c:208:             return create_token(SYMBOL, ASSIGN_SYMBOL, lexer->line, lexer->column - 1);
 	jmp	.L1	;
 .L77:
-; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
-	movl	$32, %edi	;,
 ; src/lexer.c:204:             return create_token(SYMBOL, LT_SYMBOL, lexer->line, lexer->column - 1);
 	movq	LT_SYMBOL(%rip), %rbx	; LT_SYMBOL, LT_SYMBOL.36_185
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
-	call	alloc_memory@PLT	;
+	movl	$32, %edi	;,
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:22:     token->line = line;
 	movdqa	(%rsp), %xmm2	; %sfp, _608
 ; src/lexer.c:20:     token->type = type;
@@ -1334,10 +1299,10 @@ next_token:
 	leaq	.LC1(%rip), %rdx	;, tmp521
 	movl	$2, %esi	;,
 	leaq	.LC5(%rip), %r9	;,
-	call	__fprintf_chk@PLT	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 ; src/lexer.c:19:     Token* token = (Token*)alloc_memory(sizeof(Token));
 	movl	$32, %edi	;,
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:20:     token->type = type;
 	xorl	%edx, %edx	;
 ; src/lexer.c:21:     token->lexeme = lexeme;
@@ -1408,31 +1373,21 @@ next_token:
 ; src/lexer.c:90:             type = FLOAT;
 	movl	$3, %r13d	;, type
 	jmp	.L23	;
-	.cfi_endproc
-.LFE72:
 	.size	next_token, .-next_token
 	.p2align 4
 	.globl	create_lexer
 	.type	create_lexer, @function
 create_lexer:
-.LFB65:
-	.cfi_startproc
-	endbr64	
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rdi, %rbp	; tmp87, source
 ; src/lexer.c:4:     Lexer* lexer = (Lexer*)alloc_memory(sizeof(Lexer));
 	movl	$80, %edi	;,
 ; src/lexer.c:3: Lexer* create_lexer(string source, size_t length) {
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	movq	%rsi, %rbx	; tmp88, length
 	subq	$8, %rsp	;,
-	.cfi_def_cfa_offset 32
 ; src/lexer.c:4:     Lexer* lexer = (Lexer*)alloc_memory(sizeof(Lexer));
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/lexer.c:11:     lexer->peeked_position = 0;
 	pxor	%xmm0, %xmm0	; tmp85
 ; src/lexer.c:5:     lexer->source = source;
@@ -1455,28 +1410,18 @@ create_lexer:
 	movups	%xmm0, 48(%rax)	; tmp85, MEM <vector(2) long unsigned int> [(long unsigned int *)lexer_3 + 48B]
 ; src/lexer.c:16: }
 	addq	$8, %rsp	;,
-	.cfi_def_cfa_offset 24
 	popq	%rbx	;
-	.cfi_def_cfa_offset 16
 	popq	%rbp	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE65:
 	.size	create_lexer, .-create_lexer
 	.p2align 4
 	.globl	get_next_token
 	.type	get_next_token, @function
 get_next_token:
-.LFB73:
-	.cfi_startproc
-	endbr64	
 ; src/lexer.c:217:     if (lexer->peeked_token != 0) {
 	movq	40(%rdi), %rax	; lexer_8(D)->peeked_token, <retval>
 ; src/lexer.c:216: Token* get_next_token(Lexer* lexer, bool skip_comment) {
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
 ; src/lexer.c:216: Token* get_next_token(Lexer* lexer, bool skip_comment) {
 	movq	%rdi, %rbx	; tmp93, lexer
 ; src/lexer.c:217:     if (lexer->peeked_token != 0) {
@@ -1486,8 +1431,6 @@ get_next_token:
 	movq	48(%rdi), %rdx	; lexer_8(D)->peeked_position, lexer_8(D)->peeked_position
 ; src/lexer.c:227: }
 	popq	%rbx	;
-	.cfi_remember_state
-	.cfi_def_cfa_offset 8
 ; src/lexer.c:218:         lexer->current_token = lexer->peeked_token;
 	movq	%rax, 72(%rdi)	; <retval>, lexer_8(D)->current_token
 ; src/lexer.c:220:         lexer->line = lexer->peeked_line;
@@ -1503,7 +1446,6 @@ get_next_token:
 	.p2align 4,,10
 	.p2align 3
 .L222:
-	.cfi_restore_state
 ; src/lexer.c:225:     Token* token = next_token(lexer, skip_comment);
 	movsbl	%sil, %esi	; skip_comment, skip_comment
 	call	next_token	;
@@ -1511,18 +1453,12 @@ get_next_token:
 	movq	%rax, 72(%rbx)	; <retval>, lexer_8(D)->current_token
 ; src/lexer.c:227: }
 	popq	%rbx	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE73:
 	.size	get_next_token, .-get_next_token
 	.p2align 4
 	.globl	peek_next_token
 	.type	peek_next_token, @function
 peek_next_token:
-.LFB74:
-	.cfi_startproc
-	endbr64	
 ; src/lexer.c:230:     if (lexer->peeked_token != 0)
 	movq	40(%rdi), %rax	; lexer_8(D)->peeked_token, <retval>
 ; src/lexer.c:230:     if (lexer->peeked_token != 0)
@@ -1535,17 +1471,12 @@ peek_next_token:
 .L231:
 ; src/lexer.c:229: Token* peek_next_token(Lexer* lexer, bool skip_comment) {
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 ; src/lexer.c:225:     Token* token = next_token(lexer, skip_comment);
 	movsbl	%sil, %esi	; skip_comment, skip_comment
 ; src/lexer.c:229: Token* peek_next_token(Lexer* lexer, bool skip_comment) {
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	movq	%rdi, %rbx	; tmp100, lexer
 	subq	$24, %rsp	;,
-	.cfi_def_cfa_offset 48
 ; src/lexer.c:233:     size_t saved_line = lexer->line;
 	movdqu	24(%rdi), %xmm1	; MEM <vector(2) long unsigned int> [(long unsigned int *)lexer_8(D) + 24B], MEM <vector(2) long unsigned int> [(long unsigned int *)lexer_8(D) + 24B]
 ; src/lexer.c:232:     size_t saved_position = lexer->position;
@@ -1577,36 +1508,23 @@ peek_next_token:
 	movups	%xmm1, 24(%rbx)	; MEM <vector(2) long unsigned int> [(long unsigned int *)lexer_8(D) + 24B], MEM <vector(2) long unsigned int> [(long unsigned int *)lexer_8(D) + 24B]
 ; src/lexer.c:244: }
 	addq	$24, %rsp	;,
-	.cfi_def_cfa_offset 24
 	popq	%rbx	;
-	.cfi_def_cfa_offset 16
 	popq	%rbp	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE74:
 	.size	peek_next_token, .-peek_next_token
 	.p2align 4
 	.globl	peek_current_token
 	.type	peek_current_token, @function
 peek_current_token:
-.LFB75:
-	.cfi_startproc
-	endbr64	
 ; src/lexer.c:247:     return lexer->current_token;
 	movq	72(%rdi), %rax	; lexer_2(D)->current_token, lexer_2(D)->current_token
 ; src/lexer.c:248: }
 	ret	
-	.cfi_endproc
-.LFE75:
 	.size	peek_current_token, .-peek_current_token
 	.p2align 4
 	.globl	reset_lexer
 	.type	reset_lexer, @function
 reset_lexer:
-.LFB76:
-	.cfi_startproc
-	endbr64	
 ; src/lexer.c:252:     lexer->line = 0;
 	pxor	%xmm0, %xmm0	; tmp83
 ; src/lexer.c:251:     lexer->position = 0;
@@ -1623,8 +1541,6 @@ reset_lexer:
 	movups	%xmm0, 48(%rdi)	; tmp83, MEM <vector(2) long unsigned int> [(long unsigned int *)lexer_2(D) + 48B]
 ; src/lexer.c:259: }
 	ret	
-	.cfi_endproc
-.LFE76:
 	.size	reset_lexer, .-reset_lexer
 	.section	.rodata
 	.align 8
@@ -1634,19 +1550,3 @@ __PRETTY_FUNCTION__.0:
 	.string	"next_token"
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

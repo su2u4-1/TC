@@ -3,7 +3,7 @@
  ;	compiled by GNU C version 13.2.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
  ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
- ; options passed: -mtune=generic -march=nocona -O0
+ ; options passed: -mtune=generic -march=nocona -O0 -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt
 	.text
 	.section .rdata,"dr"
 .LC0:
@@ -15,15 +15,10 @@
 	.text
 	.globl	string_append
 	.def	string_append;	.scl	2;	.type	32;	.endef
-	.seh_proc	string_append
 string_append:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp	 ;,
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; dest, dest
 	movq	%rdx, 24(%rbp)	 ; dest_length, dest_length
 	movq	%r8, 32(%rbp)	 ; src, src
@@ -98,25 +93,18 @@ string_append:
 .L5:
  ; D:\TC\src\compiler.c:16: }
 	nop	
-	addq	$80, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC3:
 	.ascii "\0"
 	.text
 	.globl	read_source
 	.def	read_source;	.scl	2;	.type	32;	.endef
-	.seh_proc	read_source
 read_source:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$64, %rsp	 ;,
-	.seh_stackalloc	64
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; file, file
 	movq	%rdx, 24(%rbp)	 ; length, length
  ; D:\TC\src\compiler.c:18:     fseek(file, 0, SEEK_END);
@@ -212,10 +200,8 @@ read_source:
  ; D:\TC\src\compiler.c:31:     return source;
 	movq	-16(%rbp), %rax	 ; source, _30
  ; D:\TC\src\compiler.c:32: }
-	addq	$64, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC4:
@@ -258,15 +244,10 @@ read_source:
 	.text
 	.globl	output_token
 	.def	output_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	output_token
 output_token:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp	 ;,
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; file, file
 	movq	%rdx, 24(%rbp)	 ; lexer, lexer
  ; D:\TC\src\compiler.c:34:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
@@ -547,21 +528,14 @@ output_token:
 	call	fprintf	 ;
  ; D:\TC\src\compiler.c:71: }
 	nop	
-	addq	$80, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	output_ast
 	.def	output_ast;	.scl	2;	.type	32;	.endef
-	.seh_proc	output_ast
 output_ast:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; file, file
 	movq	%rdx, 24(%rbp)	 ; lexer, lexer
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -593,10 +567,8 @@ output_ast:
 	call	fprintf	 ;
  ; D:\TC\src\compiler.c:76: }
 	nop	
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC19:
 	.ascii "r\0"
@@ -613,15 +585,10 @@ output_ast:
 	.text
 	.globl	parse_file
 	.def	parse_file;	.scl	2;	.type	32;	.endef
-	.seh_proc	parse_file
 parse_file:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	addq	$-128, %rsp	 ;,
-	.seh_stackalloc	128
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; name, name
 	movl	%edx, %eax	 ; o_token, tmp91
 	movl	%r8d, %edx	 ; o_ast, tmp93
@@ -783,13 +750,10 @@ parse_file:
 	movq	-80(%rbp), %rax	 ; out_ast_file, tmp136
 	movq	%rax, %rcx	 ; tmp136,
 	call	fclose	 ;
-	nop	
 .L32:
  ; D:\TC\src\compiler.c:113: }
-	subq	$-128, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	strlen;	.scl	2;	.type	32;	.endef
 	.def	snprintf;	.scl	2;	.type	32;	.endef

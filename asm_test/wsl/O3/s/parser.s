@@ -27,29 +27,16 @@
 	.p2align 4
 	.type	parse_expression, @function
 parse_expression:
-.LFB76:
-	.cfi_startproc
 	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	movq	%rsi, %r13
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	movq	%rdx, %r12
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	movq	%rdi, %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 	subq	$16, %rsp
-	.cfi_def_cfa_offset 64
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	movl	24(%rax), %eax
 	cmpl	$2, %eax
@@ -68,32 +55,24 @@ parse_expression:
 .L13:
 	movq	%rbx, %rsi
 	leaq	.LC5(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L16:
 	movq	%rbp, %rdi
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	leaq	.LC6(%rip), %rdi
 	movq	%rax, %rsi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	addq	$16, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 48
 	xorl	%eax, %eax
 	popq	%rbx
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L56:
-	.cfi_restore_state
 	movq	(%rbx), %rsi
 	xorl	%r8d, %r8d
 	xorl	%ecx, %ecx
@@ -101,37 +80,29 @@ parse_expression:
 	movl	$1, %ebx
 .L3:
 	movl	%ebx, %edi
-	call	create_primary@PLT
+	call	*create_primary@GOTPCREL(%rip)
 	movq	%rax, %rdx
 	testq	%rax, %rax
 	je	.L16
 	xorl	%ecx, %ecx
 	xorl	%esi, %esi
 	movl	$19, %edi
-	call	create_expression@PLT
+	call	*create_expression@GOTPCREL(%rip)
 	addq	$16, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 48
 	movq	%r12, %r8
 	movq	%r13, %rcx
 	popq	%rbx
-	.cfi_def_cfa_offset 40
 	movq	%rbp, %rdi
 	movq	%rax, %rsi
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	xorl	%edx, %edx
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	jmp	parse_expr_prec
 	.p2align 4,,10
 	.p2align 3
 .L55:
-	.cfi_restore_state
 	movq	(%rbx), %rsi
 	xorl	%r8d, %r8d
 	xorl	%ecx, %ecx
@@ -152,7 +123,7 @@ parse_expression:
 .L58:
 	movq	(%rbx), %rdi
 	movq	TRUE_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L59
 	movl	24(%rbx), %eax
@@ -160,7 +131,7 @@ parse_expression:
 	jne	.L6
 	movq	(%rbx), %rdi
 	movq	FALSE_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L9
 	movl	24(%rbx), %eax
@@ -171,7 +142,7 @@ parse_expression:
 .L10:
 	movq	(%rbx), %rdi
 	movq	L_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L60
 	movl	24(%rbx), %eax
@@ -179,7 +150,7 @@ parse_expression:
 	jne	.L20
 	movq	(%rbx), %rdi
 	movq	NOT_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L61
 	movl	24(%rbx), %eax
@@ -187,7 +158,7 @@ parse_expression:
 	jne	.L20
 	movq	(%rbx), %rdi
 	movq	SUB_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L21
 	movl	24(%rbx), %eax
@@ -198,7 +169,7 @@ parse_expression:
 	jne	.L13
 	movq	(%rbx), %rdi
 	movq	SELF_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L13
 	cmpb	$0, 1(%r12)
@@ -239,7 +210,7 @@ parse_expression:
 .L60:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%r12, %rdx
 	movq	%r13, %rsi
 	movq	%rbp, %rdi
@@ -247,10 +218,10 @@ parse_expression:
 	call	parse_expression
 	testq	%rax, %rax
 	je	.L62
+	movq	%rax, 8(%rsp)
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	movq	%rax, 8(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	8(%rsp), %rdx
 	movl	24(%rax), %ebx
 	movq	%rax, %r14
@@ -259,7 +230,7 @@ parse_expression:
 	movq	(%rax), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
 	movq	%rdx, 8(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L18
 	movq	8(%rsp), %rdx
@@ -272,7 +243,7 @@ parse_expression:
 .L61:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%r12, %rdx
 	movq	%r13, %rsi
 	movq	%rbp, %rdi
@@ -291,7 +262,7 @@ parse_expression:
 .L21:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%r12, %rdx
 	movq	%r13, %rsi
 	movq	%rbp, %rdi
@@ -308,54 +279,41 @@ parse_expression:
 .L18:
 	movq	%r14, %rsi
 	leaq	.LC1(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L16
 .L23:
 	movq	%rbx, %rsi
 	leaq	.LC4(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L16
 .L62:
 	movq	%rbx, %rsi
 	leaq	.LC0(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L16
 .L63:
 	movq	%rbx, %rsi
 	leaq	.LC2(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L16
 .L64:
 	movq	%rbx, %rsi
 	leaq	.LC3(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L16
-	.cfi_endproc
-.LFE76:
 	.size	parse_expression, .-parse_expression
 	.p2align 4
 	.type	parse_primary, @function
 parse_primary:
-.LFB77:
-	.cfi_startproc
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	movq	%rdx, %r13
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	movq	%rsi, %r12
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	movq	%rdi, %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	subq	$24, %rsp
-	.cfi_def_cfa_offset 64
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	movl	24(%rax), %eax
 	cmpl	$2, %eax
@@ -374,25 +332,18 @@ parse_primary:
 .L77:
 	movq	%rbx, %rsi
 	leaq	.LC5(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L82:
 	addq	$24, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	xorl	%eax, %eax
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L117:
-	.cfi_restore_state
 	movq	(%rbx), %rsi
 	xorl	%r8d, %r8d
 	xorl	%ecx, %ecx
@@ -400,22 +351,15 @@ parse_primary:
 	movl	$1, %ebx
 .L67:
 	addq	$24, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	movl	%ebx, %edi
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
-	jmp	create_primary@PLT
+	jmp	*create_primary@GOTPCREL(%rip)
 	.p2align 4,,10
 	.p2align 3
 .L116:
-	.cfi_restore_state
 	movq	(%rbx), %rsi
 	xorl	%r8d, %r8d
 	xorl	%ecx, %ecx
@@ -436,7 +380,7 @@ parse_primary:
 .L119:
 	movq	(%rbx), %rdi
 	movq	TRUE_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L120
 	movl	24(%rbx), %eax
@@ -444,7 +388,7 @@ parse_primary:
 	jne	.L70
 	movq	(%rbx), %rdi
 	movq	FALSE_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L73
 	movl	24(%rbx), %eax
@@ -455,7 +399,7 @@ parse_primary:
 .L74:
 	movq	(%rbx), %rdi
 	movq	L_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L121
 	movl	24(%rbx), %eax
@@ -463,7 +407,7 @@ parse_primary:
 	jne	.L85
 	movq	(%rbx), %rdi
 	movq	NOT_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L122
 	movl	24(%rbx), %eax
@@ -471,7 +415,7 @@ parse_primary:
 	jne	.L85
 	movq	(%rbx), %rdi
 	movq	SUB_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L86
 	movl	24(%rbx), %eax
@@ -482,7 +426,7 @@ parse_primary:
 	jne	.L77
 	movq	(%rbx), %rdi
 	movq	SELF_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L77
 	cmpb	$0, 1(%r13)
@@ -523,7 +467,7 @@ parse_primary:
 .L121:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%r13, %rdx
 	movq	%r12, %rsi
 	movq	%rbp, %rdi
@@ -532,9 +476,9 @@ parse_primary:
 	testq	%rax, %rax
 	je	.L123
 	movq	%rbp, %rdi
-	movl	$1, %esi
 	movq	%rax, 8(%rsp)
-	call	get_next_token@PLT
+	movl	$1, %esi
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	8(%rsp), %rdx
 	movl	24(%rax), %ebx
 	movq	%rax, %rbp
@@ -543,7 +487,7 @@ parse_primary:
 	movq	(%rax), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
 	movq	%rdx, 8(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L83
 	movq	8(%rsp), %rdx
@@ -556,7 +500,7 @@ parse_primary:
 .L122:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%r13, %rdx
 	movq	%r12, %rsi
 	movq	%rbp, %rdi
@@ -575,7 +519,7 @@ parse_primary:
 .L86:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%r13, %rdx
 	movq	%r12, %rsi
 	movq	%rbp, %rdi
@@ -592,30 +536,28 @@ parse_primary:
 .L83:
 	movq	%rbp, %rsi
 	leaq	.LC1(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L82
 .L88:
 	movq	%rbx, %rsi
 	leaq	.LC4(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L82
 .L123:
 	movq	%rbx, %rsi
 	leaq	.LC0(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L82
 .L124:
 	movq	%rbx, %rsi
 	leaq	.LC2(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L82
 .L125:
 	movq	%rbx, %rsi
 	leaq	.LC3(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L82
-	.cfi_endproc
-.LFE77:
 	.size	parse_primary, .-parse_primary
 	.section	.rodata.str1.1
 .LC7:
@@ -624,43 +566,28 @@ parse_primary:
 	.p2align 4
 	.type	parse_expr_prec, @function
 parse_expr_prec:
-.LFB75:
-	.cfi_startproc
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	movq	%r8, %r15
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	movq	%rdi, %rbx
 	subq	$40, %rsp
-	.cfi_def_cfa_offset 96
 	movq	%rsi, 8(%rsp)
 	movl	$1, %esi
 	movl	%edx, 28(%rsp)
 	movq	%rcx, 16(%rsp)
-	call	peek_next_token@PLT
+	call	*peek_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	jne	.L136
 .L134:
 	movq	(%rax), %rdi
-	call	string_to_operator@PLT
-	movl	%eax, %edi
+	call	*string_to_operator@GOTPCREL(%rip)
 	movl	%eax, %r12d
-	call	operator_precedence@PLT
+	movl	%eax, %edi
+	call	*operator_precedence@GOTPCREL(%rip)
 	movl	%eax, %ebp
 	cmpl	$19, %r12d
 	je	.L136
@@ -669,10 +596,10 @@ parse_expr_prec:
 	jl	.L136
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %rsi
 	movq	%r15, %rdx
 	movq	%rbx, %rdi
@@ -684,19 +611,19 @@ parse_expr_prec:
 	xorl	%ecx, %ecx
 	xorl	%esi, %esi
 	movl	$19, %edi
-	call	create_expression@PLT
+	call	*create_expression@GOTPCREL(%rip)
 	movq	%rax, %r13
 .L140:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	peek_next_token@PLT
+	call	*peek_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	jne	.L130
 	movq	(%rax), %rdi
-	call	string_to_operator@PLT
+	call	*string_to_operator@GOTPCREL(%rip)
 	movl	%eax, %r14d
 	movl	%eax, %edi
-	call	operator_precedence@PLT
+	call	*operator_precedence@GOTPCREL(%rip)
 	cmpl	$19, %r14d
 	je	.L130
 	cmpl	%eax, %ebp
@@ -715,50 +642,39 @@ parse_expr_prec:
 	.p2align 4,,10
 	.p2align 3
 .L130:
-	movq	8(%rsp), %rsi
 	xorl	%edx, %edx
+	movq	8(%rsp), %rsi
 	movq	%r13, %rcx
 	movl	%r12d, %edi
-	call	create_expression@PLT
+	call	*create_expression@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
 	movq	%rax, 8(%rsp)
-	call	peek_next_token@PLT
+	call	*peek_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	je	.L134
 .L136:
-	movq	%rbx, %rdi
 	movq	8(%rsp), %r14
-	call	peek_current_token@PLT
+	movq	%rbx, %rdi
+	call	*peek_current_token@GOTPCREL(%rip)
 .L126:
 	addq	$40, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	movq	%r14, %rax
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L141:
-	.cfi_restore_state
 	movq	%r13, %rsi
 	leaq	.LC7(%rip), %rdi
 	xorl	%r14d, %r14d
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L126
-	.cfi_endproc
-.LFE75:
 	.size	parse_expr_prec, .-parse_expr_prec
 	.section	.rodata.str1.8
 	.align 8
@@ -795,32 +711,17 @@ parse_expr_prec:
 	.p2align 4
 	.type	parse_variable_access, @function
 parse_variable_access:
-.LFB78:
-	.cfi_startproc
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	movq	%rdx, %r12
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	movq	%rsi, %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	movq	%rdi, %rbx
 	subq	$40, %rsp
-	.cfi_def_cfa_offset 96
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	movq	%rax, %r13
 	movl	24(%rax), %eax
 	cmpl	$1, %eax
@@ -829,24 +730,24 @@ parse_variable_access:
 	jne	.L146
 	movq	0(%r13), %rdi
 	movq	SELF_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L146
 .L143:
 	movq	0(%r13), %rsi
 	movq	%rbp, %rdi
-	call	search@PLT
+	call	*search@GOTPCREL(%rip)
 	xorl	%r8d, %r8d
 	xorl	%ecx, %ecx
 	xorl	%esi, %esi
 	xorl	%edi, %edi
 	movq	%rax, %rdx
 	movq	%rax, %r14
-	call	create_variable_access@PLT
+	call	*create_variable_access@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
 	movq	%rax, %r13
-	call	peek_next_token@PLT
+	call	*peek_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r15
 	jne	.L142
@@ -878,20 +779,20 @@ parse_variable_access:
 .L151:
 	movq	(%r15), %rdi
 	movq	L_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L207
 	movq	(%r15), %rdi
 	movq	L_BRACKET_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L165
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%r12, %rdx
 	movq	%rbp, %rsi
 	movq	%rbx, %rdi
@@ -903,7 +804,7 @@ parse_variable_access:
 	xorl	%ecx, %ecx
 	xorl	%esi, %esi
 	movl	$19, %edi
-	call	create_expression@PLT
+	call	*create_expression@GOTPCREL(%rip)
 	movq	%r12, %r8
 	movq	%rbp, %rcx
 	xorl	%edx, %edx
@@ -916,14 +817,14 @@ parse_variable_access:
 .L168:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %rdx
 	jne	.L170
 	movq	(%rax), %rdi
 	movq	R_BRACKET_SYMBOL(%rip), %rsi
 	movq	%rax, 24(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	24(%rsp), %rdx
 	testb	%al, %al
 	je	.L170
@@ -932,48 +833,39 @@ parse_variable_access:
 	movq	%r15, %rcx
 	xorl	%edx, %edx
 	movl	$3, %edi
-	call	create_variable_access@PLT
+	call	*create_variable_access@GOTPCREL(%rip)
 	movq	%rax, %r13
 .L164:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	peek_next_token@PLT
+	call	*peek_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r15
 	je	.L174
 .L142:
 	addq	$40, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	movq	%r13, %rax
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L165:
-	.cfi_restore_state
 	movq	(%r15), %rdi
 	movq	DOT_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L142
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpq	$0, 8(%rsp)
 	movq	%rax, %r15
 	je	.L209
@@ -981,7 +873,7 @@ parse_variable_access:
 	jne	.L210
 	movq	(%rax), %rsi
 	movq	8(%rsp), %rdi
-	call	search@PLT
+	call	*search@GOTPCREL(%rip)
 	movq	%rax, %r14
 	testq	%rax, %rax
 	je	.L211
@@ -990,7 +882,7 @@ parse_variable_access:
 	xorl	%ecx, %ecx
 	movq	%rax, %rdx
 	movl	$2, %edi
-	call	create_variable_access@PLT
+	call	*create_variable_access@GOTPCREL(%rip)
 	movq	$0, 8(%rsp)
 	movq	$0, 16(%rsp)
 	movq	%rax, %r13
@@ -1000,7 +892,7 @@ parse_variable_access:
 .L207:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	testq	%r14, %r14
 	je	.L212
 .L153:
@@ -1011,9 +903,9 @@ parse_variable_access:
 .L154:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r15
-	call	create_list@PLT
+	call	*create_list@GOTPCREL(%rip)
 	movq	%rax, 8(%rsp)
 	.p2align 4,,10
 	.p2align 3
@@ -1031,7 +923,7 @@ parse_variable_access:
 	xorl	%ecx, %ecx
 	xorl	%esi, %esi
 	movl	$19, %edi
-	call	create_expression@PLT
+	call	*create_expression@GOTPCREL(%rip)
 	movq	%r12, %r8
 	movq	%rbp, %rcx
 	xorl	%edx, %edx
@@ -1043,17 +935,17 @@ parse_variable_access:
 	je	.L157
 .L158:
 	movq	8(%rsp), %rdi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r15
 	je	.L159
 .L162:
 	movq	%r15, %rsi
 	leaq	.LC12(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L145:
 	xorl	%r13d, %r13d
 	jmp	.L142
@@ -1062,15 +954,15 @@ parse_variable_access:
 .L214:
 	movq	(%r15), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L163
-	movq	8(%rsp), %r8
 	movq	%r13, %rsi
+	movq	8(%rsp), %r8
 	xorl	%ecx, %ecx
 	xorl	%edx, %edx
 	movl	$1, %edi
-	call	create_variable_access@PLT
+	call	*create_variable_access@GOTPCREL(%rip)
 	movq	16(%r14), %r14
 	movq	$0, 8(%rsp)
 	movq	$0, 16(%rsp)
@@ -1081,14 +973,14 @@ parse_variable_access:
 .L159:
 	movq	(%rax), %rdi
 	movq	COMMA_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L216
 	cmpl	$5, 24(%r15)
 	jne	.L162
 	movq	(%r15), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L155
 	jmp	.L162
@@ -1096,14 +988,14 @@ parse_variable_access:
 	.p2align 3
 .L215:
 	movq	%rbx, %rdi
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	leaq	.LC6(%rip), %rdi
 	movq	%rax, %rsi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L157:
 	movq	%r15, %rsi
 	leaq	.LC11(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	xorl	%esi, %esi
 	jmp	.L158
 	.p2align 4,,10
@@ -1111,7 +1003,7 @@ parse_variable_access:
 .L216:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r15
 	jmp	.L155
 	.p2align 4,,10
@@ -1119,14 +1011,14 @@ parse_variable_access:
 .L213:
 	movq	%rax, %rsi
 	leaq	.LC10(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L154
 	.p2align 4,,10
 	.p2align 3
 .L146:
 	movq	%r13, %rsi
 	leaq	.LC8(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L145
 	.p2align 4,,10
 	.p2align 3
@@ -1138,47 +1030,45 @@ parse_variable_access:
 	jmp	.L148
 .L208:
 	movq	%rbx, %rdi
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	leaq	.LC6(%rip), %rdi
 	movq	%rax, %rsi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L167:
 	movq	24(%rsp), %rsi
 	leaq	.LC13(%rip), %rdi
 	xorl	%r15d, %r15d
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L168
 	.p2align 4,,10
 	.p2align 3
 .L212:
+	movq	%rax, 8(%rsp)
 	movq	%rax, %rsi
 	leaq	.LC9(%rip), %rdi
-	movq	%rax, 8(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	8(%rsp), %rax
 	jmp	.L153
 .L170:
 	movq	%rdx, %rsi
 	leaq	.LC14(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L145
 .L209:
 	movq	%rax, %rsi
 	leaq	.LC15(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L145
 .L211:
 	movq	%r15, %rsi
 	leaq	.LC17(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L145
 .L210:
 	movq	%rax, %rsi
 	leaq	.LC16(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L145
-	.cfi_endproc
-.LFE78:
 	.size	parse_variable_access, .-parse_variable_access
 	.section	.rodata.str1.1
 .LC18:
@@ -1200,32 +1090,17 @@ parse_variable_access:
 	.p2align 4
 	.type	parse_variable, @function
 parse_variable:
-.LFB70:
-	.cfi_startproc
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	movq	%rdx, %r14
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	movq	%rsi, %r13
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	movq	%rdi, %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 64
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	movl	24(%rax), %eax
 	cmpl	$1, %eax
@@ -1233,13 +1108,13 @@ parse_variable:
 	cmpl	$6, %eax
 	jne	.L221
 	movq	(%rbx), %rdi
-	call	is_builtin_type@PLT
+	call	*is_builtin_type@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L221
 .L218:
 	movq	(%rbx), %rsi
 	movq	%r13, %rdi
-	call	search@PLT
+	call	*search@GOTPCREL(%rip)
 	movq	%rax, %r12
 	testq	%rax, %rax
 	je	.L222
@@ -1248,7 +1123,7 @@ parse_variable:
 .L223:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$1, 24(%rax)
 	movq	%rax, %rbx
 	jne	.L246
@@ -1258,87 +1133,69 @@ parse_variable:
 	movq	%r13, %r8
 	movq	%r12, %rdx
 	movl	$1, %esi
-	call	create_name@PLT
+	call	*create_name@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
 	movq	%rax, %rbx
-	call	peek_next_token@PLT
+	call	*peek_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	je	.L247
 .L226:
 	xorl	%edx, %edx
 .L230:
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	movq	%rbx, %rsi
 	movq	%r12, %rdi
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
-	jmp	create_variable@PLT
+	jmp	*create_variable@GOTPCREL(%rip)
 	.p2align 4,,10
 	.p2align 3
 .L246:
-	.cfi_restore_state
 	movq	%rax, %rsi
 	leaq	.LC21(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L224
 	.p2align 4,,10
 	.p2align 3
 .L221:
 	movq	%rbx, %rsi
 	leaq	.LC18(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	xorl	%eax, %eax
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L245:
-	.cfi_restore_state
 	movq	%rbx, %rsi
 	leaq	.LC19(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L223
 	.p2align 4,,10
 	.p2align 3
 .L247:
 	movq	(%rax), %rdi
 	movq	ASSIGN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L226
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%r14, %rdx
 	movq	%r13, %rsi
 	movq	%rbp, %rdi
@@ -1350,7 +1207,7 @@ parse_variable:
 	xorl	%ecx, %ecx
 	xorl	%esi, %esi
 	movl	$19, %edi
-	call	create_expression@PLT
+	call	*create_expression@GOTPCREL(%rip)
 	xorl	%edx, %edx
 	movq	%r14, %r8
 	movq	%r13, %rcx
@@ -1363,24 +1220,22 @@ parse_variable:
 .L229:
 	movq	%r15, %rsi
 	leaq	.LC22(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L226
 	.p2align 4,,10
 	.p2align 3
 .L222:
 	movq	%rbx, %rsi
 	leaq	.LC20(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L223
 .L248:
 	movq	%rbp, %rdi
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	leaq	.LC6(%rip), %rdi
 	movq	%rax, %rsi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L229
-	.cfi_endproc
-.LFE70:
 	.size	parse_variable, .-parse_variable
 	.section	.rodata.str1.1
 .LC23:
@@ -1479,32 +1334,17 @@ parse_variable:
 	.p2align 4
 	.type	parse_statement, @function
 parse_statement:
-.LFB71:
-	.cfi_startproc
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	movq	%rsi, %r12
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	movq	%rdx, %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	movq	%rdi, %rbx
 	subq	$56, %rsp
-	.cfi_def_cfa_offset 112
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	cmpl	$6, 24(%rax)
 	je	.L431
 	movq	%rbp, %rdx
@@ -1517,7 +1357,7 @@ parse_statement:
 	movq	%rax, %rdx
 	xorl	%esi, %esi
 	movl	$19, %edi
-	call	create_expression@PLT
+	call	*create_expression@GOTPCREL(%rip)
 	movq	%rbp, %r8
 	movq	%r12, %rcx
 	xorl	%edx, %edx
@@ -1532,49 +1372,40 @@ parse_statement:
 	xorl	%edx, %edx
 	xorl	%esi, %esi
 	xorl	%edi, %edi
-	call	create_statement@PLT
+	call	*create_statement@GOTPCREL(%rip)
 	movq	%rax, %rbp
 .L335:
 	movq	%rbx, %rdi
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	testq	%rbp, %rbp
 	je	.L433
 .L345:
 	movq	%rbx, %rdi
 	movl	$1, %esi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %rbx
 	je	.L346
 .L348:
 	movq	%rbx, %rsi
 	leaq	.LC52(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L249:
 	addq	$56, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	movq	%rbp, %rax
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L346:
-	.cfi_restore_state
 	movq	(%rax), %rdi
 	movq	SEMICOLON_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L348
 	jmp	.L249
@@ -1584,32 +1415,32 @@ parse_statement:
 	movq	(%rax), %rdi
 	movq	IF_KEYWORD(%rip), %rsi
 	movq	%rax, %r13
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L434
 	movq	0(%r13), %rdi
 	movq	FOR_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L435
 	movq	0(%r13), %rdi
 	movq	WHILE_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L436
 	movq	0(%r13), %rdi
 	movq	VAR_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L437
 	movq	0(%r13), %rdi
 	movq	RETURN_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L336
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rbp, %rdx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
@@ -1620,7 +1451,7 @@ parse_statement:
 	movq	%rax, %r8
 	xorl	%esi, %esi
 	movl	$5, %edi
-	call	create_statement@PLT
+	call	*create_statement@GOTPCREL(%rip)
 	movq	%rax, %rbp
 	jmp	.L335
 	.p2align 4,,10
@@ -1628,18 +1459,18 @@ parse_statement:
 .L435:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	jne	.L289
 	movq	(%rax), %rdi
 	movq	L_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L289
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r14
 	je	.L290
@@ -1654,19 +1485,19 @@ parse_statement:
 .L292:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r14
 .L294:
 	cmpl	$5, 24(%r14)
 	jne	.L297
 	movq	(%r14), %rdi
 	movq	SEMICOLON_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L297
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r15
 	je	.L298
@@ -1681,7 +1512,7 @@ parse_statement:
 	xorl	%ecx, %ecx
 	xorl	%esi, %esi
 	movl	$19, %edi
-	call	create_expression@PLT
+	call	*create_expression@GOTPCREL(%rip)
 	movq	%rbp, %r8
 	movq	%r12, %rcx
 	xorl	%edx, %edx
@@ -1694,19 +1525,19 @@ parse_statement:
 .L304:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r15
 .L302:
 	cmpl	$5, 24(%r15)
 	jne	.L306
 	movq	(%r15), %rdi
 	movq	SEMICOLON_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L306
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r15
 	je	.L307
@@ -1721,7 +1552,7 @@ parse_statement:
 	xorl	%ecx, %ecx
 	xorl	%esi, %esi
 	movl	$19, %edi
-	call	create_expression@PLT
+	call	*create_expression@GOTPCREL(%rip)
 	movq	%rbp, %r8
 	movq	%r12, %rcx
 	xorl	%edx, %edx
@@ -1734,33 +1565,33 @@ parse_statement:
 .L313:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r15
 .L311:
 	cmpl	$5, 24(%r15)
 	jne	.L315
 	movq	(%r15), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L315
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r15
 	jne	.L317
 	movq	(%rax), %rdi
 	movq	L_BRACE_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L317
-	call	create_list@PLT
+	call	*create_list@GOTPCREL(%rip)
 	movb	$1, 2(%rbp)
 	movl	$1, %esi
 	movq	%rbx, %rdi
 	movq	%rax, %r15
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r14
 	jmp	.L318
 	.p2align 4,,10
@@ -1768,17 +1599,17 @@ parse_statement:
 .L319:
 	movq	%rax, %rsi
 	movq	%r15, %rdi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r14
 .L318:
 	cmpl	$5, 24(%r14)
 	jne	.L320
 	movq	(%r14), %rdi
 	movq	R_BRACE_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L441
 .L320:
@@ -1788,10 +1619,10 @@ parse_statement:
 	call	parse_statement
 	testq	%rax, %rax
 	jne	.L319
+	movq	%rax, 24(%rsp)
 	movq	%r14, %rsi
 	leaq	.LC43(%rip), %rdi
-	movq	%rax, 24(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	24(%rsp), %rax
 	jmp	.L319
 	.p2align 4,,10
@@ -1799,25 +1630,25 @@ parse_statement:
 .L433:
 	movq	%rax, %rsi
 	leaq	.LC51(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L345
 	.p2align 4,,10
 	.p2align 3
 .L434:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	jne	.L254
 	movq	(%rax), %rdi
 	movq	L_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L254
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rbp, %rdx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
@@ -1829,7 +1660,7 @@ parse_statement:
 	xorl	%ecx, %ecx
 	xorl	%esi, %esi
 	movl	$19, %edi
-	call	create_expression@PLT
+	call	*create_expression@GOTPCREL(%rip)
 	movq	%rbp, %r8
 	movq	%r12, %rcx
 	xorl	%edx, %edx
@@ -1842,31 +1673,31 @@ parse_statement:
 .L257:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	jne	.L259
 	movq	(%rax), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L259
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	jne	.L261
 	movq	(%rax), %rdi
 	movq	L_BRACE_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L261
-	call	create_list@PLT
+	call	*create_list@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
 	movq	%rax, %r15
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r13
 	jmp	.L262
 	.p2align 4,,10
@@ -1874,17 +1705,17 @@ parse_statement:
 .L263:
 	movq	%r14, %rsi
 	movq	%r15, %rdi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r13
 .L262:
 	cmpl	$5, 24(%r13)
 	jne	.L264
 	movq	0(%r13), %rdi
 	movq	R_BRACE_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L443
 .L264:
@@ -1897,14 +1728,14 @@ parse_statement:
 	jne	.L263
 	movq	%r13, %rsi
 	leaq	.LC27(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L263
 	.p2align 4,,10
 	.p2align 3
 .L254:
 	movq	%r13, %rsi
 	leaq	.LC23(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L253:
 	xorl	%esi, %esi
 .L266:
@@ -1915,31 +1746,22 @@ parse_statement:
 	movl	$2, %edi
 .L430:
 	addq	$56, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
-	jmp	create_statement@PLT
+	jmp	*create_statement@GOTPCREL(%rip)
 	.p2align 4,,10
 	.p2align 3
 .L432:
-	.cfi_restore_state
 	movq	%rbx, %rdi
 	movq	%rax, 8(%rsp)
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	leaq	.LC6(%rip), %rdi
 	movq	%rax, %rsi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	8(%rsp), %r8
 	jmp	.L344
 	.p2align 4,,10
@@ -1947,18 +1769,18 @@ parse_statement:
 .L436:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	jne	.L324
 	movq	(%rax), %rdi
 	movq	L_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L324
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rbp, %rdx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
@@ -1970,32 +1792,32 @@ parse_statement:
 .L325:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	jne	.L328
 	movq	(%rax), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L328
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	jne	.L330
 	movq	(%rax), %rdi
 	movq	L_BRACE_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L330
-	call	create_list@PLT
+	call	*create_list@GOTPCREL(%rip)
 	movb	$1, 2(%rbp)
 	movl	$1, %esi
 	movq	%rbx, %rdi
 	movq	%rax, %r13
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r15
 	jmp	.L331
 	.p2align 4,,10
@@ -2003,17 +1825,17 @@ parse_statement:
 .L332:
 	movq	%rax, %rsi
 	movq	%r13, %rdi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r15
 .L331:
 	cmpl	$5, 24(%r15)
 	jne	.L333
 	movq	(%r15), %rdi
 	movq	R_BRACE_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L445
 .L333:
@@ -2023,10 +1845,10 @@ parse_statement:
 	call	parse_statement
 	testq	%rax, %rax
 	jne	.L332
+	movq	%rax, 8(%rsp)
 	movq	%r15, %rsi
 	leaq	.LC48(%rip), %rdi
-	movq	%rax, 8(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	8(%rsp), %rax
 	jmp	.L332
 	.p2align 4,,10
@@ -2034,7 +1856,7 @@ parse_statement:
 .L437:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rbp, %rdx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
@@ -2045,7 +1867,7 @@ parse_statement:
 	movq	%rax, %r9
 	xorl	%esi, %esi
 	movl	$1, %edi
-	call	create_statement@PLT
+	call	*create_statement@GOTPCREL(%rip)
 	movq	%rax, %rbp
 	jmp	.L335
 	.p2align 4,,10
@@ -2053,14 +1875,14 @@ parse_statement:
 .L259:
 	movq	%r13, %rsi
 	leaq	.LC25(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L253
 	.p2align 4,,10
 	.p2align 3
 .L289:
 	movq	%r13, %rsi
 	leaq	.LC35(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L288:
 	xorl	%ecx, %ecx
 .L296:
@@ -2075,7 +1897,7 @@ parse_statement:
 .L324:
 	movq	%r13, %rsi
 	leaq	.LC44(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L323:
 	xorl	%edx, %edx
 .L327:
@@ -2087,14 +1909,14 @@ parse_statement:
 	jmp	.L430
 .L442:
 	movq	%rbx, %rdi
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	leaq	.LC6(%rip), %rdi
 	movq	%rax, %rsi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L256:
 	movq	%r13, %rsi
 	leaq	.LC24(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	$0, 32(%rsp)
 	jmp	.L257
 	.p2align 4,,10
@@ -2102,7 +1924,7 @@ parse_statement:
 .L336:
 	movq	0(%r13), %rdi
 	movq	BREAK_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L337
 	cmpb	$0, 2(%rbp)
@@ -2113,7 +1935,7 @@ parse_statement:
 	xorl	%edx, %edx
 	xorl	%esi, %esi
 	movl	$6, %edi
-	call	create_statement@PLT
+	call	*create_statement@GOTPCREL(%rip)
 	movq	%rax, %rbp
 	jmp	.L335
 	.p2align 4,,10
@@ -2121,49 +1943,49 @@ parse_statement:
 .L297:
 	movq	%r14, %rsi
 	leaq	.LC37(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L288
 .L261:
 	movq	%r13, %rsi
 	leaq	.LC26(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L253
 .L443:
-	call	create_list@PLT
+	call	*create_list@GOTPCREL(%rip)
 	movq	%rax, 24(%rsp)
-	call	create_list@PLT
+	call	*create_list@GOTPCREL(%rip)
 	movq	%rax, 40(%rsp)
 	.p2align 4,,10
 	.p2align 3
 .L428:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	peek_next_token@PLT
+	call	*peek_next_token@GOTPCREL(%rip)
 	cmpl	$6, 24(%rax)
 	movq	%rax, %r13
 	jne	.L279
 	movq	(%rax), %rdi
 	movq	ELIF_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L447
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	jne	.L268
 	movq	(%rax), %rdi
 	movq	L_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L268
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rbp, %rdx
 	movq	%r12, %rsi
 	movq	%rbx, %rdi
@@ -2175,7 +1997,7 @@ parse_statement:
 	xorl	%ecx, %ecx
 	xorl	%esi, %esi
 	movl	$19, %edi
-	call	create_expression@PLT
+	call	*create_expression@GOTPCREL(%rip)
 	movq	%rbp, %r8
 	movq	%r12, %rcx
 	xorl	%edx, %edx
@@ -2188,31 +2010,31 @@ parse_statement:
 .L271:
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	jne	.L273
 	movq	(%rax), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L273
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	jne	.L275
 	movq	(%rax), %rdi
 	movq	L_BRACE_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L275
-	call	create_list@PLT
+	call	*create_list@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
 	movq	%rax, %r13
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r14
 	jmp	.L276
 	.p2align 4,,10
@@ -2220,17 +2042,17 @@ parse_statement:
 .L277:
 	movq	%rax, %rsi
 	movq	%r13, %rdi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r14
 .L276:
 	cmpl	$5, 24(%r14)
 	jne	.L278
 	movq	(%r14), %rdi
 	movq	R_BRACE_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L449
 .L278:
@@ -2240,10 +2062,10 @@ parse_statement:
 	call	parse_statement
 	testq	%rax, %rax
 	jne	.L277
+	movq	%rax, 8(%rsp)
 	movq	%r14, %rsi
 	leaq	.LC32(%rip), %rdi
-	movq	%rax, 8(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	8(%rsp), %rax
 	jmp	.L277
 	.p2align 4,,10
@@ -2251,45 +2073,45 @@ parse_statement:
 .L449:
 	movq	16(%rsp), %rdi
 	movq	%r13, %rsi
-	call	create_else_if@PLT
+	call	*create_else_if@GOTPCREL(%rip)
 	movq	24(%rsp), %rdi
 	movq	%rax, %rsi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	jmp	.L428
 .L448:
 	movq	%rbx, %rdi
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	leaq	.LC6(%rip), %rdi
 	movq	%rax, %rsi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L270:
 	movq	%r13, %rsi
 	leaq	.LC29(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	$0, 16(%rsp)
 	jmp	.L271
 .L290:
 	movq	(%rax), %rdi
 	movq	SEMICOLON_SYMBOL(%rip), %rsi
 	xorl	%r13d, %r13d
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L294
 	jmp	.L293
 .L328:
 	movq	%r13, %rsi
 	leaq	.LC46(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L323
 .L306:
 	movq	%r15, %rsi
 	leaq	.LC39(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L288
 .L337:
 	movq	0(%r13), %rdi
 	movq	CONTINUE_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L340
 	cmpb	$0, 2(%rbp)
@@ -2300,13 +2122,13 @@ parse_statement:
 	xorl	%edx, %edx
 	xorl	%esi, %esi
 	movl	$7, %edi
-	call	create_statement@PLT
+	call	*create_statement@GOTPCREL(%rip)
 	movq	%rax, %rbp
 	jmp	.L335
 .L298:
 	movq	(%rax), %rdi
 	movq	SEMICOLON_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L301
 	movq	$0, 8(%rsp)
@@ -2314,59 +2136,59 @@ parse_statement:
 .L330:
 	movq	%r13, %rsi
 	leaq	.LC47(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L323
 .L445:
 	movb	$0, 2(%rbp)
 	movq	%r13, %rsi
 	movq	%r14, %rdi
-	call	create_while@PLT
+	call	*create_while@GOTPCREL(%rip)
 	movq	%rax, %rdx
 	jmp	.L327
 .L438:
 	movq	%r14, %rsi
 	leaq	.LC36(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L292
 .L315:
 	movq	%r15, %rsi
 	leaq	.LC41(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L288
 .L444:
 	movq	%r13, %rsi
 	leaq	.LC45(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L325
 .L268:
 	movq	%r13, %rsi
 	leaq	.LC28(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L253
 .L279:
 	movq	%rbx, %rdi
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
+	movq	%r15, %rsi
 	movq	40(%rsp), %rcx
 	movq	24(%rsp), %rdx
-	movq	%r15, %rsi
 	movq	32(%rsp), %rdi
-	call	create_if@PLT
+	call	*create_if@GOTPCREL(%rip)
 	movq	%rax, %rsi
 	jmp	.L266
 .L273:
 	movq	%r13, %rsi
 	leaq	.LC30(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L253
 .L275:
 	movq	%r13, %rsi
 	leaq	.LC31(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L253
 .L307:
 	movq	(%rax), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L310
 	movq	$0, 16(%rsp)
@@ -2375,18 +2197,18 @@ parse_statement:
 	movq	%r13, %rsi
 	leaq	.LC49(%rip), %rdi
 	xorl	%ebp, %ebp
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L249
 .L439:
 	movq	%rbx, %rdi
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	leaq	.LC6(%rip), %rdi
 	movq	%rax, %rsi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L303:
 	movq	%r15, %rsi
 	leaq	.LC38(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	$0, 8(%rsp)
 	jmp	.L304
 .L340:
@@ -2398,15 +2220,15 @@ parse_statement:
 .L317:
 	movq	%r15, %rsi
 	leaq	.LC42(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L288
 .L441:
+	movq	%r15, %rcx
 	movb	$0, 2(%rbp)
 	movq	16(%rsp), %rdx
-	movq	%r15, %rcx
 	movq	%r13, %rdi
 	movq	8(%rsp), %rsi
-	call	create_for@PLT
+	call	*create_for@GOTPCREL(%rip)
 	movq	%rax, %rcx
 	jmp	.L296
 .L447:
@@ -2414,45 +2236,45 @@ parse_statement:
 	jne	.L279
 	movq	0(%r13), %rdi
 	movq	ELSE_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L279
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	jne	.L282
 	movq	L_BRACE_SYMBOL(%rip), %rsi
 	movq	(%rax), %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L282
 	movl	$1, %esi
 	movq	%rbx, %rdi
 	leaq	.LC34(%rip), %r13
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r14
 	jmp	.L283
 	.p2align 4,,10
 	.p2align 3
 .L284:
-	movq	40(%rsp), %rdi
 	movq	%rax, %rsi
-	call	list_append@PLT
+	movq	40(%rsp), %rdi
+	call	*list_append@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbx, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r14
 .L283:
 	cmpl	$5, 24(%r14)
 	jne	.L285
 	movq	(%r14), %rdi
 	movq	R_BRACE_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L279
 .L285:
@@ -2462,37 +2284,35 @@ parse_statement:
 	call	parse_statement
 	testq	%rax, %rax
 	jne	.L284
+	movq	%rax, 8(%rsp)
 	movq	%r14, %rsi
 	movq	%r13, %rdi
-	movq	%rax, 8(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	8(%rsp), %rax
 	jmp	.L284
 .L440:
 	movq	%rbx, %rdi
-	call	peek_current_token@PLT
+	call	*peek_current_token@GOTPCREL(%rip)
 	leaq	.LC6(%rip), %rdi
 	movq	%rax, %rsi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L312:
 	movq	%r15, %rsi
 	leaq	.LC40(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	$0, 16(%rsp)
 	jmp	.L313
 .L450:
 	movq	%r13, %rsi
 	leaq	.LC50(%rip), %rdi
 	xorl	%ebp, %ebp
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L249
 .L282:
 	movq	%r13, %rsi
 	leaq	.LC33(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L253
-	.cfi_endproc
-.LFE71:
 	.size	parse_statement, .-parse_statement
 	.section	.rodata.str1.8
 	.align 8
@@ -2607,31 +2427,15 @@ parse_statement:
 	.globl	parse_code
 	.type	parse_code, @function
 parse_code:
-.LFB65:
-	.cfi_startproc
-	endbr64
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	movq	%rdi, %r15
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	movq	%rsi, %rbx
 	subq	$120, %rsp
-	.cfi_def_cfa_offset 176
 	cmpq	$0, builtin_scope(%rip)
 	movq	%rdx, 8(%rsp)
 	je	.L618
@@ -2640,14 +2444,14 @@ parse_code:
 	cmove	builtin_scope(%rip), %rbx
 	leaq	.LC88(%rip), %r14
 	movq	%r15, %rbp
-	call	create_list@PLT
-	movq	%rbx, %rdi
+	call	*create_list@GOTPCREL(%rip)
 	movq	%rax, 32(%rsp)
-	call	create_scope@PLT
+	movq	%rbx, %rdi
+	call	*create_scope@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%r15, %rdi
 	movq	%rax, 24(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r10
 	testq	%rax, %rax
 	jne	.L454
@@ -2657,11 +2461,11 @@ parse_code:
 .L494:
 	movq	%r10, %rsi
 	movq	%r14, %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L466:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r10
 	testq	%rax, %rax
 	je	.L540
@@ -2674,7 +2478,7 @@ parse_code:
 	movq	(%r10), %rdi
 	movq	IMPORT_KEYWORD(%rip), %rsi
 	movq	%r10, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testb	%al, %al
 	movl	%eax, %ebx
@@ -2684,7 +2488,7 @@ parse_code:
 	movq	(%r10), %rdi
 	movq	FUNC_KEYWORD(%rip), %rsi
 	movq	%r10, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testb	%al, %al
 	jne	.L620
@@ -2693,30 +2497,30 @@ parse_code:
 	movq	(%r10), %rdi
 	movq	CLASS_KEYWORD(%rip), %rsi
 	movq	%r10, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testb	%al, %al
 	je	.L494
 	movq	24(%rsp), %rdi
-	call	create_scope@PLT
+	call	*create_scope@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
 	movq	%rax, 40(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	cmpl	$1, 24(%rax)
 	jne	.L621
-	movq	(%rax), %rdi
-	movq	24(%rsp), %r8
-	xorl	%edx, %edx
-	movl	$4, %esi
-	movq	40(%rsp), %rcx
 	movq	%r10, 16(%rsp)
-	call	create_name@PLT
+	xorl	%edx, %edx
+	movq	(%rax), %rdi
+	movl	$4, %esi
+	movq	24(%rsp), %r8
+	movq	40(%rsp), %rcx
+	call	*create_name@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
 	movq	%rax, 56(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	cmpl	$5, 24(%rax)
 	movq	%rax, %rbx
@@ -2724,16 +2528,16 @@ parse_code:
 	movq	(%rax), %rdi
 	movq	L_BRACE_SYMBOL(%rip), %rsi
 	movq	%r10, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testb	%al, %al
 	je	.L498
-	call	create_list@PLT
+	call	*create_list@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
 	leaq	.LC86(%rip), %r12
 	movq	%rax, 48(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	movq	%rax, %r9
 	movq	%r10, 72(%rsp)
@@ -2746,11 +2550,11 @@ parse_code:
 .L500:
 	movq	%r9, %rsi
 	movq	%r12, %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L533:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r9
 .L499:
 	movl	24(%r9), %eax
@@ -2759,7 +2563,7 @@ parse_code:
 	movq	(%r9), %rdi
 	movq	R_BRACE_SYMBOL(%rip), %rsi
 	movq	%r9, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L538
 	movq	16(%rsp), %r9
@@ -2770,7 +2574,7 @@ parse_code:
 	movq	(%r9), %rdi
 	movq	METHOD_KEYWORD(%rip), %rsi
 	movq	%r9, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	testb	%al, %al
 	jne	.L623
@@ -2779,13 +2583,13 @@ parse_code:
 	movq	(%r9), %rdi
 	movq	VAR_KEYWORD(%rip), %rsi
 	movq	%r9, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	testb	%al, %al
 	je	.L500
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	8(%rsp), %rdx
 	movq	40(%rsp), %rsi
 	movq	%rbp, %rdi
@@ -2797,20 +2601,20 @@ parse_code:
 .L534:
 	xorl	%esi, %esi
 	movl	$1, %edi
-	call	create_class_member@PLT
+	call	*create_class_member@GOTPCREL(%rip)
 	movq	48(%rsp), %rdi
 	movq	%rax, %rsi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %rbx
 	je	.L535
 .L536:
 	movq	%rbx, %rsi
 	leaq	.LC85(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L533
 	.p2align 4,,10
 	.p2align 3
@@ -2818,36 +2622,27 @@ parse_code:
 	movq	24(%rsp), %rsi
 	movq	32(%rsp), %rdi
 	addq	$120, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
-	jmp	create_code@PLT
+	jmp	*create_code@GOTPCREL(%rip)
 	.p2align 4,,10
 	.p2align 3
 .L619:
-	.cfi_restore_state
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	cmpl	$1, 24(%rax)
 	jne	.L625
-	movl	$1, %esi
-	movq	%rbp, %rdi
 	movq	%r10, 16(%rsp)
 	movq	(%rax), %r13
-	call	get_next_token@PLT
+	movl	$1, %esi
+	movq	%rbp, %rdi
+	call	*get_next_token@GOTPCREL(%rip)
 	xorl	%ebx, %ebx
 	movq	16(%rsp), %r10
 	movq	%rax, %r12
@@ -2860,22 +2655,22 @@ parse_code:
 	movq	(%r12), %rdi
 	movq	SEMICOLON_SYMBOL(%rip), %rsi
 	movq	%r10, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testb	%al, %al
 	je	.L463
-	movq	24(%rsp), %rdx
 	movq	%r13, %rdi
+	movq	24(%rsp), %rdx
 	movq	%rbx, %rsi
-	call	parse_import_file@PLT
+	call	*parse_import_file@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testq	%rax, %rax
 	movq	%rax, %rdi
 	je	.L627
 .L464:
-	movq	%rbx, %rsi
 	movq	%r10, 16(%rsp)
-	call	create_import@PLT
+	movq	%rbx, %rsi
+	call	*create_import@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testq	%rax, %rax
 	movq	%rax, %rsi
@@ -2884,20 +2679,20 @@ parse_code:
 	xorl	%edi, %edi
 	xorl	%ecx, %ecx
 	xorl	%edx, %edx
-	call	create_code_member@PLT
+	call	*create_code_member@GOTPCREL(%rip)
 	movq	32(%rsp), %rdi
 	movq	%rax, %rsi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	jmp	.L466
 	.p2align 4,,10
 	.p2align 3
 .L620:
 	movq	24(%rsp), %rdi
-	call	create_scope@PLT
+	call	*create_scope@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
 	movq	%rax, %r12
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	movq	%rax, %r13
 	movl	24(%rax), %eax
@@ -2905,9 +2700,9 @@ parse_code:
 	je	.L468
 	cmpl	$6, %eax
 	jne	.L471
-	movq	0(%r13), %rdi
 	movq	%r10, 16(%rsp)
-	call	is_builtin_type@PLT
+	movq	0(%r13), %rdi
+	call	*is_builtin_type@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testb	%al, %al
 	je	.L471
@@ -2915,29 +2710,29 @@ parse_code:
 	movq	0(%r13), %rsi
 	movq	24(%rsp), %rdi
 	movq	%r10, 16(%rsp)
-	call	search@PLT
+	call	*search@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testq	%rax, %rax
 	movq	%rax, 40(%rsp)
 	je	.L628
+	movq	%r10, 16(%rsp)
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	movq	%r10, 16(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	cmpl	$1, 24(%rax)
 	jne	.L629
-	movq	(%rax), %rdi
-	movq	24(%rsp), %r8
-	xorl	%ecx, %ecx
-	movl	$2, %esi
-	movq	40(%rsp), %rdx
 	movq	%r10, 16(%rsp)
-	call	create_name@PLT
+	xorl	%ecx, %ecx
+	movq	(%rax), %rdi
+	movl	$2, %esi
+	movq	24(%rsp), %r8
+	movq	40(%rsp), %rdx
+	call	*create_name@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
 	movq	%rax, 48(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
@@ -2945,15 +2740,15 @@ parse_code:
 	movq	(%rax), %rdi
 	movq	L_PAREN_SYMBOL(%rip), %rsi
 	movq	%r10, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testb	%al, %al
 	je	.L475
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r13
-	call	create_list@PLT
+	call	*create_list@GOTPCREL(%rip)
 	movb	%bl, 56(%rsp)
 	movq	16(%rsp), %rbx
 	movq	%rax, %r15
@@ -2973,72 +2768,72 @@ parse_code:
 	je	.L479
 	movq	%r13, %rsi
 	leaq	.LC62(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L478:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
 	je	.L480
 .L483:
+	movq	%rbx, 16(%rsp)
 	movq	%r13, %rsi
 	leaq	.LC63(%rip), %rdi
-	movq	%rbx, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 .L470:
 	movq	%r10, %rsi
 	leaq	.LC68(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	xorl	%edx, %edx
 .L493:
 	xorl	%esi, %esi
 	xorl	%ecx, %ecx
 	movl	$1, %edi
-	call	create_code_member@PLT
+	call	*create_code_member@GOTPCREL(%rip)
 	movq	32(%rsp), %rdi
 	movq	%rax, %rsi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	jmp	.L466
 	.p2align 4,,10
 	.p2align 3
 .L498:
+	movq	%r10, 16(%rsp)
 	movq	%rbx, %rsi
 	leaq	.LC70(%rip), %rdi
-	movq	%r10, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 .L496:
 	movq	%r10, %rsi
 	leaq	.LC87(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	xorl	%ecx, %ecx
 .L539:
 	xorl	%esi, %esi
 	xorl	%edx, %edx
 	movl	$2, %edi
-	call	create_code_member@PLT
+	call	*create_code_member@GOTPCREL(%rip)
 	movq	32(%rsp), %rdi
 	movq	%rax, %rsi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	jmp	.L466
 	.p2align 4,,10
 	.p2align 3
 .L623:
 	movq	40(%rsp), %rdi
-	call	create_scope@PLT
-	movq	56(%rsp), %rdx
+	call	*create_scope@GOTPCREL(%rip)
 	xorl	%ecx, %ecx
+	movq	56(%rsp), %rdx
 	movq	SELF_KEYWORD(%rip), %rdi
 	movq	%rax, %r8
 	movl	$1, %esi
 	movq	%rax, %r13
-	call	create_name@PLT
+	call	*create_name@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
 	movq	%rax, %rbx
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	movq	%rax, %r15
 	movl	24(%rax), %eax
@@ -3046,9 +2841,9 @@ parse_code:
 	je	.L502
 	cmpl	$6, %eax
 	jne	.L505
-	movq	(%r15), %rdi
 	movq	%r9, 16(%rsp)
-	call	is_builtin_type@PLT
+	movq	(%r15), %rdi
+	call	*is_builtin_type@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	testb	%al, %al
 	je	.L505
@@ -3056,29 +2851,29 @@ parse_code:
 	movq	(%r15), %rsi
 	movq	40(%rsp), %rdi
 	movq	%r9, 16(%rsp)
-	call	search@PLT
+	call	*search@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	testq	%rax, %rax
 	movq	%rax, 64(%rsp)
 	je	.L632
+	movq	%r9, 16(%rsp)
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	movq	%r9, 16(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	cmpl	$1, 24(%rax)
 	jne	.L633
-	movq	(%rax), %rdi
-	movq	40(%rsp), %r8
-	xorl	%ecx, %ecx
-	movl	$3, %esi
-	movq	64(%rsp), %rdx
 	movq	%r9, 16(%rsp)
-	call	create_name@PLT
+	xorl	%ecx, %ecx
+	movq	(%rax), %rdi
+	movl	$3, %esi
+	movq	40(%rsp), %r8
+	movq	64(%rsp), %rdx
+	call	*create_name@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
 	movq	%rax, 96(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r15
@@ -3086,39 +2881,39 @@ parse_code:
 	movq	(%rax), %rdi
 	movq	L_PAREN_SYMBOL(%rip), %rsi
 	movq	%r9, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	testb	%al, %al
 	je	.L509
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	cmpl	$6, 24(%rax)
 	movq	%rax, %r15
 	je	.L510
 .L512:
+	movq	%r9, 16(%rsp)
 	movq	%r15, %rsi
 	leaq	.LC75(%rip), %rdi
-	movq	%r9, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 .L511:
+	movq	%r9, 16(%rsp)
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	movq	%r9, 16(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r15
-	call	create_list@PLT
-	movq	56(%rsp), %rdi
+	call	*create_list@GOTPCREL(%rip)
 	movq	%rbx, %rsi
+	movq	56(%rsp), %rdi
 	xorl	%edx, %edx
 	movq	%rax, 80(%rsp)
 	movq	%r15, %rbx
-	call	create_variable@PLT
+	call	*create_variable@GOTPCREL(%rip)
 	movq	80(%rsp), %rdi
 	movq	%rax, %rsi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	movq	16(%rsp), %r15
 	.p2align 4,,10
 	.p2align 3
@@ -3129,10 +2924,10 @@ parse_code:
 	movq	%r15, %r9
 	movq	%rbx, %r15
 .L517:
+	movq	%r9, 16(%rsp)
 	movq	%r15, %rsi
 	leaq	.LC76(%rip), %rdi
-	movq	%r9, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	jmp	.L504
 	.p2align 4,,10
@@ -3143,7 +2938,7 @@ parse_code:
 	movq	48(%rsp), %rsi
 	movq	56(%rsp), %rdi
 	movq	%r10, 16(%rsp)
-	call	create_class@PLT
+	call	*create_class@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testq	%rax, %rax
 	movq	%rax, %rcx
@@ -3154,7 +2949,7 @@ parse_code:
 .L535:
 	movq	(%rax), %rdi
 	movq	SEMICOLON_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L536
 	jmp	.L533
@@ -3163,7 +2958,7 @@ parse_code:
 .L621:
 	movq	%rax, %rsi
 	leaq	.LC69(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	jmp	.L496
 	.p2align 4,,10
@@ -3171,66 +2966,66 @@ parse_code:
 .L625:
 	movq	%rax, %rsi
 	leaq	.LC53(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 .L458:
 	movq	%r10, %rsi
 	leaq	.LC56(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	xorl	%esi, %esi
 	jmp	.L465
 	.p2align 4,,10
 	.p2align 3
 .L463:
+	movq	%r10, 16(%rsp)
 	movq	%r12, %rsi
 	leaq	.LC55(%rip), %rdi
-	movq	%r10, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	jmp	.L458
 	.p2align 4,,10
 	.p2align 3
 .L475:
+	movq	%r10, 16(%rsp)
 	movq	%r13, %rsi
 	leaq	.LC60(%rip), %rdi
-	movq	%r10, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	jmp	.L470
 	.p2align 4,,10
 	.p2align 3
 .L509:
+	movq	%r9, 16(%rsp)
 	movq	%r15, %rsi
 	leaq	.LC74(%rip), %rdi
-	movq	%r9, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 .L504:
 	movq	%r9, %rsi
 	leaq	.LC83(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	xorl	%esi, %esi
 .L532:
 	xorl	%edi, %edi
 	xorl	%edx, %edx
-	call	create_class_member@PLT
+	call	*create_class_member@GOTPCREL(%rip)
 	movq	48(%rsp), %rdi
 	movq	%rax, %rsi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	jmp	.L533
 	.p2align 4,,10
 	.p2align 3
 .L630:
 	movq	0(%r13), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L484
-	movl	$1, %esi
-	movq	%rbp, %rdi
 	movq	%rbx, 16(%rsp)
+	movl	$1, %esi
 	movzbl	56(%rsp), %ebx
-	call	get_next_token@PLT
+	movq	%rbp, %rdi
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	cmpl	$5, 24(%rax)
 	movq	%rax, %r13
@@ -3238,17 +3033,17 @@ parse_code:
 	movq	(%rax), %rdi
 	movq	L_BRACE_SYMBOL(%rip), %rsi
 	movq	%r10, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testb	%al, %al
 	je	.L486
-	call	create_list@PLT
+	call	*create_list@GOTPCREL(%rip)
 	movq	8(%rsp), %rcx
 	movl	$1, %esi
 	movq	%rbp, %rdi
 	movq	%rax, 56(%rsp)
 	movb	$1, (%rcx)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	movq	%r15, 72(%rsp)
 	movq	%rax, %r13
@@ -3263,17 +3058,17 @@ parse_code:
 	movq	%rax, %rsi
 	movq	%r15, %rdi
 	cmove	%ecx, %ebx
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r13
 .L487:
 	cmpl	$5, 24(%r13)
 	jne	.L491
 	movq	0(%r13), %rdi
 	movq	R_BRACE_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L635
 .L491:
@@ -3285,10 +3080,10 @@ parse_code:
 	je	.L636
 	testb	%bl, %bl
 	je	.L489
+	movq	%rax, 16(%rsp)
 	movq	%r13, %rsi
 	leaq	.LC66(%rip), %rdi
-	movq	%rax, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %rax
 	jmp	.L489
 	.p2align 4,,10
@@ -3296,21 +3091,21 @@ parse_code:
 .L479:
 	movq	%rax, %rsi
 	movq	%r15, %rdi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	jmp	.L478
 	.p2align 4,,10
 	.p2align 3
 .L480:
 	movq	(%rax), %rdi
 	movq	COMMA_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L637
 	cmpl	$5, 24(%r13)
 	jne	.L483
 	movq	0(%r13), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L476
 	jmp	.L483
@@ -3319,19 +3114,19 @@ parse_code:
 .L634:
 	movq	(%rbx), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L638
 	cmpl	$5, 24(%rbx)
 	jne	.L616
 	movq	(%rbx), %rdi
 	movq	COMMA_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L639
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	8(%rsp), %rdx
 	movq	%r13, %rsi
 	movq	%rbp, %rdi
@@ -3343,11 +3138,11 @@ parse_code:
 	je	.L523
 	movq	%rbx, %rsi
 	leaq	.LC78(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 .L522:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	jmp	.L513
 	.p2align 4,,10
@@ -3355,89 +3150,89 @@ parse_code:
 .L523:
 	movq	80(%rsp), %rdi
 	movq	%rax, %rsi
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	jmp	.L522
 	.p2align 4,,10
 	.p2align 3
 .L631:
 	movq	%r13, %rsi
 	leaq	.LC61(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L478
 	.p2align 4,,10
 	.p2align 3
 .L640:
 	movq	%rbx, %rsi
 	leaq	.LC77(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	jmp	.L522
 	.p2align 4,,10
 	.p2align 3
 .L618:
 	xorl	%edi, %edi
-	call	create_scope@PLT
+	call	*create_scope@GOTPCREL(%rip)
 	movq	VOID_KEYWORD(%rip), %rdi
 	xorl	%ecx, %ecx
 	xorl	%edx, %edx
 	movq	%rax, %r8
 	xorl	%esi, %esi
 	movq	%rax, builtin_scope(%rip)
-	call	create_name@PLT
+	call	*create_name@GOTPCREL(%rip)
 	movq	builtin_scope(%rip), %r8
 	xorl	%ecx, %ecx
 	xorl	%edx, %edx
 	movq	INT_KEYWORD(%rip), %rdi
 	xorl	%esi, %esi
 	movq	%rax, name_void(%rip)
-	call	create_name@PLT
+	call	*create_name@GOTPCREL(%rip)
 	movq	builtin_scope(%rip), %r8
 	xorl	%ecx, %ecx
 	xorl	%edx, %edx
 	movq	FLOAT_KEYWORD(%rip), %rdi
 	xorl	%esi, %esi
 	movq	%rax, name_int(%rip)
-	call	create_name@PLT
+	call	*create_name@GOTPCREL(%rip)
 	movq	builtin_scope(%rip), %r8
 	xorl	%ecx, %ecx
 	xorl	%edx, %edx
 	movq	STRING_KEYWORD(%rip), %rdi
 	xorl	%esi, %esi
 	movq	%rax, name_float(%rip)
-	call	create_name@PLT
+	call	*create_name@GOTPCREL(%rip)
 	movq	builtin_scope(%rip), %r8
 	xorl	%ecx, %ecx
 	xorl	%edx, %edx
+	movq	%rax, name_string(%rip)
 	movq	BOOL_KEYWORD(%rip), %rdi
 	xorl	%esi, %esi
-	movq	%rax, name_string(%rip)
-	call	create_name@PLT
+	call	*create_name@GOTPCREL(%rip)
 	movq	%rax, name_bool(%rip)
 	jmp	.L452
 	.p2align 4,,10
 	.p2align 3
 .L471:
+	movq	%r10, 16(%rsp)
 	movq	%r13, %rsi
 	leaq	.LC57(%rip), %rdi
-	movq	%r10, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	jmp	.L470
 	.p2align 4,,10
 	.p2align 3
 .L505:
+	movq	%r9, 16(%rsp)
 	movq	%r15, %rsi
 	leaq	.LC71(%rip), %rdi
-	movq	%r9, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	jmp	.L504
 	.p2align 4,,10
 	.p2align 3
 .L624:
+	movq	%rax, 16(%rsp)
 	movq	%rbx, %rsi
 	leaq	.LC84(%rip), %rdi
-	movq	%rax, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %rdx
 	jmp	.L534
 	.p2align 4,,10
@@ -3445,25 +3240,25 @@ parse_code:
 .L637:
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r13
 	jmp	.L476
 .L629:
 	movq	%rax, %rsi
 	leaq	.LC59(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	jmp	.L470
 .L633:
 	movq	%rax, %rsi
 	leaq	.LC73(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	jmp	.L504
 .L626:
 	movq	(%r12), %rdi
 	movq	FROM_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testb	%al, %al
 	jne	.L460
@@ -3477,15 +3272,15 @@ parse_code:
 	movq	(%rbx), %rdi
 	movq	R_PAREN_SYMBOL(%rip), %rsi
 	movq	%r9, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	testb	%al, %al
 	je	.L517
 .L525:
+	movq	%r9, 16(%rsp)
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	movq	%r9, 16(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	cmpl	$5, 24(%rax)
 	movq	%rax, %rbx
@@ -3493,19 +3288,19 @@ parse_code:
 	movq	(%rax), %rdi
 	movq	L_BRACE_SYMBOL(%rip), %rsi
 	movq	%r9, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	testb	%al, %al
 	je	.L520
 	movq	%r9, 88(%rsp)
-	call	create_list@PLT
+	call	*create_list@GOTPCREL(%rip)
 	movl	$257, %esi
 	movq	%rbp, %rdi
 	movq	%rax, 16(%rsp)
 	movq	8(%rsp), %rax
 	movw	%si, (%rax)
 	movl	$1, %esi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	88(%rsp), %r9
 	xorl	%edx, %edx
 	movq	%rax, %r15
@@ -3515,22 +3310,22 @@ parse_code:
 	.p2align 4,,10
 	.p2align 3
 .L528:
-	movq	16(%rsp), %rdi
 	cmpl	$5, 8(%rax)
 	movl	$1, %ecx
 	movq	%rax, %rsi
+	movq	16(%rsp), %rdi
 	cmove	%ecx, %ebx
-	call	list_append@PLT
+	call	*list_append@GOTPCREL(%rip)
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %r15
 .L526:
 	cmpl	$5, 24(%r15)
 	jne	.L530
 	movq	(%r15), %rdi
 	movq	R_BRACE_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L641
 .L530:
@@ -3542,44 +3337,44 @@ parse_code:
 	je	.L642
 	testb	%bl, %bl
 	je	.L528
+	movq	%rax, 88(%rsp)
 	movq	%r15, %rsi
 	leaq	.LC66(%rip), %rdi
-	movq	%rax, 88(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	88(%rsp), %rax
 	jmp	.L528
 .L520:
+	movq	%r9, 16(%rsp)
 	movq	%rbx, %rsi
 	leaq	.LC79(%rip), %rdi
-	movq	%r9, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	jmp	.L504
 	.p2align 4,,10
 	.p2align 3
 .L642:
+	movq	%rax, 88(%rsp)
 	movq	%r15, %rsi
 	leaq	.LC81(%rip), %rdi
-	movq	%rax, 88(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	88(%rsp), %rax
 	jmp	.L528
 .L510:
 	movq	(%rax), %rdi
 	movq	SELF_KEYWORD(%rip), %rsi
 	movq	%r9, 16(%rsp)
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	testb	%al, %al
 	je	.L512
 	jmp	.L511
 .L627:
-	movq	24(%rsp), %r8
 	movq	%r13, %rdi
+	movq	24(%rsp), %r8
 	xorl	%ecx, %ecx
 	movl	$1, %esi
 	movq	name_void(%rip), %rdx
-	call	create_name@PLT
+	call	*create_name@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	movq	%rax, %rdi
 	jmp	.L464
@@ -3593,19 +3388,19 @@ parse_code:
 	movq	64(%rsp), %rax
 	cmpq	name_void(%rip), %rax
 	je	.L531
+	movq	%r9, 88(%rsp)
 	movq	%r15, %rsi
 	leaq	.LC82(%rip), %rdi
-	movq	%r9, 88(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	88(%rsp), %r9
 .L531:
-	movq	64(%rsp), %rsi
-	movq	16(%rsp), %rcx
-	movq	%r13, %r8
 	movq	%r9, 88(%rsp)
+	movq	64(%rsp), %rsi
+	movq	%r13, %r8
+	movq	16(%rsp), %rcx
 	movq	80(%rsp), %rdx
 	movq	96(%rsp), %rdi
-	call	create_method@PLT
+	call	*create_method@GOTPCREL(%rip)
 	movq	88(%rsp), %r9
 	testq	%rax, %rax
 	movq	%rax, %rsi
@@ -3616,35 +3411,35 @@ parse_code:
 .L628:
 	movq	%r13, %rsi
 	leaq	.LC58(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	jmp	.L470
 .L632:
 	movq	%r15, %rsi
 	leaq	.LC72(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r9
 	jmp	.L504
 .L636:
+	movq	%rax, 16(%rsp)
 	movq	%r13, %rsi
 	leaq	.LC65(%rip), %rdi
-	movq	%rax, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %rax
 	jmp	.L489
 .L460:
+	movq	%r10, 16(%rsp)
 	movl	$1, %esi
 	movq	%rbp, %rdi
-	movq	%r10, 16(%rsp)
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	cmpl	$4, 24(%rax)
 	jne	.L643
-	movl	$1, %esi
-	movq	%rbp, %rdi
 	movq	%r10, 16(%rsp)
 	movq	(%rax), %rbx
-	call	get_next_token@PLT
+	movl	$1, %esi
+	movq	%rbp, %rdi
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	movq	%rax, %r12
 	movl	24(%rax), %eax
@@ -3653,10 +3448,10 @@ parse_code:
 	movq	%r15, %r9
 	jmp	.L525
 .L486:
+	movq	%r10, 16(%rsp)
 	movq	%r13, %rsi
 	leaq	.LC64(%rip), %rdi
-	movq	%r10, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	jmp	.L470
 .L635:
@@ -3669,19 +3464,19 @@ parse_code:
 	movq	40(%rsp), %rax
 	cmpq	name_void(%rip), %rax
 	je	.L492
+	movq	%r10, 16(%rsp)
 	movq	%r13, %rsi
 	leaq	.LC67(%rip), %rdi
-	movq	%r10, 16(%rsp)
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 .L492:
-	movq	56(%rsp), %rcx
-	movq	40(%rsp), %rsi
-	movq	%r15, %rdx
-	movq	%r12, %r8
-	movq	48(%rsp), %rdi
 	movq	%r10, 16(%rsp)
-	call	create_function@PLT
+	movq	%r15, %rdx
+	movq	56(%rsp), %rcx
+	movq	%r12, %r8
+	movq	40(%rsp), %rsi
+	movq	48(%rsp), %rdi
+	call	*create_function@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	testq	%rax, %rax
 	movq	%rax, %rdx
@@ -3692,27 +3487,9 @@ parse_code:
 .L643:
 	movq	%rax, %rsi
 	leaq	.LC54(%rip), %rdi
-	call	parser_error@PLT
+	call	*parser_error@GOTPCREL(%rip)
 	movq	16(%rsp), %r10
 	jmp	.L458
-	.cfi_endproc
-.LFE65:
 	.size	parse_code, .-parse_code
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

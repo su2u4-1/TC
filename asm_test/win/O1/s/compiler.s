@@ -10,21 +10,13 @@
 	.text
 	.globl	string_append
 	.def	string_append;	.scl	2;	.type	32;	.endef
-	.seh_proc	string_append
 string_append:
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, %r12
 	movq	%rdx, %rbx
 	movq	%r8, %rsi
@@ -36,16 +28,15 @@ string_append:
 	call	strlen
 	leaq	0(%rbp,%rax), %rdx
 	cmpq	%rbx, %rdx
-	jnb	.L5
+	jnb	.L6
 	cmpq	%r12, %rsi
-	je	.L6
+	je	.L7
 	movq	%rdi, 32(%rsp)
 	movq	%rsi, %r9
 	leaq	.LC2(%rip), %r8
 	movq	%rbx, %rdx
 	movq	%r12, %rcx
 	call	snprintf
-	nop
 .L1:
 	addq	$48, %rsp
 	popq	%rbx
@@ -54,7 +45,7 @@ string_append:
 	popq	%rbp
 	popq	%r12
 	ret
-.L5:
+.L6:
 	leaq	-1(%rbx), %r9
 	movq	%rdi, 40(%rsp)
 	movq	%rsi, 32(%rsp)
@@ -64,7 +55,7 @@ string_append:
 	movq	%r12, %rcx
 	call	snprintf
 	jmp	.L1
-.L6:
+.L7:
 	subq	%rbp, %rbx
 	movq	%rbx, %rdx
 	leaq	(%r12,%rbp), %rcx
@@ -72,24 +63,17 @@ string_append:
 	leaq	.LC1(%rip), %r8
 	call	snprintf
 	jmp	.L1
-	.seh_endproc
 	.section .rdata,"dr"
 .LC3:
 	.ascii "\0"
 	.text
 	.globl	read_source
 	.def	read_source;	.scl	2;	.type	32;	.endef
-	.seh_proc	read_source
 read_source:
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
 	movq	%rcx, %rdi
 	movq	%rdx, %rsi
 	movl	$2, %r8d
@@ -115,28 +99,27 @@ read_source:
 	movb	$0, (%rbx,%rax)
 	movq	%rax, (%rsi)
 	testq	%rax, %rax
-	je	.L7
+	je	.L8
 	movl	$0, %eax
-	jmp	.L10
-.L9:
+	jmp	.L11
+.L10:
 	addq	$1, %rax
 	cmpq	(%rsi), %rax
-	jnb	.L7
-.L10:
+	jnb	.L8
+.L11:
 	movzbl	(%rbx,%rax), %edx
 	andl	$-5, %edx
 	cmpb	$9, %dl
-	jne	.L9
+	jne	.L10
 	movb	$32, (%rbx,%rax)
-	jmp	.L9
-.L7:
+	jmp	.L10
+.L8:
 	movq	%rbx, %rax
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC4:
@@ -179,39 +162,28 @@ read_source:
 	.text
 	.globl	output_token
 	.def	output_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	output_token
 output_token:
 	pushq	%r15
-	.seh_pushreg	%r15
 	pushq	%r14
-	.seh_pushreg	%r14
 	pushq	%r13
-	.seh_pushreg	%r13
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movq	%rcx, %rdi
 	movq	%rdx, %r14
 	movl	$0, %edx
 	movq	%r14, %rcx
 	call	get_next_token
-	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L13
-	leaq	.L16(%rip), %r12
+	je	.L15
+	movq	%rax, %rbx
+	leaq	.L18(%rip), %r12
 	leaq	.LC16(%rip), %r15
-	jmp	.L31
-.L23:
+	jmp	.L33
+.L25:
 	movq	16(%rbx), %rdx
 	movq	8(%rbx), %rax
 	leaq	1(%rdx), %r9
@@ -219,13 +191,12 @@ output_token:
 	leaq	.LC4(%rip), %rdx
 	movq	%rdi, %rcx
 	call	fprintf
-.L13:
+.L15:
 	call	get_info
 	movq	%rax, %r8
 	leaq	.LC18(%rip), %rdx
 	movq	%rdi, %rcx
 	call	fprintf
-	nop
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -236,13 +207,13 @@ output_token:
 	popq	%r14
 	popq	%r15
 	ret
-.L22:
+.L24:
 	movq	%rdi, %r9
 	movl	$31, %r8d
 	movl	$1, %edx
 	leaq	.LC5(%rip), %rcx
 	call	fwrite
-.L14:
+.L16:
 	movq	16(%rbx), %rdx
 	movq	8(%rbx), %rax
 	leaq	1(%rdx), %r9
@@ -254,97 +225,97 @@ output_token:
 	movl	$0, %ebx
 	leaq	.LC14(%rip), %r13
 	leaq	.LC13(%rip), %rbp
-	jmp	.L24
-.L21:
+	jmp	.L26
+.L23:
 	movq	%rdi, %r9
 	movl	$31, %r8d
 	movl	$1, %edx
 	leaq	.LC6(%rip), %rcx
 	call	fwrite
-	jmp	.L14
-.L20:
+	jmp	.L16
+.L22:
 	movq	%rdi, %r9
 	movl	$31, %r8d
 	movl	$1, %edx
 	leaq	.LC7(%rip), %rcx
 	call	fwrite
-	jmp	.L14
-.L19:
+	jmp	.L16
+.L21:
 	movq	%rdi, %r9
 	movl	$31, %r8d
 	movl	$1, %edx
 	leaq	.LC8(%rip), %rcx
 	call	fwrite
-	jmp	.L14
-.L18:
+	jmp	.L16
+.L20:
 	movq	%rdi, %r9
 	movl	$31, %r8d
 	movl	$1, %edx
 	leaq	.LC9(%rip), %rcx
 	call	fwrite
-	jmp	.L14
-.L17:
+	jmp	.L16
+.L19:
 	movq	%rdi, %r9
 	movl	$31, %r8d
 	movl	$1, %edx
 	leaq	.LC10(%rip), %rcx
 	call	fwrite
-	jmp	.L14
-.L15:
+	jmp	.L16
+.L17:
 	movq	%rdi, %r9
 	movl	$31, %r8d
 	movl	$1, %edx
 	leaq	.LC11(%rip), %rcx
 	call	fwrite
-	jmp	.L14
-.L34:
+	jmp	.L16
+.L37:
 	movq	%rdi, %r9
 	movl	$2, %r8d
 	movl	$1, %edx
 	movq	%rbp, %rcx
 	call	fwrite
-.L26:
+.L28:
 	addq	$1, %rbx
-.L24:
+.L26:
 	movq	%rsi, %rcx
 	call	strlen
 	cmpq	%rax, %rbx
-	jnb	.L33
+	jnb	.L36
 	movzbl	(%rsi,%rbx), %ecx
 	testb	%cl, %cl
-	je	.L34
-	cmpb	$10, %cl
-	je	.L35
-	cmpb	$9, %cl
-	je	.L36
-	cmpb	$13, %cl
 	je	.L37
+	cmpb	$10, %cl
+	je	.L38
+	cmpb	$9, %cl
+	je	.L39
+	cmpb	$13, %cl
+	je	.L40
 	movsbl	%cl, %ecx
 	movq	%rdi, %rdx
 	call	fputc
-	jmp	.L26
-.L35:
+	jmp	.L28
+.L38:
 	movq	%rdi, %r9
 	movl	$2, %r8d
 	movl	$1, %edx
 	movq	%r13, %rcx
 	call	fwrite
-	jmp	.L26
-.L36:
+	jmp	.L28
+.L39:
 	movq	%rdi, %r9
 	movl	$2, %r8d
 	movl	$1, %edx
 	leaq	.LC15(%rip), %rcx
 	call	fwrite
-	jmp	.L26
-.L37:
+	jmp	.L28
+.L40:
 	movq	%rdi, %r9
 	movl	$2, %r8d
 	movl	$1, %edx
 	movq	%r15, %rcx
 	call	fwrite
-	jmp	.L26
-.L33:
+	jmp	.L28
+.L36:
 	movq	%rdi, %r9
 	movl	$2, %r8d
 	movl	$1, %edx
@@ -355,38 +326,32 @@ output_token:
 	call	get_next_token
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L13
-.L31:
+	je	.L15
+.L33:
 	cmpl	$7, 24(%rbx)
-	ja	.L14
+	ja	.L16
 	movl	24(%rbx), %eax
 	movslq	(%r12,%rax,4), %rax
 	addq	%r12, %rax
 	jmp	*%rax
 	.section .rdata,"dr"
 	.align 4
-.L16:
-	.long	.L23-.L16
-	.long	.L22-.L16
-	.long	.L21-.L16
-	.long	.L20-.L16
-	.long	.L19-.L16
-	.long	.L18-.L16
-	.long	.L17-.L16
-	.long	.L15-.L16
+.L18:
+	.long	.L25-.L18
+	.long	.L24-.L18
+	.long	.L23-.L18
+	.long	.L22-.L18
+	.long	.L21-.L18
+	.long	.L20-.L18
+	.long	.L19-.L18
+	.long	.L17-.L18
 	.text
-	.seh_endproc
 	.globl	output_ast
 	.def	output_ast;	.scl	2;	.type	32;	.endef
-	.seh_proc	output_ast
 output_ast:
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movq	%rcx, %rbx
 	movq	%rdx, %rcx
 	movq	%r8, %rsi
@@ -403,12 +368,10 @@ output_ast:
 	leaq	.LC18(%rip), %rdx
 	movq	%rbx, %rcx
 	call	fprintf
-	nop
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC19:
 	.ascii "r\0"
@@ -425,21 +388,13 @@ output_ast:
 	.text
 	.globl	parse_file
 	.def	parse_file;	.scl	2;	.type	32;	.endef
-	.seh_proc	parse_file
 parse_file:
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movl	%edx, %r12d
 	movl	%r8d, %ebp
 	call	create_file
@@ -451,9 +406,9 @@ parse_file:
 	leaq	.LC19(%rip), %rdx
 	movq	%rax, %rcx
 	call	fopen
-	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L46
+	je	.L51
+	movq	%rax, %rbx
 	leaq	40(%rsp), %rdx
 	movq	%rax, %rcx
 	call	read_source
@@ -465,15 +420,15 @@ parse_file:
 	call	create_lexer
 	movq	%rax, %rbx
 	testb	%r12b, %r12b
-	jne	.L47
-.L42:
+	jne	.L52
+.L46:
 	movq	%rbx, %rcx
 	call	reset_lexer
 	call	create_parser
 	movq	%rax, %rdi
 	testb	%bpl, %bpl
-	jne	.L48
-.L39:
+	jne	.L53
+.L43:
 	addq	$48, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -481,14 +436,14 @@ parse_file:
 	popq	%rbp
 	popq	%r12
 	ret
-.L46:
+.L51:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%rdi, %r8
 	leaq	.LC20(%rip), %rdx
 	call	fprintf
-	jmp	.L39
-.L47:
+	jmp	.L43
+.L52:
 	movl	$6, %edx
 	leaq	.LC21(%rip), %rcx
 	call	create_string
@@ -503,21 +458,21 @@ parse_file:
 	call	fopen
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	je	.L49
+	je	.L54
 	movq	%rbx, %rdx
 	movq	%rax, %rcx
 	call	output_token
 	movq	%rdi, %rcx
 	call	fclose
-	jmp	.L42
-.L49:
+	jmp	.L46
+.L54:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%r12, %r8
 	leaq	.LC23(%rip), %rdx
 	call	fprintf
-	jmp	.L42
-.L48:
+	jmp	.L46
+.L53:
 	movl	$4, %edx
 	leaq	.LC24(%rip), %rcx
 	call	create_string
@@ -532,22 +487,21 @@ parse_file:
 	call	fopen
 	movq	%rax, %rsi
 	testq	%rax, %rax
-	je	.L50
+	je	.L55
 	movq	%rdi, %r8
 	movq	%rbx, %rdx
 	movq	%rax, %rcx
 	call	output_ast
 	movq	%rsi, %rcx
 	call	fclose
-	jmp	.L39
-.L50:
+	jmp	.L43
+.L55:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%rbp, %r8
 	leaq	.LC23(%rip), %rdx
 	call	fprintf
-	jmp	.L39
-	.seh_endproc
+	jmp	.L43
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	strlen;	.scl	2;	.type	32;	.endef
 	.def	snprintf;	.scl	2;	.type	32;	.endef

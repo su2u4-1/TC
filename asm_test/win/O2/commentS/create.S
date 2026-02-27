@@ -3,7 +3,7 @@
  ;	compiled by GNU C version 13.2.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
  ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
- ; options passed: -mtune=generic -march=nocona -O2
+ ; options passed: -mtune=generic -march=nocona -O2 -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt
 	.text
 	.section .rdata,"dr"
 	.align 8
@@ -16,27 +16,19 @@
 	.p2align 4
 	.globl	create_code_member
 	.def	create_code_member;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_code_member
 create_code_member:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
+	movq	%r9, %rbp	 ; tmp127, class_content
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
+	movq	%r8, %rdi	 ; tmp126, function_content
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
+	movq	%rdx, %rsi	 ; tmp125, import_content
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\create.c:3: CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content) {
 	movl	%ecx, %ebx	 ; tmp124, type
  ; D:\TC\src\create.c:4:     CodeMember* code_member = (CodeMember*)alloc_memory(sizeof(CodeMember));
 	movl	$16, %ecx	 ;,
  ; D:\TC\src\create.c:3: CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content) {
-	movq	%rdx, %rsi	 ; tmp125, import_content
-	movq	%r8, %rdi	 ; tmp126, function_content
-	movq	%r9, %rbp	 ; tmp127, class_content
+	subq	$40, %rsp	 ;,
  ; D:\TC\src\create.c:4:     CodeMember* code_member = (CodeMember*)alloc_memory(sizeof(CodeMember));
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:5:     code_member->type = type;
@@ -97,7 +89,7 @@ create_code_member:
 	movq	%rbp, %r9	 ; class_content, class_content
 	orq	%rdi, %r9	 ; function_content, class_content
 	orq	%r9, %rsi	 ; tmp117, tmp131
-	je	.L28	 ;,
+	je	.L29	 ;,
  ; D:\TC\src\create.c:16:             fprintf(stderr, "Error creating code member: unknown type %u\n", type);
 	call	__getreent	 ;
  ; D:\TC\src\create.c:16:             fprintf(stderr, "Error creating code member: unknown type %u\n", type);
@@ -108,7 +100,7 @@ create_code_member:
  ; D:\TC\src\create.c:17:         return 0;
 	xorl	%eax, %eax	 ; <retval>
 	jmp	.L1	 ;
-.L28:
+.L29:
  ; D:\TC\src\create.c:14:             fprintf(stderr, "Error creating code member: content is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:14:             fprintf(stderr, "Error creating code member: content is NULL\n");
@@ -120,25 +112,18 @@ create_code_member:
  ; D:\TC\src\create.c:17:         return 0;
 	xorl	%eax, %eax	 ; <retval>
 	jmp	.L1	 ;
-	.seh_endproc
 	.p2align 4
 	.globl	create_code
 	.def	create_code;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_code
 create_code:
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\create.c:22: Code* create_code(list(CodeMember*) members, Scope* global_scope) {
 	movq	%rcx, %rsi	 ; tmp86, members
  ; D:\TC\src\create.c:23:     Code* code = (Code*)alloc_memory(sizeof(Code));
 	movl	$16, %ecx	 ;,
  ; D:\TC\src\create.c:22: Code* create_code(list(CodeMember*) members, Scope* global_scope) {
+	pushq	%rbx	 ;
 	movq	%rdx, %rbx	 ; tmp87, global_scope
+	subq	$40, %rsp	 ;,
  ; D:\TC\src\create.c:23:     Code* code = (Code*)alloc_memory(sizeof(Code));
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:25:     code_ptr->members = members;
@@ -150,7 +135,6 @@ create_code:
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC2:
@@ -159,29 +143,23 @@ create_code:
 	.p2align 4
 	.globl	create_import
 	.def	create_import;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_import
 create_import:
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
 	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\create.c:30: Import* create_import(Name* name, string source) {
-	movq	%rcx, %rbx	 ; tmp90, name
-	movq	%rdx, %rsi	 ; tmp91, source
  ; D:\TC\src\create.c:31:     if (name == 0) {
 	testq	%rcx, %rcx	 ; name
-	je	.L33	 ;,
+	je	.L36	 ;,
+	movq	%rcx, %rbx	 ; tmp90, name
  ; D:\TC\src\create.c:35:     Import* import = (Import*)alloc_memory(sizeof(Import));
 	movl	$16, %ecx	 ;,
+	movq	%rdx, %rsi	 ; tmp91, source
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:37:     import_ptr->name = name;
 	movq	%rbx, (%rax)	 ; name, import_8->name
  ; D:\TC\src\create.c:38:     import_ptr->source = source;
 	movq	%rsi, 8(%rax)	 ; source, import_8->source
-.L30:
+.L32:
  ; D:\TC\src\create.c:40: }
 	addq	$40, %rsp	 ;,
 	popq	%rbx	 ;
@@ -189,7 +167,7 @@ create_import:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L33:
+.L36:
  ; D:\TC\src\create.c:32:         fprintf(stderr, "Error creating import: name is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:32:         fprintf(stderr, "Error creating import: name is NULL\n");
@@ -200,8 +178,7 @@ create_import:
 	call	fwrite	 ;
  ; D:\TC\src\create.c:33:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L30	 ;
-	.seh_endproc
+	jmp	.L32	 ;
 	.section .rdata,"dr"
 	.align 8
 .LC3:
@@ -210,31 +187,23 @@ create_import:
 	.p2align 4
 	.globl	create_function
 	.def	create_function;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_function
 create_function:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
 	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\create.c:42: Function* create_function(Name* name, Name* return_type, list(Variable*) parameters, list(Statement*) body, Scope* function_scope) {
-	movq	%rcx, %rbx	 ; tmp100, name
-	movq	%rdx, %rsi	 ; tmp101, return_type
-	movq	%r8, %rbp	 ; tmp102, parameters
-	movq	%r9, %rdi	 ; tmp103, body
  ; D:\TC\src\create.c:43:     if (name == 0 || return_type == 0) {
 	testq	%rcx, %rcx	 ; name
-	je	.L38	 ;,
+	je	.L41	 ;,
+	movq	%rdx, %rsi	 ; tmp101, return_type
 	testq	%rdx, %rdx	 ; return_type
-	je	.L38	 ;,
+	je	.L41	 ;,
+	movq	%rcx, %rbx	 ; tmp100, name
  ; D:\TC\src\create.c:47:     Function* function = (Function*)alloc_memory(sizeof(Function));
 	movl	$40, %ecx	 ;,
+	movq	%r8, %rbp	 ; tmp102, parameters
+	movq	%r9, %rdi	 ; tmp103, body
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:53:     function_ptr->function_scope = function_scope;
 	movq	112(%rsp), %rdx	 ; function_scope, function_scope
@@ -257,7 +226,7 @@ create_function:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L38:
+.L41:
  ; D:\TC\src\create.c:44:         fprintf(stderr, "Error creating function: name or return_type is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:44:         fprintf(stderr, "Error creating function: name or return_type is NULL\n");
@@ -266,16 +235,16 @@ create_function:
 	leaq	.LC3(%rip), %rcx	 ;, tmp98
 	movq	24(%rax), %r9	 ; _4->_stderr,
 	call	fwrite	 ;
+ ; D:\TC\src\create.c:55: }
+	addq	$40, %rsp	 ;,
  ; D:\TC\src\create.c:45:         return 0;
 	xorl	%eax, %eax	 ; <retval>
  ; D:\TC\src\create.c:55: }
-	addq	$40, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC4:
@@ -284,31 +253,23 @@ create_function:
 	.p2align 4
 	.globl	create_method
 	.def	create_method;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_method
 create_method:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
 	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\create.c:57: Method* create_method(Name* name, Name* return_type, list(Variable*) parameters, list(Statement*) body, Scope* method_scope) {
-	movq	%rcx, %rbx	 ; tmp100, name
-	movq	%rdx, %rsi	 ; tmp101, return_type
-	movq	%r8, %rbp	 ; tmp102, parameters
-	movq	%r9, %rdi	 ; tmp103, body
  ; D:\TC\src\create.c:58:     if (name == 0 || return_type == 0) {
 	testq	%rcx, %rcx	 ; name
-	je	.L43	 ;,
+	je	.L47	 ;,
+	movq	%rdx, %rsi	 ; tmp101, return_type
 	testq	%rdx, %rdx	 ; return_type
-	je	.L43	 ;,
+	je	.L47	 ;,
+	movq	%rcx, %rbx	 ; tmp100, name
  ; D:\TC\src\create.c:62:     Method* method = (Method*)alloc_memory(sizeof(Method));
 	movl	$40, %ecx	 ;,
+	movq	%r8, %rbp	 ; tmp102, parameters
+	movq	%r9, %rdi	 ; tmp103, body
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:68:     method_ptr->method_scope = method_scope;
 	movq	112(%rsp), %rdx	 ; method_scope, method_scope
@@ -331,7 +292,7 @@ create_method:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L43:
+.L47:
  ; D:\TC\src\create.c:59:         fprintf(stderr, "Error creating method: name or return_type is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:59:         fprintf(stderr, "Error creating method: name or return_type is NULL\n");
@@ -340,16 +301,16 @@ create_method:
 	leaq	.LC4(%rip), %rcx	 ;, tmp98
 	movq	24(%rax), %r9	 ; _4->_stderr,
 	call	fwrite	 ;
+ ; D:\TC\src\create.c:70: }
+	addq	$40, %rsp	 ;,
  ; D:\TC\src\create.c:60:         return 0;
 	xorl	%eax, %eax	 ; <retval>
  ; D:\TC\src\create.c:70: }
-	addq	$40, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC5:
@@ -361,36 +322,29 @@ create_method:
 	.p2align 4
 	.globl	create_class_member
 	.def	create_class_member;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_class_member
 create_class_member:
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
+	movq	%r8, %rdi	 ; tmp115, variable_content
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
+	movq	%rdx, %rsi	 ; tmp114, method_content
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$32, %rsp	 ;,
-	.seh_stackalloc	32
-	.seh_endprologue
- ; D:\TC\src\create.c:72: ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content) {
 	movl	%ecx, %ebx	 ; tmp113, type
  ; D:\TC\src\create.c:73:     ClassMember* class_member = (ClassMember*)alloc_memory(sizeof(ClassMember));
 	movl	$16, %ecx	 ;,
  ; D:\TC\src\create.c:72: ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content) {
-	movq	%rdx, %rsi	 ; tmp114, method_content
-	movq	%r8, %rdi	 ; tmp115, variable_content
+	subq	$32, %rsp	 ;,
  ; D:\TC\src\create.c:73:     ClassMember* class_member = (ClassMember*)alloc_memory(sizeof(ClassMember));
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:75:     class_member_ptr->type = type;
 	movl	%ebx, 8(%rax)	 ; type, class_member_20->type
  ; D:\TC\src\create.c:76:     if (type == CLASS_METHOD && method_content != NULL)
 	testl	%ebx, %ebx	 ; type
-	jne	.L45	 ;,
+	jne	.L50	 ;,
 	testq	%rsi, %rsi	 ; method_content
-	je	.L45	 ;,
+	je	.L50	 ;,
  ; D:\TC\src\create.c:77:         class_member_ptr->content.method = method_content;
 	movq	%rsi, (%rax)	 ; method_content, class_member_20->content.method
-.L44:
+.L49:
  ; D:\TC\src\create.c:88: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
@@ -399,12 +353,12 @@ create_class_member:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L45:
+.L50:
  ; D:\TC\src\create.c:78:     else if (type == CLASS_VARIABLE && variable_content != NULL)
 	cmpl	$1, %ebx	 ;, type
-	jne	.L47	 ;,
+	jne	.L52	 ;,
 	testq	%rdi, %rdi	 ; variable_content
-	je	.L47	 ;,
+	je	.L52	 ;,
  ; D:\TC\src\create.c:79:         class_member_ptr->content.variable = variable_content;
 	movq	%rdi, (%rax)	 ; variable_content, class_member_20->content.variable
  ; D:\TC\src\create.c:88: }
@@ -415,10 +369,10 @@ create_class_member:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L47:
+.L52:
  ; D:\TC\src\create.c:81:         if (method_content == 0 && variable_content == 0)
 	orq	%rdi, %rsi	 ; variable_content, tmp119
-	jne	.L49	 ;,
+	jne	.L54	 ;,
  ; D:\TC\src\create.c:82:             fprintf(stderr, "Error creating class member: content is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:82:             fprintf(stderr, "Error creating class member: content is NULL\n");
@@ -429,10 +383,10 @@ create_class_member:
 	call	fwrite	 ;
  ; D:\TC\src\create.c:85:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L44	 ;
+	jmp	.L49	 ;
 	.p2align 4,,10
 	.p2align 3
-.L49:
+.L54:
  ; D:\TC\src\create.c:84:             fprintf(stderr, "Error creating class member: unknown type %u\n", type);
 	call	__getreent	 ;
  ; D:\TC\src\create.c:84:             fprintf(stderr, "Error creating class member: unknown type %u\n", type);
@@ -442,8 +396,7 @@ create_class_member:
 	call	fprintf	 ;
  ; D:\TC\src\create.c:85:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L44	 ;
-	.seh_endproc
+	jmp	.L49	 ;
 	.section .rdata,"dr"
 	.align 8
 .LC7:
@@ -452,26 +405,19 @@ create_class_member:
 	.p2align 4
 	.globl	create_class
 	.def	create_class;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_class
 create_class:
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
 	subq	$32, %rsp	 ;,
-	.seh_stackalloc	32
-	.seh_endprologue
- ; D:\TC\src\create.c:90: Class* create_class(Name* name, list(ClassMember*) members, Scope* class_scope) {
-	movq	%rcx, %rbx	 ; tmp91, name
-	movq	%rdx, %rdi	 ; tmp92, members
-	movq	%r8, %rsi	 ; tmp93, class_scope
  ; D:\TC\src\create.c:91:     if (name == 0) {
 	testq	%rcx, %rcx	 ; name
-	je	.L66	 ;,
+	je	.L73	 ;,
+	movq	%rcx, %rbx	 ; tmp91, name
  ; D:\TC\src\create.c:95:     Class* class = (Class*)alloc_memory(sizeof(Class));
 	movl	$24, %ecx	 ;,
+	movq	%rdx, %rdi	 ; tmp92, members
+	movq	%r8, %rsi	 ; tmp93, class_scope
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:97:     class_ptr->name = name;
 	movq	%rbx, (%rax)	 ; name, class_8->name
@@ -479,7 +425,7 @@ create_class:
 	movq	%rdi, 8(%rax)	 ; members, class_8->members
  ; D:\TC\src\create.c:99:     class_ptr->class_scope = class_scope;
 	movq	%rsi, 16(%rax)	 ; class_scope, class_8->class_scope
-.L63:
+.L69:
  ; D:\TC\src\create.c:101: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
@@ -488,7 +434,7 @@ create_class:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L66:
+.L73:
  ; D:\TC\src\create.c:92:         fprintf(stderr, "Error creating class: name is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:92:         fprintf(stderr, "Error creating class: name is NULL\n");
@@ -499,8 +445,7 @@ create_class:
 	call	fwrite	 ;
  ; D:\TC\src\create.c:93:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L63	 ;
-	.seh_endproc
+	jmp	.L69	 ;
 	.section .rdata,"dr"
 	.align 8
 .LC8:
@@ -509,28 +454,21 @@ create_class:
 	.p2align 4
 	.globl	create_variable
 	.def	create_variable;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_variable
 create_variable:
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
 	subq	$32, %rsp	 ;,
-	.seh_stackalloc	32
-	.seh_endprologue
- ; D:\TC\src\create.c:103: Variable* create_variable(Name* type, Name* name, Expression* value) {
-	movq	%rcx, %rbx	 ; tmp98, type
-	movq	%rdx, %rsi	 ; tmp99, name
-	movq	%r8, %rdi	 ; tmp100, value
  ; D:\TC\src\create.c:104:     if (type == 0 || name == 0) {
 	testq	%rcx, %rcx	 ; type
-	je	.L71	 ;,
+	je	.L78	 ;,
+	movq	%rdx, %rsi	 ; tmp99, name
 	testq	%rdx, %rdx	 ; name
-	je	.L71	 ;,
+	je	.L78	 ;,
+	movq	%rcx, %rbx	 ; tmp98, type
  ; D:\TC\src\create.c:108:     Variable* variable = (Variable*)alloc_memory(sizeof(Variable));
 	movl	$24, %ecx	 ;,
+	movq	%r8, %rdi	 ; tmp100, value
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:110:     variable_ptr->type = type;
 	movq	%rbx, (%rax)	 ; type, variable_12->type
@@ -546,7 +484,7 @@ create_variable:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L71:
+.L78:
  ; D:\TC\src\create.c:105:         fprintf(stderr, "Error creating variable: type or name is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:105:         fprintf(stderr, "Error creating variable: type or name is NULL\n");
@@ -555,15 +493,15 @@ create_variable:
 	leaq	.LC8(%rip), %rcx	 ;, tmp96
 	movq	24(%rax), %r9	 ; _4->_stderr,
 	call	fwrite	 ;
+ ; D:\TC\src\create.c:114: }
+	addq	$32, %rsp	 ;,
  ; D:\TC\src\create.c:106:         return 0;
 	xorl	%eax, %eax	 ; <retval>
  ; D:\TC\src\create.c:114: }
-	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC9:
@@ -575,30 +513,22 @@ create_variable:
 	.p2align 4
 	.globl	create_statement
 	.def	create_statement;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_statement
 create_statement:
 	pushq	%r12	 ;
-	.seh_pushreg	%r12
+	movq	%r8, %r12	 ; tmp153, while_stmt
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
+	movq	%rdx, %rbp	 ; tmp152, if_stmt
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
+	movq	%r9, %rsi	 ; tmp154, for_stmt
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$32, %rsp	 ;,
-	.seh_stackalloc	32
-	.seh_endprologue
- ; D:\TC\src\create.c:116: Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt) {
-	movq	112(%rsp), %rdi	 ; expr, expr
 	movl	%ecx, %ebx	 ; tmp151, type
  ; D:\TC\src\create.c:117:     Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
 	movl	$16, %ecx	 ;,
  ; D:\TC\src\create.c:116: Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt) {
-	movq	%rdx, %rbp	 ; tmp152, if_stmt
-	movq	%r8, %r12	 ; tmp153, while_stmt
-	movq	%r9, %rsi	 ; tmp154, for_stmt
+	subq	$32, %rsp	 ;,
+ ; D:\TC\src\create.c:116: Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt) {
+	movq	112(%rsp), %rdi	 ; expr, expr
  ; D:\TC\src\create.c:117:     Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:120:     if (type == EXPRESSION_STATEMENT && expr != 0)
@@ -609,13 +539,13 @@ create_statement:
 	setne	%dl	 ;, tmp120
  ; D:\TC\src\create.c:120:     if (type == EXPRESSION_STATEMENT && expr != 0)
 	testl	%ebx, %ebx	 ; type
-	jne	.L73	 ;,
+	jne	.L81	 ;,
 	testb	%dl, %dl	 ; tmp120
-	je	.L73	 ;,
-.L120:
+	je	.L81	 ;,
+.L129:
  ; D:\TC\src\create.c:131:         statement_ptr->stmt.return_expr = expr;
 	movq	%rdi, (%rax)	 ; expr,* <retval>
-.L72:
+.L80:
  ; D:\TC\src\create.c:142: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
@@ -626,12 +556,12 @@ create_statement:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L73:
+.L81:
  ; D:\TC\src\create.c:122:     else if (type == VARIABLE_STATEMENT && var_stmt != 0)
 	cmpl	$1, %ebx	 ;, type
-	jne	.L75	 ;,
+	jne	.L83	 ;,
 	cmpq	$0, 120(%rsp)	 ;, var_stmt
-	je	.L75	 ;,
+	je	.L83	 ;,
  ; D:\TC\src\create.c:123:         statement_ptr->stmt.var = var_stmt;
 	movq	120(%rsp), %rsi	 ; var_stmt, tmp160
 	movq	%rsi, (%rax)	 ; tmp160,* <retval>
@@ -645,12 +575,12 @@ create_statement:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L75:
+.L83:
  ; D:\TC\src\create.c:124:     else if (type == IF_STATEMENT && if_stmt != 0)
 	cmpl	$2, %ebx	 ;, type
-	jne	.L77	 ;,
+	jne	.L85	 ;,
 	testq	%rbp, %rbp	 ; if_stmt
-	je	.L77	 ;,
+	je	.L85	 ;,
  ; D:\TC\src\create.c:125:         statement_ptr->stmt.if_stmt = if_stmt;
 	movq	%rbp, (%rax)	 ; if_stmt, statement_35->stmt.if_stmt
  ; D:\TC\src\create.c:142: }
@@ -663,44 +593,44 @@ create_statement:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L77:
+.L85:
  ; D:\TC\src\create.c:126:     else if (type == WHILE_STATEMENT && while_stmt != 0)
 	cmpl	$3, %ebx	 ;, type
-	jne	.L78	 ;,
+	jne	.L86	 ;,
 	testq	%r12, %r12	 ; while_stmt
-	je	.L78	 ;,
+	je	.L86	 ;,
  ; D:\TC\src\create.c:127:         statement_ptr->stmt.while_stmt = while_stmt;
 	movq	%r12, (%rax)	 ; while_stmt, statement_35->stmt.while_stmt
-	jmp	.L72	 ;
+	jmp	.L80	 ;
 	.p2align 4,,10
 	.p2align 3
-.L78:
+.L86:
  ; D:\TC\src\create.c:128:     else if (type == FOR_STATEMENT && for_stmt != 0)
 	cmpl	$4, %ebx	 ;, type
-	jne	.L79	 ;,
+	jne	.L87	 ;,
 	testq	%rsi, %rsi	 ; for_stmt
-	je	.L79	 ;,
+	je	.L87	 ;,
  ; D:\TC\src\create.c:129:         statement_ptr->stmt.for_stmt = for_stmt;
 	movq	%rsi, (%rax)	 ; for_stmt,* <retval>
-	jmp	.L72	 ;
+	jmp	.L80	 ;
 	.p2align 4,,10
 	.p2align 3
-.L79:
+.L87:
  ; D:\TC\src\create.c:130:     else if (type == RETURN_STATEMENT && expr != 0)
 	cmpl	$5, %ebx	 ;, type
-	jne	.L80	 ;,
+	jne	.L88	 ;,
 	testb	%dl, %dl	 ; tmp120
-	jne	.L120	 ;,
-.L80:
+	jne	.L129	 ;,
+.L88:
  ; D:\TC\src\create.c:132:     else if (type == BREAK_STATEMENT || type == CONTINUE_STATEMENT)
 	leal	-6(%rbx), %edx	 ;, tmp141
  ; D:\TC\src\create.c:132:     else if (type == BREAK_STATEMENT || type == CONTINUE_STATEMENT)
 	cmpl	$1, %edx	 ;, tmp141
-	ja	.L81	 ;,
+	ja	.L89	 ;,
  ; D:\TC\src\create.c:133:         statement_ptr->stmt.expr = 0;
 	movq	$0, (%rax)	 ;, statement_35->stmt.expr
-	jmp	.L72	 ;
-.L81:
+	jmp	.L80	 ;
+.L89:
  ; D:\TC\src\create.c:135:         if (if_stmt == 0 && while_stmt == 0 && for_stmt == 0 && expr == 0 && var_stmt == 0)
 	orq	%r12, %rsi	 ; while_stmt, for_stmt
 	movq	120(%rsp), %rax	 ; var_stmt, tmp143
@@ -708,7 +638,7 @@ create_statement:
 	orq	%rsi, %rdx	 ; tmp142, if_stmt
 	orq	%rdx, %rax	 ; tmp143, tmp143
 	orq	%rdi, %rax	 ; expr, tmp158
-	je	.L121	 ;,
+	je	.L130	 ;,
  ; D:\TC\src\create.c:138:             fprintf(stderr, "Error creating statement: unknown type %u\n", type);
 	call	__getreent	 ;
  ; D:\TC\src\create.c:138:             fprintf(stderr, "Error creating statement: unknown type %u\n", type);
@@ -718,8 +648,8 @@ create_statement:
 	call	fprintf	 ;
  ; D:\TC\src\create.c:139:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L72	 ;
-.L121:
+	jmp	.L80	 ;
+.L130:
  ; D:\TC\src\create.c:136:             fprintf(stderr, "Error creating statement: content is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:136:             fprintf(stderr, "Error creating statement: content is NULL\n");
@@ -730,8 +660,7 @@ create_statement:
 	call	fwrite	 ;
  ; D:\TC\src\create.c:139:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L72	 ;
-	.seh_endproc
+	jmp	.L80	 ;
 	.section .rdata,"dr"
 	.align 8
 .LC11:
@@ -740,29 +669,21 @@ create_statement:
 	.p2align 4
 	.globl	create_if
 	.def	create_if;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_if
 create_if:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
 	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\create.c:144: If* create_if(Expression* condition, list(Statement*) body, list(ElseIf*) else_if, list(Statement*) else_body) {
+ ; D:\TC\src\create.c:145:     if (condition == 0) {
+	testq	%rcx, %rcx	 ; condition
+	je	.L135	 ;,
 	movq	%rcx, %rbx	 ; tmp92, condition
+ ; D:\TC\src\create.c:149:     If* if_ = (If*)alloc_memory(sizeof(If));
+	movl	$32, %ecx	 ;,
 	movq	%rdx, %rbp	 ; tmp93, body
 	movq	%r8, %rdi	 ; tmp94, else_if
 	movq	%r9, %rsi	 ; tmp95, else_body
- ; D:\TC\src\create.c:145:     if (condition == 0) {
-	testq	%rcx, %rcx	 ; condition
-	je	.L125	 ;,
- ; D:\TC\src\create.c:149:     If* if_ = (If*)alloc_memory(sizeof(If));
-	movl	$32, %ecx	 ;,
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:151:     if_ptr->condition = condition;
 	movq	%rbx, (%rax)	 ; condition, if__8->condition
@@ -772,7 +693,7 @@ create_if:
 	movq	%rdi, 16(%rax)	 ; else_if, if__8->else_if
  ; D:\TC\src\create.c:154:     if_ptr->else_body = else_body;
 	movq	%rsi, 24(%rax)	 ; else_body, if__8->else_body
-.L122:
+.L131:
  ; D:\TC\src\create.c:156: }
 	addq	$40, %rsp	 ;,
 	popq	%rbx	 ;
@@ -782,7 +703,7 @@ create_if:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L125:
+.L135:
  ; D:\TC\src\create.c:146:         fprintf(stderr, "Error creating if statement: condition is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:146:         fprintf(stderr, "Error creating if statement: condition is NULL\n");
@@ -793,8 +714,7 @@ create_if:
 	call	fwrite	 ;
  ; D:\TC\src\create.c:147:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L122	 ;
-	.seh_endproc
+	jmp	.L131	 ;
 	.section .rdata,"dr"
 	.align 8
 .LC12:
@@ -803,29 +723,23 @@ create_if:
 	.p2align 4
 	.globl	create_else_if
 	.def	create_else_if;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_else_if
 create_else_if:
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
 	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\create.c:158: ElseIf* create_else_if(Expression* condition, list(Statement*) body) {
-	movq	%rcx, %rbx	 ; tmp90, condition
-	movq	%rdx, %rsi	 ; tmp91, body
  ; D:\TC\src\create.c:159:     if (condition == 0) {
 	testq	%rcx, %rcx	 ; condition
-	je	.L129	 ;,
+	je	.L140	 ;,
+	movq	%rcx, %rbx	 ; tmp90, condition
  ; D:\TC\src\create.c:163:     ElseIf* else_if = (ElseIf*)alloc_memory(sizeof(ElseIf));
 	movl	$16, %ecx	 ;,
+	movq	%rdx, %rsi	 ; tmp91, body
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:165:     else_if_ptr->condition = condition;
 	movq	%rbx, (%rax)	 ; condition, else_if_8->condition
  ; D:\TC\src\create.c:166:     else_if_ptr->body = body;
 	movq	%rsi, 8(%rax)	 ; body, else_if_8->body
-.L126:
+.L136:
  ; D:\TC\src\create.c:168: }
 	addq	$40, %rsp	 ;,
 	popq	%rbx	 ;
@@ -833,7 +747,7 @@ create_else_if:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L129:
+.L140:
  ; D:\TC\src\create.c:160:         fprintf(stderr, "Error creating else-if statement: condition is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:160:         fprintf(stderr, "Error creating else-if statement: condition is NULL\n");
@@ -844,32 +758,23 @@ create_else_if:
 	call	fwrite	 ;
  ; D:\TC\src\create.c:161:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L126	 ;
-	.seh_endproc
+	jmp	.L136	 ;
 	.p2align 4
 	.globl	create_for
 	.def	create_for;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_for
 create_for:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
-	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
-	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\create.c:170: For* create_for(Variable* initializer, Expression* condition, Expression* increment, list(Statement*) body) {
 	movq	%rcx, %rbp	 ; tmp88, initializer
  ; D:\TC\src\create.c:171:     For* for_ = (For*)alloc_memory(sizeof(For));
 	movl	$32, %ecx	 ;,
  ; D:\TC\src\create.c:170: For* create_for(Variable* initializer, Expression* condition, Expression* increment, list(Statement*) body) {
+	pushq	%rdi	 ;
 	movq	%rdx, %rdi	 ; tmp89, condition
+	pushq	%rsi	 ;
 	movq	%r8, %rsi	 ; tmp90, increment
+	pushq	%rbx	 ;
 	movq	%r9, %rbx	 ; tmp91, body
+	subq	$40, %rsp	 ;,
  ; D:\TC\src\create.c:171:     For* for_ = (For*)alloc_memory(sizeof(For));
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:173:     for_ptr->initializer = initializer;
@@ -887,25 +792,18 @@ create_for:
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 	.p2align 4
 	.globl	create_while
 	.def	create_while;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_while
 create_while:
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\create.c:180: While* create_while(Expression* condition, list(Statement*) body) {
 	movq	%rcx, %rsi	 ; tmp86, condition
  ; D:\TC\src\create.c:181:     While* while_ = (While*)alloc_memory(sizeof(While));
 	movl	$16, %ecx	 ;,
  ; D:\TC\src\create.c:180: While* create_while(Expression* condition, list(Statement*) body) {
+	pushq	%rbx	 ;
 	movq	%rdx, %rbx	 ; tmp87, body
+	subq	$40, %rsp	 ;,
  ; D:\TC\src\create.c:181:     While* while_ = (While*)alloc_memory(sizeof(While));
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:183:     while_ptr->condition = condition;
@@ -917,7 +815,6 @@ create_while:
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC13:
 	.ascii "true\0"
@@ -933,41 +830,29 @@ create_while:
 	.p2align 4
 	.globl	create_expression
 	.def	create_expression;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_expression
 create_expression:
 	pushq	%r12	 ;
-	.seh_pushreg	%r12
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
+	movq	%r8, %rbp	 ; tmp120, prim_left
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
+	movq	%rdx, %rdi	 ; tmp119, expr_left
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
+	movq	%r9, %rsi	 ; tmp121, right
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
+	movl	%ecx, %ebx	 ; tmp118, operator
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
  ; D:\TC\src\create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
 	cmpl	$19, %ecx	 ;, operator
- ; D:\TC\src\create.c:188: Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
-	movq	%rdx, %rdi	 ; tmp119, expr_left
-	movl	%ecx, %ebx	 ; tmp118, operator
-	movq	%r8, %rbp	 ; tmp120, prim_left
- ; D:\TC\src\create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
 	sete	%dl	 ;, tmp101
 	testq	%r9, %r9	 ; right
- ; D:\TC\src\create.c:188: Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
-	movq	%r9, %rsi	 ; tmp121, right
- ; D:\TC\src\create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
 	sete	%al	 ;, tmp103
  ; D:\TC\src\create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
 	cmpb	%al, %dl	 ; tmp103, tmp101
-	jne	.L133	 ;,
+	jne	.L146	 ;,
  ; D:\TC\src\create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
 	movq	%r8, %rax	 ; prim_left, tmp125
 	orq	%rdi, %rax	 ; expr_left, tmp125
-	je	.L149	 ;,
+	je	.L163	 ;,
  ; D:\TC\src\create.c:197:     Expression* expression = (Expression*)alloc_memory(sizeof(Expression));
 	movl	$32, %ecx	 ;,
 	call	alloc_memory	 ;
@@ -975,13 +860,13 @@ create_expression:
 	movl	%ebx, 24(%rax)	 ; operator, expression_24->operator
  ; D:\TC\src\create.c:200:     if (expr_left != 0)
 	testq	%rdi, %rdi	 ; expr_left
-	je	.L140	 ;,
+	je	.L153	 ;,
  ; D:\TC\src\create.c:201:         expression_ptr->expr_left = expr_left;
 	movq	%rdi, (%rax)	 ; expr_left, expression_24->expr_left
-.L141:
+.L154:
  ; D:\TC\src\create.c:208:     expression_ptr->right = right;
 	movq	%rsi, 16(%rax)	 ; right, expression_24->right
-.L132:
+.L145:
  ; D:\TC\src\create.c:210: }
 	addq	$48, %rsp	 ;,
 	popq	%rbx	 ;
@@ -992,20 +877,20 @@ create_expression:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L149:
+.L163:
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	leaq	.LC13(%rip), %rbp	 ;, iftmp.1_12
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	testq	%r9, %r9	 ; right
-	je	.L144	 ;,
+	je	.L157	 ;,
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	leaq	.LC14(%rip), %r12	 ;, iftmp.0_11
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	movq	%rbp, %rsi	 ; iftmp.1_12, iftmp.2_13
-	jmp	.L135	 ;
+	jmp	.L148	 ;
 	.p2align 4,,10
 	.p2align 3
-.L133:
+.L146:
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	leaq	.LC13(%rip), %rax	 ;, tmp111
 	leaq	.LC14(%rip), %r9	 ;, tmp110
@@ -1022,7 +907,7 @@ create_expression:
 	testq	%rdi, %rdi	 ; expr_left
 	cmovne	%r9, %rax	 ; tmp110,, tmp111
 	movq	%rax, %rsi	 ; tmp111, iftmp.2_13
-.L135:
+.L148:
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	cmpl	$19, %ebx	 ;, operator
 	leaq	.LC13(%rip), %rax	 ;, tmp115
@@ -1040,25 +925,25 @@ create_expression:
 	call	fprintf	 ;
  ; D:\TC\src\create.c:195:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L132	 ;
+	jmp	.L145	 ;
 	.p2align 4,,10
 	.p2align 3
-.L144:
+.L157:
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	movq	%rbp, %r12	 ; iftmp.1_12, iftmp.0_11
  ; D:\TC\src\create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	movq	%rbp, %rsi	 ; iftmp.1_12, iftmp.2_13
-	jmp	.L135	 ;
+	jmp	.L148	 ;
 	.p2align 4,,10
 	.p2align 3
-.L140:
+.L153:
  ; D:\TC\src\create.c:202:     else if (prim_left != 0)
 	testq	%rbp, %rbp	 ; prim_left
-	je	.L142	 ;,
+	je	.L155	 ;,
  ; D:\TC\src\create.c:203:         expression_ptr->prim_left = prim_left;
 	movq	%rbp, 8(%rax)	 ; prim_left, expression_24->prim_left
-	jmp	.L141	 ;
-.L142:
+	jmp	.L154	 ;
+.L155:
  ; D:\TC\src\create.c:205:         fprintf(stderr, "Error creating expression: both expr_left and prim_left are NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:205:         fprintf(stderr, "Error creating expression: both expr_left and prim_left are NULL\n");
@@ -1069,8 +954,7 @@ create_expression:
 	call	fwrite	 ;
  ; D:\TC\src\create.c:195:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L132	 ;
-	.seh_endproc
+	jmp	.L145	 ;
 	.section .rdata,"dr"
 	.align 8
 .LC17:
@@ -1082,39 +966,31 @@ create_expression:
 	.p2align 4
 	.globl	create_primary
 	.def	create_primary;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_primary
 create_primary:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
+	movq	%r8, %rbp	 ; tmp132, expr_value
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
+	movq	%r9, %rdi	 ; tmp133, prim_value
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
+	movq	%rdx, %rsi	 ; tmp131, str_value
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\create.c:212: Primary* create_primary(PrimaryType type, string str_value, Expression* expr_value, Primary* prim_value, VariableAccess* variable_value) {
 	movl	%ecx, %ebx	 ; tmp130, type
  ; D:\TC\src\create.c:213:     Primary* primary = (Primary*)alloc_memory(sizeof(Primary));
 	movl	$16, %ecx	 ;,
  ; D:\TC\src\create.c:212: Primary* create_primary(PrimaryType type, string str_value, Expression* expr_value, Primary* prim_value, VariableAccess* variable_value) {
-	movq	%rdx, %rsi	 ; tmp131, str_value
-	movq	%r8, %rbp	 ; tmp132, expr_value
-	movq	%r9, %rdi	 ; tmp133, prim_value
+	subq	$40, %rsp	 ;,
  ; D:\TC\src\create.c:213:     Primary* primary = (Primary*)alloc_memory(sizeof(Primary));
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:215:     primary_ptr->type = type;
 	movl	%ebx, 8(%rax)	 ; type, primary_27->type
  ; D:\TC\src\create.c:216:     if ((type == PRIM_INTEGER || type == PRIM_FLOAT || type == PRIM_STRING || type == PRIM_TRUE || type == PRIM_FALSE) && str_value != 0)
 	cmpl	$4, %ebx	 ;, type
-	ja	.L151	 ;,
+	ja	.L165	 ;,
 	testq	%rsi, %rsi	 ; str_value
-	je	.L151	 ;,
+	je	.L165	 ;,
  ; D:\TC\src\create.c:217:         primary_ptr->value.literal_value = str_value;
 	movq	%rsi, (%rax)	 ; str_value, primary_27->value.literal_value
-.L150:
+.L164:
  ; D:\TC\src\create.c:232: }
 	addq	$40, %rsp	 ;,
 	popq	%rbx	 ;
@@ -1124,12 +1000,12 @@ create_primary:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L151:
+.L165:
  ; D:\TC\src\create.c:218:     else if (type == PRIM_EXPRESSION && expr_value != 0)
 	cmpl	$5, %ebx	 ;, type
-	jne	.L153	 ;,
+	jne	.L167	 ;,
 	testq	%rbp, %rbp	 ; expr_value
-	je	.L153	 ;,
+	je	.L167	 ;,
  ; D:\TC\src\create.c:219:         primary_ptr->value.expr = expr_value;
 	movq	%rbp, (%rax)	 ; expr_value, primary_27->value.expr
  ; D:\TC\src\create.c:232: }
@@ -1141,20 +1017,20 @@ create_primary:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L153:
+.L167:
  ; D:\TC\src\create.c:220:     else if ((type == PRIM_NOT_OPERAND || type == PRIM_NEG_OPERAND) && prim_value != 0)
 	leal	-6(%rbx), %edx	 ;, tmp117
  ; D:\TC\src\create.c:220:     else if ((type == PRIM_NOT_OPERAND || type == PRIM_NEG_OPERAND) && prim_value != 0)
 	cmpl	$1, %edx	 ;, tmp117
-	jbe	.L181	 ;,
+	jbe	.L196	 ;,
  ; D:\TC\src\create.c:222:     else if (type == PRIM_VARIABLE_ACCESS && variable_value != 0)
 	cmpl	$8, %ebx	 ;, type
-	jne	.L156	 ;,
+	jne	.L170	 ;,
 	cmpq	$0, 112(%rsp)	 ;, variable_value
-	je	.L156	 ;,
+	je	.L170	 ;,
  ; D:\TC\src\create.c:223:         primary_ptr->value.var = variable_value;
 	movq	112(%rsp), %rdi	 ; variable_value, tmp139
-.L180:
+.L195:
 	movq	%rdi, (%rax)	 ; tmp139,* <retval>
  ; D:\TC\src\create.c:232: }
 	addq	$40, %rsp	 ;,
@@ -1165,18 +1041,18 @@ create_primary:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L181:
+.L196:
  ; D:\TC\src\create.c:220:     else if ((type == PRIM_NOT_OPERAND || type == PRIM_NEG_OPERAND) && prim_value != 0)
 	testq	%rdi, %rdi	 ; prim_value
-	jne	.L180	 ;,
-.L156:
+	jne	.L195	 ;,
+.L170:
  ; D:\TC\src\create.c:225:         if (str_value == 0 && expr_value == 0 && prim_value == 0 && variable_value == 0)
 	movq	112(%rsp), %rax	 ; variable_value, prim_value
 	movq	%rbp, %r8	 ; expr_value, expr_value
 	orq	%rdi, %rax	 ; prim_value, prim_value
 	orq	%rax, %r8	 ; tmp122, expr_value
 	orq	%r8, %rsi	 ; tmp123, tmp137
-	jne	.L157	 ;,
+	jne	.L171	 ;,
  ; D:\TC\src\create.c:226:             fprintf(stderr, "Error creating primary: value is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:226:             fprintf(stderr, "Error creating primary: value is NULL\n");
@@ -1187,10 +1063,10 @@ create_primary:
 	call	fwrite	 ;
  ; D:\TC\src\create.c:229:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L150	 ;
+	jmp	.L164	 ;
 	.p2align 4,,10
 	.p2align 3
-.L157:
+.L171:
  ; D:\TC\src\create.c:228:             fprintf(stderr, "Error creating primary: unknown type %u\n", type);
 	call	__getreent	 ;
  ; D:\TC\src\create.c:228:             fprintf(stderr, "Error creating primary: unknown type %u\n", type);
@@ -1200,8 +1076,7 @@ create_primary:
 	call	fprintf	 ;
  ; D:\TC\src\create.c:229:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L150	 ;
-	.seh_endproc
+	jmp	.L164	 ;
 	.section .rdata,"dr"
 	.align 8
 .LC19:
@@ -1216,39 +1091,27 @@ create_primary:
 	.p2align 4
 	.globl	create_variable_access
 	.def	create_variable_access;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_variable_access
 create_variable_access:
 	pushq	%r12	 ;
-	.seh_pushreg	%r12
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
+	movq	%rdx, %rsi	 ; tmp141, base
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
+	movl	%ecx, %ebx	 ; tmp140, type
 	subq	$32, %rsp	 ;,
-	.seh_stackalloc	32
-	.seh_endprologue
  ; D:\TC\src\create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
 	testl	%ecx, %ecx	 ; type
- ; D:\TC\src\create.c:234: VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Name* name_content, Expression* expr_content, list(Expression*) args_content) {
-	movl	%ecx, %ebx	 ; tmp140, type
-	movq	%rdx, %rsi	 ; tmp141, base
-	movq	%r8, %rdi	 ; tmp142, name_content
- ; D:\TC\src\create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
 	sete	%al	 ;, tmp113
 	testq	%rdx, %rdx	 ; base
- ; D:\TC\src\create.c:234: VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Name* name_content, Expression* expr_content, list(Expression*) args_content) {
-	movq	%r9, %rbp	 ; tmp143, expr_content
- ; D:\TC\src\create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
 	sete	%r12b	 ;, tmp115
  ; D:\TC\src\create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
 	cmpb	%al, %r12b	 ; tmp113, tmp115
-	jne	.L221	 ;,
+	jne	.L237	 ;,
+	movq	%r8, %rdi	 ; tmp142, name_content
  ; D:\TC\src\create.c:239:     VariableAccess* variable_access = (VariableAccess*)alloc_memory(sizeof(VariableAccess));
 	movl	$24, %ecx	 ;,
+	movq	%r9, %rbp	 ; tmp143, expr_content
 	call	alloc_memory	 ;
  ; D:\TC\src\create.c:243:     if (type == VAR_NAME && name_content != 0)
 	testq	%rdi, %rdi	 ; name_content
@@ -1260,13 +1123,13 @@ create_variable_access:
 	movq	%rsi, (%rax)	 ; base, variable_access_33->base
  ; D:\TC\src\create.c:243:     if (type == VAR_NAME && name_content != 0)
 	testb	%r12b, %r12b	 ; tmp115
-	je	.L187	 ;,
+	je	.L202	 ;,
 	testb	%dl, %dl	 ; tmp118
-	je	.L187	 ;,
-.L220:
+	je	.L202	 ;,
+.L236:
  ; D:\TC\src\create.c:250:         variable_access_ptr->content.attr_name = name_content;
 	movq	%rdi, 8(%rax)	 ; name_content,
-.L182:
+.L197:
  ; D:\TC\src\create.c:259: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
@@ -1277,12 +1140,12 @@ create_variable_access:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L187:
+.L202:
  ; D:\TC\src\create.c:245:     else if (type == VAR_FUNC_CALL && args_content != 0)
 	cmpl	$1, %ebx	 ;, type
-	jne	.L189	 ;,
+	jne	.L204	 ;,
 	cmpq	$0, 112(%rsp)	 ;, args_content
-	je	.L189	 ;,
+	je	.L204	 ;,
  ; D:\TC\src\create.c:246:         variable_access_ptr->content.args = args_content;
 	movq	112(%rsp), %rsi	 ; args_content, tmp152
 	movq	%rsi, 8(%rax)	 ; tmp152, variable_access_33->content.args
@@ -1296,7 +1159,7 @@ create_variable_access:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L221:
+.L237:
  ; D:\TC\src\create.c:236:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
 	leaq	.LC13(%rip), %rax	 ;, tmp137
 	leaq	.LC14(%rip), %r8	 ;, tmp136
@@ -1317,32 +1180,32 @@ create_variable_access:
 	call	fprintf	 ;
  ; D:\TC\src\create.c:237:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L182	 ;
+	jmp	.L197	 ;
 	.p2align 4,,10
 	.p2align 3
-.L189:
+.L204:
  ; D:\TC\src\create.c:247:     else if (type == VAR_GET_SEQ && expr_content != 0)
 	cmpl	$3, %ebx	 ;, type
-	jne	.L191	 ;,
+	jne	.L206	 ;,
 	testq	%rbp, %rbp	 ; expr_content
-	je	.L191	 ;,
+	je	.L206	 ;,
  ; D:\TC\src\create.c:248:         variable_access_ptr->content.index = expr_content;
 	movq	%rbp, 8(%rax)	 ; expr_content, variable_access_33->content.index
-	jmp	.L182	 ;
+	jmp	.L197	 ;
 	.p2align 4,,10
 	.p2align 3
-.L191:
+.L206:
  ; D:\TC\src\create.c:249:     else if (type == VAR_GET_ATTR && name_content != 0)
 	cmpl	$2, %ebx	 ;, type
-	jne	.L192	 ;,
+	jne	.L207	 ;,
 	testb	%dl, %dl	 ; tmp118
-	jne	.L220	 ;,
-.L192:
+	jne	.L236	 ;,
+.L207:
  ; D:\TC\src\create.c:252:         if (name_content == 0 && expr_content == 0 && args_content == 0)
 	movq	112(%rsp), %r9	 ; args_content, expr_content
 	orq	%rbp, %r9	 ; expr_content, expr_content
 	orq	%r9, %rdi	 ; tmp129, name_content
-	je	.L222	 ;,
+	je	.L238	 ;,
  ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %u\n", type);
 	call	__getreent	 ;
  ; D:\TC\src\create.c:255:             fprintf(stderr, "Error creating variable access: unknown type %u\n", type);
@@ -1352,8 +1215,8 @@ create_variable_access:
 	call	fprintf	 ;
  ; D:\TC\src\create.c:237:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L182	 ;
-.L222:
+	jmp	.L197	 ;
+.L238:
  ; D:\TC\src\create.c:253:             fprintf(stderr, "Error creating variable access: content is NULL\n");
 	call	__getreent	 ;
  ; D:\TC\src\create.c:253:             fprintf(stderr, "Error creating variable access: content is NULL\n");
@@ -1364,8 +1227,7 @@ create_variable_access:
 	call	fwrite	 ;
  ; D:\TC\src\create.c:237:         return 0;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L182	 ;
-	.seh_endproc
+	jmp	.L197	 ;
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
 	.def	__getreent;	.scl	2;	.type	32;	.endef

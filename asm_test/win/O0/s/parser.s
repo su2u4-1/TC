@@ -16,15 +16,10 @@
 	.text
 	.globl	parse_code
 	.def	parse_code;	.scl	2;	.type	32;	.endef
-	.seh_proc	parse_code
 parse_code:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$112, %rsp
-	.seh_stackalloc	112
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -260,10 +255,8 @@ parse_code:
 	movq	-24(%rbp), %rax
 	movq	%rax, %rcx
 	call	create_code
-	addq	$112, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC4:
@@ -276,15 +269,10 @@ parse_code:
 	.ascii "Expected ';' at end of import statement\0"
 	.text
 	.def	parse_import;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_import
 parse_import:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$96, %rsp
-	.seh_stackalloc	96
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	$0, -8(%rbp)
@@ -408,10 +396,8 @@ parse_import:
 	movq	%rax, %rcx
 	call	create_import
 .L17:
-	addq	$96, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC7:
@@ -447,15 +433,10 @@ parse_import:
 	.ascii "Function missing return statement\0"
 	.text
 	.def	parse_function;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_function
 parse_function:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	addq	$-128, %rsp
-	.seh_stackalloc	128
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -792,10 +773,8 @@ parse_function:
 	movq	%rax, %rcx
 	call	create_function
 .L26:
-	subq	$-128, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC18:
@@ -832,15 +811,10 @@ parse_function:
 	.ascii "Method missing return statement\0"
 	.text
 	.def	parse_method;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_method
 parse_method:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$144, %rsp
-	.seh_stackalloc	144
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1230,10 +1204,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	create_method
 .L50:
-	addq	$144, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC29:
@@ -1254,15 +1226,10 @@ parse_method:
 	.ascii "Unexpected token in class member\0"
 	.text
 	.def	parse_class;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_class
 parse_class:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$112, %rsp
-	.seh_stackalloc	112
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1487,10 +1454,8 @@ parse_class:
 	movq	%rax, %rcx
 	call	create_class
 .L77:
-	addq	$112, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC35:
 	.ascii "Expected variable type\0"
@@ -1506,15 +1471,10 @@ parse_class:
 	.ascii "Failed to parse variable initializer\0"
 	.text
 	.def	parse_variable;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_variable
 parse_variable:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$96, %rsp
-	.seh_stackalloc	96
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1664,10 +1624,8 @@ parse_variable:
 	movq	%rax, %rcx
 	call	create_variable
 .L93:
-	addq	$96, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC40:
@@ -1681,15 +1639,10 @@ parse_variable:
 	.ascii "Expected ';' after statement\0"
 	.text
 	.def	parse_statement;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_statement
 parse_statement:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1965,10 +1918,8 @@ parse_statement:
 .L113:
 	movq	-8(%rbp), %rax
 .L101:
-	addq	$80, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC44:
 	.ascii "Expected '(' after 'if'\0"
@@ -2004,15 +1955,10 @@ parse_statement:
 	.ascii "Failed to parse else body statement\0"
 	.text
 	.def	parse_if;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_if
 parse_if:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	addq	$-128, %rsp
-	.seh_stackalloc	128
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -2490,10 +2436,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	create_if
 .L117:
-	subq	$-128, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC56:
 	.ascii "Expected '(' after 'for'\0"
@@ -2523,15 +2467,10 @@ parse_if:
 	.ascii "Failed to parse for loop body statement\0"
 	.text
 	.def	parse_for;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_for
 parse_for:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$96, %rsp
-	.seh_stackalloc	96
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -2851,10 +2790,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	create_for
 .L148:
-	addq	$96, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC65:
 	.ascii "Expected '(' after 'while'\0"
@@ -2872,15 +2809,10 @@ parse_for:
 	.ascii "Failed to parse while body statement\0"
 	.text
 	.def	parse_while;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_while
 parse_while:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -3051,24 +2983,17 @@ parse_while:
 	movq	%rax, %rcx
 	call	create_while
 .L172:
-	addq	$80, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC70:
 	.ascii "Failed to parse right operand\0"
 	.text
 	.def	parse_expr_prec;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_expr_prec
 parse_expr_prec:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$96, %rsp
-	.seh_stackalloc	96
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movl	%r8d, 32(%rbp)
@@ -3215,25 +3140,18 @@ parse_expr_prec:
 	movq	%rax, -8(%rbp)
 	movq	24(%rbp), %rax
 .L185:
-	addq	$96, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC71:
 	.ascii "Failed to parse expression primary\0"
 	.text
 	.def	parse_expression;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_expression
 parse_expression:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$64, %rsp
-	.seh_stackalloc	64
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -3273,10 +3191,8 @@ parse_expression:
 	movq	%rax, %rcx
 	call	parse_expr_prec
 .L193:
-	addq	$64, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC72:
@@ -3297,15 +3213,10 @@ parse_expression:
 	.ascii "Unexpected token in primary expression\0"
 	.text
 	.def	parse_primary;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_primary
 parse_primary:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$112, %rsp
-	.seh_stackalloc	112
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -3584,10 +3495,8 @@ parse_primary:
 	movl	%eax, %ecx
 	call	create_primary
 .L203:
-	addq	$112, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC78:
@@ -3620,15 +3529,10 @@ parse_primary:
 	.ascii "Unknown attribute name\0"
 	.text
 	.def	parse_variable_access;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_variable_access
 parse_variable_access:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$144, %rsp
-	.seh_stackalloc	144
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -4054,10 +3958,8 @@ parse_variable_access:
 .L242:
 	movq	-48(%rbp), %rax
 .L217:
-	addq	$144, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	create_scope;	.scl	2;	.type	32;	.endef
 	.def	create_name;	.scl	2;	.type	32;	.endef

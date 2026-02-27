@@ -3,7 +3,7 @@
  ;	compiled by GNU C version 13.2.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
  ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
- ; options passed: -mtune=generic -march=nocona -Os
+ ; options passed: -mtune=generic -march=nocona -Os -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt
 	.text
 	.def	__main;	.scl	2;	.type	32;	.endef
 	.section .rdata,"dr"
@@ -12,18 +12,13 @@
 	.section	.text.startup,"x"
 	.globl	main
 	.def	main;	.scl	2;	.type	32;	.endef
-	.seh_proc	main
 main:
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$56, %rsp	 ;,
-	.seh_stackalloc	56
-	.seh_endprologue
- ; D:\TC\src\main.c:3: int main(int argc, char* argv[]) {
 	movl	%ecx, %esi	 ; tmp93, argc
+	pushq	%rbx	 ;
 	movq	%rdx, %rbx	 ; tmp94, argv
+	subq	$56, %rsp	 ;,
+ ; D:\TC\src\main.c:3: int main(int argc, char* argv[]) {
 	call	__main	 ;
  ; D:\TC\src\main.c:4:     if (argc < 2) {
 	decl	%esi	 ; argc
@@ -55,7 +50,6 @@ main:
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	ret	
-	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	__getreent;	.scl	2;	.type	32;	.endef
 	.def	fprintf;	.scl	2;	.type	32;	.endef

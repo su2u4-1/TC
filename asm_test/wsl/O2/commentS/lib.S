@@ -3,7 +3,7 @@
 ;	compiled by GNU C version 13.3.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
 ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-; options passed: -mtune=generic -march=x86-64 -O2 -fasynchronous-unwind-tables -fstack-protector-strong -fstack-clash-protection -fcf-protection
+; options passed: -mtune=generic -march=x86-64 -O2 -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -fstack-clash-protection
 	.text
 	.section	.rodata.str1.8,"aMS",@progbits,1
 	.align 8
@@ -13,29 +13,22 @@
 	.p2align 4
 	.type	increase_memory_size, @function
 increase_memory_size:
-.LFB65:
-	.cfi_startproc
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movl	%edi, %ebp	; tmp109, for_struct
 ; src/lib.c:79:     MemoryBlock* new_block = (MemoryBlock*)malloc(sizeof(MemoryBlock));
 	movl	$32, %edi	;,
 ; src/lib.c:78: static void increase_memory_size(bool for_struct) {
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	subq	$8, %rsp	;,
-	.cfi_def_cfa_offset 32
 ; src/lib.c:79:     MemoryBlock* new_block = (MemoryBlock*)malloc(sizeof(MemoryBlock));
-	call	malloc@PLT	;
+	call	*malloc@GOTPCREL(%rip)	;
 ; src/lib.c:80:     if (new_block == NULL) {
 	testq	%rax, %rax	; new_block
 	je	.L13	;,
+	movq	%rax, %rbx	; tmp110, new_block
 ; src/lib.c:92:     new_block->block = (pointer)malloc(defaultMemorySize);
 	movl	$1024, %edi	;,
-	movq	%rax, %rbx	; tmp110, new_block
-	call	malloc@PLT	;
+	call	*malloc@GOTPCREL(%rip)	;
 ; src/lib.c:93:     new_block->size = defaultMemorySize;
 	movdqa	.LC1(%rip), %xmm0	;, tmp106
 ; src/lib.c:95:     new_block->next = NULL;
@@ -59,17 +52,12 @@ increase_memory_size:
 	addq	%rdx, string_memory_used(%rip)	; string_memory.17_10->used, string_memory_used
 ; src/lib.c:113: }
 	addq	$8, %rsp	;,
-	.cfi_remember_state
-	.cfi_def_cfa_offset 24
 	popq	%rbx	;
-	.cfi_def_cfa_offset 16
 	popq	%rbp	;
-	.cfi_def_cfa_offset 8
 	ret	
 	.p2align 4,,10
 	.p2align 3
 .L14:
-	.cfi_restore_state
 ; src/lib.c:97:         struct_memory_used += struct_memory->used;
 	movq	struct_memory(%rip), %rax	; struct_memory, struct_memory.13_4
 ; src/lib.c:100:         struct_memory_count += defaultMemorySize;
@@ -82,21 +70,16 @@ increase_memory_size:
 	addq	%rdx, struct_memory_used(%rip)	; struct_memory.13_4->used, struct_memory_used
 ; src/lib.c:113: }
 	addq	$8, %rsp	;,
-	.cfi_remember_state
-	.cfi_def_cfa_offset 24
 	popq	%rbx	;
-	.cfi_def_cfa_offset 16
 	popq	%rbp	;
-	.cfi_def_cfa_offset 8
 	ret	
 .L13:
-	.cfi_restore_state
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rcx	; stderr,
 	movl	$30, %edx	;,
 	movl	$1, %esi	;,
 	leaq	.LC0(%rip), %rdi	;, tmp103
-	call	fwrite@PLT	;
+	call	*fwrite@GOTPCREL(%rip)	;
 ; src/lib.c:82:         MemoryBlock* current = string_memory;
 	movq	string_memory(%rip), %rbx	; string_memory, next
 ; src/lib.c:83:         while (current != NULL) {
@@ -108,22 +91,19 @@ increase_memory_size:
 	movq	16(%rbx), %rbx	; current_45->next, next
 ; src/lib.c:85:             free(current->block);
 	movq	24(%rbp), %rdi	; current_47->block, current_47->block
-	call	free@PLT	;
+	call	*free@GOTPCREL(%rip)	;
 ; src/lib.c:86:             free(current);
 	movq	%rbp, %rdi	; current,
-	call	free@PLT	;
+	call	*free@GOTPCREL(%rip)	;
 ; src/lib.c:83:         while (current != NULL) {
 	testq	%rbx, %rbx	; next
 	jne	.L4	;,
 .L3:
-; src/lib.c:90:         exit(1);
-	movl	$1, %edi	;,
 ; src/lib.c:89:         initialized = false;
 	movb	$0, initialized(%rip)	;, initialized
 ; src/lib.c:90:         exit(1);
-	call	exit@PLT	;
-	.cfi_endproc
-.LFE65:
+	movl	$1, %edi	;,
+	call	*exit@GOTPCREL(%rip)	;
 	.size	increase_memory_size, .-increase_memory_size
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC2:
@@ -137,15 +117,10 @@ increase_memory_size:
 	.globl	alloc_memory
 	.type	alloc_memory, @function
 alloc_memory:
-.LFB70:
-	.cfi_startproc
-	endbr64	
 ; src/lib.c:254:     if (!initialized) init();
 	cmpb	$0, initialized(%rip)	;, initialized
 ; src/lib.c:253: pointer alloc_memory(size_t size) {
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
 ; src/lib.c:253: pointer alloc_memory(size_t size) {
 	movq	%rdi, %rbx	; tmp106, size
 ; src/lib.c:254:     if (!initialized) init();
@@ -179,8 +154,6 @@ alloc_memory:
 	andq	$-8, %rax	;, tmp102
 ; src/lib.c:263: }
 	popq	%rbx	;
-	.cfi_remember_state
-	.cfi_def_cfa_offset 8
 ; src/lib.c:259:     size_t* ptr = struct_memory->block + (struct_memory->used / ALIGN_SIZE);
 	addq	24(%rdx), %rax	; prephitmp_33->block, <retval>
 ; src/lib.c:263: }
@@ -188,7 +161,6 @@ alloc_memory:
 	.p2align 4,,10
 	.p2align 3
 .L20:
-	.cfi_restore_state
 	call	init.part.0	;
 	jmp	.L16	;
 	.p2align 4,,10
@@ -207,9 +179,7 @@ alloc_memory:
 	movl	$258, %edx	;,
 	leaq	.LC2(%rip), %rsi	;, tmp100
 	leaq	.LC3(%rip), %rdi	;, tmp101
-	call	__assert_fail@PLT	;
-	.cfi_endproc
-.LFE70:
+	call	*__assert_fail@GOTPCREL(%rip)	;
 	.size	alloc_memory, .-alloc_memory
 	.section	.rodata.str1.8
 	.align 8
@@ -219,28 +189,16 @@ alloc_memory:
 	.p2align 4
 	.type	create_string_check, @function
 create_string_check:
-.LFB67:
-	.cfi_startproc
 ; src/lib.c:128:     if (!initialized) init();
 	cmpb	$0, initialized(%rip)	;, initialized
 ; src/lib.c:127: static string create_string_check(const char* data, size_t length, bool check) {
 	pushq	%r14	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	movq	%rdi, %r13	; tmp127, data
 	pushq	%r12	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	movq	%rsi, %rbp	; tmp128, length
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 ; src/lib.c:127: static string create_string_check(const char* data, size_t length, bool check) {
 	movl	%edx, %ebx	; tmp129, check
 ; src/lib.c:128:     if (!initialized) init();
@@ -283,7 +241,7 @@ create_string_check:
 	movq	%rbp, %rdx	; length,
 	movq	%r13, %rsi	; data,
 	movq	%r14, %rdi	; _6,
-	call	strncmp@PLT	;
+	call	*strncmp@GOTPCREL(%rip)	;
 ; src/lib.c:136:             current = current->next;
 	movq	16(%rbx), %rbx	; current_51->next, current
 ; src/lib.c:135:                 existing = current->str;
@@ -320,7 +278,7 @@ create_string_check:
 	movq	%rbp, %rdx	; length,
 	movq	%r13, %rsi	; data,
 	movq	%r12, %rdi	; <retval>,
-	call	strncpy@PLT	;
+	call	*strncpy@GOTPCREL(%rip)	;
 ; src/lib.c:151:     str[length] = '\0';
 	movb	$0, (%r12,%rbp)	;, *_19
 ; src/lib.c:152:     StringList* new_str = (StringList*)alloc_memory(sizeof(StringList));
@@ -339,22 +297,15 @@ create_string_check:
 .L23:
 ; src/lib.c:158: }
 	popq	%rbx	;
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	movq	%r12, %rax	; <retval>,
 	popq	%rbp	;
-	.cfi_def_cfa_offset 32
 	popq	%r12	;
-	.cfi_def_cfa_offset 24
 	popq	%r13	;
-	.cfi_def_cfa_offset 16
 	popq	%r14	;
-	.cfi_def_cfa_offset 8
 	ret	
 	.p2align 4,,10
 	.p2align 3
 .L42:
-	.cfi_restore_state
 	call	init.part.0	;
 	jmp	.L24	;
 	.p2align 4,,10
@@ -364,12 +315,11 @@ create_string_check:
 	leaq	1(%rbp), %rbx	;, _9
 ; src/lib.c:116:     string_memory_count += size;
 	addq	%rbx, string_memory_count(%rip)	; _9, string_memory_count
-; src/lib.c:118:     char* block = (char*)malloc(size);
-	movq	%rbx, %rdi	; _9,
 ; src/lib.c:117:     string_memory_used += size;
 	addq	%rbx, string_memory_used(%rip)	; _9, string_memory_used
 ; src/lib.c:118:     char* block = (char*)malloc(size);
-	call	malloc@PLT	;
+	movq	%rbx, %rdi	; _9,
+	call	*malloc@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rdi	; stderr,
 	movq	%rbx, %rcx	; _9,
@@ -379,19 +329,19 @@ create_string_check:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
-	call	__fprintf_chk@PLT	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 ; src/lib.c:120:     if (block == NULL) {
 	testq	%r12, %r12	; <retval>
 	jne	.L30	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rcx	; stderr,
+	leaq	.LC0(%rip), %rdi	;, tmp120
 	movl	$30, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC0(%rip), %rdi	;, tmp120
-	call	fwrite@PLT	;
+	movq	stderr(%rip), %rcx	; stderr,
+	call	*fwrite@GOTPCREL(%rip)	;
 ; src/lib.c:122:         exit(1);
 	movl	$1, %edi	;,
-	call	exit@PLT	;
+	call	*exit@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
 .L32:
@@ -399,22 +349,15 @@ create_string_check:
 	xorl	%r12d, %r12d	; <retval>
 ; src/lib.c:158: }
 	popq	%rbx	;
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbp	;
-	.cfi_def_cfa_offset 32
 	movq	%r12, %rax	; <retval>,
 	popq	%r12	;
-	.cfi_def_cfa_offset 24
 	popq	%r13	;
-	.cfi_def_cfa_offset 16
 	popq	%r14	;
-	.cfi_def_cfa_offset 8
 	ret	
 	.p2align 4,,10
 	.p2align 3
 .L45:
-	.cfi_restore_state
 ; src/lib.c:146:             increase_memory_size(false);
 	xorl	%edi, %edi	;
 	call	increase_memory_size	;
@@ -423,39 +366,24 @@ create_string_check:
 ; src/lib.c:147:         str = &((char*)(string_memory->block))[string_memory->used];
 	movq	8(%rax), %rdx	; pretmp_68->used, _11
 	jmp	.L31	;
-	.cfi_endproc
-.LFE67:
 	.size	create_string_check, .-create_string_check
 	.p2align 4
 	.globl	create_string
 	.type	create_string, @function
 create_string:
-.LFB68:
-	.cfi_startproc
-	endbr64	
 ; src/lib.c:161:     return create_string_check(data, length, true);
 	movl	$1, %edx	;,
 	jmp	create_string_check	;
-	.cfi_endproc
-.LFE68:
 	.size	create_string, .-create_string
 	.p2align 4
 	.type	init.part.0, @function
 init.part.0:
-.LFB74:
-	.cfi_startproc
 ; src/lib.c:166:     if (struct_memory == NULL) {
 	cmpq	$0, struct_memory(%rip)	;, struct_memory
 ; src/lib.c:164: void init(void) {
 	pushq	%r12	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
 ; src/lib.c:166:     if (struct_memory == NULL) {
 	je	.L58	;,
 ; src/lib.c:179:     if (string_memory == NULL) {
@@ -474,7 +402,7 @@ init.part.0:
 .L52:
 ; src/lib.c:194:         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
 	movq	(%rbx), %rdi	; MEM[(const char * *)_186], MEM[(const char * *)_186]
-	call	strlen@PLT	;
+	call	*strlen@GOTPCREL(%rip)	;
 	movq	%rax, %rsi	; tmp291, _14
 .L54:
 ; src/lib.c:194:         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
@@ -500,7 +428,7 @@ init.part.0:
 .L60:
 ; src/lib.c:196:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
 	movq	(%rbx), %rdi	; MEM[(const char * *)_175], MEM[(const char * *)_175]
-	call	strlen@PLT	;
+	call	*strlen@GOTPCREL(%rip)	;
 	movq	%rax, %rsi	; tmp293, prephitmp_156
 .L53:
 ; src/lib.c:196:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
@@ -664,17 +592,13 @@ init.part.0:
 	movq	208+symbolList(%rip), %rax	; symbolList[26], symbolList[26]
 ; src/lib.c:249: }
 	popq	%rbx	;
-	.cfi_remember_state
-	.cfi_def_cfa_offset 24
 	popq	%rbp	;
-	.cfi_def_cfa_offset 16
 ; src/lib.c:245:     DIV_ASSIGN_SYMBOL = symbolList[26];
 	movq	%rax, DIV_ASSIGN_SYMBOL(%rip)	; symbolList[26], DIV_ASSIGN_SYMBOL
 ; src/lib.c:246:     MOD_ASSIGN_SYMBOL = symbolList[27];
 	movq	216+symbolList(%rip), %rax	; symbolList[27], symbolList[27]
 ; src/lib.c:249: }
 	popq	%r12	;
-	.cfi_def_cfa_offset 8
 ; src/lib.c:246:     MOD_ASSIGN_SYMBOL = symbolList[27];
 	movq	%rax, MOD_ASSIGN_SYMBOL(%rip)	; symbolList[27], MOD_ASSIGN_SYMBOL
 ; src/lib.c:247:     AND_SYMBOL = symbolList[28];
@@ -686,10 +610,9 @@ init.part.0:
 ; src/lib.c:249: }
 	ret	
 .L58:
-	.cfi_restore_state
 ; src/lib.c:167:         struct_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
 	movl	$32, %edi	;,
-	call	malloc@PLT	;
+	call	*malloc@GOTPCREL(%rip)	;
 ; src/lib.c:167:         struct_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
 	movq	%rax, struct_memory(%rip)	; tmp162, struct_memory
 ; src/lib.c:167:         struct_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
@@ -699,7 +622,7 @@ init.part.0:
 	je	.L57	;,
 ; src/lib.c:173:         struct_memory->block = (size_t*)malloc(defaultMemorySize);
 	movl	$1024, %edi	;,
-	call	malloc@PLT	;
+	call	*malloc@GOTPCREL(%rip)	;
 ; src/lib.c:174:         struct_memory->size = defaultMemorySize;
 	movdqa	.LC1(%rip), %xmm0	;, tmp166
 ; src/lib.c:179:     if (string_memory == NULL) {
@@ -717,7 +640,7 @@ init.part.0:
 .L59:
 ; src/lib.c:180:         string_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
 	movl	$32, %edi	;,
-	call	malloc@PLT	;
+	call	*malloc@GOTPCREL(%rip)	;
 ; src/lib.c:180:         string_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
 	movq	%rax, string_memory(%rip)	; tmp167, string_memory
 ; src/lib.c:180:         string_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
@@ -727,7 +650,7 @@ init.part.0:
 	je	.L57	;,
 ; src/lib.c:186:         string_memory->block = (pointer)malloc(defaultMemorySize);
 	movl	$1024, %edi	;,
-	call	malloc@PLT	;
+	call	*malloc@GOTPCREL(%rip)	;
 ; src/lib.c:187:         string_memory->size = defaultMemorySize;
 	movdqa	.LC1(%rip), %xmm0	;, tmp171
 ; src/lib.c:189:         string_memory->next = NULL;
@@ -741,27 +664,21 @@ init.part.0:
 	jmp	.L50	;
 .L57:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rcx	; stderr,
+	leaq	.LC0(%rip), %rdi	;, tmp169
 	movl	$30, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC0(%rip), %rdi	;, tmp169
-	call	fwrite@PLT	;
-; src/lib.c:184:             exit(1);
-	movl	$1, %edi	;,
+	movq	stderr(%rip), %rcx	; stderr,
+	call	*fwrite@GOTPCREL(%rip)	;
 ; src/lib.c:183:             initialized = false;
 	movb	$0, initialized(%rip)	;, initialized
 ; src/lib.c:184:             exit(1);
-	call	exit@PLT	;
-	.cfi_endproc
-.LFE74:
+	movl	$1, %edi	;,
+	call	*exit@GOTPCREL(%rip)	;
 	.size	init.part.0, .-init.part.0
 	.p2align 4
 	.globl	init
 	.type	init, @function
 init:
-.LFB69:
-	.cfi_startproc
-	endbr64	
 ; src/lib.c:165:     if (initialized) return;
 	cmpb	$0, initialized(%rip)	;, initialized
 	jne	.L61	;,
@@ -771,22 +688,15 @@ init:
 .L61:
 ; src/lib.c:249: }
 	ret	
-	.cfi_endproc
-.LFE69:
 	.size	init, .-init
 	.p2align 4
 	.globl	is_keyword
 	.type	is_keyword, @function
 is_keyword:
-.LFB71:
-	.cfi_startproc
-	endbr64	
 ; src/lib.c:266:     if (!initialized) init();
 	cmpb	$0, initialized(%rip)	;, initialized
 ; src/lib.c:265: bool is_keyword(const string str) {
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
 ; src/lib.c:265: bool is_keyword(const string str) {
 	movq	%rdi, %rbx	; tmp90, str
 ; src/lib.c:266:     if (!initialized) init();
@@ -810,43 +720,30 @@ is_keyword:
 	movl	$1, %eax	;, <retval>
 ; src/lib.c:271: }
 	popq	%rbx	;
-	.cfi_remember_state
-	.cfi_def_cfa_offset 8
 	ret	
 	.p2align 4,,10
 	.p2align 3
 .L71:
-	.cfi_restore_state
 ; src/lib.c:270:     return false;
 	xorl	%eax, %eax	; <retval>
 ; src/lib.c:271: }
 	popq	%rbx	;
-	.cfi_remember_state
-	.cfi_def_cfa_offset 8
 	ret	
 	.p2align 4,,10
 	.p2align 3
 .L70:
-	.cfi_restore_state
 	call	init.part.0	;
 	jmp	.L64	;
-	.cfi_endproc
-.LFE71:
 	.size	is_keyword, .-is_keyword
 	.p2align 4
 	.globl	string_equal
 	.type	string_equal, @function
 string_equal:
-.LFB72:
-	.cfi_startproc
-	endbr64	
 ; src/lib.c:274:     return a == b;
 	cmpq	%rdi, %rsi	; tmp88, tmp89
 	sete	%al	;, tmp87
 ; src/lib.c:275: }
 	ret	
-	.cfi_endproc
-.LFE72:
 	.size	string_equal, .-string_equal
 	.section	.rodata.str1.1
 .LC5:
@@ -862,27 +759,14 @@ string_equal:
 	.globl	get_info
 	.type	get_info, @function
 get_info:
-.LFB73:
-	.cfi_startproc
-	endbr64	
 ; src/lib.c:279:     StringList* current = all_string_list;
 	movq	all_string_list(%rip), %rax	; all_string_list, current
 ; src/lib.c:277: string get_info(void) {
 	pushq	%r14	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	pushq	%r12	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 ; src/lib.c:278:     size_t stringCount = 0;
 	xorl	%ebx, %ebx	; stringCount
 ; src/lib.c:280:     while (current != NULL) {
@@ -909,8 +793,8 @@ get_info:
 ; src/lib.c:285:     string struct_memory_used_str = create_string_check("", 48, false);
 	call	create_string_check	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:30:   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
-	movq	struct_memory_count(%rip), %r9	; struct_memory_count,
 	movq	%r14, %rcx	; tmp104,
+	movq	struct_memory_count(%rip), %r9	; struct_memory_count,
 	movq	struct_memory_used(%rip), %r8	; struct_memory_used, struct_memory_used
 ; src/lib.c:285:     string struct_memory_used_str = create_string_check("", 48, false);
 	movq	%rax, %r12	; tmp115, struct_memory_used_str
@@ -921,15 +805,15 @@ get_info:
 	movq	%r12, %rdi	; struct_memory_used_str,
 	addq	8(%rax), %r8	; struct_memory.47_2->used,
 	xorl	%eax, %eax	;
-	call	__sprintf_chk@PLT	;
+	call	*__sprintf_chk@GOTPCREL(%rip)	;
 ; src/lib.c:288:     string string_memory_used_str = create_string_check("", 48, false);
 	movq	%rbp, %rdi	; tmp98,
 	xorl	%edx, %edx	;
 	movl	$48, %esi	;,
 	call	create_string_check	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:30:   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
-	movq	string_memory_count(%rip), %r9	; string_memory_count,
 	movq	%r14, %rcx	; tmp104,
+	movq	string_memory_count(%rip), %r9	; string_memory_count,
 	movq	string_memory_used(%rip), %r8	; string_memory_used, string_memory_used
 ; src/lib.c:288:     string string_memory_used_str = create_string_check("", 48, false);
 	movq	%rax, %r13	; tmp116, string_memory_used_str
@@ -940,7 +824,7 @@ get_info:
 	movq	%r13, %rdi	; string_memory_used_str,
 	addq	8(%rax), %r8	; string_memory.50_7->used,
 	xorl	%eax, %eax	;
-	call	__sprintf_chk@PLT	;
+	call	*__sprintf_chk@GOTPCREL(%rip)	;
 ; src/lib.c:291:     string info = (string)create_string_check("", 240, false);
 	movq	%rbp, %rdi	; tmp98,
 	xorl	%edx, %edx	;
@@ -948,42 +832,31 @@ get_info:
 	call	create_string_check	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:30:   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
 	subq	$8, %rsp	;,
-	.cfi_def_cfa_offset 56
 	movq	%r12, %r9	; struct_memory_used_str,
 	pushq	memoryBlockCount(%rip)	; memoryBlockCount
-	.cfi_def_cfa_offset 64
 	pushq	%rbx	; stringCount
-	.cfi_def_cfa_offset 72
 ; src/lib.c:291:     string info = (string)create_string_check("", 240, false);
 	movq	%rax, %rbp	; tmp117, <retval>
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:30:   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
 	movq	%rax, %rdi	; <retval>,
 	movl	$3, %r8d	;,
 	pushq	%r13	; string_memory_used_str
-	.cfi_def_cfa_offset 80
 	leaq	.LC7(%rip), %rcx	;, tmp113
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
 	movq	$-1, %rdx	;,
-	call	__sprintf_chk@PLT	;
-; src/lib.c:293:     return info;
-	addq	$32, %rsp	;,
-	.cfi_def_cfa_offset 48
+	call	*__sprintf_chk@GOTPCREL(%rip)	;
 ; src/lib.c:294: }
 	movq	%rbp, %rax	; <retval>,
+; src/lib.c:293:     return info;
+	addq	$32, %rsp	;,
+; src/lib.c:294: }
 	popq	%rbx	;
-	.cfi_def_cfa_offset 40
 	popq	%rbp	;
-	.cfi_def_cfa_offset 32
 	popq	%r12	;
-	.cfi_def_cfa_offset 24
 	popq	%r13	;
-	.cfi_def_cfa_offset 16
 	popq	%r14	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE73:
 	.size	get_info, .-get_info
 	.section	.rodata
 	.align 8
@@ -1561,19 +1434,3 @@ keywordStrings:
 	.quad	0
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

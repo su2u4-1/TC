@@ -3,50 +3,30 @@
 	.globl	create_list
 	.type	create_list, @function
 create_list:
-.LFB65:
-	.cfi_startproc
-	endbr64
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 16
 	movl	$16, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	$0, (%rax)
 	movq	$0, 8(%rax)
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE65:
 	.size	create_list, .-create_list
 	.globl	create_node
 	.type	create_node, @function
 create_node:
-.LFB66:
-	.cfi_startproc
-	endbr64
 	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
 	movq	%rdi, %rbx
 	movl	$16, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	$0, (%rax)
 	movq	%rbx, 8(%rax)
 	popq	%rbx
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE66:
 	.size	create_node, .-create_node
 	.globl	list_append
 	.type	list_append, @function
 list_append:
-.LFB67:
-	.cfi_startproc
-	endbr64
 	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
 	movq	%rdi, %rbx
 	movq	%rsi, %rdi
 	call	create_node
@@ -57,25 +37,15 @@ list_append:
 .L7:
 	movq	%rax, 8(%rbx)
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 8
 	ret
 .L9:
-	.cfi_restore_state
 	movq	%rax, (%rbx)
 	jmp	.L7
-	.cfi_endproc
-.LFE67:
 	.size	list_append, .-list_append
 	.globl	list_copy
 	.type	list_copy, @function
 list_copy:
-.LFB68:
-	.cfi_startproc
-	endbr64
 	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
 	movq	%rdi, %rbx
 	call	create_list
 	movq	(%rbx), %rdx
@@ -83,17 +53,11 @@ list_copy:
 	movq	8(%rbx), %rdx
 	movq	%rdx, 8(%rax)
 	popq	%rbx
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE68:
 	.size	list_copy, .-list_copy
 	.globl	list_pop
 	.type	list_pop, @function
 list_pop:
-.LFB69:
-	.cfi_startproc
-	endbr64
 	movq	(%rdi), %rax
 	testq	%rax, %rax
 	je	.L12
@@ -108,61 +72,34 @@ list_pop:
 .L15:
 	movq	$0, 8(%rdi)
 	jmp	.L14
-	.cfi_endproc
-.LFE69:
 	.size	list_pop, .-list_pop
 	.globl	create_scope
 	.type	create_scope, @function
 create_scope:
-.LFB71:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	pushq	%rbx
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 32
 	movq	%rdi, %rbp
 	movl	$16, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	movq	%rbp, (%rax)
 	call	create_list
 	movq	%rax, 8(%rbx)
 	movq	%rbx, %rax
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 24
 	popq	%rbx
-	.cfi_def_cfa_offset 16
 	popq	%rbp
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE71:
 	.size	create_scope, .-create_scope
 	.globl	search
 	.type	search, @function
 search:
-.LFB72:
-	.cfi_startproc
-	endbr64
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
 	movq	%rdi, %r13
 	movq	%rsi, %r12
 	testq	%rdi, %rdi
@@ -176,7 +113,7 @@ search:
 	movq	8(%rbx), %rbp
 	movq	0(%rbp), %rdi
 	movq	%r12, %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L18
 	movq	(%rbx), %rbx
@@ -193,18 +130,11 @@ search:
 .L18:
 	movq	%rbp, %rax
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 40
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE72:
 	.size	search, .-search
 	.section	.rodata.str1.8,"aMS",@progbits,1
 	.align 8
@@ -236,29 +166,13 @@ search:
 	.globl	create_name
 	.type	create_name, @function
 create_name:
-.LFB70:
-	.cfi_startproc
-	endbr64
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 64
 	movq	%rdi, %r12
 	movl	%esi, %ebp
 	movq	%rdx, %r14
@@ -275,14 +189,14 @@ create_name:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	cmpl	$5, 24(%rbx)
 	ja	.L29
 	movl	24(%rbx), %eax
 	leaq	.L31(%rip), %rdx
 	movslq	(%rdx,%rax,4), %rax
 	addq	%rdx, %rax
-	notrack jmp	*%rax
+	jmp	*%rax
 	.section	.rodata
 	.align 4
 	.align 4
@@ -299,10 +213,10 @@ create_name:
 	movl	$5, %edx
 	movl	$1, %esi
 	leaq	.LC1(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 .L28:
 	movl	$32, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	movq	%r12, (%rax)
 	movq	id_counter.0(%rip), %rax
@@ -326,42 +240,42 @@ create_name:
 	movl	$9, %edx
 	movl	$1, %esi
 	leaq	.LC2(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L28
 .L34:
 	movq	stderr(%rip), %rcx
 	movl	$9, %edx
 	movl	$1, %esi
 	leaq	.LC3(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L28
 .L33:
 	movq	stderr(%rip), %rcx
 	movl	$7, %edx
 	movl	$1, %esi
 	leaq	.LC4(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L28
 .L32:
 	movq	stderr(%rip), %rcx
 	movl	$6, %edx
 	movl	$1, %esi
 	leaq	.LC5(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L28
 .L30:
 	movq	stderr(%rip), %rcx
 	movl	$10, %edx
 	movl	$1, %esi
 	leaq	.LC6(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L28
 .L29:
 	movq	stderr(%rip), %rcx
 	movl	$8, %edx
 	movl	$1, %esi
 	leaq	.LC7(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L28
 .L37:
 	testq	%r14, %r14
@@ -374,23 +288,14 @@ create_name:
 .L27:
 	movq	%rbx, %rax
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 .L40:
-	.cfi_restore_state
 	testl	%ebp, %ebp
 	jne	.L41
 	movq	$0, 16(%rbx)
@@ -403,7 +308,7 @@ create_name:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movl	$0, %ebx
 	jmp	.L27
 .L43:
@@ -412,77 +317,60 @@ create_name:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movl	$0, %ebx
 	jmp	.L27
-	.cfi_endproc
-.LFE70:
 	.size	create_name, .-create_name
 	.globl	is_builtin_type
 	.type	is_builtin_type, @function
 is_builtin_type:
-.LFB73:
-	.cfi_startproc
-	endbr64
 	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
 	movq	%rdi, %rbx
 	movq	INT_KEYWORD(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$1, %eax
 	testb	%dl, %dl
 	je	.L53
 .L47:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 8
 	ret
 .L53:
-	.cfi_restore_state
 	movq	FLOAT_KEYWORD(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$1, %eax
 	testb	%dl, %dl
 	jne	.L47
 	movq	STRING_KEYWORD(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$1, %eax
 	testb	%dl, %dl
 	jne	.L47
 	movq	BOOL_KEYWORD(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$1, %eax
 	testb	%dl, %dl
 	jne	.L47
 	movq	VOID_KEYWORD(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	setne	%al
 	movzbl	%al, %eax
 	jmp	.L47
-	.cfi_endproc
-.LFE73:
 	.size	is_builtin_type, .-is_builtin_type
 	.globl	is_type
 	.type	is_type, @function
 is_type:
-.LFB74:
-	.cfi_startproc
-	endbr64
 	testl	$-5, 24(%rdi)
 	sete	%al
 	ret
-	.cfi_endproc
-.LFE74:
 	.size	is_type, .-is_type
 	.section	.rodata.str1.8
 	.align 8
@@ -492,11 +380,7 @@ is_type:
 	.globl	parser_error
 	.type	parser_error, @function
 parser_error:
-.LFB75:
-	.cfi_startproc
-	endbr64
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 16
 	movq	%rdi, %r9
 	movq	16(%rsi), %rax
 	movq	8(%rsi), %rcx
@@ -506,12 +390,9 @@ parser_error:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE75:
 	.size	parser_error, .-parser_error
 	.section	.rodata.str1.1
 .LC11:
@@ -526,29 +407,13 @@ parser_error:
 	.globl	indention
 	.type	indention, @function
 indention:
-.LFB78:
-	.cfi_startproc
-	endbr64
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	subq	$24, %rsp
-	.cfi_def_cfa_offset 80
 	movq	%rdi, %r13
 	movq	%rsi, %rbp
 	movl	%edx, %edi
@@ -585,7 +450,7 @@ indention:
 	movl	$2, %esi
 	movq	%r13, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	addq	$1, %rbx
 	cmpq	%rbx, %rbp
 	jne	.L59
@@ -597,7 +462,7 @@ indention:
 	movl	$2, %esi
 	movq	%r13, %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L57
 .L58:
 	movl	%esi, %ecx
@@ -612,41 +477,25 @@ indention:
 	jne	.L63
 .L57:
 	addq	$24, %rsp
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE78:
 	.size	indention, .-indention
 	.globl	create_parser
 	.type	create_parser, @function
 create_parser:
-.LFB79:
-	.cfi_startproc
-	endbr64
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 16
 	movl	$35, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movb	$0, (%rax)
 	movb	$0, 1(%rax)
 	movb	$0, 2(%rax)
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE79:
 	.size	create_parser, .-create_parser
 	.section	.rodata.str1.1
 .LC15:
@@ -681,97 +530,78 @@ create_parser:
 	.globl	parse_import_file
 	.type	parse_import_file, @function
 parse_import_file:
-.LFB80:
-	.cfi_startproc
-	endbr64
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
-	subq	$1064, %rsp
-	.cfi_def_cfa_offset 1120
+	subq	$1048, %rsp
 	movq	%rdi, %r12
 	movq	%rsi, %rbx
 	movq	%rdx, %r13
-	movq	%fs:40, %rax
-	movq	%rax, 1048(%rsp)
-	xorl	%eax, %eax
 	movb	$0, 16(%rsp)
 	testq	%rsi, %rsi
-	je	.L89
+	je	.L88
 	leaq	16(%rsp), %rbp
 	movq	%rsi, %rcx
 	movq	%rbp, %rdx
 	movl	$1024, %esi
 	movq	%rbp, %rdi
-	call	string_append@PLT
+	call	*string_append@GOTPCREL(%rip)
 	leaq	.LC18(%rip), %rcx
 	movq	%rbp, %rdx
 	movl	$1024, %esi
 	movq	%rbp, %rdi
-	call	string_append@PLT
+	call	*string_append@GOTPCREL(%rip)
 	movq	%r12, %rcx
 	movq	%rbp, %rdx
 	movl	$1024, %esi
 	movq	%rbp, %rdi
-	call	string_append@PLT
+	call	*string_append@GOTPCREL(%rip)
 	leaq	.LC19(%rip), %rcx
 	movq	%rbp, %rdx
 	movl	$1024, %esi
 	movq	%rbp, %rdi
-	call	string_append@PLT
+	call	*string_append@GOTPCREL(%rip)
 .L79:
 	leaq	16(%rsp), %rdi
 	leaq	.LC20(%rip), %rsi
-	call	fopen@PLT
+	call	*fopen@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L90
+	je	.L89
 	leaq	16(%rsp), %r14
 	movq	%r14, %rdx
 	leaq	.LC22(%rip), %rsi
 	movl	$2, %edi
 	movl	$0, %eax
-	call	__printf_chk@PLT
+	call	*__printf_chk@GOTPCREL(%rip)
 	movq	$0, 8(%rsp)
 	leaq	8(%rsp), %rsi
 	movq	%rbx, %rdi
-	call	read_source@PLT
+	call	*read_source@GOTPCREL(%rip)
 	movq	%rax, %rbp
 	movq	%rbx, %rdi
-	call	fclose@PLT
+	call	*fclose@GOTPCREL(%rip)
 	call	create_parser
 	movq	%rax, %rbx
 	movq	builtin_scope(%rip), %r15
 	movq	8(%rsp), %rsi
 	movq	%rbp, %rdi
-	call	create_lexer@PLT
+	call	*create_lexer@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	movq	%rbx, %rdx
 	movq	%r15, %rsi
-	call	parse_code@PLT
+	call	*parse_code@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	movq	%r14, %rdx
 	leaq	.LC23(%rip), %rsi
 	movl	$2, %edi
 	movl	$0, %eax
-	call	__printf_chk@PLT
+	call	*__printf_chk@GOTPCREL(%rip)
 	testq	%rbx, %rbx
-	je	.L91
+	je	.L90
 	movq	8(%rbx), %rax
 	movq	8(%rax), %rax
 	movq	(%rax), %rbx
@@ -781,21 +611,21 @@ parse_import_file:
 	movq	8(%rbx), %rbp
 	movq	0(%rbp), %rdi
 	movq	%r12, %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	jne	.L84
 	movq	(%rbx), %rbx
 	testq	%rbx, %rbx
 	jne	.L85
 	jmp	.L76
-.L89:
+.L88:
 	leaq	.LC15(%rip), %rsi
-	call	strcmp@PLT
+	call	*strcmp@GOTPCREL(%rip)
 	testl	%eax, %eax
-	je	.L92
+	je	.L91
 	leaq	.LC16(%rip), %rsi
 	movq	%r12, %rdi
-	call	strcmp@PLT
+	call	*strcmp@GOTPCREL(%rip)
 	testl	%eax, %eax
 	jne	.L80
 	movabsq	$8241920901561659182, %rax
@@ -803,7 +633,7 @@ parse_import_file:
 	movabsq	$27993765531771183, %rax
 	movq	%rax, 21(%rsp)
 	jmp	.L79
-.L92:
+.L91:
 	movabsq	$8246143026212319022, %rax
 	movq	%rax, 16(%rsp)
 	movabsq	$27993765565065586, %rax
@@ -815,23 +645,23 @@ parse_import_file:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L76
-.L90:
+.L89:
 	leaq	16(%rsp), %rcx
 	leaq	.LC21(%rip), %rdx
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L76
-.L91:
+.L90:
 	movq	%r14, %rcx
 	leaq	.LC24(%rip), %rdx
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L76
 .L84:
 	movq	8(%r13), %rdi
@@ -839,362 +669,310 @@ parse_import_file:
 	call	list_append
 	movq	%rbp, %rbx
 .L76:
-	movq	1048(%rsp), %rax
-	subq	%fs:40, %rax
-	jne	.L93
 	movq	%rbx, %rax
-	addq	$1064, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
+	addq	$1048, %rsp
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
-.L93:
-	.cfi_restore_state
-	call	__stack_chk_fail@PLT
-	.cfi_endproc
-.LFE80:
 	.size	parse_import_file, .-parse_import_file
 	.globl	string_to_operator
 	.type	string_to_operator, @function
 string_to_operator:
-.LFB81:
-	.cfi_startproc
-	endbr64
 	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
 	movq	%rdi, %rbx
 	movq	ASSIGN_SYMBOL(%rip), %rsi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$13, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	ADD_ASSIGN_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$14, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	SUB_ASSIGN_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$15, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	MUL_ASSIGN_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$16, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	DIV_ASSIGN_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$17, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	MOD_ASSIGN_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$18, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	AND_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$11, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	OR_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$12, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	EQ_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$5, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	NE_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$6, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	LT_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$7, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	GT_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$8, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	LE_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$9, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	GE_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$10, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	ADD_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$0, %eax
 	testb	%dl, %dl
-	je	.L116
-.L94:
+	je	.L114
+.L92:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 8
 	ret
-.L116:
-	.cfi_restore_state
+.L114:
 	movq	SUB_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$1, %eax
 	testb	%dl, %dl
-	jne	.L94
+	jne	.L92
 	movq	MUL_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
-	jne	.L112
+	jne	.L110
 	movq	DIV_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
-	jne	.L113
+	jne	.L111
 	movq	MOD_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
-	call	string_equal@PLT
+	call	*string_equal@GOTPCREL(%rip)
 	cmpb	$1, %al
 	sbbl	%eax, %eax
 	andl	$15, %eax
 	addl	$4, %eax
-	jmp	.L94
-.L112:
+	jmp	.L92
+.L110:
 	movl	$2, %eax
-	jmp	.L94
-.L113:
+	jmp	.L92
+.L111:
 	movl	$3, %eax
-	jmp	.L94
-	.cfi_endproc
-.LFE81:
+	jmp	.L92
 	.size	string_to_operator, .-string_to_operator
 	.globl	operator_precedence
 	.type	operator_precedence, @function
 operator_precedence:
-.LFB82:
-	.cfi_startproc
-	endbr64
 	cmpl	$18, %edi
-	ja	.L118
+	ja	.L116
 	movl	%edi, %edi
-	leaq	.L120(%rip), %rdx
+	leaq	.L118(%rip), %rdx
 	movslq	(%rdx,%rdi,4), %rax
 	addq	%rdx, %rax
-	notrack jmp	*%rax
+	jmp	*%rax
 	.section	.rodata
 	.align 4
 	.align 4
-.L120:
-	.long	.L124-.L120
-	.long	.L124-.L120
-	.long	.L123-.L120
-	.long	.L123-.L120
-	.long	.L123-.L120
-	.long	.L122-.L120
-	.long	.L122-.L120
-	.long	.L122-.L120
-	.long	.L122-.L120
-	.long	.L122-.L120
-	.long	.L122-.L120
-	.long	.L125-.L120
-	.long	.L125-.L120
-	.long	.L119-.L120
-	.long	.L119-.L120
-	.long	.L119-.L120
-	.long	.L119-.L120
-	.long	.L119-.L120
-	.long	.L119-.L120
+.L118:
+	.long	.L122-.L118
+	.long	.L122-.L118
+	.long	.L121-.L118
+	.long	.L121-.L118
+	.long	.L121-.L118
+	.long	.L120-.L118
+	.long	.L120-.L118
+	.long	.L120-.L118
+	.long	.L120-.L118
+	.long	.L120-.L118
+	.long	.L120-.L118
+	.long	.L123-.L118
+	.long	.L123-.L118
+	.long	.L117-.L118
+	.long	.L117-.L118
+	.long	.L117-.L118
+	.long	.L117-.L118
+	.long	.L117-.L118
+	.long	.L117-.L118
 	.text
-.L119:
+.L117:
 	movl	$1, %eax
 	ret
-.L122:
+.L120:
 	movl	$3, %eax
 	ret
-.L124:
+.L122:
 	movl	$4, %eax
 	ret
-.L123:
+.L121:
 	movl	$5, %eax
 	ret
-.L118:
+.L116:
 	movl	$0, %eax
 	ret
-.L125:
+.L123:
 	movl	$2, %eax
 	ret
-	.cfi_endproc
-.LFE82:
 	.size	operator_precedence, .-operator_precedence
 	.globl	operator_to_string
 	.type	operator_to_string, @function
 operator_to_string:
-.LFB83:
-	.cfi_startproc
-	endbr64
 	cmpl	$18, %edi
-	ja	.L148
+	ja	.L146
 	movl	%edi, %edi
-	leaq	.L129(%rip), %rdx
+	leaq	.L127(%rip), %rdx
 	movslq	(%rdx,%rdi,4), %rax
 	addq	%rdx, %rax
-	notrack jmp	*%rax
+	jmp	*%rax
 	.section	.rodata
 	.align 4
 	.align 4
-.L129:
-	.long	.L147-.L129
-	.long	.L146-.L129
-	.long	.L145-.L129
-	.long	.L144-.L129
-	.long	.L143-.L129
-	.long	.L142-.L129
-	.long	.L141-.L129
-	.long	.L140-.L129
-	.long	.L139-.L129
-	.long	.L138-.L129
-	.long	.L137-.L129
-	.long	.L136-.L129
-	.long	.L135-.L129
-	.long	.L134-.L129
-	.long	.L133-.L129
-	.long	.L132-.L129
-	.long	.L131-.L129
-	.long	.L130-.L129
-	.long	.L128-.L129
+.L127:
+	.long	.L145-.L127
+	.long	.L144-.L127
+	.long	.L143-.L127
+	.long	.L142-.L127
+	.long	.L141-.L127
+	.long	.L140-.L127
+	.long	.L139-.L127
+	.long	.L138-.L127
+	.long	.L137-.L127
+	.long	.L136-.L127
+	.long	.L135-.L127
+	.long	.L134-.L127
+	.long	.L133-.L127
+	.long	.L132-.L127
+	.long	.L131-.L127
+	.long	.L130-.L127
+	.long	.L129-.L127
+	.long	.L128-.L127
+	.long	.L126-.L127
 	.text
-.L134:
+.L132:
 	movq	ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L133:
+.L131:
 	movq	ADD_ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L132:
+.L130:
 	movq	SUB_ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L131:
+.L129:
 	movq	MUL_ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L130:
+.L128:
 	movq	DIV_ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L128:
+.L126:
 	movq	MOD_ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L136:
+.L134:
 	movq	AND_SYMBOL(%rip), %rax
 	ret
-.L135:
+.L133:
 	movq	OR_SYMBOL(%rip), %rax
 	ret
-.L142:
+.L140:
 	movq	EQ_SYMBOL(%rip), %rax
 	ret
-.L141:
+.L139:
 	movq	NE_SYMBOL(%rip), %rax
 	ret
-.L140:
+.L138:
 	movq	LT_SYMBOL(%rip), %rax
 	ret
-.L139:
+.L137:
 	movq	GT_SYMBOL(%rip), %rax
 	ret
-.L138:
+.L136:
 	movq	LE_SYMBOL(%rip), %rax
 	ret
-.L137:
+.L135:
 	movq	GE_SYMBOL(%rip), %rax
 	ret
-.L147:
+.L145:
 	movq	ADD_SYMBOL(%rip), %rax
 	ret
-.L146:
+.L144:
 	movq	SUB_SYMBOL(%rip), %rax
 	ret
-.L145:
+.L143:
 	movq	MUL_SYMBOL(%rip), %rax
 	ret
-.L144:
+.L142:
 	movq	DIV_SYMBOL(%rip), %rax
 	ret
-.L143:
+.L141:
 	movq	MOD_SYMBOL(%rip), %rax
 	ret
-.L148:
+.L146:
 	movl	$0, %eax
 	ret
-	.cfi_endproc
-.LFE83:
 	.size	operator_to_string, .-operator_to_string
 	.local	id_counter.0
 	.comm	id_counter.0,8,8
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

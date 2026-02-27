@@ -2,9 +2,7 @@
 	.text
 	.p2align 4
 	.def	get_current_char.isra.0;	.scl	3;	.type	32;	.endef
-	.seh_proc	get_current_char.isra.0
 get_current_char.isra.0:
-	.seh_endprologue
 	movq	8(%rcx), %rax
 	cmpq	16(%rcx), %rax
 	jnb	.L1
@@ -13,7 +11,6 @@ get_current_char.isra.0:
 	movq	%rax, 8(%rcx)
 .L1:
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC0:
@@ -31,38 +28,32 @@ get_current_char.isra.0:
 	.text
 	.p2align 4
 	.def	next_token;	.scl	3;	.type	32;	.endef
-	.seh_proc	next_token
 next_token:
-	pushq	%r13
-	.seh_pushreg	%r13
-	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
+	movq	%rsp, %rbp
+	pushq	%r14
+	pushq	%r13
+	movl	%edx, %r13d
+	pushq	%r12
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$88, %rsp
-	.seh_stackalloc	88
-	movaps	%xmm6, 64(%rsp)
-	.seh_savexmm	%xmm6, 64
-	.seh_endprologue
-	movq	8(%rcx), %rdi
-	movq	32(%rcx), %rbp
-	movl	%edx, %r12d
-	movq	16(%rcx), %rdx
 	movq	%rcx, %rbx
-	cmpq	%rdx, %rdi
+	subq	$16, %rsp
+	andq	$-16, %rsp
+	subq	$64, %rsp
+	movq	8(%rcx), %r12
+	movq	16(%rcx), %rdx
+	movq	32(%rcx), %rdi
+	movaps	%xmm6, 64(%rsp)
+	cmpq	%rdx, %r12
 	jnb	.L5
-	leaq	1(%rbp), %r9
-	leaq	1(%rdi), %rsi
+	leaq	1(%rdi), %r9
+	leaq	1(%r12), %rsi
 	movq	%r9, 32(%rcx)
 	movq	(%rcx), %rcx
 	movq	%rsi, 8(%rbx)
-	leaq	(%rcx,%rdi), %r10
+	leaq	(%rcx,%r12), %r10
 	movzbl	(%r10), %eax
 	cmpb	$32, %al
 	ja	.L6
@@ -83,11 +74,11 @@ next_token:
 	.long	.L6-.L8
 	.long	.L6-.L8
 	.long	.L6-.L8
-	.long	.L192-.L8
+	.long	.L193-.L8
 	.long	.L9-.L8
 	.long	.L6-.L8
 	.long	.L6-.L8
-	.long	.L192-.L8
+	.long	.L193-.L8
 	.long	.L6-.L8
 	.long	.L6-.L8
 	.long	.L6-.L8
@@ -106,17 +97,17 @@ next_token:
 	.long	.L6-.L8
 	.long	.L6-.L8
 	.long	.L6-.L8
-	.long	.L192-.L8
+	.long	.L193-.L8
 	.text
 	.p2align 4,,10
 	.p2align 3
 .L93:
-	movq	%r9, %rbp
+	movq	%r9, %rdi
 	.p2align 4,,10
 	.p2align 3
 .L5:
 	movq	24(%rbx), %xmm6
-	movq	%rbp, %xmm1
+	movq	%rdi, %xmm1
 	movl	$32, %ecx
 	punpcklqdq	%xmm1, %xmm6
 	call	alloc_memory
@@ -125,30 +116,32 @@ next_token:
 	movups	%xmm6, 8(%rax)
 .L4:
 	movaps	64(%rsp), %xmm6
-	addq	$88, %rsp
+	leaq	-48(%rbp), %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
-	popq	%rbp
 	popq	%r12
 	popq	%r13
+	popq	%r14
+	popq	%rbp
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L9:
 	addq	$1, 24(%rbx)
 	movq	$0, 32(%rbx)
-.L192:
+.L193:
 	movaps	64(%rsp), %xmm6
-	movsbl	%r12b, %edx
+	leaq	-48(%rbp), %rsp
+	movsbl	%r13b, %edx
 	movq	%rbx, %rcx
-	addq	$88, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
-	popq	%rbp
 	popq	%r12
 	popq	%r13
+	popq	%r14
+	popq	%rbp
 	jmp	next_token
 	.p2align 4,,10
 	.p2align 3
@@ -162,10 +155,10 @@ next_token:
 	leal	-48(%rax), %r8d
 	cmpb	$9, %r8b
 	jbe	.L15
-	jmp	.L193
+	jmp	.L194
 	.p2align 4,,10
 	.p2align 3
-.L195:
+.L196:
 	addq	$1, %rsi
 	addq	$1, %r9
 	movq	%r9, 32(%rbx)
@@ -174,25 +167,25 @@ next_token:
 .L15:
 	leal	-48(%rax), %r8d
 	cmpb	$9, %r8b
-	ja	.L194
+	ja	.L195
 	cmpq	%rdx, %rsi
-	jb	.L195
-	movl	$2, %r12d
+	jb	.L196
+	movl	$2, %r13d
 .L23:
 	subq	$1, %r9
 	leaq	-1(%rsi), %rdx
-	movq	%rbp, %xmm4
+	movq	%rdi, %xmm4
 	movq	%r10, %rcx
 	movq	%rdx, 8(%rbx)
 	movq	24(%rbx), %xmm6
-	subq	%rdi, %rdx
+	subq	%r12, %rdx
 	movq	%r9, 32(%rbx)
 	punpcklqdq	%xmm4, %xmm6
 	call	create_string
 	movl	$32, %ecx
 	movq	%rax, %rbx
 	call	alloc_memory
-	movl	%r12d, 24(%rax)
+	movl	%r13d, 24(%rax)
 	movq	%rbx, (%rax)
 	movups	%xmm6, 8(%rax)
 	jmp	.L4
@@ -200,13 +193,13 @@ next_token:
 	.p2align 3
 .L11:
 	cmpb	$95, %al
-	jne	.L196
+	jne	.L197
 .L12:
 	movabsq	$288230372997595135, %r8
 	jmp	.L17
 	.p2align 4,,10
 	.p2align 3
-.L198:
+.L199:
 	addq	$1, %rsi
 	addq	$1, %r9
 	movq	%r9, 32(%rbx)
@@ -214,7 +207,7 @@ next_token:
 	movzbl	-1(%rcx,%rsi), %eax
 .L17:
 	cmpb	$57, %al
-	jle	.L197
+	jle	.L198
 	subl	$65, %eax
 	cmpb	$57, %al
 	ja	.L18
@@ -222,13 +215,13 @@ next_token:
 	jnc	.L18
 .L20:
 	cmpq	%rdx, %rsi
-	jb	.L198
+	jb	.L199
 .L18:
 	leaq	-1(%rsi), %rdx
 	subq	$1, %r9
 	movq	%r10, %rcx
 	movq	%rdx, 8(%rbx)
-	subq	%rdi, %rdx
+	subq	%r12, %rdx
 	movq	%r9, 32(%rbx)
 	call	create_string
 	movq	%rax, %rcx
@@ -237,7 +230,7 @@ next_token:
 	movq	24(%rbx), %xmm6
 	testb	%al, %al
 	je	.L22
-	movq	%rbp, %xmm2
+	movq	%rdi, %xmm2
 	movl	$32, %ecx
 	punpcklqdq	%xmm2, %xmm6
 	call	alloc_memory
@@ -247,13 +240,13 @@ next_token:
 	jmp	.L4
 	.p2align 4,,10
 	.p2align 3
-.L196:
+.L197:
 	leal	-97(%rax), %r8d
 	cmpb	$25, %r8b
 	jbe	.L12
 	cmpq	%rdx, %rsi
-	jnb	.L199
-	movzbl	1(%rcx,%rdi), %r10d
+	jnb	.L200
+	movzbl	1(%rcx,%r12), %r10d
 	xorl	%r11d, %r11d
 .L43:
 	cmpb	$61, %r10b
@@ -263,15 +256,15 @@ next_token:
 	jne	.L85
 	testb	%cl, %cl
 	je	.L85
-	addq	$2, %rdi
-	leaq	2(%rbp), %rax
+	addq	$2, %r12
+	leaq	2(%rdi), %rax
 	movq	24(%rbx), %xmm6
-	movq	%rbp, %xmm5
-	movq	%rdi, 8(%rbx)
+	movq	%rdi, %xmm5
+	movq	%r12, 8(%rbx)
 	movq	%rax, 32(%rbx)
 	movq	.refptr.EQ_SYMBOL(%rip), %rax
 	punpcklqdq	%xmm5, %xmm6
-.L190:
+.L191:
 	movq	(%rax), %rbx
 	movl	$32, %ecx
 	call	alloc_memory
@@ -282,7 +275,7 @@ next_token:
 	.p2align 4,,10
 	.p2align 3
 .L22:
-	movq	%rbp, %xmm3
+	movq	%rdi, %xmm3
 	movl	$32, %ecx
 	punpcklqdq	%xmm3, %xmm6
 	call	alloc_memory
@@ -293,51 +286,51 @@ next_token:
 	.p2align 4,,10
 	.p2align 3
 .L13:
-	xorl	%r12d, %r12d
+	xorl	%r13d, %r13d
 	cmpq	%rdx, %rsi
 	jnb	.L27
-	leaq	2(%rbp), %rax
-	movq	%rax, 32(%rbx)
 	leaq	2(%rdi), %rax
+	movq	%rax, 32(%rbx)
+	leaq	2(%r12), %rax
 	movq	%rax, 8(%rbx)
-	movzbl	1(%rcx,%rdi), %r12d
+	movzbl	1(%rcx,%r12), %r13d
 .L27:
 	movabsq	$-17179870210, %r9
 	jmp	.L28
 	.p2align 4,,10
 	.p2align 3
-.L201:
+.L202:
 	leaq	1(%rax), %r8
 	addq	$1, 32(%rbx)
 	movq	%r8, 8(%rbx)
-	movzbl	(%rcx,%rax), %r12d
+	movzbl	(%rcx,%rax), %r13d
 .L28:
-	cmpb	$34, %r12b
-	jbe	.L200
+	cmpb	$34, %r13b
+	jbe	.L201
 .L30:
 	movq	8(%rbx), %rax
 	cmpq	%rdx, %rax
-	jb	.L201
-	xorl	%r12d, %r12d
+	jb	.L202
+	xorl	%r13d, %r13d
 .L29:
-	movq	24(%rbx), %rdi
-	cmpb	$34, %r12b
+	movq	24(%rbx), %r12
+	cmpb	$34, %r13b
 	je	.L31
 	call	__getreent
 	movq	%rsi, %r9
-	leaq	1(%rdi), %r8
+	leaq	1(%r12), %r8
 	leaq	.LC0(%rip), %rdx
 	movq	24(%rax), %rcx
 	leaq	.LC1(%rip), %rax
 	movq	%rax, 32(%rsp)
 	call	fprintf
-	cmpb	$10, %r12b
+	cmpb	$10, %r13b
 	je	.L32
 	movq	24(%rbx), %xmm6
 .L33:
 	movq	(%rbx), %rcx
 	movq	%rsi, %rdx
-	movq	%rbp, %xmm5
+	movq	%rdi, %xmm5
 	notq	%rdx
 	addq	8(%rbx), %rdx
 	punpcklqdq	%xmm5, %xmm6
@@ -352,17 +345,17 @@ next_token:
 	jmp	.L4
 	.p2align 4,,10
 	.p2align 3
-.L200:
-	btq	%r12, %r9
+.L201:
+	btq	%r13, %r9
 	jc	.L30
 	jmp	.L29
-.L193:
+.L194:
 	cmpb	$47, %al
 	sete	%r8b
 	movl	%r8d, %r11d
 	cmpq	%rdx, %rsi
 	jnb	.L91
-	movzbl	1(%rcx,%rdi), %r10d
+	movzbl	1(%rcx,%r12), %r10d
 	cmpb	$47, %r10b
 	jne	.L38
 	testb	%r8b, %r8b
@@ -371,7 +364,7 @@ next_token:
 	jmp	.L36
 	.p2align 4,,10
 	.p2align 3
-.L202:
+.L203:
 	addq	$1, %rsi
 	addq	$1, %r9
 	movq	%r9, 32(%rbx)
@@ -383,21 +376,21 @@ next_token:
 	testb	%al, %al
 	je	.L39
 	cmpq	%rdx, %rsi
-	jb	.L202
+	jb	.L203
 .L39:
 	leaq	-1(%rsi), %rdx
 	subq	$1, %r9
 	movq	%rdx, 8(%rbx)
 	movq	%r9, 32(%rbx)
-	testb	%r12b, %r12b
-	jne	.L192
+	testb	%r13b, %r13b
+	jne	.L193
 	movq	24(%rbx), %xmm6
-	addq	$2, %rdi
-	movq	%rbp, %xmm2
-	subq	%rdi, %rdx
-	addq	%rdi, %rcx
+	addq	$2, %r12
+	movq	%rdi, %xmm2
+	subq	%r12, %rdx
+	addq	%r12, %rcx
 	punpcklqdq	%xmm2, %xmm6
-.L191:
+.L192:
 	call	create_string
 	movl	$32, %ecx
 	movq	%rax, %rbx
@@ -406,8 +399,8 @@ next_token:
 	movq	%rbx, (%rax)
 	movups	%xmm6, 8(%rax)
 	jmp	.L4
-.L194:
-	movl	$2, %r12d
+.L195:
+	movl	$2, %r13d
 	cmpq	%rdx, %rsi
 	jnb	.L23
 	cmpb	$46, %al
@@ -425,7 +418,7 @@ next_token:
 	jmp	.L25
 	.p2align 4,,10
 	.p2align 3
-.L203:
+.L204:
 	addq	$1, %rsi
 	addq	$1, %r9
 	movq	%r9, 32(%rbx)
@@ -436,9 +429,9 @@ next_token:
 	cmpb	$9, %al
 	ja	.L98
 	cmpq	%rdx, %rsi
-	jb	.L203
+	jb	.L204
 .L98:
-	movl	$3, %r12d
+	movl	$3, %r13d
 	jmp	.L23
 .L31:
 	movq	%rsi, %rdx
@@ -449,8 +442,8 @@ next_token:
 	movl	$32, %ecx
 	movq	%rax, %rbx
 	call	alloc_memory
-	movq	%rdi, %xmm0
-	movq	%rbp, %xmm5
+	movq	%r12, %xmm0
+	movq	%rdi, %xmm5
 	punpcklqdq	%xmm5, %xmm0
 	movl	$4, 24(%rax)
 	movq	%rbx, (%rax)
@@ -463,7 +456,7 @@ next_token:
 	movq	%rax, 24(%rbx)
 	movq	%rax, %xmm6
 	jmp	.L33
-.L199:
+.L200:
 	xorl	%r11d, %r11d
 .L91:
 	xorl	%r10d, %r10d
@@ -472,35 +465,35 @@ next_token:
 	cmpb	$43, %al
 	jne	.L56
 	testb	%dl, %dl
-	jne	.L204
+	jne	.L205
 .L56:
 	cmpb	$45, %al
 	jne	.L57
 	testb	%dl, %dl
-	jne	.L205
+	jne	.L206
 .L57:
 	cmpb	$42, %al
 	jne	.L58
 	testb	%dl, %dl
-	jne	.L206
+	jne	.L207
 .L59:
 	cmpb	$37, %al
 	jne	.L60
 	testb	%dl, %dl
-	jne	.L207
+	jne	.L208
 .L60:
 	cmpb	$38, %al
 	jne	.L61
 	cmpb	$38, %r10b
-	je	.L208
+	je	.L209
 .L61:
 	cmpb	$124, %al
 	jne	.L62
 	cmpb	$124, %r10b
-	je	.L209
+	je	.L210
 .L62:
 	movq	24(%rbx), %rbx
-	movq	%rbp, %xmm4
+	movq	%rdi, %xmm4
 	subl	$33, %eax
 	movq	%rbx, %xmm6
 	punpcklqdq	%xmm4, %xmm6
@@ -632,7 +625,7 @@ next_token:
 	jne	.L43
 	testb	%r8b, %r8b
 	je	.L43
-	leaq	2(%rdi), %rsi
+	leaq	2(%r12), %rsi
 	movl	$42, %eax
 	movl	$47, %r8d
 	.p2align 4,,10
@@ -641,7 +634,7 @@ next_token:
 	cmpb	$42, %r8b
 	jne	.L158
 	cmpb	$47, %al
-	je	.L210
+	je	.L211
 .L158:
 	movq	8(%rbx), %rax
 	cmpq	%rdx, %rax
@@ -651,7 +644,7 @@ next_token:
 	movq	%r9, 8(%rbx)
 	movzbl	(%rcx,%rax), %r8d
 	cmpq	%rdx, %r9
-	jnb	.L211
+	jnb	.L212
 	movzbl	1(%rcx,%rax), %eax
 	cmpb	$10, %r8b
 	jne	.L49
@@ -659,7 +652,7 @@ next_token:
 	movq	$0, 32(%rbx)
 	testb	%al, %al
 	jne	.L158
-	jmp	.L189
+	jmp	.L190
 	.p2align 4,,10
 	.p2align 3
 .L49:
@@ -674,33 +667,33 @@ next_token:
 	call	__assert_func
 	.p2align 4,,10
 	.p2align 3
-.L211:
+.L212:
 	cmpb	$10, %r8b
 	jne	.L47
 	movq	24(%rbx), %rax
 	movq	$0, 32(%rbx)
-	leaq	1(%rax), %r13
-	movq	%r13, 24(%rbx)
+	leaq	1(%rax), %r14
+	movq	%r14, 24(%rbx)
 .L48:
 	call	__getreent
-	leaq	3(%rdi), %r9
-	leaq	1(%r13), %r8
+	leaq	3(%r12), %r9
+	leaq	1(%r14), %r8
 	movq	24(%rax), %rcx
 	leaq	.LC4(%rip), %rax
 	leaq	.LC0(%rip), %rdx
 	movq	%rax, 32(%rsp)
 	call	fprintf
-	testb	%r12b, %r12b
-	jne	.L192
+	testb	%r13b, %r13b
+	jne	.L193
 	movq	24(%rbx), %xmm6
 	movq	8(%rbx), %rdx
-	movq	%rbp, %xmm3
+	movq	%rdi, %xmm3
 	movq	(%rbx), %rcx
 	punpcklqdq	%xmm3, %xmm6
 	subq	%rsi, %rdx
 	addq	%rsi, %rcx
-	jmp	.L191
-.L210:
+	jmp	.L192
+.L211:
 	movq	8(%rbx), %rax
 	cmpq	%rdx, %rax
 	jnb	.L89
@@ -708,26 +701,26 @@ next_token:
 	addq	$1, 32(%rbx)
 	movq	%rax, 8(%rbx)
 .L89:
-	testb	%r12b, %r12b
-	jne	.L192
+	testb	%r13b, %r13b
+	jne	.L193
 	movq	8(%rbx), %rdx
 	movq	24(%rbx), %xmm6
-	movq	%rbp, %xmm4
+	movq	%rdi, %xmm4
 	addq	%rsi, %rcx
 	subq	$2, %rdx
 	punpcklqdq	%xmm4, %xmm6
 	subq	%rsi, %rdx
-	jmp	.L191
+	jmp	.L192
 .L47:
 	testb	%r8b, %r8b
-	jne	.L189
+	jne	.L190
 	.p2align 4,,10
 	.p2align 3
 .L45:
 	subq	$1, 8(%rbx)
 	subq	$1, 32(%rbx)
-.L189:
-	movq	24(%rbx), %r13
+.L190:
+	movq	24(%rbx), %r14
 	jmp	.L48
 .L58:
 	testb	%dl, %dl
@@ -742,8 +735,8 @@ next_token:
 	movq	%rax, %xmm3
 	movq	.refptr.DIV_ASSIGN_SYMBOL(%rip), %rax
 	punpcklqdq	%xmm3, %xmm6
-	jmp	.L190
-.L204:
+	jmp	.L191
+.L205:
 	movq	%rbx, %rcx
 	call	get_current_char.isra.0
 	movq	32(%rbx), %rax
@@ -752,8 +745,8 @@ next_token:
 	movq	%rax, %xmm3
 	movq	.refptr.ADD_ASSIGN_SYMBOL(%rip), %rax
 	punpcklqdq	%xmm3, %xmm6
-	jmp	.L190
-.L205:
+	jmp	.L191
+.L206:
 	movq	%rbx, %rcx
 	call	get_current_char.isra.0
 	movq	32(%rbx), %rax
@@ -762,8 +755,8 @@ next_token:
 	movq	%rax, %xmm4
 	movq	.refptr.SUB_ASSIGN_SYMBOL(%rip), %rax
 	punpcklqdq	%xmm4, %xmm6
-	jmp	.L190
-.L206:
+	jmp	.L191
+.L207:
 	movq	%rbx, %rcx
 	call	get_current_char.isra.0
 	movq	32(%rbx), %rax
@@ -772,8 +765,8 @@ next_token:
 	movq	%rax, %xmm5
 	movq	.refptr.MUL_ASSIGN_SYMBOL(%rip), %rax
 	punpcklqdq	%xmm5, %xmm6
-	jmp	.L190
-.L207:
+	jmp	.L191
+.L208:
 	movq	%rbx, %rcx
 	call	get_current_char.isra.0
 	movq	32(%rbx), %rax
@@ -782,8 +775,8 @@ next_token:
 	movq	%rax, %xmm4
 	movq	.refptr.MOD_ASSIGN_SYMBOL(%rip), %rax
 	punpcklqdq	%xmm4, %xmm6
-	jmp	.L190
-.L208:
+	jmp	.L191
+.L209:
 	movq	%rbx, %rcx
 	call	get_current_char.isra.0
 	movq	32(%rbx), %rax
@@ -792,8 +785,8 @@ next_token:
 	movq	%rax, %xmm5
 	movq	.refptr.AND_SYMBOL(%rip), %rax
 	punpcklqdq	%xmm5, %xmm6
-	jmp	.L190
-.L209:
+	jmp	.L191
+.L210:
 	movq	%rbx, %rcx
 	call	get_current_char.isra.0
 	movq	32(%rbx), %rax
@@ -802,36 +795,36 @@ next_token:
 	movq	%rax, %xmm3
 	movq	.refptr.OR_SYMBOL(%rip), %rax
 	punpcklqdq	%xmm3, %xmm6
-	jmp	.L190
+	jmp	.L191
 .L85:
 	cmpb	$33, %al
 	jne	.L55
 	testb	%cl, %cl
-	jne	.L212
+	jne	.L213
 .L55:
 	cmpb	$60, %al
 	jne	.L88
 	testb	%cl, %cl
 	je	.L88
 	movq	24(%rbx), %xmm6
-	leaq	2(%rbp), %rax
-	addq	$2, %rdi
-	movq	%rbp, %xmm4
+	leaq	2(%rdi), %rax
+	addq	$2, %r12
+	movq	%rdi, %xmm4
 	movq	%rax, 32(%rbx)
 	movq	.refptr.LE_SYMBOL(%rip), %rax
-	movq	%rdi, 8(%rbx)
+	movq	%r12, 8(%rbx)
 	punpcklqdq	%xmm4, %xmm6
-	jmp	.L190
-.L212:
+	jmp	.L191
+.L213:
 	movq	24(%rbx), %xmm6
-	leaq	2(%rbp), %rax
-	addq	$2, %rdi
-	movq	%rbp, %xmm3
+	leaq	2(%rdi), %rax
+	addq	$2, %r12
+	movq	%rdi, %xmm3
 	movq	%rax, 32(%rbx)
 	movq	.refptr.NE_SYMBOL(%rip), %rax
-	movq	%rdi, 8(%rbx)
+	movq	%r12, 8(%rbx)
 	punpcklqdq	%xmm3, %xmm6
-	jmp	.L190
+	jmp	.L191
 .L88:
 	cmpb	$62, %al
 	jne	.L35
@@ -845,81 +838,78 @@ next_token:
 	movq	%rax, %xmm5
 	movq	.refptr.GE_SYMBOL(%rip), %rax
 	punpcklqdq	%xmm5, %xmm6
-	jmp	.L190
+	jmp	.L191
 .L64:
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L66:
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax
-	jmp	.L190
-.L197:
+	jmp	.L191
+.L198:
 	cmpb	$47, %al
 	jg	.L20
 	jmp	.L18
 .L67:
 	movq	.refptr.R_BRACKET_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L68:
 	movq	.refptr.L_BRACKET_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L69:
 	movq	.refptr.GT_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L70:
 	movq	.refptr.ASSIGN_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L71:
 	movq	.refptr.LT_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L72:
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L73:
 	movq	.refptr.DIV_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L74:
 	movq	.refptr.DOT_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L75:
 	movq	.refptr.SUB_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L76:
 	movq	.refptr.COMMA_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L77:
 	movq	.refptr.ADD_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L78:
 	movq	.refptr.MUL_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L79:
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L80:
 	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L81:
 	movq	.refptr.MOD_SYMBOL(%rip), %rax
-	jmp	.L190
+	jmp	.L191
 .L82:
 	movq	.refptr.NOT_SYMBOL(%rip), %rax
-	jmp	.L190
-	.seh_endproc
+	jmp	.L191
 	.p2align 4
 	.globl	create_lexer
 	.def	create_lexer;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_lexer
 create_lexer:
+	pushq	%rbp
+	movq	%rsp, %rbp
 	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movq	%rcx, %rsi
 	movl	$80, %ecx
+	pushq	%rbx
 	movq	%rdx, %rbx
+	andq	$-16, %rsp
+	subq	$32, %rsp
 	call	alloc_memory
 	pxor	%xmm0, %xmm0
 	movq	%rsi, (%rax)
@@ -931,114 +921,104 @@ create_lexer:
 	movq	$0, 64(%rax)
 	movq	$0, 72(%rax)
 	movups	%xmm0, 48(%rax)
-	addq	$40, %rsp
+	leaq	-16(%rbp), %rsp
 	popq	%rbx
 	popq	%rsi
+	popq	%rbp
 	ret
-	.seh_endproc
 	.p2align 4
 	.globl	get_next_token
 	.def	get_next_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	get_next_token
 get_next_token:
+	pushq	%rbp
+	movq	%rsp, %rbp
 	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	movq	40(%rcx), %rax
 	movq	%rcx, %rbx
+	andq	$-16, %rsp
+	subq	$32, %rsp
+	movq	40(%rcx), %rax
 	testq	%rax, %rax
-	je	.L215
+	je	.L217
 	movq	48(%rcx), %rdx
-	movdqu	56(%rcx), %xmm0
+	movq	-8(%rbp), %rbx
 	movq	%rax, 72(%rcx)
+	movdqu	56(%rcx), %xmm0
 	movq	$0, 40(%rcx)
 	movq	%rdx, 8(%rcx)
 	movups	%xmm0, 24(%rcx)
-	addq	$32, %rsp
-	popq	%rbx
+	leave
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L215:
+.L217:
 	movsbl	%dl, %edx
 	call	next_token
 	movq	%rax, 72(%rbx)
-	addq	$32, %rsp
-	popq	%rbx
+	movq	-8(%rbp), %rbx
+	leave
 	ret
-	.seh_endproc
 	.p2align 4
 	.globl	peek_next_token
 	.def	peek_next_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	peek_next_token
 peek_next_token:
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$56, %rsp
-	.seh_stackalloc	56
-	movaps	%xmm6, 32(%rsp)
-	.seh_savexmm	%xmm6, 32
-	.seh_endprologue
 	movq	40(%rcx), %rax
-	movq	%rcx, %rbx
 	testq	%rax, %rax
-	je	.L219
-	movaps	32(%rsp), %xmm6
-	addq	$56, %rsp
-	popq	%rbx
-	popq	%rsi
+	je	.L226
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L219:
+.L226:
+	pushq	%rbp
 	movsbl	%dl, %edx
-	movdqu	24(%rcx), %xmm6
+	movq	%rsp, %rbp
+	pushq	%rsi
+	pushq	%rbx
+	movq	%rcx, %rbx
+	subq	$16, %rsp
+	andq	$-16, %rsp
+	subq	$32, %rsp
 	movq	8(%rcx), %rsi
+	movaps	%xmm6, 32(%rsp)
+	movdqu	24(%rcx), %xmm6
 	call	next_token
 	movdqu	8(%rbx), %xmm0
 	movdqu	24(%rbx), %xmm1
+	movq	%rsi, 8(%rbx)
 	movq	32(%rbx), %rdx
 	movq	%rax, 72(%rbx)
 	punpcklqdq	%xmm1, %xmm0
-	movq	%rsi, 8(%rbx)
-	movq	%rdx, 64(%rbx)
 	movq	%rax, 40(%rbx)
+	movq	%rdx, 64(%rbx)
 	movups	%xmm0, 48(%rbx)
 	movups	%xmm6, 24(%rbx)
 	movaps	32(%rsp), %xmm6
-	addq	$56, %rsp
+	leaq	-16(%rbp), %rsp
 	popq	%rbx
 	popq	%rsi
+	popq	%rbp
 	ret
-	.seh_endproc
 	.p2align 4
 	.globl	peek_current_token
 	.def	peek_current_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	peek_current_token
 peek_current_token:
-	.seh_endprologue
 	movq	72(%rcx), %rax
 	ret
-	.seh_endproc
 	.p2align 4
 	.globl	reset_lexer
 	.def	reset_lexer;	.scl	2;	.type	32;	.endef
-	.seh_proc	reset_lexer
 reset_lexer:
-	.seh_endprologue
+	pushq	%rbp
 	pxor	%xmm0, %xmm0
 	movq	$0, 8(%rcx)
 	movq	$0, 40(%rcx)
+	movq	%rsp, %rbp
 	movq	$0, 64(%rcx)
+	andq	$-16, %rsp
 	movq	$0, 72(%rcx)
 	movups	%xmm0, 24(%rcx)
 	movups	%xmm0, 48(%rcx)
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

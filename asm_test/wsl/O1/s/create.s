@@ -11,29 +11,17 @@
 	.globl	create_code_member
 	.type	create_code_member, @function
 create_code_member:
-.LFB65:
-	.cfi_startproc
-	endbr64
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
 	movl	%edi, %ebx
 	movq	%rsi, %rbp
 	movq	%rdx, %r12
 	movq	%rcx, %r13
 	movl	$16, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movl	%ebx, 8(%rax)
 	testl	%ebx, %ebx
 	jne	.L2
@@ -42,19 +30,12 @@ create_code_member:
 	movq	%rbp, (%rax)
 .L1:
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
 .L2:
-	.cfi_restore_state
 	cmpl	$1, %ebx
 	jne	.L4
 	testq	%r12, %r12
@@ -78,7 +59,7 @@ create_code_member:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L1
 .L8:
@@ -86,41 +67,26 @@ create_code_member:
 	movl	$44, %edx
 	movl	$1, %esi
 	leaq	.LC0(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L1
-	.cfi_endproc
-.LFE65:
 	.size	create_code_member, .-create_code_member
 	.globl	create_code
 	.type	create_code, @function
 create_code:
-.LFB66:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	pushq	%rbx
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 32
 	movq	%rdi, %rbp
 	movq	%rsi, %rbx
 	movl	$16, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbp, (%rax)
 	movq	%rbx, 8(%rax)
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 24
 	popq	%rbx
-	.cfi_def_cfa_offset 16
 	popq	%rbp
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE66:
 	.size	create_code, .-create_code
 	.section	.rodata.str1.8
 	.align 8
@@ -130,45 +96,30 @@ create_code:
 	.globl	create_import
 	.type	create_import, @function
 create_import:
-.LFB67:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	pushq	%rbx
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 32
 	movq	%rdi, %rbx
 	testq	%rdi, %rdi
 	je	.L15
 	movq	%rsi, %rbp
 	movl	$16, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbx, (%rax)
 	movq	%rbp, 8(%rax)
 .L11:
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 24
 	popq	%rbx
-	.cfi_def_cfa_offset 16
 	popq	%rbp
-	.cfi_def_cfa_offset 8
 	ret
 .L15:
-	.cfi_restore_state
 	movq	stderr(%rip), %rcx
 	movl	$36, %edx
 	movl	$1, %esi
 	leaq	.LC2(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%rbx, %rax
 	jmp	.L11
-	.cfi_endproc
-.LFE67:
 	.size	create_import, .-create_import
 	.section	.rodata.str1.8
 	.align 8
@@ -178,24 +129,11 @@ create_import:
 	.globl	create_function
 	.type	create_function, @function
 create_function:
-.LFB68:
-	.cfi_startproc
-	endbr64
 	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 	testq	%rdi, %rdi
 	je	.L20
 	movq	%rdi, %rbx
@@ -206,7 +144,7 @@ create_function:
 	testq	%rsi, %rsi
 	je	.L20
 	movl	$40, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbx, (%rax)
 	movq	%rbp, 8(%rax)
 	movq	%r14, 16(%rax)
@@ -214,28 +152,19 @@ create_function:
 	movq	%r12, 32(%rax)
 .L16:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
 .L20:
-	.cfi_restore_state
 	movq	stderr(%rip), %rcx
 	movl	$53, %edx
 	movl	$1, %esi
 	leaq	.LC3(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L16
-	.cfi_endproc
-.LFE68:
 	.size	create_function, .-create_function
 	.section	.rodata.str1.8
 	.align 8
@@ -245,24 +174,11 @@ create_function:
 	.globl	create_method
 	.type	create_method, @function
 create_method:
-.LFB69:
-	.cfi_startproc
-	endbr64
 	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 	testq	%rdi, %rdi
 	je	.L26
 	movq	%rdi, %rbx
@@ -273,7 +189,7 @@ create_method:
 	testq	%rsi, %rsi
 	je	.L26
 	movl	$40, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbx, (%rax)
 	movq	%rbp, 8(%rax)
 	movq	%r14, 16(%rax)
@@ -281,28 +197,19 @@ create_method:
 	movq	%r12, 32(%rax)
 .L22:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
 .L26:
-	.cfi_restore_state
 	movq	stderr(%rip), %rcx
 	movl	$51, %edx
 	movl	$1, %esi
 	leaq	.LC4(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L22
-	.cfi_endproc
-.LFE69:
 	.size	create_method, .-create_method
 	.section	.rodata.str1.8
 	.align 8
@@ -315,23 +222,14 @@ create_method:
 	.globl	create_class_member
 	.type	create_class_member, @function
 create_class_member:
-.LFB70:
-	.cfi_startproc
-	endbr64
 	pushq	%r12
-	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
 	pushq	%rbp
-	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
 	pushq	%rbx
-	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
 	movl	%edi, %ebx
 	movq	%rsi, %rbp
 	movq	%rdx, %r12
 	movl	$16, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movl	%ebx, 8(%rax)
 	testl	%ebx, %ebx
 	jne	.L29
@@ -340,15 +238,10 @@ create_class_member:
 	movq	%rbp, (%rax)
 .L28:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 24
 	popq	%rbp
-	.cfi_def_cfa_offset 16
 	popq	%r12
-	.cfi_def_cfa_offset 8
 	ret
 .L29:
-	.cfi_restore_state
 	cmpl	$1, %ebx
 	jne	.L31
 	testq	%r12, %r12
@@ -362,7 +255,7 @@ create_class_member:
 	movl	$45, %edx
 	movl	$1, %esi
 	leaq	.LC5(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L28
 .L32:
@@ -371,11 +264,9 @@ create_class_member:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L28
-	.cfi_endproc
-.LFE70:
 	.size	create_class_member, .-create_class_member
 	.section	.rodata.str1.8
 	.align 8
@@ -385,48 +276,32 @@ create_class_member:
 	.globl	create_class
 	.type	create_class, @function
 create_class:
-.LFB71:
-	.cfi_startproc
-	endbr64
 	pushq	%r12
-	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
 	pushq	%rbp
-	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
 	pushq	%rbx
-	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
 	movq	%rdi, %rbx
 	testq	%rdi, %rdi
 	je	.L38
 	movq	%rsi, %r12
 	movq	%rdx, %rbp
 	movl	$24, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbx, (%rax)
 	movq	%r12, 8(%rax)
 	movq	%rbp, 16(%rax)
 .L34:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 24
 	popq	%rbp
-	.cfi_def_cfa_offset 16
 	popq	%r12
-	.cfi_def_cfa_offset 8
 	ret
 .L38:
-	.cfi_restore_state
 	movq	stderr(%rip), %rcx
 	movl	$35, %edx
 	movl	$1, %esi
 	leaq	.LC7(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%rbx, %rax
 	jmp	.L34
-	.cfi_endproc
-.LFE71:
 	.size	create_class, .-create_class
 	.section	.rodata.str1.8
 	.align 8
@@ -436,18 +311,9 @@ create_class:
 	.globl	create_variable
 	.type	create_variable, @function
 create_variable:
-.LFB72:
-	.cfi_startproc
-	endbr64
 	pushq	%r12
-	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
 	pushq	%rbp
-	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
 	pushq	%rbx
-	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
 	testq	%rdi, %rdi
 	je	.L43
 	movq	%rdi, %rbx
@@ -456,30 +322,23 @@ create_variable:
 	testq	%rsi, %rsi
 	je	.L43
 	movl	$24, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbx, (%rax)
 	movq	%rbp, 8(%rax)
 	movq	%r12, 16(%rax)
 .L39:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 24
 	popq	%rbp
-	.cfi_def_cfa_offset 16
 	popq	%r12
-	.cfi_def_cfa_offset 8
 	ret
 .L43:
-	.cfi_restore_state
 	movq	stderr(%rip), %rcx
 	movl	$46, %edx
 	movl	$1, %esi
 	leaq	.LC8(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L39
-	.cfi_endproc
-.LFE72:
 	.size	create_variable, .-create_variable
 	.section	.rodata.str1.8
 	.align 8
@@ -492,29 +351,13 @@ create_variable:
 	.globl	create_statement
 	.type	create_statement, @function
 create_statement:
-.LFB73:
-	.cfi_startproc
-	endbr64
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 64
 	movl	%edi, %ebx
 	movq	%rsi, %r13
 	movq	%rdx, %r14
@@ -522,7 +365,7 @@ create_statement:
 	movq	%r8, %rbp
 	movq	%r9, %r12
 	movl	$16, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movl	%ebx, 8(%rax)
 	testq	%rbp, %rbp
 	setne	%dl
@@ -533,23 +376,14 @@ create_statement:
 	movq	%rbp, (%rax)
 .L45:
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 .L46:
-	.cfi_restore_state
 	cmpl	$1, %ebx
 	jne	.L48
 	testq	%r12, %r12
@@ -601,7 +435,7 @@ create_statement:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L45
 .L56:
@@ -609,11 +443,9 @@ create_statement:
 	movl	$42, %edx
 	movl	$1, %esi
 	leaq	.LC9(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L45
-	.cfi_endproc
-.LFE73:
 	.size	create_statement, .-create_statement
 	.section	.rodata.str1.8
 	.align 8
@@ -623,23 +455,11 @@ create_statement:
 	.globl	create_if
 	.type	create_if, @function
 create_if:
-.LFB74:
-	.cfi_startproc
-	endbr64
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
 	movq	%rdi, %rbx
 	testq	%rdi, %rdi
 	je	.L61
@@ -647,35 +467,26 @@ create_if:
 	movq	%rdx, %rbp
 	movq	%rcx, %r13
 	movl	$32, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbx, (%rax)
 	movq	%r12, 8(%rax)
 	movq	%rbp, 16(%rax)
 	movq	%r13, 24(%rax)
 .L57:
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
 .L61:
-	.cfi_restore_state
 	movq	stderr(%rip), %rcx
 	movl	$47, %edx
 	movl	$1, %esi
 	leaq	.LC11(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%rbx, %rax
 	jmp	.L57
-	.cfi_endproc
-.LFE74:
 	.size	create_if, .-create_if
 	.section	.rodata.str1.8
 	.align 8
@@ -685,119 +496,72 @@ create_if:
 	.globl	create_else_if
 	.type	create_else_if, @function
 create_else_if:
-.LFB75:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	pushq	%rbx
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 32
 	movq	%rdi, %rbx
 	testq	%rdi, %rdi
 	je	.L66
 	movq	%rsi, %rbp
 	movl	$16, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbx, (%rax)
 	movq	%rbp, 8(%rax)
 .L62:
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 24
 	popq	%rbx
-	.cfi_def_cfa_offset 16
 	popq	%rbp
-	.cfi_def_cfa_offset 8
 	ret
 .L66:
-	.cfi_restore_state
 	movq	stderr(%rip), %rcx
 	movl	$52, %edx
 	movl	$1, %esi
 	leaq	.LC12(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%rbx, %rax
 	jmp	.L62
-	.cfi_endproc
-.LFE75:
 	.size	create_else_if, .-create_else_if
 	.globl	create_for
 	.type	create_for, @function
 create_for:
-.LFB76:
-	.cfi_startproc
-	endbr64
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
 	movq	%rdi, %r13
 	movq	%rsi, %r12
 	movq	%rdx, %rbp
 	movq	%rcx, %rbx
 	movl	$32, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%r13, (%rax)
 	movq	%r12, 8(%rax)
 	movq	%rbp, 16(%rax)
 	movq	%rbx, 24(%rax)
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 40
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE76:
 	.size	create_for, .-create_for
 	.globl	create_while
 	.type	create_while, @function
 create_while:
-.LFB77:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	pushq	%rbx
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 32
 	movq	%rdi, %rbp
 	movq	%rsi, %rbx
 	movl	$16, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbp, (%rax)
 	movq	%rbx, 8(%rax)
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 24
 	popq	%rbx
-	.cfi_def_cfa_offset 16
 	popq	%rbp
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE77:
 	.size	create_while, .-create_while
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC13:
@@ -815,23 +579,11 @@ create_while:
 	.globl	create_expression
 	.type	create_expression, @function
 create_expression:
-.LFB78:
-	.cfi_startproc
-	endbr64
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
 	movl	%edi, %ebx
 	movq	%rsi, %rbp
 	movq	%rdx, %r13
@@ -846,7 +598,7 @@ create_expression:
 	orq	%rsi, %rax
 	je	.L90
 	movl	$32, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movl	%ebx, 24(%rax)
 	testq	%rbp, %rbp
 	je	.L80
@@ -874,32 +626,22 @@ create_expression:
 	leaq	.LC13(%rip), %rdx
 	cmove	%rdx, %rcx
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 56
 	pushq	%rax
-	.cfi_def_cfa_offset 64
 	leaq	.LC15(%rip), %rdx
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	addq	$16, %rsp
-	.cfi_def_cfa_offset 48
 	movl	$0, %eax
 .L71:
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
 .L80:
-	.cfi_restore_state
 	testq	%r13, %r13
 	je	.L82
 	movq	%r13, 8(%rax)
@@ -909,7 +651,7 @@ create_expression:
 	movl	$65, %edx
 	movl	$1, %esi
 	leaq	.LC16(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	%r13, %rax
 	jmp	.L71
 .L90:
@@ -921,8 +663,6 @@ create_expression:
 	movq	%rax, %r9
 	movq	%rax, %r8
 	jmp	.L77
-	.cfi_endproc
-.LFE78:
 	.size	create_expression, .-create_expression
 	.section	.rodata.str1.8
 	.align 8
@@ -935,31 +675,18 @@ create_expression:
 	.globl	create_primary
 	.type	create_primary, @function
 create_primary:
-.LFB79:
-	.cfi_startproc
-	endbr64
 	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 	movl	%edi, %ebx
 	movq	%rsi, %rbp
 	movq	%rdx, %r12
 	movq	%rcx, %r14
 	movq	%r8, %r13
 	movl	$16, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movl	%ebx, 8(%rax)
 	cmpl	$4, %ebx
 	ja	.L92
@@ -968,19 +695,12 @@ create_primary:
 	movq	%rbp, (%rax)
 .L91:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
 .L92:
-	.cfi_restore_state
 	cmpl	$5, %ebx
 	jne	.L94
 	testq	%r12, %r12
@@ -1012,7 +732,7 @@ create_primary:
 	movl	$38, %edx
 	movl	$1, %esi
 	leaq	.LC17(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L91
 .L97:
@@ -1021,11 +741,9 @@ create_primary:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L91
-	.cfi_endproc
-.LFE79:
 	.size	create_primary, .-create_primary
 	.section	.rodata.str1.8
 	.align 8
@@ -1041,29 +759,13 @@ create_primary:
 	.globl	create_variable_access
 	.type	create_variable_access, @function
 create_variable_access:
-.LFB80:
-	.cfi_startproc
-	endbr64
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 64
 	movl	%edi, %ebx
 	movq	%rsi, %rbp
 	testl	%edi, %edi
@@ -1076,7 +778,7 @@ create_variable_access:
 	movq	%rcx, %r14
 	movq	%r8, %r13
 	movl	$24, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movl	%ebx, 16(%rax)
 	movq	%rbp, (%rax)
 	testq	%r12, %r12
@@ -1099,27 +801,18 @@ create_variable_access:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movl	$0, %eax
 .L100:
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 .L105:
-	.cfi_restore_state
 	cmpl	$1, %ebx
 	jne	.L106
 	testq	%r13, %r13
@@ -1149,7 +842,7 @@ create_variable_access:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L100
 .L114:
@@ -1157,27 +850,9 @@ create_variable_access:
 	movl	$48, %edx
 	movl	$1, %esi
 	leaq	.LC20(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
 	jmp	.L100
-	.cfi_endproc
-.LFE80:
 	.size	create_variable_access, .-create_variable_access
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

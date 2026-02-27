@@ -7,17 +7,12 @@
 	.section	.text.startup,"x"
 	.globl	main
 	.def	main;	.scl	2;	.type	32;	.endef
-	.seh_proc	main
 main:
 	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$56, %rsp
-	.seh_stackalloc	56
-	.seh_endprologue
 	movl	%ecx, %esi
+	pushq	%rbx
 	movq	%rdx, %rbx
+	subq	$56, %rsp
 	call	__main
 	decl	%esi
 	jg	.L2
@@ -41,7 +36,6 @@ main:
 	popq	%rbx
 	popq	%rsi
 	ret
-	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	__getreent;	.scl	2;	.type	32;	.endef
 	.def	fprintf;	.scl	2;	.type	32;	.endef

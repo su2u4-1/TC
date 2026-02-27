@@ -3,7 +3,7 @@
  ;	compiled by GNU C version 13.2.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
  ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
- ; options passed: -mtune=generic -march=nocona -O0
+ ; options passed: -mtune=generic -march=nocona -O0 -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt
 	.text
 	.section .rdata,"dr"
 	.align 8
@@ -21,15 +21,10 @@
 	.text
 	.globl	parse_code
 	.def	parse_code;	.scl	2;	.type	32;	.endef
-	.seh_proc	parse_code
 parse_code:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$112, %rsp	 ;,
-	.seh_stackalloc	112
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -326,10 +321,8 @@ parse_code:
 	movq	%rax, %rcx	 ; tmp181,
 	call	create_code	 ;
  ; D:\TC\src\parser.c:61: }
-	addq	$112, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC4:
@@ -342,15 +335,10 @@ parse_code:
 	.ascii "Expected ';' at end of import statement\0"
 	.text
 	.def	parse_import;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_import
 parse_import:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$96, %rsp	 ;,
-	.seh_stackalloc	96
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
  ; D:\TC\src\parser.c:66:     Token* token = 0;
@@ -510,10 +498,8 @@ parse_import:
 	call	create_import	 ;
 .L17:
  ; D:\TC\src\parser.c:98: }
-	addq	$96, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC7:
@@ -549,15 +535,10 @@ parse_import:
 	.ascii "Function missing return statement\0"
 	.text
 	.def	parse_function;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_function
 parse_function:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	addq	$-128, %rsp	 ;,
-	.seh_stackalloc	128
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -991,10 +972,8 @@ parse_function:
 	call	create_function	 ;
 .L26:
  ; D:\TC\src\parser.c:180: }
-	subq	$-128, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC18:
@@ -1031,15 +1010,10 @@ parse_function:
 	.ascii "Method missing return statement\0"
 	.text
 	.def	parse_method;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_method
 parse_method:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$144, %rsp	 ;,
-	.seh_stackalloc	144
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; class_name, class_name
@@ -1538,10 +1512,8 @@ parse_method:
 	call	create_method	 ;
 .L50:
  ; D:\TC\src\parser.c:269: }
-	addq	$144, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC29:
@@ -1562,15 +1534,10 @@ parse_method:
 	.ascii "Unexpected token in class member\0"
 	.text
 	.def	parse_class;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_class
 parse_class:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$112, %rsp	 ;,
-	.seh_stackalloc	112
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -1856,10 +1823,8 @@ parse_class:
 	call	create_class	 ;
 .L77:
  ; D:\TC\src\parser.c:316: }
-	addq	$112, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC35:
 	.ascii "Expected variable type\0"
@@ -1875,15 +1840,10 @@ parse_class:
 	.ascii "Failed to parse variable initializer\0"
 	.text
 	.def	parse_variable;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_variable
 parse_variable:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$96, %rsp	 ;,
-	.seh_stackalloc	96
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -2076,10 +2036,8 @@ parse_variable:
 	call	create_variable	 ;
 .L93:
  ; D:\TC\src\parser.c:354: }
-	addq	$96, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC40:
@@ -2093,15 +2051,10 @@ parse_variable:
 	.ascii "Expected ';' after statement\0"
 	.text
 	.def	parse_statement;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_statement
 parse_statement:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp	 ;,
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -2440,10 +2393,8 @@ parse_statement:
 	movq	-8(%rbp), %rax	 ; statement, _37
 .L101:
  ; D:\TC\src\parser.c:406: }
-	addq	$80, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC44:
 	.ascii "Expected '(' after 'if'\0"
@@ -2479,15 +2430,10 @@ parse_statement:
 	.ascii "Failed to parse else body statement\0"
 	.text
 	.def	parse_if;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_if
 parse_if:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	addq	$-128, %rsp	 ;,
-	.seh_stackalloc	128
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -3099,10 +3045,8 @@ parse_if:
 	call	create_if	 ;
 .L117:
  ; D:\TC\src\parser.c:515: }
-	subq	$-128, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC56:
 	.ascii "Expected '(' after 'for'\0"
@@ -3132,15 +3076,10 @@ parse_if:
 	.ascii "Failed to parse for loop body statement\0"
 	.text
 	.def	parse_for;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_for
 parse_for:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$96, %rsp	 ;,
-	.seh_stackalloc	96
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -3550,10 +3489,8 @@ parse_for:
 	call	create_for	 ;
 .L148:
  ; D:\TC\src\parser.c:596: }
-	addq	$96, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC65:
 	.ascii "Expected '(' after 'while'\0"
@@ -3571,15 +3508,10 @@ parse_for:
 	.ascii "Failed to parse while body statement\0"
 	.text
 	.def	parse_while;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_while
 parse_while:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp	 ;,
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -3799,24 +3731,17 @@ parse_while:
 	call	create_while	 ;
 .L172:
  ; D:\TC\src\parser.c:640: }
-	addq	$80, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC70:
 	.ascii "Failed to parse right operand\0"
 	.text
 	.def	parse_expr_prec;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_expr_prec
 parse_expr_prec:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$96, %rsp	 ;,
-	.seh_stackalloc	96
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; expr_left, expr_left
 	movl	%r8d, 32(%rbp)	 ; min_prec, min_prec
@@ -4004,25 +3929,18 @@ parse_expr_prec:
 	movq	24(%rbp), %rax	 ; expr_left, _9
 .L185:
  ; D:\TC\src\parser.c:684: }
-	addq	$96, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC71:
 	.ascii "Failed to parse expression primary\0"
 	.text
 	.def	parse_expression;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_expression
 parse_expression:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$64, %rsp	 ;,
-	.seh_stackalloc	64
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -4070,10 +3988,8 @@ parse_expression:
 	call	parse_expr_prec	 ;
 .L193:
  ; D:\TC\src\parser.c:695: }
-	addq	$64, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC72:
@@ -4094,15 +4010,10 @@ parse_expression:
 	.ascii "Unexpected token in primary expression\0"
 	.text
 	.def	parse_primary;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_primary
 parse_primary:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$112, %rsp	 ;,
-	.seh_stackalloc	112
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -4472,10 +4383,8 @@ parse_primary:
 	call	create_primary	 ;
 .L203:
  ; D:\TC\src\parser.c:769: }
-	addq	$112, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC78:
@@ -4508,15 +4417,10 @@ parse_primary:
 	.ascii "Unknown attribute name\0"
 	.text
 	.def	parse_variable_access;	.scl	3;	.type	32;	.endef
-	.seh_proc	parse_variable_access
 parse_variable_access:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$144, %rsp	 ;,
-	.seh_stackalloc	144
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
@@ -5070,10 +4974,8 @@ parse_variable_access:
 	movq	-48(%rbp), %rax	 ; base, _57
 .L217:
  ; D:\TC\src\parser.c:873: }
-	addq	$144, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	create_scope;	.scl	2;	.type	32;	.endef
 	.def	create_name;	.scl	2;	.type	32;	.endef

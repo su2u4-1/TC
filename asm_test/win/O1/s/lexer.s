@@ -1,9 +1,7 @@
 	.file	"D:\\TC\\src\\lexer.c"
 	.text
 	.def	get_current_char;	.scl	3;	.type	32;	.endef
-	.seh_proc	get_current_char
 get_current_char:
-	.seh_endprologue
 	movq	8(%rcx), %rax
 	movl	$0, %edx
 	cmpq	16(%rcx), %rax
@@ -16,21 +14,13 @@ get_current_char:
 .L1:
 	movl	%edx, %eax
 	ret
-	.seh_endproc
 	.def	create_token;	.scl	3;	.type	32;	.endef
-	.seh_proc	create_token
 create_token:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movl	%ecx, %ebp
 	movq	%rdx, %rdi
 	movq	%r8, %rsi
@@ -47,24 +37,17 @@ create_token:
 	popq	%rdi
 	popq	%rbp
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC0:
 	.ascii "Lexer Error at Line %zu, Column %zu: %s\12\0"
 	.text
 	.def	lexer_error;	.scl	3;	.type	32;	.endef
-	.seh_proc	lexer_error
 lexer_error:
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, %rdi
 	movq	%rdx, %rbx
 	movq	%r8, %rsi
@@ -75,13 +58,11 @@ lexer_error:
 	leaq	1(%rbx), %r8
 	leaq	.LC0(%rip), %rdx
 	call	fprintf
-	nop
 	addq	$48, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC1:
 	.ascii "Unterminated string literal\0"
@@ -95,77 +76,68 @@ lexer_error:
 	.ascii "Unexpected character\0"
 	.text
 	.def	next_token;	.scl	3;	.type	32;	.endef
-	.seh_proc	next_token
 next_token:
 	pushq	%r13
-	.seh_pushreg	%r13
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movq	%rcx, %rbx
 	movl	%edx, %esi
 	call	get_current_char
 	cmpb	$32, %al
-	ja	.L7
+	ja	.L9
 	movzbl	%al, %edx
-	leaq	.L9(%rip), %rcx
+	leaq	.L11(%rip), %rcx
 	movslq	(%rcx,%rdx,4), %rdx
 	addq	%rcx, %rdx
 	jmp	*%rdx
 	.section .rdata,"dr"
 	.align 4
-.L9:
-	.long	.L11-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L8-.L9
-	.long	.L10-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L8-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L7-.L9
-	.long	.L8-.L9
-	.text
 .L11:
+	.long	.L13-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L10-.L11
+	.long	.L12-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L10-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L9-.L11
+	.long	.L10-.L11
+	.text
+.L13:
 	movq	32(%rbx), %r9
 	movq	24(%rbx), %r8
 	movl	$0, %edx
 	movl	$0, %ecx
 	call	create_token
-.L6:
+.L8:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -174,25 +146,25 @@ next_token:
 	popq	%r12
 	popq	%r13
 	ret
-.L8:
+.L10:
 	movsbl	%sil, %edx
 	movq	%rbx, %rcx
 	call	next_token
-	jmp	.L6
-.L10:
+	jmp	.L8
+.L12:
 	addq	$1, 24(%rbx)
 	movq	$0, 32(%rbx)
 	movsbl	%sil, %edx
 	movq	%rbx, %rcx
 	call	next_token
-	jmp	.L6
-.L7:
+	jmp	.L8
+.L9:
 	cmpb	$57, %al
-	jg	.L13
+	jg	.L15
 	cmpb	$47, %al
-	jg	.L14
+	jg	.L16
 	cmpb	$34, %al
-	jne	.L100
+	jne	.L103
 	movq	8(%rbx), %rdi
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r12
@@ -200,30 +172,30 @@ next_token:
 	call	get_current_char
 	movl	%eax, %esi
 	cmpb	$34, %al
-	ja	.L29
+	ja	.L31
 	movabsq	$17179870209, %rax
 	btq	%rsi, %rax
-	jc	.L30
-.L29:
+	jc	.L32
+.L31:
 	movabsq	$17179870209, %rbp
-.L94:
+.L96:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movl	%eax, %esi
 	cmpb	$34, %al
-	ja	.L94
+	ja	.L96
 	btq	%rsi, %rbp
-	jnc	.L94
-.L30:
+	jnc	.L96
+.L32:
 	cmpb	$34, %sil
-	je	.L32
+	je	.L34
 	movq	24(%rbx), %rdx
 	leaq	-1(%rdi), %r8
 	leaq	.LC1(%rip), %rcx
 	call	lexer_error
 	cmpb	$10, %sil
-	je	.L101
-.L33:
+	je	.L104
+.L35:
 	movq	24(%rbx), %rsi
 	movq	%rdi, %rdx
 	notq	%rdx
@@ -236,35 +208,35 @@ next_token:
 	movq	%rsi, %r8
 	movl	$4, %ecx
 	call	create_token
-	jmp	.L6
-.L13:
+	jmp	.L8
+.L15:
 	leal	-65(%rax), %edx
 	cmpb	$57, %dl
-	ja	.L18
+	ja	.L20
 	movabsq	$288230372997595135, %rcx
 	btq	%rdx, %rcx
-	jnc	.L18
+	jnc	.L20
 	movq	8(%rbx), %r12
 	leaq	-1(%r12), %rbp
 	movq	32(%rbx), %rdi
 	subq	$1, %rdi
 	movabsq	$288230372997595135, %rsi
-	jmp	.L20
-.L102:
+	jmp	.L22
+.L105:
 	cmpb	$47, %al
-	jle	.L23
-.L22:
+	jle	.L25
+.L24:
 	movq	%rbx, %rcx
 	call	get_current_char
-.L20:
+.L22:
 	cmpb	$57, %al
-	jle	.L102
+	jle	.L105
 	subl	$65, %eax
 	cmpb	$57, %al
-	ja	.L23
+	ja	.L25
 	btq	%rax, %rsi
-	jc	.L22
-.L23:
+	jc	.L24
+.L25:
 	movq	8(%rbx), %rdx
 	leaq	-1(%rdx), %rax
 	movq	%rax, 8(%rbx)
@@ -277,38 +249,38 @@ next_token:
 	movq	%rax, %rcx
 	call	is_keyword
 	testb	%al, %al
-	je	.L25
+	je	.L27
 	movq	%rdi, %r9
 	movq	24(%rbx), %r8
 	movq	%rsi, %rdx
 	movl	$6, %ecx
 	call	create_token
-	jmp	.L6
-.L25:
+	jmp	.L8
+.L27:
 	movq	%rdi, %r9
 	movq	24(%rbx), %r8
 	movq	%rsi, %rdx
 	movl	$1, %ecx
 	call	create_token
-	jmp	.L6
-.L14:
+	jmp	.L8
+.L16:
 	movq	8(%rbx), %rbp
 	leaq	-1(%rbp), %rdi
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %rsi
-.L26:
+.L28:
 	movq	%rbx, %rcx
 	call	get_current_char
 	leal	-48(%rax), %edx
 	cmpb	$9, %dl
-	jbe	.L26
+	jbe	.L28
 	movq	8(%rbx), %rdx
 	movl	$2, %r12d
 	cmpq	16(%rbx), %rdx
-	jnb	.L27
+	jnb	.L29
 	cmpb	$46, %al
-	je	.L103
-.L27:
+	je	.L106
+.L29:
 	movq	8(%rbx), %rdx
 	leaq	-1(%rdx), %rax
 	movq	%rax, 8(%rbx)
@@ -323,34 +295,34 @@ next_token:
 	movq	%r13, %r8
 	movl	%r12d, %ecx
 	call	create_token
-	jmp	.L6
-.L103:
+	jmp	.L8
+.L106:
 	movq	(%rbx), %rax
 	movzbl	(%rax,%rdx), %eax
 	subl	$48, %eax
 	cmpb	$9, %al
-	ja	.L27
+	ja	.L29
 	movq	%rbx, %rcx
 	call	get_current_char
 	subl	$48, %eax
 	cmpb	$9, %al
-	ja	.L87
-.L28:
+	ja	.L89
+.L30:
 	movq	%rbx, %rcx
 	call	get_current_char
 	subl	$48, %eax
 	cmpb	$9, %al
-	jbe	.L28
+	jbe	.L30
 	movl	$3, %r12d
-	jmp	.L27
-.L87:
+	jmp	.L29
+.L89:
 	movl	$3, %r12d
-	jmp	.L27
-.L101:
+	jmp	.L29
+.L104:
 	addq	$1, 24(%rbx)
 	movq	$0, 32(%rbx)
-	jmp	.L33
-.L32:
+	jmp	.L35
+.L34:
 	movq	24(%rbx), %rsi
 	movq	%rdi, %rdx
 	notq	%rdx
@@ -363,40 +335,40 @@ next_token:
 	movq	%rsi, %r8
 	movl	$4, %ecx
 	call	create_token
-	jmp	.L6
-.L100:
+	jmp	.L8
+.L103:
 	movq	8(%rbx), %rbp
 	movq	16(%rbx), %rdi
 	cmpq	%rdi, %rbp
-	jnb	.L34
+	jnb	.L36
 	movq	(%rbx), %r12
 	movzbl	(%r12,%rbp), %edx
 	cmpb	$47, %al
 	sete	%cl
 	cmpb	$47, %dl
-	jne	.L35
+	jne	.L37
 	testb	%cl, %cl
-	je	.L35
+	je	.L37
 	movq	32(%rbx), %rdi
-.L36:
+.L38:
 	movq	%rbx, %rcx
 	call	get_current_char
 	cmpb	$10, %al
-	je	.L89
+	je	.L91
 	testb	%al, %al
-	jne	.L36
-.L89:
+	jne	.L38
+.L91:
 	movq	8(%rbx), %rax
 	leaq	-1(%rax), %rdx
 	movq	%rdx, 8(%rbx)
 	subq	$1, 32(%rbx)
 	testb	%sil, %sil
-	je	.L38
+	je	.L40
 	movsbl	%sil, %edx
 	movq	%rbx, %rcx
 	call	next_token
-	jmp	.L6
-.L38:
+	jmp	.L8
+.L40:
 	addq	$1, %rbp
 	movq	24(%rbx), %rbx
 	subq	%rbp, %rdx
@@ -407,31 +379,31 @@ next_token:
 	movq	%rbx, %r8
 	movl	$7, %ecx
 	call	create_token
-	jmp	.L6
-.L44:
+	jmp	.L8
+.L46:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	8(%rbx), %rdx
 	cmpq	%rdi, %rdx
-	jnb	.L41
+	jnb	.L43
 	movq	(%rbx), %rcx
 	movzbl	(%rcx,%rdx), %edx
 	cmpb	$10, %al
-	je	.L78
-.L42:
+	je	.L80
+.L44:
 	testb	%dl, %dl
-	je	.L43
+	je	.L45
 	testb	%al, %al
-	je	.L104
-.L40:
+	je	.L107
+.L42:
 	cmpb	$42, %al
-	jne	.L44
+	jne	.L46
 	cmpb	$47, %dl
-	jne	.L44
+	jne	.L46
 	movq	%rbx, %rcx
 	call	get_current_char
 	testb	%sil, %sil
-	jne	.L81
+	jne	.L83
 	movq	24(%rbx), %rsi
 	movq	8(%rbx), %rax
 	leaq	-2(%rax), %rdx
@@ -444,18 +416,18 @@ next_token:
 	movq	%rsi, %r8
 	movl	$7, %ecx
 	call	create_token
-	jmp	.L6
-.L104:
+	jmp	.L8
+.L107:
 	leaq	.LC2(%rip), %r9
 	leaq	__func__.0(%rip), %r8
 	movl	$125, %edx
 	leaq	.LC3(%rip), %rcx
 	call	__assert_func
-.L105:
+.L108:
 	subq	$1, 8(%rbx)
 	subq	$1, 32(%rbx)
-	jmp	.L80
-.L46:
+	jmp	.L82
+.L48:
 	movq	24(%rbx), %rsi
 	movq	8(%rbx), %rdx
 	subq	%rbp, %rdx
@@ -467,13 +439,13 @@ next_token:
 	movq	%rsi, %r8
 	movl	$7, %ecx
 	call	create_token
-	jmp	.L6
-.L81:
+	jmp	.L8
+.L83:
 	movsbl	%sil, %edx
 	movq	%rbx, %rcx
 	call	next_token
-	jmp	.L6
-.L107:
+	jmp	.L8
+.L110:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	32(%rbx), %rax
@@ -483,8 +455,8 @@ next_token:
 	movq	24(%rbx), %r8
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L108:
+	jmp	.L8
+.L111:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	32(%rbx), %rax
@@ -494,8 +466,8 @@ next_token:
 	movq	24(%rbx), %r8
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L109:
+	jmp	.L8
+.L112:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	32(%rbx), %rax
@@ -505,8 +477,8 @@ next_token:
 	movq	24(%rbx), %r8
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L110:
+	jmp	.L8
+.L113:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	32(%rbx), %rax
@@ -516,8 +488,8 @@ next_token:
 	movq	24(%rbx), %r8
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L111:
+	jmp	.L8
+.L114:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	32(%rbx), %rax
@@ -527,8 +499,8 @@ next_token:
 	movq	24(%rbx), %r8
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L112:
+	jmp	.L8
+.L115:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	32(%rbx), %rax
@@ -538,8 +510,8 @@ next_token:
 	movq	24(%rbx), %r8
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L113:
+	jmp	.L8
+.L116:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	32(%rbx), %rax
@@ -549,8 +521,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L114:
+	jmp	.L8
+.L117:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	32(%rbx), %rax
@@ -560,8 +532,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L115:
+	jmp	.L8
+.L118:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	32(%rbx), %rax
@@ -571,8 +543,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L116:
+	jmp	.L8
+.L119:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	32(%rbx), %rax
@@ -582,8 +554,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L117:
+	jmp	.L8
+.L120:
 	movq	%rbx, %rcx
 	call	get_current_char
 	movq	32(%rbx), %rax
@@ -593,8 +565,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L75:
+	jmp	.L8
+.L77:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -602,8 +574,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L74:
+	jmp	.L8
+.L76:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -611,8 +583,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L61:
+	jmp	.L8
+.L63:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -620,8 +592,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L59:
+	jmp	.L8
+.L61:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -629,8 +601,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L71:
+	jmp	.L8
+.L73:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -638,8 +610,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L77:
+	jmp	.L8
+.L79:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -647,8 +619,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L69:
+	jmp	.L8
+.L71:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -656,8 +628,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L63:
+	jmp	.L8
+.L65:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -665,8 +637,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L62:
+	jmp	.L8
+.L64:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -674,8 +646,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L67:
+	jmp	.L8
+.L69:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -683,8 +655,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L72:
+	jmp	.L8
+.L74:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -692,8 +664,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L70:
+	jmp	.L8
+.L72:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -701,8 +673,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L73:
+	jmp	.L8
+.L75:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -710,8 +682,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L68:
+	jmp	.L8
+.L70:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -719,8 +691,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L76:
+	jmp	.L8
+.L78:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -728,8 +700,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L66:
+	jmp	.L8
+.L68:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -737,8 +709,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L64:
+	jmp	.L8
+.L66:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -746,8 +718,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L65:
+	jmp	.L8
+.L67:
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r9
 	movq	24(%rbx), %r8
@@ -755,8 +727,8 @@ next_token:
 	movq	(%rax), %rdx
 	movl	$5, %ecx
 	call	create_token
-	jmp	.L6
-.L58:
+	jmp	.L8
+.L60:
 	movq	32(%rbx), %rax
 	movq	24(%rbx), %rdx
 	leaq	-1(%rax), %r8
@@ -767,229 +739,223 @@ next_token:
 	movl	$0, %edx
 	movl	$0, %ecx
 	call	create_token
-	jmp	.L6
-.L41:
+	jmp	.L8
+.L43:
 	cmpb	$10, %al
-	jne	.L43
+	jne	.L45
 	movl	%r12d, %edx
-.L78:
+.L80:
 	addq	$1, 24(%rbx)
 	movq	$0, 32(%rbx)
-	jmp	.L42
-.L43:
+	jmp	.L44
+.L45:
 	testb	%al, %al
-	je	.L105
-.L80:
+	je	.L108
+.L82:
 	movq	24(%rbx), %rdx
 	movq	%rbp, %r8
 	leaq	.LC4(%rip), %rcx
 	call	lexer_error
 	testb	%sil, %sil
-	je	.L46
+	je	.L48
 	movsbl	%sil, %edx
 	movq	%rbx, %rcx
 	call	next_token
-	jmp	.L6
-.L106:
+	jmp	.L8
+.L109:
 	movq	(%rbx), %rdx
 	movzbl	(%rdx,%rbp), %edx
 	cmpb	$47, %al
 	sete	%cl
-.L35:
+.L37:
 	cmpb	$42, %dl
-	jne	.L39
+	jne	.L41
 	testb	%cl, %cl
-	je	.L39
+	je	.L41
 	addq	$1, %rbp
 	movq	32(%rbx), %rax
 	leaq	-1(%rax), %r13
 	movl	$47, %eax
 	movl	$0, %r12d
-	jmp	.L40
-.L18:
+	jmp	.L42
+.L20:
 	movq	8(%rbx), %rbp
 	movq	16(%rbx), %rdi
 	cmpq	%rdi, %rbp
-	jb	.L106
-.L34:
+	jb	.L109
+.L36:
 	cmpb	$47, %al
 	sete	%cl
 	movl	$0, %edx
-.L39:
+.L41:
 	cmpb	$61, %dl
 	sete	%r8b
 	cmpb	$61, %al
-	jne	.L47
-	testb	%r8b, %r8b
-	jne	.L107
-.L47:
-	cmpb	$33, %al
-	jne	.L48
-	testb	%r8b, %r8b
-	jne	.L108
-.L48:
-	cmpb	$60, %al
 	jne	.L49
 	testb	%r8b, %r8b
-	jne	.L109
+	jne	.L110
 .L49:
-	cmpb	$62, %al
+	cmpb	$33, %al
 	jne	.L50
 	testb	%r8b, %r8b
-	jne	.L110
+	jne	.L111
 .L50:
-	cmpb	$43, %al
+	cmpb	$60, %al
 	jne	.L51
 	testb	%r8b, %r8b
-	jne	.L111
+	jne	.L112
 .L51:
-	cmpb	$45, %al
+	cmpb	$62, %al
 	jne	.L52
 	testb	%r8b, %r8b
-	jne	.L112
+	jne	.L113
 .L52:
-	cmpb	$42, %al
+	cmpb	$43, %al
 	jne	.L53
 	testb	%r8b, %r8b
-	jne	.L113
-.L53:
-	testb	%r8b, %r8b
-	je	.L54
-	testb	%cl, %cl
 	jne	.L114
-.L54:
-	cmpb	$37, %al
-	jne	.L55
+.L53:
+	cmpb	$45, %al
+	jne	.L54
 	testb	%r8b, %r8b
 	jne	.L115
+.L54:
+	cmpb	$42, %al
+	jne	.L55
+	testb	%r8b, %r8b
+	jne	.L116
 .L55:
-	cmpb	$38, %al
-	jne	.L56
-	cmpb	$38, %dl
-	je	.L116
+	testb	%r8b, %r8b
+	je	.L56
+	testb	%cl, %cl
+	jne	.L117
 .L56:
-	cmpb	$124, %al
+	cmpb	$37, %al
 	jne	.L57
-	cmpb	$124, %dl
-	je	.L117
+	testb	%r8b, %r8b
+	jne	.L118
 .L57:
+	cmpb	$38, %al
+	jne	.L58
+	cmpb	$38, %dl
+	je	.L119
+.L58:
+	cmpb	$124, %al
+	jne	.L59
+	cmpb	$124, %dl
+	je	.L120
+.L59:
 	subl	$33, %eax
 	cmpb	$92, %al
-	ja	.L58
+	ja	.L60
 	movzbl	%al, %eax
-	leaq	.L60(%rip), %rdx
+	leaq	.L62(%rip), %rdx
 	movslq	(%rdx,%rax,4), %rax
 	addq	%rdx, %rax
 	jmp	*%rax
 	.section .rdata,"dr"
 	.align 4
-.L60:
-	.long	.L77-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L76-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L75-.L60
-	.long	.L74-.L60
-	.long	.L73-.L60
-	.long	.L72-.L60
-	.long	.L71-.L60
-	.long	.L70-.L60
-	.long	.L69-.L60
-	.long	.L68-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L67-.L60
-	.long	.L66-.L60
-	.long	.L65-.L60
-	.long	.L64-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L63-.L60
-	.long	.L58-.L60
-	.long	.L62-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L58-.L60
-	.long	.L61-.L60
-	.long	.L58-.L60
-	.long	.L59-.L60
+.L62:
+	.long	.L79-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L78-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L77-.L62
+	.long	.L76-.L62
+	.long	.L75-.L62
+	.long	.L74-.L62
+	.long	.L73-.L62
+	.long	.L72-.L62
+	.long	.L71-.L62
+	.long	.L70-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L69-.L62
+	.long	.L68-.L62
+	.long	.L67-.L62
+	.long	.L66-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L65-.L62
+	.long	.L60-.L62
+	.long	.L64-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L60-.L62
+	.long	.L63-.L62
+	.long	.L60-.L62
+	.long	.L61-.L62
 	.text
-	.seh_endproc
 	.globl	create_lexer
 	.def	create_lexer;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_lexer
 create_lexer:
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movq	%rcx, %rsi
 	movq	%rdx, %rbx
 	movl	$80, %ecx
@@ -1008,20 +974,15 @@ create_lexer:
 	popq	%rbx
 	popq	%rsi
 	ret
-	.seh_endproc
 	.globl	get_next_token
 	.def	get_next_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	get_next_token
 get_next_token:
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
 	movq	%rcx, %rbx
 	movq	40(%rcx), %rax
 	testq	%rax, %rax
-	je	.L120
+	je	.L124
 	movq	%rax, 72(%rcx)
 	movq	48(%rcx), %rdx
 	movq	%rdx, 8(%rcx)
@@ -1030,43 +991,29 @@ get_next_token:
 	movq	64(%rcx), %rdx
 	movq	%rdx, 32(%rcx)
 	movq	$0, 40(%rcx)
-.L119:
+.L123:
 	addq	$32, %rsp
 	popq	%rbx
 	ret
-.L120:
+.L124:
 	movsbl	%dl, %edx
 	call	next_token
 	movq	%rax, 72(%rbx)
-	jmp	.L119
-	.seh_endproc
+	jmp	.L123
 	.globl	peek_next_token
 	.def	peek_next_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	peek_next_token
 peek_next_token:
-	pushq	%rbp
-	.seh_pushreg	%rbp
-	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movq	%rcx, %rbx
 	movq	40(%rcx), %rax
 	testq	%rax, %rax
-	je	.L124
-.L122:
-	addq	$40, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbp
+	je	.L133
 	ret
-.L124:
+.L133:
+	pushq	%rbp
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rbx
+	subq	$40, %rsp
+	movq	%rcx, %rbx
 	movq	8(%rcx), %rbp
 	movq	24(%rcx), %rdi
 	movq	32(%rcx), %rsi
@@ -1082,21 +1029,20 @@ peek_next_token:
 	movq	%rdi, 24(%rbx)
 	movq	%rsi, 32(%rbx)
 	movq	%rax, 40(%rbx)
-	jmp	.L122
-	.seh_endproc
+	addq	$40, %rsp
+	popq	%rbx
+	popq	%rsi
+	popq	%rdi
+	popq	%rbp
+	ret
 	.globl	peek_current_token
 	.def	peek_current_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	peek_current_token
 peek_current_token:
-	.seh_endprologue
 	movq	72(%rcx), %rax
 	ret
-	.seh_endproc
 	.globl	reset_lexer
 	.def	reset_lexer;	.scl	2;	.type	32;	.endef
-	.seh_proc	reset_lexer
 reset_lexer:
-	.seh_endprologue
 	movq	$0, 8(%rcx)
 	movq	$0, 24(%rcx)
 	movq	$0, 32(%rcx)
@@ -1106,7 +1052,6 @@ reset_lexer:
 	movq	$0, 64(%rcx)
 	movq	$0, 72(%rcx)
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

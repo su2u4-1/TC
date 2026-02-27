@@ -2,8 +2,6 @@
 	.text
 	.type	get_current_char, @function
 get_current_char:
-.LFB68:
-	.cfi_startproc
 	movq	8(%rdi), %rax
 	movl	$0, %edx
 	cmpq	16(%rdi), %rax
@@ -16,50 +14,30 @@ get_current_char:
 .L1:
 	movl	%edx, %eax
 	ret
-	.cfi_endproc
-.LFE68:
 	.size	get_current_char, .-get_current_char
 	.type	create_token, @function
 create_token:
-.LFB66:
-	.cfi_startproc
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
 	movl	%edi, %r13d
 	movq	%rsi, %r12
 	movq	%rdx, %rbp
 	movq	%rcx, %rbx
 	movl	$32, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movl	%r13d, 24(%rax)
 	movq	%r12, (%rax)
 	movq	%rbp, 8(%rax)
 	movq	%rbx, 16(%rax)
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 40
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE66:
 	.size	create_token, .-create_token
 	.section	.rodata.str1.8,"aMS",@progbits,1
 	.align 8
@@ -68,10 +46,7 @@ create_token:
 	.text
 	.type	lexer_error, @function
 lexer_error:
-.LFB67:
-	.cfi_startproc
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 16
 	movq	%rdi, %r9
 	leaq	1(%rsi), %rcx
 	leaq	1(%rdx), %r8
@@ -79,12 +54,9 @@ lexer_error:
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE67:
 	.size	lexer_error, .-lexer_error
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC1:
@@ -100,28 +72,13 @@ lexer_error:
 	.text
 	.type	next_token, @function
 next_token:
-.LFB72:
-	.cfi_startproc
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 64
 	movq	%rdi, %rbx
 	movl	%esi, %ebp
 	call	get_current_char
@@ -131,7 +88,7 @@ next_token:
 	leaq	.L11(%rip), %rcx
 	movslq	(%rcx,%rdx,4), %rdx
 	addq	%rcx, %rdx
-	notrack jmp	*%rdx
+	jmp	*%rdx
 	.section	.rodata
 	.align 4
 	.align 4
@@ -178,23 +135,14 @@ next_token:
 	call	create_token
 .L8:
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 .L10:
-	.cfi_restore_state
 	movsbl	%bpl, %esi
 	movq	%rbx, %rdi
 	call	next_token
@@ -250,7 +198,7 @@ next_token:
 	addq	8(%rbx), %rsi
 	movq	%r12, %rdi
 	addq	(%rbx), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
 	movq	%r14, %rcx
 	movq	%rbp, %rdx
@@ -292,10 +240,10 @@ next_token:
 	subq	%r14, %rsi
 	movq	%r13, %rdi
 	addq	(%rbx), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rbp
 	movq	%rax, %rdi
-	call	is_keyword@PLT
+	call	*is_keyword@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L27
 	movq	24(%rbx), %rdx
@@ -337,7 +285,7 @@ next_token:
 	subq	%r13, %rsi
 	movq	%r12, %rdi
 	addq	(%rbx), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
 	movq	%rbp, %rcx
 	movq	%r15, %rdx
@@ -377,7 +325,7 @@ next_token:
 	addq	8(%rbx), %rsi
 	movq	%r12, %rdi
 	addq	(%rbx), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
 	movq	%r14, %rcx
 	movq	%rbp, %rdx
@@ -421,7 +369,7 @@ next_token:
 	movq	24(%rbx), %rbx
 	subq	%r13, %rsi
 	leaq	(%r14,%r13), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
 	leaq	-1(%r12), %rcx
 	movq	%rbx, %rdx
@@ -458,7 +406,7 @@ next_token:
 	subq	%r13, %rsi
 	movq	%r13, %rdi
 	addq	(%rbx), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
 	movq	%r15, %rcx
 	movq	%rbp, %rdx
@@ -470,7 +418,7 @@ next_token:
 	movl	$125, %edx
 	leaq	.LC2(%rip), %rsi
 	leaq	.LC3(%rip), %rdi
-	call	__assert_fail@PLT
+	call	*__assert_fail@GOTPCREL(%rip)
 .L108:
 	subq	$1, 8(%rbx)
 	subq	$1, 32(%rbx)
@@ -481,7 +429,7 @@ next_token:
 	subq	%r13, %rsi
 	movq	%r13, %rdi
 	addq	(%rbx), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
 	movq	%r15, %rcx
 	movq	%rbp, %rdx
@@ -871,7 +819,7 @@ next_token:
 	leaq	.L62(%rip), %rdx
 	movslq	(%rdx,%rax,4), %rax
 	addq	%rdx, %rax
-	notrack jmp	*%rax
+	jmp	*%rax
 	.section	.rodata
 	.align 4
 	.align 4
@@ -970,27 +918,17 @@ next_token:
 	.long	.L60-.L62
 	.long	.L61-.L62
 	.text
-	.cfi_endproc
-.LFE72:
 	.size	next_token, .-next_token
 	.globl	create_lexer
 	.type	create_lexer, @function
 create_lexer:
-.LFB65:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	pushq	%rbx
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 32
 	movq	%rdi, %rbp
 	movq	%rsi, %rbx
 	movl	$80, %edi
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbp, (%rax)
 	movq	$0, 8(%rax)
 	movq	%rbx, 16(%rax)
@@ -1002,24 +940,14 @@ create_lexer:
 	movq	$0, 64(%rax)
 	movq	$0, 72(%rax)
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 24
 	popq	%rbx
-	.cfi_def_cfa_offset 16
 	popq	%rbp
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE65:
 	.size	create_lexer, .-create_lexer
 	.globl	get_next_token
 	.type	get_next_token, @function
 get_next_token:
-.LFB73:
-	.cfi_startproc
-	endbr64
 	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
 	movq	%rdi, %rbx
 	movq	40(%rdi), %rax
 	testq	%rax, %rax
@@ -1034,43 +962,26 @@ get_next_token:
 	movq	$0, 40(%rdi)
 .L123:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 8
 	ret
 .L124:
-	.cfi_restore_state
 	movsbl	%sil, %esi
 	call	next_token
 	movq	%rax, 72(%rbx)
 	jmp	.L123
-	.cfi_endproc
-.LFE73:
 	.size	get_next_token, .-get_next_token
 	.globl	peek_next_token
 	.type	peek_next_token, @function
 peek_next_token:
-.LFB74:
-	.cfi_startproc
-	endbr64
 	movq	40(%rdi), %rax
 	testq	%rax, %rax
 	je	.L133
 	ret
 .L133:
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
 	movq	%rdi, %rbx
 	movq	8(%rdi), %r13
 	movq	24(%rdi), %r12
@@ -1088,36 +999,21 @@ peek_next_token:
 	movq	%rbp, 32(%rbx)
 	movq	%rax, 40(%rbx)
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 40
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE74:
 	.size	peek_next_token, .-peek_next_token
 	.globl	peek_current_token
 	.type	peek_current_token, @function
 peek_current_token:
-.LFB75:
-	.cfi_startproc
-	endbr64
 	movq	72(%rdi), %rax
 	ret
-	.cfi_endproc
-.LFE75:
 	.size	peek_current_token, .-peek_current_token
 	.globl	reset_lexer
 	.type	reset_lexer, @function
 reset_lexer:
-.LFB76:
-	.cfi_startproc
-	endbr64
 	movq	$0, 8(%rdi)
 	movq	$0, 24(%rdi)
 	movq	$0, 32(%rdi)
@@ -1127,8 +1023,6 @@ reset_lexer:
 	movq	$0, 64(%rdi)
 	movq	$0, 72(%rdi)
 	ret
-	.cfi_endproc
-.LFE76:
 	.size	reset_lexer, .-reset_lexer
 	.section	.rodata
 	.align 8
@@ -1138,19 +1032,3 @@ __PRETTY_FUNCTION__.0:
 	.string	"next_token"
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

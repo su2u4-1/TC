@@ -3,7 +3,7 @@
 ;	compiled by GNU C version 13.3.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
 ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-; options passed: -mtune=generic -march=x86-64 -Os -fasynchronous-unwind-tables -fstack-protector-strong -fstack-clash-protection -fcf-protection
+; options passed: -mtune=generic -march=x86-64 -Os -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -fstack-clash-protection
 	.text
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC0:
@@ -14,32 +14,20 @@
 	.globl	create_code_member
 	.type	create_code_member, @function
 create_code_member:
-.LFB50:
-	.cfi_startproc
-	endbr64	
 	pushq	%r13	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	movq	%rdx, %r13	; tmp121, function_content
 	pushq	%r12	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	movq	%rsi, %r12	; tmp120, import_content
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	movq	%rcx, %rbp	; tmp122, class_content
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	movl	%edi, %ebx	; tmp119, type
 ; src/create.c:4:     CodeMember* code_member = (CodeMember*)alloc_memory(sizeof(CodeMember));
 	movl	$16, %edi	;,
 ; src/create.c:3: CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content) {
 	pushq	%r8	;
-	.cfi_def_cfa_offset 48
 ; src/create.c:4:     CodeMember* code_member = (CodeMember*)alloc_memory(sizeof(CodeMember));
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:5:     code_member->type = type;
 	movl	%ebx, 8(%rax)	; type, code_member_21->type
 ; src/create.c:6:     if (type == CODE_IMPORT && import_content != NULL)
@@ -79,68 +67,48 @@ create_code_member:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rdi, %rsi	; pretmp_16,
 	leaq	.LC0(%rip), %rdi	;, tmp116
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 	jmp	.L8	;
 .L7:
 	movl	%ebx, %ecx	; type,
 	leaq	.LC1(%rip), %rdx	;, tmp117
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
-	call	__fprintf_chk@PLT	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 .L8:
 ; src/create.c:17:         return 0;
 	xorl	%eax, %eax	; <retval>
 .L1:
 ; src/create.c:20: }
 	popq	%rdx	;
-	.cfi_def_cfa_offset 40
 	popq	%rbx	;
-	.cfi_def_cfa_offset 32
 	popq	%rbp	;
-	.cfi_def_cfa_offset 24
 	popq	%r12	;
-	.cfi_def_cfa_offset 16
 	popq	%r13	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE50:
 	.size	create_code_member, .-create_code_member
 	.globl	create_code
 	.type	create_code, @function
 create_code:
-.LFB51:
-	.cfi_startproc
-	endbr64	
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rdi, %rbp	; tmp86, members
 ; src/create.c:23:     Code* code = (Code*)alloc_memory(sizeof(Code));
 	movl	$16, %edi	;,
 ; src/create.c:22: Code* create_code(list(CodeMember*) members, Scope* global_scope) {
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	movq	%rsi, %rbx	; tmp87, global_scope
 	pushq	%rax	;
-	.cfi_def_cfa_offset 32
 ; src/create.c:23:     Code* code = (Code*)alloc_memory(sizeof(Code));
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:25:     code_ptr->members = members;
 	movq	%rbp, (%rax)	; members, code_3->members
 ; src/create.c:26:     code_ptr->global_scope = global_scope;
 	movq	%rbx, 8(%rax)	; global_scope, code_3->global_scope
 ; src/create.c:28: }
 	popq	%rdx	;
-	.cfi_def_cfa_offset 24
 	popq	%rbx	;
-	.cfi_def_cfa_offset 16
 	popq	%rbp	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE51:
 	.size	create_code, .-create_code
 	.section	.rodata.str1.1
 .LC2:
@@ -149,33 +117,25 @@ create_code:
 	.globl	create_import
 	.type	create_import, @function
 create_import:
-.LFB52:
-	.cfi_startproc
-	endbr64	
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	pushq	%rcx	;
-	.cfi_def_cfa_offset 32
 ; src/create.c:31:     if (name == 0) {
 	testq	%rdi, %rdi	; name
 	jne	.L32	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC2(%rip), %rdi	;, tmp87
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 ; src/create.c:33:         return 0;
 	xorl	%eax, %eax	; <retval>
 	jmp	.L31	;
 .L32:
 	movq	%rdi, %rbx	; tmp89, name
+	movq	%rsi, %rbp	; tmp90, source
 ; src/create.c:35:     Import* import = (Import*)alloc_memory(sizeof(Import));
 	movl	$16, %edi	;,
-	movq	%rsi, %rbp	; tmp90, source
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:37:     import_ptr->name = name;
 	movq	%rbx, (%rax)	; name, import_7->name
 ; src/create.c:38:     import_ptr->source = source;
@@ -183,14 +143,9 @@ create_import:
 .L31:
 ; src/create.c:40: }
 	popq	%rdx	;
-	.cfi_def_cfa_offset 24
 	popq	%rbx	;
-	.cfi_def_cfa_offset 16
 	popq	%rbp	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE52:
 	.size	create_import, .-create_import
 	.section	.rodata.str1.1
 .LC3:
@@ -199,24 +154,11 @@ create_import:
 	.globl	create_function
 	.type	create_function, @function
 create_function:
-.LFB53:
-	.cfi_startproc
-	endbr64	
 	pushq	%r14	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	pushq	%r12	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 ; src/create.c:43:     if (name == 0 || return_type == 0) {
 	testq	%rdi, %rdi	; name
 	je	.L39	;,
@@ -227,18 +169,18 @@ create_function:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC3(%rip), %rdi	;, tmp97
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 ; src/create.c:45:         return 0;
 	xorl	%eax, %eax	; <retval>
 	jmp	.L35	;
 .L36:
 	movq	%rdi, %rbp	; tmp99, name
-; src/create.c:47:     Function* function = (Function*)alloc_memory(sizeof(Function));
-	movl	$40, %edi	;,
 	movq	%rdx, %r14	; tmp101, parameters
 	movq	%rcx, %r13	; tmp102, body
 	movq	%r8, %r12	; tmp103, function_scope
-	call	alloc_memory@PLT	;
+; src/create.c:47:     Function* function = (Function*)alloc_memory(sizeof(Function));
+	movl	$40, %edi	;,
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:49:     function_ptr->name = name;
 	movq	%rbp, (%rax)	; name, function_11->name
 ; src/create.c:50:     function_ptr->return_type = return_type;
@@ -252,18 +194,11 @@ create_function:
 .L35:
 ; src/create.c:55: }
 	popq	%rbx	;
-	.cfi_def_cfa_offset 40
 	popq	%rbp	;
-	.cfi_def_cfa_offset 32
 	popq	%r12	;
-	.cfi_def_cfa_offset 24
 	popq	%r13	;
-	.cfi_def_cfa_offset 16
 	popq	%r14	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE53:
 	.size	create_function, .-create_function
 	.section	.rodata.str1.1
 .LC4:
@@ -272,24 +207,11 @@ create_function:
 	.globl	create_method
 	.type	create_method, @function
 create_method:
-.LFB54:
-	.cfi_startproc
-	endbr64	
 	pushq	%r14	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	pushq	%r12	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 ; src/create.c:58:     if (name == 0 || return_type == 0) {
 	testq	%rdi, %rdi	; name
 	je	.L45	;,
@@ -300,18 +222,18 @@ create_method:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC4(%rip), %rdi	;, tmp97
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 ; src/create.c:60:         return 0;
 	xorl	%eax, %eax	; <retval>
 	jmp	.L41	;
 .L42:
 	movq	%rdi, %rbp	; tmp99, name
-; src/create.c:62:     Method* method = (Method*)alloc_memory(sizeof(Method));
-	movl	$40, %edi	;,
 	movq	%rdx, %r14	; tmp101, parameters
 	movq	%rcx, %r13	; tmp102, body
 	movq	%r8, %r12	; tmp103, method_scope
-	call	alloc_memory@PLT	;
+; src/create.c:62:     Method* method = (Method*)alloc_memory(sizeof(Method));
+	movl	$40, %edi	;,
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:64:     method_ptr->name = name;
 	movq	%rbp, (%rax)	; name, method_11->name
 ; src/create.c:65:     method_ptr->return_type = return_type;
@@ -325,18 +247,11 @@ create_method:
 .L41:
 ; src/create.c:70: }
 	popq	%rbx	;
-	.cfi_def_cfa_offset 40
 	popq	%rbp	;
-	.cfi_def_cfa_offset 32
 	popq	%r12	;
-	.cfi_def_cfa_offset 24
 	popq	%r13	;
-	.cfi_def_cfa_offset 16
 	popq	%r14	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE54:
 	.size	create_method, .-create_method
 	.section	.rodata.str1.1
 .LC5:
@@ -347,25 +262,16 @@ create_method:
 	.globl	create_class_member
 	.type	create_class_member, @function
 create_class_member:
-.LFB55:
-	.cfi_startproc
-	endbr64	
 	pushq	%r12	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
 	movq	%rdx, %r12	; tmp110, variable_content
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
 	movq	%rsi, %rbp	; tmp109, method_content
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
 ; src/create.c:72: ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content) {
 	movl	%edi, %ebx	; tmp108, type
 ; src/create.c:73:     ClassMember* class_member = (ClassMember*)alloc_memory(sizeof(ClassMember));
 	movl	$16, %edi	;,
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:75:     class_member_ptr->type = type;
 	movl	%ebx, 8(%rax)	; type, class_member_18->type
 ; src/create.c:76:     if (type == CLASS_METHOD && method_content != NULL)
@@ -395,28 +301,23 @@ create_class_member:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rdi, %rsi	; pretmp_9,
 	leaq	.LC5(%rip), %rdi	;, tmp105
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 	jmp	.L53	;
 .L52:
 	movl	%ebx, %ecx	; type,
 	leaq	.LC6(%rip), %rdx	;, tmp106
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
-	call	__fprintf_chk@PLT	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 .L53:
 ; src/create.c:85:         return 0;
 	xorl	%eax, %eax	; <retval>
 .L47:
 ; src/create.c:88: }
 	popq	%rbx	;
-	.cfi_def_cfa_offset 24
 	popq	%rbp	;
-	.cfi_def_cfa_offset 16
 	popq	%r12	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE55:
 	.size	create_class_member, .-create_class_member
 	.section	.rodata.str1.1
 .LC7:
@@ -425,35 +326,26 @@ create_class_member:
 	.globl	create_class
 	.type	create_class, @function
 create_class:
-.LFB56:
-	.cfi_startproc
-	endbr64	
 	pushq	%r12	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
 ; src/create.c:91:     if (name == 0) {
 	testq	%rdi, %rdi	; name
 	jne	.L68	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC7(%rip), %rdi	;, tmp88
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 ; src/create.c:93:         return 0;
 	xorl	%eax, %eax	; <retval>
 	jmp	.L67	;
 .L68:
 	movq	%rdi, %rbx	; tmp90, name
-; src/create.c:95:     Class* class = (Class*)alloc_memory(sizeof(Class));
-	movl	$24, %edi	;,
 	movq	%rsi, %r12	; tmp91, members
 	movq	%rdx, %rbp	; tmp92, class_scope
-	call	alloc_memory@PLT	;
+; src/create.c:95:     Class* class = (Class*)alloc_memory(sizeof(Class));
+	movl	$24, %edi	;,
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:97:     class_ptr->name = name;
 	movq	%rbx, (%rax)	; name, class_7->name
 ; src/create.c:98:     class_ptr->members = members;
@@ -463,14 +355,9 @@ create_class:
 .L67:
 ; src/create.c:101: }
 	popq	%rbx	;
-	.cfi_def_cfa_offset 24
 	popq	%rbp	;
-	.cfi_def_cfa_offset 16
 	popq	%r12	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE56:
 	.size	create_class, .-create_class
 	.section	.rodata.str1.1
 .LC8:
@@ -479,18 +366,9 @@ create_class:
 	.globl	create_variable
 	.type	create_variable, @function
 create_variable:
-.LFB57:
-	.cfi_startproc
-	endbr64	
 	pushq	%r12	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
 ; src/create.c:104:     if (type == 0 || name == 0) {
 	testq	%rdi, %rdi	; type
 	je	.L75	;,
@@ -501,16 +379,16 @@ create_variable:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC8(%rip), %rdi	;, tmp95
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 ; src/create.c:106:         return 0;
 	xorl	%eax, %eax	; <retval>
 	jmp	.L71	;
 .L72:
 	movq	%rdi, %rbp	; tmp97, type
+	movq	%rdx, %r12	; tmp99, value
 ; src/create.c:108:     Variable* variable = (Variable*)alloc_memory(sizeof(Variable));
 	movl	$24, %edi	;,
-	movq	%rdx, %r12	; tmp99, value
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:110:     variable_ptr->type = type;
 	movq	%rbp, (%rax)	; type, variable_11->type
 ; src/create.c:111:     variable_ptr->name = name;
@@ -520,14 +398,9 @@ create_variable:
 .L71:
 ; src/create.c:114: }
 	popq	%rbx	;
-	.cfi_def_cfa_offset 24
 	popq	%rbp	;
-	.cfi_def_cfa_offset 16
 	popq	%r12	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE57:
 	.size	create_variable, .-create_variable
 	.section	.rodata.str1.1
 .LC9:
@@ -538,40 +411,24 @@ create_variable:
 	.globl	create_statement
 	.type	create_statement, @function
 create_statement:
-.LFB58:
-	.cfi_startproc
-	endbr64	
 	pushq	%r15	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	movq	%rdx, %r15	; tmp148, while_stmt
 	pushq	%r14	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	movq	%r8, %r14	; tmp150, expr
 	pushq	%r13	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	movq	%rcx, %r13	; tmp149, for_stmt
 	pushq	%r12	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	movq	%rsi, %r12	; tmp147, if_stmt
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	movq	%r9, %rbp	; tmp151, var_stmt
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	movl	%edi, %ebx	; tmp146, type
 ; src/create.c:117:     Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
 	movl	$16, %edi	;,
 ; src/create.c:116: Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt) {
 	pushq	%r10	;
-	.cfi_def_cfa_offset 64
 ; src/create.c:117:     Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:120:     if (type == EXPRESSION_STATEMENT && expr != 0)
 	testq	%r14, %r14	; expr
 ; src/create.c:119:     statement_ptr->type = type;
@@ -652,36 +509,27 @@ create_statement:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rdi, %rsi	; pretmp_63,
 	leaq	.LC9(%rip), %rdi	;, tmp143
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 	jmp	.L88	;
 .L87:
 	movl	%ebx, %ecx	; type,
 	leaq	.LC10(%rip), %rdx	;, tmp144
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
-	call	__fprintf_chk@PLT	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 .L88:
 ; src/create.c:139:         return 0;
 	xorl	%eax, %eax	; <retval>
 .L77:
 ; src/create.c:142: }
 	popq	%rdx	;
-	.cfi_def_cfa_offset 56
 	popq	%rbx	;
-	.cfi_def_cfa_offset 48
 	popq	%rbp	;
-	.cfi_def_cfa_offset 40
 	popq	%r12	;
-	.cfi_def_cfa_offset 32
 	popq	%r13	;
-	.cfi_def_cfa_offset 24
 	popq	%r14	;
-	.cfi_def_cfa_offset 16
 	popq	%r15	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE58:
 	.size	create_statement, .-create_statement
 	.section	.rodata.str1.1
 .LC11:
@@ -690,41 +538,29 @@ create_statement:
 	.globl	create_if
 	.type	create_if, @function
 create_if:
-.LFB59:
-	.cfi_startproc
-	endbr64	
 	pushq	%r13	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	pushq	%r12	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	pushq	%r8	;
-	.cfi_def_cfa_offset 48
 ; src/create.c:145:     if (condition == 0) {
 	testq	%rdi, %rdi	; condition
 	jne	.L128	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC11(%rip), %rdi	;, tmp89
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 ; src/create.c:147:         return 0;
 	xorl	%eax, %eax	; <retval>
 	jmp	.L127	;
 .L128:
 	movq	%rdi, %rbx	; tmp91, condition
-; src/create.c:149:     If* if_ = (If*)alloc_memory(sizeof(If));
-	movl	$32, %edi	;,
 	movq	%rsi, %r13	; tmp92, body
 	movq	%rdx, %r12	; tmp93, else_if
 	movq	%rcx, %rbp	; tmp94, else_body
-	call	alloc_memory@PLT	;
+; src/create.c:149:     If* if_ = (If*)alloc_memory(sizeof(If));
+	movl	$32, %edi	;,
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:151:     if_ptr->condition = condition;
 	movq	%rbx, (%rax)	; condition, if__7->condition
 ; src/create.c:152:     if_ptr->body = body;
@@ -736,18 +572,11 @@ create_if:
 .L127:
 ; src/create.c:156: }
 	popq	%rdx	;
-	.cfi_def_cfa_offset 40
 	popq	%rbx	;
-	.cfi_def_cfa_offset 32
 	popq	%rbp	;
-	.cfi_def_cfa_offset 24
 	popq	%r12	;
-	.cfi_def_cfa_offset 16
 	popq	%r13	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE59:
 	.size	create_if, .-create_if
 	.section	.rodata.str1.1
 .LC12:
@@ -756,33 +585,25 @@ create_if:
 	.globl	create_else_if
 	.type	create_else_if, @function
 create_else_if:
-.LFB60:
-	.cfi_startproc
-	endbr64	
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	pushq	%rcx	;
-	.cfi_def_cfa_offset 32
 ; src/create.c:159:     if (condition == 0) {
 	testq	%rdi, %rdi	; condition
 	jne	.L132	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC12(%rip), %rdi	;, tmp87
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 ; src/create.c:161:         return 0;
 	xorl	%eax, %eax	; <retval>
 	jmp	.L131	;
 .L132:
 	movq	%rdi, %rbx	; tmp89, condition
+	movq	%rsi, %rbp	; tmp90, body
 ; src/create.c:163:     ElseIf* else_if = (ElseIf*)alloc_memory(sizeof(ElseIf));
 	movl	$16, %edi	;,
-	movq	%rsi, %rbp	; tmp90, body
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:165:     else_if_ptr->condition = condition;
 	movq	%rbx, (%rax)	; condition, else_if_7->condition
 ; src/create.c:166:     else_if_ptr->body = body;
@@ -790,44 +611,27 @@ create_else_if:
 .L131:
 ; src/create.c:168: }
 	popq	%rdx	;
-	.cfi_def_cfa_offset 24
 	popq	%rbx	;
-	.cfi_def_cfa_offset 16
 	popq	%rbp	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE60:
 	.size	create_else_if, .-create_else_if
 	.globl	create_for
 	.type	create_for, @function
 create_for:
-.LFB61:
-	.cfi_startproc
-	endbr64	
 	pushq	%r13	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	movq	%rdi, %r13	; tmp88, initializer
 ; src/create.c:171:     For* for_ = (For*)alloc_memory(sizeof(For));
 	movl	$32, %edi	;,
 ; src/create.c:170: For* create_for(Variable* initializer, Expression* condition, Expression* increment, list(Statement*) body) {
 	pushq	%r12	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	movq	%rsi, %r12	; tmp89, condition
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	movq	%rdx, %rbp	; tmp90, increment
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	movq	%rcx, %rbx	; tmp91, body
 	pushq	%rax	;
-	.cfi_def_cfa_offset 48
 ; src/create.c:171:     For* for_ = (For*)alloc_memory(sizeof(For));
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:173:     for_ptr->initializer = initializer;
 	movq	%r13, (%rax)	; initializer, for__3->initializer
 ; src/create.c:174:     for_ptr->condition = condition;
@@ -838,54 +642,34 @@ create_for:
 	movq	%rbx, 24(%rax)	; body, for__3->body
 ; src/create.c:178: }
 	popq	%rdx	;
-	.cfi_def_cfa_offset 40
 	popq	%rbx	;
-	.cfi_def_cfa_offset 32
 	popq	%rbp	;
-	.cfi_def_cfa_offset 24
 	popq	%r12	;
-	.cfi_def_cfa_offset 16
 	popq	%r13	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE61:
 	.size	create_for, .-create_for
 	.globl	create_while
 	.type	create_while, @function
 create_while:
-.LFB62:
-	.cfi_startproc
-	endbr64	
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rdi, %rbp	; tmp86, condition
 ; src/create.c:181:     While* while_ = (While*)alloc_memory(sizeof(While));
 	movl	$16, %edi	;,
 ; src/create.c:180: While* create_while(Expression* condition, list(Statement*) body) {
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	movq	%rsi, %rbx	; tmp87, body
 	pushq	%rax	;
-	.cfi_def_cfa_offset 32
 ; src/create.c:181:     While* while_ = (While*)alloc_memory(sizeof(While));
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:183:     while_ptr->condition = condition;
 	movq	%rbp, (%rax)	; condition, while__3->condition
 ; src/create.c:184:     while_ptr->body = body;
 	movq	%rbx, 8(%rax)	; body, while__3->body
 ; src/create.c:186: }
 	popq	%rdx	;
-	.cfi_def_cfa_offset 24
 	popq	%rbx	;
-	.cfi_def_cfa_offset 16
 	popq	%rbp	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE62:
 	.size	create_while, .-create_while
 	.section	.rodata.str1.1
 .LC13:
@@ -900,19 +684,12 @@ create_while:
 	.globl	create_expression
 	.type	create_expression, @function
 create_expression:
-.LFB63:
-	.cfi_startproc
-	endbr64	
 ; src/create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
 	cmpl	$19, %edi	;, operator
 ; src/create.c:188: Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
 	pushq	%r13	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	movl	%edi, %r13d	; tmp133, operator
 	pushq	%r12	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	movq	%rdx, %r12	; tmp135, prim_left
 ; src/create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
 	sete	%dl	;, tmp99
@@ -920,15 +697,10 @@ create_expression:
 	sete	%al	;, tmp101
 ; src/create.c:188: Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	movq	%rcx, %rbp	; tmp136, right
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	movq	%rsi, %rbx	; tmp134, expr_left
 	pushq	%r9	;
-	.cfi_def_cfa_offset 48
 ; src/create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
 	cmpb	%al, %dl	; tmp101, tmp99
 	jne	.L140	;,
@@ -972,32 +744,26 @@ create_expression:
 ; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	cmpl	$19, %r13d	;, operator
 	leaq	.LC13(%rip), %rdx	;, tmp126
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	pushq	%rsi	;
-	.cfi_def_cfa_offset 56
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	leaq	.LC14(%rip), %rcx	;, tmp125
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	pushq	%rax	; iftmp.13_9
-	.cfi_def_cfa_offset 64
+	movq	stderr(%rip), %rdi	; stderr,
 ; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
 	cmove	%rdx, %rcx	; tmp125,, tmp126, iftmp.16_12
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	$2, %esi	;,
-	xorl	%eax, %eax	;
-	movq	stderr(%rip), %rdi	; stderr,
 	leaq	.LC15(%rip), %rdx	;, tmp104
-	call	__fprintf_chk@PLT	;
+	pushq	%rsi	;
+	movl	$2, %esi	;,
+	pushq	%rax	; iftmp.13_9
+	xorl	%eax, %eax	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 ; src/create.c:195:         return 0;
 	popq	%rdi	;
-	.cfi_def_cfa_offset 56
 	popq	%r8	;
-	.cfi_def_cfa_offset 48
 	jmp	.L147	;
 .L157:
 ; src/create.c:197:     Expression* expression = (Expression*)alloc_memory(sizeof(Expression));
 	movl	$32, %edi	;,
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:199:     expression_ptr->operator = operator;
 	movl	%r13d, 24(%rax)	; operator, expression_22->operator
 ; src/create.c:200:     if (expr_left != 0)
@@ -1017,7 +783,7 @@ create_expression:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC16(%rip), %rdi	;, tmp106
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 .L147:
 ; src/create.c:195:         return 0;
 	xorl	%eax, %eax	; <retval>
@@ -1028,18 +794,11 @@ create_expression:
 .L139:
 ; src/create.c:210: }
 	popq	%rdx	;
-	.cfi_def_cfa_offset 40
 	popq	%rbx	;
-	.cfi_def_cfa_offset 32
 	popq	%rbp	;
-	.cfi_def_cfa_offset 24
 	popq	%r12	;
-	.cfi_def_cfa_offset 16
 	popq	%r13	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE63:
 	.size	create_expression, .-create_expression
 	.section	.rodata.str1.1
 .LC17:
@@ -1050,33 +809,20 @@ create_expression:
 	.globl	create_primary
 	.type	create_primary, @function
 create_primary:
-.LFB64:
-	.cfi_startproc
-	endbr64	
 	pushq	%r14	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	movq	%rcx, %r14	; tmp135, prim_value
 	pushq	%r13	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	movq	%rsi, %r13	; tmp133, str_value
 	pushq	%r12	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	movq	%r8, %r12	; tmp136, variable_value
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	movq	%rdx, %rbp	; tmp134, expr_value
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 ; src/create.c:212: Primary* create_primary(PrimaryType type, string str_value, Expression* expr_value, Primary* prim_value, VariableAccess* variable_value) {
 	movl	%edi, %ebx	; tmp132, type
 ; src/create.c:213:     Primary* primary = (Primary*)alloc_memory(sizeof(Primary));
 	movl	$16, %edi	;,
-	call	alloc_memory@PLT	;
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:215:     primary_ptr->type = type;
 	movl	%ebx, 8(%rax)	; type, primary_25->type
 ; src/create.c:216:     if ((type == PRIM_INTEGER || type == PRIM_FLOAT || type == PRIM_STRING || type == PRIM_TRUE || type == PRIM_FALSE) && str_value != 0)
@@ -1128,32 +874,25 @@ create_primary:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rdi, %rsi	; pretmp_49,
 	leaq	.LC17(%rip), %rdi	;, tmp129
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 	jmp	.L168	;
 .L167:
 	movl	%ebx, %ecx	; type,
 	leaq	.LC18(%rip), %rdx	;, tmp130
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
-	call	__fprintf_chk@PLT	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 .L168:
 ; src/create.c:229:         return 0;
 	xorl	%eax, %eax	; <retval>
 .L160:
 ; src/create.c:232: }
 	popq	%rbx	;
-	.cfi_def_cfa_offset 40
 	popq	%rbp	;
-	.cfi_def_cfa_offset 32
 	popq	%r12	;
-	.cfi_def_cfa_offset 24
 	popq	%r13	;
-	.cfi_def_cfa_offset 16
 	popq	%r14	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE64:
 	.size	create_primary, .-create_primary
 	.section	.rodata.str1.1
 .LC19:
@@ -1166,41 +905,25 @@ create_primary:
 	.globl	create_variable_access
 	.type	create_variable_access, @function
 create_variable_access:
-.LFB65:
-	.cfi_startproc
-	endbr64	
 ; src/create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
 	testl	%edi, %edi	; type
 ; src/create.c:234: VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Name* name_content, Expression* expr_content, list(Expression*) args_content) {
 	pushq	%r15	;
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 ; src/create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
 	sete	%al	;, tmp109
 	testq	%rsi, %rsi	; base
 ; src/create.c:234: VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Name* name_content, Expression* expr_content, list(Expression*) args_content) {
 	pushq	%r14	;
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	movq	%rsi, %r14	; tmp143, base
 ; src/create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
 	sete	%r15b	;, tmp111
 ; src/create.c:234: VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Name* name_content, Expression* expr_content, list(Expression*) args_content) {
 	pushq	%r13	;
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12	;
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp	;
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx	;
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	movl	%edi, %ebx	; tmp142, type
 	pushq	%r9	;
-	.cfi_def_cfa_offset 64
 ; src/create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
 	cmpb	%al, %r15b	; tmp109, tmp111
 	je	.L195	;,
@@ -1224,16 +947,16 @@ create_variable_access:
 	cmove	%rax, %rcx	; tmp134,, tmp135, iftmp.22_21
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	xorl	%eax, %eax	;
-	call	__fprintf_chk@PLT	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 ; src/create.c:237:         return 0;
 	jmp	.L198	;
 .L195:
 	movq	%rdx, %r12	; tmp144, name_content
-; src/create.c:239:     VariableAccess* variable_access = (VariableAccess*)alloc_memory(sizeof(VariableAccess));
-	movl	$24, %edi	;,
 	movq	%rcx, %rbp	; tmp145, expr_content
 	movq	%r8, %r13	; tmp146, args_content
-	call	alloc_memory@PLT	;
+; src/create.c:239:     VariableAccess* variable_access = (VariableAccess*)alloc_memory(sizeof(VariableAccess));
+	movl	$24, %edi	;,
+	call	*alloc_memory@GOTPCREL(%rip)	;
 ; src/create.c:243:     if (type == VAR_NAME && name_content != 0)
 	testq	%r12, %r12	; name_content
 ; src/create.c:241:     variable_access_ptr->type = type;
@@ -1286,52 +1009,27 @@ create_variable_access:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rdi, %rsi	; pretmp_23,
 	leaq	.LC20(%rip), %rdi	;, tmp127
-	call	fputs@PLT	;
+	call	*fputs@GOTPCREL(%rip)	;
 	jmp	.L198	;
 .L205:
 	movl	%ebx, %ecx	; type,
 	leaq	.LC21(%rip), %rdx	;, tmp128
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
-	call	__fprintf_chk@PLT	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 .L198:
 ; src/create.c:237:         return 0;
 	xorl	%eax, %eax	; <retval>
 .L194:
 ; src/create.c:259: }
 	popq	%rdx	;
-	.cfi_def_cfa_offset 56
 	popq	%rbx	;
-	.cfi_def_cfa_offset 48
 	popq	%rbp	;
-	.cfi_def_cfa_offset 40
 	popq	%r12	;
-	.cfi_def_cfa_offset 32
 	popq	%r13	;
-	.cfi_def_cfa_offset 24
 	popq	%r14	;
-	.cfi_def_cfa_offset 16
 	popq	%r15	;
-	.cfi_def_cfa_offset 8
 	ret	
-	.cfi_endproc
-.LFE65:
 	.size	create_variable_access, .-create_variable_access
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

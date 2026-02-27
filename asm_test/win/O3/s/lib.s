@@ -7,53 +7,53 @@
 	.text
 	.p2align 4
 	.def	increase_memory_size;	.scl	3;	.type	32;	.endef
-	.seh_proc	increase_memory_size
 increase_memory_size:
+	pushq	%rbp
+	movq	%rsp, %rbp
 	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movl	%ecx, %esi
 	movl	$32, %ecx
+	pushq	%rbx
+	andq	$-16, %rsp
+	subq	$32, %rsp
 	call	malloc
-	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L12
+	je	.L13
 	movl	$1024, %ecx
+	movq	%rax, %rbx
 	call	malloc
 	movdqa	.LC1(%rip), %xmm0
 	movq	$0, 16(%rbx)
 	movq	%rax, 24(%rbx)
 	movups	%xmm0, (%rbx)
 	testb	%sil, %sil
-	jne	.L13
+	jne	.L14
 	movq	string_memory(%rip), %rax
 	addq	$1024, string_memory_count(%rip)
 	movq	%rbx, string_memory(%rip)
 	movq	8(%rax), %rdx
-	addq	%rdx, string_memory_used(%rip)
 	movq	%rax, 16(%rbx)
-	addq	$40, %rsp
+	addq	%rdx, string_memory_used(%rip)
+	leaq	-16(%rbp), %rsp
 	popq	%rbx
 	popq	%rsi
+	popq	%rbp
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L13:
+.L14:
 	movq	struct_memory(%rip), %rax
 	addq	$1024, struct_memory_count(%rip)
 	movq	%rbx, struct_memory(%rip)
 	movq	8(%rax), %rdx
-	addq	%rdx, struct_memory_used(%rip)
 	movq	%rax, 16(%rbx)
-	addq	$40, %rsp
+	addq	%rdx, struct_memory_used(%rip)
+	leaq	-16(%rbp), %rsp
 	popq	%rbx
 	popq	%rsi
+	popq	%rbp
 	ret
-.L12:
+.L13:
 	call	__getreent
 	movl	$30, %r8d
 	movl	$1, %edx
@@ -76,121 +76,114 @@ increase_memory_size:
 	movl	$1, %ecx
 	movb	$0, initialized(%rip)
 	call	exit
-	nop
-	.seh_endproc
 	.p2align 4
 	.globl	init
 	.def	init;	.scl	2;	.type	32;	.endef
-	.seh_proc	init
 init:
-	pushq	%rbp
-	.seh_pushreg	%rbp
-	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$56, %rsp
-	.seh_stackalloc	56
-	.seh_endprologue
 	cmpb	$0, initialized(%rip)
-	jne	.L14
+	jne	.L32
+	pushq	%rbp
+	movq	%rsp, %rbp
+	pushq	%r12
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rbx
+	andq	$-16, %rsp
+	subq	$48, %rsp
 	cmpq	$0, struct_memory(%rip)
-	je	.L31
+	je	.L35
+.L17:
 	cmpq	$0, string_memory(%rip)
-	je	.L32
-.L18:
+	je	.L36
+.L19:
 	leaq	keywordStrings(%rip), %rbx
 	movl	$1, %edi
 	movl	$6, %edx
 	movb	$1, initialized(%rip)
 	leaq	keywordList(%rip), %rsi
-	leaq	176(%rbx), %rbp
-	jmp	.L25
-	.p2align 4,,10
-	.p2align 3
-.L20:
-	testq	%rdx, %rdx
-	je	.L21
-.L33:
-	call	create_string_check.part.0
-	addq	$8, %rbx
-	addq	$8, %rsi
-	movzbl	initialized(%rip), %edi
-	movq	%rax, -8(%rsi)
-	cmpq	%rbx, %rbp
-	je	.L23
-.L22:
-	movq	(%rbx), %rcx
-	call	strlen
-	movq	%rax, %rdx
-.L25:
-	movq	(%rbx), %rcx
-	testb	%dil, %dil
-	jne	.L20
-	movq	%rcx, 40(%rsp)
-	movq	%rdx, 32(%rsp)
-	call	init
-	movq	32(%rsp), %rdx
-	movq	40(%rsp), %rcx
-	testq	%rdx, %rdx
-	jne	.L33
+	leaq	176(%rbx), %r12
+	jmp	.L26
 	.p2align 4,,10
 	.p2align 3
 .L21:
-	addq	$8, %rbx
-	movq	$0, (%rsi)
-	movzbl	initialized(%rip), %edi
-	addq	$8, %rsi
-	cmpq	%rbp, %rbx
-	jne	.L22
-	.p2align 4,,10
-	.p2align 3
-.L23:
-	leaq	symbolStrings(%rip), %rbx
-	leaq	symbolList(%rip), %rsi
-	movl	$1, %edx
-	leaq	240(%rbx), %rdi
-	jmp	.L24
-	.p2align 4,,10
-	.p2align 3
-.L26:
 	testq	%rdx, %rdx
-	je	.L27
-.L34:
+	je	.L22
+.L37:
 	call	create_string_check.part.0
 	addq	$8, %rbx
 	addq	$8, %rsi
+	movzbl	initialized(%rip), %edi
 	movq	%rax, -8(%rsi)
-	cmpq	%rbx, %rdi
-	je	.L29
-.L28:
+	cmpq	%rbx, %r12
+	je	.L24
+.L23:
 	movq	(%rbx), %rcx
 	call	strlen
 	movq	%rax, %rdx
-.L24:
-	cmpb	$0, initialized(%rip)
+.L26:
 	movq	(%rbx), %rcx
-	jne	.L26
-	movq	%rdx, 40(%rsp)
+	testb	%dil, %dil
+	jne	.L21
 	movq	%rcx, 32(%rsp)
+	movq	%rdx, 40(%rsp)
 	call	init
 	movq	40(%rsp), %rdx
 	movq	32(%rsp), %rcx
 	testq	%rdx, %rdx
-	jne	.L34
+	jne	.L37
+	.p2align 4,,10
+	.p2align 3
+.L22:
+	addq	$8, %rbx
+	movq	$0, (%rsi)
+	movzbl	initialized(%rip), %edi
+	addq	$8, %rsi
+	cmpq	%r12, %rbx
+	jne	.L23
+	.p2align 4,,10
+	.p2align 3
+.L24:
+	leaq	symbolStrings(%rip), %rbx
+	leaq	symbolList(%rip), %rsi
+	movl	$1, %edx
+	leaq	240(%rbx), %rdi
+	jmp	.L25
 	.p2align 4,,10
 	.p2align 3
 .L27:
+	testq	%rdx, %rdx
+	je	.L28
+.L38:
+	call	create_string_check.part.0
+	addq	$8, %rbx
+	addq	$8, %rsi
+	movq	%rax, -8(%rsi)
+	cmpq	%rbx, %rdi
+	je	.L30
+.L29:
+	movq	(%rbx), %rcx
+	call	strlen
+	movq	%rax, %rdx
+.L25:
+	cmpb	$0, initialized(%rip)
+	movq	(%rbx), %rcx
+	jne	.L27
+	movq	%rdx, 32(%rsp)
+	movq	%rcx, 40(%rsp)
+	call	init
+	movq	32(%rsp), %rdx
+	movq	40(%rsp), %rcx
+	testq	%rdx, %rdx
+	jne	.L38
+	.p2align 4,,10
+	.p2align 3
+.L28:
 	addq	$8, %rbx
 	movq	$0, (%rsi)
 	addq	$8, %rsi
 	cmpq	%rbx, %rdi
-	jne	.L28
-	.p2align 4,,10
-	.p2align 3
-.L29:
+	jne	.L29
+.L30:
 	movq	keywordList(%rip), %rax
 	movq	%rax, IMPORT_KEYWORD(%rip)
 	movq	8+keywordList(%rip), %rax
@@ -295,36 +288,24 @@ init:
 	movq	%rax, AND_SYMBOL(%rip)
 	movq	232+symbolList(%rip), %rax
 	movq	%rax, OR_SYMBOL(%rip)
-.L14:
-	addq	$56, %rsp
+	leaq	-32(%rbp), %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
+	popq	%r12
 	popq	%rbp
 	ret
-.L31:
-	movl	$32, %ecx
-	call	malloc
-	movq	%rax, struct_memory(%rip)
-	movq	%rax, %rbx
-	testq	%rax, %rax
-	je	.L30
-	movl	$1024, %ecx
-	call	malloc
-	movdqa	.LC1(%rip), %xmm0
-	cmpq	$0, string_memory(%rip)
-	movq	$0, 16(%rbx)
-	movq	%rax, 24(%rbx)
-	movq	$1024, struct_memory_count(%rip)
-	movups	%xmm0, (%rbx)
-	jne	.L18
+	.p2align 4,,10
+	.p2align 3
 .L32:
+	ret
+.L36:
 	movl	$32, %ecx
 	call	malloc
 	movq	%rax, string_memory(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L30
+	je	.L39
 	movl	$1024, %ecx
 	call	malloc
 	movdqa	.LC1(%rip), %xmm0
@@ -332,8 +313,23 @@ init:
 	movq	%rax, 24(%rbx)
 	movq	$1024, string_memory_count(%rip)
 	movups	%xmm0, (%rbx)
-	jmp	.L18
-.L30:
+	jmp	.L19
+.L35:
+	movl	$32, %ecx
+	call	malloc
+	movq	%rax, struct_memory(%rip)
+	movq	%rax, %rbx
+	testq	%rax, %rax
+	je	.L40
+	movl	$1024, %ecx
+	call	malloc
+	movdqa	.LC1(%rip), %xmm0
+	movq	$0, 16(%rbx)
+	movq	%rax, 24(%rbx)
+	movq	$1024, struct_memory_count(%rip)
+	movups	%xmm0, (%rbx)
+	jmp	.L17
+.L39:
 	call	__getreent
 	movl	$30, %r8d
 	movl	$1, %edx
@@ -343,8 +339,16 @@ init:
 	movl	$1, %ecx
 	movb	$0, initialized(%rip)
 	call	exit
-	nop
-	.seh_endproc
+.L40:
+	call	__getreent
+	movl	$30, %r8d
+	movl	$1, %edx
+	leaq	.LC0(%rip), %rcx
+	movq	24(%rax), %r9
+	call	fwrite
+	movl	$1, %ecx
+	movb	$0, initialized(%rip)
+	call	exit
 	.section .rdata,"dr"
 	.align 8
 .LC2:
@@ -357,60 +361,53 @@ init:
 	.text
 	.p2align 4
 	.def	create_string_check.part.0;	.scl	3;	.type	32;	.endef
-	.seh_proc	create_string_check.part.0
 create_string_check.part.0:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movq	%rcx, %rdi
+	pushq	%rsi
+	pushq	%rbx
 	movq	%rdx, %rbx
+	subq	$40, %rsp
 	cmpq	$1022, %rdx
-	ja	.L42
+	ja	.L49
 	movq	string_memory(%rip), %rdx
 	movq	8(%rdx), %rcx
 	leaq	(%rbx,%rcx), %rax
 	cmpq	(%rdx), %rax
-	jnb	.L43
-.L38:
+	jnb	.L50
+.L44:
 	leaq	1(%rcx,%rbx), %rax
 	movq	24(%rdx), %rsi
 	movq	%rax, 8(%rdx)
 	addq	%rcx, %rsi
-.L37:
+.L43:
 	movq	%rbx, %r8
 	movq	%rdi, %rdx
 	movq	%rsi, %rcx
 	call	strncpy
 	movb	$0, (%rsi,%rbx)
 	cmpb	$0, initialized(%rip)
-	je	.L44
-.L39:
+	je	.L51
+.L45:
 	movq	struct_memory(%rip), %r8
 	movq	8(%r8), %rdx
 	leaq	24(%rdx), %rax
 	cmpq	(%r8), %rax
-	jnb	.L45
-.L40:
+	jnb	.L52
+.L46:
 	testb	$7, %dl
-	jne	.L46
-	addq	$1, memoryBlockCount(%rip)
+	jne	.L53
 	movq	all_string_list(%rip), %rax
 	movq	%rdx, %rcx
 	addq	$24, %rdx
+	addq	$1, memoryBlockCount(%rip)
 	andq	$-8, %rcx
 	addq	24(%r8), %rcx
 	movq	%rdx, 8(%r8)
+	movq	%rsi, (%rcx)
 	movq	%rax, 16(%rcx)
 	movq	%rsi, %rax
-	movq	%rsi, (%rcx)
 	movq	%rbx, 8(%rcx)
 	movq	%rcx, all_string_list(%rip)
 	addq	$40, %rsp
@@ -421,15 +418,15 @@ create_string_check.part.0:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L43:
+.L50:
 	xorl	%ecx, %ecx
 	call	increase_memory_size
 	movq	string_memory(%rip), %rdx
 	movq	8(%rdx), %rcx
-	jmp	.L38
+	jmp	.L44
 	.p2align 4,,10
 	.p2align 3
-.L42:
+.L49:
 	leaq	1(%rdx), %rbp
 	addq	%rbp, string_memory_count(%rip)
 	movq	%rbp, %rcx
@@ -442,7 +439,7 @@ create_string_check.part.0:
 	movq	24(%rax), %rcx
 	call	fprintf
 	testq	%rsi, %rsi
-	jne	.L37
+	jne	.L43
 	call	__getreent
 	movl	$30, %r8d
 	movl	$1, %edx
@@ -453,69 +450,59 @@ create_string_check.part.0:
 	call	exit
 	.p2align 4,,10
 	.p2align 3
-.L45:
+.L52:
 	movl	$1, %ecx
 	call	increase_memory_size
 	movq	struct_memory(%rip), %r8
 	movq	8(%r8), %rdx
-	jmp	.L40
+	jmp	.L46
 	.p2align 4,,10
 	.p2align 3
-.L44:
+.L51:
 	call	init
-	jmp	.L39
-.L46:
+	jmp	.L45
+.L53:
 	leaq	.LC3(%rip), %r9
 	leaq	__func__.0(%rip), %r8
 	movl	$258, %edx
 	leaq	.LC4(%rip), %rcx
 	call	__assert_func
-	nop
-	.seh_endproc
 	.p2align 4
 	.globl	create_string
 	.def	create_string;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_string
 create_string:
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
-	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	cmpb	$0, initialized(%rip)
 	movq	%rcx, %rbp
+	pushq	%rdi
+	pushq	%rsi
 	movq	%rdx, %rsi
-	je	.L62
-.L48:
+	pushq	%rbx
+	subq	$32, %rsp
+	cmpb	$0, initialized(%rip)
+	je	.L70
+.L55:
 	testq	%rbp, %rbp
-	je	.L53
+	je	.L60
 	testq	%rsi, %rsi
-	je	.L53
+	je	.L60
 	movq	all_string_list(%rip), %rbx
 	testq	%rbx, %rbx
-	je	.L50
+	je	.L57
 	xorl	%r12d, %r12d
-	jmp	.L52
+	jmp	.L59
 	.p2align 4,,10
 	.p2align 3
-.L51:
+.L58:
 	movq	16(%rbx), %rbx
 	testq	%rbx, %rbx
-	je	.L63
-.L52:
+	je	.L71
+.L59:
 	cmpq	8(%rbx), %rsi
-	jne	.L51
+	jne	.L58
 	movq	(%rbx), %rdi
 	testq	%rdi, %rdi
-	je	.L51
+	je	.L58
 	movq	%rsi, %r8
 	movq	%rbp, %rdx
 	movq	%rdi, %rcx
@@ -524,12 +511,12 @@ create_string:
 	testl	%eax, %eax
 	cmove	%rdi, %r12
 	testq	%rbx, %rbx
-	jne	.L52
-.L63:
+	jne	.L59
+.L71:
 	testq	%r12, %r12
-	je	.L50
-	movq	%r12, %rax
+	je	.L57
 	addq	$32, %rsp
+	movq	%r12, %rax
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
@@ -538,10 +525,10 @@ create_string:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L50:
+.L57:
+	addq	$32, %rsp
 	movq	%rsi, %rdx
 	movq	%rbp, %rcx
-	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
@@ -550,110 +537,47 @@ create_string:
 	jmp	create_string_check.part.0
 	.p2align 4,,10
 	.p2align 3
-.L62:
+.L70:
 	call	init
-	jmp	.L48
+	jmp	.L55
 	.p2align 4,,10
 	.p2align 3
-.L53:
-	xorl	%r12d, %r12d
-	movq	%r12, %rax
+.L60:
 	addq	$32, %rsp
+	xorl	%r12d, %r12d
 	popq	%rbx
+	movq	%r12, %rax
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	popq	%r12
 	ret
-	.seh_endproc
 	.p2align 4
 	.globl	alloc_memory
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
-	.seh_proc	alloc_memory
 alloc_memory:
 	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	cmpb	$0, initialized(%rip)
 	movq	%rcx, %rbx
-	je	.L68
-.L65:
+	subq	$32, %rsp
+	cmpb	$0, initialized(%rip)
+	je	.L77
+.L73:
 	movq	struct_memory(%rip), %rdx
 	movq	8(%rdx), %rcx
 	leaq	(%rcx,%rbx), %rax
 	cmpq	(%rdx), %rax
-	jnb	.L69
-.L66:
+	jnb	.L78
+.L74:
 	addq	$7, %rbx
 	andq	$-8, %rbx
 	testb	$7, %cl
-	jne	.L70
-	addq	$1, memoryBlockCount(%rip)
-	movq	%rcx, %rax
+	jne	.L79
 	addq	%rcx, %rbx
+	movq	%rcx, %rax
+	addq	$1, memoryBlockCount(%rip)
+	movq	%rbx, 8(%rdx)
 	andq	$-8, %rax
 	addq	24(%rdx), %rax
-	movq	%rbx, 8(%rdx)
-	addq	$32, %rsp
-	popq	%rbx
-	ret
-	.p2align 4,,10
-	.p2align 3
-.L68:
-	call	init
-	jmp	.L65
-	.p2align 4,,10
-	.p2align 3
-.L69:
-	movl	$1, %ecx
-	call	increase_memory_size
-	movq	struct_memory(%rip), %rdx
-	movq	8(%rdx), %rcx
-	jmp	.L66
-.L70:
-	leaq	.LC3(%rip), %r9
-	leaq	__func__.0(%rip), %r8
-	movl	$258, %edx
-	leaq	.LC4(%rip), %rcx
-	call	__assert_func
-	nop
-	.seh_endproc
-	.p2align 4
-	.globl	is_keyword
-	.def	is_keyword;	.scl	2;	.type	32;	.endef
-	.seh_proc	is_keyword
-is_keyword:
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	cmpb	$0, initialized(%rip)
-	movq	%rcx, %rbx
-	je	.L77
-.L72:
-	leaq	keywordList(%rip), %rax
-	leaq	176(%rax), %rdx
-	jmp	.L74
-	.p2align 4,,10
-	.p2align 3
-.L79:
-	addq	$8, %rax
-	cmpq	%rax, %rdx
-	je	.L78
-.L74:
-	cmpq	%rbx, (%rax)
-	jne	.L79
-	movl	$1, %eax
-	addq	$32, %rsp
-	popq	%rbx
-	ret
-	.p2align 4,,10
-	.p2align 3
-.L78:
-	xorl	%eax, %eax
 	addq	$32, %rsp
 	popq	%rbx
 	ret
@@ -661,18 +585,66 @@ is_keyword:
 	.p2align 3
 .L77:
 	call	init
-	jmp	.L72
-	.seh_endproc
+	jmp	.L73
+	.p2align 4,,10
+	.p2align 3
+.L78:
+	movl	$1, %ecx
+	call	increase_memory_size
+	movq	struct_memory(%rip), %rdx
+	movq	8(%rdx), %rcx
+	jmp	.L74
+.L79:
+	leaq	.LC3(%rip), %r9
+	leaq	__func__.0(%rip), %r8
+	movl	$258, %edx
+	leaq	.LC4(%rip), %rcx
+	call	__assert_func
+	.p2align 4
+	.globl	is_keyword
+	.def	is_keyword;	.scl	2;	.type	32;	.endef
+is_keyword:
+	pushq	%rbx
+	movq	%rcx, %rbx
+	subq	$32, %rsp
+	cmpb	$0, initialized(%rip)
+	je	.L87
+.L81:
+	leaq	keywordList(%rip), %rax
+	leaq	176(%rax), %rdx
+	jmp	.L83
+	.p2align 4,,10
+	.p2align 3
+.L89:
+	addq	$8, %rax
+	cmpq	%rax, %rdx
+	je	.L88
+.L83:
+	cmpq	%rbx, (%rax)
+	jne	.L89
+	addq	$32, %rsp
+	movl	$1, %eax
+	popq	%rbx
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L88:
+	addq	$32, %rsp
+	xorl	%eax, %eax
+	popq	%rbx
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L87:
+	call	init
+	jmp	.L81
 	.p2align 4
 	.globl	string_equal
 	.def	string_equal;	.scl	2;	.type	32;	.endef
-	.seh_proc	string_equal
 string_equal:
-	.seh_endprologue
 	cmpq	%rcx, %rdx
 	sete	%al
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC5:
 	.ascii "\0"
@@ -685,36 +657,28 @@ string_equal:
 	.p2align 4
 	.globl	get_info
 	.def	get_info;	.scl	2;	.type	32;	.endef
-	.seh_proc	get_info
 get_info:
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$64, %rsp
-	.seh_stackalloc	64
-	.seh_endprologue
-	movq	all_string_list(%rip), %rax
 	xorl	%ebx, %ebx
+	subq	$64, %rsp
+	movq	all_string_list(%rip), %rax
 	testq	%rax, %rax
-	je	.L82
+	je	.L92
 	.p2align 4,,10
 	.p2align 3
-.L83:
+.L93:
 	movq	16(%rax), %rax
 	addq	$1, %rbx
 	testq	%rax, %rax
-	jne	.L83
-.L82:
+	jne	.L93
+.L92:
 	cmpb	$0, initialized(%rip)
-	je	.L89
-.L84:
+	je	.L100
+.L94:
 	leaq	.LC5(%rip), %rsi
 	movl	$48, %edx
 	leaq	.LC6(%rip), %r12
@@ -729,8 +693,8 @@ get_info:
 	addq	8(%rax), %r8
 	call	sprintf
 	cmpb	$0, initialized(%rip)
-	je	.L90
-.L85:
+	je	.L101
+.L95:
 	movl	$48, %edx
 	movq	%rsi, %rcx
 	call	create_string_check.part.0
@@ -743,8 +707,8 @@ get_info:
 	addq	8(%rax), %r8
 	call	sprintf
 	cmpb	$0, initialized(%rip)
-	je	.L91
-.L86:
+	je	.L102
+.L96:
 	movq	%rsi, %rcx
 	movl	$240, %edx
 	call	create_string_check.part.0
@@ -758,8 +722,8 @@ get_info:
 	movq	%rsi, %rcx
 	movq	%rax, 48(%rsp)
 	call	sprintf
-	movq	%rsi, %rax
 	addq	$64, %rsp
+	movq	%rsi, %rax
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
@@ -768,20 +732,19 @@ get_info:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L89:
+.L100:
 	call	init
-	jmp	.L84
+	jmp	.L94
 	.p2align 4,,10
 	.p2align 3
-.L91:
+.L102:
 	call	init
-	jmp	.L86
+	jmp	.L96
 	.p2align 4,,10
 	.p2align 3
-.L90:
+.L101:
 	call	init
-	jmp	.L85
-	.seh_endproc
+	jmp	.L95
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

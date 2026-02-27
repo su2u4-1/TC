@@ -4,14 +4,9 @@
 	.globl	get_cwd
 	.type	get_cwd, @function
 get_cwd:
-.LFB65:
-	.cfi_startproc
-	endbr64
 	xorl	%esi, %esi
 	xorl	%edi, %edi
-	jmp	getcwd@PLT
-	.cfi_endproc
-.LFE65:
+	jmp	*getcwd@GOTPCREL(%rip)
 	.size	get_cwd, .-get_cwd
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC0:
@@ -23,26 +18,13 @@ get_cwd:
 	.globl	absolute_path
 	.type	absolute_path, @function
 absolute_path:
-.LFB67:
-	.cfi_startproc
-	endbr64
 	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	movq	%rdi, %r12
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	testq	%rax, %rax
 	je	.L4
 	movq	%rax, %r13
@@ -79,11 +61,11 @@ absolute_path:
 	cmpb	$47, %al
 	jne	.L20
 	movq	%r13, %rdx
+	subq	$1, %r13
 	addq	%r12, %rsi
 	movq	%rbp, %rdi
-	subq	$1, %r13
 	subq	%rbx, %rdx
-	call	memmove@PLT
+	call	*memmove@GOTPCREL(%rip)
 	cmpq	%r13, %rbx
 	jb	.L14
 	.p2align 4,,10
@@ -96,16 +78,16 @@ absolute_path:
 .L15:
 	xorl	%esi, %esi
 	xorl	%edi, %edi
-	call	getcwd@PLT
+	call	*getcwd@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	je	.L25
 	movq	%rax, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	leaq	.LC0(%rip), %rdi
 	leaq	2(%r13,%rax), %r13
 	movq	%r13, %rsi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%r12, %r9
 	movq	%rbx, %r8
 	movl	$2, %esi
@@ -114,27 +96,20 @@ absolute_path:
 	xorl	%eax, %eax
 	movq	$-1, %rdx
 	leaq	.LC1(%rip), %rcx
-	call	__sprintf_chk@PLT
+	call	*__sprintf_chk@GOTPCREL(%rip)
 	movq	%rbx, %rdi
-	call	free@PLT
+	call	*free@GOTPCREL(%rip)
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	movq	%r13, %rsi
 	movq	%rbp, %rdi
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
-	jmp	create_string@PLT
+	jmp	*create_string@GOTPCREL(%rip)
 	.p2align 4,,10
 	.p2align 3
 .L37:
-	.cfi_restore_state
 	leaq	-2(%rbx), %r14
 	leaq	(%r12,%r14), %rbp
 	cmpb	$47, 0(%rbp)
@@ -144,7 +119,7 @@ absolute_path:
 	subq	$2, %r13
 	subq	%rbx, %rdx
 	movq	%r14, %rbx
-	call	memmove@PLT
+	call	*memmove@GOTPCREL(%rip)
 	.p2align 4,,10
 	.p2align 3
 .L10:
@@ -156,22 +131,15 @@ absolute_path:
 	.p2align 3
 .L25:
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	movq	%r12, %rax
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L4:
-	.cfi_restore_state
 	xorl	%r13d, %r13d
 	jmp	.L15
 .L38:
@@ -180,60 +148,36 @@ absolute_path:
 	jne	.L20
 	movzbl	-1(%r12,%rbx), %eax
 	jmp	.L8
-	.cfi_endproc
-.LFE67:
 	.size	absolute_path, .-absolute_path
 	.p2align 4
 	.globl	get_file_name
 	.type	get_file_name, @function
 get_file_name:
-.LFB68:
-	.cfi_startproc
-	endbr64
 	movq	16(%rdi), %rax
 	ret
-	.cfi_endproc
-.LFE68:
 	.size	get_file_name, .-get_file_name
 	.p2align 4
 	.globl	get_file_extension
 	.type	get_file_extension, @function
 get_file_extension:
-.LFB69:
-	.cfi_startproc
-	endbr64
 	movq	8(%rdi), %rax
 	ret
-	.cfi_endproc
-.LFE69:
 	.size	get_file_extension, .-get_file_extension
 	.p2align 4
 	.globl	get_file_dir
 	.type	get_file_dir, @function
 get_file_dir:
-.LFB70:
-	.cfi_startproc
-	endbr64
 	movq	(%rdi), %rdx
 	testq	%rdx, %rdx
 	je	.L68
 	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
 	xorl	%r13d, %r13d
 	pushq	%r12
-	.cfi_def_cfa_offset 24
-	.cfi_offset 12, -24
 	movq	%rdi, %r12
 	pushq	%rbp
-	.cfi_def_cfa_offset 32
-	.cfi_offset 6, -32
 	xorl	%ebp, %ebp
 	pushq	%rbx
-	.cfi_def_cfa_offset 40
-	.cfi_offset 3, -40
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
 	movq	8(%rdx), %rbx
 	testq	%rbx, %rbx
 	je	.L41
@@ -242,7 +186,7 @@ get_file_dir:
 .L43:
 	movq	(%rdx), %rdi
 	addq	$1, %r13
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%rbx, %rdx
 	addq	%rax, %rbp
 	movq	8(%rbx), %rax
@@ -260,7 +204,7 @@ get_file_dir:
 	cmpq	$1, %r13
 	cmove	%rax, %rsi
 	leaq	.LC0(%rip), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movb	$0, (%rax)
 	movq	(%r12), %rbx
 	movq	%rax, %rbp
@@ -272,10 +216,10 @@ get_file_dir:
 	movq	(%rbx), %r12
 .L51:
 	movq	%rbp, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%r12, %rsi
 	leaq	0(%rbp,%rax), %rdi
-	call	stpcpy@PLT
+	call	*stpcpy@GOTPCREL(%rip)
 	movq	8(%rbx), %rbx
 	testq	%rbx, %rbx
 	je	.L49
@@ -296,96 +240,53 @@ get_file_dir:
 	.p2align 3
 .L49:
 	movq	%rbp, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	movq	%rbp, %rdi
 	popq	%rbx
-	.cfi_restore 3
-	.cfi_def_cfa_offset 32
 	movq	%rax, %rsi
 	popq	%rbp
-	.cfi_restore 6
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_restore 12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_restore 13
-	.cfi_def_cfa_offset 8
-	jmp	create_string@PLT
+	jmp	*create_string@GOTPCREL(%rip)
 	.p2align 4,,10
 	.p2align 3
 .L73:
-	.cfi_restore_state
 	cmpb	$0, 1(%r12)
 	je	.L51
 	jmp	.L54
 .L41:
 	popq	%rdx
-	.cfi_def_cfa_offset 40
 	xorl	%eax, %eax
 	popq	%rbx
-	.cfi_def_cfa_offset 32
 	popq	%rbp
-	.cfi_def_cfa_offset 24
 	popq	%r12
-	.cfi_def_cfa_offset 16
 	popq	%r13
-	.cfi_def_cfa_offset 8
 	ret
 .L68:
-	.cfi_restore 3
-	.cfi_restore 6
-	.cfi_restore 12
-	.cfi_restore 13
 	xorl	%eax, %eax
 	ret
-	.cfi_endproc
-.LFE70:
 	.size	get_file_dir, .-get_file_dir
 	.p2align 4
 	.globl	get_full_path
 	.type	get_full_path, @function
 get_full_path:
-.LFB71:
-	.cfi_startproc
-	endbr64
 	movq	24(%rdi), %rax
 	ret
-	.cfi_endproc
-.LFE71:
 	.size	get_full_path, .-get_full_path
 	.p2align 4
 	.globl	change_file_extension
 	.type	change_file_extension, @function
 change_file_extension:
-.LFB72:
-	.cfi_startproc
-	endbr64
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	movq	%rsi, %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	movq	%rdi, %rbx
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 64
 	movq	%rsi, 8(%rdi)
 	call	get_file_dir
 	movq	%rax, %r13
@@ -394,20 +295,20 @@ change_file_extension:
 	movq	%rax, %rdi
 	movq	%r13, %r15
 	leaq	.LC0(%rip), %r14
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	16(%rbx), %rdi
 	movq	%rax, %r12
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	addq	%r12, %rax
 	leaq	1(%rax), %r12
 	testq	%rbp, %rbp
 	je	.L94
 .L86:
 	movq	%rbp, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%r14, %rdi
 	leaq	1(%r12,%rax), %rsi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %r12
 	testq	%r13, %r13
 	je	.L95
@@ -416,44 +317,35 @@ change_file_extension:
 .L79:
 	movq	16(%rbx), %rsi
 	movq	%r12, %rdi
-	call	strcpy@PLT
+	call	*strcpy@GOTPCREL(%rip)
 .L80:
 	testq	%rbp, %rbp
 	je	.L82
 .L81:
 	movq	%rbp, %rsi
 	movq	%r12, %rdi
-	call	strcat@PLT
+	call	*strcat@GOTPCREL(%rip)
 .L82:
 	movq	%r12, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%r12, %rdi
 	movq	%rax, %rsi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, 24(%rbx)
 	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L94:
-	.cfi_restore_state
 	leaq	2(%rax), %rsi
 	movq	%r14, %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	cmpb	$0, (%r15)
 	movq	%rax, %r12
 	je	.L79
@@ -465,13 +357,13 @@ change_file_extension:
 	movq	$-1, %rdx
 	movl	$2, %esi
 	movq	%r12, %rdi
-	call	__sprintf_chk@PLT
+	call	*__sprintf_chk@GOTPCREL(%rip)
 	jmp	.L80
 	.p2align 4,,10
 	.p2align 3
 .L76:
 	movq	16(%rbx), %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	testq	%rbp, %rbp
 	je	.L85
 	leaq	.LC0(%rip), %r14
@@ -483,21 +375,19 @@ change_file_extension:
 .L85:
 	leaq	2(%rax), %rsi
 	leaq	.LC0(%rip), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	16(%rbx), %rsi
-	movq	%rax, %rdi
 	movq	%rax, %r12
-	call	strcpy@PLT
+	movq	%rax, %rdi
+	call	*strcpy@GOTPCREL(%rip)
 	jmp	.L82
 	.p2align 4,,10
 	.p2align 3
 .L95:
 	movq	16(%rbx), %rsi
 	movq	%r12, %rdi
-	call	strcpy@PLT
+	call	*strcpy@GOTPCREL(%rip)
 	jmp	.L81
-	.cfi_endproc
-.LFE72:
 	.size	change_file_extension, .-change_file_extension
 	.section	.rodata.str1.1
 .LC2:
@@ -509,32 +399,16 @@ change_file_extension:
 	.globl	change_file_name
 	.type	change_file_name, @function
 change_file_name:
-.LFB73:
-	.cfi_startproc
-	endbr64
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	leaq	.LC0(%rip), %r14
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	movq	%rsi, %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	movq	%rdi, %rbx
 	subq	$24, %rsp
-	.cfi_def_cfa_offset 80
 	movq	(%rdi), %rax
 	movq	%rsi, 16(%rdi)
 	testq	%rax, %rax
@@ -546,20 +420,20 @@ change_file_name:
 	movq	8(%rax), %rax
 	testq	%rax, %rax
 	jne	.L98
-	movq	%rbp, %rdi
 	movq	8(%rbx), %r15
-	call	strlen@PLT
+	movq	%rbp, %rdi
+	call	*strlen@GOTPCREL(%rip)
 	movq	%rax, %r13
 	testq	%r15, %r15
 	je	.L110
 	movq	%r15, %rdi
 	leaq	.LC0(%rip), %r14
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	addq	%rax, %r13
 .L100:
 	leaq	1(%r13), %rsi
 	movq	%r14, %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%r15, %r9
 	movq	%rbp, %r8
 	movl	$2, %esi
@@ -568,12 +442,12 @@ change_file_name:
 	movq	$-1, %rdx
 	movq	%rax, %rdi
 	xorl	%eax, %eax
-	call	__sprintf_chk@PLT
+	call	*__sprintf_chk@GOTPCREL(%rip)
 	movq	%r13, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%r13, %rdi
 	movq	%rax, %rsi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, (%r12)
 .L99:
 	movq	%rbx, %rdi
@@ -582,23 +456,23 @@ change_file_name:
 	testq	%rax, %rax
 	je	.L102
 	movq	%rax, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%rbp, %rdi
 	movq	8(%rbx), %r15
 	movq	%rax, %r13
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%r12, %r8
 	leaq	0(%r13,%rax), %rsi
 	leaq	1(%rsi), %r13
 	testq	%r15, %r15
 	je	.L115
 .L109:
-	movq	%r15, %rdi
 	movq	%r8, 8(%rsp)
-	call	strlen@PLT
+	movq	%r15, %rdi
+	call	*strlen@GOTPCREL(%rip)
 	movq	%r14, %rdi
 	leaq	1(%r13,%rax), %rsi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	testq	%r12, %r12
 	movq	8(%rsp), %r8
 	movq	%rax, %r13
@@ -613,59 +487,46 @@ change_file_name:
 	movq	$-1, %rdx
 	movl	$2, %esi
 	xorl	%eax, %eax
-	call	__sprintf_chk@PLT
+	call	*__sprintf_chk@GOTPCREL(%rip)
 .L106:
 	movq	%r13, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%r13, %rdi
 	movq	%rax, %rsi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, 24(%rbx)
 	addq	$24, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L115:
-	.cfi_restore_state
 	addq	$2, %rsi
-	movq	%r14, %rdi
 	movq	%r12, 8(%rsp)
+	movq	%r14, %rdi
 	leaq	.LC0(%rip), %r15
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	8(%rsp), %r8
 	movq	%rax, %r13
 	cmpb	$0, (%r8)
 	je	.L105
 .L116:
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 88
 	movq	$-1, %rdx
 	movq	%rbp, %r9
 	xorl	%eax, %eax
 	pushq	%r15
-	.cfi_def_cfa_offset 96
 	leaq	.LC3(%rip), %rcx
 	movl	$2, %esi
 	movq	%r13, %rdi
-	call	__sprintf_chk@PLT
+	call	*__sprintf_chk@GOTPCREL(%rip)
 	popq	%rax
-	.cfi_def_cfa_offset 88
 	popq	%rdx
-	.cfi_def_cfa_offset 80
 	jmp	.L106
 	.p2align 4,,10
 	.p2align 3
@@ -676,9 +537,9 @@ change_file_name:
 	.p2align 4,,10
 	.p2align 3
 .L102:
-	movq	%rbp, %rdi
 	movq	8(%rbx), %r15
-	call	strlen@PLT
+	movq	%rbp, %rdi
+	call	*strlen@GOTPCREL(%rip)
 	leaq	.LC0(%rip), %r8
 	leaq	1(%rax), %r13
 	testq	%r15, %r15
@@ -686,11 +547,9 @@ change_file_name:
 	leaq	2(%rax), %rsi
 	movq	%r14, %rdi
 	leaq	.LC0(%rip), %r15
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %r13
 	jmp	.L105
-	.cfi_endproc
-.LFE73:
 	.size	change_file_name, .-change_file_name
 	.section	.rodata.str1.1
 .LC4:
@@ -704,49 +563,30 @@ change_file_name:
 	.globl	normalize_path
 	.type	normalize_path, @function
 normalize_path:
-.LFB74:
-	.cfi_startproc
-	endbr64
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	movq	%rdi, %r12
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	xorl	%ebp, %ebp
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	xorl	%ebx, %ebx
-	subq	$312, %rsp
-	.cfi_def_cfa_offset 368
+	subq	$296, %rsp
 	movq	24(%rdi), %rdi
-	movq	%fs:40, %rax
-	movq	%rax, 296(%rsp)
-	xorl	%eax, %eax
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	leaq	.LC0(%rip), %rdi
 	leaq	1(%rax), %rsi
 	movq	%rax, %r15
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	24(%r12), %rsi
-	movq	%rax, %rdi
 	movq	%rax, %r14
-	call	strcpy@PLT
+	movq	%rax, %rdi
+	call	*strcpy@GOTPCREL(%rip)
 	testq	%r15, %r15
 	je	.L118
 	cmpb	$47, (%r14)
-	je	.L185
+	je	.L184
 .L118:
 	movq	%rbp, %rsi
 	movq	%rbx, %r13
@@ -761,7 +601,7 @@ normalize_path:
 	movq	%rbp, %rax
 	addq	$1, %rbp
 	cmpq	%rax, %r15
-	je	.L186
+	je	.L185
 	cmpb	$47, (%r14,%rax)
 	jne	.L122
 	cmpq	%rax, %rsi
@@ -771,7 +611,7 @@ normalize_path:
 	jmp	.L122
 	.p2align 4,,10
 	.p2align 3
-.L186:
+.L185:
 	cmpq	%r15, %rsi
 	jb	.L120
 .L121:
@@ -781,7 +621,7 @@ normalize_path:
 	movq	0(%r13), %r13
 	movl	$46, %esi
 	movq	%r13, %rdi
-	call	strrchr@PLT
+	call	*strrchr@GOTPCREL(%rip)
 	movq	%rax, %rbp
 	cmpq	%rax, %r13
 	je	.L135
@@ -790,17 +630,17 @@ normalize_path:
 	movq	%rax, %rsi
 	movq	%r13, %rdi
 	subq	%r13, %rsi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rbp, %rdi
 	movq	%rax, 16(%r12)
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%rbp, %rdi
 	movq	%rax, %rsi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, 8(%r12)
 	testq	%rbx, %rbx
 	je	.L137
-.L189:
+.L188:
 	movq	%rbx, %rbp
 	xorl	%r15d, %r15d
 	xorl	%r14d, %r14d
@@ -809,7 +649,7 @@ normalize_path:
 .L138:
 	movq	0(%rbp), %rdi
 	addq	$1, %r15
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	8(%rbp), %rbp
 	addq	%rax, %r14
 	testq	%rbp, %rbp
@@ -819,7 +659,7 @@ normalize_path:
 	leaq	(%r14,%r15), %rsi
 	cmovbe	%rax, %rsi
 	leaq	.LC0(%rip), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movb	$0, (%rax)
 	movq	(%rbx), %rbp
 	movq	%rax, %r13
@@ -827,16 +667,16 @@ normalize_path:
 	.p2align 3
 .L144:
 	movq	%r13, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%rbp, %rsi
 	leaq	0(%r13,%rax), %rdi
-	call	stpcpy@PLT
+	call	*stpcpy@GOTPCREL(%rip)
 	movq	8(%rbx), %rbx
 	testq	%rbx, %rbx
 	je	.L140
 	movq	(%rbx), %rbp
 	cmpb	$47, 0(%rbp)
-	je	.L187
+	je	.L186
 .L147:
 	cmpb	$0, 0(%r13)
 	je	.L144
@@ -853,29 +693,29 @@ normalize_path:
 	movq	%r10, %rdi
 	addq	%r14, %rsi
 	movl	$256, %ecx
-	movq	%rax, %rdx
 	movq	%rax, 8(%rsp)
-	call	__strncpy_chk@PLT
+	movq	%rax, %rdx
+	call	*__strncpy_chk@GOTPCREL(%rip)
 	movq	8(%rsp), %r8
 	movq	%rax, %r10
 	movb	$0, 32(%rsp,%r8)
 	cmpw	$46, (%rax)
 	je	.L123
 	cmpw	$11822, (%rax)
-	je	.L188
+	je	.L187
 .L127:
 	cmpb	$0, 32(%rsp)
 	je	.L123
-	movl	$16, %edi
 	movq	%r10, 24(%rsp)
+	movl	$16, %edi
 	movq	%r8, 8(%rsp)
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	24(%rsp), %r10
 	movq	8(%rsp), %rsi
 	movq	%rax, 16(%rsp)
-	movq	%r10, %rdi
 	movq	%r10, 8(%rsp)
-	call	create_string@PLT
+	movq	%r10, %rdi
+	call	*create_string@GOTPCREL(%rip)
 	movq	16(%rsp), %rdx
 	testq	%r13, %r13
 	movq	8(%rsp), %r10
@@ -897,51 +737,37 @@ normalize_path:
 	movq	%r13, 16(%r12)
 	movq	%rax, 8(%r12)
 	testq	%rbx, %rbx
-	jne	.L189
+	jne	.L188
 .L137:
 	movl	$1, %esi
 	leaq	.LC0(%rip), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movb	$0, (%rax)
 	movq	%rax, %r13
-	.p2align 4,,10
-	.p2align 3
 .L140:
 	movq	%r13, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%r13, %rdi
 	movq	%rax, %rsi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, 24(%r12)
-	movq	296(%rsp), %rax
-	subq	%fs:40, %rax
-	jne	.L190
-	addq	$312, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
+	addq	$296, %rsp
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L187:
-	.cfi_restore_state
+.L186:
 	cmpb	$0, 1(%rbp)
 	je	.L144
 	jmp	.L147
 	.p2align 4,,10
 	.p2align 3
-.L188:
+.L187:
 	cmpb	$0, 2(%rax)
 	jne	.L127
 	testq	%r13, %r13
@@ -950,33 +776,33 @@ normalize_path:
 	je	.L130
 	movq	0(%r13), %rax
 	cmpb	$46, (%rax)
-	je	.L191
-.L151:
+	je	.L189
+.L150:
 	movq	%rbx, %rax
 	jmp	.L132
 	.p2align 4,,10
 	.p2align 3
-.L152:
+.L151:
 	movq	%rdx, %rax
 .L132:
 	testq	%rax, %rax
 	je	.L123
 	movq	8(%rax), %rdx
 	cmpq	%r13, %rdx
-	jne	.L152
+	jne	.L151
 	movq	$0, 8(%rax)
 	movq	%rax, %r13
 	jmp	.L123
 	.p2align 4,,10
 	.p2align 3
-.L185:
+.L184:
 	movl	$16, %edi
 	movl	$1, %ebp
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movl	$1, %esi
 	leaq	.LC4(%rip), %rdi
 	movq	%rax, %rbx
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	$0, 8(%rbx)
 	movq	%rax, (%rbx)
 	jmp	.L118
@@ -985,30 +811,30 @@ normalize_path:
 .L130:
 	testq	%rbx, %rbx
 	jne	.L123
-	movl	$16, %edi
 	movq	%r10, 8(%rsp)
-	call	alloc_memory@PLT
+	movl	$16, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
 	movl	$2, %esi
 	leaq	.LC6(%rip), %rdi
 	movq	%rax, %rbx
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rbx, %r13
 	movq	8(%rsp), %r10
 	movq	$0, 8(%rbx)
 	movq	%rax, (%rbx)
 	jmp	.L123
-.L191:
+.L189:
 	cmpb	$46, 1(%rax)
-	jne	.L151
+	jne	.L150
 	cmpb	$0, 2(%rax)
-	jne	.L151
-	movl	$16, %edi
+	jne	.L150
 	movq	%r10, 16(%rsp)
-	call	alloc_memory@PLT
+	movl	$16, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
 	movl	$2, %esi
 	leaq	.LC6(%rip), %rdi
 	movq	%rax, 8(%rsp)
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	8(%rsp), %rdx
 	movq	16(%rsp), %r10
 	movq	%rax, (%rdx)
@@ -1016,29 +842,17 @@ normalize_path:
 	movq	%rdx, 8(%r13)
 	movq	%rdx, %r13
 	jmp	.L123
-.L190:
-	call	__stack_chk_fail@PLT
-	.cfi_endproc
-.LFE74:
 	.size	normalize_path, .-normalize_path
 	.p2align 4
 	.globl	create_file
 	.type	create_file, @function
 create_file:
-.LFB66:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rdi, %rbp
 	movl	$32, %edi
 	pushq	%rbx
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 32
-	call	alloc_memory@PLT
+	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbp, %rdi
 	movq	%rax, %rbx
 	call	absolute_path
@@ -1046,31 +860,10 @@ create_file:
 	movq	%rax, 24(%rbx)
 	call	normalize_path
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 24
 	movq	%rbx, %rax
 	popq	%rbx
-	.cfi_def_cfa_offset 16
 	popq	%rbp
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE66:
 	.size	create_file, .-create_file
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

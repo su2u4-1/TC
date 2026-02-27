@@ -2,15 +2,10 @@
 	.text
 	.globl	create_list
 	.def	create_list;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_list
 create_list:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movl	$16, %ecx
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
@@ -19,21 +14,14 @@ create_list:
 	movq	-8(%rbp), %rax
 	movq	$0, 8(%rax)
 	movq	-8(%rbp), %rax
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	create_node
 	.def	create_node;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_node
 create_node:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movl	$16, %ecx
 	call	alloc_memory
@@ -44,21 +32,14 @@ create_node:
 	movq	16(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	list_append
 	.def	list_append;	.scl	2;	.type	32;	.endef
-	.seh_proc	list_append
 list_append:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	24(%rbp), %rax
@@ -86,21 +67,14 @@ list_append:
 	movq	%rdx, 8(%rax)
 .L8:
 	nop
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	list_copy
 	.def	list_copy;	.scl	2;	.type	32;	.endef
-	.seh_proc	list_copy
 list_copy:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	call	create_list
 	movq	%rax, -8(%rbp)
@@ -113,21 +87,14 @@ list_copy:
 	movq	-8(%rbp), %rax
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	list_pop
 	.def	list_pop;	.scl	2;	.type	32;	.endef
-	.seh_proc	list_pop
 list_pop:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$16, %rsp
-	.seh_stackalloc	16
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	16(%rbp), %rax
 	movq	(%rax), %rax
@@ -153,10 +120,8 @@ list_pop:
 	movq	-8(%rbp), %rax
 	movq	8(%rax), %rax
 .L13:
-	addq	$16, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC0:
@@ -184,15 +149,10 @@ list_pop:
 	.text
 	.globl	create_name
 	.def	create_name;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_name
 create_name:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movl	%edx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -383,21 +343,14 @@ create_name:
 	call	list_append
 	movq	-16(%rbp), %rax
 .L32:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	create_scope
 	.def	create_scope;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_scope
 create_scope:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movl	$16, %ecx
 	call	alloc_memory
@@ -411,21 +364,14 @@ create_scope:
 	movq	-16(%rbp), %rdx
 	movq	%rax, 8(%rdx)
 	movq	-8(%rbp), %rax
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	search
 	.def	search;	.scl	2;	.type	32;	.endef
-	.seh_proc	search
 search:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	16(%rbp), %rax
@@ -469,21 +415,14 @@ search:
 	jne	.L41
 	movl	$0, %eax
 .L39:
-	addq	$80, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	is_builtin_type
 	.def	is_builtin_type;	.scl	2;	.type	32;	.endef
-	.seh_proc	is_builtin_type
 is_builtin_type:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	.refptr.INT_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
@@ -526,21 +465,14 @@ is_builtin_type:
 .L44:
 	movl	$0, %eax
 .L45:
-	addq	$32, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	is_type
 	.def	is_type;	.scl	2;	.type	32;	.endef
-	.seh_proc	is_type
 is_type:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$16, %rsp
-	.seh_stackalloc	16
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	16(%rbp), %rax
 	movq	%rax, -8(%rbp)
@@ -558,10 +490,8 @@ is_type:
 .L49:
 	movl	$0, %eax
 .L50:
-	addq	$16, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC10:
@@ -569,30 +499,23 @@ is_type:
 	.text
 	.globl	parser_error
 	.def	parser_error;	.scl	2;	.type	32;	.endef
-	.seh_proc	parser_error
 parser_error:
 	pushq	%rbp
-	.seh_pushreg	%rbp
+	movq	%rsp, %rbp
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	leaq	48(%rsp), %rbp
-	.seh_setframe	%rbp, 48
-	.seh_endprologue
-	movq	%rcx, 32(%rbp)
-	movq	%rdx, 40(%rbp)
-	movq	40(%rbp), %rax
+	movq	%rcx, 16(%rbp)
+	movq	%rdx, 24(%rbp)
+	movq	24(%rbp), %rax
 	movq	16(%rax), %rax
 	leaq	1(%rax), %rsi
-	movq	40(%rbp), %rax
+	movq	24(%rbp), %rax
 	movq	8(%rax), %rax
 	leaq	1(%rax), %rbx
 	call	__getreent
 	movq	24(%rax), %rax
-	movq	32(%rbp), %rdx
+	movq	16(%rbp), %rdx
 	movq	%rdx, 32(%rsp)
 	movq	%rsi, %r9
 	movq	%rbx, %r8
@@ -605,17 +528,11 @@ parser_error:
 	popq	%rsi
 	popq	%rbp
 	ret
-	.seh_endproc
 	.def	set_bool_list;	.scl	3;	.type	32;	.endef
-	.seh_proc	set_bool_list
 set_bool_list:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$16, %rsp
-	.seh_stackalloc	16
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movl	%r8d, %eax
@@ -662,18 +579,12 @@ set_bool_list:
 	movb	%al, (%rdx)
 .L56:
 	nop
-	addq	$16, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.def	get_bool_list;	.scl	3;	.type	32;	.endef
-	.seh_proc	get_bool_list
 get_bool_list:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	24(%rbp), %rax
@@ -693,7 +604,6 @@ get_bool_list:
 	setne	%al
 	popq	%rbp
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC11:
 	.ascii "\342\224\202   \0"
@@ -706,15 +616,10 @@ get_bool_list:
 	.text
 	.globl	indention
 	.def	indention;	.scl	2;	.type	32;	.endef
-	.seh_proc	indention
 indention:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movl	%r8d, %eax
@@ -768,21 +673,14 @@ indention:
 	call	fprintf
 .L67:
 	nop
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	create_parser
 	.def	create_parser;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_parser
 create_parser:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movl	$35, %ecx
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
@@ -795,10 +693,8 @@ create_parser:
 	movq	-16(%rbp), %rax
 	movb	$0, 2(%rax)
 	movq	-8(%rbp), %rax
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC15:
 	.ascii "print\0"
@@ -828,46 +724,40 @@ create_parser:
 	.text
 	.globl	parse_import_file
 	.def	parse_import_file;	.scl	2;	.type	32;	.endef
-	.seh_proc	parse_import_file
 parse_import_file:
 	pushq	%rbp
-	.seh_pushreg	%rbp
+	movq	%rsp, %rbp
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
+	andq	$-16, %rsp
 	subq	$1152, %rsp
-	.seh_stackalloc	1152
-	leaq	128(%rsp), %rbp
-	.seh_setframe	%rbp, 128
-	.seh_endprologue
-	movq	%rcx, 1056(%rbp)
-	movq	%rdx, 1064(%rbp)
-	movq	%r8, 1072(%rbp)
-	movq	$0, 1016(%rbp)
-	movb	$0, -80(%rbp)
-	cmpq	$0, 1064(%rbp)
+	movq	%rcx, 16(%rbp)
+	movq	%rdx, 24(%rbp)
+	movq	%r8, 32(%rbp)
+	movq	$0, 1144(%rsp)
+	movb	$0, 48(%rsp)
+	cmpq	$0, 24(%rbp)
 	jne	.L71
-	movq	1056(%rbp), %rax
+	movq	16(%rbp), %rax
 	leaq	.LC15(%rip), %rdx
 	movq	%rax, %rcx
 	call	strcmp
 	testl	%eax, %eax
 	jne	.L72
-	leaq	-80(%rbp), %rax
+	leaq	48(%rsp), %rax
 	movabsq	$8246143026212319022, %rbx
 	movq	%rbx, (%rax)
 	movabsq	$27993765565065586, %rsi
 	movq	%rsi, 7(%rax)
 	jmp	.L73
 .L72:
-	movq	1056(%rbp), %rax
+	movq	16(%rbp), %rax
 	leaq	.LC16(%rip), %rdx
 	movq	%rax, %rcx
 	call	strcmp
 	testl	%eax, %eax
 	jne	.L74
-	leaq	-80(%rbp), %rax
+	leaq	48(%rsp), %rax
 	movabsq	$8241920901561659182, %rbx
 	movq	%rbx, (%rax)
 	movabsq	$27993765531771183, %rsi
@@ -876,7 +766,7 @@ parse_import_file:
 .L74:
 	call	__getreent
 	movq	24(%rax), %rax
-	leaq	-80(%rbp), %rdx
+	leaq	48(%rsp), %rdx
 	movq	%rdx, %r8
 	leaq	.LC17(%rip), %rdx
 	movq	%rax, %rcx
@@ -884,47 +774,47 @@ parse_import_file:
 	movl	$0, %eax
 	jmp	.L83
 .L71:
-	movq	1064(%rbp), %rcx
-	leaq	-80(%rbp), %rdx
-	leaq	-80(%rbp), %rax
+	movq	24(%rbp), %rcx
+	leaq	48(%rsp), %rdx
+	leaq	48(%rsp), %rax
 	movq	%rcx, %r9
 	movq	%rdx, %r8
 	movl	$1024, %edx
 	movq	%rax, %rcx
 	call	string_append
-	leaq	-80(%rbp), %rdx
-	leaq	-80(%rbp), %rax
+	leaq	48(%rsp), %rdx
+	leaq	48(%rsp), %rax
 	leaq	.LC18(%rip), %r9
 	movq	%rdx, %r8
 	movl	$1024, %edx
 	movq	%rax, %rcx
 	call	string_append
-	movq	1056(%rbp), %rcx
-	leaq	-80(%rbp), %rdx
-	leaq	-80(%rbp), %rax
+	movq	16(%rbp), %rcx
+	leaq	48(%rsp), %rdx
+	leaq	48(%rsp), %rax
 	movq	%rcx, %r9
 	movq	%rdx, %r8
 	movl	$1024, %edx
 	movq	%rax, %rcx
 	call	string_append
-	leaq	-80(%rbp), %rdx
-	leaq	-80(%rbp), %rax
+	leaq	48(%rsp), %rdx
+	leaq	48(%rsp), %rax
 	leaq	.LC19(%rip), %r9
 	movq	%rdx, %r8
 	movl	$1024, %edx
 	movq	%rax, %rcx
 	call	string_append
 .L73:
-	leaq	-80(%rbp), %rax
+	leaq	48(%rsp), %rax
 	leaq	.LC20(%rip), %rdx
 	movq	%rax, %rcx
 	call	fopen
-	movq	%rax, 1000(%rbp)
-	cmpq	$0, 1000(%rbp)
+	movq	%rax, 1128(%rsp)
+	cmpq	$0, 1128(%rsp)
 	jne	.L76
 	call	__getreent
 	movq	24(%rax), %rax
-	leaq	-80(%rbp), %rdx
+	leaq	48(%rsp), %rdx
 	movq	%rdx, %r8
 	leaq	.LC21(%rip), %rdx
 	movq	%rax, %rcx
@@ -932,43 +822,43 @@ parse_import_file:
 	movl	$0, %eax
 	jmp	.L83
 .L76:
-	leaq	-80(%rbp), %rax
+	leaq	48(%rsp), %rax
 	movq	%rax, %rdx
 	leaq	.LC22(%rip), %rax
 	movq	%rax, %rcx
 	call	printf
-	movq	$0, -88(%rbp)
-	leaq	-88(%rbp), %rdx
-	movq	1000(%rbp), %rax
+	movq	$0, 40(%rsp)
+	leaq	40(%rsp), %rdx
+	movq	1128(%rsp), %rax
 	movq	%rax, %rcx
 	call	read_source
-	movq	%rax, 992(%rbp)
-	movq	1000(%rbp), %rax
+	movq	%rax, 1120(%rsp)
+	movq	1128(%rsp), %rax
 	movq	%rax, %rcx
 	call	fclose
 	call	create_parser
 	movq	%rax, %rsi
 	movq	.refptr.builtin_scope(%rip), %rax
 	movq	(%rax), %rbx
-	movq	-88(%rbp), %rdx
-	movq	992(%rbp), %rax
+	movq	40(%rsp), %rdx
+	movq	1120(%rsp), %rax
 	movq	%rax, %rcx
 	call	create_lexer
 	movq	%rsi, %r8
 	movq	%rbx, %rdx
 	movq	%rax, %rcx
 	call	parse_code
-	movq	%rax, 984(%rbp)
-	leaq	-80(%rbp), %rax
+	movq	%rax, 1112(%rsp)
+	leaq	48(%rsp), %rax
 	movq	%rax, %rdx
 	leaq	.LC23(%rip), %rax
 	movq	%rax, %rcx
 	call	printf
-	cmpq	$0, 984(%rbp)
+	cmpq	$0, 1112(%rsp)
 	jne	.L77
 	call	__getreent
 	movq	24(%rax), %rax
-	leaq	-80(%rbp), %rdx
+	leaq	48(%rsp), %rdx
 	movq	%rdx, %r8
 	leaq	.LC24(%rip), %rdx
 	movq	%rax, %rcx
@@ -976,67 +866,61 @@ parse_import_file:
 	movl	$0, %eax
 	jmp	.L83
 .L77:
-	movq	984(%rbp), %rax
+	movq	1112(%rsp), %rax
 	movq	8(%rax), %rax
 	movq	8(%rax), %rax
-	movq	%rax, 976(%rbp)
-	movq	976(%rbp), %rax
+	movq	%rax, 1104(%rsp)
+	movq	1104(%rsp), %rax
 	movq	(%rax), %rax
-	movq	%rax, 1008(%rbp)
+	movq	%rax, 1136(%rsp)
 	jmp	.L78
 .L81:
-	movq	1008(%rbp), %rax
-	movq	%rax, 968(%rbp)
-	movq	968(%rbp), %rax
+	movq	1136(%rsp), %rax
+	movq	%rax, 1096(%rsp)
+	movq	1096(%rsp), %rax
 	movq	8(%rax), %rax
-	movq	%rax, 960(%rbp)
-	movq	960(%rbp), %rax
+	movq	%rax, 1088(%rsp)
+	movq	1088(%rsp), %rax
 	movq	(%rax), %rax
-	movq	1056(%rbp), %rdx
+	movq	16(%rbp), %rdx
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
 	je	.L79
-	movq	960(%rbp), %rax
-	movq	%rax, 1016(%rbp)
+	movq	1088(%rsp), %rax
+	movq	%rax, 1144(%rsp)
 	jmp	.L80
 .L79:
-	movq	968(%rbp), %rax
+	movq	1096(%rsp), %rax
 	movq	(%rax), %rax
-	movq	%rax, 1008(%rbp)
+	movq	%rax, 1136(%rsp)
 .L78:
-	cmpq	$0, 1008(%rbp)
+	cmpq	$0, 1136(%rsp)
 	jne	.L81
 .L80:
-	cmpq	$0, 1016(%rbp)
+	cmpq	$0, 1144(%rsp)
 	je	.L82
-	movq	1072(%rbp), %rax
-	movq	%rax, 952(%rbp)
-	movq	952(%rbp), %rax
+	movq	32(%rbp), %rax
+	movq	%rax, 1080(%rsp)
+	movq	1080(%rsp), %rax
 	movq	8(%rax), %rax
-	movq	1016(%rbp), %rdx
+	movq	1144(%rsp), %rdx
 	movq	%rax, %rcx
 	call	list_append
 .L82:
-	movq	1016(%rbp), %rax
+	movq	1144(%rsp), %rax
 .L83:
-	addq	$1152, %rsp
+	leaq	-16(%rbp), %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rbp
 	ret
-	.seh_endproc
 	.globl	string_to_operator
 	.def	string_to_operator;	.scl	2;	.type	32;	.endef
-	.seh_proc	string_to_operator
 string_to_operator:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	.refptr.ASSIGN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
@@ -1230,19 +1114,13 @@ string_to_operator:
 .L104:
 	movl	$19, %eax
 .L86:
-	addq	$32, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	operator_precedence
 	.def	operator_precedence;	.scl	2;	.type	32;	.endef
-	.seh_proc	operator_precedence
 operator_precedence:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)
 	cmpl	$18, 16(%rbp)
 	ja	.L106
@@ -1297,16 +1175,11 @@ operator_precedence:
 .L113:
 	popq	%rbp
 	ret
-	.seh_endproc
 	.globl	operator_to_string
 	.def	operator_to_string;	.scl	2;	.type	32;	.endef
-	.seh_proc	operator_to_string
 operator_to_string:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)
 	cmpl	$18, 16(%rbp)
 	ja	.L115
@@ -1422,7 +1295,6 @@ operator_to_string:
 .L136:
 	popq	%rbp
 	ret
-	.seh_endproc
 .lcomm id_counter.0,8,8
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef

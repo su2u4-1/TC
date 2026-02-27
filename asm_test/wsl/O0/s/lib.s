@@ -568,19 +568,13 @@ builtin_scope:
 	.text
 	.type	increase_memory_size, @function
 increase_memory_size:
-.LFB6:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	subq	$48, %rsp
 	movl	%edi, %eax
 	movb	%al, -36(%rbp)
 	movl	$32, %edi
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	movq	%rax, -16(%rbp)
 	cmpq	$0, -16(%rbp)
 	jne	.L2
@@ -590,32 +584,32 @@ increase_memory_size:
 	movl	$1, %esi
 	leaq	.LC52(%rip), %rax
 	movq	%rax, %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	string_memory(%rip), %rax
-	movq	%rax, -24(%rbp)
+	movq	%rax, -8(%rbp)
 	jmp	.L3
 .L4:
-	movq	-24(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	16(%rax), %rax
-	movq	%rax, -8(%rbp)
-	movq	-24(%rbp), %rax
+	movq	%rax, -24(%rbp)
+	movq	-8(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	%rax, %rdi
-	call	free@PLT
-	movq	-24(%rbp), %rax
-	movq	%rax, %rdi
-	call	free@PLT
+	call	*free@GOTPCREL(%rip)
 	movq	-8(%rbp), %rax
-	movq	%rax, -24(%rbp)
+	movq	%rax, %rdi
+	call	*free@GOTPCREL(%rip)
+	movq	-24(%rbp), %rax
+	movq	%rax, -8(%rbp)
 .L3:
-	cmpq	$0, -24(%rbp)
+	cmpq	$0, -8(%rbp)
 	jne	.L4
 	movb	$0, initialized(%rip)
 	movl	$1, %edi
-	call	exit@PLT
+	call	*exit@GOTPCREL(%rip)
 .L2:
 	movl	$1024, %edi
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	movq	%rax, %rdx
 	movq	-16(%rbp), %rax
 	movq	%rdx, 24(%rax)
@@ -658,10 +652,7 @@ increase_memory_size:
 .L7:
 	nop
 	leave
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
-.LFE6:
 	.size	increase_memory_size, .-increase_memory_size
 	.section	.rodata
 	.align 8
@@ -670,14 +661,8 @@ increase_memory_size:
 	.text
 	.type	alloc_big_memory, @function
 alloc_big_memory:
-.LFB7:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	subq	$32, %rsp
 	movq	%rdi, -24(%rbp)
 	movq	string_memory_count(%rip), %rdx
@@ -690,7 +675,7 @@ alloc_big_memory:
 	movq	%rax, string_memory_used(%rip)
 	movq	-24(%rbp), %rax
 	movq	%rax, %rdi
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	movq	%rax, -8(%rbp)
 	movq	stderr(%rip), %rax
 	movq	-24(%rbp), %rdx
@@ -698,7 +683,7 @@ alloc_big_memory:
 	movq	%rcx, %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
-	call	fprintf@PLT
+	call	*fprintf@GOTPCREL(%rip)
 	cmpq	$0, -8(%rbp)
 	jne	.L9
 	movq	stderr(%rip), %rax
@@ -707,27 +692,18 @@ alloc_big_memory:
 	movl	$1, %esi
 	leaq	.LC52(%rip), %rax
 	movq	%rax, %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movl	$1, %edi
-	call	exit@PLT
+	call	*exit@GOTPCREL(%rip)
 .L9:
 	movq	-8(%rbp), %rax
 	leave
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
-.LFE7:
 	.size	alloc_big_memory, .-alloc_big_memory
 	.type	create_string_check, @function
 create_string_check:
-.LFB8:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	subq	$64, %rsp
 	movq	%rdi, -40(%rbp)
 	movq	%rsi, -48(%rbp)
@@ -749,40 +725,40 @@ create_string_check:
 	cmpb	$0, -52(%rbp)
 	je	.L16
 	movq	all_string_list(%rip), %rax
-	movq	%rax, -32(%rbp)
-	movq	$0, -24(%rbp)
+	movq	%rax, -8(%rbp)
+	movq	$0, -16(%rbp)
 	jmp	.L17
 .L19:
-	movq	-32(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	8(%rax), %rax
 	cmpq	%rax, -48(%rbp)
 	jne	.L18
-	movq	-32(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	(%rax), %rax
 	testq	%rax, %rax
 	je	.L18
-	movq	-32(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	(%rax), %rax
 	movq	-48(%rbp), %rdx
 	movq	-40(%rbp), %rcx
 	movq	%rcx, %rsi
 	movq	%rax, %rdi
-	call	strncmp@PLT
+	call	*strncmp@GOTPCREL(%rip)
 	testl	%eax, %eax
 	jne	.L18
-	movq	-32(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	(%rax), %rax
-	movq	%rax, -24(%rbp)
+	movq	%rax, -16(%rbp)
 .L18:
-	movq	-32(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	16(%rax), %rax
-	movq	%rax, -32(%rbp)
+	movq	%rax, -8(%rbp)
 .L17:
-	cmpq	$0, -32(%rbp)
+	cmpq	$0, -8(%rbp)
 	jne	.L19
-	cmpq	$0, -24(%rbp)
+	cmpq	$0, -16(%rbp)
 	je	.L16
-	movq	-24(%rbp), %rax
+	movq	-16(%rbp), %rax
 	jmp	.L15
 .L16:
 	cmpq	$1022, -48(%rbp)
@@ -791,7 +767,7 @@ create_string_check:
 	addq	$1, %rax
 	movq	%rax, %rdi
 	call	alloc_big_memory
-	movq	%rax, -16(%rbp)
+	movq	%rax, -24(%rbp)
 	jmp	.L21
 .L20:
 	movq	string_memory(%rip), %rax
@@ -810,7 +786,7 @@ create_string_check:
 	movq	string_memory(%rip), %rax
 	movq	8(%rax), %rax
 	addq	%rdx, %rax
-	movq	%rax, -16(%rbp)
+	movq	%rax, -24(%rbp)
 	movq	string_memory(%rip), %rax
 	movq	8(%rax), %rdx
 	movq	-48(%rbp), %rax
@@ -821,47 +797,38 @@ create_string_check:
 .L21:
 	movq	-48(%rbp), %rdx
 	movq	-40(%rbp), %rcx
-	movq	-16(%rbp), %rax
+	movq	-24(%rbp), %rax
 	movq	%rcx, %rsi
 	movq	%rax, %rdi
-	call	strncpy@PLT
-	movq	-16(%rbp), %rdx
+	call	*strncpy@GOTPCREL(%rip)
+	movq	-24(%rbp), %rdx
 	movq	-48(%rbp), %rax
 	addq	%rdx, %rax
 	movb	$0, (%rax)
 	movl	$24, %edi
 	call	alloc_memory
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	-16(%rbp), %rdx
+	movq	%rax, -32(%rbp)
+	movq	-32(%rbp), %rax
+	movq	-24(%rbp), %rdx
 	movq	%rdx, (%rax)
-	movq	-8(%rbp), %rax
+	movq	-32(%rbp), %rax
 	movq	-48(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	movq	all_string_list(%rip), %rdx
-	movq	-8(%rbp), %rax
+	movq	-32(%rbp), %rax
 	movq	%rdx, 16(%rax)
-	movq	-8(%rbp), %rax
+	movq	-32(%rbp), %rax
 	movq	%rax, all_string_list(%rip)
-	movq	-16(%rbp), %rax
+	movq	-24(%rbp), %rax
 .L15:
 	leave
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
-.LFE8:
 	.size	create_string_check, .-create_string_check
 	.globl	create_string
 	.type	create_string, @function
 create_string:
-.LFB9:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	subq	$16, %rsp
 	movq	%rdi, -8(%rbp)
 	movq	%rsi, -16(%rbp)
@@ -872,25 +839,15 @@ create_string:
 	movq	%rax, %rdi
 	call	create_string_check
 	leave
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
-.LFE9:
 	.size	create_string, .-create_string
 	.globl	init
 	.type	init, @function
 init:
-.LFB10:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	pushq	%rbx
 	subq	$24, %rsp
-	.cfi_offset 3, -24
 	movzbl	initialized(%rip), %eax
 	testb	%al, %al
 	jne	.L36
@@ -898,7 +855,7 @@ init:
 	testq	%rax, %rax
 	jne	.L28
 	movl	$32, %edi
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	movq	%rax, struct_memory(%rip)
 	movq	struct_memory(%rip), %rax
 	testq	%rax, %rax
@@ -909,14 +866,14 @@ init:
 	movl	$1, %esi
 	leaq	.LC52(%rip), %rax
 	movq	%rax, %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movb	$0, initialized(%rip)
 	movl	$1, %edi
-	call	exit@PLT
+	call	*exit@GOTPCREL(%rip)
 .L29:
 	movq	struct_memory(%rip), %rbx
 	movl	$1024, %edi
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	movq	%rax, 24(%rbx)
 	movq	struct_memory(%rip), %rax
 	movq	$1024, (%rax)
@@ -930,7 +887,7 @@ init:
 	testq	%rax, %rax
 	jne	.L30
 	movl	$32, %edi
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	movq	%rax, string_memory(%rip)
 	movq	string_memory(%rip), %rax
 	testq	%rax, %rax
@@ -941,14 +898,14 @@ init:
 	movl	$1, %esi
 	leaq	.LC52(%rip), %rax
 	movq	%rax, %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movb	$0, initialized(%rip)
 	movl	$1, %edi
-	call	exit@PLT
+	call	*exit@GOTPCREL(%rip)
 .L31:
 	movq	string_memory(%rip), %rbx
 	movl	$1024, %edi
-	call	malloc@PLT
+	call	*malloc@GOTPCREL(%rip)
 	movq	%rax, 24(%rbx)
 	movq	string_memory(%rip), %rax
 	movq	$1024, (%rax)
@@ -959,45 +916,19 @@ init:
 	movq	$1024, string_memory_count(%rip)
 .L30:
 	movb	$1, initialized(%rip)
-	movq	$0, -32(%rbp)
+	movq	$0, -24(%rbp)
 	jmp	.L32
 .L33:
-	movq	-32(%rbp), %rax
+	movq	-24(%rbp), %rax
 	leaq	0(,%rax,8), %rdx
 	leaq	keywordStrings(%rip), %rax
 	movq	(%rdx,%rax), %rax
 	movq	%rax, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%rax, %rcx
-	movq	-32(%rbp), %rax
+	movq	-24(%rbp), %rax
 	leaq	0(,%rax,8), %rdx
 	leaq	keywordStrings(%rip), %rax
-	movq	(%rdx,%rax), %rax
-	movl	$0, %edx
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	create_string_check
-	movq	-32(%rbp), %rdx
-	leaq	0(,%rdx,8), %rcx
-	leaq	keywordList(%rip), %rdx
-	movq	%rax, (%rcx,%rdx)
-	addq	$1, -32(%rbp)
-.L32:
-	cmpq	$21, -32(%rbp)
-	jbe	.L33
-	movq	$0, -24(%rbp)
-	jmp	.L34
-.L35:
-	movq	-24(%rbp), %rax
-	leaq	0(,%rax,8), %rdx
-	leaq	symbolStrings(%rip), %rax
-	movq	(%rdx,%rax), %rax
-	movq	%rax, %rdi
-	call	strlen@PLT
-	movq	%rax, %rcx
-	movq	-24(%rbp), %rax
-	leaq	0(,%rax,8), %rdx
-	leaq	symbolStrings(%rip), %rax
 	movq	(%rdx,%rax), %rax
 	movl	$0, %edx
 	movq	%rcx, %rsi
@@ -1005,11 +936,37 @@ init:
 	call	create_string_check
 	movq	-24(%rbp), %rdx
 	leaq	0(,%rdx,8), %rcx
-	leaq	symbolList(%rip), %rdx
+	leaq	keywordList(%rip), %rdx
 	movq	%rax, (%rcx,%rdx)
 	addq	$1, -24(%rbp)
+.L32:
+	cmpq	$21, -24(%rbp)
+	jbe	.L33
+	movq	$0, -32(%rbp)
+	jmp	.L34
+.L35:
+	movq	-32(%rbp), %rax
+	leaq	0(,%rax,8), %rdx
+	leaq	symbolStrings(%rip), %rax
+	movq	(%rdx,%rax), %rax
+	movq	%rax, %rdi
+	call	*strlen@GOTPCREL(%rip)
+	movq	%rax, %rcx
+	movq	-32(%rbp), %rax
+	leaq	0(,%rax,8), %rdx
+	leaq	symbolStrings(%rip), %rax
+	movq	(%rdx,%rax), %rax
+	movl	$0, %edx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	call	create_string_check
+	movq	-32(%rbp), %rdx
+	leaq	0(,%rdx,8), %rcx
+	leaq	symbolList(%rip), %rdx
+	movq	%rax, (%rcx,%rdx)
+	addq	$1, -32(%rbp)
 .L34:
-	cmpq	$29, -24(%rbp)
+	cmpq	$29, -32(%rbp)
 	jbe	.L35
 	movq	keywordList(%rip), %rax
 	movq	%rax, IMPORT_KEYWORD(%rip)
@@ -1121,10 +1078,7 @@ init:
 .L25:
 	movq	-8(%rbp), %rbx
 	leave
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
-.LFE10:
 	.size	init, .-init
 	.local	memoryBlockCount
 	.comm	memoryBlockCount,8,8
@@ -1138,14 +1092,8 @@ init:
 	.globl	alloc_memory
 	.type	alloc_memory, @function
 alloc_memory:
-.LFB11:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	subq	$32, %rsp
 	movq	%rdi, -24(%rbp)
 	movzbl	initialized(%rip), %eax
@@ -1180,7 +1128,7 @@ alloc_memory:
 	movq	%rax, %rsi
 	leaq	.LC55(%rip), %rax
 	movq	%rax, %rdi
-	call	__assert_fail@PLT
+	call	*__assert_fail@GOTPCREL(%rip)
 .L40:
 	movq	struct_memory(%rip), %rax
 	movq	24(%rax), %rdx
@@ -1200,22 +1148,13 @@ alloc_memory:
 	movq	%rax, memoryBlockCount(%rip)
 	movq	-8(%rbp), %rax
 	leave
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
-.LFE11:
 	.size	alloc_memory, .-alloc_memory
 	.globl	is_keyword
 	.type	is_keyword, @function
 is_keyword:
-.LFB12:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	subq	$32, %rsp
 	movq	%rdi, -24(%rbp)
 	movzbl	initialized(%rip), %eax
@@ -1246,32 +1185,20 @@ is_keyword:
 	movl	$0, %eax
 .L46:
 	leave
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
-.LFE12:
 	.size	is_keyword, .-is_keyword
 	.globl	string_equal
 	.type	string_equal, @function
 string_equal:
-.LFB13:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	movq	%rdi, -8(%rbp)
 	movq	%rsi, -16(%rbp)
 	movq	-8(%rbp), %rax
 	cmpq	-16(%rbp), %rax
 	sete	%al
 	popq	%rbp
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
-.LFE13:
 	.size	string_equal, .-string_equal
 	.section	.rodata
 .LC56:
@@ -1285,26 +1212,20 @@ string_equal:
 	.globl	get_info
 	.type	get_info, @function
 get_info:
-.LFB14:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
 	subq	$48, %rsp
-	movq	$0, -40(%rbp)
+	movq	$0, -8(%rbp)
 	movq	all_string_list(%rip), %rax
-	movq	%rax, -32(%rbp)
+	movq	%rax, -16(%rbp)
 	jmp	.L51
 .L52:
-	addq	$1, -40(%rbp)
-	movq	-32(%rbp), %rax
+	addq	$1, -8(%rbp)
+	movq	-16(%rbp), %rax
 	movq	16(%rax), %rax
-	movq	%rax, -32(%rbp)
+	movq	%rax, -16(%rbp)
 .L51:
-	cmpq	$0, -32(%rbp)
+	cmpq	$0, -16(%rbp)
 	jne	.L52
 	movl	$0, %edx
 	movl	$48, %esi
@@ -1323,36 +1244,36 @@ get_info:
 	leaq	.LC57(%rip), %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
-	call	sprintf@PLT
+	call	*sprintf@GOTPCREL(%rip)
 	movl	$0, %edx
 	movl	$48, %esi
 	leaq	.LC56(%rip), %rax
 	movq	%rax, %rdi
 	call	create_string_check
-	movq	%rax, -16(%rbp)
+	movq	%rax, -32(%rbp)
 	movq	string_memory_count(%rip), %rdx
 	movq	string_memory(%rip), %rax
 	movq	8(%rax), %rcx
 	movq	string_memory_used(%rip), %rax
 	leaq	(%rcx,%rax), %rsi
-	movq	-16(%rbp), %rax
+	movq	-32(%rbp), %rax
 	movq	%rdx, %rcx
 	movq	%rsi, %rdx
 	leaq	.LC57(%rip), %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
-	call	sprintf@PLT
+	call	*sprintf@GOTPCREL(%rip)
 	movl	$0, %edx
 	movl	$240, %esi
 	leaq	.LC56(%rip), %rax
 	movq	%rax, %rdi
 	call	create_string_check
-	movq	%rax, -8(%rbp)
+	movq	%rax, -40(%rbp)
 	movq	memoryBlockCount(%rip), %rcx
-	movq	-40(%rbp), %rdi
-	movq	-16(%rbp), %rsi
+	movq	-8(%rbp), %rdi
+	movq	-32(%rbp), %rsi
 	movq	-24(%rbp), %rdx
-	movq	-8(%rbp), %rax
+	movq	-40(%rbp), %rax
 	subq	$8, %rsp
 	pushq	%rcx
 	movq	%rdi, %r9
@@ -1362,14 +1283,11 @@ get_info:
 	leaq	.LC58(%rip), %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
-	call	sprintf@PLT
+	call	*sprintf@GOTPCREL(%rip)
 	addq	$16, %rsp
-	movq	-8(%rbp), %rax
+	movq	-40(%rbp), %rax
 	leave
-	.cfi_def_cfa 7, 8
 	ret
-	.cfi_endproc
-.LFE14:
 	.size	get_info, .-get_info
 	.section	.rodata
 	.align 8
@@ -1379,19 +1297,3 @@ __PRETTY_FUNCTION__.0:
 	.string	"alloc_memory"
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

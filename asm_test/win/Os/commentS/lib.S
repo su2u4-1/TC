@@ -3,28 +3,23 @@
  ;	compiled by GNU C version 13.2.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
  ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
- ; options passed: -mtune=generic -march=nocona -Os
+ ; options passed: -mtune=generic -march=nocona -Os -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt
 	.text
 	.section .rdata,"dr"
 .LC0:
 	.ascii "Fatal: Cannot allocate memory\12\0"
 	.text
 	.def	increase_memory_size;	.scl	3;	.type	32;	.endef
-	.seh_proc	increase_memory_size
 increase_memory_size:
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
- ; D:\TC\src\lib.c:78: static void increase_memory_size(bool for_struct) {
 	movl	%ecx, %esi	 ; tmp110, for_struct
  ; D:\TC\src\lib.c:79:     MemoryBlock* new_block = (MemoryBlock*)malloc(sizeof(MemoryBlock));
 	movl	$32, %ecx	 ;,
+ ; D:\TC\src\lib.c:78: static void increase_memory_size(bool for_struct) {
+	pushq	%rbx	 ;
+	subq	$40, %rsp	 ;,
+ ; D:\TC\src\lib.c:79:     MemoryBlock* new_block = (MemoryBlock*)malloc(sizeof(MemoryBlock));
 	call	malloc	 ;
-	movq	%rax, %rbx	 ; tmp111, tmp103
  ; D:\TC\src\lib.c:80:     if (new_block == NULL) {
 	testq	%rax, %rax	 ; tmp103
 	jne	.L2	 ;,
@@ -39,7 +34,7 @@ increase_memory_size:
 .L3:
  ; D:\TC\src\lib.c:83:         while (current != NULL) {
 	testq	%rbx, %rbx	 ; current
-	je	.L8	 ;,
+	je	.L9	 ;,
  ; D:\TC\src\lib.c:85:             free(current->block);
 	movq	24(%rbx), %rcx	 ; current_17->block, current_17->block
  ; D:\TC\src\lib.c:84:             MemoryBlock* next = current->next;
@@ -53,7 +48,7 @@ increase_memory_size:
  ; D:\TC\src\lib.c:86:             free(current);
 	call	free	 ;
 	jmp	.L3	 ;
-.L8:
+.L9:
  ; D:\TC\src\lib.c:90:         exit(1);
 	movl	$1, %ecx	 ;,
  ; D:\TC\src\lib.c:89:         initialized = false;
@@ -63,6 +58,7 @@ increase_memory_size:
 .L2:
  ; D:\TC\src\lib.c:92:     new_block->block = (pointer)malloc(defaultMemorySize);
 	movl	$1024, %ecx	 ;,
+	movq	%rax, %rbx	 ; tmp111, tmp103
 	call	malloc	 ;
  ; D:\TC\src\lib.c:93:     new_block->size = defaultMemorySize;
 	movq	$1024, (%rbx)	 ;, new_block_22->size
@@ -106,7 +102,6 @@ increase_memory_size:
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC1:
 	.ascii "struct_memory->used % ALIGN_SIZE == 0\0"
@@ -115,22 +110,16 @@ increase_memory_size:
 	.text
 	.globl	alloc_memory
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
-	.seh_proc	alloc_memory
 alloc_memory:
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
+	movq	%rcx, %rbx	 ; tmp107, size
 	subq	$32, %rsp	 ;,
-	.seh_stackalloc	32
-	.seh_endprologue
  ; D:\TC\src\lib.c:254:     if (!initialized) init();
 	cmpb	$0, initialized(%rip)	 ;, initialized
- ; D:\TC\src\lib.c:253: pointer alloc_memory(size_t size) {
-	movq	%rcx, %rbx	 ; tmp107, size
- ; D:\TC\src\lib.c:254:     if (!initialized) init();
-	jne	.L10	 ;,
+	jne	.L11	 ;,
  ; D:\TC\src\lib.c:254:     if (!initialized) init();
 	call	init	 ;
-.L10:
+.L11:
  ; D:\TC\src\lib.c:255:     if (struct_memory->used + size >= struct_memory->size)
 	movq	struct_memory(%rip), %rax	 ; struct_memory, struct_memory.32_2
  ; D:\TC\src\lib.c:255:     if (struct_memory->used + size >= struct_memory->size)
@@ -138,11 +127,11 @@ alloc_memory:
 	addq	%rbx, %rdx	 ; size, tmp99
  ; D:\TC\src\lib.c:255:     if (struct_memory->used + size >= struct_memory->size)
 	cmpq	(%rax), %rdx	 ; struct_memory.32_2->size, tmp99
-	jb	.L11	 ;,
+	jb	.L12	 ;,
  ; D:\TC\src\lib.c:256:         increase_memory_size(true);
 	movl	$1, %ecx	 ;,
 	call	increase_memory_size	 ;
-.L11:
+.L12:
  ; D:\TC\src\lib.c:258:     assert(struct_memory->used % ALIGN_SIZE == 0);
 	movq	struct_memory(%rip), %rcx	 ; struct_memory, struct_memory.34_7
  ; D:\TC\src\lib.c:257:     size = (size + ALIGN_SIZE - 1) & ~(ALIGN_SIZE - 1);
@@ -152,86 +141,75 @@ alloc_memory:
  ; D:\TC\src\lib.c:258:     assert(struct_memory->used % ALIGN_SIZE == 0);
 	movq	8(%rcx), %rdx	 ; struct_memory.34_7->used, _8
 	testb	$7, %dl	 ;, _8
-	je	.L12	 ;,
+	je	.L13	 ;,
  ; D:\TC\src\lib.c:258:     assert(struct_memory->used % ALIGN_SIZE == 0);
 	leaq	.LC1(%rip), %r9	 ;,
 	leaq	__func__.0(%rip), %r8	 ;,
 	movl	$258, %edx	 ;,
 	leaq	.LC2(%rip), %rcx	 ;, tmp102
 	call	__assert_func	 ;
-.L12:
- ; D:\TC\src\lib.c:261:     ++memoryBlockCount;
-	incq	memoryBlockCount(%rip)	 ; memoryBlockCount
+.L13:
  ; D:\TC\src\lib.c:259:     size_t* ptr = struct_memory->block + (struct_memory->used / ALIGN_SIZE);
 	movq	%rdx, %rax	 ; _8, tmp103
  ; D:\TC\src\lib.c:260:     struct_memory->used += size;
 	addq	%rbx, %rdx	 ; size, tmp105
+ ; D:\TC\src\lib.c:261:     ++memoryBlockCount;
+	incq	memoryBlockCount(%rip)	 ; memoryBlockCount
+ ; D:\TC\src\lib.c:260:     struct_memory->used += size;
+	movq	%rdx, 8(%rcx)	 ; tmp105, struct_memory.34_7->used
  ; D:\TC\src\lib.c:259:     size_t* ptr = struct_memory->block + (struct_memory->used / ALIGN_SIZE);
 	andq	$-8, %rax	 ;, tmp103
  ; D:\TC\src\lib.c:259:     size_t* ptr = struct_memory->block + (struct_memory->used / ALIGN_SIZE);
 	addq	24(%rcx), %rax	 ; struct_memory.34_7->block, <retval>
- ; D:\TC\src\lib.c:260:     struct_memory->used += size;
-	movq	%rdx, 8(%rcx)	 ; tmp105, struct_memory.34_7->used
  ; D:\TC\src\lib.c:263: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC3:
 	.ascii "Info: Allocate big memory block of size %zu bytes\12\0"
 	.text
 	.def	create_string_check;	.scl	3;	.type	32;	.endef
-	.seh_proc	create_string_check
 create_string_check:
 	pushq	%r12	 ;
-	.seh_pushreg	%r12
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
+	movq	%rcx, %rdi	 ; tmp132, data
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
+	movq	%rdx, %rsi	 ; tmp133, length
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
+	movl	%r8d, %ebx	 ; tmp134, check
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
  ; D:\TC\src\lib.c:128:     if (!initialized) init();
 	cmpb	$0, initialized(%rip)	 ;, initialized
- ; D:\TC\src\lib.c:127: static string create_string_check(const char* data, size_t length, bool check) {
-	movq	%rcx, %rdi	 ; tmp132, data
-	movq	%rdx, %rsi	 ; tmp133, length
-	movl	%r8d, %ebx	 ; tmp134, check
- ; D:\TC\src\lib.c:128:     if (!initialized) init();
-	jne	.L14	 ;,
+	jne	.L16	 ;,
  ; D:\TC\src\lib.c:128:     if (!initialized) init();
 	call	init	 ;
-.L14:
+.L16:
  ; D:\TC\src\lib.c:129:     if (data == NULL || length == 0) return 0;
 	testq	%rdi, %rdi	 ; data
-	je	.L23	 ;,
+	je	.L25	 ;,
 	testq	%rsi, %rsi	 ; length
-	je	.L23	 ;,
+	je	.L25	 ;,
  ; D:\TC\src\lib.c:130:     if (check) {
 	testb	%bl, %bl	 ; check
-	je	.L16	 ;,
+	je	.L18	 ;,
  ; D:\TC\src\lib.c:131:         StringList* current = all_string_list;
 	movq	all_string_list(%rip), %rbp	 ; all_string_list, current
  ; D:\TC\src\lib.c:132:         string existing = NULL;
 	xorl	%ebx, %ebx	 ; <retval>
-.L17:
+.L19:
  ; D:\TC\src\lib.c:133:         while (current != NULL) {
 	testq	%rbp, %rbp	 ; current
-	je	.L28	 ;,
+	je	.L31	 ;,
  ; D:\TC\src\lib.c:134:             if (current->length == length && current->str != 0 && strncmp(current->str, data, length) == 0)
 	cmpq	%rsi, 8(%rbp)	 ; length, current_21->length
-	jne	.L18	 ;,
+	jne	.L20	 ;,
  ; D:\TC\src\lib.c:134:             if (current->length == length && current->str != 0 && strncmp(current->str, data, length) == 0)
 	movq	0(%rbp), %r12	 ; current_21->str, _6
  ; D:\TC\src\lib.c:134:             if (current->length == length && current->str != 0 && strncmp(current->str, data, length) == 0)
 	testq	%r12, %r12	 ; _6
-	je	.L18	 ;,
+	je	.L20	 ;,
  ; D:\TC\src\lib.c:134:             if (current->length == length && current->str != 0 && strncmp(current->str, data, length) == 0)
 	movq	%rsi, %r8	 ; length,
 	movq	%rdi, %rdx	 ; data,
@@ -240,18 +218,18 @@ create_string_check:
  ; D:\TC\src\lib.c:135:                 existing = current->str;
 	testl	%eax, %eax	 ; tmp135
 	cmove	%r12, %rbx	 ; <retval>,, _6, <retval>
-.L18:
+.L20:
  ; D:\TC\src\lib.c:136:             current = current->next;
 	movq	16(%rbp), %rbp	 ; current_21->next, current
-	jmp	.L17	 ;
-.L28:
+	jmp	.L19	 ;
+.L31:
  ; D:\TC\src\lib.c:138:         if (existing != NULL)
 	testq	%rbx, %rbx	 ; <retval>
-	jne	.L13	 ;,
-.L16:
+	jne	.L15	 ;,
+.L18:
  ; D:\TC\src\lib.c:142:     if (length >= defaultMemorySize - 1)
 	cmpq	$1022, %rsi	 ;, length
-	jbe	.L20	 ;,
+	jbe	.L22	 ;,
  ; D:\TC\src\lib.c:143:         str = alloc_big_memory(length + 1);
 	leaq	1(%rsi), %r8	 ;, _9
  ; D:\TC\src\lib.c:116:     string_memory_count += size;
@@ -273,7 +251,7 @@ create_string_check:
 	call	fprintf	 ;
  ; D:\TC\src\lib.c:120:     if (block == NULL) {
 	testq	%rbx, %rbx	 ; <retval>
-	jne	.L21	 ;,
+	jne	.L23	 ;,
  ; D:\TC\src\lib.c:121:         fprintf(stderr, "Fatal: Cannot allocate memory\n");
 	call	__getreent	 ;
  ; D:\TC\src\lib.c:121:         fprintf(stderr, "Fatal: Cannot allocate memory\n");
@@ -283,7 +261,7 @@ create_string_check:
  ; D:\TC\src\lib.c:122:         exit(1);
 	movl	$1, %ecx	 ;,
 	call	exit	 ;
-.L20:
+.L22:
  ; D:\TC\src\lib.c:145:         if (string_memory->used + length >= string_memory->size)
 	movq	string_memory(%rip), %rax	 ; string_memory, string_memory.1_10
  ; D:\TC\src\lib.c:145:         if (string_memory->used + length >= string_memory->size)
@@ -291,11 +269,11 @@ create_string_check:
 	addq	%rsi, %rdx	 ; length, tmp125
  ; D:\TC\src\lib.c:145:         if (string_memory->used + length >= string_memory->size)
 	cmpq	(%rax), %rdx	 ; string_memory.1_10->size, tmp125
-	jb	.L22	 ;,
+	jb	.L24	 ;,
  ; D:\TC\src\lib.c:146:             increase_memory_size(false);
 	xorl	%ecx, %ecx	 ;
 	call	increase_memory_size	 ;
-.L22:
+.L24:
  ; D:\TC\src\lib.c:147:         str = &((char*)(string_memory->block))[string_memory->used];
 	movq	string_memory(%rip), %rax	 ; string_memory, string_memory.3_14
  ; D:\TC\src\lib.c:147:         str = &((char*)(string_memory->block))[string_memory->used];
@@ -306,7 +284,7 @@ create_string_check:
  ; D:\TC\src\lib.c:148:         string_memory->used += length + 1;
 	leaq	1(%rdx,%rsi), %rdx	 ;, tmp129
 	movq	%rdx, 8(%rax)	 ; tmp129, string_memory.3_14->used
-.L21:
+.L23:
  ; D:\TC\src\lib.c:150:     strncpy(str, data, length);
 	movq	%rdi, %rdx	 ; data,
 	movq	%rsi, %r8	 ; length,
@@ -328,53 +306,41 @@ create_string_check:
  ; D:\TC\src\lib.c:156:     all_string_list = new_str;
 	movq	%rax, all_string_list(%rip)	 ; new_str, all_string_list
  ; D:\TC\src\lib.c:157:     return str;
-	jmp	.L13	 ;
-.L23:
+	jmp	.L15	 ;
+.L25:
  ; D:\TC\src\lib.c:129:     if (data == NULL || length == 0) return 0;
 	xorl	%ebx, %ebx	 ; <retval>
-.L13:
+.L15:
  ; D:\TC\src\lib.c:158: }
-	movq	%rbx, %rax	 ; <retval>,
 	addq	$48, %rsp	 ;,
+	movq	%rbx, %rax	 ; <retval>,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	popq	%r12	 ;
 	ret	
-	.seh_endproc
 	.globl	create_string
 	.def	create_string;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_string
 create_string:
-	.seh_endprologue
  ; D:\TC\src\lib.c:161:     return create_string_check(data, length, true);
 	movl	$1, %r8d	 ;,
- ; D:\TC\src\lib.c:162: }
- ; D:\TC\src\lib.c:161:     return create_string_check(data, length, true);
 	jmp	create_string_check	 ;
-	.seh_endproc
 	.globl	init
 	.def	init;	.scl	2;	.type	32;	.endef
-	.seh_proc	init
 init:
-	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
-	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
-	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$40, %rsp	 ;,
-	.seh_stackalloc	40
-	.seh_endprologue
  ; D:\TC\src\lib.c:165:     if (initialized) return;
 	cmpb	$0, initialized(%rip)	 ;, initialized
-	jne	.L30	 ;,
+	jne	.L44	 ;,
+ ; D:\TC\src\lib.c:164: void init(void) {
+	pushq	%rbp	 ;
+	pushq	%rdi	 ;
+	pushq	%rsi	 ;
+	pushq	%rbx	 ;
+	subq	$40, %rsp	 ;,
  ; D:\TC\src\lib.c:166:     if (struct_memory == NULL) {
 	cmpq	$0, struct_memory(%rip)	 ;, struct_memory
-	jne	.L32	 ;,
+	jne	.L35	 ;,
  ; D:\TC\src\lib.c:167:         struct_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
 	movl	$32, %ecx	 ;,
 	call	malloc	 ;
@@ -384,7 +350,20 @@ init:
 	movq	%rax, %rbx	 ; tmp275, tmp153
  ; D:\TC\src\lib.c:168:         if (struct_memory == NULL) {
 	testq	%rax, %rax	 ; tmp153
-	je	.L40	 ;,
+	jne	.L36	 ;,
+ ; D:\TC\src\lib.c:169:             fprintf(stderr, "Fatal: Cannot allocate memory\n");
+	call	__getreent	 ;
+ ; D:\TC\src\lib.c:169:             fprintf(stderr, "Fatal: Cannot allocate memory\n");
+	leaq	.LC0(%rip), %rcx	 ;, tmp155
+	movq	24(%rax), %rdx	 ; _7->_stderr, _7->_stderr
+	call	fputs	 ;
+ ; D:\TC\src\lib.c:171:             exit(1);
+	movl	$1, %ecx	 ;,
+ ; D:\TC\src\lib.c:170:             initialized = false;
+	movb	$0, initialized(%rip)	 ;, initialized
+ ; D:\TC\src\lib.c:171:             exit(1);
+	call	exit	 ;
+.L36:
  ; D:\TC\src\lib.c:173:         struct_memory->block = (size_t*)malloc(defaultMemorySize);
 	movl	$1024, %ecx	 ;,
 	call	malloc	 ;
@@ -399,10 +378,10 @@ init:
 	movq	%rdx, 16(%rbx)	 ;, MEM[(struct MemoryBlock *)_6].next
  ; D:\TC\src\lib.c:177:         struct_memory_count = defaultMemorySize;
 	movq	$1024, struct_memory_count(%rip)	 ;, struct_memory_count
-.L32:
+.L35:
  ; D:\TC\src\lib.c:179:     if (string_memory == NULL) {
 	cmpq	$0, string_memory(%rip)	 ;, string_memory
-	jne	.L34	 ;,
+	jne	.L37	 ;,
  ; D:\TC\src\lib.c:180:         string_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
 	movl	$32, %ecx	 ;,
 	call	malloc	 ;
@@ -412,13 +391,12 @@ init:
 	movq	%rax, %rbx	 ; tmp278, tmp157
  ; D:\TC\src\lib.c:181:         if (string_memory == NULL) {
 	testq	%rax, %rax	 ; tmp157
-	jne	.L35	 ;,
-.L40:
+	jne	.L38	 ;,
  ; D:\TC\src\lib.c:182:             fprintf(stderr, "Fatal: Cannot allocate memory\n");
 	call	__getreent	 ;
  ; D:\TC\src\lib.c:182:             fprintf(stderr, "Fatal: Cannot allocate memory\n");
 	leaq	.LC0(%rip), %rcx	 ;, tmp159
-	movq	24(%rax), %rdx	 ;, _12->_stderr
+	movq	24(%rax), %rdx	 ; _12->_stderr, _12->_stderr
 	call	fputs	 ;
  ; D:\TC\src\lib.c:184:             exit(1);
 	movl	$1, %ecx	 ;,
@@ -426,7 +404,7 @@ init:
 	movb	$0, initialized(%rip)	 ;, initialized
  ; D:\TC\src\lib.c:184:             exit(1);
 	call	exit	 ;
-.L35:
+.L38:
  ; D:\TC\src\lib.c:186:         string_memory->block = (pointer)malloc(defaultMemorySize);
 	movl	$1024, %ecx	 ;,
 	call	malloc	 ;
@@ -440,7 +418,7 @@ init:
 	movq	%rax, 16(%rbx)	 ;, MEM[(struct MemoryBlock *)_11].next
  ; D:\TC\src\lib.c:190:         string_memory_count = defaultMemorySize;
 	movq	$1024, string_memory_count(%rip)	 ;, string_memory_count
-.L34:
+.L37:
  ; D:\TC\src\lib.c:192:     initialized = true;
 	movb	$1, initialized(%rip)	 ;, initialized
  ; D:\TC\src\lib.c:193:     for (size_t i = 0; i < keywordCount; ++i)
@@ -449,7 +427,7 @@ init:
 	leaq	keywordStrings(%rip), %rbp	 ;, tmp161
  ; D:\TC\src\lib.c:194:         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
 	leaq	keywordList(%rip), %rdi	 ;, tmp165
-.L36:
+.L39:
  ; D:\TC\src\lib.c:194:         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
 	movq	0(%rbp,%rbx,8), %rsi	 ; MEM[(const char * *)&keywordStrings + i_165 * 8], _16
 	movq	%rsi, %rcx	 ; _16,
@@ -467,14 +445,14 @@ init:
 	incq	%rbx	 ; i
  ; D:\TC\src\lib.c:193:     for (size_t i = 0; i < keywordCount; ++i)
 	cmpq	$22, %rbx	 ;, i
-	jne	.L36	 ;,
+	jne	.L39	 ;,
  ; D:\TC\src\lib.c:195:     for (size_t i = 0; i < symbolCount; ++i)
 	xorl	%ebx, %ebx	 ; i
  ; D:\TC\src\lib.c:196:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
 	leaq	symbolStrings(%rip), %rbp	 ;, tmp166
  ; D:\TC\src\lib.c:196:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
 	leaq	symbolList(%rip), %rdi	 ;, tmp170
-.L37:
+.L40:
  ; D:\TC\src\lib.c:196:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
 	movq	0(%rbp,%rbx,8), %rsi	 ; MEM[(const char * *)&symbolStrings + i_166 * 8], _21
 	movq	%rsi, %rcx	 ; _21,
@@ -492,7 +470,7 @@ init:
 	incq	%rbx	 ; i
  ; D:\TC\src\lib.c:195:     for (size_t i = 0; i < symbolCount; ++i)
 	cmpq	$30, %rbx	 ;, i
-	jne	.L37	 ;,
+	jne	.L40	 ;,
  ; D:\TC\src\lib.c:197:     IMPORT_KEYWORD = keywordList[0];
 	movq	keywordList(%rip), %rax	 ; keywordList[0], keywordList[0]
 	movq	%rax, IMPORT_KEYWORD(%rip)	 ; keywordList[0], IMPORT_KEYWORD
@@ -649,7 +627,6 @@ init:
  ; D:\TC\src\lib.c:248:     OR_SYMBOL = symbolList[29];
 	movq	232+symbolList(%rip), %rax	 ; symbolList[29], symbolList[29]
 	movq	%rax, OR_SYMBOL(%rip)	 ; symbolList[29], OR_SYMBOL
-.L30:
  ; D:\TC\src\lib.c:249: }
 	addq	$40, %rsp	 ;,
 	popq	%rbx	 ;
@@ -657,61 +634,52 @@ init:
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
+.L44:
+	ret	
 	.globl	is_keyword
 	.def	is_keyword;	.scl	2;	.type	32;	.endef
-	.seh_proc	is_keyword
 is_keyword:
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
+	movq	%rcx, %rbx	 ; tmp89, str
 	subq	$32, %rsp	 ;,
-	.seh_stackalloc	32
-	.seh_endprologue
  ; D:\TC\src\lib.c:266:     if (!initialized) init();
 	cmpb	$0, initialized(%rip)	 ;, initialized
- ; D:\TC\src\lib.c:265: bool is_keyword(const string str) {
-	movq	%rcx, %rbx	 ; tmp89, str
- ; D:\TC\src\lib.c:266:     if (!initialized) init();
-	jne	.L42	 ;,
+	jne	.L48	 ;,
  ; D:\TC\src\lib.c:266:     if (!initialized) init();
 	call	init	 ;
-.L42:
+.L48:
  ; D:\TC\src\lib.c:265: bool is_keyword(const string str) {
 	xorl	%eax, %eax	 ; i
  ; D:\TC\src\lib.c:268:         if (string_equal(str, keywordList[i]))
 	leaq	keywordList(%rip), %rdx	 ;, tmp87
-.L44:
+.L50:
  ; D:\TC\src\lib.c:268:         if (string_equal(str, keywordList[i]))
 	cmpq	%rbx, (%rdx,%rax,8)	 ; str, MEM[(char * *)&keywordList + i_14 * 8]
-	je	.L45	 ;,
+	je	.L51	 ;,
  ; D:\TC\src\lib.c:267:     for (size_t i = 0; i < keywordCount; ++i)
 	incq	%rax	 ; i
  ; D:\TC\src\lib.c:267:     for (size_t i = 0; i < keywordCount; ++i)
 	cmpq	$22, %rax	 ;, i
-	jne	.L44	 ;,
+	jne	.L50	 ;,
  ; D:\TC\src\lib.c:270:     return false;
 	xorl	%eax, %eax	 ; <retval>
-	jmp	.L41	 ;
-.L45:
+	jmp	.L47	 ;
+.L51:
  ; D:\TC\src\lib.c:269:             return true;
 	movb	$1, %al	 ;, <retval>
-.L41:
+.L47:
  ; D:\TC\src\lib.c:271: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
 	ret	
-	.seh_endproc
 	.globl	string_equal
 	.def	string_equal;	.scl	2;	.type	32;	.endef
-	.seh_proc	string_equal
 string_equal:
-	.seh_endprologue
  ; D:\TC\src\lib.c:274:     return a == b;
 	cmpq	%rcx, %rdx	 ; tmp88, tmp89
 	sete	%al	 ;, tmp87
  ; D:\TC\src\lib.c:275: }
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC4:
 	.ascii "\0"
@@ -722,35 +690,28 @@ string_equal:
 	.text
 	.globl	get_info
 	.def	get_info;	.scl	2;	.type	32;	.endef
-	.seh_proc	get_info
 get_info:
 	pushq	%r12	 ;
-	.seh_pushreg	%r12
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
-	pushq	%rdi	 ;
-	.seh_pushreg	%rdi
-	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
-	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
-	subq	$64, %rsp	 ;,
-	.seh_stackalloc	64
-	.seh_endprologue
- ; D:\TC\src\lib.c:279:     StringList* current = all_string_list;
-	movq	all_string_list(%rip), %rax	 ; all_string_list, current
  ; D:\TC\src\lib.c:278:     size_t stringCount = 0;
 	xorl	%ebp, %ebp	 ; stringCount
-.L49:
+ ; D:\TC\src\lib.c:277: string get_info(void) {
+	pushq	%rdi	 ;
+	pushq	%rsi	 ;
+	pushq	%rbx	 ;
+	subq	$64, %rsp	 ;,
+ ; D:\TC\src\lib.c:279:     StringList* current = all_string_list;
+	movq	all_string_list(%rip), %rax	 ; all_string_list, current
+.L56:
  ; D:\TC\src\lib.c:280:     while (current != NULL) {
 	testq	%rax, %rax	 ; current
-	je	.L51	 ;,
+	je	.L59	 ;,
  ; D:\TC\src\lib.c:282:         current = current->next;
 	movq	16(%rax), %rax	 ; current_13->next, current
  ; D:\TC\src\lib.c:281:         stringCount++;
 	incq	%rbp	 ; stringCount
-	jmp	.L49	 ;
-.L51:
+	jmp	.L56	 ;
+.L59:
  ; D:\TC\src\lib.c:285:     string struct_memory_used_str = create_string_check("", 48, false);
 	leaq	.LC4(%rip), %rbx	 ;, tmp98
 	xorl	%r8d, %r8d	 ;
@@ -772,8 +733,8 @@ get_info:
 	addq	8(%rax), %r8	 ; struct_memory.42_2->used,
 	call	sprintf	 ;
  ; D:\TC\src\lib.c:288:     string string_memory_used_str = create_string_check("", 48, false);
-	xorl	%r8d, %r8d	 ;
 	movq	%rbx, %rcx	 ; tmp98,
+	xorl	%r8d, %r8d	 ;
 	movl	$48, %edx	 ;,
 	call	create_string_check	 ;
  ; D:\TC\src\lib.c:289:     sprintf(string_memory_used_str, "%zu/%zu bytes", string_memory_used + string_memory->used, string_memory_count);
@@ -788,8 +749,8 @@ get_info:
 	addq	8(%rax), %r8	 ; string_memory.45_7->used,
 	call	sprintf	 ;
  ; D:\TC\src\lib.c:291:     string info = (string)create_string_check("", 240, false);
-	xorl	%r8d, %r8d	 ;
 	movq	%rbx, %rcx	 ; tmp98,
+	xorl	%r8d, %r8d	 ;
 	movl	$240, %edx	 ;,
 	call	create_string_check	 ;
  ; D:\TC\src\lib.c:292:     sprintf(info, "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu", PLATFORM, struct_memory_used_str, string_memory_used_str, stringCount, memoryBlockCount);
@@ -806,15 +767,14 @@ get_info:
 	movq	%rax, 48(%rsp)	 ; memoryBlockCount,
 	call	sprintf	 ;
  ; D:\TC\src\lib.c:294: }
-	movq	%rbx, %rax	 ; <retval>,
 	addq	$64, %rsp	 ;,
+	movq	%rbx, %rax	 ; <retval>,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	popq	%r12	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

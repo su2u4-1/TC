@@ -27,25 +27,18 @@
 	.ascii "kind: \"unknown_NameType\"\12\0"
 	.text
 	.def	output_name;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_name
 output_name:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movq	%rcx, %rsi
 	movq	%rdx, %rbx
 	movq	%r8, %rdi
 	movq	%r9, %rbp
 	testq	%rcx, %rcx
-	je	.L12
+	je	.L13
+	movq	%rcx, %rsi
 	movl	$0, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -80,7 +73,7 @@ output_name:
 	.long	.L7-.L6
 	.long	.L5-.L6
 	.text
-.L12:
+.L13:
 	movl	$1, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -90,7 +83,6 @@ output_name:
 	movl	$1, %edx
 	leaq	.LC0(%rip), %rcx
 	call	fwrite
-	nop
 .L1:
 	addq	$40, %rsp
 	popq	%rbx
@@ -242,7 +234,6 @@ output_name:
 	leaq	.LC11(%rip), %rcx
 	call	fwrite
 	jmp	.L1
-	.seh_endproc
 	.section .rdata,"dr"
 .LC12:
 	.ascii "UNKNOWN_OPERATOR\0"
@@ -256,28 +247,20 @@ output_name:
 	.ascii "right\12\0"
 	.text
 	.def	output_expression;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_expression
 output_expression:
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
 	movq	%rcx, %r12
 	movq	%rdx, %rbx
 	movq	%r8, %rbp
 	movq	%r9, %rsi
 	movl	24(%rcx), %ecx
 	cmpl	$19, %ecx
-	je	.L18
+	je	.L20
 	call	operator_to_string
 	movq	%rax, %rdi
 	movq	%rsi, %r9
@@ -322,8 +305,7 @@ output_expression:
 	movq	%rdi, %r8
 	movq	%rbx, %rdx
 	call	output_expression
-	nop
-.L13:
+.L14:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -331,7 +313,7 @@ output_expression:
 	popq	%rbp
 	popq	%r12
 	ret
-.L18:
+.L20:
 	movl	$1, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -346,8 +328,7 @@ output_expression:
 	leaq	1(%rbp), %r8
 	movq	%rbx, %rdx
 	call	output_primary
-	jmp	.L13
-	.seh_endproc
+	jmp	.L14
 	.section .rdata,"dr"
 .LC17:
 	.ascii "name\12\0"
@@ -357,21 +338,13 @@ output_expression:
 	.ascii "value: \"NULL\"\12\0"
 	.text
 	.def	output_variable;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_variable
 output_variable:
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
 	movq	%rcx, %rbp
 	movq	%rdx, %rbx
 	movq	%r8, %rdi
@@ -407,7 +380,7 @@ output_variable:
 	movq	%rbx, %rdx
 	call	output_name
 	cmpq	$0, 16(%rbp)
-	je	.L20
+	je	.L22
 	movq	%rsi, %r9
 	movl	$1, %r8d
 	movq	%rdi, %rdx
@@ -423,8 +396,7 @@ output_variable:
 	movq	%r12, %r8
 	movq	%rbx, %rdx
 	call	output_expression
-	nop
-.L19:
+.L21:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -432,7 +404,7 @@ output_variable:
 	popq	%rbp
 	popq	%r12
 	ret
-.L20:
+.L22:
 	movq	%rsi, %r9
 	movl	$1, %r8d
 	movq	%rdi, %rdx
@@ -443,8 +415,7 @@ output_variable:
 	movl	$1, %edx
 	leaq	.LC19(%rip), %rcx
 	call	fwrite
-	jmp	.L19
-	.seh_endproc
+	jmp	.L21
 	.section .rdata,"dr"
 .LC20:
 	.ascii "type: \"name\"\12\0"
@@ -473,37 +444,26 @@ output_variable:
 	.ascii "unknown_VariableAccessType: %u\12\0"
 	.text
 	.def	output_variable_access;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_variable_access
 output_variable_access:
 	pushq	%r15
-	.seh_pushreg	%r15
 	pushq	%r14
-	.seh_pushreg	%r14
 	pushq	%r13
-	.seh_pushreg	%r13
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movq	%rcx, %rdi
 	movq	%rdx, %rbx
 	movq	%r8, %rbp
 	movq	%r9, %rsi
 	movl	16(%rcx), %eax
 	cmpl	$2, %eax
-	je	.L23
-	ja	.L24
+	je	.L26
+	ja	.L27
 	testl	%eax, %eax
-	je	.L34
+	je	.L38
 	movq	8(%rcx), %rcx
 	call	list_copy
 	movq	%rax, %r13
@@ -546,10 +506,10 @@ output_variable_access:
 	movl	$-1, %r12d
 	leaq	.LC24(%rip), %r15
 	addq	$2, %rbp
-	jmp	.L30
-.L24:
+	jmp	.L33
+.L27:
 	cmpl	$3, %eax
-	jne	.L35
+	jne	.L39
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -590,8 +550,8 @@ output_variable_access:
 	movq	%r12, %r8
 	movq	%rbx, %rdx
 	call	output_expression
-	jmp	.L22
-.L34:
+	jmp	.L25
+.L38:
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -616,8 +576,7 @@ output_variable_access:
 	leaq	1(%rbp), %r8
 	movq	%rbx, %rdx
 	call	output_name
-	nop
-.L22:
+.L25:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -628,7 +587,7 @@ output_variable_access:
 	popq	%r14
 	popq	%r15
 	ret
-.L31:
+.L34:
 	movq	%rsi, %r9
 	movl	$0, %r8d
 	movq	%r14, %rdx
@@ -644,14 +603,14 @@ output_variable_access:
 	movq	%rbx, %rdx
 	movq	%rdi, %rcx
 	call	output_expression
-.L30:
+.L33:
 	movq	%r13, %rcx
 	call	list_pop
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	jne	.L31
-	jmp	.L22
-.L23:
+	jne	.L34
+	jmp	.L25
+.L26:
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -692,8 +651,8 @@ output_variable_access:
 	movq	%r12, %r8
 	movq	%rbx, %rdx
 	call	output_name
-	jmp	.L22
-.L35:
+	jmp	.L25
+.L39:
 	movl	$1, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -702,8 +661,7 @@ output_variable_access:
 	leaq	.LC31(%rip), %rdx
 	movq	%rbx, %rcx
 	call	fprintf
-	jmp	.L22
-	.seh_endproc
+	jmp	.L25
 	.section .rdata,"dr"
 .LC32:
 	.ascii "type: \"integer\"\12\0"
@@ -733,44 +691,37 @@ output_variable_access:
 	.ascii "unknown_PrimaryType: %u\12\0"
 	.text
 	.def	output_primary;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_primary
 output_primary:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movq	%rcx, %rsi
 	movq	%rdx, %rbx
 	movq	%r8, %rdi
 	movq	%r9, %rbp
 	cmpl	$8, 8(%rcx)
-	ja	.L37
+	ja	.L41
 	movl	8(%rcx), %eax
-	leaq	.L39(%rip), %rdx
+	leaq	.L43(%rip), %rdx
 	movslq	(%rdx,%rax,4), %rax
 	addq	%rdx, %rax
 	jmp	*%rax
 	.section .rdata,"dr"
 	.align 4
-.L39:
-	.long	.L47-.L39
-	.long	.L46-.L39
-	.long	.L45-.L39
-	.long	.L44-.L39
-	.long	.L43-.L39
-	.long	.L42-.L39
-	.long	.L41-.L39
-	.long	.L40-.L39
-	.long	.L38-.L39
+.L43:
+	.long	.L51-.L43
+	.long	.L50-.L43
+	.long	.L49-.L43
+	.long	.L48-.L43
+	.long	.L47-.L43
+	.long	.L46-.L43
+	.long	.L45-.L43
+	.long	.L44-.L43
+	.long	.L42-.L43
 	.text
-.L47:
+.L51:
 	movl	$0, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -789,15 +740,14 @@ output_primary:
 	leaq	.LC33(%rip), %rdx
 	movq	%rbx, %rcx
 	call	fprintf
-	nop
-.L36:
+.L40:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	ret
-.L46:
+.L50:
 	movl	$0, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -816,8 +766,8 @@ output_primary:
 	leaq	.LC33(%rip), %rdx
 	movq	%rbx, %rcx
 	call	fprintf
-	jmp	.L36
-.L45:
+	jmp	.L40
+.L49:
 	movl	$0, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -836,8 +786,8 @@ output_primary:
 	leaq	.LC36(%rip), %rdx
 	movq	%rbx, %rcx
 	call	fprintf
-	jmp	.L36
-.L44:
+	jmp	.L40
+.L48:
 	movl	$0, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -857,8 +807,8 @@ output_primary:
 	movl	$1, %edx
 	leaq	.LC38(%rip), %rcx
 	call	fwrite
-	jmp	.L36
-.L43:
+	jmp	.L40
+.L47:
 	movl	$0, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -878,8 +828,8 @@ output_primary:
 	movl	$1, %edx
 	leaq	.LC39(%rip), %rcx
 	call	fwrite
-	jmp	.L36
-.L42:
+	jmp	.L40
+.L46:
 	movl	$0, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -904,8 +854,8 @@ output_primary:
 	leaq	1(%rdi), %r8
 	movq	%rbx, %rdx
 	call	output_expression
-	jmp	.L36
-.L41:
+	jmp	.L40
+.L45:
 	movl	$0, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -930,8 +880,8 @@ output_primary:
 	leaq	1(%rdi), %r8
 	movq	%rbx, %rdx
 	call	output_primary
-	jmp	.L36
-.L40:
+	jmp	.L40
+.L44:
 	movl	$0, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -956,8 +906,8 @@ output_primary:
 	leaq	1(%rdi), %r8
 	movq	%rbx, %rdx
 	call	output_primary
-	jmp	.L36
-.L38:
+	jmp	.L40
+.L42:
 	movl	$0, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -982,8 +932,8 @@ output_primary:
 	leaq	1(%rdi), %r8
 	movq	%rbx, %rdx
 	call	output_variable_access
-	jmp	.L36
-.L37:
+	jmp	.L40
+.L41:
 	movl	$1, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -992,8 +942,7 @@ output_primary:
 	leaq	.LC44(%rip), %rdx
 	movq	%rbx, %rcx
 	call	fprintf
-	jmp	.L36
-	.seh_endproc
+	jmp	.L40
 	.section .rdata,"dr"
 .LC45:
 	.ascii "if_statement\12\0"
@@ -1038,51 +987,40 @@ output_primary:
 	.ascii "unknown_StatementType: %u\12\0"
 	.text
 	.def	output_statement;	.scl	3;	.type	32;	.endef
-	.seh_proc	output_statement
 output_statement:
 	pushq	%r15
-	.seh_pushreg	%r15
 	pushq	%r14
-	.seh_pushreg	%r14
 	pushq	%r13
-	.seh_pushreg	%r13
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$56, %rsp
-	.seh_stackalloc	56
-	.seh_endprologue
 	movq	%rcx, %rdi
 	movq	%rdx, %rbx
 	movq	%r8, %rbp
 	movq	%r9, %rsi
 	cmpl	$7, 8(%rcx)
-	ja	.L50
+	ja	.L55
 	movl	8(%rcx), %eax
-	leaq	.L52(%rip), %rdx
+	leaq	.L57(%rip), %rdx
 	movslq	(%rdx,%rax,4), %rax
 	addq	%rdx, %rax
 	jmp	*%rax
 	.section .rdata,"dr"
 	.align 4
-.L52:
-	.long	.L59-.L52
-	.long	.L58-.L52
-	.long	.L57-.L52
-	.long	.L56-.L52
-	.long	.L55-.L52
-	.long	.L54-.L52
-	.long	.L53-.L52
-	.long	.L51-.L52
-	.text
 .L57:
+	.long	.L64-.L57
+	.long	.L63-.L57
+	.long	.L62-.L57
+	.long	.L61-.L57
+	.long	.L60-.L57
+	.long	.L59-.L57
+	.long	.L58-.L57
+	.long	.L56-.L57
+	.text
+.L62:
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -1130,18 +1068,18 @@ output_statement:
 	movl	$1, %edx
 	leaq	.LC47(%rip), %rcx
 	call	fwrite
-.L60:
+.L65:
 	movq	%rdi, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L81
+	je	.L87
 	movq	%rsi, %r9
 	movq	%r13, %r8
 	movq	%rbx, %rdx
 	call	output_statement
-	jmp	.L60
-.L81:
+	jmp	.L65
+.L87:
 	movq	%rsi, %r9
 	movl	$0, %r8d
 	movq	40(%rsp), %rdx
@@ -1154,12 +1092,12 @@ output_statement:
 	call	fwrite
 	leaq	.LC46(%rip), %r15
 	addq	$3, %rbp
-.L62:
+.L67:
 	movq	%r14, %rcx
 	call	list_pop
 	movq	%rax, %r12
 	testq	%rax, %rax
-	je	.L82
+	je	.L88
 	movq	8(%r12), %rcx
 	call	list_copy
 	movq	%rax, %rdi
@@ -1188,18 +1126,18 @@ output_statement:
 	movl	$1, %edx
 	leaq	.LC47(%rip), %rcx
 	call	fwrite
-.L63:
+.L68:
 	movq	%rdi, %rcx
 	call	list_pop
 	testq	%rax, %rax
-	je	.L62
+	je	.L67
 	movq	%rsi, %r9
 	movq	%rbp, %r8
 	movq	%rbx, %rdx
 	movq	%rax, %rcx
 	call	output_statement
-	jmp	.L63
-.L82:
+	jmp	.L68
+.L88:
 	movq	%rsi, %r9
 	movl	$1, %r8d
 	movq	40(%rsp), %rdx
@@ -1210,18 +1148,18 @@ output_statement:
 	movl	$1, %edx
 	leaq	.LC49(%rip), %rcx
 	call	fwrite
-.L66:
+.L71:
 	movq	32(%rsp), %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L49
+	je	.L54
 	movq	%rsi, %r9
 	movq	%r13, %r8
 	movq	%rbx, %rdx
 	call	output_statement
-	jmp	.L66
-.L55:
+	jmp	.L71
+.L60:
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -1237,7 +1175,7 @@ output_statement:
 	call	list_copy
 	movq	%rax, %rdi
 	cmpq	$0, (%r12)
-	je	.L69
+	je	.L74
 	movq	%rsi, %r9
 	movl	$0, %r8d
 	movq	%r13, %rdx
@@ -1253,9 +1191,9 @@ output_statement:
 	leaq	2(%rbp), %r8
 	movq	%rbx, %rdx
 	call	output_variable
-.L70:
+.L75:
 	cmpq	$0, 8(%r12)
-	je	.L71
+	je	.L76
 	movq	%rsi, %r9
 	movl	$0, %r8d
 	movq	%r13, %rdx
@@ -1271,9 +1209,9 @@ output_statement:
 	leaq	2(%rbp), %r8
 	movq	%rbx, %rdx
 	call	output_expression
-.L72:
+.L77:
 	cmpq	$0, 16(%r12)
-	je	.L73
+	je	.L78
 	movq	%rsi, %r9
 	movl	$0, %r8d
 	movq	%r13, %rdx
@@ -1289,7 +1227,7 @@ output_statement:
 	leaq	2(%rbp), %r8
 	movq	%rbx, %rdx
 	call	output_expression
-.L74:
+.L79:
 	movq	%rsi, %r9
 	movl	$1, %r8d
 	movq	%r13, %rdx
@@ -1301,18 +1239,18 @@ output_statement:
 	leaq	.LC47(%rip), %rcx
 	call	fwrite
 	addq	$2, %rbp
-.L75:
+.L80:
 	movq	%rdi, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L49
+	je	.L54
 	movq	%rsi, %r9
 	movq	%rbp, %r8
 	movq	%rbx, %rdx
 	call	output_statement
-	jmp	.L75
-.L69:
+	jmp	.L80
+.L74:
 	movq	%rsi, %r9
 	movl	$0, %r8d
 	movq	%r13, %rdx
@@ -1323,8 +1261,8 @@ output_statement:
 	movl	$1, %edx
 	leaq	.LC52(%rip), %rcx
 	call	fwrite
-	jmp	.L70
-.L71:
+	jmp	.L75
+.L76:
 	movq	%rsi, %r9
 	movl	$0, %r8d
 	movq	%r13, %rdx
@@ -1335,8 +1273,8 @@ output_statement:
 	movl	$1, %edx
 	leaq	.LC53(%rip), %rcx
 	call	fwrite
-	jmp	.L72
-.L73:
+	jmp	.L77
+.L78:
 	movq	%rsi, %r9
 	movl	$0, %r8d
 	movq	%r13, %rdx
@@ -1347,8 +1285,8 @@ output_statement:
 	movl	$1, %edx
 	leaq	.LC55(%rip), %rcx
 	call	fwrite
-	jmp	.L74
-.L56:
+	jmp	.L79
+.L61:
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -1389,18 +1327,18 @@ output_statement:
 	movl	$1, %edx
 	leaq	.LC47(%rip), %rcx
 	call	fwrite
-.L77:
+.L82:
 	movq	%rdi, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L49
+	je	.L54
 	movq	%rsi, %r9
 	movq	%rbp, %r8
 	movq	%rbx, %rdx
 	call	output_statement
-	jmp	.L77
-.L58:
+	jmp	.L82
+.L63:
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -1415,8 +1353,7 @@ output_statement:
 	leaq	1(%rbp), %r8
 	movq	%rbx, %rdx
 	call	output_variable
-	nop
-.L49:
+.L54:
 	addq	$56, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -1427,9 +1364,9 @@ output_statement:
 	popq	%r14
 	popq	%r15
 	ret
-.L54:
+.L59:
 	cmpq	$0, (%rcx)
-	je	.L83
+	je	.L89
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -1444,8 +1381,8 @@ output_statement:
 	leaq	1(%rbp), %r8
 	movq	%rbx, %rdx
 	call	output_expression
-	jmp	.L49
-.L83:
+	jmp	.L54
+.L89:
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -1455,8 +1392,8 @@ output_statement:
 	movl	$1, %edx
 	leaq	.LC58(%rip), %rcx
 	call	fwrite
-	jmp	.L49
-.L53:
+	jmp	.L54
+.L58:
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -1466,8 +1403,8 @@ output_statement:
 	movl	$1, %edx
 	leaq	.LC60(%rip), %rcx
 	call	fwrite
-	jmp	.L49
-.L51:
+	jmp	.L54
+.L56:
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -1477,10 +1414,10 @@ output_statement:
 	movl	$1, %edx
 	leaq	.LC61(%rip), %rcx
 	call	fwrite
-	jmp	.L49
-.L59:
+	jmp	.L54
+.L64:
 	cmpq	$0, (%rcx)
-	je	.L84
+	je	.L90
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -1495,8 +1432,8 @@ output_statement:
 	leaq	1(%rbp), %r8
 	movq	%rbx, %rdx
 	call	output_expression
-	jmp	.L49
-.L84:
+	jmp	.L54
+.L90:
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -1506,8 +1443,8 @@ output_statement:
 	movl	$1, %edx
 	leaq	.LC62(%rip), %rcx
 	call	fwrite
-	jmp	.L49
-.L50:
+	jmp	.L54
+.L55:
 	movl	$0, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -1516,8 +1453,7 @@ output_statement:
 	leaq	.LC64(%rip), %rdx
 	movq	%rbx, %rcx
 	call	fprintf
-	jmp	.L49
-	.seh_endproc
+	jmp	.L54
 	.section .rdata,"dr"
 .LC65:
 	.ascii "NULL\0"
@@ -1544,35 +1480,24 @@ output_statement:
 	.text
 	.globl	output_code
 	.def	output_code;	.scl	2;	.type	32;	.endef
-	.seh_proc	output_code
 output_code:
 	pushq	%r15
-	.seh_pushreg	%r15
 	pushq	%r14
-	.seh_pushreg	%r14
 	pushq	%r13
-	.seh_pushreg	%r13
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$72, %rsp
-	.seh_stackalloc	72
-	.seh_endprologue
 	movq	%rdx, %r15
 	movq	%r8, 160(%rsp)
 	movq	%r9, %r14
 	movq	(%rcx), %rcx
 	call	list_copy
 	movq	%rax, 56(%rsp)
-	jmp	.L86
-.L87:
+	jmp	.L92
+.L93:
 	movq	%r14, %r9
 	movl	$0, %r8d
 	movq	%r15, %rcx
@@ -1637,12 +1562,12 @@ output_code:
 	movl	$-1, %esi
 	movq	160(%rsp), %rax
 	leaq	4(%rax), %r13
-.L92:
+.L98:
 	movq	%r12, %rcx
 	call	list_pop
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L108
+	je	.L115
 	movq	%r14, %r9
 	movl	$0, %r8d
 	movq	%rdi, %rdx
@@ -1658,8 +1583,8 @@ output_code:
 	movq	%r15, %rdx
 	movq	%rbx, %rcx
 	call	output_variable
-	jmp	.L92
-.L108:
+	jmp	.L98
+.L115:
 	movq	%r14, %r9
 	movl	$1, %r8d
 	movq	32(%rsp), %rdx
@@ -1670,18 +1595,18 @@ output_code:
 	movl	$1, %edx
 	leaq	.LC47(%rip), %rcx
 	call	fwrite
-.L94:
+.L100:
 	movq	%rbp, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L86
+	je	.L92
 	movq	%r14, %r9
 	movq	%rdi, %r8
 	movq	%r15, %rdx
 	call	output_statement
-	jmp	.L94
-.L88:
+	jmp	.L100
+.L94:
 	movq	%r14, %r9
 	movl	$0, %r8d
 	movq	%r15, %rcx
@@ -1725,8 +1650,8 @@ output_code:
 	movq	8(%rbx), %rcx
 	call	list_copy
 	movq	%rax, 32(%rsp)
-	jmp	.L96
-.L97:
+	jmp	.L102
+.L103:
 	movq	%r14, %r9
 	movl	$0, %r8d
 	movq	40(%rsp), %rdx
@@ -1792,8 +1717,8 @@ output_code:
 	movl	$-1, %esi
 	movq	160(%rsp), %rax
 	leaq	6(%rax), %r13
-	jmp	.L100
-.L101:
+	jmp	.L106
+.L107:
 	movq	%r14, %r9
 	movl	$0, %r8d
 	movq	%rdi, %rdx
@@ -1809,12 +1734,12 @@ output_code:
 	movq	%r15, %rdx
 	movq	%rbx, %rcx
 	call	output_variable
-.L100:
+.L106:
 	movq	%r12, %rcx
 	call	list_pop
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	jne	.L101
+	jne	.L107
 	movq	%r14, %r9
 	movl	$1, %r8d
 	movq	48(%rsp), %rdx
@@ -1825,29 +1750,29 @@ output_code:
 	movl	$1, %edx
 	leaq	.LC47(%rip), %rcx
 	call	fwrite
-	jmp	.L102
-.L103:
+	jmp	.L108
+.L109:
 	movq	%r14, %r9
 	movq	%rdi, %r8
 	movq	%r15, %rdx
 	call	output_statement
-.L102:
+.L108:
 	movq	%rbp, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	jne	.L103
-.L96:
+	jne	.L109
+.L102:
 	movq	32(%rsp), %rcx
 	call	list_pop
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L86
+	je	.L92
 	movl	8(%rbx), %eax
 	testl	%eax, %eax
-	je	.L97
+	je	.L103
 	cmpl	$1, %eax
-	je	.L98
+	je	.L104
 	movq	%r14, %r9
 	movl	$0, %r8d
 	movq	40(%rsp), %rdx
@@ -1857,8 +1782,8 @@ output_code:
 	leaq	.LC74(%rip), %rdx
 	movq	%r15, %rcx
 	call	fprintf
-	jmp	.L96
-.L98:
+	jmp	.L102
+.L104:
 	movq	%r14, %r9
 	movl	$0, %r8d
 	movq	40(%rsp), %rdx
@@ -1875,8 +1800,8 @@ output_code:
 	leaq	4(%rax), %r8
 	movq	%r15, %rdx
 	call	output_variable
-	jmp	.L96
-.L89:
+	jmp	.L102
+.L95:
 	movq	%r14, %r9
 	movl	$0, %r8d
 	movq	%r15, %rcx
@@ -1885,21 +1810,21 @@ output_code:
 	leaq	.LC75(%rip), %rdx
 	movq	%r15, %rcx
 	call	fprintf
-.L86:
+.L92:
 	movq	56(%rsp), %rcx
 	call	list_pop
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L109
+	je	.L116
 	movq	160(%rsp), %rax
 	leaq	1(%rax), %rdx
 	movl	8(%rbx), %eax
 	cmpl	$1, %eax
-	je	.L87
+	je	.L93
 	cmpl	$2, %eax
-	je	.L88
+	je	.L94
 	testl	%eax, %eax
-	jne	.L89
+	jne	.L95
 	movq	%r14, %r9
 	movl	$0, %r8d
 	movq	%r15, %rcx
@@ -1940,8 +1865,8 @@ output_code:
 	leaq	.LC67(%rip), %rdx
 	movq	%r15, %rcx
 	call	fprintf
-	jmp	.L86
-.L109:
+	jmp	.L92
+.L116:
 	addq	$72, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -1952,7 +1877,6 @@ output_code:
 	popq	%r14
 	popq	%r15
 	ret
-	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	indention;	.scl	2;	.type	32;	.endef
 	.def	fprintf;	.scl	2;	.type	32;	.endef

@@ -3,19 +3,14 @@
  ;	compiled by GNU C version 13.2.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
  ; GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
- ; options passed: -mtune=generic -march=nocona -O0
+ ; options passed: -mtune=generic -march=nocona -O0 -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt
 	.text
 	.globl	create_list
 	.def	create_list;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_list
 create_list:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
  ; D:\TC\src\helper.c:8:     List* new_list = (List*)alloc_memory(sizeof(List));
 	movl	$16, %ecx	 ;,
 	call	alloc_memory	 ;
@@ -29,21 +24,14 @@ create_list:
  ; D:\TC\src\helper.c:11:     return new_list;
 	movq	-8(%rbp), %rax	 ; new_list, _6
  ; D:\TC\src\helper.c:12: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	create_node
 	.def	create_node;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_node
 create_node:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; content, content
  ; D:\TC\src\helper.c:15:     Node* new_node = (Node*)alloc_memory(sizeof(Node));
 	movl	$16, %ecx	 ;,
@@ -59,21 +47,14 @@ create_node:
  ; D:\TC\src\helper.c:18:     return new_node;
 	movq	-8(%rbp), %rax	 ; new_node, _7
  ; D:\TC\src\helper.c:19: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	list_append
 	.def	list_append;	.scl	2;	.type	32;	.endef
-	.seh_proc	list_append
 list_append:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; list, list
 	movq	%rdx, 24(%rbp)	 ; item, item
  ; D:\TC\src\helper.c:22:     Node* new_node = create_node(item);
@@ -111,21 +92,14 @@ list_append:
 .L8:
  ; D:\TC\src\helper.c:30: }
 	nop	
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	list_copy
 	.def	list_copy;	.scl	2;	.type	32;	.endef
-	.seh_proc	list_copy
 list_copy:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; original, original
  ; D:\TC\src\helper.c:33:     list() new_list = create_list();
 	call	create_list	 ;
@@ -145,21 +119,14 @@ list_copy:
  ; D:\TC\src\helper.c:36:     return new_list;
 	movq	-8(%rbp), %rax	 ; new_list, _9
  ; D:\TC\src\helper.c:37: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	list_pop
 	.def	list_pop;	.scl	2;	.type	32;	.endef
-	.seh_proc	list_pop
 list_pop:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$16, %rsp	 ;,
-	.seh_stackalloc	16
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; list, list
  ; D:\TC\src\helper.c:40:     if (list->head == 0)
 	movq	16(%rbp), %rax	 ; list, tmp87
@@ -196,10 +163,8 @@ list_pop:
 	movq	8(%rax), %rax	 ; head_node_9->content, _4
 .L13:
  ; D:\TC\src\helper.c:47: }
-	addq	$16, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC0:
@@ -227,15 +192,10 @@ list_pop:
 	.text
 	.globl	create_name
 	.def	create_name;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_name
 create_name:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; name, name
 	movl	%edx, 24(%rbp)	 ; kind, kind
 	movq	%r8, 32(%rbp)	 ; name_info, name_info
@@ -491,21 +451,14 @@ create_name:
 	movq	-16(%rbp), %rax	 ; new_name, _26
 .L32:
  ; D:\TC\src\helper.c:98: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	create_scope
 	.def	create_scope;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_scope
 create_scope:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; parent, parent
  ; D:\TC\src\helper.c:101:     Scope* new_scope = (Scope*)alloc_memory(sizeof(Scope));
 	movl	$16, %ecx	 ;,
@@ -526,21 +479,14 @@ create_scope:
  ; D:\TC\src\helper.c:105:     return new_scope;
 	movq	-8(%rbp), %rax	 ; new_scope, _10
  ; D:\TC\src\helper.c:106: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	search
 	.def	search;	.scl	2;	.type	32;	.endef
-	.seh_proc	search
 search:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp	 ;,
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; scope, scope
 	movq	%rdx, 24(%rbp)	 ; name, name
  ; D:\TC\src\helper.c:109:     Scope* scope_ptr = (scope);
@@ -600,21 +546,14 @@ search:
 	movl	$0, %eax	 ;, _5
 .L39:
  ; D:\TC\src\helper.c:123: }
-	addq	$80, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	is_builtin_type
 	.def	is_builtin_type;	.scl	2;	.type	32;	.endef
-	.seh_proc	is_builtin_type
 is_builtin_type:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$32, %rsp	 ;,
-	.seh_stackalloc	32
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; type, type
  ; D:\TC\src\helper.c:126:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 	movq	.refptr.INT_KEYWORD(%rip), %rax	 ;, tmp95
@@ -671,21 +610,14 @@ is_builtin_type:
 	movl	$0, %eax	 ;, iftmp.2_11
 .L45:
  ; D:\TC\src\helper.c:127: }
-	addq	$32, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	is_type
 	.def	is_type;	.scl	2;	.type	32;	.endef
-	.seh_proc	is_type
 is_type:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$16, %rsp	 ;,
-	.seh_stackalloc	16
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; type, type
  ; D:\TC\src\helper.c:130:     Name* type_ptr = (type);
 	movq	16(%rbp), %rax	 ; type, tmp87
@@ -712,10 +644,8 @@ is_type:
 	movl	$0, %eax	 ;, iftmp.8_3
 .L50:
  ; D:\TC\src\helper.c:132: }
-	addq	$16, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC10:
@@ -723,28 +653,21 @@ is_type:
 	.text
 	.globl	parser_error
 	.def	parser_error;	.scl	2;	.type	32;	.endef
-	.seh_proc	parser_error
 parser_error:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
+	movq	%rsp, %rbp	 ;,
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	leaq	48(%rsp), %rbp	 ;,
-	.seh_setframe	%rbp, 48
-	.seh_endprologue
-	movq	%rcx, 32(%rbp)	 ; message, message
-	movq	%rdx, 40(%rbp)	 ; token, token
+	movq	%rcx, 16(%rbp)	 ; message, message
+	movq	%rdx, 24(%rbp)	 ; token, token
  ; D:\TC\src\helper.c:135:     fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", token->line + 1, token->column + 1, message);
-	movq	40(%rbp), %rax	 ; token, tmp88
+	movq	24(%rbp), %rax	 ; token, tmp88
 	movq	16(%rax), %rax	 ; token_8(D)->column, _1
  ; D:\TC\src\helper.c:135:     fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", token->line + 1, token->column + 1, message);
 	leaq	1(%rax), %rsi	 ;, _2
  ; D:\TC\src\helper.c:135:     fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", token->line + 1, token->column + 1, message);
-	movq	40(%rbp), %rax	 ; token, tmp89
+	movq	24(%rbp), %rax	 ; token, tmp89
 	movq	8(%rax), %rax	 ; token_8(D)->line, _3
  ; D:\TC\src\helper.c:135:     fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", token->line + 1, token->column + 1, message);
 	leaq	1(%rax), %rbx	 ;, _4
@@ -753,7 +676,7 @@ parser_error:
  ; D:\TC\src\helper.c:135:     fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", token->line + 1, token->column + 1, message);
 	movq	24(%rax), %rax	 ; _5->_stderr, _6
  ; D:\TC\src\helper.c:135:     fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", token->line + 1, token->column + 1, message);
-	movq	32(%rbp), %rdx	 ; message, tmp90
+	movq	16(%rbp), %rdx	 ; message, tmp90
 	movq	%rdx, 32(%rsp)	 ; tmp90,
 	movq	%rsi, %r9	 ; _2,
 	movq	%rbx, %r8	 ; _4,
@@ -767,17 +690,11 @@ parser_error:
 	popq	%rsi	 ;
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 	.def	set_bool_list;	.scl	3;	.type	32;	.endef
-	.seh_proc	set_bool_list
 set_bool_list:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$16, %rsp	 ;,
-	.seh_stackalloc	16
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; bool_list, bool_list
 	movq	%rdx, 24(%rbp)	 ; index, index
 	movl	%r8d, %eax	 ; value, tmp99
@@ -844,18 +761,12 @@ set_bool_list:
 .L56:
  ; D:\TC\src\helper.c:144: }
 	nop	
-	addq	$16, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.def	get_bool_list;	.scl	3;	.type	32;	.endef
-	.seh_proc	get_bool_list
 get_bool_list:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; bool_list, bool_list
 	movq	%rdx, 24(%rbp)	 ; index, index
  ; D:\TC\src\helper.c:147:     return ((bool_list[index / 8] & (1 << (index % 8))) == 0 ? false : true);
@@ -881,7 +792,6 @@ get_bool_list:
  ; D:\TC\src\helper.c:148: }
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC11:
 	.ascii "\342\224\202   \0"
@@ -894,15 +804,10 @@ get_bool_list:
 	.text
 	.globl	indention
 	.def	indention;	.scl	2;	.type	32;	.endef
-	.seh_proc	indention
 indention:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; out, out
 	movq	%rdx, 24(%rbp)	 ; indent, indent
 	movl	%r8d, %eax	 ; is_last, tmp89
@@ -975,21 +880,14 @@ indention:
 .L67:
  ; D:\TC\src\helper.c:157: }
 	nop	
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	create_parser
 	.def	create_parser;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_parser
 create_parser:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp	 ;,
-	.seh_stackalloc	48
-	.seh_endprologue
  ; D:\TC\src\helper.c:160:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
 	movl	$35, %ecx	 ;,
 	call	alloc_memory	 ;
@@ -1009,10 +907,8 @@ create_parser:
  ; D:\TC\src\helper.c:165:     return new_parser;
 	movq	-8(%rbp), %rax	 ; new_parser, _8
  ; D:\TC\src\helper.c:166: }
-	addq	$48, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.section .rdata,"dr"
 .LC15:
 	.ascii "print\0"
@@ -1042,31 +938,25 @@ create_parser:
 	.text
 	.globl	parse_import_file
 	.def	parse_import_file;	.scl	2;	.type	32;	.endef
-	.seh_proc	parse_import_file
 parse_import_file:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
+	movq	%rsp, %rbp	 ;,
 	pushq	%rsi	 ;
-	.seh_pushreg	%rsi
 	pushq	%rbx	 ;
-	.seh_pushreg	%rbx
+	andq	$-16, %rsp	 ;,
 	subq	$1152, %rsp	 ;,
-	.seh_stackalloc	1152
-	leaq	128(%rsp), %rbp	 ;,
-	.seh_setframe	%rbp, 128
-	.seh_endprologue
-	movq	%rcx, 1056(%rbp)	 ; import_name, import_name
-	movq	%rdx, 1064(%rbp)	 ; source, source
-	movq	%r8, 1072(%rbp)	 ; scope, scope
+	movq	%rcx, 16(%rbp)	 ; import_name, import_name
+	movq	%rdx, 24(%rbp)	 ; source, source
+	movq	%r8, 32(%rbp)	 ; scope, scope
  ; D:\TC\src\helper.c:169:     Name* name = 0;
-	movq	$0, 1016(%rbp)	 ;, name
+	movq	$0, 1144(%rsp)	 ;, name
  ; D:\TC\src\helper.c:173:     filename[0] = '\0';
-	movb	$0, -80(%rbp)	 ;, filename[0]
+	movb	$0, 48(%rsp)	 ;, filename[0]
  ; D:\TC\src\helper.c:174:     if (source == 0) {
-	cmpq	$0, 1064(%rbp)	 ;, source
+	cmpq	$0, 24(%rbp)	 ;, source
 	jne	.L71	 ;,
  ; D:\TC\src\helper.c:175:         if (strcmp(import_name, "print") == 0)
-	movq	1056(%rbp), %rax	 ; import_name, tmp100
+	movq	16(%rbp), %rax	 ; import_name, tmp100
 	leaq	.LC15(%rip), %rdx	 ;, tmp101
 	movq	%rax, %rcx	 ; tmp100,
 	call	strcmp	 ;
@@ -1074,7 +964,7 @@ parse_import_file:
 	testl	%eax, %eax	 ; _1
 	jne	.L72	 ;,
  ; D:\TC\src\helper.c:176:             strcpy(filename, "./std/print.tc");
-	leaq	-80(%rbp), %rax	 ;, tmp102
+	leaq	48(%rsp), %rax	 ;, tmp102
 	movabsq	$8246143026212319022, %rbx	 ;, tmp153
 	movq	%rbx, (%rax)	 ; tmp153, MEM <char[1:15]> [(void *)&filename]
 	movabsq	$27993765565065586, %rsi	 ;, tmp154
@@ -1082,7 +972,7 @@ parse_import_file:
 	jmp	.L73	 ;
 .L72:
  ; D:\TC\src\helper.c:177:         else if (strcmp(import_name, "arr") == 0)
-	movq	1056(%rbp), %rax	 ; import_name, tmp103
+	movq	16(%rbp), %rax	 ; import_name, tmp103
 	leaq	.LC16(%rip), %rdx	 ;, tmp104
 	movq	%rax, %rcx	 ; tmp103,
 	call	strcmp	 ;
@@ -1090,7 +980,7 @@ parse_import_file:
 	testl	%eax, %eax	 ; _2
 	jne	.L74	 ;,
  ; D:\TC\src\helper.c:178:             strcpy(filename, "./std/arr.tc");
-	leaq	-80(%rbp), %rax	 ;, tmp105
+	leaq	48(%rsp), %rax	 ;, tmp105
 	movabsq	$8241920901561659182, %rbx	 ;, tmp155
 	movq	%rbx, (%rax)	 ; tmp155, MEM <char[1:13]> [(void *)&filename]
 	movabsq	$27993765531771183, %rsi	 ;, tmp156
@@ -1102,7 +992,7 @@ parse_import_file:
  ; D:\TC\src\helper.c:180:             fprintf(stderr, "Error: Standard library file for import not found: %s\n", filename);
 	movq	24(%rax), %rax	 ; _3->_stderr, _4
  ; D:\TC\src\helper.c:180:             fprintf(stderr, "Error: Standard library file for import not found: %s\n", filename);
-	leaq	-80(%rbp), %rdx	 ;, tmp106
+	leaq	48(%rsp), %rdx	 ;, tmp106
 	movq	%rdx, %r8	 ; tmp106,
 	leaq	.LC17(%rip), %rdx	 ;, tmp107
 	movq	%rax, %rcx	 ; _4,
@@ -1112,34 +1002,34 @@ parse_import_file:
 	jmp	.L83	 ;
 .L71:
  ; D:\TC\src\helper.c:184:         string_append(filename, MAX_FILENAME_SIZE, filename, source);
-	movq	1064(%rbp), %rcx	 ; source, tmp108
-	leaq	-80(%rbp), %rdx	 ;, tmp109
-	leaq	-80(%rbp), %rax	 ;, tmp110
+	movq	24(%rbp), %rcx	 ; source, tmp108
+	leaq	48(%rsp), %rdx	 ;, tmp109
+	leaq	48(%rsp), %rax	 ;, tmp110
 	movq	%rcx, %r9	 ; tmp108,
 	movq	%rdx, %r8	 ; tmp109,
 	movl	$1024, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp110,
 	call	string_append	 ;
  ; D:\TC\src\helper.c:185:         string_append(filename, MAX_FILENAME_SIZE, filename, "/");
-	leaq	-80(%rbp), %rdx	 ;, tmp111
-	leaq	-80(%rbp), %rax	 ;, tmp112
+	leaq	48(%rsp), %rdx	 ;, tmp111
+	leaq	48(%rsp), %rax	 ;, tmp112
 	leaq	.LC18(%rip), %r9	 ;,
 	movq	%rdx, %r8	 ; tmp111,
 	movl	$1024, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp112,
 	call	string_append	 ;
  ; D:\TC\src\helper.c:186:         string_append(filename, MAX_FILENAME_SIZE, filename, import_name);
-	movq	1056(%rbp), %rcx	 ; import_name, tmp113
-	leaq	-80(%rbp), %rdx	 ;, tmp114
-	leaq	-80(%rbp), %rax	 ;, tmp115
+	movq	16(%rbp), %rcx	 ; import_name, tmp113
+	leaq	48(%rsp), %rdx	 ;, tmp114
+	leaq	48(%rsp), %rax	 ;, tmp115
 	movq	%rcx, %r9	 ; tmp113,
 	movq	%rdx, %r8	 ; tmp114,
 	movl	$1024, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp115,
 	call	string_append	 ;
  ; D:\TC\src\helper.c:187:         string_append(filename, MAX_FILENAME_SIZE, filename, ".tc");
-	leaq	-80(%rbp), %rdx	 ;, tmp116
-	leaq	-80(%rbp), %rax	 ;, tmp117
+	leaq	48(%rsp), %rdx	 ;, tmp116
+	leaq	48(%rsp), %rax	 ;, tmp117
 	leaq	.LC19(%rip), %r9	 ;,
 	movq	%rdx, %r8	 ; tmp116,
 	movl	$1024, %edx	 ;,
@@ -1147,20 +1037,20 @@ parse_import_file:
 	call	string_append	 ;
 .L73:
  ; D:\TC\src\helper.c:189:     openfile = fopen(filename, "r");
-	leaq	-80(%rbp), %rax	 ;, tmp118
+	leaq	48(%rsp), %rax	 ;, tmp118
 	leaq	.LC20(%rip), %rdx	 ;, tmp119
 	movq	%rax, %rcx	 ; tmp118,
 	call	fopen	 ;
-	movq	%rax, 1000(%rbp)	 ; tmp120, openfile
+	movq	%rax, 1128(%rsp)	 ; tmp120, openfile
  ; D:\TC\src\helper.c:190:     if (openfile == NULL) {
-	cmpq	$0, 1000(%rbp)	 ;, openfile
+	cmpq	$0, 1128(%rsp)	 ;, openfile
 	jne	.L76	 ;,
  ; D:\TC\src\helper.c:191:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
 	call	__getreent	 ;
  ; D:\TC\src\helper.c:191:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
 	movq	24(%rax), %rax	 ; _5->_stderr, _6
  ; D:\TC\src\helper.c:191:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
-	leaq	-80(%rbp), %rdx	 ;, tmp121
+	leaq	48(%rsp), %rdx	 ;, tmp121
 	movq	%rdx, %r8	 ; tmp121,
 	leaq	.LC21(%rip), %rdx	 ;, tmp122
 	movq	%rax, %rcx	 ; _6,
@@ -1170,21 +1060,21 @@ parse_import_file:
 	jmp	.L83	 ;
 .L76:
  ; D:\TC\src\helper.c:194:     printf("Info: Starting parsing lib file for import: %s\n", filename);
-	leaq	-80(%rbp), %rax	 ;, tmp123
+	leaq	48(%rsp), %rax	 ;, tmp123
 	movq	%rax, %rdx	 ; tmp123,
 	leaq	.LC22(%rip), %rax	 ;, tmp124
 	movq	%rax, %rcx	 ; tmp124,
 	call	printf	 ;
  ; D:\TC\src\helper.c:195:     size_t length = 0;
-	movq	$0, -88(%rbp)	 ;, length
+	movq	$0, 40(%rsp)	 ;, length
  ; D:\TC\src\helper.c:196:     string source_code = read_source(openfile, &length);
-	leaq	-88(%rbp), %rdx	 ;, tmp125
-	movq	1000(%rbp), %rax	 ; openfile, tmp126
+	leaq	40(%rsp), %rdx	 ;, tmp125
+	movq	1128(%rsp), %rax	 ; openfile, tmp126
 	movq	%rax, %rcx	 ; tmp126,
 	call	read_source	 ;
-	movq	%rax, 992(%rbp)	 ; tmp127, source_code
+	movq	%rax, 1120(%rsp)	 ; tmp127, source_code
  ; D:\TC\src\helper.c:197:     fclose(openfile);
-	movq	1000(%rbp), %rax	 ; openfile, tmp128
+	movq	1128(%rsp), %rax	 ; openfile, tmp128
 	movq	%rax, %rcx	 ; tmp128,
 	call	fclose	 ;
  ; D:\TC\src\helper.c:198:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser());
@@ -1193,8 +1083,8 @@ parse_import_file:
  ; D:\TC\src\helper.c:198:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser());
 	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp129
 	movq	(%rax), %rbx	 ; builtin_scope, builtin_scope.11_8
-	movq	-88(%rbp), %rdx	 ; length, length.12_9
-	movq	992(%rbp), %rax	 ; source_code, tmp130
+	movq	40(%rsp), %rdx	 ; length, length.12_9
+	movq	1120(%rsp), %rax	 ; source_code, tmp130
 	movq	%rax, %rcx	 ; tmp130,
 	call	create_lexer	 ;
  ; D:\TC\src\helper.c:198:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser());
@@ -1202,22 +1092,22 @@ parse_import_file:
 	movq	%rbx, %rdx	 ; builtin_scope.11_8,
 	movq	%rax, %rcx	 ; _10,
 	call	parse_code	 ;
-	movq	%rax, 984(%rbp)	 ; tmp131, code
+	movq	%rax, 1112(%rsp)	 ; tmp131, code
  ; D:\TC\src\helper.c:199:     printf("Info: Finished parsing lib file for import: %s\n", filename);
-	leaq	-80(%rbp), %rax	 ;, tmp132
+	leaq	48(%rsp), %rax	 ;, tmp132
 	movq	%rax, %rdx	 ; tmp132,
 	leaq	.LC23(%rip), %rax	 ;, tmp133
 	movq	%rax, %rcx	 ; tmp133,
 	call	printf	 ;
  ; D:\TC\src\helper.c:200:     if (code == 0) {
-	cmpq	$0, 984(%rbp)	 ;, code
+	cmpq	$0, 1112(%rsp)	 ;, code
 	jne	.L77	 ;,
  ; D:\TC\src\helper.c:201:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
 	call	__getreent	 ;
  ; D:\TC\src\helper.c:201:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
 	movq	24(%rax), %rax	 ; _11->_stderr, _12
  ; D:\TC\src\helper.c:201:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
-	leaq	-80(%rbp), %rdx	 ;, tmp134
+	leaq	48(%rsp), %rdx	 ;, tmp134
 	movq	%rdx, %r8	 ; tmp134,
 	leaq	.LC24(%rip), %rdx	 ;, tmp135
 	movq	%rax, %rcx	 ; _12,
@@ -1227,83 +1117,77 @@ parse_import_file:
 	jmp	.L83	 ;
 .L77:
  ; D:\TC\src\helper.c:204:     list(Node*) names = ((((code))->global_scope))->names;
-	movq	984(%rbp), %rax	 ; code, tmp136
+	movq	1112(%rsp), %rax	 ; code, tmp136
 	movq	8(%rax), %rax	 ; code_49->global_scope, _13
  ; D:\TC\src\helper.c:204:     list(Node*) names = ((((code))->global_scope))->names;
 	movq	8(%rax), %rax	 ; _13->names, tmp137
-	movq	%rax, 976(%rbp)	 ; tmp137, names
+	movq	%rax, 1104(%rsp)	 ; tmp137, names
  ; D:\TC\src\helper.c:205:     Node* current = ((names))->head;
-	movq	976(%rbp), %rax	 ; names, tmp138
+	movq	1104(%rsp), %rax	 ; names, tmp138
 	movq	(%rax), %rax	 ; names_51->head, tmp139
-	movq	%rax, 1008(%rbp)	 ; tmp139, current
+	movq	%rax, 1136(%rsp)	 ; tmp139, current
  ; D:\TC\src\helper.c:206:     while (current != 0) {
 	jmp	.L78	 ;
 .L81:
  ; D:\TC\src\helper.c:207:         Node* node_ptr = (current);
-	movq	1008(%rbp), %rax	 ; current, tmp140
-	movq	%rax, 968(%rbp)	 ; tmp140, node_ptr
+	movq	1136(%rsp), %rax	 ; current, tmp140
+	movq	%rax, 1096(%rsp)	 ; tmp140, node_ptr
  ; D:\TC\src\helper.c:208:         Name* current_name = (Name*)node_ptr->content;
-	movq	968(%rbp), %rax	 ; node_ptr, tmp141
+	movq	1096(%rsp), %rax	 ; node_ptr, tmp141
 	movq	8(%rax), %rax	 ; node_ptr_53->content, tmp142
-	movq	%rax, 960(%rbp)	 ; tmp142, current_name
+	movq	%rax, 1088(%rsp)	 ; tmp142, current_name
  ; D:\TC\src\helper.c:209:         if (string_equal(current_name->name, import_name)) {
-	movq	960(%rbp), %rax	 ; current_name, tmp143
+	movq	1088(%rsp), %rax	 ; current_name, tmp143
 	movq	(%rax), %rax	 ; current_name_54->name, _14
-	movq	1056(%rbp), %rdx	 ; import_name, tmp144
+	movq	16(%rbp), %rdx	 ; import_name, tmp144
 	movq	%rax, %rcx	 ; _14,
 	call	string_equal	 ;
  ; D:\TC\src\helper.c:209:         if (string_equal(current_name->name, import_name)) {
 	testb	%al, %al	 ; _15
 	je	.L79	 ;,
  ; D:\TC\src\helper.c:210:             name = current_name;
-	movq	960(%rbp), %rax	 ; current_name, tmp145
-	movq	%rax, 1016(%rbp)	 ; tmp145, name
+	movq	1088(%rsp), %rax	 ; current_name, tmp145
+	movq	%rax, 1144(%rsp)	 ; tmp145, name
  ; D:\TC\src\helper.c:211:             break;
 	jmp	.L80	 ;
 .L79:
  ; D:\TC\src\helper.c:213:         current = node_ptr->next;
-	movq	968(%rbp), %rax	 ; node_ptr, tmp146
+	movq	1096(%rsp), %rax	 ; node_ptr, tmp146
 	movq	(%rax), %rax	 ; node_ptr_53->next, tmp147
-	movq	%rax, 1008(%rbp)	 ; tmp147, current
+	movq	%rax, 1136(%rsp)	 ; tmp147, current
 .L78:
  ; D:\TC\src\helper.c:206:     while (current != 0) {
-	cmpq	$0, 1008(%rbp)	 ;, current
+	cmpq	$0, 1136(%rsp)	 ;, current
 	jne	.L81	 ;,
 .L80:
  ; D:\TC\src\helper.c:215:     if (name != 0) {
-	cmpq	$0, 1016(%rbp)	 ;, name
+	cmpq	$0, 1144(%rsp)	 ;, name
 	je	.L82	 ;,
  ; D:\TC\src\helper.c:216:         Scope* scope_ptr = (scope);
-	movq	1072(%rbp), %rax	 ; scope, tmp148
-	movq	%rax, 952(%rbp)	 ; tmp148, scope_ptr
+	movq	32(%rbp), %rax	 ; scope, tmp148
+	movq	%rax, 1080(%rsp)	 ; tmp148, scope_ptr
  ; D:\TC\src\helper.c:217:         list_append(scope_ptr->names, (pointer)name);
-	movq	952(%rbp), %rax	 ; scope_ptr, tmp149
+	movq	1080(%rsp), %rax	 ; scope_ptr, tmp149
 	movq	8(%rax), %rax	 ; scope_ptr_59->names, _16
-	movq	1016(%rbp), %rdx	 ; name, tmp150
+	movq	1144(%rsp), %rdx	 ; name, tmp150
 	movq	%rax, %rcx	 ; _16,
 	call	list_append	 ;
 .L82:
  ; D:\TC\src\helper.c:219:     return name;
-	movq	1016(%rbp), %rax	 ; name, _19
+	movq	1144(%rsp), %rax	 ; name, _19
 .L83:
  ; D:\TC\src\helper.c:220: }
-	addq	$1152, %rsp	 ;,
+	leaq	-16(%rbp), %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 	.globl	string_to_operator
 	.def	string_to_operator;	.scl	2;	.type	32;	.endef
-	.seh_proc	string_to_operator
 string_to_operator:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
 	subq	$32, %rsp	 ;,
-	.seh_stackalloc	32
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)	 ; str, str
  ; D:\TC\src\helper.c:224:     if (string_equal(str, ASSIGN_SYMBOL)) return OP_ASSIGN;
 	movq	.refptr.ASSIGN_SYMBOL(%rip), %rax	 ;, tmp122
@@ -1575,19 +1459,13 @@ string_to_operator:
 	movl	$19, %eax	 ;, _39
 .L86:
  ; D:\TC\src\helper.c:244: }
-	addq	$32, %rsp	 ;,
-	popq	%rbp	 ;
+	leave	
 	ret	
-	.seh_endproc
 	.globl	operator_precedence
 	.def	operator_precedence;	.scl	2;	.type	32;	.endef
-	.seh_proc	operator_precedence
 operator_precedence:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)	 ; op, op
  ; D:\TC\src\helper.c:247:     switch (op) {
 	cmpl	$18, 16(%rbp)	 ;, op
@@ -1650,16 +1528,11 @@ operator_precedence:
  ; D:\TC\src\helper.c:276: }
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 	.globl	operator_to_string
 	.def	operator_to_string;	.scl	2;	.type	32;	.endef
-	.seh_proc	operator_to_string
 operator_to_string:
 	pushq	%rbp	 ;
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp	 ;,
-	.seh_setframe	%rbp, 0
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)	 ; op, op
  ; D:\TC\src\helper.c:279:     switch (op) {
 	cmpl	$18, 16(%rbp)	 ;, op
@@ -1797,7 +1670,6 @@ operator_to_string:
  ; D:\TC\src\helper.c:302: }
 	popq	%rbp	 ;
 	ret	
-	.seh_endproc
 .lcomm id_counter.0,8,8
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef

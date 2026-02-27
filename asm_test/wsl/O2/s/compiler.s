@@ -12,122 +12,80 @@
 	.globl	string_append
 	.type	string_append, @function
 string_append:
-.LFB65:
-	.cfi_startproc
-	endbr64
 	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	movq	%rdi, %r13
 	movq	%rdx, %rdi
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	movq	%rcx, %r12
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	movq	%rsi, %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 	movq	%rdx, %rbx
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	movq	%r12, %rdi
 	movq	%rax, %r14
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	leaq	(%r14,%rax), %rdx
 	cmpq	%rbp, %rdx
 	jnb	.L7
 	cmpq	%r13, %rbx
 	je	.L8
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 56
 	movq	%rbx, %r9
 	movl	$2, %edx
 	movq	%rbp, %rsi
 	pushq	%r12
-	.cfi_def_cfa_offset 64
 	movq	%r13, %rdi
 	leaq	.LC2(%rip), %r8
 	xorl	%eax, %eax
 	movq	$-1, %rcx
-	call	__snprintf_chk@PLT
+	call	*__snprintf_chk@GOTPCREL(%rip)
 	popq	%rax
-	.cfi_def_cfa_offset 56
 	popq	%rdx
-	.cfi_def_cfa_offset 48
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
 .L8:
-	.cfi_restore_state
 	movq	%rbp, %rsi
 	leaq	(%rbx,%r14), %rdi
 	movq	%r12, %rcx
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
 	subq	%r14, %rsi
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	leaq	.LC1(%rip), %rdx
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	xorl	%eax, %eax
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
-	jmp	snprintf@PLT
+	jmp	*snprintf@GOTPCREL(%rip)
 	.p2align 4,,10
 	.p2align 3
 .L7:
-	.cfi_restore_state
-	pushq	%r12
-	.cfi_def_cfa_offset 56
 	leaq	-1(%rbp), %r9
+	pushq	%r12
 	movq	%rbp, %rsi
 	movq	$-1, %rcx
 	pushq	%rbx
-	.cfi_def_cfa_offset 64
 	subl	%eax, %r9d
 	movq	%r13, %rdi
 	leaq	.LC0(%rip), %r8
 	movl	$2, %edx
 	xorl	%eax, %eax
-	call	__snprintf_chk@PLT
+	call	*__snprintf_chk@GOTPCREL(%rip)
 	popq	%rcx
-	.cfi_def_cfa_offset 56
 	popq	%rsi
-	.cfi_def_cfa_offset 48
 	popq	%rbx
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE65:
 	.size	string_append, .-string_append
 	.section	.rodata.str1.1
 .LC3:
@@ -137,40 +95,31 @@ string_append:
 	.globl	read_source
 	.type	read_source, @function
 read_source:
-.LFB66:
-	.cfi_startproc
-	endbr64
 	pushq	%r12
-	.cfi_def_cfa_offset 16
-	.cfi_offset 12, -16
-	movl	$2, %edx
 	movq	%rdi, %r12
+	movl	$2, %edx
 	pushq	%rbp
-	.cfi_def_cfa_offset 24
-	.cfi_offset 6, -24
 	movq	%rsi, %rbp
 	xorl	%esi, %esi
 	pushq	%rbx
-	.cfi_def_cfa_offset 32
-	.cfi_offset 3, -32
-	call	fseek@PLT
+	call	*fseek@GOTPCREL(%rip)
 	movq	%r12, %rdi
-	call	ftell@PLT
+	call	*ftell@GOTPCREL(%rip)
 	xorl	%edx, %edx
 	xorl	%esi, %esi
 	movq	%r12, %rdi
 	movq	%rax, 0(%rbp)
-	call	fseek@PLT
+	call	*fseek@GOTPCREL(%rip)
 	movq	0(%rbp), %rax
 	leaq	.LC3(%rip), %rdi
 	leaq	1(%rax), %rsi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	0(%rbp), %rdx
 	movq	%r12, %rcx
 	movl	$1, %esi
-	movq	%rax, %rdi
 	movq	%rax, %rbx
-	call	fread@PLT
+	movq	%rax, %rdi
+	call	*fread@GOTPCREL(%rip)
 	movb	$0, (%rbx,%rax)
 	movq	%rax, 0(%rbp)
 	testq	%rax, %rax
@@ -191,14 +140,9 @@ read_source:
 .L9:
 	movq	%rbx, %rax
 	popq	%rbx
-	.cfi_def_cfa_offset 24
 	popq	%rbp
-	.cfi_def_cfa_offset 16
 	popq	%r12
-	.cfi_def_cfa_offset 8
 	ret
-	.cfi_endproc
-.LFE66:
 	.size	read_source, .-read_source
 	.section	.rodata.str1.8,"aMS",@progbits,1
 	.align 8
@@ -245,34 +189,18 @@ read_source:
 	.globl	output_token
 	.type	output_token, @function
 output_token:
-.LFB67:
-	.cfi_startproc
-	endbr64
 	pushq	%r15
-	.cfi_def_cfa_offset 16
-	.cfi_offset 15, -16
 	pushq	%r14
-	.cfi_def_cfa_offset 24
-	.cfi_offset 14, -24
 	pushq	%r13
-	.cfi_def_cfa_offset 32
-	.cfi_offset 13, -32
 	pushq	%r12
-	.cfi_def_cfa_offset 40
-	.cfi_offset 12, -40
 	movq	%rdi, %r12
 	movq	%rsi, %rdi
 	pushq	%rbp
-	.cfi_def_cfa_offset 48
-	.cfi_offset 6, -48
 	pushq	%rbx
-	.cfi_def_cfa_offset 56
-	.cfi_offset 3, -56
 	subq	$24, %rsp
-	.cfi_def_cfa_offset 80
 	movq	%rsi, 8(%rsp)
 	xorl	%esi, %esi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	testq	%rax, %rax
 	je	.L30
 	movq	%rax, %rbx
@@ -285,7 +213,7 @@ output_token:
 	movl	24(%rbx), %eax
 	movslq	(%r14,%rax,4), %rax
 	addq	%r14, %rax
-	notrack jmp	*%rax
+	jmp	*%rax
 	.section	.rodata
 	.align 4
 	.align 4
@@ -306,7 +234,7 @@ output_token:
 	movl	$31, %edx
 	movl	$1, %esi
 	leaq	.LC10(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	.p2align 4,,10
 	.p2align 3
 .L20:
@@ -320,7 +248,7 @@ output_token:
 	leaq	1(%rax), %r8
 	xorl	%eax, %eax
 	leaq	.LC12(%rip), %rdx
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movq	(%rbx), %rbp
 	xorl	%ebx, %ebx
 	jmp	.L31
@@ -334,12 +262,12 @@ output_token:
 	cmpb	$13, %dil
 	je	.L46
 	movq	%r12, %rsi
-	call	fputc@PLT
+	call	*fputc@GOTPCREL(%rip)
 .L33:
 	addq	$1, %rbx
 .L31:
 	movq	%rbp, %rdi
-	call	strlen@PLT
+	call	*strlen@GOTPCREL(%rip)
 	cmpq	%rax, %rbx
 	jnb	.L47
 	movsbl	0(%rbp,%rbx), %edi
@@ -349,7 +277,7 @@ output_token:
 	movl	$2, %edx
 	movl	$1, %esi
 	movq	%r13, %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L33
 	.p2align 4,,10
 	.p2align 3
@@ -358,7 +286,7 @@ output_token:
 	movl	$31, %edx
 	movl	$1, %esi
 	leaq	.LC9(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L20
 	.p2align 4,,10
 	.p2align 3
@@ -367,7 +295,7 @@ output_token:
 	movl	$31, %edx
 	movl	$1, %esi
 	leaq	.LC8(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L20
 	.p2align 4,,10
 	.p2align 3
@@ -376,7 +304,7 @@ output_token:
 	movl	$31, %edx
 	movl	$1, %esi
 	leaq	.LC7(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L20
 	.p2align 4,,10
 	.p2align 3
@@ -389,39 +317,30 @@ output_token:
 	leaq	1(%rax), %r8
 	addq	$1, %rcx
 	xorl	%eax, %eax
-	call	__fprintf_chk@PLT
+	call	*__fprintf_chk@GOTPCREL(%rip)
 .L30:
-	call	get_info@PLT
+	call	*get_info@GOTPCREL(%rip)
 	addq	$24, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 56
 	movq	%r12, %rdi
 	leaq	.LC18(%rip), %rdx
 	popq	%rbx
-	.cfi_def_cfa_offset 48
 	movq	%rax, %rcx
 	popq	%rbp
-	.cfi_def_cfa_offset 40
 	movl	$2, %esi
 	popq	%r12
-	.cfi_def_cfa_offset 32
 	xorl	%eax, %eax
 	popq	%r13
-	.cfi_def_cfa_offset 24
 	popq	%r14
-	.cfi_def_cfa_offset 16
 	popq	%r15
-	.cfi_def_cfa_offset 8
-	jmp	__fprintf_chk@PLT
+	jmp	*__fprintf_chk@GOTPCREL(%rip)
 	.p2align 4,,10
 	.p2align 3
 .L21:
-	.cfi_restore_state
 	movq	%r12, %rcx
 	movl	$31, %edx
 	movl	$1, %esi
 	leaq	.LC11(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L20
 	.p2align 4,,10
 	.p2align 3
@@ -430,7 +349,7 @@ output_token:
 	movl	$31, %edx
 	movl	$1, %esi
 	leaq	.LC6(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L20
 	.p2align 4,,10
 	.p2align 3
@@ -439,7 +358,7 @@ output_token:
 	movl	$31, %edx
 	movl	$1, %esi
 	leaq	.LC5(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L20
 	.p2align 4,,10
 	.p2align 3
@@ -448,7 +367,7 @@ output_token:
 	movl	$2, %edx
 	movl	$1, %esi
 	leaq	.LC16(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L33
 	.p2align 4,,10
 	.p2align 3
@@ -457,7 +376,7 @@ output_token:
 	movl	$2, %edx
 	movl	$1, %esi
 	movq	%r15, %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L33
 	.p2align 4,,10
 	.p2align 3
@@ -466,10 +385,10 @@ output_token:
 	movl	$2, %edx
 	movl	$1, %esi
 	leaq	.LC17(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	movq	8(%rsp), %rdi
 	xorl	%esi, %esi
-	call	get_next_token@PLT
+	call	*get_next_token@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	jne	.L38
@@ -481,51 +400,36 @@ output_token:
 	movl	$2, %edx
 	movl	$1, %esi
 	leaq	.LC15(%rip), %rdi
-	call	fwrite@PLT
+	call	*fwrite@GOTPCREL(%rip)
 	jmp	.L33
-	.cfi_endproc
-.LFE67:
 	.size	output_token, .-output_token
 	.p2align 4
 	.globl	output_ast
 	.type	output_ast, @function
 output_ast:
-.LFB68:
-	.cfi_startproc
-	endbr64
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rdx, %rbp
 	pushq	%rbx
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
 	movq	%rdi, %rbx
 	movq	%rsi, %rdi
 	subq	$8, %rsp
-	.cfi_def_cfa_offset 32
 	movq	builtin_scope(%rip), %rsi
-	call	parse_code@PLT
+	call	*parse_code@GOTPCREL(%rip)
 	movq	%rbp, %rcx
 	movq	%rbx, %rsi
 	xorl	%edx, %edx
 	movq	%rax, %rdi
-	call	output_code@PLT
-	call	get_info@PLT
+	call	*output_code@GOTPCREL(%rip)
+	call	*get_info@GOTPCREL(%rip)
 	addq	$8, %rsp
-	.cfi_def_cfa_offset 24
 	movq	%rbx, %rdi
 	leaq	.LC18(%rip), %rdx
 	movq	%rax, %rcx
 	popq	%rbx
-	.cfi_def_cfa_offset 16
 	movl	$2, %esi
 	xorl	%eax, %eax
 	popq	%rbp
-	.cfi_def_cfa_offset 8
-	jmp	__fprintf_chk@PLT
-	.cfi_endproc
-.LFE68:
+	jmp	*__fprintf_chk@GOTPCREL(%rip)
 	.size	output_ast, .-output_ast
 	.section	.rodata.str1.1
 .LC19:
@@ -545,216 +449,144 @@ output_ast:
 	.globl	parse_file
 	.type	parse_file, @function
 parse_file:
-.LFB69:
-	.cfi_startproc
-	endbr64
 	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
 	movl	%esi, %r13d
 	pushq	%r12
-	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
 	movl	%edx, %r12d
 	pushq	%rbp
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
 	pushq	%rbx
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
 	subq	$16, %rsp
-	.cfi_def_cfa_offset 64
-	movq	%fs:40, %rax
-	movq	%rax, 8(%rsp)
-	xorl	%eax, %eax
-	call	create_file@PLT
+	call	*create_file@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	movq	%rax, %rbp
-	call	get_full_path@PLT
+	call	*get_full_path@GOTPCREL(%rip)
 	leaq	.LC19(%rip), %rsi
-	movq	$0, (%rsp)
-	movq	%rax, %rdi
+	movq	$0, 8(%rsp)
 	movq	%rax, %r14
-	call	fopen@PLT
-	testq	%rax, %rax
-	je	.L63
-	movq	%rax, %rbx
-	movq	%rsp, %rsi
 	movq	%rax, %rdi
+	call	*fopen@GOTPCREL(%rip)
+	testq	%rax, %rax
+	je	.L58
+	leaq	8(%rsp), %rsi
+	movq	%rax, %rdi
+	movq	%rax, %rbx
 	call	read_source
 	movq	%rbx, %rdi
 	movq	%rax, %r14
-	call	fclose@PLT
-	movq	(%rsp), %rsi
+	call	*fclose@GOTPCREL(%rip)
+	movq	8(%rsp), %rsi
 	movq	%r14, %rdi
-	call	create_lexer@PLT
+	call	*create_lexer@GOTPCREL(%rip)
 	movq	%rax, %rbx
 	testb	%r13b, %r13b
-	jne	.L64
-.L53:
+	jne	.L59
+.L52:
 	movq	%rbx, %rdi
-	call	reset_lexer@PLT
-	call	create_parser@PLT
+	call	*reset_lexer@GOTPCREL(%rip)
+	call	*create_parser@GOTPCREL(%rip)
 	movq	%rax, %r13
 	testb	%r12b, %r12b
-	jne	.L65
-	movq	8(%rsp), %rax
-	subq	%fs:40, %rax
-	jne	.L62
+	jne	.L60
 	addq	$16, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 48
 	popq	%rbx
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L64:
-	.cfi_restore_state
+.L59:
 	movl	$6, %esi
 	leaq	.LC21(%rip), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rbp, %rdi
 	movq	%rax, %rsi
-	call	change_file_extension@PLT
+	call	*change_file_extension@GOTPCREL(%rip)
 	movq	%rbp, %rdi
-	call	get_full_path@PLT
+	call	*get_full_path@GOTPCREL(%rip)
 	leaq	.LC22(%rip), %rsi
-	movq	%rax, %rdi
 	movq	%rax, %r14
-	call	fopen@PLT
+	movq	%rax, %rdi
+	call	*fopen@GOTPCREL(%rip)
 	movq	%rax, %r13
 	testq	%rax, %rax
-	je	.L66
+	je	.L61
 	movq	%rbx, %rsi
 	movq	%rax, %rdi
 	call	output_token
 	movq	%r13, %rdi
-	call	fclose@PLT
-	jmp	.L53
+	call	*fclose@GOTPCREL(%rip)
+	jmp	.L52
 	.p2align 4,,10
 	.p2align 3
-.L65:
+.L60:
 	movl	$4, %esi
 	leaq	.LC24(%rip), %rdi
-	call	create_string@PLT
+	call	*create_string@GOTPCREL(%rip)
 	movq	%rbp, %rdi
 	movq	%rax, %rsi
-	call	change_file_extension@PLT
+	call	*change_file_extension@GOTPCREL(%rip)
 	movq	%rbp, %rdi
-	call	get_full_path@PLT
+	call	*get_full_path@GOTPCREL(%rip)
 	leaq	.LC22(%rip), %rsi
-	movq	%rax, %rdi
 	movq	%rax, %r12
-	call	fopen@PLT
+	movq	%rax, %rdi
+	call	*fopen@GOTPCREL(%rip)
 	movq	%rax, %rbp
 	testq	%rax, %rax
-	je	.L67
-	movq	builtin_scope(%rip), %rsi
+	je	.L62
 	movq	%r13, %rdx
 	movq	%rbx, %rdi
-	call	parse_code@PLT
-	xorl	%edx, %edx
+	movq	builtin_scope(%rip), %rsi
+	call	*parse_code@GOTPCREL(%rip)
 	movq	%r13, %rcx
 	movq	%rbp, %rsi
+	xorl	%edx, %edx
 	movq	%rax, %rdi
-	call	output_code@PLT
-	call	get_info@PLT
-	leaq	.LC18(%rip), %rdx
-	movl	$2, %esi
+	call	*output_code@GOTPCREL(%rip)
+	call	*get_info@GOTPCREL(%rip)
 	movq	%rbp, %rdi
+	movl	$2, %esi
+	leaq	.LC18(%rip), %rdx
 	movq	%rax, %rcx
 	xorl	%eax, %eax
-	call	__fprintf_chk@PLT
-	movq	8(%rsp), %rax
-	subq	%fs:40, %rax
-	jne	.L62
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	addq	$16, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 48
 	movq	%rbp, %rdi
 	popq	%rbx
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
-	jmp	fclose@PLT
-.L63:
-	.cfi_restore_state
-	movq	8(%rsp), %rax
-	subq	%fs:40, %rax
+	jmp	*fclose@GOTPCREL(%rip)
+.L58:
 	movq	%r14, %rcx
 	leaq	.LC20(%rip), %rdx
-	jne	.L62
-.L61:
+.L57:
 	movq	stderr(%rip), %rdi
 	addq	$16, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 48
 	movl	$2, %esi
 	xorl	%eax, %eax
 	popq	%rbx
-	.cfi_def_cfa_offset 40
 	popq	%rbp
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
-	jmp	__fprintf_chk@PLT
-.L67:
-	.cfi_restore_state
-	movq	8(%rsp), %rax
-	subq	%fs:40, %rax
-	movq	%r12, %rcx
-	leaq	.LC23(%rip), %rdx
-	je	.L61
-.L62:
-	call	__stack_chk_fail@PLT
-.L66:
+	jmp	*__fprintf_chk@GOTPCREL(%rip)
+.L61:
 	movq	stderr(%rip), %rdi
 	movq	%r14, %rcx
 	movl	$2, %esi
 	xorl	%eax, %eax
 	leaq	.LC23(%rip), %rdx
-	call	__fprintf_chk@PLT
-	jmp	.L53
-	.cfi_endproc
-.LFE69:
+	call	*__fprintf_chk@GOTPCREL(%rip)
+	jmp	.L52
+.L62:
+	movq	%r12, %rcx
+	leaq	.LC23(%rip), %rdx
+	jmp	.L57
 	.size	parse_file, .-parse_file
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

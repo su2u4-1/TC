@@ -10,15 +10,10 @@
 	.text
 	.globl	string_append
 	.def	string_append;	.scl	2;	.type	32;	.endef
-	.seh_proc	string_append
 string_append:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -80,25 +75,18 @@ string_append:
 	call	snprintf
 .L5:
 	nop
-	addq	$80, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC3:
 	.ascii "\0"
 	.text
 	.globl	read_source
 	.def	read_source;	.scl	2;	.type	32;	.endef
-	.seh_proc	read_source
 read_source:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$64, %rsp
-	.seh_stackalloc	64
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	16(%rbp), %rax
@@ -170,10 +158,8 @@ read_source:
 	cmpq	%rax, -8(%rbp)
 	jb	.L10
 	movq	-16(%rbp), %rax
-	addq	$64, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC4:
@@ -216,15 +202,10 @@ read_source:
 	.text
 	.globl	output_token
 	.def	output_token;	.scl	2;	.type	32;	.endef
-	.seh_proc	output_token
 output_token:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$80, %rsp
-	.seh_stackalloc	80
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	24(%rbp), %rax
@@ -447,21 +428,14 @@ output_token:
 	movq	%rax, %rcx
 	call	fprintf
 	nop
-	addq	$80, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	output_ast
 	.def	output_ast;	.scl	2;	.type	32;	.endef
-	.seh_proc	output_ast
 output_ast:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -488,10 +462,8 @@ output_ast:
 	movq	%rax, %rcx
 	call	fprintf
 	nop
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC19:
 	.ascii "r\0"
@@ -508,15 +480,10 @@ output_ast:
 	.text
 	.globl	parse_file
 	.def	parse_file;	.scl	2;	.type	32;	.endef
-	.seh_proc	parse_file
 parse_file:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	addq	$-128, %rsp
-	.seh_stackalloc	128
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movl	%edx, %eax
 	movl	%r8d, %edx
@@ -643,12 +610,9 @@ parse_file:
 	movq	-80(%rbp), %rax
 	movq	%rax, %rcx
 	call	fclose
-	nop
 .L32:
-	subq	$-128, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	strlen;	.scl	2;	.type	32;	.endef
 	.def	snprintf;	.scl	2;	.type	32;	.endef

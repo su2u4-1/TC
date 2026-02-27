@@ -10,15 +10,10 @@
 	.text
 	.globl	create_code_member
 	.def	create_code_member;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_code_member
 create_code_member:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -85,21 +80,14 @@ create_code_member:
 .L3:
 	movq	-8(%rbp), %rax
 .L8:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	create_code
 	.def	create_code;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_code
 create_code:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movl	$16, %ecx
@@ -114,10 +102,8 @@ create_code:
 	movq	24(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC2:
@@ -125,15 +111,10 @@ create_code:
 	.text
 	.globl	create_import
 	.def	create_import;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_import
 create_import:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	cmpq	$0, 16(%rbp)
@@ -162,10 +143,8 @@ create_import:
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
 .L13:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC3:
@@ -173,15 +152,10 @@ create_import:
 	.text
 	.globl	create_function
 	.def	create_function;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_function
 create_function:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -224,10 +198,8 @@ create_function:
 	movq	%rdx, 32(%rax)
 	movq	-8(%rbp), %rax
 .L17:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC4:
@@ -235,15 +207,10 @@ create_function:
 	.text
 	.globl	create_method
 	.def	create_method;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_method
 create_method:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -286,10 +253,8 @@ create_method:
 	movq	%rdx, 32(%rax)
 	movq	-8(%rbp), %rax
 .L21:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC5:
@@ -300,15 +265,10 @@ create_method:
 	.text
 	.globl	create_class_member
 	.def	create_class_member;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_class_member
 create_class_member:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -365,10 +325,8 @@ create_class_member:
 .L24:
 	movq	-8(%rbp), %rax
 .L28:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC7:
@@ -376,15 +334,10 @@ create_class_member:
 	.text
 	.globl	create_class
 	.def	create_class;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_class
 create_class:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -417,10 +370,8 @@ create_class:
 	movq	%rdx, 16(%rax)
 	movq	-8(%rbp), %rax
 .L31:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC8:
@@ -428,15 +379,10 @@ create_class:
 	.text
 	.globl	create_variable
 	.def	create_variable;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_variable
 create_variable:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -472,10 +418,8 @@ create_variable:
 	movq	%rdx, 16(%rax)
 	movq	-8(%rbp), %rax
 .L35:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC9:
@@ -486,15 +430,10 @@ create_variable:
 	.text
 	.globl	create_statement
 	.def	create_statement;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_statement
 create_statement:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -603,10 +542,8 @@ create_statement:
 .L38:
 	movq	-8(%rbp), %rax
 .L48:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC11:
@@ -614,15 +551,10 @@ create_statement:
 	.text
 	.globl	create_if
 	.def	create_if;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_if
 create_if:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -659,10 +591,8 @@ create_if:
 	movq	%rdx, 24(%rax)
 	movq	-8(%rbp), %rax
 .L51:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC12:
@@ -670,15 +600,10 @@ create_if:
 	.text
 	.globl	create_else_if
 	.def	create_else_if;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_else_if
 create_else_if:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	cmpq	$0, 16(%rbp)
@@ -707,21 +632,14 @@ create_else_if:
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
 .L54:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	create_for
 	.def	create_for;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_for
 create_for:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -744,21 +662,14 @@ create_for:
 	movq	40(%rbp), %rdx
 	movq	%rdx, 24(%rax)
 	movq	-8(%rbp), %rax
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.globl	create_while
 	.def	create_while;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_while
 create_while:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movl	$16, %ecx
@@ -773,10 +684,8 @@ create_while:
 	movq	24(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC13:
 	.ascii "true\0"
@@ -791,61 +700,52 @@ create_while:
 	.text
 	.globl	create_expression
 	.def	create_expression;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_expression
 create_expression:
 	pushq	%rbp
-	.seh_pushreg	%rbp
+	movq	%rsp, %rbp
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$64, %rsp
-	.seh_stackalloc	64
-	leaq	64(%rsp), %rbp
-	.seh_setframe	%rbp, 64
-	.seh_endprologue
-	movl	%ecx, 48(%rbp)
-	movq	%rdx, 56(%rbp)
-	movq	%r8, 64(%rbp)
-	movq	%r9, 72(%rbp)
-	cmpl	$19, 48(%rbp)
+	movl	%ecx, 16(%rbp)
+	movq	%rdx, 24(%rbp)
+	movq	%r8, 32(%rbp)
+	movq	%r9, 40(%rbp)
+	cmpl	$19, 16(%rbp)
 	sete	%dl
-	cmpq	$0, 72(%rbp)
+	cmpq	$0, 40(%rbp)
 	sete	%al
 	xorl	%edx, %eax
 	testb	%al, %al
 	jne	.L60
-	cmpq	$0, 56(%rbp)
+	cmpq	$0, 24(%rbp)
 	jne	.L61
-	cmpq	$0, 64(%rbp)
+	cmpq	$0, 32(%rbp)
 	jne	.L61
 .L60:
-	cmpq	$0, 72(%rbp)
+	cmpq	$0, 40(%rbp)
 	jne	.L62
 	leaq	.LC13(%rip), %rsi
 	jmp	.L63
 .L62:
 	leaq	.LC14(%rip), %rsi
 .L63:
-	cmpq	$0, 64(%rbp)
+	cmpq	$0, 32(%rbp)
 	jne	.L64
 	leaq	.LC13(%rip), %rbx
 	jmp	.L65
 .L64:
 	leaq	.LC14(%rip), %rbx
 .L65:
-	cmpq	$0, 56(%rbp)
+	cmpq	$0, 24(%rbp)
 	jne	.L66
 	leaq	.LC13(%rip), %r12
 	jmp	.L67
 .L66:
 	leaq	.LC14(%rip), %r12
 .L67:
-	cmpl	$19, 48(%rbp)
+	cmpl	$19, 16(%rbp)
 	jne	.L68
 	leaq	.LC13(%rip), %rdi
 	jmp	.L69
@@ -866,23 +766,23 @@ create_expression:
 .L61:
 	movl	$32, %ecx
 	call	alloc_memory
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	48(%rbp), %edx
+	movq	%rax, -40(%rbp)
+	movq	-40(%rbp), %rax
+	movq	%rax, -48(%rbp)
+	movq	-48(%rbp), %rax
+	movl	16(%rbp), %edx
 	movl	%edx, 24(%rax)
-	cmpq	$0, 56(%rbp)
+	cmpq	$0, 24(%rbp)
 	je	.L71
-	movq	-16(%rbp), %rax
-	movq	56(%rbp), %rdx
+	movq	-48(%rbp), %rax
+	movq	24(%rbp), %rdx
 	movq	%rdx, (%rax)
 	jmp	.L72
 .L71:
-	cmpq	$0, 64(%rbp)
+	cmpq	$0, 32(%rbp)
 	je	.L73
-	movq	-16(%rbp), %rax
-	movq	64(%rbp), %rdx
+	movq	-48(%rbp), %rax
+	movq	32(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	jmp	.L72
 .L73:
@@ -897,10 +797,10 @@ create_expression:
 	movl	$0, %eax
 	jmp	.L70
 .L72:
-	movq	-16(%rbp), %rax
-	movq	72(%rbp), %rdx
+	movq	-48(%rbp), %rax
+	movq	40(%rbp), %rdx
 	movq	%rdx, 16(%rax)
-	movq	-8(%rbp), %rax
+	movq	-40(%rbp), %rax
 .L70:
 	addq	$64, %rsp
 	popq	%rbx
@@ -909,7 +809,6 @@ create_expression:
 	popq	%r12
 	popq	%rbp
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC17:
@@ -920,15 +819,10 @@ create_expression:
 	.text
 	.globl	create_primary
 	.def	create_primary;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_primary
 create_primary:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	movq	%rsp, %rbp
-	.seh_setframe	%rbp, 0
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	.seh_endprologue
 	movl	%ecx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1020,10 +914,8 @@ create_primary:
 .L77:
 	movq	-8(%rbp), %rax
 .L84:
-	addq	$48, %rsp
-	popq	%rbp
+	leave
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 	.align 8
 .LC19:
@@ -1037,38 +929,31 @@ create_primary:
 	.text
 	.globl	create_variable_access
 	.def	create_variable_access;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_variable_access
 create_variable_access:
 	pushq	%rbp
-	.seh_pushreg	%rbp
+	movq	%rsp, %rbp
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$48, %rsp
-	.seh_stackalloc	48
-	leaq	48(%rsp), %rbp
-	.seh_setframe	%rbp, 48
-	.seh_endprologue
-	movl	%ecx, 32(%rbp)
-	movq	%rdx, 40(%rbp)
-	movq	%r8, 48(%rbp)
-	movq	%r9, 56(%rbp)
-	cmpq	$0, 40(%rbp)
+	movl	%ecx, 16(%rbp)
+	movq	%rdx, 24(%rbp)
+	movq	%r8, 32(%rbp)
+	movq	%r9, 40(%rbp)
+	cmpq	$0, 24(%rbp)
 	sete	%dl
-	cmpl	$0, 32(%rbp)
+	cmpl	$0, 16(%rbp)
 	sete	%al
 	xorl	%edx, %eax
 	testb	%al, %al
 	je	.L86
-	cmpl	$0, 32(%rbp)
+	cmpl	$0, 16(%rbp)
 	jne	.L87
 	leaq	.LC13(%rip), %rsi
 	jmp	.L88
 .L87:
 	leaq	.LC14(%rip), %rsi
 .L88:
-	cmpq	$0, 40(%rbp)
+	cmpq	$0, 24(%rbp)
 	jne	.L89
 	leaq	.LC13(%rip), %rbx
 	jmp	.L90
@@ -1087,56 +972,56 @@ create_variable_access:
 .L86:
 	movl	$24, %ecx
 	call	alloc_memory
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	32(%rbp), %edx
+	movq	%rax, -24(%rbp)
+	movq	-24(%rbp), %rax
+	movq	%rax, -32(%rbp)
+	movq	-32(%rbp), %rax
+	movl	16(%rbp), %edx
 	movl	%edx, 16(%rax)
-	movq	-16(%rbp), %rax
-	movq	40(%rbp), %rdx
+	movq	-32(%rbp), %rax
+	movq	24(%rbp), %rdx
 	movq	%rdx, (%rax)
-	cmpl	$0, 32(%rbp)
+	cmpl	$0, 16(%rbp)
 	jne	.L92
-	cmpq	$0, 48(%rbp)
+	cmpq	$0, 32(%rbp)
 	je	.L92
-	movq	-16(%rbp), %rax
-	movq	48(%rbp), %rdx
+	movq	-32(%rbp), %rax
+	movq	32(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	jmp	.L93
 .L92:
-	cmpl	$1, 32(%rbp)
+	cmpl	$1, 16(%rbp)
 	jne	.L94
-	cmpq	$0, 64(%rbp)
-	je	.L94
-	movq	-16(%rbp), %rax
-	movq	64(%rbp), %rdx
-	movq	%rdx, 8(%rax)
-	jmp	.L93
-.L94:
-	cmpl	$3, 32(%rbp)
-	jne	.L95
-	cmpq	$0, 56(%rbp)
-	je	.L95
-	movq	-16(%rbp), %rax
-	movq	56(%rbp), %rdx
-	movq	%rdx, 8(%rax)
-	jmp	.L93
-.L95:
-	cmpl	$2, 32(%rbp)
-	jne	.L96
 	cmpq	$0, 48(%rbp)
-	je	.L96
-	movq	-16(%rbp), %rax
+	je	.L94
+	movq	-32(%rbp), %rax
 	movq	48(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	jmp	.L93
+.L94:
+	cmpl	$3, 16(%rbp)
+	jne	.L95
+	cmpq	$0, 40(%rbp)
+	je	.L95
+	movq	-32(%rbp), %rax
+	movq	40(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	jmp	.L93
+.L95:
+	cmpl	$2, 16(%rbp)
+	jne	.L96
+	cmpq	$0, 32(%rbp)
+	je	.L96
+	movq	-32(%rbp), %rax
+	movq	32(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	jmp	.L93
 .L96:
+	cmpq	$0, 32(%rbp)
+	jne	.L97
+	cmpq	$0, 40(%rbp)
+	jne	.L97
 	cmpq	$0, 48(%rbp)
-	jne	.L97
-	cmpq	$0, 56(%rbp)
-	jne	.L97
-	cmpq	$0, 64(%rbp)
 	jne	.L97
 	call	__getreent
 	movq	24(%rax), %rax
@@ -1150,7 +1035,7 @@ create_variable_access:
 .L97:
 	call	__getreent
 	movq	24(%rax), %rax
-	movl	32(%rbp), %edx
+	movl	16(%rbp), %edx
 	movl	%edx, %r8d
 	leaq	.LC21(%rip), %rdx
 	movq	%rax, %rcx
@@ -1159,14 +1044,13 @@ create_variable_access:
 	movl	$0, %eax
 	jmp	.L91
 .L93:
-	movq	-8(%rbp), %rax
+	movq	-24(%rbp), %rax
 .L91:
 	addq	$48, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rbp
 	ret
-	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
 	.def	__getreent;	.scl	2;	.type	32;	.endef

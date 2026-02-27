@@ -8,24 +8,17 @@
 	.text
 	.globl	create_code_member
 	.def	create_code_member;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_code_member
 create_code_member:
 	pushq	%rbp
-	.seh_pushreg	%rbp
+	movq	%r8, %rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
+	movq	%rdx, %rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
+	movq	%r9, %rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movl	%ecx, %ebx
 	movl	$16, %ecx
-	movq	%rdx, %rdi
-	movq	%r8, %rbp
-	movq	%r9, %rsi
+	subq	$40, %rsp
 	call	alloc_memory
 	movl	%ebx, 8(%rax)
 	testl	%ebx, %ebx
@@ -72,21 +65,15 @@ create_code_member:
 	popq	%rdi
 	popq	%rbp
 	ret
-	.seh_endproc
 	.globl	create_code
 	.def	create_code;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_code
 create_code:
 	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movq	%rcx, %rsi
 	movl	$16, %ecx
+	pushq	%rbx
 	movq	%rdx, %rbx
+	subq	$40, %rsp
 	call	alloc_memory
 	movq	%rsi, (%rax)
 	movq	%rbx, 8(%rax)
@@ -94,79 +81,65 @@ create_code:
 	popq	%rbx
 	popq	%rsi
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC2:
 	.ascii "Error creating import: name is NULL\12\0"
 	.text
 	.globl	create_import
 	.def	create_import;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_import
 create_import:
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movq	%rcx, %rbx
-	movq	%rdx, %rsi
 	testq	%rcx, %rcx
-	jne	.L30
+	jne	.L32
 	call	__getreent
 	leaq	.LC2(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
 	xorl	%eax, %eax
-	jmp	.L29
-.L30:
+	jmp	.L31
+.L32:
+	movq	%rcx, %rbx
 	movl	$16, %ecx
+	movq	%rdx, %rsi
 	call	alloc_memory
 	movq	%rbx, (%rax)
 	movq	%rsi, 8(%rax)
-.L29:
+.L31:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC3:
 	.ascii "Error creating function: name or return_type is NULL\12\0"
 	.text
 	.globl	create_function
 	.def	create_function;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_function
 create_function:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movq	%rcx, %rsi
-	movq	%rdx, %rbx
-	movq	%r8, %rbp
-	movq	%r9, %rdi
 	testq	%rcx, %rcx
-	je	.L36
+	je	.L39
+	movq	%rdx, %rbx
 	testq	%rdx, %rdx
-	jne	.L33
-.L36:
+	jne	.L36
+.L39:
 	call	__getreent
 	leaq	.LC3(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
 	xorl	%eax, %eax
-	jmp	.L32
-.L33:
+	jmp	.L35
+.L36:
+	movq	%rcx, %rsi
 	movl	$40, %ecx
+	movq	%r8, %rbp
+	movq	%r9, %rdi
 	call	alloc_memory
 	movq	112(%rsp), %rdx
 	movq	%rsi, (%rax)
@@ -174,50 +147,42 @@ create_function:
 	movq	%rbp, 16(%rax)
 	movq	%rdi, 24(%rax)
 	movq	%rdx, 32(%rax)
-.L32:
+.L35:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC4:
 	.ascii "Error creating method: name or return_type is NULL\12\0"
 	.text
 	.globl	create_method
 	.def	create_method;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_method
 create_method:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movq	%rcx, %rsi
-	movq	%rdx, %rbx
-	movq	%r8, %rbp
-	movq	%r9, %rdi
 	testq	%rcx, %rcx
-	je	.L41
+	je	.L45
+	movq	%rdx, %rbx
 	testq	%rdx, %rdx
-	jne	.L38
-.L41:
+	jne	.L42
+.L45:
 	call	__getreent
 	leaq	.LC4(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
 	xorl	%eax, %eax
-	jmp	.L37
-.L38:
+	jmp	.L41
+.L42:
+	movq	%rcx, %rsi
 	movl	$40, %ecx
+	movq	%r8, %rbp
+	movq	%r9, %rdi
 	call	alloc_memory
 	movq	112(%rsp), %rdx
 	movq	%rsi, (%rax)
@@ -225,14 +190,13 @@ create_method:
 	movq	%rbp, 16(%rax)
 	movq	%rdi, 24(%rax)
 	movq	%rdx, 32(%rax)
-.L37:
+.L41:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC5:
 	.ascii "Error creating class member: content is NULL\12\0"
@@ -241,144 +205,123 @@ create_method:
 	.text
 	.globl	create_class_member
 	.def	create_class_member;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_class_member
 create_class_member:
 	pushq	%rdi
-	.seh_pushreg	%rdi
+	movq	%r8, %rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
+	movq	%rdx, %rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
 	movl	%ecx, %ebx
 	movl	$16, %ecx
-	movq	%rdx, %rsi
-	movq	%r8, %rdi
+	subq	$32, %rsp
 	call	alloc_memory
 	movl	%ebx, 8(%rax)
 	testl	%ebx, %ebx
-	jne	.L43
+	jne	.L48
 	testq	%rsi, %rsi
-	je	.L43
+	je	.L48
 	movq	%rsi, (%rax)
-	jmp	.L42
-.L43:
+	jmp	.L47
+.L48:
 	cmpl	$1, %ebx
-	jne	.L45
+	jne	.L50
 	testq	%rdi, %rdi
-	je	.L45
+	je	.L50
 	movq	%rdi, (%rax)
-	jmp	.L42
-.L45:
+	jmp	.L47
+.L50:
 	orq	%rdi, %rsi
-	jne	.L47
+	jne	.L52
 	call	__getreent
 	leaq	.LC5(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
-	jmp	.L48
-.L47:
+	jmp	.L53
+.L52:
 	call	__getreent
 	movl	%ebx, %r8d
 	leaq	.LC6(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
-.L48:
+.L53:
 	xorl	%eax, %eax
-.L42:
+.L47:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC7:
 	.ascii "Error creating class: name is NULL\12\0"
 	.text
 	.globl	create_class
 	.def	create_class;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_class
 create_class:
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	movq	%rcx, %rbx
-	movq	%rdx, %rdi
-	movq	%r8, %rsi
 	testq	%rcx, %rcx
-	jne	.L62
+	jne	.L68
 	call	__getreent
 	leaq	.LC7(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
 	xorl	%eax, %eax
-	jmp	.L61
-.L62:
+	jmp	.L67
+.L68:
+	movq	%rcx, %rbx
 	movl	$24, %ecx
+	movq	%rdx, %rdi
+	movq	%r8, %rsi
 	call	alloc_memory
 	movq	%rbx, (%rax)
 	movq	%rdi, 8(%rax)
 	movq	%rsi, 16(%rax)
-.L61:
+.L67:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC8:
 	.ascii "Error creating variable: type or name is NULL\12\0"
 	.text
 	.globl	create_variable
 	.def	create_variable;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_variable
 create_variable:
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	movq	%rcx, %rsi
-	movq	%rdx, %rbx
-	movq	%r8, %rdi
 	testq	%rcx, %rcx
-	je	.L68
+	je	.L75
+	movq	%rdx, %rbx
 	testq	%rdx, %rdx
-	jne	.L65
-.L68:
+	jne	.L72
+.L75:
 	call	__getreent
 	leaq	.LC8(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
 	xorl	%eax, %eax
-	jmp	.L64
-.L65:
+	jmp	.L71
+.L72:
+	movq	%rcx, %rsi
 	movl	$24, %ecx
+	movq	%r8, %rdi
 	call	alloc_memory
 	movq	%rsi, (%rax)
 	movq	%rbx, 8(%rax)
 	movq	%rdi, 16(%rax)
-.L64:
+.L71:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC9:
 	.ascii "Error creating statement: content is NULL\12\0"
@@ -387,101 +330,92 @@ create_variable:
 	.text
 	.globl	create_statement
 	.def	create_statement;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_statement
 create_statement:
 	pushq	%r13
-	.seh_pushreg	%r13
+	movq	%r8, %r13
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
+	movq	%r9, %rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
+	movq	%rdx, %rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movq	128(%rsp), %r12
-	movq	136(%rsp), %rbp
 	movl	%ecx, %ebx
 	movl	$16, %ecx
-	movq	%rdx, %rsi
-	movq	%r8, %r13
-	movq	%r9, %rdi
+	subq	$40, %rsp
+	movq	128(%rsp), %r12
+	movq	136(%rsp), %rbp
 	call	alloc_memory
 	testq	%r12, %r12
 	movl	%ebx, 8(%rax)
 	setne	%dl
 	testl	%ebx, %ebx
-	jne	.L70
+	jne	.L78
 	testb	%dl, %dl
-	jne	.L117
-.L70:
+	jne	.L126
+.L78:
 	cmpl	$1, %ebx
-	jne	.L72
+	jne	.L80
 	testq	%rbp, %rbp
-	je	.L72
+	je	.L80
 	movq	%rbp, (%rax)
-	jmp	.L69
-.L72:
+	jmp	.L77
+.L80:
 	cmpl	$2, %ebx
-	jne	.L74
+	jne	.L82
 	testq	%rsi, %rsi
-	je	.L74
+	je	.L82
 	movq	%rsi, (%rax)
-	jmp	.L69
-.L74:
+	jmp	.L77
+.L82:
 	cmpl	$3, %ebx
-	jne	.L75
+	jne	.L83
 	testq	%r13, %r13
-	je	.L75
+	je	.L83
 	movq	%r13, (%rax)
-	jmp	.L69
-.L75:
+	jmp	.L77
+.L83:
 	cmpl	$4, %ebx
-	jne	.L76
+	jne	.L84
 	testq	%rdi, %rdi
-	je	.L76
+	je	.L84
 	movq	%rdi, (%rax)
-	jmp	.L69
-.L76:
+	jmp	.L77
+.L84:
 	cmpl	$5, %ebx
-	jne	.L77
+	jne	.L85
 	testb	%dl, %dl
-	je	.L77
-.L117:
+	je	.L85
+.L126:
 	movq	%r12, (%rax)
-	jmp	.L69
-.L77:
+	jmp	.L77
+.L85:
 	leal	-6(%rbx), %edx
 	cmpl	$1, %edx
-	ja	.L78
+	ja	.L86
 	xorl	%edx, %edx
 	movq	%rdx, (%rax)
-	jmp	.L69
-.L78:
+	jmp	.L77
+.L86:
 	orq	%r13, %rdi
 	orq	%rdi, %rsi
 	orq	%rsi, %rbp
 	orq	%rbp, %r12
-	jne	.L79
+	jne	.L87
 	call	__getreent
 	leaq	.LC9(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
-	jmp	.L80
-.L79:
+	jmp	.L88
+.L87:
 	call	__getreent
 	movl	%ebx, %r8d
 	leaq	.LC10(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
-.L80:
+.L88:
 	xorl	%eax, %eax
-.L69:
+.L77:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -490,109 +424,87 @@ create_statement:
 	popq	%r12
 	popq	%r13
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC11:
 	.ascii "Error creating if statement: condition is NULL\12\0"
 	.text
 	.globl	create_if
 	.def	create_if;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_if
 create_if:
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movq	%rcx, %rbx
-	movq	%rdx, %rbp
-	movq	%r8, %rdi
-	movq	%r9, %rsi
 	testq	%rcx, %rcx
-	jne	.L119
+	jne	.L128
 	call	__getreent
 	leaq	.LC11(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
 	xorl	%eax, %eax
-	jmp	.L118
-.L119:
+	jmp	.L127
+.L128:
+	movq	%rcx, %rbx
 	movl	$32, %ecx
+	movq	%rdx, %rbp
+	movq	%r8, %rdi
+	movq	%r9, %rsi
 	call	alloc_memory
 	movq	%rbx, (%rax)
 	movq	%rbp, 8(%rax)
 	movq	%rdi, 16(%rax)
 	movq	%rsi, 24(%rax)
-.L118:
+.L127:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC12:
 	.ascii "Error creating else-if statement: condition is NULL\12\0"
 	.text
 	.globl	create_else_if
 	.def	create_else_if;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_else_if
 create_else_if:
 	pushq	%rsi
-	.seh_pushreg	%rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
 	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
-	movq	%rcx, %rbx
-	movq	%rdx, %rsi
 	testq	%rcx, %rcx
-	jne	.L122
+	jne	.L132
 	call	__getreent
 	leaq	.LC12(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
 	xorl	%eax, %eax
-	jmp	.L121
-.L122:
+	jmp	.L131
+.L132:
+	movq	%rcx, %rbx
 	movl	$16, %ecx
+	movq	%rdx, %rsi
 	call	alloc_memory
 	movq	%rbx, (%rax)
 	movq	%rsi, 8(%rax)
-.L121:
+.L131:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
 	ret
-	.seh_endproc
 	.globl	create_for
 	.def	create_for;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_for
 create_for:
 	pushq	%rbp
-	.seh_pushreg	%rbp
-	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movq	%rcx, %rbp
 	movl	$32, %ecx
+	pushq	%rdi
 	movq	%rdx, %rdi
+	pushq	%rsi
 	movq	%r8, %rsi
+	pushq	%rbx
 	movq	%r9, %rbx
+	subq	$40, %rsp
 	call	alloc_memory
 	movq	%rbp, (%rax)
 	movq	%rdi, 8(%rax)
@@ -604,21 +516,15 @@ create_for:
 	popq	%rdi
 	popq	%rbp
 	ret
-	.seh_endproc
 	.globl	create_while
 	.def	create_while;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_while
 create_while:
 	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$40, %rsp
-	.seh_stackalloc	40
-	.seh_endprologue
 	movq	%rcx, %rsi
 	movl	$16, %ecx
+	pushq	%rbx
 	movq	%rdx, %rbx
+	subq	$40, %rsp
 	call	alloc_memory
 	movq	%rsi, (%rax)
 	movq	%rbx, 8(%rax)
@@ -626,7 +532,6 @@ create_while:
 	popq	%rbx
 	popq	%rsi
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC13:
 	.ascii "true\0"
@@ -639,36 +544,28 @@ create_while:
 	.text
 	.globl	create_expression
 	.def	create_expression;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_expression
 create_expression:
 	pushq	%r12
-	.seh_pushreg	%r12
-	pushq	%rbp
-	.seh_pushreg	%rbp
-	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$64, %rsp
-	.seh_stackalloc	64
-	.seh_endprologue
-	cmpl	$19, %ecx
-	movq	%rdx, %rsi
 	movl	%ecx, %r12d
+	pushq	%rbp
 	movq	%r8, %rbp
+	pushq	%rdi
+	movq	%r9, %rdi
+	pushq	%rsi
+	movq	%rdx, %rsi
+	pushq	%rbx
+	subq	$64, %rsp
+	cmpl	$19, %ecx
 	sete	%dl
 	testq	%r9, %r9
-	movq	%r9, %rdi
 	sete	%al
 	cmpb	%al, %dl
-	jne	.L127
+	jne	.L140
 	movq	%r8, %rax
 	orq	%rsi, %rax
-	jne	.L144
-	jmp	.L145
-.L127:
+	jne	.L157
+	jmp	.L159
+.L140:
 	leaq	.LC14(%rip), %rbx
 	leaq	.LC13(%rip), %rax
 	testq	%r9, %r9
@@ -676,19 +573,19 @@ create_expression:
 	cmove	%rax, %rdi
 	testq	%r8, %r8
 	cmove	%rax, %rbx
-.L131:
+.L144:
 	testq	%rsi, %rsi
 	leaq	.LC14(%rip), %r9
 	leaq	.LC13(%rip), %rax
 	cmove	%rax, %r9
-	jmp	.L132
-.L145:
+	jmp	.L145
+.L159:
 	testq	%r9, %r9
-	jne	.L146
+	jne	.L160
 	leaq	.LC13(%rip), %rdi
 	movq	%rdi, %rbx
 	movq	%rdi, %r9
-.L132:
+.L145:
 	cmpl	$19, %r12d
 	leaq	.LC13(%rip), %rax
 	movq	%r9, 56(%rsp)
@@ -703,36 +600,36 @@ create_expression:
 	movq	%rdi, 40(%rsp)
 	movq	%rbx, 32(%rsp)
 	call	fprintf
-	jmp	.L134
-.L144:
+	jmp	.L147
+.L157:
 	movl	$32, %ecx
 	call	alloc_memory
 	movl	%r12d, 24(%rax)
 	testq	%rsi, %rsi
-	je	.L135
+	je	.L148
 	movq	%rsi, (%rax)
-	jmp	.L136
-.L135:
+	jmp	.L149
+.L148:
 	testq	%rbp, %rbp
-	je	.L137
+	je	.L150
 	movq	%rbp, 8(%rax)
-	jmp	.L136
-.L137:
+	jmp	.L149
+.L150:
 	call	__getreent
 	leaq	.LC16(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
-.L134:
+.L147:
 	xorl	%eax, %eax
-	jmp	.L126
-.L136:
+	jmp	.L139
+.L149:
 	movq	%rdi, 16(%rax)
-	jmp	.L126
-.L146:
+	jmp	.L139
+.L160:
 	leaq	.LC14(%rip), %rdi
 	leaq	.LC13(%rip), %rbx
-	jmp	.L131
-.L126:
+	jmp	.L144
+.L139:
 	addq	$64, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -740,7 +637,6 @@ create_expression:
 	popq	%rbp
 	popq	%r12
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC17:
 	.ascii "Error creating primary: value is NULL\12\0"
@@ -749,76 +645,68 @@ create_expression:
 	.text
 	.globl	create_primary
 	.def	create_primary;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_primary
 create_primary:
 	pushq	%r12
-	.seh_pushreg	%r12
+	movq	%r9, %r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
 	pushq	%rdi
-	.seh_pushreg	%rdi
+	movq	%rdx, %rdi
 	pushq	%rsi
-	.seh_pushreg	%rsi
+	movq	%r8, %rsi
 	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$32, %rsp
-	.seh_stackalloc	32
-	.seh_endprologue
-	movq	112(%rsp), %rbp
 	movl	%ecx, %ebx
 	movl	$16, %ecx
-	movq	%rdx, %rdi
-	movq	%r8, %rsi
-	movq	%r9, %r12
+	subq	$32, %rsp
+	movq	112(%rsp), %rbp
 	call	alloc_memory
 	movl	%ebx, 8(%rax)
 	cmpl	$4, %ebx
-	ja	.L148
+	ja	.L162
 	testq	%rdi, %rdi
-	je	.L148
+	je	.L162
 	movq	%rdi, (%rax)
-	jmp	.L147
-.L148:
+	jmp	.L161
+.L162:
 	cmpl	$5, %ebx
-	jne	.L150
+	jne	.L164
 	testq	%rsi, %rsi
-	je	.L150
+	je	.L164
 	movq	%rsi, (%rax)
-	jmp	.L147
-.L150:
+	jmp	.L161
+.L164:
 	leal	-6(%rbx), %edx
 	cmpl	$1, %edx
-	ja	.L152
+	ja	.L166
 	testq	%r12, %r12
-	je	.L152
+	je	.L166
 	movq	%r12, (%rax)
-	jmp	.L147
-.L152:
+	jmp	.L161
+.L166:
 	cmpl	$8, %ebx
-	jne	.L153
+	jne	.L167
 	testq	%rbp, %rbp
-	je	.L153
+	je	.L167
 	movq	%rbp, (%rax)
-	jmp	.L147
-.L153:
+	jmp	.L161
+.L167:
 	orq	%r12, %rbp
 	orq	%rbp, %rsi
 	orq	%rdi, %rsi
-	jne	.L154
+	jne	.L168
 	call	__getreent
 	leaq	.LC17(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
-	jmp	.L155
-.L154:
+	jmp	.L169
+.L168:
 	call	__getreent
 	movl	%ebx, %r8d
 	leaq	.LC18(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
-.L155:
+.L169:
 	xorl	%eax, %eax
-.L147:
+.L161:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -826,7 +714,6 @@ create_primary:
 	popq	%rbp
 	popq	%r12
 	ret
-	.seh_endproc
 	.section .rdata,"dr"
 .LC19:
 	.ascii "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\12\0"
@@ -837,34 +724,23 @@ create_primary:
 	.text
 	.globl	create_variable_access
 	.def	create_variable_access;	.scl	2;	.type	32;	.endef
-	.seh_proc	create_variable_access
 create_variable_access:
 	pushq	%r13
-	.seh_pushreg	%r13
 	pushq	%r12
-	.seh_pushreg	%r12
 	pushq	%rbp
-	.seh_pushreg	%rbp
-	pushq	%rdi
-	.seh_pushreg	%rdi
-	pushq	%rsi
-	.seh_pushreg	%rsi
-	pushq	%rbx
-	.seh_pushreg	%rbx
-	subq	$56, %rsp
-	.seh_stackalloc	56
-	.seh_endprologue
-	movq	144(%rsp), %r12
-	testl	%ecx, %ecx
-	movl	%ecx, %ebx
 	movq	%rdx, %rbp
-	movq	%r8, %rdi
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rbx
+	movl	%ecx, %ebx
+	subq	$56, %rsp
+	testl	%ecx, %ecx
 	sete	%al
 	testq	%rdx, %rdx
-	movq	%r9, %rsi
+	movq	144(%rsp), %r12
 	sete	%r13b
 	cmpb	%al, %r13b
-	je	.L181
+	je	.L196
 	leaq	.LC13(%rip), %rax
 	testl	%ecx, %ecx
 	leaq	.LC14(%rip), %r8
@@ -880,58 +756,60 @@ create_variable_access:
 	leaq	.LC19(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
-	jmp	.L184
-.L181:
+	jmp	.L199
+.L196:
+	movq	%r8, %rdi
 	movl	$24, %ecx
+	movq	%r9, %rsi
 	call	alloc_memory
 	testq	%rdi, %rdi
 	movl	%ebx, 16(%rax)
 	setne	%dl
 	movq	%rbp, (%rax)
 	testb	%r13b, %r13b
-	je	.L185
+	je	.L200
 	testb	%dl, %dl
-	jne	.L218
-.L185:
+	jne	.L234
+.L200:
 	cmpl	$1, %ebx
-	jne	.L187
+	jne	.L202
 	testq	%r12, %r12
-	je	.L187
+	je	.L202
 	movq	%r12, 8(%rax)
-	jmp	.L180
-.L187:
+	jmp	.L195
+.L202:
 	cmpl	$3, %ebx
-	jne	.L189
+	jne	.L204
 	testq	%rsi, %rsi
-	je	.L189
+	je	.L204
 	movq	%rsi, 8(%rax)
-	jmp	.L180
-.L189:
+	jmp	.L195
+.L204:
 	cmpl	$2, %ebx
-	jne	.L190
+	jne	.L205
 	testb	%dl, %dl
-	je	.L190
-.L218:
+	je	.L205
+.L234:
 	movq	%rdi, 8(%rax)
-	jmp	.L180
-.L190:
+	jmp	.L195
+.L205:
 	orq	%r12, %rsi
 	orq	%rsi, %rdi
-	jne	.L191
+	jne	.L206
 	call	__getreent
 	leaq	.LC20(%rip), %rcx
 	movq	24(%rax), %rdx
 	call	fputs
-	jmp	.L184
-.L191:
+	jmp	.L199
+.L206:
 	call	__getreent
 	movl	%ebx, %r8d
 	leaq	.LC21(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
-.L184:
+.L199:
 	xorl	%eax, %eax
-.L180:
+.L195:
 	addq	$56, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -940,7 +818,6 @@ create_variable_access:
 	popq	%r12
 	popq	%r13
 	ret
-	.seh_endproc
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
 	.def	__getreent;	.scl	2;	.type	32;	.endef
