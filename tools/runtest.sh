@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Build the project
-./tools/build.sh
+bash ./tools/build.sh
 if [ $? -ne 0 ]; then
     echo "Build failed!"
     exit 1
