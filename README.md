@@ -201,3 +201,15 @@ tc/
 ├── grammar.ebnf        # EBNF 格式的文法檔案
 └── README.md           # 本檔案
 ```
+
+
+
+---
+
+# 以上都是廢話，還沒實現，以下才是目前情況
+要build請執行`./tools/build.bat`，會在`build`資料夾下產生`program.exe`  
+要測試請執行`./test/runtest.bat`，會自動建置並執行`test`資料夾下的測試案例，目前只有`test1`、`test2`和`test3`，可以用`-1`、`-2`和`-3`來指定要執行的測試案例，例如`./test/runtest.bat -1`只會執行`test1`資料夾下的測試案例，如果不指定則會執行所有測試案例。  
+`.sh`的script我不確定是否可以正常運作，那是我叫AI寫的  
+`./asm_test`是我嘗試設計一個ISA的相關東西，`O0`到`Os`是gcc產生的不同優化等級的asm，`i`是我讓gcc把預處理展開後的結果，`s`是把`i`丟進`https://godbolt.org/`產生出來的asm，從`O0`到`Os`與`i`都可以用`./asm_test/buildall.bat`來產生，`s`的話要自己丟到godbolt上面去產生。  
+`ISA.md`是我嘗試設計的ISA，目前還在不斷修改中。  
+`my_ISA`是我嘗試拿我設計得ISA來寫`./src`底下的`.c`code的東西，目前純手寫寫完了`compiler.s`。  
