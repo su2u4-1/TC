@@ -58,15 +58,15 @@ string get_file_extension(File* path) {
 }
 
 string get_file_dir(File* path) {
-    if (path->dirs == 0) return 0;
+    if (path->dirs == NULL) return 0;
 
     // Calculate total length needed
     size_t total_len = 0;
     size_t node_count = 0;
     StrNode* current = path->dirs;
-    while (current != 0) {
-        if (current->next != 0) {  // Not the last element (which is the filename)
-            size_t dir_len = strlen((current->dir));
+    while (current != NULL) {
+        if (current->next != NULL) {  // Not the last element (which is the filename)
+            size_t dir_len = strlen(current->dir);
             total_len += dir_len;
             node_count++;
         }
@@ -85,8 +85,8 @@ string get_file_dir(File* path) {
 
     current = path->dirs;
     bool first = true;
-    while (current != 0) {
-        if (current->next != 0) {  // Not the last element
+    while (current != NULL) {
+        if (current->next != NULL) {  // Not the last element
             if (!first && strcmp(current->dir, "/") != 0)
                 // Add separator before non-root components
                 if (strlen(dir_path) > 0 && dir_path[strlen(dir_path) - 1] != '/')
@@ -114,15 +114,15 @@ void change_file_extension(File* file, const string new_extension) {
     string ext_cstr = new_extension != NULL ? new_extension : "";
 
     size_t path_len = strlen(dir_cstr) + 1 + strlen(file->name);
-    if (new_extension != 0) path_len += strlen(ext_cstr);
+    if (new_extension != NULL) path_len += strlen(ext_cstr);
 
     string new_path = create_string("", path_len + 1);
-    if (dir != 0 && strlen(dir_cstr) > 0)
+    if (dir != NULL && strlen(dir_cstr) > 0)
         sprintf(new_path, "%s/%s", dir_cstr, file->name);
     else
         sprintf(new_path, "%s", file->name);
 
-    if (new_extension != 0)
+    if (new_extension != NULL)
         strcat(new_path, new_extension);
 
     file->path = create_string(new_path, strlen(new_path));
@@ -132,15 +132,15 @@ void change_file_name(File* file, const string new_name) {
     file->name = new_name;
 
     // Update the last node in dirs list
-    if (file->dirs != 0) {
+    if (file->dirs != NULL) {
         StrNode* current = file->dirs;
 
-        while (current != 0) {
-            if (current->next == 0) {
+        while (current != NULL) {
+            if (current->next == NULL) {
                 // This is the last node - update it
                 string ext_cstr = file->extension != NULL ? file->extension : "";
                 size_t full_name_len = strlen(new_name);
-                if (file->extension != 0) full_name_len += strlen(ext_cstr);
+                if (file->extension != NULL) full_name_len += strlen(ext_cstr);
 
                 string full_name = create_string("", full_name_len + 1);
                 sprintf(full_name, "%s%s", new_name, ext_cstr);
@@ -154,10 +154,10 @@ void change_file_name(File* file, const string new_name) {
     // Rebuild the full path
     string dir = get_file_dir(file);
     string dir_cstr = dir != NULL ? dir : "";
-    string ext_cstr = file->extension != 0 ? (file->extension) : "";
+    string ext_cstr = file->extension != NULL ? (file->extension) : "";
 
     size_t path_len = strlen(dir_cstr) + 1 + strlen(new_name);
-    if (file->extension != 0) path_len += strlen(ext_cstr);
+    if (file->extension != NULL) path_len += strlen(ext_cstr);
 
     string new_path = create_string("", path_len + 1);
     if (dir != NULL && strlen(dir_cstr) > 0)
@@ -175,8 +175,8 @@ void normalize_path(File* file) {
     string path_copy = create_string("", path_len + 1);
     strcpy(path_copy, file->path);
 
-    StrNode* dirs_head = 0;
-    StrNode* dirs_tail = 0;
+    StrNode* dirs_head = NULL;
+    StrNode* dirs_tail = NULL;
 
     size_t start = 0;
 
@@ -219,7 +219,7 @@ void normalize_path(File* file) {
                     // Skip current directory
                 } else if (strcmp(component, "..") == 0) {
                     // Go up one directory
-                    if (dirs_tail != 0 && dirs_tail != dirs_head) {
+                    if (dirs_tail != NULL && dirs_tail != dirs_head) {
                         // Don't collapse ".." if the last component is also ".."
                         if (strcmp(dirs_tail->dir, "..") == 0) {
                             StrNode* node = (StrNode*)alloc_memory(sizeof(StrNode));
@@ -230,15 +230,15 @@ void normalize_path(File* file) {
                         } else {
                             // Remove the last directory
                             StrNode* prev = dirs_head;
-                            while (prev != 0 && prev->next != dirs_tail)
+                            while (prev != NULL && prev->next != dirs_tail)
                                 prev = prev->next;
 
-                            if (prev != 0) {
+                            if (prev != NULL) {
                                 prev->next = 0;
                                 dirs_tail = prev;
                             }
                         }
-                    } else if (dirs_head == 0) {
+                    } else if (dirs_head == NULL) {
                         // No directories yet, add ".."
                         StrNode* node = (StrNode*)alloc_memory(sizeof(StrNode));
                         node->dir = create_string("..", 2);
@@ -252,11 +252,11 @@ void normalize_path(File* file) {
                     node->dir = create_string(component, comp_len);
                     node->next = 0;
 
-                    if (dirs_tail != 0)
+                    if (dirs_tail != NULL)
                         (dirs_tail)->next = node;
 
                     dirs_tail = node;
-                    if (dirs_head == 0) dirs_head = node;
+                    if (dirs_head == NULL) dirs_head = node;
                 }
             }
             start = i + 1;
@@ -268,7 +268,7 @@ void normalize_path(File* file) {
     file->dirs = dirs_head;
 
     // Extract filename and extension from the last node
-    if (dirs_tail != 0) {
+    if (dirs_tail != NULL) {
         string dot = strrchr(dirs_tail->dir, '.');
 
         if (dot != NULL && dot != dirs_tail->dir) {
@@ -291,7 +291,7 @@ void normalize_path(File* file) {
     StrNode* current = dirs_head;
     size_t node_count = 0;
 
-    while (current != 0) {
+    while (current != NULL) {
         full_path_len += strlen(current->dir);
         node_count++;
         current = current->next;
@@ -306,7 +306,7 @@ void normalize_path(File* file) {
 
     current = dirs_head;
     bool is_first = true;
-    while (current != 0) {
+    while (current != NULL) {
         if (!is_first && strcmp(current->dir, "/") != 0) {
             // Add separator before non-root components
             if (strlen(full_path) > 0 && full_path[strlen(full_path) - 1] != '/') {
