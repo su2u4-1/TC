@@ -35,15 +35,15 @@ class Test2 {
 
 // entry point
 func int main() {
-    var Test1 t = Test1.init(5);
+    var Test1 t = Test1(5);
     print(t.get_a());
     t.set_a(20);
     print(t.get_a());
     var float _abc123 = 30.5;
     var int _def456 = 15;
 
-    var Test2 t2 = Test2.init();
-    var arr nums = arr.init("int", 10);
+    var Test2 t2 = Test2();
+    var arr nums = arr("int", 10);
     nums[0] = 42;
     t2.set_x(2 + t2.get_x() * 10);  // 2 + 5 * 10 = 52
     print(t2.get_x());  // should print 52

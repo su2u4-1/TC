@@ -19,7 +19,7 @@ class Test1 {
 
 // entry point
 func int main() {
-    var Test1 t = Test1.init(5);
+    var Test1 t = Test1(5);
     print(t.get_a());
     t.set_a(20);
     print(t.get_a());

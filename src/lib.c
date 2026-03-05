@@ -11,6 +11,8 @@ bool initialized = false;
 
 StringList* all_string_list = 0;
 
+string CONSTRUCTOR_NAME = 0;
+
 string IMPORT_KEYWORD = 0;
 string FROM_KEYWORD = 0;
 string FUNC_KEYWORD = 0;
@@ -194,6 +196,7 @@ void init(void) {
         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
     for (size_t i = 0; i < symbolCount; ++i)
         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
+    CONSTRUCTOR_NAME = create_string_check("init", 4, false);
     IMPORT_KEYWORD = keywordList[0];
     FROM_KEYWORD = keywordList[1];
     FUNC_KEYWORD = keywordList[2];

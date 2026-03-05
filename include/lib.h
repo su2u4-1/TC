@@ -63,6 +63,8 @@ extern bool initialized;
 
 extern StringList* all_string_list;
 
+extern string CONSTRUCTOR_NAME;
+
 extern string IMPORT_KEYWORD;     // keyword `import`
 extern string FROM_KEYWORD;       // keyword `from`
 extern string FUNC_KEYWORD;       // keyword `func`

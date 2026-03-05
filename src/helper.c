@@ -99,17 +99,15 @@ Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info
 
 Scope* create_scope(Scope* parent) {
     Scope* new_scope = (Scope*)alloc_memory(sizeof(Scope));
-    Scope* scope_ptr = (new_scope);
-    scope_ptr->parent = parent;
-    scope_ptr->names = create_list();
+    new_scope->parent = parent;
+    new_scope->names = create_list();
     return new_scope;
 }
 
 Name* search(Scope* scope, string name) {
-    Scope* scope_ptr = (scope);
-    while (scope_ptr != NULL) {
-        list(Name*) names = scope_ptr->names;
-        Node* current = ((names))->head;
+    while (scope != NULL) {
+        list(Name*) names = scope->names;
+        Node* current = names->head;
         while (current != 0) {
             Node* node_ptr = (current);
             Name* current_name = (Name*)node_ptr->content;
@@ -117,7 +115,7 @@ Name* search(Scope* scope, string name) {
                 return current_name;
             current = node_ptr->next;
         }
-        scope_ptr = (scope_ptr->parent);
+        scope = scope->parent;
     }
     return NULL;
 }
@@ -127,8 +125,7 @@ bool is_builtin_type(string type) {
 }
 
 bool is_type(Name* type) {
-    Name* type_ptr = (type);
-    return type_ptr->kind == NAME_TYPE || type_ptr->kind == NAME_CLASS;
+    return type->kind == NAME_TYPE || type->kind == NAME_CLASS;
 }
 
 void parser_error(const string message, Token* token) {
@@ -144,7 +141,7 @@ static void set_bool_list(char bool_list[32], size_t index, bool value) {
 }
 
 static bool get_bool_list(char bool_list[32], size_t index) {
-    return ((bool_list[index / 8] & (1 << (index % 8))) == 0 ? false : true);
+    return (bool_list[index / 8] & (1 << (index % 8))) == 0 ? false : true;
 }
 
 void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
@@ -201,9 +198,9 @@ Name* parse_import_file(string import_name, string source, Scope* scope) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
         return 0;
     }
-    list(Node*) names = ((((code))->global_scope))->names;
-    Node* current = ((names))->head;
-    while (current != 0) {
+    list(Node*) names = code->global_scope->names;
+    Node* current = names->head;
+    while (current != NULL) {
         Node* node_ptr = (current);
         Name* current_name = (Name*)node_ptr->content;
         if (string_equal(current_name->name, import_name)) {
@@ -212,10 +209,8 @@ Name* parse_import_file(string import_name, string source, Scope* scope) {
         }
         current = node_ptr->next;
     }
-    if (name != 0) {
-        Scope* scope_ptr = (scope);
-        list_append(scope_ptr->names, (pointer)name);
-    }
+    if (name != NULL)
+        list_append(scope->names, (pointer)name);
     return name;
 }
 
