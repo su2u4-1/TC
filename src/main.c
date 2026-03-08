@@ -1,7 +1,6 @@
 #include "compiler.h"
-#include <stdbool.h>
 
-void print_usage(const char* prog_name) {
+static void print_usage(const char* prog_name) {
     printf("Usage: %s <source_file> [output_path] [options]\n", prog_name);
     printf("Parameters:\n");
     printf("  <source_file>  The TC source file you want to compile\n");
