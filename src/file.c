@@ -81,18 +81,25 @@ string get_file_dir(File* path) {
 
     // Build the directory path
     string dir_path = create_string("", total_len + 1);
-    dir_path[0] = '\0';
+    char* ptr = dir_path;
+    *ptr = '\0';
 
     current = path->dirs;
     bool first = true;
     while (current != NULL) {
         if (current->next != NULL) {  // Not the last element
-            if (!first && strcmp(current->dir, "/") != 0)
+            if (!first && strcmp(current->dir, "/") != 0) {
                 // Add separator before non-root components
-                if (strlen(dir_path) > 0 && dir_path[strlen(dir_path) - 1] != '/')
-                    strcat(dir_path, "/");
+                if (ptr > dir_path && *(ptr - 1) != '/') {
+                    *ptr++ = '/';
+                    *ptr = '\0';
+                }
+            }
 
-            strcat(dir_path, current->dir);
+            size_t len = strlen(current->dir);
+            memcpy(ptr, current->dir, len);
+            ptr += len;
+            *ptr = '\0';
             first = false;
         }
         current = current->next;
@@ -302,18 +309,23 @@ void normalize_path(File* file) {
         full_path_len += (node_count - 1);
 
     string full_path = create_string("", full_path_len + 1);
-    full_path[0] = '\0';
+    char* ptr = full_path;
+    *ptr = '\0';
 
     current = dirs_head;
     bool is_first = true;
     while (current != NULL) {
         if (!is_first && strcmp(current->dir, "/") != 0) {
             // Add separator before non-root components
-            if (strlen(full_path) > 0 && full_path[strlen(full_path) - 1] != '/') {
-                strcat(full_path, "/");
+            if (ptr > full_path && *(ptr - 1) != '/') {
+                *ptr++ = '/';
+                *ptr = '\0';
             }
         }
-        strcat(full_path, current->dir);
+        size_t len = strlen(current->dir);
+        memcpy(ptr, current->dir, len);
+        ptr += len;
+        *ptr = '\0';
         is_first = false;
         current = current->next;
     }
