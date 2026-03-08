@@ -74,10 +74,6 @@ string absolute_path(string path) {
     return create_string(abs_path, total_len);
 }
 
-string get_file_name(File* path) {
-    return path->name;
-}
-
 string get_file_dir(File* path) {
     if (path->dirs == NULL) return 0;
 
