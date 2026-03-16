@@ -70,7 +70,9 @@ void codegen_while(While* while_, TACStatus* status) {}
 Arg* codegen_expression(Expression* expression, TACStatus* status) {}
 Arg* codegen_primary(Primary* primary, TACStatus* status) {}
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status) {
-    Arg* base = codegen_variable_access(variable_access->base, status);
+    Arg* base = NULL;
+    if (variable_access->base != NULL)
+        base = codegen_variable_access(variable_access->base, status);
     if (variable_access->type == VAR_NAME)
         return create_arg(ARG_VARIABLE, codegen_name(variable_access->content.name));
     else if (variable_access->type == VAR_FUNC_CALL) {
