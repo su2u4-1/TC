@@ -13,6 +13,7 @@
 #define false 0
 #define ALIGN_SIZE sizeof(size_t)
 #define defaultMemorySize 1024  // 1 KB
+#define sizeDigit 20
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #ifdef _MSC_VER
