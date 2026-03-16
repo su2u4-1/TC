@@ -1,7 +1,5 @@
 #include "codegen.h"
 
-#include <sys/unistd.h>
-
 #include "helper.h"
 #include "parser.h"
 
@@ -57,7 +55,9 @@ static Arg* create_arg(ArgType type, void* value) {
     return arg;
 }
 
-TAC* codegen_code(Code* code) {}
+TAC* codegen_code(Code* code) {
+    return NULL;
+}
 void codegen_code_member(CodeMember* code_member, TACStatus* status) {}
 void codegen_import(Import* import, TACStatus* status) {}
 void codegen_function(Function* function, TACStatus* status) {}
@@ -112,10 +112,9 @@ Arg* codegen_expression(Expression* expression, TACStatus* status) {
     bool is_compound = (expression->operator == OP_ADD_ASSIGN || expression->operator == OP_SUB_ASSIGN || expression->operator == OP_MUL_ASSIGN || expression->operator == OP_DIV_ASSIGN || expression->operator == OP_MOD_ASSIGN);
     bool is_assign = (expression->operator == OP_ASSIGN || is_compound);
     if (is_assign) {
+        Arg* right = load_rvalue(codegen_expression(expression->right, status), status);
         Arg* left = codegen_expression(expression->expr_left, status);
         bool left_is_addr = status->is_get;
-        Arg* right = load_rvalue(codegen_expression(expression->right, status), status);
-        bool right_is_addr = status->is_get;
         if (is_compound) {
             Arg* left_val = left;
             if (left_is_addr) {
@@ -130,17 +129,18 @@ Arg* codegen_expression(Expression* expression, TACStatus* status) {
             list_append(status->current_block->instructions, (pointer)create_instruction(INST_STORE, left, right, NULL));
         else
             list_append(status->current_block->instructions, (pointer)create_instruction(INST_ASSIGN, left, right, NULL));
-        status->is_get = right_is_addr;
+        status->is_get = false;
         return right;
     }
-    Arg* left = load_rvalue(codegen_expression(expression->expr_left, status), status);
     Arg* right = load_rvalue(codegen_expression(expression->right, status), status);
+    Arg* left = load_rvalue(codegen_expression(expression->expr_left, status), status);
     Arg* result = create_arg(ARG_VARIABLE, create_var(status, VAR_TEMP));
     list_append(status->current_block->instructions, (pointer)create_instruction(base_op, result, left, right));
     status->is_get = false;
     return result;
 }
 Arg* codegen_primary(Primary* primary, TACStatus* status) {
+    status->is_get = false;
     if (primary->type == PRIM_INTEGER) {
         long long int_value = strtoll(primary->value.literal_value, NULL, 10);
         return create_arg(ARG_INT, &int_value);
@@ -176,8 +176,9 @@ Arg* codegen_primary(Primary* primary, TACStatus* status) {
 }
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status) {
     Arg* base = NULL;
+    status->is_get = false;
     if (variable_access->base != NULL)
-        base = codegen_variable_access(variable_access->base, status);
+        base = load_rvalue(codegen_variable_access(variable_access->base, status), status);
     if (variable_access->type == VAR_NAME)
         return create_arg(ARG_VARIABLE, codegen_name(variable_access->content.name));
     else if (variable_access->type == VAR_FUNC_CALL) {
@@ -185,7 +186,7 @@ Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status)
         Expression* expr;
         size_t arg_count = 0;
         while ((expr = (Expression*)list_pop(args)) != 0) {
-            Arg* param = codegen_expression(expr, status);
+            Arg* param = load_rvalue(codegen_expression(expr, status), status);
             list_append(status->current_block->instructions, (pointer)create_instruction(INST_PARAM, param, NULL, NULL));
             ++arg_count;
         }
@@ -201,7 +202,7 @@ Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status)
         return var;
     } else if (variable_access->type == VAR_GET_SEQ) {
         Arg* var = create_arg(ARG_VARIABLE, create_var(status, VAR_VAR));
-        Arg* index = codegen_expression(variable_access->content.index, status);
+        Arg* index = load_rvalue(codegen_expression(variable_access->content.index, status), status);
         list_append(status->current_block->instructions, (pointer)create_instruction(INST_GET_ELEM, var, base, index));
         status->is_get = true;
         return var;
