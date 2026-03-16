@@ -105,6 +105,7 @@ typedef struct TACStatus {
     size_t for_count;
     size_t while_count;
     size_t label_count;
+    bool is_get;
 } TACStatus;
 
 TAC* codegen_code(Code* code);
