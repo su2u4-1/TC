@@ -27,9 +27,7 @@ instruction ::= add arg(result) arg(var_a) arg(var_b)
               | or  arg(result) arg(var_a) arg(var_b)
               | not arg(result) arg(operand)
               | assign arg(result) arg(value)
-              | set_attr arg(object) identifier(attribute_name) arg(value)
               | get_attr arg(result) arg(object) identifier(attribute_name)
-              | set_elem arg(array) arg(index) arg(value)
               | get_elem arg(result) arg(array) arg(index)
               | param integer(size) arg(value)
               | alloc arg(var) identifier(type) integer(size)
@@ -38,6 +36,8 @@ instruction ::= add arg(result) arg(var_a) arg(var_b)
               | jmp identifier(label)
               | ret arg(value)
               | call arg(var) identifier(subroutine_name) argument_count
+              | load arg(result) arg(address)
+              | store arg(address) arg(value)
 arg ::= var_name | temp_var_name | parameter_name | literal
 literal ::= integer | float | string | boolean | void
 subroutine ::= class_name "." method_name | function_name

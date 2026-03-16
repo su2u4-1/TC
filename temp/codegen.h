@@ -38,7 +38,11 @@ typedef struct Var {
 } Var;
 typedef enum ArgType {
     ARG_VARIABLE,
-    ARG_CONSTANT,
+    ARG_INT,
+    ARG_FLOAT,
+    ARG_STRING,
+    ARG_BOOL,
+    ARG_VOID,
     ARG_LABEL,
     ARG_DESIGN,
     ARG_NONE
@@ -46,7 +50,10 @@ typedef enum ArgType {
 typedef struct Arg {
     union {
         Id* variable;
-        string constant;
+        long long int_value;
+        double float_value;
+        string string_value;
+        bool bool_value;
         Id* label;
         Design* design;
     } value;
@@ -68,9 +75,7 @@ typedef enum InstructionType {
     INST_OR,        // ||
     INST_NOT,       // !
     INST_ASSIGN,    // =
-    INST_SET_ATTR,  // set object attribute
     INST_GET_ATTR,  // get object attribute
-    INST_SET_ELEM,  // set array element
     INST_GET_ELEM,  // get array element
     INST_PARAM,     // set parameter for function/method call
     INST_ALLOC,     // allocate size memory for variable
@@ -79,8 +84,8 @@ typedef enum InstructionType {
     INST_JMP,       // unconditional jump to label
     INST_RET,       // return from subroutine
     INST_CALL,      // call subroutine
-    // INST_PUSH_FRAME,  // push a new frame
-    // INST_POP_FRAME,   // pop the current frame
+    INST_LOAD,      // load value of address to temporary variable
+    INST_STORE,     // store value of temporary variable to address
     INST_NONE
 } InstructionType;
 typedef struct Instruction {
