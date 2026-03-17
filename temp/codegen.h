@@ -91,7 +91,7 @@ typedef enum InstructionType {
 typedef struct Instruction {
     Arg* arg1;
     Arg* arg2;
-    Arg* result;
+    Arg* arg3;
     InstructionType type;
 } Instruction;
 
@@ -99,12 +99,7 @@ typedef struct TACStatus {
     list(Design*) designs;
     Subroutine* current_subroutine;
     Block* current_block;
-    size_t var_count;
-    size_t if_count;
-    size_t else_if_count;
-    size_t for_count;
-    size_t while_count;
-    size_t label_count;
+    size_t id_cont;
     bool is_get;
 } TACStatus;
 

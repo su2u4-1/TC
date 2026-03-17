@@ -1,7 +1,6 @@
 #include "codegen.h"
 
 #include "helper.h"
-#include "parser.h"
 
 typedef enum VarType {
     VAR_ATTR,
@@ -13,8 +12,8 @@ typedef enum VarType {
 
 static Id* create_var(TACStatus* status, VarType type) {
     Id* id = (Id*)alloc_memory(sizeof(Id));
-    id->id = ++status->var_count;
-    id->name = (char*)alloc_memory(sizeDigit);
+    id->id = ++status->id_cont;
+    id->name = (char*)alloc_memory(sizeDigit + 2);
     if (type == VAR_ATTR)
         snprintf(id->name, sizeDigit + 2, "a%d", id->id);
     else if (type == VAR_PARAM)
@@ -27,12 +26,12 @@ static Id* create_var(TACStatus* status, VarType type) {
         snprintf(id->name, sizeDigit + 2, "b%d", id->id);
     return id;
 }
-static Instruction* create_instruction(InstructionType type, Arg* arg1, Arg* arg2, Arg* result) {
+static Instruction* create_instruction(InstructionType type, Arg* arg1, Arg* arg2, Arg* arg3) {
     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
     inst->type = type;
     inst->arg1 = arg1;
     inst->arg2 = arg2;
-    inst->result = result;
+    inst->arg3 = arg3;
     return inst;
 }
 static Arg* create_arg(ArgType type, void* value) {
@@ -54,6 +53,12 @@ static Arg* create_arg(ArgType type, void* value) {
         arg->value.variable = (Id*)value;
     return arg;
 }
+static Block* create_block(Id* label) {
+    Block* block = (Block*)alloc_memory(sizeof(Block));
+    block->label = label;
+    block->instructions = create_list();
+    return block;
+}
 
 TAC* codegen_code(Code* code) {
     return NULL;
@@ -69,7 +74,26 @@ void codegen_statement(Statement* statement, TACStatus* status) {}
 void codegen_if(If* if_, TACStatus* status) {}
 void codegen_else_if(ElseIf* else_if, TACStatus* status) {}
 void codegen_for(For* for_, TACStatus* status) {}
-void codegen_while(While* while_, TACStatus* status) {}
+void codegen_while(While* while_, TACStatus* status) {
+    Id* start_label = create_var(status, VAR_BLOCK);
+    Arg* start_arg = create_arg(ARG_LABEL, start_label);
+    list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, start_arg, NULL, NULL));
+    Block* block = create_block(start_label);
+    list_append(status->current_subroutine->blocks, (pointer)block);
+    status->current_block = block;
+    Id* end_label = create_var(status, VAR_BLOCK);
+    Arg* end_arg = create_arg(ARG_LABEL, end_label);
+    Arg* cond = codegen_expression(while_->condition, status);
+    list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP_F, end_arg, cond, NULL));
+    list(Statement*) body = list_copy(while_->body);
+    Statement* stmt;
+    while ((stmt = (Statement*)list_pop(body)) != 0)
+        codegen_statement(stmt, status);
+    list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, start_arg, NULL, NULL));
+    block = create_block(end_label);
+    list_append(status->current_subroutine->blocks, (pointer)block);
+    status->current_block = block;
+}
 static InstructionType get_instruction_type(OperatorType op) {
     switch (op) {
         case OP_ADD:
@@ -184,7 +208,7 @@ Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status)
     else if (variable_access->type == VAR_FUNC_CALL) {
         list(Expression*) args = list_copy(variable_access->content.args);
         Expression* expr;
-        size_t arg_count = 0;
+        long long arg_count = 0;
         while ((expr = (Expression*)list_pop(args)) != 0) {
             Arg* param = load_rvalue(codegen_expression(expr, status), status);
             list_append(status->current_block->instructions, (pointer)create_instruction(INST_PARAM, param, NULL, NULL));
