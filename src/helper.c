@@ -19,6 +19,8 @@ Node* create_node(pointer content) {
 }
 
 void list_append(list() list, pointer item) {
+    if (list == NULL)
+        list = create_list();
     Node* new_node = create_node(item);
     if (list->head == 0) {
         list->head = new_node;
@@ -30,6 +32,8 @@ void list_append(list() list, pointer item) {
 }
 
 list() list_copy(list() original) {
+    if (original == NULL)
+        return NULL;
     list() new_list = create_list();
     new_list->head = original->head;
     new_list->tail = original->tail;
@@ -37,29 +41,29 @@ list() list_copy(list() original) {
 }
 
 pointer list_pop(list() list) {
-    if (list->head == 0)
-        return 0;
+    if (list == NULL || list->head == NULL)
+        return NULL;
     Node* head_node = list->head;
     list->head = head_node->next;
-    if (list->head == 0)
-        list->tail = 0;
+    if (list->head == NULL)
+        list->tail = NULL;
     return head_node->content;
 }
 
 pointer list_pop_back(list() list) {
-    if (list->head == 0)
-        return 0;
+    if (list == NULL || list->head == NULL)
+        return NULL;
     if (list->head == list->tail) {
         pointer content = list->head->content;
-        list->head = 0;
-        list->tail = 0;
+        list->head = NULL;
+        list->tail = NULL;
         return content;
     }
     Node* current = list->head;
     while (current->next != list->tail)
         current = current->next;
     pointer content = list->tail->content;
-    current->next = 0;
+    current->next = NULL;
     list->tail = current;
     return content;
 }
