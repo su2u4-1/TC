@@ -78,8 +78,47 @@ void codegen_class_member(ClassMember* class_member, TACStatus* status) {}
 void codegen_class(Class* class, TACStatus* status) {}
 void codegen_variable(Variable* variable, TACStatus* status) {}
 void codegen_statement(Statement* statement, TACStatus* status) {}
-void codegen_if(If* if_, TACStatus* status) {}
-void codegen_else_if(ElseIf* else_if, TACStatus* status) {}
+void codegen_if(If* if_, TACStatus* status) {
+    Arg* cond = codegen_expression(if_->condition, status);
+    Id *elif_label = NULL, *end_label = create_var(status, VAR_BLOCK);
+    Arg *elif_arg = NULL, *end_arg = create_arg(ARG_LABEL, end_label);
+    if (if_->else_if == NULL && if_->else_body == NULL) {
+        elif_label = end_label;
+        elif_arg = end_arg;
+    } else {
+        elif_label = create_var(status, VAR_BLOCK);
+        elif_arg = create_arg(ARG_LABEL, elif_label);
+    }
+    list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP_F, elif_arg, cond, NULL));
+    list(Statement*) body = list_copy(if_->body);
+    Statement* stmt;
+    while ((stmt = (Statement*)list_pop(body)) != 0)
+        codegen_statement(stmt, status);
+    list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, end_arg, NULL, NULL));
+    add_new_block(elif_label, elif_arg, status, false);
+    if (if_->else_if != NULL) {
+        list(ElseIf*) elif_list = list_copy(if_->else_if);
+        ElseIf* elif;
+        while ((elif = (ElseIf*)list_pop(elif_list)) != 0) {
+            Arg* elif_cond = codegen_expression(elif->condition, status);
+            Id* next_elif_label = create_var(status, VAR_BLOCK);
+            Arg* next_elif_arg = create_arg(ARG_LABEL, next_elif_label);
+            list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP_F, next_elif_arg, elif_cond, NULL));
+            list(Statement*) else_if_body = list_copy(elif->body);
+            while ((stmt = (Statement*)list_pop(else_if_body)) != 0)
+                codegen_statement(stmt, status);
+            list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, end_arg, NULL, NULL));
+            add_new_block(next_elif_label, next_elif_arg, status, false);
+        }
+    }
+    if (if_->else_body != NULL) {
+        list(Statement*) else_body = list_copy(if_->else_body);
+        while ((stmt = (Statement*)list_pop(else_body)) != 0)
+            codegen_statement(stmt, status);
+        list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, end_arg, NULL, NULL));
+    }
+    add_new_block(end_label, end_arg, status, false);
+}
 void codegen_for(For* for_, TACStatus* status) {
     if (for_->initializer != NULL)
         codegen_variable(for_->initializer, status);
