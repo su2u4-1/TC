@@ -79,8 +79,7 @@ typedef enum InstructionType {
     INST_GET_ELEM,  // get array element
     INST_PARAM,     // set parameter for function/method call
     INST_ALLOC,     // allocate size memory for variable
-    INST_JMP_T,     // jump to label if condition is true
-    INST_JMP_F,     // jump to label if condition is false
+    INST_JMP_C,     // jump to true_label if condition is true, else jump to false_label
     INST_JMP,       // unconditional jump to label
     INST_RET,       // return from subroutine
     INST_CALL,      // call subroutine

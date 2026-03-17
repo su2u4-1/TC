@@ -50,9 +50,7 @@ static Block* create_block(Id* label) {
 }
 #define push_inst(type, arg1, arg2, arg3) list_append(status->current_block->instructions, (pointer)create_instruction(type, arg1, arg2, arg3))
 
-static void add_new_block(Id* label, Arg* arg, TACStatus* status, bool continued) {
-    if (continued)
-        push_inst(INST_JMP, arg, NULL, NULL);
+static void add_new_block(Id* label, TACStatus* status) {
     Block* block = create_block(label);
     list_append(status->current_subroutine->blocks, (pointer)block);
     status->current_block = block;
@@ -113,95 +111,88 @@ void codegen_statement(Statement* statement, TACStatus* status) {
     }
 }
 void codegen_if(If* if_, TACStatus* status) {
-    Arg* cond = codegen_expression(if_->condition, status);
-    Id *next_label = create_var(status, VAR_BLOCK), *end_label = next_label;
-    Arg *next_arg = create_arg(next_label, ARG_LABEL), *end_arg = next_arg;
-    if (if_->else_if != NULL || if_->else_body != NULL) {
-        next_label = create_var(status, VAR_BLOCK);
-        next_arg = create_arg(next_label, ARG_LABEL);
-    }
-    push_inst(INST_JMP_F, next_arg, cond, NULL);
+    Id *then_label = create_var(status, VAR_BLOCK), *next_branch_label = create_var(status, VAR_BLOCK), *end_label = create_var(status, VAR_BLOCK);
+    Arg *next_branch_arg = create_arg(next_branch_label, ARG_LABEL), *end_arg = create_arg(end_label, ARG_LABEL);
+    Arg* cond = load_rvalue(codegen_expression(if_->condition, status), status);
+    push_inst(INST_JMP_C, create_arg(then_label, ARG_LABEL), next_branch_arg, cond);
+    add_new_block(then_label, status);
     list(Statement*) body = list_copy(if_->body);
     Statement* stmt;
     while ((stmt = (Statement*)list_pop(body)) != 0)
         codegen_statement(stmt, status);
     push_inst(INST_JMP, end_arg, NULL, NULL);
-    if (next_label != end_label)
-        add_new_block(next_label, next_arg, status, false);
+    add_new_block(next_branch_label, status);
     if (if_->else_if != NULL) {
         list(ElseIf*) elif_list = list_copy(if_->else_if);
         ElseIf* elif;
         while ((elif = (ElseIf*)list_pop(elif_list)) != 0) {
-            Arg* elif_cond = codegen_expression(elif->condition, status);
-            Id* target_label = end_label;
-            Arg* target_arg = end_arg;
-            if (elif_list->head != NULL || if_->else_body != NULL) {
-                target_arg = create_arg(target_label, ARG_LABEL);
-                target_label = create_var(status, VAR_BLOCK);
-            }
-            push_inst(INST_JMP_F, target_arg, elif_cond, NULL);
-            list(Statement*) else_if_body = list_copy(elif->body);
-            while ((stmt = (Statement*)list_pop(else_if_body)) != 0)
+            Arg* elif_cond = load_rvalue(codegen_expression(elif->condition, status), status);
+            Id *elif_then_label = create_var(status, VAR_BLOCK), *elif_next_label = create_var(status, VAR_BLOCK);
+            Arg* elif_next_arg = create_arg(elif_next_label, ARG_LABEL);
+            push_inst(INST_JMP_C, create_arg(elif_then_label, ARG_LABEL), elif_next_arg, elif_cond);
+            add_new_block(elif_then_label, status);
+            list(Statement*) elif_body = list_copy(elif->body);
+            while ((stmt = (Statement*)list_pop(elif_body)) != 0)
                 codegen_statement(stmt, status);
             push_inst(INST_JMP, end_arg, NULL, NULL);
-            if (target_label != end_label)
-                add_new_block(target_label, target_arg, status, false);
+            add_new_block(elif_next_label, status);
+            next_branch_label = elif_next_label;
+            next_branch_arg = elif_next_arg;
         }
     }
     if (if_->else_body != NULL) {
         list(Statement*) else_body = list_copy(if_->else_body);
         while ((stmt = (Statement*)list_pop(else_body)) != 0)
             codegen_statement(stmt, status);
-        push_inst(INST_JMP, end_arg, NULL, NULL);
     }
-    add_new_block(end_label, end_arg, status, false);
+    push_inst(INST_JMP, end_arg, NULL, NULL);
+    add_new_block(end_label, status);
 }
 void codegen_for(For* for_, TACStatus* status) {
     if (for_->initializer != NULL)
         codegen_variable(for_->initializer, status);
-    Id* start_label = create_var(status, VAR_BLOCK);
-    Arg* start_arg = create_arg(start_label, ARG_LABEL);
-    add_new_block(start_label, start_arg, status, true);
-    Id* end_label = create_var(status, VAR_BLOCK);
-    Arg* end_arg = create_arg(end_label, ARG_LABEL);
-    Id* continue_label = create_var(status, VAR_BLOCK);
-    Arg* continue_arg = create_arg(continue_label, ARG_LABEL);
-    if (for_->condition != NULL) {
-        Arg* cond = codegen_expression(for_->condition, status);
-        push_inst(INST_JMP_F, end_arg, cond, NULL);
-    }
+    Id *cond_label = create_var(status, VAR_BLOCK), *body_label = create_var(status, VAR_BLOCK), *incr_label = create_var(status, VAR_BLOCK), *end_label = create_var(status, VAR_BLOCK);
+    Arg *cond_arg = create_arg(cond_label, ARG_LABEL), *body_arg = create_arg(body_label, ARG_LABEL), *incr_arg = create_arg(incr_label, ARG_LABEL), *end_arg = create_arg(end_label, ARG_LABEL);
+    push_inst(INST_JMP, cond_arg, NULL, NULL);
+    add_new_block(cond_label, status);
+    if (for_->condition != NULL)
+        push_inst(INST_JMP_C, body_arg, end_arg, load_rvalue(codegen_expression(for_->condition, status), status));
+    else
+        push_inst(INST_JMP, body_arg, NULL, NULL);
+    add_new_block(body_label, status);
     list_append(status->end_labels, (pointer)end_arg);
-    list_append(status->start_labels, (pointer)continue_arg);
+    list_append(status->start_labels, (pointer)incr_arg);
     list(Statement*) body = list_copy(for_->body);
     Statement* stmt;
     while ((stmt = (Statement*)list_pop(body)) != 0)
         codegen_statement(stmt, status);
     list_pop_back(status->end_labels);
     list_pop_back(status->start_labels);
-    add_new_block(continue_label, continue_arg, status, true);
+    push_inst(INST_JMP, incr_arg, NULL, NULL);
+    add_new_block(incr_label, status);
     if (for_->increment != NULL)
         codegen_expression(for_->increment, status);
-    push_inst(INST_JMP, start_arg, NULL, NULL);
-    add_new_block(end_label, end_arg, status, false);
+    push_inst(INST_JMP, cond_arg, NULL, NULL);
+    add_new_block(end_label, status);
 }
 void codegen_while(While* while_, TACStatus* status) {
-    Id* start_label = create_var(status, VAR_BLOCK);
-    Arg* start_arg = create_arg(start_label, ARG_LABEL);
-    add_new_block(start_label, start_arg, status, true);
-    Id* end_label = create_var(status, VAR_BLOCK);
-    Arg* end_arg = create_arg(end_label, ARG_LABEL);
-    Arg* cond = codegen_expression(while_->condition, status);
-    push_inst(INST_JMP_F, end_arg, cond, NULL);
+    Id *cond_label = create_var(status, VAR_BLOCK), *body_label = create_var(status, VAR_BLOCK), *end_label = create_var(status, VAR_BLOCK);
+    Arg *cond_arg = create_arg(cond_label, ARG_LABEL), *end_arg = create_arg(end_label, ARG_LABEL);
+    push_inst(INST_JMP, cond_arg, NULL, NULL);
+    add_new_block(cond_label, status);
+    Arg* cond = load_rvalue(codegen_expression(while_->condition, status), status);
+    push_inst(INST_JMP_C, create_arg(body_label, ARG_LABEL), end_arg, cond);
+    add_new_block(body_label, status);
     list_append(status->end_labels, (pointer)end_arg);
-    list_append(status->start_labels, (pointer)start_arg);
+    list_append(status->start_labels, (pointer)cond_arg);
     list(Statement*) body = list_copy(while_->body);
     Statement* stmt;
     while ((stmt = (Statement*)list_pop(body)) != 0)
         codegen_statement(stmt, status);
     list_pop_back(status->end_labels);
     list_pop_back(status->start_labels);
-    push_inst(INST_JMP, start_arg, NULL, NULL);
-    add_new_block(end_label, end_arg, status, false);
+    push_inst(INST_JMP, cond_arg, NULL, NULL);
+    add_new_block(end_label, status);
 }
 static InstructionType get_instruction_type(OperatorType op) {
     switch (op) {
