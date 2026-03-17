@@ -95,20 +95,29 @@ void codegen_if(If* if_, TACStatus* status) {
     while ((stmt = (Statement*)list_pop(body)) != 0)
         codegen_statement(stmt, status);
     list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, end_arg, NULL, NULL));
-    add_new_block(elif_label, elif_arg, status, false);
+    if (elif_label != end_label)
+        add_new_block(elif_label, elif_arg, status, false);
     if (if_->else_if != NULL) {
         list(ElseIf*) elif_list = list_copy(if_->else_if);
         ElseIf* elif;
         while ((elif = (ElseIf*)list_pop(elif_list)) != 0) {
             Arg* elif_cond = codegen_expression(elif->condition, status);
-            Id* next_elif_label = create_var(status, VAR_BLOCK);
-            Arg* next_elif_arg = create_arg(ARG_LABEL, next_elif_label);
+            Id* next_elif_label = NULL;
+            Arg* next_elif_arg = NULL;
+            if (elif_list->head == NULL && if_->else_body == NULL) {
+                next_elif_label = end_label;
+                next_elif_arg = end_arg;
+            } else {
+                next_elif_label = create_var(status, VAR_BLOCK);
+                next_elif_arg = create_arg(ARG_LABEL, next_elif_label);
+            }
             list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP_F, next_elif_arg, elif_cond, NULL));
             list(Statement*) else_if_body = list_copy(elif->body);
             while ((stmt = (Statement*)list_pop(else_if_body)) != 0)
                 codegen_statement(stmt, status);
             list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, end_arg, NULL, NULL));
-            add_new_block(next_elif_label, next_elif_arg, status, false);
+            if (next_elif_label != end_label)
+                add_new_block(next_elif_label, next_elif_arg, status, false);
         }
     }
     if (if_->else_body != NULL) {
@@ -225,8 +234,8 @@ Arg* codegen_expression(Expression* expression, TACStatus* status) {
         status->is_get = false;
         return right;
     }
-    Arg* right = load_rvalue(codegen_expression(expression->right, status), status);
     Arg* left = load_rvalue(codegen_expression(expression->expr_left, status), status);
+    Arg* right = load_rvalue(codegen_expression(expression->right, status), status);
     Arg* result = create_arg(ARG_VARIABLE, create_var(status, VAR_TEMP));
     list_append(status->current_block->instructions, (pointer)create_instruction(base_op, result, left, right));
     status->is_get = false;
