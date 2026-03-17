@@ -1,9 +1,8 @@
-```ebnf
 TAC ::= { design } entry_point { subroutine }
 design ::= identifier(class_name) integer(size) { attribute }
 entry_point ::= identifier(subroutine_name)
 subroutine ::= identifier(subroutine_name) { parameter } { local } { block }
-block ::= label_name { instruction }
+block ::= block_name { instruction }
 attribute ::= identifier(type) attribute_name offset
 parameter ::= identifier(type) parameter_name
 local ::= identifier(type) var_name
@@ -41,4 +40,3 @@ instruction ::= add arg(result) arg(var_a) arg(var_b)
 arg ::= var_name | temp_var_name | parameter_name | literal
 literal ::= integer | float | string | boolean | void
 subroutine ::= class_name "." method_name | function_name
-```
