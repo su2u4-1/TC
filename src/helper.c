@@ -46,6 +46,24 @@ pointer list_pop(list() list) {
     return head_node->content;
 }
 
+pointer list_pop_back(list() list) {
+    if (list->head == 0)
+        return 0;
+    if (list->head == list->tail) {
+        pointer content = list->head->content;
+        list->head = 0;
+        list->tail = 0;
+        return content;
+    }
+    Node* current = list->head;
+    while (current->next != list->tail)
+        current = current->next;
+    pointer content = list->tail->content;
+    current->next = 0;
+    list->tail = current;
+    return content;
+}
+
 // parser helper functions
 Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info, Scope* scope) {
     static size_t id_counter = 0;

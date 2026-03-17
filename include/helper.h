@@ -20,6 +20,7 @@ Node* create_node(pointer content);
 void list_append(list() list, pointer item);
 list() list_copy(list() original);
 pointer list_pop(list() list);
+pointer list_pop_back(list() list);
 
 // parser helper functions
 Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info, Scope* scope);
