@@ -55,6 +55,17 @@ static void add_new_block(Id* label, Arg* arg, TACStatus* status, bool continued
     list_append(status->current_subroutine->blocks, (pointer)block);
     status->current_block = block;
 }
+static Arg* load_rvalue(Arg* arg, TACStatus* status) {
+    if (arg == NULL)
+        return NULL;
+    if (status->is_get) {
+        status->is_get = false;
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(status, VAR_TEMP));
+        list_append(status->current_block->instructions, (pointer)create_instruction(INST_LOAD, temp, arg, NULL));
+        return temp;
+    }
+    return arg;
+}
 
 TAC* codegen_code(Code* code) {
     return NULL;
@@ -66,7 +77,39 @@ void codegen_method(Method* method, TACStatus* status) {}
 void codegen_class_member(ClassMember* class_member, TACStatus* status) {}
 void codegen_class(Class* class, TACStatus* status) {}
 void codegen_variable(Variable* variable, TACStatus* status) {}
-void codegen_statement(Statement* statement, TACStatus* status) {}
+void codegen_statement(Statement* statement, TACStatus* status) {
+    switch (statement->type) {
+        case EXPRESSION_STATEMENT: codegen_expression(statement->stmt.expr, status); return;
+        case VARIABLE_STATEMENT: codegen_variable(statement->stmt.var, status); return;
+        case IF_STATEMENT: codegen_if(statement->stmt.if_stmt, status); return;
+        case WHILE_STATEMENT: codegen_while(statement->stmt.while_stmt, status); return;
+        case FOR_STATEMENT: codegen_for(statement->stmt.for_stmt, status); return;
+        case RETURN_STATEMENT:
+            if (statement->stmt.return_expr != NULL) {
+                Arg* return_value = load_rvalue(codegen_expression(statement->stmt.return_expr, status), status);
+                list_append(status->current_block->instructions, (pointer)create_instruction(INST_RET, return_value, NULL, NULL));
+            } else {
+                Arg* void_arg = create_arg(ARG_VOID, NULL);
+                list_append(status->current_block->instructions, (pointer)create_instruction(INST_RET, void_arg, NULL, NULL));
+            }
+            return;
+        case BREAK_STATEMENT:
+            if (status->end_labels->head != NULL)
+                list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, (Arg*)list_pop_back(status->end_labels), NULL, NULL));
+            else
+                fprintf(stderr, "Break statement not within a loop\n");
+            return;
+        case CONTINUE_STATEMENT:
+            if (status->start_labels->head != NULL)
+                list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, (Arg*)list_pop_back(status->start_labels), NULL, NULL));
+            else
+                fprintf(stderr, "Continue statement not within a loop\n");
+            return;
+        default:
+            fprintf(stderr, "Unknown StatementType: %u\n", statement->type);
+            return;
+    }
+}
 void codegen_if(If* if_, TACStatus* status) {
     Arg* cond = codegen_expression(if_->condition, status);
     Id *next_label = create_var(status, VAR_BLOCK), *end_label = next_label;
@@ -119,18 +162,21 @@ void codegen_for(For* for_, TACStatus* status) {
     add_new_block(start_label, start_arg, status, true);
     Id* end_label = create_var(status, VAR_BLOCK);
     Arg* end_arg = create_arg(ARG_LABEL, end_label);
+    Id* continue_label = create_var(status, VAR_BLOCK);
+    Arg* continue_arg = create_arg(ARG_LABEL, continue_label);
     if (for_->condition != NULL) {
         Arg* cond = codegen_expression(for_->condition, status);
         list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP_F, end_arg, cond, NULL));
     }
     list_append(status->end_labels, (pointer)end_arg);
-    list_append(status->start_labels, (pointer)start_arg);
+    list_append(status->start_labels, (pointer)continue_arg);
     list(Statement*) body = list_copy(for_->body);
     Statement* stmt;
     while ((stmt = (Statement*)list_pop(body)) != 0)
         codegen_statement(stmt, status);
     list_pop_back(status->end_labels);
     list_pop_back(status->start_labels);
+    add_new_block(continue_label, continue_arg, status, true);
     if (for_->increment != NULL)
         codegen_expression(for_->increment, status);
     list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, start_arg, NULL, NULL));
@@ -179,17 +225,6 @@ static InstructionType get_instruction_type(OperatorType op) {
         case OP_NONE:
         default: return INST_NONE;
     }
-}
-static Arg* load_rvalue(Arg* arg, TACStatus* status) {
-    if (arg == NULL)
-        return NULL;
-    if (status->is_get) {
-        status->is_get = false;
-        Arg* temp = create_arg(ARG_VARIABLE, create_var(status, VAR_TEMP));
-        list_append(status->current_block->instructions, (pointer)create_instruction(INST_LOAD, temp, arg, NULL));
-        return temp;
-    }
-    return arg;
 }
 Arg* codegen_expression(Expression* expression, TACStatus* status) {
     if (expression->operator == OP_NONE)
