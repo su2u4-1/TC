@@ -99,6 +99,8 @@ typedef struct TACStatus {
     list(Design*) designs;
     Subroutine* current_subroutine;
     Block* current_block;
+    list(Arg*) end_labels;
+    list(Arg*) start_labels;
     size_t id_cont;
     bool is_get;
 } TACStatus;
