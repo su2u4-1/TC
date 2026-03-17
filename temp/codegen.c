@@ -3,27 +3,18 @@
 #include "helper.h"
 
 typedef enum VarType {
-    VAR_ATTR,
-    VAR_PARAM,
-    VAR_VAR,
-    VAR_TEMP,
-    VAR_BLOCK,
+    VAR_ATTR = 'a',
+    VAR_PARAM = 'p',
+    VAR_VAR = 'v',
+    VAR_TEMP = 't',
+    VAR_BLOCK = 'b',
 } VarType;
 
 static Id* create_var(TACStatus* status, VarType type) {
     Id* id = (Id*)alloc_memory(sizeof(Id));
     id->id = ++status->id_cont;
     id->name = (char*)alloc_memory(sizeDigit + 2);
-    if (type == VAR_ATTR)
-        snprintf(id->name, sizeDigit + 2, "a%d", id->id);
-    else if (type == VAR_PARAM)
-        snprintf(id->name, sizeDigit + 2, "p%d", id->id);
-    else if (type == VAR_VAR)
-        snprintf(id->name, sizeDigit + 2, "v%d", id->id);
-    else if (type == VAR_TEMP)
-        snprintf(id->name, sizeDigit + 2, "t%d", id->id);
-    else if (type == VAR_BLOCK)
-        snprintf(id->name, sizeDigit + 2, "b%d", id->id);
+    snprintf(id->name, sizeDigit + 2, "%c%d", type, id->id);
     return id;
 }
 static Instruction* create_instruction(InstructionType type, Arg* arg1, Arg* arg2, Arg* arg3) {
@@ -37,20 +28,18 @@ static Instruction* create_instruction(InstructionType type, Arg* arg1, Arg* arg
 static Arg* create_arg(ArgType type, void* value) {
     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
     arg->type = type;
-    if (type == ARG_INT)
-        arg->value.int_value = *(long long*)value;
-    else if (type == ARG_FLOAT)
-        arg->value.float_value = *(double*)value;
-    else if (type == ARG_STRING)
-        arg->value.string_value = (string)value;
-    else if (type == ARG_BOOL)
-        arg->value.bool_value = *(bool*)value;
-    else if (type == ARG_LABEL)
-        arg->value.label = (Id*)value;
-    else if (type == ARG_DESIGN)
-        arg->value.design = (Design*)value;
-    else if (type == ARG_VARIABLE)
-        arg->value.variable = (Id*)value;
+    switch (type) {
+        case ARG_INT: arg->value.int_value = *(long long*)value; break;
+        case ARG_FLOAT: arg->value.float_value = *(double*)value; break;
+        case ARG_STRING: arg->value.string_value = (string)value; break;
+        case ARG_BOOL: arg->value.bool_value = *(bool*)value; break;
+        case ARG_LABEL: arg->value.label = (Id*)value; break;
+        case ARG_DESIGN: arg->value.design = (Design*)value; break;
+        case ARG_VARIABLE: arg->value.variable = (Id*)value; break;
+        case ARG_NONE:
+        case ARG_VOID:
+        default: break;
+    }
     return arg;
 }
 static Block* create_block(Id* label) {
@@ -80,44 +69,38 @@ void codegen_variable(Variable* variable, TACStatus* status) {}
 void codegen_statement(Statement* statement, TACStatus* status) {}
 void codegen_if(If* if_, TACStatus* status) {
     Arg* cond = codegen_expression(if_->condition, status);
-    Id *elif_label = NULL, *end_label = create_var(status, VAR_BLOCK);
-    Arg *elif_arg = NULL, *end_arg = create_arg(ARG_LABEL, end_label);
-    if (if_->else_if == NULL && if_->else_body == NULL) {
-        elif_label = end_label;
-        elif_arg = end_arg;
-    } else {
-        elif_label = create_var(status, VAR_BLOCK);
-        elif_arg = create_arg(ARG_LABEL, elif_label);
+    Id *next_label = create_var(status, VAR_BLOCK), *end_label = next_label;
+    Arg *next_arg = create_arg(ARG_LABEL, next_label), *end_arg = next_arg;
+    if (if_->else_if != NULL || if_->else_body != NULL) {
+        next_label = create_var(status, VAR_BLOCK);
+        next_arg = create_arg(ARG_LABEL, next_label);
     }
-    list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP_F, elif_arg, cond, NULL));
+    list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP_F, next_arg, cond, NULL));
     list(Statement*) body = list_copy(if_->body);
     Statement* stmt;
     while ((stmt = (Statement*)list_pop(body)) != 0)
         codegen_statement(stmt, status);
     list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, end_arg, NULL, NULL));
-    if (elif_label != end_label)
-        add_new_block(elif_label, elif_arg, status, false);
+    if (next_label != end_label)
+        add_new_block(next_label, next_arg, status, false);
     if (if_->else_if != NULL) {
         list(ElseIf*) elif_list = list_copy(if_->else_if);
         ElseIf* elif;
         while ((elif = (ElseIf*)list_pop(elif_list)) != 0) {
             Arg* elif_cond = codegen_expression(elif->condition, status);
-            Id* next_elif_label = NULL;
-            Arg* next_elif_arg = NULL;
-            if (elif_list->head == NULL && if_->else_body == NULL) {
-                next_elif_label = end_label;
-                next_elif_arg = end_arg;
-            } else {
-                next_elif_label = create_var(status, VAR_BLOCK);
-                next_elif_arg = create_arg(ARG_LABEL, next_elif_label);
+            Id* target_label = end_label;
+            Arg* target_arg = end_arg;
+            if (elif_list->head != NULL || if_->else_body != NULL) {
+                target_arg = create_arg(ARG_LABEL, target_label);
+                target_label = create_var(status, VAR_BLOCK);
             }
-            list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP_F, next_elif_arg, elif_cond, NULL));
+            list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP_F, target_arg, elif_cond, NULL));
             list(Statement*) else_if_body = list_copy(elif->body);
             while ((stmt = (Statement*)list_pop(else_if_body)) != 0)
                 codegen_statement(stmt, status);
             list_append(status->current_block->instructions, (pointer)create_instruction(INST_JMP, end_arg, NULL, NULL));
-            if (next_elif_label != end_label)
-                add_new_block(next_elif_label, next_elif_arg, status, false);
+            if (target_label != end_label)
+                add_new_block(target_label, target_arg, status, false);
         }
     }
     if (if_->else_body != NULL) {
@@ -182,9 +165,9 @@ static InstructionType get_instruction_type(OperatorType op) {
         case OP_MUL_ASSIGN: return INST_MUL;
         case OP_DIV:
         case OP_DIV_ASSIGN: return INST_DIV;
-        case OP_ASSIGN: return INST_ASSIGN;
         case OP_MOD:
         case OP_MOD_ASSIGN: return INST_MOD;
+        case OP_ASSIGN: return INST_ASSIGN;
         case OP_EQ: return INST_EQ;
         case OP_NE: return INST_NE;
         case OP_LT: return INST_LT;
@@ -198,6 +181,8 @@ static InstructionType get_instruction_type(OperatorType op) {
     }
 }
 static Arg* load_rvalue(Arg* arg, TACStatus* status) {
+    if (arg == NULL)
+        return NULL;
     if (status->is_get) {
         status->is_get = false;
         Arg* temp = create_arg(ARG_VARIABLE, create_var(status, VAR_TEMP));
@@ -212,8 +197,7 @@ Arg* codegen_expression(Expression* expression, TACStatus* status) {
     status->is_get = false;
     InstructionType base_op = get_instruction_type(expression->operator);
     bool is_compound = (expression->operator == OP_ADD_ASSIGN || expression->operator == OP_SUB_ASSIGN || expression->operator == OP_MUL_ASSIGN || expression->operator == OP_DIV_ASSIGN || expression->operator == OP_MOD_ASSIGN);
-    bool is_assign = (expression->operator == OP_ASSIGN || is_compound);
-    if (is_assign) {
+    if (expression->operator == OP_ASSIGN || is_compound) {
         Arg* right = load_rvalue(codegen_expression(expression->right, status), status);
         Arg* left = codegen_expression(expression->expr_left, status);
         bool left_is_addr = status->is_get;
@@ -227,10 +211,7 @@ Arg* codegen_expression(Expression* expression, TACStatus* status) {
             list_append(status->current_block->instructions, (pointer)create_instruction(base_op, result, left_val, right));
             right = result;
         }
-        if (left_is_addr)
-            list_append(status->current_block->instructions, (pointer)create_instruction(INST_STORE, left, right, NULL));
-        else
-            list_append(status->current_block->instructions, (pointer)create_instruction(INST_ASSIGN, left, right, NULL));
+        list_append(status->current_block->instructions, (pointer)create_instruction(left_is_addr ? INST_STORE : INST_ASSIGN, left, right, NULL));
         status->is_get = false;
         return right;
     }
@@ -251,24 +232,18 @@ Arg* codegen_primary(Primary* primary, TACStatus* status) {
         return create_arg(ARG_FLOAT, &float_value);
     } else if (primary->type == PRIM_STRING)
         return create_arg(ARG_STRING, primary->value.literal_value);
-    else if (primary->type == PRIM_TRUE) {
-        bool bool_value = true;
-        return create_arg(ARG_BOOL, &bool_value);
-    } else if (primary->type == PRIM_FALSE) {
-        bool bool_value = false;
+    else if (primary->type == PRIM_TRUE || primary->type == PRIM_FALSE) {
+        bool bool_value = (primary->type == PRIM_TRUE);
         return create_arg(ARG_BOOL, &bool_value);
     } else if (primary->type == PRIM_EXPRESSION)
         return codegen_expression(primary->value.expr, status);
-    else if (primary->type == PRIM_NOT_OPERAND) {
-        Arg* arg = create_arg(ARG_VARIABLE, create_var(status, VAR_TEMP));
-        Instruction* inst = create_instruction(INST_NOT, arg, codegen_primary(primary->value.operand, status), NULL);
-        list_append(status->current_block->instructions, (pointer)inst);
-        return arg;
-    } else if (primary->type == PRIM_NEG_OPERAND) {
-        Arg* arg = create_arg(ARG_VARIABLE, create_var(status, VAR_TEMP));
+    else if (primary->type == PRIM_NOT_OPERAND || primary->type == PRIM_NEG_OPERAND) {
+        Arg *arg = create_arg(ARG_VARIABLE, create_var(status, VAR_TEMP)), *operand = codegen_primary(primary->value.operand, status);
         long long zero = 0;
-        Instruction* inst = create_instruction(INST_SUB, arg, create_arg(ARG_INT, &zero), codegen_primary(primary->value.operand, status));
-        list_append(status->current_block->instructions, (pointer)inst);
+        if (primary->type == PRIM_NOT_OPERAND)
+            list_append(status->current_block->instructions, (pointer)create_instruction(INST_NOT, arg, operand, NULL));
+        else
+            list_append(status->current_block->instructions, (pointer)create_instruction(INST_SUB, arg, create_arg(ARG_INT, &zero), operand));
         return arg;
     } else if (primary->type == PRIM_VARIABLE_ACCESS)
         return codegen_variable_access(primary->value.var, status);
@@ -278,9 +253,9 @@ Arg* codegen_primary(Primary* primary, TACStatus* status) {
 }
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status) {
     Arg* base = NULL;
-    status->is_get = false;
     if (variable_access->base != NULL)
         base = load_rvalue(codegen_variable_access(variable_access->base, status), status);
+    status->is_get = false;
     if (variable_access->type == VAR_NAME)
         return create_arg(ARG_VARIABLE, codegen_name(variable_access->content.name));
     else if (variable_access->type == VAR_FUNC_CALL) {
@@ -292,20 +267,16 @@ Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status)
             list_append(status->current_block->instructions, (pointer)create_instruction(INST_PARAM, param, NULL, NULL));
             ++arg_count;
         }
-        Arg* var = create_arg(ARG_VARIABLE, create_var(status, VAR_VAR));
-        Arg* int_arg = create_arg(ARG_INT, &arg_count);
+        Arg *var = create_arg(ARG_VARIABLE, create_var(status, VAR_VAR)), *int_arg = create_arg(ARG_INT, &arg_count);
         list_append(status->current_block->instructions, (pointer)create_instruction(INST_CALL, var, base, int_arg));
         return var;
-    } else if (variable_access->type == VAR_GET_ATTR) {
-        Arg* var = create_arg(ARG_VARIABLE, create_var(status, VAR_VAR));
-        Arg* name = create_arg(ARG_VARIABLE, codegen_name(variable_access->content.attr_name));
-        list_append(status->current_block->instructions, (pointer)create_instruction(INST_GET_ATTR, var, base, name));
-        status->is_get = true;
-        return var;
-    } else if (variable_access->type == VAR_GET_SEQ) {
-        Arg* var = create_arg(ARG_VARIABLE, create_var(status, VAR_VAR));
-        Arg* index = load_rvalue(codegen_expression(variable_access->content.index, status), status);
-        list_append(status->current_block->instructions, (pointer)create_instruction(INST_GET_ELEM, var, base, index));
+    } else if (variable_access->type == VAR_GET_ATTR || variable_access->type == VAR_GET_SEQ) {
+        Arg *var = create_arg(ARG_VARIABLE, create_var(status, VAR_VAR)), *offset = NULL;
+        if (variable_access->type == VAR_GET_ATTR)
+            offset = create_arg(ARG_VARIABLE, codegen_name(variable_access->content.attr_name));
+        else
+            offset = load_rvalue(codegen_expression(variable_access->content.index, status), status);
+        list_append(status->current_block->instructions, (pointer)create_instruction(variable_access->type == VAR_GET_ATTR ? INST_GET_ATTR : INST_GET_ELEM, var, base, offset));
         status->is_get = true;
         return var;
     } else
