@@ -77,6 +77,8 @@ static size_t string_memory_used = 0;
 static size_t struct_memory_count = 0;
 static size_t string_memory_count = 0;
 
+static void init(void);
+
 static void increase_memory_size(bool for_struct) {
     MemoryBlock* new_block = (MemoryBlock*)malloc(sizeof(MemoryBlock));
     if (new_block == NULL) {

@@ -99,7 +99,7 @@ Function* parse_function(Lexer* lexer, Scope* now_scope, Parser* parser) {
         parser_error("Expected function return type after 'func'", token);
         return NULL;
     }
-    Name* return_type = search(now_scope, token->lexeme);
+    Name* return_type = search_name(now_scope, token->lexeme);
     if (return_type == 0)
 
     {
@@ -172,7 +172,7 @@ Method* parse_method(Lexer* lexer, Scope* now_scope, Name* class_name, Parser* p
         parser_error("Expected method return type after 'method'", token);
         return NULL;
     }
-    Name* return_type = search(now_scope, token->lexeme);
+    Name* return_type = search_name(now_scope, token->lexeme);
     if (return_type == 0) {
         parser_error("Unknown return type for method", token);
         return NULL;
@@ -276,7 +276,7 @@ Class* parse_class(Lexer* lexer, Scope* now_scope, Parser* parser) {
             parser_error("Unexpected token in class member", token);
         token = get_next_token(lexer, true);
     }
-    Name* constructor = search(class_scope, CONSTRUCTOR_NAME);
+    Name* constructor = search_name(class_scope, CONSTRUCTOR_NAME);
     if (constructor == NULL)
         constructor = create_name(CONSTRUCTOR_NAME, NAME_METHOD, name, NULL, now_scope);
     if (constructor->kind != NAME_METHOD)
@@ -293,7 +293,7 @@ Variable* parse_variable(Lexer* lexer, Scope* now_scope, Parser* parser) {
         parser_error("Expected variable type", token);
         return NULL;
     }
-    Name* type = search(now_scope, token->lexeme);
+    Name* type = search_name(now_scope, token->lexeme);
     if (type != 0) {
         Name* type_ptr = (type);
         if (type_ptr->kind != NAME_TYPE && type_ptr->kind != NAME_CLASS)
@@ -683,7 +683,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, Scope* now_scope, Parser* pa
     Name* current_type = 0;
     Name* base_name = 0;
     Scope* var_scope = 0;
-    base_name = search(now_scope, token->lexeme);
+    base_name = search_name(now_scope, token->lexeme);
     VariableAccess* base = create_variable_access(VAR_NAME, 0, base_name, NULL, NULL);
     token = peek_next_token(lexer, true);
     while (token->type == SYMBOL) {
@@ -703,7 +703,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, Scope* now_scope, Parser* pa
             if (base_name == 0)
                 parser_error("Cannot call undefined variable", token);
             else if (base_name->kind == NAME_CLASS) {
-                base_name = search(base_name->info.scope, CONSTRUCTOR_NAME);
+                base_name = search_name(base_name->info.scope, CONSTRUCTOR_NAME);
                 base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
             }
             if (base_name->kind != NAME_FUNCTION && base_name->kind != NAME_METHOD)
@@ -750,7 +750,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, Scope* now_scope, Parser* pa
                 parser_error("Expected attribute name after '.'", token);
                 return NULL;
             }
-            base_name = search(var_scope, token->lexeme);
+            base_name = search_name(var_scope, token->lexeme);
             if (base_name == 0) {
                 parser_error("Unknown attribute name", token);
                 return NULL;

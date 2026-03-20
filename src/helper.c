@@ -11,7 +11,7 @@ list() create_list(void) {
     return new_list;
 }
 
-Node* create_node(pointer content) {
+static Node* create_node(pointer content) {
     Node* new_node = (Node*)alloc_memory(sizeof(Node));
     new_node->next = 0;
     new_node->content = content;
@@ -71,7 +71,7 @@ pointer list_pop_back(list() list) {
 // parser helper functions
 Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info, Scope* scope) {
     static size_t id_counter = 0;
-    Name* result = search(scope, name);
+    Name* result = search_name(scope, name);
     if (result != NULL) {
         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, returning existing name, kind: ", name);
         switch (result->kind) {
@@ -126,7 +126,7 @@ Scope* create_scope(Scope* parent) {
     return new_scope;
 }
 
-Name* search(Scope* scope, string name) {
+Name* search_name(Scope* scope, string name) {
     while (scope != NULL) {
         list(Name*) names = scope->names;
         Node* current = names->head;
@@ -144,10 +144,6 @@ Name* search(Scope* scope, string name) {
 
 bool is_builtin_type(string type) {
     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
-}
-
-bool is_type(Name* type) {
-    return type->kind == NAME_TYPE || type->kind == NAME_CLASS;
 }
 
 void parser_error(const string message, Token* token) {

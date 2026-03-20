@@ -16,7 +16,6 @@ typedef struct Token Token;
 
 // list helper functions
 list() create_list(void);
-Node* create_node(pointer content);
 void list_append(list() list, pointer item);
 list() list_copy(list() original);
 pointer list_pop(list() list);
@@ -25,9 +24,8 @@ pointer list_pop_back(list() list);
 // parser helper functions
 Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info, Scope* scope);
 Scope* create_scope(Scope* parent);
-Name* search(Scope* scope, string name);
+Name* search_name(Scope* scope, string name);
 bool is_builtin_type(string type);
-bool is_type(Name* type);
 void parser_error(const string message, Token* token);
 void indention(FILE* out, size_t indent, bool is_last, Parser* parser);
 Parser* create_parser(void);
