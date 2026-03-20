@@ -18,6 +18,7 @@ typedef struct Design {
     list(Attribute*) attributes;
 } Design;
 typedef struct Attribute {
+    Name* original_name;
     Id* type;
     Id* name;
     size_t offset;
@@ -33,6 +34,7 @@ typedef struct Block {
     list(Instruction*) instructions;
 } Block;
 typedef struct Var {
+    Name* original_name;
     Id* name;
     Id* type;
 } Var;
@@ -104,6 +106,14 @@ typedef struct TACStatus {
     bool is_get;
 } TACStatus;
 
+typedef enum VarType {
+    VAR_ATTR = 'a',
+    VAR_PARAM = 'p',
+    VAR_VAR = 'v',
+    VAR_TEMP = 't',
+    VAR_BLOCK = 'b',
+} VarType;
+
 TAC* codegen_code(Code* code);
 void codegen_code_member(CodeMember* code_member, TACStatus* status);
 void codegen_import(Import* import, TACStatus* status);
@@ -111,7 +121,7 @@ void codegen_function(Function* function, TACStatus* status);
 void codegen_method(Method* method, TACStatus* status);
 void codegen_class_member(ClassMember* class_member, TACStatus* status);
 void codegen_class(Class* class, TACStatus* status);
-void codegen_variable(Variable* variable, TACStatus* status);
+void codegen_variable(Variable* variable, TACStatus* status, VarType type);
 void codegen_statement(Statement* statement, TACStatus* status);
 void codegen_if(If* if_, TACStatus* status);
 void codegen_else_if(ElseIf* else_if, TACStatus* status);
@@ -120,6 +130,5 @@ void codegen_while(While* while_, TACStatus* status);
 Arg* codegen_expression(Expression* expression, TACStatus* status);
 Arg* codegen_primary(Primary* primary, TACStatus* status);
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status);
-Id* codegen_name(Name* name);
 
 #endif  // CODEGEN_H
