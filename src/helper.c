@@ -188,7 +188,7 @@ Name* parse_import_file(string import_name, string source, Scope* scope) {
     Name* name = 0;
     FILE* openfile;
     // temporary hack, need path system
-    char filename[MAX_FILENAME_SIZE];
+    char filename[FILENAME_MAX];
     filename[0] = '\0';
     if (source == 0) {
         if (strcmp(import_name, "print") == 0)
@@ -197,18 +197,25 @@ Name* parse_import_file(string import_name, string source, Scope* scope) {
             strcpy(filename, "./std/arr.tc");
         else {
             fprintf(stderr, "Error: Standard library file for import not found: %s\n", filename);
-            return 0;
+            return NULL;
         }
     } else {
-        string_append(filename, MAX_FILENAME_SIZE, filename, source);
-        string_append(filename, MAX_FILENAME_SIZE, filename, "/");
-        string_append(filename, MAX_FILENAME_SIZE, filename, import_name);
-        string_append(filename, MAX_FILENAME_SIZE, filename, ".tc");
+        size_t len = strlen(source) + 1 + strlen(import_name) + 3 + 1;
+        if (len >= FILENAME_MAX) {
+            if (len - strlen(import_name) < FILENAME_MAX) {
+                fprintf(stderr, "Warning: Constructed filename for import is too long, truncating import name: %s/%s.tc\n", source, import_name);
+                snprintf(filename, FILENAME_MAX, "%s/%*.s.tc", source, FILENAME_MAX - strlen(source) - 6, import_name);
+            } else {
+                fprintf(stderr, "Error: Constructed filename for import is too long: %s/%s.tc\n", source, import_name);
+                return NULL;
+            }
+        } else
+            snprintf(filename, FILENAME_MAX, "%s/%s.tc", source, import_name);
     }
     openfile = fopen(filename, "r");
     if (openfile == NULL) {
         fprintf(stderr, "Error opening library file for import: %s\n", filename);
-        return 0;
+        return NULL;
     }
     printf("Info: Starting parsing lib file for import: %s\n", filename);
     size_t length = 0;
@@ -218,7 +225,7 @@ Name* parse_import_file(string import_name, string source, Scope* scope) {
     printf("Info: Finished parsing lib file for import: %s\n", filename);
     if (code == 0) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
-        return 0;
+        return NULL;
     }
     list(Node*) names = code->global_scope->names;
     Node* current = names->head;
@@ -314,6 +321,6 @@ string operator_to_string(OperatorType op) {
         case OP_DIV: return DIV_SYMBOL;
         case OP_MOD: return MOD_SYMBOL;
         case OP_NONE:
-        default: return 0;
+        default: return NULL;
     }
 }

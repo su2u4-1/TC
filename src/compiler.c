@@ -4,16 +4,6 @@
 #include "helper.h"
 #include "lexer.h"
 
-void string_append(string dest, const size_t dest_length, const string src, const string new) {
-    size_t src_length = strlen(src), new_length = strlen(new);
-    if (dest_length <= src_length + new_length) {
-        size_t max_src_length = dest_length - new_length - 1;
-        snprintf(dest, dest_length, "%.*s%s", (int)max_src_length, src, new);
-    } else if (src == dest)
-        snprintf(dest + src_length, dest_length - src_length, "%s", new);
-    else
-        snprintf(dest, dest_length, "%s%s", src, new);
-}
 string read_source(FILE* file, size_t* length) {
     fseek(file, 0, SEEK_END);
     *length = (size_t)ftell(file);
