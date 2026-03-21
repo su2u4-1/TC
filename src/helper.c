@@ -112,11 +112,11 @@ Symbol* search_name(SymbolTable* scope, string name) {
     return NULL;
 }
 
-bool is_builtin_type(string type) {
+inline bool is_builtin_type(string type) {
     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 }
 
-void parser_error(const string message, Token* token) {
+inline void parser_error(const string message, Token* token) {
     fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", token->line + 1, token->column + 1, message);
 }
 
@@ -129,7 +129,7 @@ static void set_bool_list(char bool_list[32], size_t index, bool value) {
 }
 
 static inline bool get_bool_list(char bool_list[32], size_t index) {
-    return (bool_list[index / 8] & (1 << (index % 8))) == 0;
+    return (bool_list[index / 8] & (1 << (index % 8))) != 0;
 }
 
 void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
