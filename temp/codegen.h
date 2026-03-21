@@ -3,40 +3,25 @@
 
 #include "parser.h"
 
-typedef struct Id {
-    string name;
-    size_t id;
-} Id;
 typedef struct TAC {
-    list(Design*) designs;
-    Id* entry_point;
+    list(SymbolTable*) designs;
+    Symbol* entry_point;
     list(Subroutine*) subroutines;
 } TAC;
-typedef struct Design {
-    Id* name;
-    size_t size;
-    list(Attribute*) attributes;
-} Design;
-typedef struct Attribute {
-    Symbol* original_name;
-    Id* type;
-    Id* name;
-    size_t offset;
-} Attribute;
 typedef struct Subroutine {
-    Id* name;
+    Symbol* name;
     list(Var*) parameters;
     list(Var*) local_vars;
     list(Block*) blocks;
 } Subroutine;
 typedef struct Block {
-    Id* label;
+    Symbol* label;
     list(Instruction*) instructions;
 } Block;
 typedef struct Var {
     Symbol* original_name;
-    Id* name;
-    Id* type;
+    Symbol* name;
+    Symbol* type;
 } Var;
 typedef enum ArgType {
     ARG_VARIABLE,
@@ -46,18 +31,16 @@ typedef enum ArgType {
     ARG_BOOL,
     ARG_VOID,
     ARG_LABEL,
-    ARG_DESIGN,
     ARG_NONE
 } ArgType;
 typedef struct Arg {
     union {
-        Id* variable;
+        Symbol* variable;
         long long int_value;
         double float_value;
         string string_value;
         bool bool_value;
-        Id* label;
-        Design* design;
+        Symbol* label;
     } value;
     ArgType type;
 } Arg;
@@ -97,12 +80,12 @@ typedef struct Instruction {
 } Instruction;
 
 typedef struct TACStatus {
-    list(Design*) designs;
+    list(SymbolTable*) designs;
     Subroutine* current_subroutine;
     Block* current_block;
     list(Arg*) end_labels;
     list(Arg*) start_labels;
-    size_t id_cont;
+    size_t id_count;
     bool is_get;
 } TACStatus;
 

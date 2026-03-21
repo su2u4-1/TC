@@ -2,62 +2,54 @@
 
 #include "helper.h"
 
-static Id* search_id(TACStatus* status, Symbol* original_name, string label_name, VarType type) {
+static Symbol* search_id(TACStatus* status, Symbol* original_name, VarType type) {
     Var* var = NULL;
-    if ((type == VAR_TEMP || type == VAR_VAR) && original_name != NULL) {
-        list(Var*) local_vars = list_copy(status->current_subroutine->local_vars);
-        while ((var = (Var*)list_pop(local_vars)) != NULL) {
+    if (original_name == NULL)
+        fprintf(stderr, "Warning: original_name or label_name is NULL\n");
+    else if (type == VAR_TEMP || type == VAR_VAR || type == VAR_PARAM) {
+        list(Var*) vars = list_copy(status->current_subroutine->local_vars);
+        if (type == VAR_PARAM)
+            vars = list_copy(status->current_subroutine->parameters);
+        while ((var = (Var*)list_pop(vars)) != NULL) {
             if (var->original_name == original_name)
                 return var->name;
         }
-    } else if (type == VAR_PARAM && original_name != NULL) {
-        list(Var*) parameters = list_copy(status->current_subroutine->parameters);
-        while ((var = (Var*)list_pop(parameters)) != NULL) {
-            if (var->original_name == original_name)
-                return var->name;
-        }
-    } else if (type == VAR_ATTR && original_name != NULL) {
-        list(Design*) designs = list_copy(status->designs);
-        Design* design;
-        while ((design = (Design*)list_pop(designs)) != NULL) {
-            list(Attribute*) attributes = list_copy(design->attributes);
-            Attribute* attr;
-            while ((attr = (Attribute*)list_pop(attributes)) != NULL) {
-                if (attr->original_name == original_name)
-                    return attr->name;
+    } else if (type == VAR_ATTR) {
+        list(SymbolTable*) symbol_tables = list_copy(status->designs);
+        SymbolTable* symbol_table;
+        while ((symbol_table = (SymbolTable*)list_pop(symbol_tables)) != NULL) {
+            list(Symbol*) attributes = list_copy(symbol_table->symbols);
+            Symbol* attr;
+            while ((attr = (Symbol*)list_pop(attributes)) != NULL) {
+                if (attr->original_name == original_name->original_name)
+                    return attr;
             }
         }
-    } else if (type == VAR_BLOCK && label_name != NULL) {
+    } else if (type == VAR_BLOCK) {
         list(Block*) blocks = list_copy(status->current_subroutine->blocks);
         Block* block;
         while ((block = (Block*)list_pop(blocks)) != NULL) {
-            if (block->label->name == label_name)
+            if (block->label == original_name)
                 return block->label;
         }
-    } else if (label_name == NULL || original_name == NULL)
-        fprintf(stderr, "Warning: original_name or label_name is NULL\n");
-    else
-        fprintf(stderr, "Warning: Unknown VarType: %c\n", type);
-    fprintf(stderr, "[DEBUG] Variable not found: %s\n", label_name == NULL ? original_name->original_name : label_name);
+    } else
+        fprintf(stderr, "Error: Unknown VarType: %c, original_name: %s\n", type, original_name != NULL ? original_name->original_name : "NULL");
     return NULL;
 }
-static Id* create_id(TACStatus* status, Symbol* original_name, string label_name, VarType type) {
-    Id* id;
-    if ((original_name != NULL && type != VAR_BLOCK) || (label_name != NULL && type == VAR_BLOCK)) {
-        id = search_id(status, original_name, label_name, type);
+static Symbol* create_id(TACStatus* status, Symbol* original_name, VarType type) {
+    if (original_name != NULL) {
+        Symbol* id = search_id(status, original_name, type);
         if (id != NULL)
             return id;
     }
-    id = (Id*)alloc_memory(sizeof(Id));
-    id->id = ++status->id_cont;
-    id->name = (char*)alloc_memory(sizeDigit + 2);
-    snprintf(id->name, sizeDigit + 2, "%c%d", type, id->id);
-    return id;
+    string name = (string)alloc_memory(sizeDigit + 2);
+    snprintf(name, sizeDigit + 2, "%c%d", type, ++status->id_count);
+    return create_symbol(name, SYMBOL_VARIABLE, NULL, NULL);  // TODO
 }
-static Var* create_var(TACStatus* status, Symbol* original_name, Id* type, VarType var_type) {
+static Var* create_var(TACStatus* status, Symbol* original_name, Symbol* type, VarType var_type) {
     Var* var = (Var*)alloc_memory(sizeof(Var));
     var->original_name = original_name;
-    var->name = create_id(status, NULL, NULL, var_type);
+    var->name = create_id(status, NULL, var_type);
     var->type = type;
     if (var_type == VAR_PARAM)
         list_append(status->current_subroutine->parameters, (pointer)var);
@@ -85,16 +77,15 @@ static Arg* create_arg(void* value, ArgType type) {
         case ARG_FLOAT: arg->value.float_value = *(double*)value; break;
         case ARG_STRING: arg->value.string_value = (string)value; break;
         case ARG_BOOL: arg->value.bool_value = *(bool*)value; break;
-        case ARG_LABEL: arg->value.label = (Id*)value; break;
-        case ARG_DESIGN: arg->value.design = (Design*)value; break;
-        case ARG_VARIABLE: arg->value.variable = (Id*)value; break;
+        case ARG_LABEL: arg->value.label = (Symbol*)value; break;
+        case ARG_VARIABLE: arg->value.variable = (Symbol*)value; break;
         case ARG_NONE:
         case ARG_VOID:
         default: break;
     }
     return arg;
 }
-static Block* create_block(Id* label) {
+static Block* create_block(Symbol* label) {
     Block* block = (Block*)alloc_memory(sizeof(Block));
     block->label = label;
     block->instructions = create_list();
@@ -102,7 +93,7 @@ static Block* create_block(Id* label) {
 }
 #define push_inst(type, arg1, arg2, arg3) list_append(status->current_block->instructions, (pointer)create_instruction(type, arg1, arg2, arg3))
 
-static void add_new_block(Id* label, TACStatus* status) {
+static void add_new_block(Symbol* label, TACStatus* status) {
     Block* block = create_block(label);
     list_append(status->current_subroutine->blocks, (pointer)block);
     status->current_block = block;
@@ -112,7 +103,7 @@ static Arg* load_rvalue(Arg* arg, TACStatus* status) {
         return NULL;
     if (status->is_get) {
         status->is_get = false;
-        Arg* temp = create_arg(create_id(status, NULL, NULL, VAR_TEMP), ARG_VARIABLE);
+        Arg* temp = create_arg(create_id(status, NULL, VAR_TEMP), ARG_VARIABLE);
         push_inst(INST_LOAD, temp, arg, NULL);
         return temp;
     }
@@ -130,7 +121,7 @@ void codegen_class_member(ClassMember* class_member, TACStatus* status) {}
 void codegen_class(Class* class, TACStatus* status) {}
 void codegen_variable(Variable* variable, TACStatus* status, VarType type) {
     list(Var*) local = status->current_subroutine->local_vars;
-    Var* var = create_var(status, variable->name, create_id(status, variable->type, NULL, VAR_VAR), type);
+    Var* var = create_var(status, variable->name, create_id(status, variable->type, VAR_VAR), type);
     if (variable->value != NULL) {
         Arg* init_value = load_rvalue(codegen_expression(variable->value, status), status);
         push_inst(INST_ASSIGN, create_arg(var->name, ARG_VARIABLE), init_value, NULL);
@@ -171,7 +162,7 @@ void codegen_statement(Statement* statement, TACStatus* status) {
     }
 }
 void codegen_if(If* if_, TACStatus* status) {
-    Id *then_label = create_id(status, NULL, NULL, VAR_BLOCK), *next_branch_label = create_id(status, NULL, NULL, VAR_BLOCK), *end_label = create_id(status, NULL, NULL, VAR_BLOCK);
+    Symbol *then_label = create_id(status, NULL, VAR_BLOCK), *next_branch_label = create_id(status, NULL, VAR_BLOCK), *end_label = create_id(status, NULL, VAR_BLOCK);
     Arg *next_branch_arg = create_arg(next_branch_label, ARG_LABEL), *end_arg = create_arg(end_label, ARG_LABEL);
     Arg* cond = load_rvalue(codegen_expression(if_->condition, status), status);
     push_inst(INST_JMP_C, create_arg(then_label, ARG_LABEL), next_branch_arg, cond);
@@ -187,7 +178,7 @@ void codegen_if(If* if_, TACStatus* status) {
         ElseIf* elif;
         while ((elif = (ElseIf*)list_pop(elif_list)) != NULL) {
             Arg* elif_cond = load_rvalue(codegen_expression(elif->condition, status), status);
-            Id *elif_then_label = create_id(status, NULL, NULL, VAR_BLOCK), *elif_next_label = create_id(status, NULL, NULL, VAR_BLOCK);
+            Symbol *elif_then_label = create_id(status, NULL, VAR_BLOCK), *elif_next_label = create_id(status, NULL, VAR_BLOCK);
             Arg* elif_next_arg = create_arg(elif_next_label, ARG_LABEL);
             push_inst(INST_JMP_C, create_arg(elif_then_label, ARG_LABEL), elif_next_arg, elif_cond);
             add_new_block(elif_then_label, status);
@@ -211,10 +202,10 @@ void codegen_if(If* if_, TACStatus* status) {
 void codegen_for(For* for_, TACStatus* status) {
     if (for_->initializer != NULL)
         codegen_variable(for_->initializer, status, VAR_VAR);
-    Id* cond_label = create_id(status, NULL, NULL, VAR_BLOCK);
-    Id* body_label = create_id(status, NULL, NULL, VAR_BLOCK);
-    Id* incr_label = create_id(status, NULL, NULL, VAR_BLOCK);
-    Id* end_label = create_id(status, NULL, NULL, VAR_BLOCK);
+    Symbol* cond_label = create_id(status, NULL, VAR_BLOCK);
+    Symbol* body_label = create_id(status, NULL, VAR_BLOCK);
+    Symbol* incr_label = create_id(status, NULL, VAR_BLOCK);
+    Symbol* end_label = create_id(status, NULL, VAR_BLOCK);
     Arg* cond_arg = create_arg(cond_label, ARG_LABEL);
     Arg* body_arg = create_arg(body_label, ARG_LABEL);
     Arg* incr_arg = create_arg(incr_label, ARG_LABEL);
@@ -242,9 +233,9 @@ void codegen_for(For* for_, TACStatus* status) {
     add_new_block(end_label, status);
 }
 void codegen_while(While* while_, TACStatus* status) {
-    Id* cond_label = create_id(status, NULL, NULL, VAR_BLOCK);
-    Id* body_label = create_id(status, NULL, NULL, VAR_BLOCK);
-    Id* end_label = create_id(status, NULL, NULL, VAR_BLOCK);
+    Symbol* cond_label = create_id(status, NULL, VAR_BLOCK);
+    Symbol* body_label = create_id(status, NULL, VAR_BLOCK);
+    Symbol* end_label = create_id(status, NULL, VAR_BLOCK);
     Arg* cond_arg = create_arg(cond_label, ARG_LABEL);
     Arg* end_arg = create_arg(end_label, ARG_LABEL);
     push_inst(INST_JMP, cond_arg, NULL, NULL);
@@ -301,10 +292,10 @@ Arg* codegen_expression(Expression* expression, TACStatus* status) {
         if (is_compound) {
             Arg* left_val = left;
             if (left_is_addr) {
-                left_val = create_arg(create_id(status, NULL, NULL, VAR_TEMP), ARG_VARIABLE);
+                left_val = create_arg(create_id(status, NULL, VAR_TEMP), ARG_VARIABLE);
                 push_inst(INST_LOAD, left_val, left, NULL);
             }
-            Arg* result = create_arg(create_id(status, NULL, NULL, VAR_TEMP), ARG_VARIABLE);
+            Arg* result = create_arg(create_id(status, NULL, VAR_TEMP), ARG_VARIABLE);
             push_inst(base_op, result, left_val, right);
             right = result;
         }
@@ -314,7 +305,7 @@ Arg* codegen_expression(Expression* expression, TACStatus* status) {
     }
     Arg* left = load_rvalue(codegen_expression(expression->expr_left, status), status);
     Arg* right = load_rvalue(codegen_expression(expression->right, status), status);
-    Arg* result = create_arg(create_id(status, NULL, NULL, VAR_TEMP), ARG_VARIABLE);
+    Arg* result = create_arg(create_id(status, NULL, VAR_TEMP), ARG_VARIABLE);
     push_inst(base_op, result, left, right);
     status->is_get = false;
     return result;
@@ -335,7 +326,7 @@ Arg* codegen_primary(Primary* primary, TACStatus* status) {
     } else if (primary->type == PRIM_EXPRESSION)
         return codegen_expression(primary->value.expr, status);
     else if (primary->type == PRIM_NOT_OPERAND || primary->type == PRIM_NEG_OPERAND) {
-        Arg *arg = create_arg(create_id(status, NULL, NULL, VAR_TEMP), ARG_VARIABLE), *operand = codegen_primary(primary->value.operand, status);
+        Arg *arg = create_arg(create_id(status, NULL, VAR_TEMP), ARG_VARIABLE), *operand = codegen_primary(primary->value.operand, status);
         long long zero = 0;
         if (primary->type == PRIM_NOT_OPERAND)
             push_inst(INST_NOT, arg, operand, NULL);
@@ -354,7 +345,7 @@ Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status)
         base = load_rvalue(codegen_variable_access(variable_access->base, status), status);
     status->is_get = false;
     if (variable_access->type == VAR_NAME)
-        return create_arg(create_id(status, variable_access->content.name, NULL, VAR_VAR), ARG_VARIABLE);
+        return create_arg(create_id(status, variable_access->content.name, VAR_VAR), ARG_VARIABLE);
     else if (variable_access->type == VAR_FUNC_CALL) {
         list(Expression*) args = list_copy(variable_access->content.args);
         Expression* expr;
@@ -364,13 +355,13 @@ Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status)
             push_inst(INST_PARAM, param, NULL, NULL);
             ++arg_count;
         }
-        Arg *var = create_arg(create_id(status, NULL, NULL, VAR_TEMP), ARG_VARIABLE), *int_arg = create_arg(&arg_count, ARG_INT);
+        Arg *var = create_arg(create_id(status, NULL, VAR_TEMP), ARG_VARIABLE), *int_arg = create_arg(&arg_count, ARG_INT);
         push_inst(INST_CALL, var, base, int_arg);
         return var;
     } else if (variable_access->type == VAR_GET_ATTR || variable_access->type == VAR_GET_SEQ) {
-        Arg *var = create_arg(create_id(status, NULL, NULL, VAR_TEMP), ARG_VARIABLE), *offset = NULL;
+        Arg *var = create_arg(create_id(status, NULL, VAR_TEMP), ARG_VARIABLE), *offset = NULL;
         if (variable_access->type == VAR_GET_ATTR)
-            offset = create_arg(create_id(status, variable_access->content.attr_name, NULL, VAR_VAR), ARG_VARIABLE);
+            offset = create_arg(create_id(status, variable_access->content.attr_name, VAR_VAR), ARG_VARIABLE);
         else
             offset = load_rvalue(codegen_expression(variable_access->content.index, status), status);
         push_inst(variable_access->type == VAR_GET_ATTR ? INST_GET_ATTR : INST_GET_ELEM, var, base, offset);
