@@ -111,7 +111,7 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         parser_error("Expected function name after return type", token);
         return NULL;
     }
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_SUBROUTINE, return_type, now_scope);
+    Symbol* name = create_symbol(token->lexeme, SYMBOL_SUBROUTINE, return_type, function_scope);
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after function name", token);
@@ -182,7 +182,7 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
         parser_error("Expected method name after return type", token);
         return NULL;
     }
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_SUBROUTINE, return_type, now_scope);
+    Symbol* name = create_symbol(token->lexeme, SYMBOL_SUBROUTINE, return_type, method_scope);
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after method name", token);
@@ -601,7 +601,7 @@ Expression* parse_expression(Lexer* lexer, SymbolTable* now_scope, Parser* parse
         parser_error("Failed to parse expression primary", peek_current_token(lexer));
         return NULL;
     }
-    return parse_expr_prec(lexer, create_expression(OP_NONE, NULL, left_primary, NULL), NULL, now_scope, parser);
+    return parse_expr_prec(lexer, create_expression(OP_NONE, NULL, left_primary, NULL), 0, now_scope, parser);
 }
 Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
 #ifdef DEBUG

@@ -22,7 +22,7 @@ void list_append(list() list, pointer item) {
     if (list == NULL)
         list = create_list();
     Node* new_node = create_node(item);
-    if (list->head == 0) {
+    if (list->head == NULL) {
         list->head = new_node;
         list->tail = new_node;
     } else {
@@ -73,14 +73,17 @@ Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, Symbo
     static size_t id_counter = 0;
     Symbol* result = search_name(scope, original_name);
     if (result != NULL)
-        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, returning existing name, kind: ", result->kind);
+        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", original_name, result->kind, result->id, id_counter + 1);
     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
     new_name->original_name = original_name;
     new_name->id = ++id_counter;
     new_name->kind = kind;
     new_name->type = type;
     new_name->scope = scope;
-    list_append(scope->symbols, (pointer)new_name);
+    if (kind == SYMBOL_CLASS || kind == SYMBOL_SUBROUTINE)
+        list_append(scope->parent->symbols, (pointer)new_name);
+    else
+        list_append(scope->symbols, (pointer)new_name);
     return new_name;
 }
 
@@ -95,7 +98,7 @@ Symbol* search_name(SymbolTable* scope, string name) {
     while (scope != NULL) {
         list(Symbol*) names = scope->symbols;
         Node* current = names->head;
-        while (current != 0) {
+        while (current != NULL) {
             Node* node_ptr = (current);
             Symbol* current_name = (Symbol*)node_ptr->content;
             if (string_equal(current_name->original_name, name))
@@ -151,7 +154,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope)
     // temporary hack, need path system
     char filename[FILENAME_MAX];
     filename[0] = '\0';
-    if (source == 0) {
+    if (source == NULL) {
         if (strcmp(import_name, "print") == 0)
             strcpy(filename, "./std/print.tc");
         else if (strcmp(import_name, "arr") == 0)
@@ -161,17 +164,11 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope)
             return NULL;
         }
     } else {
-        size_t len = strlen(source) + 1 + strlen(import_name) + 3 + 1;
+        int len = snprintf(filename, FILENAME_MAX, "%s/%s.tc", source, import_name);
         if (len >= FILENAME_MAX) {
-            if (len - strlen(import_name) < FILENAME_MAX) {
-                fprintf(stderr, "Warning: Constructed filename for import is too long, truncating import name: %s/%s.tc\n", source, import_name);
-                snprintf(filename, FILENAME_MAX, "%s/%*.s.tc", source, FILENAME_MAX - strlen(source) - 6, import_name);
-            } else {
-                fprintf(stderr, "Error: Constructed filename for import is too long: %s/%s.tc\n", source, import_name);
-                return NULL;
-            }
-        } else
-            snprintf(filename, FILENAME_MAX, "%s/%s.tc", source, import_name);
+            fprintf(stderr, "Error: Import path is too long\n");
+            return NULL;
+        }
     }
     openfile = fopen(filename, "r");
     if (openfile == NULL) {
@@ -184,7 +181,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope)
     fclose(openfile);
     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser());
     printf("Info: Finished parsing lib file for import: %s\n", filename);
-    if (code == 0) {
+    if (code == NULL) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
         return NULL;
     }
