@@ -132,7 +132,7 @@ extern SymbolTable* builtin_scope;
 string create_string(const char* data, size_t length);
 pointer alloc_memory(size_t size);
 bool is_keyword(const string str);
-inline bool string_equal(string a, string b);
+bool string_equal(string a, string b);
 string get_info(void);
 
 #endif  // LIB_H
