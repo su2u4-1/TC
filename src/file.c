@@ -212,7 +212,11 @@ void normalize_path(File* file) {
         if (i == path_len || path_copy[i] == '/') {
             if (i > start) {
                 size_t comp_len = i - start;
-                char component[256];
+                if (comp_len >= componentMaxSize) {
+                    comp_len = componentMaxSize - 1;
+                    fprintf(stderr, "Warning: Path component too long, truncating to %zu characters\n", comp_len);
+                }
+                char component[componentMaxSize];
                 strncpy(component, path_copy + start, comp_len);
                 component[comp_len] = '\0';
 

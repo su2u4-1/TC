@@ -3,6 +3,8 @@
 
 #include "lib.h"
 
+#define componentMaxSize 256  // Max size for a single path component
+
 typedef struct StrNode StrNode;
 struct StrNode {
     string dir;
