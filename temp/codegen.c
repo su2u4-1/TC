@@ -2,7 +2,7 @@
 
 #include "helper.h"
 
-static Id* search_id(TACStatus* status, Name* original_name, string label_name, VarType type) {
+static Id* search_id(TACStatus* status, Symbol* original_name, string label_name, VarType type) {
     Var* var = NULL;
     if ((type == VAR_TEMP || type == VAR_VAR) && original_name != NULL) {
         list(Var*) local_vars = list_copy(status->current_subroutine->local_vars);
@@ -38,10 +38,10 @@ static Id* search_id(TACStatus* status, Name* original_name, string label_name, 
         fprintf(stderr, "Warning: original_name or label_name is NULL\n");
     else
         fprintf(stderr, "Warning: Unknown VarType: %c\n", type);
-    fprintf(stderr, "[DEBUG] Variable not found: %s\n", label_name == NULL ? original_name->name : label_name);
+    fprintf(stderr, "[DEBUG] Variable not found: %s\n", label_name == NULL ? original_name->original_name : label_name);
     return NULL;
 }
-static Id* create_id(TACStatus* status, Name* original_name, string label_name, VarType type) {
+static Id* create_id(TACStatus* status, Symbol* original_name, string label_name, VarType type) {
     Id* id;
     if ((original_name != NULL && type != VAR_BLOCK) || (label_name != NULL && type == VAR_BLOCK)) {
         id = search_id(status, original_name, label_name, type);
@@ -54,7 +54,7 @@ static Id* create_id(TACStatus* status, Name* original_name, string label_name, 
     snprintf(id->name, sizeDigit + 2, "%c%d", type, id->id);
     return id;
 }
-static Var* create_var(TACStatus* status, Name* original_name, Id* type, VarType var_type) {
+static Var* create_var(TACStatus* status, Symbol* original_name, Id* type, VarType var_type) {
     Var* var = (Var*)alloc_memory(sizeof(Var));
     var->original_name = original_name;
     var->name = create_id(status, NULL, NULL, var_type);

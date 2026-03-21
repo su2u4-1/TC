@@ -18,7 +18,7 @@ typedef struct Design {
     list(Attribute*) attributes;
 } Design;
 typedef struct Attribute {
-    Name* original_name;
+    Symbol* original_name;
     Id* type;
     Id* name;
     size_t offset;
@@ -34,7 +34,7 @@ typedef struct Block {
     list(Instruction*) instructions;
 } Block;
 typedef struct Var {
-    Name* original_name;
+    Symbol* original_name;
     Id* name;
     Id* type;
 } Var;
