@@ -7,11 +7,11 @@ Lexer* create_lexer(string source, size_t length) {
     lexer->length = length;
     lexer->line = 0;
     lexer->column = 0;
-    lexer->peeked_token = 0;
+    lexer->peeked_token = NULL;
     lexer->peeked_position = 0;
     lexer->peeked_line = 0;
     lexer->peeked_column = 0;
-    lexer->current_token = 0;
+    lexer->current_token = NULL;
     return lexer;
 }
 
@@ -59,7 +59,7 @@ static void move_position(Lexer* lexer, int count) {
 static Token* next_token(Lexer* lexer, bool skip_comment) {
     char c = get_current_char(lexer);
     if (c == '\0')
-        return create_token(EOF_TOKEN, 0, lexer->line, lexer->column);
+        return create_token(EOF_TOKEN, NULL, lexer->line, lexer->column);
     else if (c == ' ' || c == '\t' || c == '\r')
         return next_token(lexer, skip_comment);
     else if (c == '\n') {
@@ -208,13 +208,13 @@ static Token* next_token(Lexer* lexer, bool skip_comment) {
             return create_token(SYMBOL, ASSIGN_SYMBOL, lexer->line, lexer->column - 1);
         else {
             lexer_error("Unexpected character", lexer->line, lexer->column - 1);
-            return create_token(EOF_TOKEN, 0, 0, 0);
+            return create_token(EOF_TOKEN, NULL, 0, 0);
         }
     }
 }
 
 Token* get_next_token(Lexer* lexer, bool skip_comment) {
-    if (lexer->peeked_token != 0) {
+    if (lexer->peeked_token != NULL) {
         lexer->current_token = lexer->peeked_token;
         lexer->position = lexer->peeked_position;
         lexer->line = lexer->peeked_line;
@@ -227,7 +227,7 @@ Token* get_next_token(Lexer* lexer, bool skip_comment) {
 }
 
 Token* peek_next_token(Lexer* lexer, bool skip_comment) {
-    if (lexer->peeked_token != 0)
+    if (lexer->peeked_token != NULL)
         return lexer->peeked_token;
     size_t saved_position = lexer->position;
     size_t saved_line = lexer->line;
@@ -251,9 +251,9 @@ void reset_lexer(Lexer* lexer) {
     lexer->position = 0;
     lexer->line = 0;
     lexer->column = 0;
-    lexer->peeked_token = 0;
+    lexer->peeked_token = NULL;
     lexer->peeked_position = 0;
     lexer->peeked_line = 0;
     lexer->peeked_column = 0;
-    lexer->current_token = 0;
+    lexer->current_token = NULL;
 }

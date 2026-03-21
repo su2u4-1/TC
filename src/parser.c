@@ -100,9 +100,7 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         return NULL;
     }
     Symbol* return_type = search_name(now_scope, token->lexeme);
-    if (return_type == NULL)
-
-    {
+    if (return_type == NULL) {
         parser_error("Unknown function return type", token);
         return NULL;
     }
@@ -295,7 +293,7 @@ Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     Symbol* type = search_name(now_scope, token->lexeme);
     if (type != NULL) {
-        Symbol* type_ptr = (type);
+        Symbol* type_ptr = type;
         if (type_ptr->kind != SYMBOL_TYPE && type_ptr->kind != SYMBOL_CLASS)
             parser_error("Expected a type for variable declaration", token);
     } else
@@ -336,9 +334,7 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
             token = get_next_token(lexer, true);
             statement = create_statement(RETURN_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
         } else if (string_equal(token->lexeme, BREAK_KEYWORD)) {
-            if (!(parser->in_loop))
-
-            {
+            if (!parser->in_loop) {
                 parser_error("Cannot use 'break' outside of a loop", token);
                 return NULL;
             }
@@ -467,9 +463,7 @@ For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             parser_error("Failed to parse for loop initializer", token);
         token = get_next_token(lexer, true);
     }
-    if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
-
-    {
+    if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
         parser_error("Expected ';' after for loop initializer", token);
         return NULL;
     }
@@ -481,9 +475,7 @@ For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             parser_error("Failed to parse for loop condition", token);
         token = get_next_token(lexer, true);
     }
-    if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
-
-    {
+    if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
         parser_error("Expected ';' after for loop condition", token);
         return NULL;
     }
@@ -495,9 +487,7 @@ For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             parser_error("Failed to parse for loop increment", token);
         token = get_next_token(lexer, true);
     }
-    if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL))
-
-    {
+    if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
         parser_error("Expected ')' after for loop increment", token);
         return NULL;
     }

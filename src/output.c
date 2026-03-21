@@ -45,7 +45,7 @@ void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser) {
 #endif
     list(CodeMember*) members = list_copy(code->members);
     CodeMember* member;
-    while ((member = (CodeMember*)list_pop(members)) != 0)
+    while ((member = (CodeMember*)list_pop(members)) != NULL)
         output_code_member(member, outfile, indent + 1, parser);
 }
 void output_import(Import* import, FILE* outfile, size_t indent, Parser* parser) {
@@ -54,7 +54,7 @@ void output_import(Import* import, FILE* outfile, size_t indent, Parser* parser)
 #endif
     ast_output(0, false, "name\n");
     output_name(import->name, outfile, indent + 1, parser);
-    ast_output(0, true, "source: \"%s\"\n", import->source != 0 ? import->source : "NULL");
+    ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 }
 void output_function(Function* function, FILE* outfile, size_t indent, Parser* parser) {
 #ifdef DEBUG
@@ -69,13 +69,13 @@ void output_function(Function* function, FILE* outfile, size_t indent, Parser* p
     list(Statement*) body = list_copy(function->body);
     Variable* parameter;
     int index = -1;
-    while ((parameter = (Variable*)list_pop(parameters)) != 0) {
+    while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
         ast_output(1, false, "parameters[%d]\n", ++index);
         output_variable(parameter, outfile, indent + 2, parser);
     }
     ast_output(0, true, "body\n");
     Statement* statement;
-    while ((statement = (Statement*)list_pop(body)) != 0)
+    while ((statement = (Statement*)list_pop(body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_method(Method* method, FILE* outfile, size_t indent, Parser* parser) {
@@ -91,13 +91,13 @@ void output_method(Method* method, FILE* outfile, size_t indent, Parser* parser)
     list(Statement*) body = list_copy(method->body);
     Variable* parameter;
     int index = -1;
-    while ((parameter = (Variable*)list_pop(parameters)) != 0) {
+    while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
         ast_output(1, false, "parameters[%d]\n", ++index);
         output_variable(parameter, outfile, indent + 2, parser);
     }
     ast_output(0, true, "body\n");
     Statement* statement;
-    while ((statement = (Statement*)list_pop(body)) != 0)
+    while ((statement = (Statement*)list_pop(body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_class_member(ClassMember* class_member, FILE* outfile, size_t indent, Parser* parser) {
@@ -127,7 +127,7 @@ void output_class(Class* class, FILE* outfile, size_t indent, Parser* parser) {
     ast_output(0, true, "members\n");
     list(ClassMember*) members = list_copy(class->members);
     ClassMember* member;
-    while ((member = (ClassMember*)list_pop(members)) != 0)
+    while ((member = (ClassMember*)list_pop(members)) != NULL)
         output_class_member(member, outfile, indent + 1, parser);
 }
 void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* parser) {
@@ -138,7 +138,7 @@ void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* p
     output_name(variable->type, outfile, indent + 1, parser);
     ast_output(0, false, "name\n");
     output_name(variable->name, outfile, indent + 1, parser);
-    if (variable->value != 0) {
+    if (variable->value != NULL) {
         ast_output(0, true, "value\n");
         output_expression(variable->value, outfile, indent + 1, parser);
     } else
@@ -166,7 +166,7 @@ void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser
             output_variable(statement->stmt.var, outfile, indent + 1, parser);
             break;
         case RETURN_STATEMENT:
-            if (statement->stmt.expr == 0) {
+            if (statement->stmt.expr == NULL) {
                 ast_output(0, false, "return_statement: \"NULL\"\n");
                 return;
             }
@@ -180,7 +180,7 @@ void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser
             ast_output(0, false, "continue_statement: \"NULL\"\n");
             return;
         case EXPRESSION_STATEMENT:
-            if (statement->stmt.expr == 0) {
+            if (statement->stmt.expr == NULL) {
                 ast_output(0, false, "expression_statement: \"NULL\"\n");
                 return;
             }
@@ -203,14 +203,14 @@ void output_if(If* if_, FILE* outfile, size_t indent, Parser* parser) {
     output_expression(if_->condition, outfile, indent + 1, parser);
     ast_output(0, false, "body\n");
     Statement* statement;
-    while ((statement = (Statement*)list_pop(body)) != 0)
+    while ((statement = (Statement*)list_pop(body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
     ast_output(0, false, "else_if\n");
     ElseIf* else_if;
-    while ((else_if = (ElseIf*)list_pop(else_if_list)) != 0)
+    while ((else_if = (ElseIf*)list_pop(else_if_list)) != NULL)
         output_else_if(else_if, outfile, indent + 1, parser);
     ast_output(0, true, "else_body\n");
-    while ((statement = (Statement*)list_pop(else_body)) != 0)
+    while ((statement = (Statement*)list_pop(else_body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_else_if(ElseIf* else_if, FILE* outfile, size_t indent, Parser* parser) {
@@ -222,7 +222,7 @@ void output_else_if(ElseIf* else_if, FILE* outfile, size_t indent, Parser* parse
     output_expression(else_if->condition, outfile, indent + 1, parser);
     ast_output(0, true, "body\n");
     Statement* statement;
-    while ((statement = (Statement*)list_pop(body)) != 0)
+    while ((statement = (Statement*)list_pop(body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_for(For* for_, FILE* outfile, size_t indent, Parser* parser) {
@@ -230,24 +230,24 @@ void output_for(For* for_, FILE* outfile, size_t indent, Parser* parser) {
     fprintf(stderr, "into output_for\n");
 #endif
     list(Statement*) body = list_copy(for_->body);
-    if (for_->initializer != 0) {
+    if (for_->initializer != NULL) {
         ast_output(0, false, "initializer\n");
         output_variable(for_->initializer, outfile, indent + 1, parser);
     } else
         ast_output(0, false, "initializer: \"NULL\"\n");
-    if (for_->condition != 0) {
+    if (for_->condition != NULL) {
         ast_output(0, false, "condition\n");
         output_expression(for_->condition, outfile, indent + 1, parser);
     } else
         ast_output(0, false, "condition: \"NULL\"\n");
-    if (for_->increment != 0) {
+    if (for_->increment != NULL) {
         ast_output(0, false, "increment\n");
         output_expression(for_->increment, outfile, indent + 1, parser);
     } else
         ast_output(0, false, "increment: \"NULL\"\n");
     ast_output(0, true, "body\n");
     Statement* statement;
-    while ((statement = (Statement*)list_pop(body)) != 0)
+    while ((statement = (Statement*)list_pop(body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_while(While* while_, FILE* outfile, size_t indent, Parser* parser) {
@@ -259,7 +259,7 @@ void output_while(While* while_, FILE* outfile, size_t indent, Parser* parser) {
     output_expression(while_->condition, outfile, indent + 1, parser);
     ast_output(0, true, "body\n");
     Statement* statement;
-    while ((statement = (Statement*)list_pop(body)) != 0)
+    while ((statement = (Statement*)list_pop(body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_expression(Expression* expression, FILE* outfile, size_t indent, Parser* parser) {
@@ -271,7 +271,7 @@ void output_expression(Expression* expression, FILE* outfile, size_t indent, Par
         output_primary(expression->prim_left, outfile, indent + 1, parser);
     } else {
         string op_str = operator_to_string(expression->operator);
-        ast_output(0, false, "operator: \"%s\"\n", op_str ? (op_str) : "UNKNOWN_OPERATOR");
+        ast_output(0, false, "operator: \"%s\"\n", op_str ? op_str : "UNKNOWN_OPERATOR");
         ast_output(0, false, "left\n");
         output_expression(expression->expr_left, outfile, indent + 1, parser);
         ast_output(0, true, "right\n");
@@ -285,15 +285,15 @@ void output_primary(Primary* primary, FILE* outfile, size_t indent, Parser* pars
     switch (primary->type) {
         case PRIM_INTEGER:
             ast_output(0, false, "type: \"integer\"\n");
-            ast_output(0, true, "value: %s\n", (primary->value.literal_value));
+            ast_output(0, true, "value: %s\n", primary->value.literal_value);
             break;
         case PRIM_FLOAT:
             ast_output(0, false, "type: \"float\"\n");
-            ast_output(0, true, "value: %s\n", (primary->value.literal_value));
+            ast_output(0, true, "value: %s\n", primary->value.literal_value);
             break;
         case PRIM_STRING:
             ast_output(0, false, "type: \"string\"\n");
-            ast_output(0, true, "value: \"%s\"\n", (primary->value.literal_value));
+            ast_output(0, true, "value: \"%s\"\n", primary->value.literal_value);
             break;
         case PRIM_TRUE:
             ast_output(0, false, "type: \"boolean\"\n");
@@ -348,7 +348,7 @@ void output_variable_access(VariableAccess* variable_access, FILE* outfile, size
             ast_output(0, true, "arguments\n");
             Expression* arg;
             index = -1;
-            while ((arg = (Expression*)list_pop(args)) != 0) {
+            while ((arg = (Expression*)list_pop(args)) != NULL) {
                 ast_output(1, false, "arguments[%d]\n", ++index);
                 output_expression(arg, outfile, indent + 2, parser);
             }

@@ -6,14 +6,14 @@
 // list helper functions
 list() create_list(void) {
     List* new_list = (List*)alloc_memory(sizeof(List));
-    new_list->head = 0;
-    new_list->tail = 0;
+    new_list->head = NULL;
+    new_list->tail = NULL;
     return new_list;
 }
 
 static Node* create_node(pointer content) {
     Node* new_node = (Node*)alloc_memory(sizeof(Node));
-    new_node->next = 0;
+    new_node->next = NULL;
     new_node->content = content;
     return new_node;
 }
@@ -101,7 +101,7 @@ Symbol* search_name(SymbolTable* scope, string name) {
         list(Symbol*) names = scope->symbols;
         Node* current = names->head;
         while (current != NULL) {
-            Node* node_ptr = (current);
+            Node* node_ptr = current;
             Symbol* current_name = (Symbol*)node_ptr->content;
             if (string_equal(current_name->original_name, name))
                 return current_name;
@@ -128,12 +128,12 @@ static void set_bool_list(char bool_list[32], size_t index, bool value) {
         bool_list[index / 8] = (char)(word & ~(1 << (index % 8)));
 }
 
-static bool get_bool_list(char bool_list[32], size_t index) {
-    return (bool_list[index / 8] & (1 << (index % 8))) == 0 ? false : true;
+static inline bool get_bool_list(char bool_list[32], size_t index) {
+    return (bool_list[index / 8] & (1 << (index % 8))) == 0;
 }
 
 void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
-    Parser* parser_ptr = (parser);
+    Parser* parser_ptr = parser;
     set_bool_list(parser_ptr->indent_has_next, indent, !is_last);
     for (size_t i = 1; i < indent; ++i)
         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
@@ -143,7 +143,7 @@ void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
 
 Parser* create_parser(void) {
     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
-    Parser* parser_ptr = (new_parser);
+    Parser* parser_ptr = new_parser;
     parser_ptr->in_function = false;
     parser_ptr->in_method = false;
     parser_ptr->in_loop = false;
@@ -151,7 +151,7 @@ Parser* create_parser(void) {
 }
 
 Symbol* parse_import_file(string import_name, string source, SymbolTable* scope) {
-    Symbol* name = 0;
+    Symbol* name = NULL;
     FILE* openfile;
     // temporary hack, need path system
     char filename[FILENAME_MAX];
@@ -190,7 +190,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope)
     list(Node*) names = code->global_scope->symbols;
     Node* current = names->head;
     while (current != NULL) {
-        Node* node_ptr = (current);
+        Node* node_ptr = current;
         Symbol* current_name = (Symbol*)node_ptr->content;
         if (string_equal(current_name->original_name, import_name)) {
             name = current_name;

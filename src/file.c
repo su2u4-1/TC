@@ -74,7 +74,7 @@ string get_file_dir(File* path) {
         current = current->next;
     }
 
-    if (node_count == 0) return 0;
+    if (node_count == 0) return NULL;
 
     // Add space for separators (but not after root '/' or drive letter)
     if (node_count > 1)
@@ -155,7 +155,7 @@ void change_file_name(File* file, const string new_name) {
     // Rebuild the full path
     string dir = get_file_dir(file);
     string dir_cstr = dir != NULL ? dir : "";
-    string ext_cstr = file->extension != NULL ? (file->extension) : "";
+    string ext_cstr = file->extension != NULL ? file->extension : "";
 
     size_t path_len = strlen(dir_cstr) + 1 + strlen(new_name);
     if (file->extension != NULL) path_len += strlen(ext_cstr);
@@ -280,11 +280,11 @@ void normalize_path(File* file) {
         } else {
             // No extension
             file->name = dirs_tail->dir;
-            file->extension = 0;
+            file->extension = NULL;
         }
     } else {
-        file->name = 0;
-        file->extension = 0;
+        file->name = NULL;
+        file->extension = NULL;
     }
 
     // Rebuild the full path
