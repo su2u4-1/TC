@@ -65,12 +65,12 @@ string DIV_ASSIGN_SYMBOL = 0;
 string MOD_ASSIGN_SYMBOL = 0;
 string AND_SYMBOL = 0;
 string OR_SYMBOL = 0;
-Name* name_void = 0;
-Name* name_int = 0;
-Name* name_float = 0;
-Name* name_string = 0;
-Name* name_bool = 0;
-Scope* builtin_scope = 0;
+Symbol* name_void = 0;
+Symbol* name_int = 0;
+Symbol* name_float = 0;
+Symbol* name_string = 0;
+Symbol* name_bool = 0;
+SymbolTable* builtin_scope = 0;
 
 static size_t struct_memory_used = 0;
 static size_t string_memory_used = 0;
@@ -275,7 +275,7 @@ bool is_keyword(const string str) {
     return false;
 }
 
-bool string_equal(string a, string b) {
+inline bool string_equal(string a, string b) {
     return a == b;
 }
 

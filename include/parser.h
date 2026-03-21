@@ -63,14 +63,6 @@ typedef enum VariableAccessType {
     VAR_GET_ATTR,
     VAR_GET_SEQ
 } VariableAccessType;
-typedef enum NameType {
-    NAME_TYPE,
-    NAME_VARIABLE,
-    NAME_FUNCTION,
-    NAME_METHOD,
-    NAME_CLASS,
-    NAME_ATTRIBUTE
-} NameType;
 
 typedef struct CodeMember CodeMember;
 typedef struct Code Code;
@@ -88,10 +80,18 @@ typedef struct While While;
 typedef struct Expression Expression;
 typedef struct Primary Primary;
 typedef struct VariableAccess VariableAccess;
-typedef struct Scope Scope;
-typedef struct Name Name;
+
 typedef struct List List;
 typedef struct Node Node;
+
+typedef enum SymbolTableType {
+    SYMBOL_CLASS,
+    SYMBOL_SUBROUTINE,
+    SYMBOL_VARIABLE,
+    SYMBOL_PARAM,
+    SYMBOL_ATTRIBUTE,
+    SYMBOL_TYPE
+} SymbolType;
 
 struct CodeMember {
     union {
@@ -103,25 +103,25 @@ struct CodeMember {
 };
 struct Code {
     list(CodeMember*) members;
-    Scope* global_scope;
+    SymbolTable* global_scope;
 };
 struct Import {
-    Name* name;
+    Symbol* name;
     string source;
 };
 struct Function {
-    Name* name;
-    Name* return_type;
+    Symbol* name;
+    Symbol* return_type;
     list(Variable*) parameters;
     list(Statement*) body;
-    Scope* function_scope;
+    SymbolTable* function_scope;
 };
 struct Method {
-    Name* name;
-    Name* return_type;
+    Symbol* name;
+    Symbol* return_type;
     list(Variable*) parameters;
     list(Statement*) body;
-    Scope* method_scope;
+    SymbolTable* method_scope;
 };
 struct ClassMember {
     union {
@@ -131,14 +131,14 @@ struct ClassMember {
     ClassMemberType type;
 };
 struct Class {
-    Name* name;
+    Symbol* name;
     list(ClassMember*) members;
-    Scope* class_scope;
+    SymbolTable* class_scope;
 };
 
 struct Variable {
-    Name* type;
-    Name* name;
+    Symbol* type;
+    Symbol* name;
     Expression* value;
 };
 struct Statement {
@@ -190,29 +190,14 @@ struct Primary {
 struct VariableAccess {
     VariableAccess* base;
     union {
-        Name* name;
+        Symbol* name;
         list(Expression*) args;  // func_call
-        Name* attr_name;         // get_attr
+        Symbol* attr_name;       // get_attr
         Expression* index;       // get_seq
     } content;
     VariableAccessType type;
 };
-struct Scope {
-    Scope* parent;
-    list(Name*) names;
-};
-struct Name {
-    string name;
-    size_t id;
-    union {
-        // variable type, attribute type, function return ntype, method return type
-        Name* type;
-        // class scope
-        Scope* scope;
-        // NAME_TYPE: 0
-    } info;
-    NameType kind;
-};
+
 struct List {
     Node* head;
     Node* tail;
@@ -222,11 +207,31 @@ struct Node {
     pointer content;
 };
 
+struct SymbolTable {
+    SymbolTable* parent;
+    list(Symbol*) symbols;
+};
+struct Symbol {
+    string original_name;
+    size_t id;
+    SymbolType kind;
+    // for SYMBOL_CLASS and SYMBOL_TYPE, type is NULL
+    // for SYMBOL_SUBROUTINE, type points to the return type symbol
+    // for SYMBOL_LOCAL_VAR and SYMBOL_PARAM, type points to the variable type symbol
+    // for SYMBOL_ATTRIBUTE, type points to the attribute type symbol
+    Symbol* type;
+    // for SYMBOL_CLASS and SYMBOL_SUBROUTINE, scope of the class or subroutine
+    // for SYMBOL_LOCAL_VAR and SYMBOL_PARAM, scope of the declaring function or method
+    // for SYMBOL_ATTRIBUTE, scope of the declaring class
+    // for SYMBOL_TYPE, scope of global scope
+    SymbolTable* scope;
+};
+
 typedef struct Lexer Lexer;
 typedef struct Parser Parser;
 
 // public functions
-Code* parse_code(Lexer* lexer, Scope* now_scope, Parser* parser);
+Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
 void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser);
 
 #endif  // PARSER_H

@@ -3,7 +3,7 @@
 
 #include "parser.h"
 
-#define OUT(x, is_last, ...) indention(outfile, indent + x, is_last, parser), fprintf(outfile, __VA_ARGS__)
+#define ast_output(x, is_last, ...) indention(outfile, indent + x, is_last, parser), fprintf(outfile, __VA_ARGS__)
 
 typedef struct Parser {
     bool in_function;
@@ -22,14 +22,14 @@ pointer list_pop(list() list);
 pointer list_pop_back(list() list);
 
 // parser helper functions
-Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info, Scope* scope);
-Scope* create_scope(Scope* parent);
-Name* search_name(Scope* scope, string name);
+Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope);
+SymbolTable* create_symbol_table(SymbolTable* parent);
+Symbol* search_name(SymbolTable* scope, string name);
 bool is_builtin_type(string type);
 void parser_error(const string message, Token* token);
 void indention(FILE* out, size_t indent, bool is_last, Parser* parser);
 Parser* create_parser(void);
-Name* parse_import_file(string import_name, string source, Scope* scope);
+Symbol* parse_import_file(string import_name, string source, SymbolTable* scope);
 
 // operator helper functions
 OperatorType string_to_operator(string str);

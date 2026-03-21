@@ -19,7 +19,7 @@ CodeMember* create_code_member(CodeMemberType type, Import* import_content, Func
     return code_member;
 }
 
-Code* create_code(list(CodeMember*) members, Scope* global_scope) {
+Code* create_code(list(CodeMember*) members, SymbolTable* global_scope) {
     Code* code = (Code*)alloc_memory(sizeof(Code));
     Code* code_ptr = code;
     code_ptr->members = members;
@@ -27,7 +27,7 @@ Code* create_code(list(CodeMember*) members, Scope* global_scope) {
     return code;
 }
 
-Import* create_import(Name* name, string source) {
+Import* create_import(Symbol* name, string source) {
     if (name == 0) {
         fprintf(stderr, "Error creating import: name is NULL\n");
         return 0;
@@ -39,7 +39,7 @@ Import* create_import(Name* name, string source) {
     return import;
 }
 
-Function* create_function(Name* name, Name* return_type, list(Variable*) parameters, list(Statement*) body, Scope* function_scope) {
+Function* create_function(Symbol* name, Symbol* return_type, list(Variable*) parameters, list(Statement*) body, SymbolTable* function_scope) {
     if (name == 0 || return_type == 0) {
         fprintf(stderr, "Error creating function: name or return_type is NULL\n");
         return 0;
@@ -54,7 +54,7 @@ Function* create_function(Name* name, Name* return_type, list(Variable*) paramet
     return function;
 }
 
-Method* create_method(Name* name, Name* return_type, list(Variable*) parameters, list(Statement*) body, Scope* method_scope) {
+Method* create_method(Symbol* name, Symbol* return_type, list(Variable*) parameters, list(Statement*) body, SymbolTable* method_scope) {
     if (name == 0 || return_type == 0) {
         fprintf(stderr, "Error creating method: name or return_type is NULL\n");
         return 0;
@@ -87,7 +87,7 @@ ClassMember* create_class_member(ClassMemberType type, Method* method_content, V
     return class_member;
 }
 
-Class* create_class(Name* name, list(ClassMember*) members, Scope* class_scope) {
+Class* create_class(Symbol* name, list(ClassMember*) members, SymbolTable* class_scope) {
     if (name == 0) {
         fprintf(stderr, "Error creating class: name is NULL\n");
         return 0;
@@ -100,7 +100,7 @@ Class* create_class(Name* name, list(ClassMember*) members, Scope* class_scope) 
     return class;
 }
 
-Variable* create_variable(Name* type, Name* name, Expression* value) {
+Variable* create_variable(Symbol* type, Symbol* name, Expression* value) {
     if (type == 0 || name == 0) {
         fprintf(stderr, "Error creating variable: type or name is NULL\n");
         return 0;
@@ -231,7 +231,7 @@ Primary* create_primary(PrimaryType type, string str_value, Expression* expr_val
     return primary;
 }
 
-VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Name* name_content, Expression* expr_content, list(Expression*) args_content) {
+VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Symbol* name_content, Expression* expr_content, list(Expression*) args_content) {
     if ((base == 0) != (type == VAR_NAME)) {
         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
         return 0;

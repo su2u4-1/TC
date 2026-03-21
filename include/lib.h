@@ -119,19 +119,20 @@ extern string MOD_ASSIGN_SYMBOL;  // symbol `%=`
 extern string AND_SYMBOL;         // symbol `&&`
 extern string OR_SYMBOL;          // symbol `||`
 
-typedef struct Name Name;
-typedef struct Scope Scope;
-extern Name* name_void;
-extern Name* name_int;
-extern Name* name_float;
-extern Name* name_string;
-extern Name* name_bool;
-extern Scope* builtin_scope;
+typedef struct SymbolTable SymbolTable;
+typedef struct Symbol Symbol;
+
+extern Symbol* name_void;
+extern Symbol* name_int;
+extern Symbol* name_float;
+extern Symbol* name_string;
+extern Symbol* name_bool;
+extern SymbolTable* builtin_scope;
 
 string create_string(const char* data, size_t length);
 pointer alloc_memory(size_t size);
 bool is_keyword(const string str);
-bool string_equal(string a, string b);
+inline bool string_equal(string a, string b);
 string get_info(void);
 
 #endif  // LIB_H

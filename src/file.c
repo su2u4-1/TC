@@ -1,6 +1,6 @@
 #include "file.h"
 
-string get_cwd(void) {
+inline string get_cwd(void) {
 #if PLATFORM == 1
     return _getcwd(NULL, 0);  // MSVC
 #elif PLATFORM == 2 || PLATFORM == 3 || PLATFORM == 4
@@ -49,11 +49,11 @@ string absolute_path(string path) {
     return create_string(abs_path, total_len);
 }
 
-string get_file_name(File* path) {
+inline string get_file_name(File* path) {
     return path->name;
 }
 
-string get_file_extension(File* path) {
+inline string get_file_extension(File* path) {
     return path->extension;
 }
 
@@ -101,7 +101,7 @@ string get_file_dir(File* path) {
     return create_string(dir_path, strlen(dir_path));
 }
 
-string get_full_path(File* path) {
+inline string get_full_path(File* path) {
     return path->path;
 }
 
@@ -253,7 +253,7 @@ void normalize_path(File* file) {
                     node->next = 0;
 
                     if (dirs_tail != NULL)
-                        (dirs_tail)->next = node;
+                        dirs_tail->next = node;
 
                     dirs_tail = node;
                     if (dirs_head == NULL) dirs_head = node;

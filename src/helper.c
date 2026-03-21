@@ -69,71 +69,36 @@ pointer list_pop_back(list() list) {
 }
 
 // parser helper functions
-Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info, Scope* scope) {
+Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope) {
     static size_t id_counter = 0;
-    Name* result = search_name(scope, name);
-    if (result != NULL) {
-        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, returning existing name, kind: ", name);
-        switch (result->kind) {
-            case NAME_TYPE:
-                fprintf(stderr, "type\n");
-                break;
-            case NAME_VARIABLE:
-                fprintf(stderr, "variable\n");
-                break;
-            case NAME_FUNCTION:
-                fprintf(stderr, "function\n");
-                break;
-            case NAME_METHOD:
-                fprintf(stderr, "method\n");
-                break;
-            case NAME_CLASS:
-                fprintf(stderr, "class\n");
-                break;
-            case NAME_ATTRIBUTE:
-                fprintf(stderr, "attribute\n");
-                break;
-            default:
-                fprintf(stderr, "unknown\n");
-                break;
-        }
-    }
-    Name* new_name = (Name*)alloc_memory(sizeof(Name));
-    new_name->name = name;
+    Symbol* result = search_name(scope, original_name);
+    if (result != NULL)
+        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, returning existing name, kind: ", result->kind);
+    Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
+    new_name->original_name = original_name;
     new_name->id = ++id_counter;
     new_name->kind = kind;
-    if ((kind == NAME_VARIABLE || kind == NAME_ATTRIBUTE || kind == NAME_FUNCTION || kind == NAME_METHOD) && name_info != NULL)
-        new_name->info.type = name_info;
-    else if (kind == NAME_CLASS && scope_info != NULL)
-        new_name->info.scope = scope_info;
-    else if (kind == NAME_TYPE)
-        new_name->info.type = NULL;
-    else {
-        if (name_info == NULL && scope_info == NULL && kind != NAME_TYPE)
-            fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %u\n", kind);
-        else
-            fprintf(stderr, "Error creating name: unknown NameType %u\n", kind);
-        return NULL;
-    }
-    list_append(scope->names, (pointer)new_name);
+    new_name->type = type;
+    new_name->scope = scope;
+    list_append(scope->symbols, (pointer)new_name);
     return new_name;
 }
 
-Scope* create_scope(Scope* parent) {
-    Scope* new_scope = (Scope*)alloc_memory(sizeof(Scope));
+SymbolTable* create_symbol_table(SymbolTable* parent) {
+    SymbolTable* new_scope = (SymbolTable*)alloc_memory(sizeof(SymbolTable));
     new_scope->parent = parent;
-    new_scope->names = create_list();
+    new_scope->symbols = create_list();
     return new_scope;
 }
 
-Name* search_name(Scope* scope, string name) {
+Symbol* search_name(SymbolTable* scope, string name) {
     while (scope != NULL) {
-        list(Name*) names = scope->names;
+        list(Symbol*) names = scope->symbols;
         Node* current = names->head;
         while (current != 0) {
             Node* node_ptr = (current);
-            Name* current_name = (Name*)node_ptr->content;
-            if (string_equal(current_name->name, name))
+            Symbol* current_name = (Symbol*)node_ptr->content;
+            if (string_equal(current_name->original_name, name))
                 return current_name;
             current = node_ptr->next;
         }
@@ -180,8 +145,8 @@ Parser* create_parser(void) {
     return new_parser;
 }
 
-Name* parse_import_file(string import_name, string source, Scope* scope) {
-    Name* name = 0;
+Symbol* parse_import_file(string import_name, string source, SymbolTable* scope) {
+    Symbol* name = 0;
     FILE* openfile;
     // temporary hack, need path system
     char filename[FILENAME_MAX];
@@ -223,19 +188,19 @@ Name* parse_import_file(string import_name, string source, Scope* scope) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
         return NULL;
     }
-    list(Node*) names = code->global_scope->names;
+    list(Node*) names = code->global_scope->symbols;
     Node* current = names->head;
     while (current != NULL) {
         Node* node_ptr = (current);
-        Name* current_name = (Name*)node_ptr->content;
-        if (string_equal(current_name->name, import_name)) {
+        Symbol* current_name = (Symbol*)node_ptr->content;
+        if (string_equal(current_name->original_name, import_name)) {
             name = current_name;
             break;
         }
         current = node_ptr->next;
     }
     if (name != NULL)
-        list_append(scope->names, (pointer)name);
+        list_append(scope->symbols, (pointer)name);
     return name;
 }
 
