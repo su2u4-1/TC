@@ -3,8 +3,8 @@ func void test() {
 }
 
 func int main() {
-    int a = 10;
-    str b = "";
+    var int a = 10;
+    var str b = "";
     if (a == 10) {
         test();
     } else {
