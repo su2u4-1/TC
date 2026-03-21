@@ -100,8 +100,9 @@ static Token* next_token(Lexer* lexer, bool skip_comment) {
         if (c != '"') {
             lexer_error("Unterminated string literal", lexer->line, start - 1);
             if (c == '\n') newline(lexer);
-            return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
         }
+        if (lexer->position - start == 1)
+            return create_token(STRING, create_string("\0", 1), lexer->line, column_start);
         return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
     } else {
         char p = peek_next_char(lexer);
