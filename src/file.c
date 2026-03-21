@@ -18,6 +18,7 @@ File* create_file(const string path) {
 }
 
 string absolute_path(string path) {
+    path = create_string(path, strlen(path));  // Create a mutable copy of the path
     size_t path_len = strlen(path);
     for (size_t i = 0; i < path_len; i++) {
         if (path[i] == '\\') path[i] = '/';
