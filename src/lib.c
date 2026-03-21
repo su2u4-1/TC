@@ -257,9 +257,9 @@ static size_t memoryBlockCount = 0;
 
 pointer alloc_memory(size_t size) {
     if (!initialized) init();
+    size = (size + ALIGN_SIZE - 1) & ~(ALIGN_SIZE - 1);
     if (struct_memory->used + size >= struct_memory->size)
         increase_memory_size(true);
-    size = (size + ALIGN_SIZE - 1) & ~(ALIGN_SIZE - 1);
     assert(struct_memory->used % ALIGN_SIZE == 0);
     size_t* ptr = struct_memory->block + (struct_memory->used / ALIGN_SIZE);
     struct_memory->used += size;
