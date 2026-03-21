@@ -84,8 +84,10 @@ Import* parse_import(Lexer* lexer, SymbolTable* now_scope) {
     }
     Symbol* name;
     name = parse_import_file(import_name, source, now_scope);
-    if (name == NULL)
+    if (name == NULL) {
+        fprintf(stderr, "Failed to import module '%s' from source '%s'\n", import_name, source);
         name = create_symbol(import_name, SYMBOL_VARIABLE, name_void, now_scope);
+    }
     return create_import(name, source);
 }
 Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
@@ -275,8 +277,10 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         token = get_next_token(lexer, true);
     }
     Symbol* constructor = search_name(class_scope, CONSTRUCTOR_NAME);
-    if (constructor == NULL)
-        constructor = create_symbol(CONSTRUCTOR_NAME, SYMBOL_SUBROUTINE, name, class_scope);
+    if (constructor == NULL) {
+        SymbolTable* constructor_scope = create_symbol_table(class_scope);
+        constructor = create_symbol(CONSTRUCTOR_NAME, SYMBOL_SUBROUTINE, name, constructor_scope);
+    }
     if (constructor->kind != SYMBOL_SUBROUTINE)
         parser_error("Constructor name conflicts with existing member", token);
     return create_class(name, members, class_scope);
@@ -715,6 +719,8 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
             base_name = base_name->type;
             current_type = NULL;
             var_scope = NULL;
+            if (base_name->kind == SYMBOL_CLASS)
+                var_scope = base_name->scope;
         } else if (string_equal(token->lexeme, L_BRACKET_SYMBOL)) {
             token = get_next_token(lexer, true);  // consume '['
             token = get_next_token(lexer, true);

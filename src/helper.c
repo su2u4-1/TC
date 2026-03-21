@@ -200,6 +200,8 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope)
     }
     if (name != NULL)
         list_append(scope->symbols, (pointer)name);
+    else
+        fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
     return name;
 }
 
