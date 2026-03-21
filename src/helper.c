@@ -19,8 +19,10 @@ static Node* create_node(pointer content) {
 }
 
 void list_append(list() list, pointer item) {
-    if (list == NULL)
-        list = create_list();
+    if (list == NULL) {
+        fprintf(stderr, "Error: list_append received NULL list\n");
+        return;
+    }
     Node* new_node = create_node(item);
     if (list->head == NULL) {
         list->head = new_node;

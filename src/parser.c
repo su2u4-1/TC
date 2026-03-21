@@ -150,7 +150,7 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             parser_error("Failed to parse function body statement", token);
         else if (have_return)
             parser_error("Unreachable code after return statement", token);
-        if (statement->type == RETURN_STATEMENT)
+        if (statement != NULL && statement->type == RETURN_STATEMENT)
             have_return = true;
         list_append(body, (pointer)statement);
         token = get_next_token(lexer, true);
@@ -227,7 +227,7 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
             parser_error("Failed to parse method body statement", token);
         else if (have_return)
             parser_error("Unreachable code after return statement", token);
-        if (statement->type == RETURN_STATEMENT)
+        if (statement != NULL && statement->type == RETURN_STATEMENT)
             have_return = true;
         list_append(body, (pointer)statement);
         token = get_next_token(lexer, true);
@@ -278,7 +278,7 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     Symbol* constructor = search_name(class_scope, CONSTRUCTOR_NAME);
     if (constructor == NULL)
-        constructor = create_symbol(CONSTRUCTOR_NAME, SYMBOL_SUBROUTINE, name, now_scope);
+        constructor = create_symbol(CONSTRUCTOR_NAME, SYMBOL_SUBROUTINE, name, class_scope);
     if (constructor->kind != SYMBOL_SUBROUTINE)
         parser_error("Constructor name conflicts with existing member", token);
     return create_class(name, members, class_scope);
@@ -702,7 +702,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                 base_name = search_name(base_name->scope, CONSTRUCTOR_NAME);
                 base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
             }
-            if (base_name->kind != SYMBOL_SUBROUTINE && base_name->kind != SYMBOL_SUBROUTINE)
+            if (base_name != NULL && base_name->kind != SYMBOL_SUBROUTINE)
                 parser_error("Cannot call non-function variable", token);
             token = get_next_token(lexer, true);
             list(Expression*) args = create_list();
