@@ -13,6 +13,7 @@ set "RUN_ALL=1"
 set "RUN_TEST1=0"
 set "RUN_TEST2=0"
 set "RUN_TEST3=0"
+set "RUN_TEST4=0"
 set "CLEAR_SCREEN=0"
 
 if "%~1"=="" goto run_tests
@@ -24,6 +25,7 @@ if "%~1"=="-c" set "CLEAR_SCREEN=1"
 if "%~1"=="-1" set "RUN_TEST1=1"
 if "%~1"=="-2" set "RUN_TEST2=1"
 if "%~1"=="-3" set "RUN_TEST3=1"
+if "%~1"=="-4" set "RUN_TEST4=1"
 shift
 goto parse_args
 
@@ -40,6 +42,7 @@ if "%RUN_ALL%"=="1" (
     set "RUN_TEST1=1"
     set "RUN_TEST2=1"
     set "RUN_TEST3=1"
+    set "RUN_TEST4=1"
     echo Running all tests...
     echo ========================================
 )
@@ -70,6 +73,16 @@ if "%RUN_TEST3%"=="1" (
     .\build\program.exe .\test\test3\test3.tc
     if errorlevel 1 (
         echo ERROR: Test 3 failed!
+        set "HAS_ERROR=1"
+    )
+)
+
+if "%RUN_TEST4%"=="1" (
+    echo.
+    echo [Test 4]
+    .\build\program.exe .\test\test4\test4.tc
+    if errorlevel 1 (
+        echo ERROR: Test 4 failed!
         set "HAS_ERROR=1"
     )
 )

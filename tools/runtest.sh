@@ -12,6 +12,7 @@ RUN_ALL=1
 RUN_TEST1=0
 RUN_TEST2=0
 RUN_TEST3=0
+RUN_TEST4=0
 CLEAR_SCREEN=0
 
 if [ $# -eq 0 ]; then
@@ -32,13 +33,17 @@ else
             -3)
                 RUN_TEST3=1
                 ;;
+            -4)
+                RUN_TEST4=1
+                ;;
             *)
                 echo "Unknown option: $arg"
-                echo "Usage: $0 [-c] [-1] [-2] [-3]"
+                echo "Usage: $0 [-c] [-1] [-2] [-3] [-4]"
                 echo "  -c    Clear screen before running tests"
                 echo "  -1    Run test1"
                 echo "  -2    Run test2"
                 echo "  -3    Run test3"
+                echo "  -4    Run test4"
                 echo "  (no options: run all tests)"
                 exit 1
                 ;;
@@ -58,6 +63,7 @@ if [ $RUN_ALL -eq 1 ]; then
     RUN_TEST1=1
     RUN_TEST2=1
     RUN_TEST3=1
+    RUN_TEST4=1
     echo "Running all tests..."
     echo "========================================"
 fi
@@ -88,6 +94,16 @@ if [ $RUN_TEST3 -eq 1 ]; then
     ./build/program ./test/test3/test3.tc
     if [ $? -ne 0 ]; then
         echo "ERROR: Test 3 failed!"
+        HAS_ERROR=1
+    fi
+fi
+
+if [ $RUN_TEST4 -eq 1 ]; then
+    echo ""
+    echo "[Test 4]"
+    ./build/program ./test/test4/test4.tc
+    if [ $? -ne 0 ]; then
+        echo "ERROR: Test 4 failed!"
         HAS_ERROR=1
     fi
 fi
