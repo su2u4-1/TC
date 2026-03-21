@@ -332,10 +332,9 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
             statement = create_statement(VARIABLE_STATEMENT, NULL, NULL, NULL, NULL, parse_variable(lexer, now_scope, parser));
         } else if (string_equal(token->lexeme, RETURN_KEYWORD)) {
             token = get_next_token(lexer, true);
-            Expression* expr = NULL;
-            if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
-                expr = parse_expression(lexer, now_scope, parser);
-            return create_statement(RETURN_STATEMENT, NULL, NULL, NULL, expr, NULL);
+            if (token->type == SYMBOL && string_equal(token->lexeme, SEMICOLON_SYMBOL))
+                return create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL);
+            statement = create_statement(RETURN_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
         } else if (string_equal(token->lexeme, BREAK_KEYWORD)) {
             if (!parser->in_loop) {
                 parser_error("Cannot use 'break' outside of a loop", token);

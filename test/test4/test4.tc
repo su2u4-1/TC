@@ -4,7 +4,7 @@ func void test() {
 
 func int main() {
     var int a = 10;
-    var str b = "";
+    var string b = "";
     if (a == 10) {
         test();
     } else {
