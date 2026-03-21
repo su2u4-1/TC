@@ -20,42 +20,44 @@ string read_source(FILE* file, size_t* length) {
     }
     return source;
 }
+void output_one_token(FILE* file, Token* token) {
+    if (token->type == EOF_TOKEN) {
+        fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+        return;
+    } else if (token->type == IDENTIFIER)
+        fprintf(file, "Token(Type: identifier,  Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == INTEGER)
+        fprintf(file, "Token(Type: integer,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == FLOAT)
+        fprintf(file, "Token(Type: float,       Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == STRING)
+        fprintf(file, "Token(Type: string,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == SYMBOL)
+        fprintf(file, "Token(Type: symbol,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == KEYWORD)
+        fprintf(file, "Token(Type: keyword,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == COMMENT)
+        fprintf(file, "Token(Type: comment,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+        char c = token->lexeme[i];
+        if (c == '\0')
+            fputs("\\0", file);
+        else if (c == '\n')
+            fputs("\\n", file);
+        else if (c == '\t')
+            fputs("\\t", file);
+        else if (c == '\r')
+            fputs("\\r", file);
+        else
+            fputc(c, file);
+    }
+    fprintf(file, "'\n");
+}
 void output_token(FILE* file, Lexer* lexer) {
     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
-        Token* token = current;
-        if (token->type == EOF_TOKEN) {
-            fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+        output_one_token(file, current);
+        if (current->type == EOF_TOKEN)
             break;
-        } else if (token->type == IDENTIFIER)
-            fprintf(file, "Token(Type: identifier,  Line: ");
-        else if (token->type == INTEGER)
-            fprintf(file, "Token(Type: integer,     Line: ");
-        else if (token->type == FLOAT)
-            fprintf(file, "Token(Type: float,       Line: ");
-        else if (token->type == STRING)
-            fprintf(file, "Token(Type: string,      Line: ");
-        else if (token->type == SYMBOL)
-            fprintf(file, "Token(Type: symbol,      Line: ");
-        else if (token->type == KEYWORD)
-            fprintf(file, "Token(Type: keyword,     Line: ");
-        else if (token->type == COMMENT)
-            fprintf(file, "Token(Type: comment,     Line: ");
-        fprintf(file, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        string lexeme_ptr = token->lexeme;
-        for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
-            char c = lexeme_ptr[i];
-            if (c == '\0')
-                fputs("\\0", file);
-            else if (c == '\n')
-                fputs("\\n", file);
-            else if (c == '\t')
-                fputs("\\t", file);
-            else if (c == '\r')
-                fputs("\\r", file);
-            else
-                fputc(c, file);
-        }
-        fprintf(file, "'\n");
     }
     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 }
