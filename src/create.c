@@ -127,7 +127,7 @@ Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, 
         statement_ptr->stmt.while_stmt = while_stmt;
     else if (type == FOR_STATEMENT && for_stmt != NULL)
         statement_ptr->stmt.for_stmt = for_stmt;
-    else if (type == RETURN_STATEMENT && expr != NULL)
+    else if (type == RETURN_STATEMENT)
         statement_ptr->stmt.return_expr = expr;
     else if (type == BREAK_STATEMENT || type == CONTINUE_STATEMENT)
         statement_ptr->stmt.expr = NULL;
