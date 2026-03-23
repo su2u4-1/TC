@@ -7,11 +7,11 @@
 #define ast_output(x, is_last, ...) indention(outfile, indent + x, is_last, parser), fprintf(outfile, __VA_ARGS__)
 
 typedef struct Parser {
+    File* source_file;
     bool in_function;
     bool in_method;
     bool in_loop;
     char indent_has_next[32];
-    File* source_file;
 } Parser;
 
 typedef struct Token Token;

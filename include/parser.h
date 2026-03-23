@@ -212,9 +212,6 @@ struct SymbolTable {
     list(Symbol*) symbols;
 };
 struct Symbol {
-    string original_name;
-    size_t id;
-    SymbolType kind;
     // for SYMBOL_CLASS and SYMBOL_TYPE, type is NULL
     // for SYMBOL_SUBROUTINE, type points to the return type symbol
     // for SYMBOL_LOCAL_VAR and SYMBOL_PARAM, type points to the variable type symbol
@@ -225,6 +222,9 @@ struct Symbol {
     // for SYMBOL_ATTRIBUTE, scope of the declaring class
     // for SYMBOL_TYPE, scope of global scope
     SymbolTable* scope;
+    string original_name;
+    size_t id;
+    SymbolType kind;
 };
 
 typedef struct Lexer Lexer;
