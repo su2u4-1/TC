@@ -1,5 +1,5 @@
 import print;
-import arr from "./std";
+import arr from "../../std/arr.tc";
 
 class Test2 {
     var int x = 1 + 2 * 3 - 8 / 4;  // 1 + 6 - 2 = 5

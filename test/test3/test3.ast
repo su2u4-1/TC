@@ -7,7 +7,7 @@
 │   │       ├── name: "void"
 │   │       ├── id: 1
 │   │       └── kind: "type"
-│   └── source: "./std"
+│   └── source: "../../std/print.tc"
 ├── class
 │   ├── name
 │   │   ├── name: "Test1"
@@ -263,7 +263,7 @@
 │   │   ├── name: "arr"
 │   │   ├── id: 18
 │   │   └── kind: "class"
-│   └── source: "./std"
+│   └── source: "NULL"
 ├── class
 │   ├── name
 │   │   ├── name: "Test2"
@@ -1047,4 +1047,4 @@
 │       │       └── value: 0
 
 info by lib:
-    Platform: 2, Structure Memory Used: 32632/33792 bytes, String Memory Used: 2630/3245 bytes, stringCount: 119, Memory Block Count: 1211
+    Platform: 2, Structure Memory Used: 33216/34816 bytes, String Memory Used: 3052/3245 bytes, stringCount: 139, Memory Block Count: 1238

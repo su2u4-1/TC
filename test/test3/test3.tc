@@ -1,7 +1,7 @@
 /*
  * this test is used to test big memory allocate.
  */
-import print from "./std";
+import print from "../../std/print.tc";
 
 class Test1 {
     var int a = 10;
@@ -17,7 +17,7 @@ class Test1 {
     }
 }
 
-import arr from "./std";
+import arr;
 
 class Test2 {
     var int x = 1 + 2 * 3 - 8 / 4;  // 1 + 6 - 2 = 5

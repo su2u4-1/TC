@@ -7,7 +7,7 @@
 │   │       ├── name: "void"
 │   │       ├── id: 1
 │   │       └── kind: "type"
-│   └── source: "./std"
+│   └── source: "../../std/print.tc"
 ├── class
 │   ├── name
 │   │   ├── name: "Test1"
@@ -466,4 +466,4 @@
 │       │       └── value: 0
 
 info by lib:
-    Platform: 2, Structure Memory Used: 15760/16384 bytes, String Memory Used: 1710/2048 bytes, stringCount: 97, Memory Block Count: 593
+    Platform: 2, Structure Memory Used: 16200/17408 bytes, String Memory Used: 2040/3072 bytes, stringCount: 110, Memory Block Count: 612

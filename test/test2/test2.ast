@@ -13,7 +13,7 @@
 │   │   ├── name: "arr"
 │   │   ├── id: 8
 │   │   └── kind: "class"
-│   └── source: "./std"
+│   └── source: "../../std/arr.tc"
 ├── class
 │   ├── name
 │   │   ├── name: "Test2"
@@ -610,4 +610,4 @@
 │       │       └── value: 0
 
 info by lib:
-    Platform: 2, Structure Memory Used: 21632/22528 bytes, String Memory Used: 1989/3072 bytes, stringCount: 107, Memory Block Count: 808
+    Platform: 2, Structure Memory Used: 22344/23552 bytes, String Memory Used: 2418/4096 bytes, stringCount: 127, Memory Block Count: 839
