@@ -116,8 +116,8 @@ inline bool is_builtin_type(string type) {
     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 }
 
-inline void parser_error(const string message, Token* token) {
-    fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", token->line + 1, token->column + 1, message);
+inline void parser_error(const string message, Token* token, string file_name) {
+    fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 }
 
 static void set_bool_list(char bool_list[32], size_t index, bool value) {
@@ -141,37 +141,26 @@ void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
         fprintf(out, is_last ? "└── " : "├── ");
 }
 
-Parser* create_parser(void) {
+Parser* create_parser(File* file) {
     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
-    Parser* parser_ptr = new_parser;
-    parser_ptr->in_function = false;
-    parser_ptr->in_method = false;
-    parser_ptr->in_loop = false;
+    new_parser->in_function = false;
+    new_parser->in_method = false;
+    new_parser->in_loop = false;
+    new_parser->source_file = file;
     return new_parser;
 }
 
-Symbol* parse_import_file(string import_name, string source, SymbolTable* scope) {
+Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file) {
     Symbol* name = NULL;
     FILE* openfile;
-    // temporary hack, need path system
-    char filename[FILENAME_MAX];
-    filename[0] = '\0';
+    string filename;
     if (source == NULL) {
-        if (strcmp(import_name, "print") == 0)
-            strcpy(filename, "./std/print.tc");
-        else if (strcmp(import_name, "arr") == 0)
-            strcpy(filename, "./std/arr.tc");
-        else {
-            fprintf(stderr, "Error: Standard library file for import not found: %s\n", filename);
-            return NULL;
-        }
-    } else {
-        int len = snprintf(filename, FILENAME_MAX, "%s/%s.tc", source, import_name);
-        if (len >= FILENAME_MAX) {
-            fprintf(stderr, "Error: Import path is too long\n");
-            return NULL;
-        }
-    }
+        // import_name += ".tc";
+        string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
+        sprintf(temp_import_name, "%s.tc", import_name);
+        filename = absolute_path(temp_import_name, std_path);
+    } else
+        filename = absolute_path(source, get_file_dir(source_file));
     openfile = fopen(filename, "r");
     if (openfile == NULL) {
         fprintf(stderr, "Error opening library file for import: %s\n", filename);
@@ -181,7 +170,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope)
     size_t length = 0;
     string source_code = read_source(openfile, &length);
     fclose(openfile);
-    Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser());
+    Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
     printf("Info: Finished parsing lib file for import: %s\n", filename);
     if (code == NULL) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);

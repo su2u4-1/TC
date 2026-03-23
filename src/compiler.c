@@ -9,7 +9,7 @@ string read_source(FILE* file, size_t* length) {
     *length = (size_t)ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    string source = create_string("", *length + 1);
+    string source = create_string_not_check("", *length + 1);
     size_t bytes_read = fread(source, 1, *length, file);
     source[bytes_read] = '\0';
     *length = bytes_read;
@@ -90,10 +90,11 @@ void parse_file(const string name, bool o_token, bool o_ast) {
         }
     }
     reset_lexer(lexer);
-    Parser* parser = create_parser();
+    Parser* parser = create_parser(file);
     if (o_ast) {
         change_file_extension(file, create_string(".ast", 4));
         string out_ast_name = get_full_path(file);
+        change_file_extension(file, create_string(".tc", 3));
         FILE* out_ast_file = fopen(out_ast_name, "w");
         if (out_ast_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_ast_name);

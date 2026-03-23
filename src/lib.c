@@ -161,6 +161,10 @@ static string create_string_check(const char* data, size_t length, bool check) {
     return str;
 }
 
+string create_string_not_check(const char* data, size_t length) {
+    return create_string_check(data, length, false);
+}
+
 string create_string(const char* data, size_t length) {
     return create_string_check(data, length, true);
 }

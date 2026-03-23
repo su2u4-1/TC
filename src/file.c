@@ -10,15 +10,17 @@ inline string get_cwd(void) {
 #endif
 }
 
+static void normalize_path(File* file);
+
 File* create_file(const string path) {
     File* file = (File*)alloc_memory(sizeof(File));
-    file->path = absolute_path(path);
+    file->path = absolute_path(path, NULL);
     normalize_path(file);
     return file;
 }
 
-string absolute_path(string path) {
-    path = create_string(path, strlen(path));  // Create a mutable copy of the path
+string absolute_path(string path, string base_path) {
+    path = create_string_not_check(path, strlen(path));
     size_t path_len = strlen(path);
     for (size_t i = 0; i < path_len; i++) {
         if (path[i] == '\\') path[i] = '/';
@@ -33,21 +35,33 @@ string absolute_path(string path) {
             i--;
         }
     }
-#if PLATFORM == 1
+#if PLATFORM == 1 || PLATFORM == 2
+    if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
+        path[0] = path[1] - ('a' - 'A');
+        path[1] = ':';
+        return path;
+    }
+#else
+    if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':') {
+        path[0] = path[0] - ('A' - 'a');
+        memmove(path, path + 1, path_len);
+        path[0] = '/';
+        path[2] = '/';
+        return path;
+    }
+#endif
     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':')
         return path;
-#else
     if (path_len > 0 && path[0] == '/')
         return path;
-#endif
-    string cwd = get_cwd();
-    if (cwd == NULL)
+    if (base_path == NULL)
+        base_path = get_cwd();
+    if (base_path == NULL)
         return path;
-    size_t total_len = strlen(cwd) + 1 + path_len + 1;
-    string abs_path = create_string("", total_len);
-    sprintf(abs_path, "%s/%s", cwd, path);
-    free(cwd);
-    return create_string(abs_path, total_len);
+    size_t total_len = strlen(base_path) + 1 + path_len + 1;
+    string abs_path = create_string_not_check("", total_len);
+    sprintf(abs_path, "%s/%s", base_path, path);
+    return absolute_path(create_string(abs_path, total_len), NULL);
 }
 
 inline string get_file_name(File* path) {
@@ -81,7 +95,7 @@ string get_file_dir(File* path) {
         total_len += node_count - 1;
 
     // Build the directory path
-    string dir_path = create_string("", total_len + 1);
+    string dir_path = create_string_not_check("", total_len + 1);
     dir_path[0] = '\0';
 
     current = path->dirs;
@@ -106,27 +120,26 @@ inline string get_full_path(File* path) {
     return path->path;
 }
 
-void change_file_extension(File* file, const string new_extension) {
-    file->extension = new_extension;
-
-    // Rebuild the full path
+static void rebuild_full_path(File* file) {
     string dir = get_file_dir(file);
     string dir_cstr = dir != NULL ? dir : "";
-    string ext_cstr = new_extension != NULL ? new_extension : "";
+    string ext_cstr = file->extension != NULL ? file->extension : "";
 
     size_t path_len = strlen(dir_cstr) + 1 + strlen(file->name);
-    if (new_extension != NULL) path_len += strlen(ext_cstr);
+    if (file->extension != NULL) path_len += strlen(ext_cstr);
 
-    string new_path = create_string("", path_len + 1);
+    string new_path = create_string_not_check("", path_len + 1);
     if (dir != NULL && strlen(dir_cstr) > 0)
-        sprintf(new_path, "%s/%s", dir_cstr, file->name);
+        sprintf(new_path, "%s/%s%s", dir_cstr, file->name, ext_cstr);
     else
-        sprintf(new_path, "%s", file->name);
-
-    if (new_extension != NULL)
-        strcat(new_path, new_extension);
+        sprintf(new_path, "%s%s", file->name, ext_cstr);
 
     file->path = create_string(new_path, strlen(new_path));
+}
+
+void change_file_extension(File* file, const string new_extension) {
+    file->extension = new_extension;
+    rebuild_full_path(file);
 }
 
 void change_file_name(File* file, const string new_name) {
@@ -143,7 +156,7 @@ void change_file_name(File* file, const string new_name) {
                 size_t full_name_len = strlen(new_name);
                 if (file->extension != NULL) full_name_len += strlen(ext_cstr);
 
-                string full_name = create_string("", full_name_len + 1);
+                string full_name = create_string_not_check("", full_name_len + 1);
                 sprintf(full_name, "%s%s", new_name, ext_cstr);
                 current->dir = create_string(full_name, strlen(full_name));
                 break;
@@ -152,28 +165,14 @@ void change_file_name(File* file, const string new_name) {
         }
     }
 
-    // Rebuild the full path
-    string dir = get_file_dir(file);
-    string dir_cstr = dir != NULL ? dir : "";
-    string ext_cstr = file->extension != NULL ? file->extension : "";
-
-    size_t path_len = strlen(dir_cstr) + 1 + strlen(new_name);
-    if (file->extension != NULL) path_len += strlen(ext_cstr);
-
-    string new_path = create_string("", path_len + 1);
-    if (dir != NULL && strlen(dir_cstr) > 0)
-        sprintf(new_path, "%s/%s%s", dir_cstr, new_name, ext_cstr);
-    else
-        sprintf(new_path, "%s%s", new_name, ext_cstr);
-
-    file->path = create_string(new_path, strlen(new_path));
+    rebuild_full_path(file);
 }
 
 void normalize_path(File* file) {
     size_t path_len = strlen(file->path);
 
     // Make a copy to work with
-    string path_copy = create_string("", path_len + 1);
+    string path_copy = create_string_not_check("", path_len + 1);
     strcpy(path_copy, file->path);
 
     StrNode* dirs_head = NULL;
@@ -306,7 +305,7 @@ void normalize_path(File* file) {
     if (node_count > 1)
         full_path_len += (node_count - 1);
 
-    string full_path = create_string("", full_path_len + 1);
+    string full_path = create_string_not_check("", full_path_len + 1);
     full_path[0] = '\0';
 
     current = dirs_head;

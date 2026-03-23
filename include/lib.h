@@ -14,6 +14,7 @@
 #define ALIGN_SIZE sizeof(size_t)
 #define defaultMemorySize 1024  // 1 KB
 #define sizeDigit 20
+#define std_path "D:/TC/std/"
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #ifdef _MSC_VER
@@ -129,6 +130,7 @@ extern Symbol* name_string;
 extern Symbol* name_bool;
 extern SymbolTable* builtin_scope;
 
+string create_string_not_check(const char* data, size_t length);
 string create_string(const char* data, size_t length);
 pointer alloc_memory(size_t size);
 bool is_keyword(const string str);

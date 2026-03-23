@@ -1,6 +1,7 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+#include "file.h"
 #include "parser.h"
 
 #define ast_output(x, is_last, ...) indention(outfile, indent + x, is_last, parser), fprintf(outfile, __VA_ARGS__)
@@ -10,6 +11,7 @@ typedef struct Parser {
     bool in_method;
     bool in_loop;
     char indent_has_next[32];
+    File* source_file;
 } Parser;
 
 typedef struct Token Token;
@@ -26,10 +28,10 @@ Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, Symbo
 SymbolTable* create_symbol_table(SymbolTable* parent);
 Symbol* search_name(SymbolTable* scope, string name);
 bool is_builtin_type(string type);
-void parser_error(const string message, Token* token);
+void parser_error(const string message, Token* token, string file_name);
 void indention(FILE* out, size_t indent, bool is_last, Parser* parser);
-Parser* create_parser(void);
-Symbol* parse_import_file(string import_name, string source, SymbolTable* scope);
+Parser* create_parser(File* file);
+Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
 
 // operator helper functions
 OperatorType string_to_operator(string str);
