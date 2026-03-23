@@ -102,17 +102,11 @@ static void increase_memory_size(bool for_struct) {
         new_block->next = struct_memory;
         struct_memory = new_block;
         struct_memory_count += defaultMemorySize;
-#ifdef DEBUG
-        fprintf(stderr, "[DEBUG]: Add new memory block for struct\n");
-#endif
     } else {
         string_memory_used += string_memory->used;
         new_block->next = string_memory;
         string_memory = new_block;
         string_memory_count += defaultMemorySize;
-#ifdef DEBUG
-        fprintf(stderr, "[DEBUG]: Add new memory block for string\n");
-#endif
     }
 }
 

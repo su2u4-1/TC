@@ -18,9 +18,6 @@ static Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* pars
 static VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
 
 Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_code\n");
-#endif
     if (builtin_scope == NULL) {
         builtin_scope = create_symbol_table(NULL);
         name_void = create_symbol(VOID_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
@@ -58,9 +55,6 @@ Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     return create_code(members, global_scope);
 }
 Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_import\n");
-#endif
     Token* token = NULL;
     token = get_next_token(lexer, true);
     if (token->type != IDENTIFIER) {
@@ -92,9 +86,6 @@ Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     return create_import(name, source);
 }
 Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_function\n");
-#endif
     Token* token = NULL;
     SymbolTable* function_scope = create_symbol_table(now_scope);
     token = get_next_token(lexer, true);
@@ -162,9 +153,6 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     return create_function(name, return_type, parameters, body, function_scope);
 }
 Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_method\n");
-#endif
     Token* token = NULL;
     SymbolTable* method_scope = create_symbol_table(now_scope);
     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, class_name, method_scope);
@@ -240,9 +228,6 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
     return create_method(name, return_type, parameters, body, method_scope);
 }
 Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_class\n");
-#endif
     Token* token = NULL;
     SymbolTable* class_scope = create_symbol_table(now_scope);
     token = get_next_token(lexer, true);
@@ -287,9 +272,6 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     return create_class(name, members, class_scope);
 }
 Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_variable\n");
-#endif
     Token* token = NULL;
     token = peek_current_token(lexer);
     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
@@ -319,9 +301,6 @@ Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     return create_variable(type, name, value);
 }
 Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_statement\n");
-#endif
     Token* token = NULL;
     token = peek_current_token(lexer);
     Statement* statement = NULL;
@@ -365,9 +344,6 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
     return statement;
 }
 If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_if\n");
-#endif
     Token* token = NULL;
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
@@ -453,9 +429,6 @@ If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     return create_if(condition, body, else_if, else_body);
 }
 For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_for\n");
-#endif
     Token* token = NULL;
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
@@ -517,9 +490,6 @@ For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     return create_for(initializer, condition, increment, body);
 }
 While* parse_while(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_while\n");
-#endif
     Token* token = NULL;
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
@@ -554,9 +524,6 @@ While* parse_while(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     return create_while(condition, body);
 }
 static Expression* parse_expr_prec(Lexer* lexer, Expression* expr_left, int min_prec, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_expr_prec\n");
-#endif
     Token* token = NULL;
     token = peek_next_token(lexer, true);
     while (token->type == SYMBOL) {
@@ -590,9 +557,6 @@ static Expression* parse_expr_prec(Lexer* lexer, Expression* expr_left, int min_
     return expr_left;
 }
 Expression* parse_expression(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_expression\n");
-#endif
     Primary* left_primary = parse_primary(lexer, now_scope, parser);
     if (left_primary == NULL) {
         parser_error("Failed to parse expression primary", peek_current_token(lexer), get_full_path(parser->source_file));
@@ -601,9 +565,6 @@ Expression* parse_expression(Lexer* lexer, SymbolTable* now_scope, Parser* parse
     return parse_expr_prec(lexer, create_expression(OP_NONE, NULL, left_primary, NULL), 0, now_scope, parser);
 }
 Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_primary\n");
-#endif
     Token* token = NULL;
     token = peek_current_token(lexer);
     PrimaryType type;
@@ -669,9 +630,6 @@ Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     return create_primary(type, str_value, expr_value, prim_value, variable_value);
 }
 VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into parse_variable_access\n");
-#endif
     Token* token = peek_current_token(lexer);
     if (token->type != IDENTIFIER && !(token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD))) {
         parser_error("Expected variable name in variable access", token, get_full_path(parser->source_file));

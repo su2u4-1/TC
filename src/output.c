@@ -18,9 +18,6 @@ static void output_variable_access(VariableAccess* variable_access, FILE* outfil
 static void output_name(Symbol* name, FILE* outfile, size_t indent, Parser* parser);
 
 void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_code_member\n");
-#endif
     switch (code_member->type) {
         case CODE_IMPORT:
             ast_output(0, false, "import\n");
@@ -40,26 +37,17 @@ void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, P
     }
 }
 void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_code\n");
-#endif
     list(CodeMember*) members = list_copy(code->members);
     CodeMember* member;
     while ((member = (CodeMember*)list_pop(members)) != NULL)
         output_code_member(member, outfile, indent + 1, parser);
 }
 void output_import(Import* import, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_import\n");
-#endif
     ast_output(0, false, "name\n");
     output_name(import->name, outfile, indent + 1, parser);
     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 }
 void output_function(Function* function, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_function\n");
-#endif
     ast_output(0, false, "name\n");
     output_name(function->name, outfile, indent + 1, parser);
     ast_output(0, false, "return_type\n");
@@ -79,9 +67,6 @@ void output_function(Function* function, FILE* outfile, size_t indent, Parser* p
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_method(Method* method, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_method\n");
-#endif
     ast_output(0, false, "name\n");
     output_name(method->name, outfile, indent + 1, parser);
     ast_output(0, false, "return_type\n");
@@ -101,9 +86,6 @@ void output_method(Method* method, FILE* outfile, size_t indent, Parser* parser)
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_class_member(ClassMember* class_member, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_class_member\n");
-#endif
     switch (class_member->type) {
         case CLASS_METHOD:
             ast_output(0, false, "method\n");
@@ -119,9 +101,6 @@ void output_class_member(ClassMember* class_member, FILE* outfile, size_t indent
     }
 }
 void output_class(Class* class, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_class\n");
-#endif
     ast_output(0, false, "name\n");
     output_name(class->name, outfile, indent + 1, parser);
     ast_output(0, true, "members\n");
@@ -131,9 +110,6 @@ void output_class(Class* class, FILE* outfile, size_t indent, Parser* parser) {
         output_class_member(member, outfile, indent + 1, parser);
 }
 void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_variable\n");
-#endif
     ast_output(0, false, "type\n");
     output_name(variable->type, outfile, indent + 1, parser);
     ast_output(0, false, "name\n");
@@ -145,9 +121,6 @@ void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* p
         ast_output(0, true, "value: \"NULL\"\n");
 }
 void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_statement\n");
-#endif
     switch (statement->type) {
         case IF_STATEMENT:
             ast_output(0, false, "if_statement\n");
@@ -193,9 +166,6 @@ void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser
     }
 }
 void output_if(If* if_, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_if\n");
-#endif
     list(Statement*) body = list_copy(if_->body);
     list(ElseIf*) else_if_list = list_copy(if_->else_if);
     list(Statement*) else_body = list_copy(if_->else_body);
@@ -214,9 +184,6 @@ void output_if(If* if_, FILE* outfile, size_t indent, Parser* parser) {
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_else_if(ElseIf* else_if, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_else_if\n");
-#endif
     list(Statement*) body = list_copy(else_if->body);
     ast_output(0, false, "condition\n");
     output_expression(else_if->condition, outfile, indent + 1, parser);
@@ -226,9 +193,6 @@ void output_else_if(ElseIf* else_if, FILE* outfile, size_t indent, Parser* parse
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_for(For* for_, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_for\n");
-#endif
     list(Statement*) body = list_copy(for_->body);
     if (for_->initializer != NULL) {
         ast_output(0, false, "initializer\n");
@@ -251,9 +215,6 @@ void output_for(For* for_, FILE* outfile, size_t indent, Parser* parser) {
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_while(While* while_, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_while\n");
-#endif
     list(Statement*) body = list_copy(while_->body);
     ast_output(0, false, "condition\n");
     output_expression(while_->condition, outfile, indent + 1, parser);
@@ -263,9 +224,6 @@ void output_while(While* while_, FILE* outfile, size_t indent, Parser* parser) {
         output_statement(statement, outfile, indent + 1, parser);
 }
 void output_expression(Expression* expression, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_expression\n");
-#endif
     if (expression->operator == OP_NONE) {
         ast_output(0, true, "primary\n");
         output_primary(expression->prim_left, outfile, indent + 1, parser);
@@ -279,9 +237,6 @@ void output_expression(Expression* expression, FILE* outfile, size_t indent, Par
     }
 }
 void output_primary(Primary* primary, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_primary\n");
-#endif
     switch (primary->type) {
         case PRIM_INTEGER:
             ast_output(0, false, "type: \"integer\"\n");
@@ -329,9 +284,6 @@ void output_primary(Primary* primary, FILE* outfile, size_t indent, Parser* pars
     }
 }
 void output_variable_access(VariableAccess* variable_access, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_variable_access\n");
-#endif
     list(Expression*) args;
     int index;
     switch (variable_access->type) {
@@ -373,9 +325,6 @@ void output_variable_access(VariableAccess* variable_access, FILE* outfile, size
     }
 }
 void output_name(Symbol* name, FILE* outfile, size_t indent, Parser* parser) {
-#ifdef DEBUG
-    fprintf(stderr, "into output_name\n");
-#endif
     if (name == NULL) {
         ast_output(0, true, "Name pointer: \"NULL\"\n");
         return;
