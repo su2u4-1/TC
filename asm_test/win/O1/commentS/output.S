@@ -19,15 +19,15 @@
 .LC5:
 	.ascii "type\12\0"
 .LC6:
-	.ascii "kind: \"function\"\12\0"
+	.ascii "kind: \"subroutine\"\12\0"
 .LC7:
 	.ascii "return_type\12\0"
 .LC8:
-	.ascii "kind: \"method\"\12\0"
-.LC9:
 	.ascii "kind: \"class\"\12\0"
-.LC10:
+.LC9:
 	.ascii "kind: \"attribute\"\12\0"
+.LC10:
+	.ascii "kind: \"parameter\"\12\0"
 .LC11:
 	.ascii "kind: \"unknown_NameType\"\12\0"
 	.text
@@ -41,35 +41,35 @@ output_name:
 	movq	%rdx, %rbx	 ; tmp128, outfile
 	movq	%r8, %rdi	 ; tmp129, indent
 	movq	%r9, %rbp	 ; tmp130, parser
- ; D:\TC\src\output.c:395:     if (name_ptr == NULL) {
+ ; D:\TC\src\output.c:328:     if (name == NULL) {
 	testq	%rcx, %rcx	 ; name
 	je	.L13	 ;,
 	movq	%rcx, %rsi	 ; tmp127, name
- ; D:\TC\src\output.c:399:     OUT(0, false, "name: \"%s\"\n", (name_ptr->name));
+ ; D:\TC\src\output.c:332:     ast_output(0, false, "name: \"%s\"\n", name->original_name);
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:399:     OUT(0, false, "name: \"%s\"\n", (name_ptr->name));
-	movq	(%rsi), %r8	 ; name_13(D)->name,
+ ; D:\TC\src\output.c:332:     ast_output(0, false, "name: \"%s\"\n", name->original_name);
+	movq	16(%rsi), %r8	 ; name_13(D)->original_name,
 	leaq	.LC1(%rip), %rdx	 ;, tmp99
 	movq	%rbx, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:400:     OUT(0, false, "id: %zu\n", name_ptr->id);
+ ; D:\TC\src\output.c:333:     ast_output(0, false, "id: %zu\n", name->id);
 	movq	%rbp, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:400:     OUT(0, false, "id: %zu\n", name_ptr->id);
-	movq	8(%rsi), %r8	 ; name_13(D)->id,
+ ; D:\TC\src\output.c:333:     ast_output(0, false, "id: %zu\n", name->id);
+	movq	24(%rsi), %r8	 ; name_13(D)->id,
 	leaq	.LC2(%rip), %rdx	 ;, tmp101
 	movq	%rbx, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:401:     switch (name_ptr->kind) {
-	cmpl	$5, 24(%rsi)	 ;, name_13(D)->kind
+ ; D:\TC\src\output.c:334:     switch (name->kind) {
+	cmpl	$5, 32(%rsi)	 ;, name_13(D)->kind
 	ja	.L4	 ;,
-	movl	24(%rsi), %eax	 ; name_13(D)->kind, name_13(D)->kind
+	movl	32(%rsi), %eax	 ; name_13(D)->kind, name_13(D)->kind
 	leaq	.L6(%rip), %rdx	 ;, tmp103
 	movslq	(%rdx,%rax,4), %rax	 ;, tmp105
 	addq	%rdx, %rax	 ; tmp103, tmp106
@@ -85,201 +85,201 @@ output_name:
 	.long	.L5-.L6
 	.text
 .L13:
- ; D:\TC\src\output.c:396:         OUT(0, true, "Name pointer: \"NULL\"\n");
+ ; D:\TC\src\output.c:329:         ast_output(0, true, "Name pointer: \"NULL\"\n");
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:396:         OUT(0, true, "Name pointer: \"NULL\"\n");
+ ; D:\TC\src\output.c:329:         ast_output(0, true, "Name pointer: \"NULL\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$21, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC0(%rip), %rcx	 ;, tmp97
 	call	fwrite	 ;
 .L1:
- ; D:\TC\src\output.c:432: }
+ ; D:\TC\src\output.c:365: }
 	addq	$40, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	ret	
-.L11:
- ; D:\TC\src\output.c:403:             OUT(0, true, "kind: \"type\"\n");
+.L5:
+ ; D:\TC\src\output.c:336:             ast_output(0, true, "kind: \"type\"\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:403:             OUT(0, true, "kind: \"type\"\n");
+ ; D:\TC\src\output.c:336:             ast_output(0, true, "kind: \"type\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$13, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC3(%rip), %rcx	 ;, tmp108
 	call	fwrite	 ;
- ; D:\TC\src\output.c:404:             break;
+ ; D:\TC\src\output.c:337:             break;
 	jmp	.L1	 ;
-.L10:
- ; D:\TC\src\output.c:406:             OUT(0, false, "kind: \"variable\"\n");
+.L9:
+ ; D:\TC\src\output.c:339:             ast_output(0, false, "kind: \"variable\"\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:406:             OUT(0, false, "kind: \"variable\"\n");
+ ; D:\TC\src\output.c:339:             ast_output(0, false, "kind: \"variable\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$17, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC4(%rip), %rcx	 ;, tmp109
 	call	fwrite	 ;
- ; D:\TC\src\output.c:407:             OUT(0, true, "type\n");
+ ; D:\TC\src\output.c:340:             ast_output(0, true, "type\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:407:             OUT(0, true, "type\n");
+ ; D:\TC\src\output.c:340:             ast_output(0, true, "type\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC5(%rip), %rcx	 ;, tmp110
 	call	fwrite	 ;
- ; D:\TC\src\output.c:408:             output_name(name_ptr->info.type, outfile, indent + 1, parser);
-	movq	16(%rsi), %rcx	 ; name_13(D)->info.type, name_13(D)->info.type
+ ; D:\TC\src\output.c:341:             output_name(name->type, outfile, indent + 1, parser);
+	movq	(%rsi), %rcx	 ; name_13(D)->type, name_13(D)->type
 	movq	%rbp, %r9	 ; parser,
 	leaq	1(%rdi), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:409:             break;
+ ; D:\TC\src\output.c:342:             break;
 	jmp	.L1	 ;
-.L9:
- ; D:\TC\src\output.c:411:             OUT(0, false, "kind: \"function\"\n");
+.L10:
+ ; D:\TC\src\output.c:344:             ast_output(0, false, "kind: \"subroutine\"\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:411:             OUT(0, false, "kind: \"function\"\n");
+ ; D:\TC\src\output.c:344:             ast_output(0, false, "kind: \"subroutine\"\n");
 	movq	%rbx, %r9	 ; outfile,
-	movl	$17, %r8d	 ;,
+	movl	$19, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC6(%rip), %rcx	 ;, tmp113
 	call	fwrite	 ;
- ; D:\TC\src\output.c:412:             OUT(0, true, "return_type\n");
+ ; D:\TC\src\output.c:345:             ast_output(0, true, "return_type\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:412:             OUT(0, true, "return_type\n");
+ ; D:\TC\src\output.c:345:             ast_output(0, true, "return_type\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$12, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC7(%rip), %rcx	 ;, tmp114
 	call	fwrite	 ;
- ; D:\TC\src\output.c:413:             output_name(name_ptr->info.type, outfile, indent + 1, parser);
-	movq	16(%rsi), %rcx	 ; name_13(D)->info.type, name_13(D)->info.type
+ ; D:\TC\src\output.c:346:             output_name(name->type, outfile, indent + 1, parser);
+	movq	(%rsi), %rcx	 ; name_13(D)->type, name_13(D)->type
 	movq	%rbp, %r9	 ; parser,
 	leaq	1(%rdi), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:414:             break;
+ ; D:\TC\src\output.c:347:             break;
 	jmp	.L1	 ;
-.L8:
- ; D:\TC\src\output.c:416:             OUT(0, false, "kind: \"method\"\n");
-	movq	%rbp, %r9	 ; parser,
-	movl	$0, %r8d	 ;,
-	movq	%rdi, %rdx	 ; indent,
-	movq	%rbx, %rcx	 ; outfile,
-	call	indention	 ;
- ; D:\TC\src\output.c:416:             OUT(0, false, "kind: \"method\"\n");
-	movq	%rbx, %r9	 ; outfile,
-	movl	$15, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC8(%rip), %rcx	 ;, tmp117
-	call	fwrite	 ;
- ; D:\TC\src\output.c:417:             OUT(0, true, "return_type\n");
+.L11:
+ ; D:\TC\src\output.c:349:             ast_output(0, true, "kind: \"class\"\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:417:             OUT(0, true, "return_type\n");
-	movq	%rbx, %r9	 ; outfile,
-	movl	$12, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC7(%rip), %rcx	 ;, tmp118
-	call	fwrite	 ;
- ; D:\TC\src\output.c:418:             output_name(name_ptr->info.type, outfile, indent + 1, parser);
-	movq	16(%rsi), %rcx	 ; name_13(D)->info.type, name_13(D)->info.type
-	movq	%rbp, %r9	 ; parser,
-	leaq	1(%rdi), %r8	 ;,
-	movq	%rbx, %rdx	 ; outfile,
-	call	output_name	 ;
- ; D:\TC\src\output.c:419:             break;
-	jmp	.L1	 ;
-.L7:
- ; D:\TC\src\output.c:421:             OUT(0, true, "kind: \"class\"\n");
-	movq	%rbp, %r9	 ; parser,
-	movl	$1, %r8d	 ;,
-	movq	%rdi, %rdx	 ; indent,
-	movq	%rbx, %rcx	 ; outfile,
-	call	indention	 ;
- ; D:\TC\src\output.c:421:             OUT(0, true, "kind: \"class\"\n");
+ ; D:\TC\src\output.c:349:             ast_output(0, true, "kind: \"class\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$14, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC9(%rip), %rcx	 ;, tmp121
+	leaq	.LC8(%rip), %rcx	 ;, tmp117
 	call	fwrite	 ;
- ; D:\TC\src\output.c:422:             break;
+ ; D:\TC\src\output.c:350:             break;
 	jmp	.L1	 ;
-.L5:
- ; D:\TC\src\output.c:424:             OUT(0, false, "kind: \"attribute\"\n");
+.L7:
+ ; D:\TC\src\output.c:352:             ast_output(0, false, "kind: \"attribute\"\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:424:             OUT(0, false, "kind: \"attribute\"\n");
+ ; D:\TC\src\output.c:352:             ast_output(0, false, "kind: \"attribute\"\n");
+	movq	%rbx, %r9	 ; outfile,
+	movl	$18, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC9(%rip), %rcx	 ;, tmp118
+	call	fwrite	 ;
+ ; D:\TC\src\output.c:353:             ast_output(0, true, "type\n");
+	movq	%rbp, %r9	 ; parser,
+	movl	$1, %r8d	 ;,
+	movq	%rdi, %rdx	 ; indent,
+	movq	%rbx, %rcx	 ; outfile,
+	call	indention	 ;
+ ; D:\TC\src\output.c:353:             ast_output(0, true, "type\n");
+	movq	%rbx, %r9	 ; outfile,
+	movl	$5, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC5(%rip), %rcx	 ;, tmp119
+	call	fwrite	 ;
+ ; D:\TC\src\output.c:354:             output_name(name->type, outfile, indent + 1, parser);
+	movq	(%rsi), %rcx	 ; name_13(D)->type, name_13(D)->type
+	movq	%rbp, %r9	 ; parser,
+	leaq	1(%rdi), %r8	 ;,
+	movq	%rbx, %rdx	 ; outfile,
+	call	output_name	 ;
+ ; D:\TC\src\output.c:355:             break;
+	jmp	.L1	 ;
+.L8:
+ ; D:\TC\src\output.c:357:             ast_output(0, false, "kind: \"parameter\"\n");
+	movq	%rbp, %r9	 ; parser,
+	movl	$0, %r8d	 ;,
+	movq	%rdi, %rdx	 ; indent,
+	movq	%rbx, %rcx	 ; outfile,
+	call	indention	 ;
+ ; D:\TC\src\output.c:357:             ast_output(0, false, "kind: \"parameter\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$18, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC10(%rip), %rcx	 ;, tmp122
 	call	fwrite	 ;
- ; D:\TC\src\output.c:425:             OUT(0, true, "type\n");
+ ; D:\TC\src\output.c:358:             ast_output(0, true, "type\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:425:             OUT(0, true, "type\n");
+ ; D:\TC\src\output.c:358:             ast_output(0, true, "type\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC5(%rip), %rcx	 ;, tmp123
 	call	fwrite	 ;
- ; D:\TC\src\output.c:426:             output_name(name_ptr->info.type, outfile, indent + 1, parser);
-	movq	16(%rsi), %rcx	 ; name_13(D)->info.type, name_13(D)->info.type
+ ; D:\TC\src\output.c:359:             output_name(name->type, outfile, indent + 1, parser);
+	movq	(%rsi), %rcx	 ; name_13(D)->type, name_13(D)->type
 	movq	%rbp, %r9	 ; parser,
 	leaq	1(%rdi), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:427:             break;
+ ; D:\TC\src\output.c:360:             break;
 	jmp	.L1	 ;
 .L4:
- ; D:\TC\src\output.c:429:             OUT(0, true, "kind: \"unknown_NameType\"\n");
+ ; D:\TC\src\output.c:362:             ast_output(0, true, "kind: \"unknown_NameType\"\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:429:             OUT(0, true, "kind: \"unknown_NameType\"\n");
+ ; D:\TC\src\output.c:362:             ast_output(0, true, "kind: \"unknown_NameType\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$25, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC11(%rip), %rcx	 ;, tmp126
 	call	fwrite	 ;
- ; D:\TC\src\output.c:430:             break;
+ ; D:\TC\src\output.c:363:             break;
 	jmp	.L1	 ;
 	.section .rdata,"dr"
 .LC12:
@@ -305,67 +305,67 @@ output_expression:
 	movq	%rdx, %rbx	 ; tmp103, outfile
 	movq	%r8, %rbp	 ; tmp104, indent
 	movq	%r9, %rsi	 ; tmp105, parser
- ; D:\TC\src\output.c:282:     if (expression_ptr->operator == OP_NONE) {
-	movl	24(%rcx), %ecx	 ; expression_9(D)->operator, _1
- ; D:\TC\src\output.c:282:     if (expression_ptr->operator == OP_NONE) {
+ ; D:\TC\src\output.c:227:     if (expression->operator == OP_NONE) {
+	movl	24(%rcx), %ecx	 ; expression_10(D)->operator, _1
+ ; D:\TC\src\output.c:227:     if (expression->operator == OP_NONE) {
 	cmpl	$19, %ecx	 ;, _1
 	je	.L20	 ;,
- ; D:\TC\src\output.c:286:         string op_str = operator_to_string(expression_ptr->operator);
+ ; D:\TC\src\output.c:231:         string op_str = operator_to_string(expression->operator);
 	call	operator_to_string	 ;
 	movq	%rax, %rdi	 ; tmp106, op_str
- ; D:\TC\src\output.c:287:         OUT(0, false, "operator: \"%s\"\n", op_str ? (op_str) : "UNKNOWN_OPERATOR");
+ ; D:\TC\src\output.c:232:         ast_output(0, false, "operator: \"%s\"\n", op_str ? op_str : "UNKNOWN_OPERATOR");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:287:         OUT(0, false, "operator: \"%s\"\n", op_str ? (op_str) : "UNKNOWN_OPERATOR");
+ ; D:\TC\src\output.c:232:         ast_output(0, false, "operator: \"%s\"\n", op_str ? op_str : "UNKNOWN_OPERATOR");
 	testq	%rdi, %rdi	 ; op_str
- ; D:\TC\src\output.c:287:         OUT(0, false, "operator: \"%s\"\n", op_str ? (op_str) : "UNKNOWN_OPERATOR");
+ ; D:\TC\src\output.c:232:         ast_output(0, false, "operator: \"%s\"\n", op_str ? op_str : "UNKNOWN_OPERATOR");
 	leaq	.LC12(%rip), %r8	 ;, tmp101
 	cmovne	%rdi, %r8	 ; op_str,,
 	leaq	.LC14(%rip), %rdx	 ;, tmp96
 	movq	%rbx, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:288:         OUT(0, false, "left\n");
+ ; D:\TC\src\output.c:233:         ast_output(0, false, "left\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:288:         OUT(0, false, "left\n");
+ ; D:\TC\src\output.c:233:         ast_output(0, false, "left\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC15(%rip), %rcx	 ;, tmp97
 	call	fwrite	 ;
- ; D:\TC\src\output.c:289:         output_expression(expression_ptr->expr_left, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:234:         output_expression(expression->expr_left, outfile, indent + 1, parser);
 	leaq	1(%rbp), %rdi	 ;, _4
-	movq	(%r12), %rcx	 ; expression_9(D)->expr_left, expression_9(D)->expr_left
+	movq	(%r12), %rcx	 ; expression_10(D)->expr_left, expression_10(D)->expr_left
 	movq	%rsi, %r9	 ; parser,
 	movq	%rdi, %r8	 ; _4,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
- ; D:\TC\src\output.c:290:         OUT(0, true, "right\n");
+ ; D:\TC\src\output.c:235:         ast_output(0, true, "right\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:290:         OUT(0, true, "right\n");
+ ; D:\TC\src\output.c:235:         ast_output(0, true, "right\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC16(%rip), %rcx	 ;, tmp99
 	call	fwrite	 ;
- ; D:\TC\src\output.c:291:         output_expression(expression_ptr->right, outfile, indent + 1, parser);
-	movq	16(%r12), %rcx	 ; expression_9(D)->right, expression_9(D)->right
+ ; D:\TC\src\output.c:236:         output_expression(expression->right, outfile, indent + 1, parser);
+	movq	16(%r12), %rcx	 ; expression_10(D)->right, expression_10(D)->right
 	movq	%rsi, %r9	 ; parser,
 	movq	%rdi, %r8	 ; _4,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
 .L14:
- ; D:\TC\src\output.c:293: }
+ ; D:\TC\src\output.c:238: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
@@ -374,19 +374,19 @@ output_expression:
 	popq	%r12	 ;
 	ret	
 .L20:
- ; D:\TC\src\output.c:283:         OUT(0, true, "primary\n");
+ ; D:\TC\src\output.c:228:         ast_output(0, true, "primary\n");
 	movl	$1, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:283:         OUT(0, true, "primary\n");
+ ; D:\TC\src\output.c:228:         ast_output(0, true, "primary\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$8, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC13(%rip), %rcx	 ;, tmp93
 	call	fwrite	 ;
- ; D:\TC\src\output.c:284:         output_primary(expression_ptr->prim_left, outfile, indent + 1, parser);
-	movq	8(%r12), %rcx	 ; expression_9(D)->prim_left, expression_9(D)->prim_left
+ ; D:\TC\src\output.c:229:         output_primary(expression->prim_left, outfile, indent + 1, parser);
+	movq	8(%r12), %rcx	 ; expression_10(D)->prim_left, expression_10(D)->prim_left
 	movq	%rsi, %r9	 ; parser,
 	leaq	1(%rbp), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
@@ -412,65 +412,65 @@ output_variable:
 	movq	%rdx, %rbx	 ; tmp99, outfile
 	movq	%r8, %rdi	 ; tmp100, indent
 	movq	%r9, %rsi	 ; tmp101, parser
- ; D:\TC\src\output.c:144:     OUT(0, false, "type\n");
+ ; D:\TC\src\output.c:113:     ast_output(0, false, "type\n");
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:144:     OUT(0, false, "type\n");
+ ; D:\TC\src\output.c:113:     ast_output(0, false, "type\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC5(%rip), %rcx	 ;, tmp91
 	call	fwrite	 ;
- ; D:\TC\src\output.c:145:     output_name(variable_ptr->type, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:114:     output_name(variable->type, outfile, indent + 1, parser);
 	leaq	1(%rdi), %r12	 ;, _1
-	movq	0(%rbp), %rcx	 ; variable_7(D)->type, variable_7(D)->type
+	movq	0(%rbp), %rcx	 ; variable_13(D)->type, variable_13(D)->type
 	movq	%rsi, %r9	 ; parser,
 	movq	%r12, %r8	 ; _1,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:146:     OUT(0, false, "name\n");
+ ; D:\TC\src\output.c:115:     ast_output(0, false, "name\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:146:     OUT(0, false, "name\n");
+ ; D:\TC\src\output.c:115:     ast_output(0, false, "name\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC17(%rip), %rcx	 ;, tmp93
 	call	fwrite	 ;
- ; D:\TC\src\output.c:147:     output_name(variable_ptr->name, outfile, indent + 1, parser);
-	movq	8(%rbp), %rcx	 ; variable_7(D)->name, variable_7(D)->name
+ ; D:\TC\src\output.c:116:     output_name(variable->name, outfile, indent + 1, parser);
+	movq	8(%rbp), %rcx	 ; variable_13(D)->name, variable_13(D)->name
 	movq	%rsi, %r9	 ; parser,
 	movq	%r12, %r8	 ; _1,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:148:     if (variable_ptr->value != 0) {
-	cmpq	$0, 16(%rbp)	 ;, variable_7(D)->value
+ ; D:\TC\src\output.c:117:     if (variable->value != NULL) {
+	cmpq	$0, 16(%rbp)	 ;, variable_13(D)->value
 	je	.L22	 ;,
- ; D:\TC\src\output.c:149:         OUT(0, true, "value\n");
+ ; D:\TC\src\output.c:118:         ast_output(0, true, "value\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:149:         OUT(0, true, "value\n");
+ ; D:\TC\src\output.c:118:         ast_output(0, true, "value\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC18(%rip), %rcx	 ;, tmp95
 	call	fwrite	 ;
- ; D:\TC\src\output.c:150:         output_expression(variable_ptr->value, outfile, indent + 1, parser);
-	movq	16(%rbp), %rcx	 ; variable_7(D)->value, variable_7(D)->value
+ ; D:\TC\src\output.c:119:         output_expression(variable->value, outfile, indent + 1, parser);
+	movq	16(%rbp), %rcx	 ; variable_13(D)->value, variable_13(D)->value
 	movq	%rsi, %r9	 ; parser,
 	movq	%r12, %r8	 ; _1,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
 .L21:
- ; D:\TC\src\output.c:153: }
+ ; D:\TC\src\output.c:122: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
@@ -479,19 +479,19 @@ output_variable:
 	popq	%r12	 ;
 	ret	
 .L22:
- ; D:\TC\src\output.c:152:         OUT(0, true, "value: \"NULL\"\n");
+ ; D:\TC\src\output.c:121:         ast_output(0, true, "value: \"NULL\"\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:152:         OUT(0, true, "value: \"NULL\"\n");
+ ; D:\TC\src\output.c:121:         ast_output(0, true, "value: \"NULL\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$14, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC19(%rip), %rcx	 ;, tmp97
 	call	fwrite	 ;
- ; D:\TC\src\output.c:153: }
+ ; D:\TC\src\output.c:122: }
 	jmp	.L21	 ;
 	.section .rdata,"dr"
 .LC20:
@@ -535,155 +535,155 @@ output_variable_access:
 	movq	%rdx, %rbx	 ; tmp129, outfile
 	movq	%r8, %rbp	 ; tmp130, indent
 	movq	%r9, %rsi	 ; tmp131, parser
- ; D:\TC\src\output.c:352:     switch (var_access_ptr->type) {
-	movl	16(%rcx), %eax	 ; variable_access_18(D)->type, _1
- ; D:\TC\src\output.c:352:     switch (var_access_ptr->type) {
+ ; D:\TC\src\output.c:289:     switch (variable_access->type) {
+	movl	16(%rcx), %eax	 ; variable_access_19(D)->type, _1
+ ; D:\TC\src\output.c:289:     switch (variable_access->type) {
 	cmpl	$2, %eax	 ;, _1
 	je	.L26	 ;,
 	ja	.L27	 ;,
 	testl	%eax, %eax	 ; _1
 	je	.L38	 ;,
- ; D:\TC\src\output.c:359:             args = list_copy(var_access_ptr->content.args);
-	movq	8(%rcx), %rcx	 ; variable_access_18(D)->content.args, variable_access_18(D)->content.args
+ ; D:\TC\src\output.c:296:             args = list_copy(variable_access->content.args);
+	movq	8(%rcx), %rcx	 ; variable_access_19(D)->content.args, variable_access_19(D)->content.args
 	call	list_copy	 ;
 	movq	%rax, %r13	 ; tmp132, args
- ; D:\TC\src\output.c:360:             OUT(0, false, "type: \"function_call\"\n");
+ ; D:\TC\src\output.c:297:             ast_output(0, false, "type: \"function_call\"\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:360:             OUT(0, false, "type: \"function_call\"\n");
+ ; D:\TC\src\output.c:297:             ast_output(0, false, "type: \"function_call\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$22, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC21(%rip), %rcx	 ;, tmp108
 	call	fwrite	 ;
- ; D:\TC\src\output.c:361:             OUT(0, false, "function\n");
+ ; D:\TC\src\output.c:298:             ast_output(0, false, "function\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:361:             OUT(0, false, "function\n");
+ ; D:\TC\src\output.c:298:             ast_output(0, false, "function\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$9, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC22(%rip), %rcx	 ;, tmp109
 	call	fwrite	 ;
- ; D:\TC\src\output.c:362:             output_variable_access(var_access_ptr->base, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:299:             output_variable_access(variable_access->base, outfile, indent + 1, parser);
 	leaq	1(%rbp), %r14	 ;, _5
-	movq	(%rdi), %rcx	 ; variable_access_18(D)->base, variable_access_18(D)->base
+	movq	(%rdi), %rcx	 ; variable_access_19(D)->base, variable_access_19(D)->base
 	movq	%rsi, %r9	 ; parser,
 	movq	%r14, %r8	 ; _5,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_variable_access	 ;
- ; D:\TC\src\output.c:363:             OUT(0, true, "arguments\n");
+ ; D:\TC\src\output.c:300:             ast_output(0, true, "arguments\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:363:             OUT(0, true, "arguments\n");
+ ; D:\TC\src\output.c:300:             ast_output(0, true, "arguments\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$10, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC23(%rip), %rcx	 ;, tmp111
 	call	fwrite	 ;
- ; D:\TC\src\output.c:365:             index = -1;
+ ; D:\TC\src\output.c:302:             index = -1;
 	movl	$-1, %r12d	 ;, index
- ; D:\TC\src\output.c:367:                 OUT(1, false, "arguments[%d]\n", ++index);
+ ; D:\TC\src\output.c:304:                 ast_output(1, false, "arguments[%d]\n", ++index);
 	leaq	.LC24(%rip), %r15	 ;, tmp126
- ; D:\TC\src\output.c:368:                 output_expression(arg, outfile, indent + 2, parser);
+ ; D:\TC\src\output.c:305:                 output_expression(arg, outfile, indent + 2, parser);
 	addq	$2, %rbp	 ;, tmp127
- ; D:\TC\src\output.c:366:             while ((arg = (Expression*)list_pop(args)) != 0) {
+ ; D:\TC\src\output.c:303:             while ((arg = (Expression*)list_pop(args)) != NULL) {
 	jmp	.L33	 ;
 .L27:
- ; D:\TC\src\output.c:352:     switch (var_access_ptr->type) {
+ ; D:\TC\src\output.c:289:     switch (variable_access->type) {
 	cmpl	$3, %eax	 ;, _1
 	jne	.L39	 ;,
- ; D:\TC\src\output.c:372:             OUT(0, false, "type: \"get sequence_element\"\n");
+ ; D:\TC\src\output.c:309:             ast_output(0, false, "type: \"get sequence_element\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:372:             OUT(0, false, "type: \"get sequence_element\"\n");
+ ; D:\TC\src\output.c:309:             ast_output(0, false, "type: \"get sequence_element\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$29, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC25(%rip), %rcx	 ;, tmp114
 	call	fwrite	 ;
- ; D:\TC\src\output.c:373:             OUT(0, false, "sequence\n");
+ ; D:\TC\src\output.c:310:             ast_output(0, false, "sequence\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:373:             OUT(0, false, "sequence\n");
+ ; D:\TC\src\output.c:310:             ast_output(0, false, "sequence\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$9, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC26(%rip), %rcx	 ;, tmp115
 	call	fwrite	 ;
- ; D:\TC\src\output.c:374:             output_variable_access(var_access_ptr->base, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:311:             output_variable_access(variable_access->base, outfile, indent + 1, parser);
 	leaq	1(%rbp), %r12	 ;, _8
-	movq	(%rdi), %rcx	 ; variable_access_18(D)->base, variable_access_18(D)->base
+	movq	(%rdi), %rcx	 ; variable_access_19(D)->base, variable_access_19(D)->base
 	movq	%rsi, %r9	 ; parser,
 	movq	%r12, %r8	 ; _8,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_variable_access	 ;
- ; D:\TC\src\output.c:375:             OUT(0, true, "index\n");
+ ; D:\TC\src\output.c:312:             ast_output(0, true, "index\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:375:             OUT(0, true, "index\n");
+ ; D:\TC\src\output.c:312:             ast_output(0, true, "index\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC27(%rip), %rcx	 ;, tmp117
 	call	fwrite	 ;
- ; D:\TC\src\output.c:376:             output_expression(var_access_ptr->content.index, outfile, indent + 1, parser);
-	movq	8(%rdi), %rcx	 ; variable_access_18(D)->content.index, variable_access_18(D)->content.index
+ ; D:\TC\src\output.c:313:             output_expression(variable_access->content.index, outfile, indent + 1, parser);
+	movq	8(%rdi), %rcx	 ; variable_access_19(D)->content.index, variable_access_19(D)->content.index
 	movq	%rsi, %r9	 ; parser,
 	movq	%r12, %r8	 ; _8,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
- ; D:\TC\src\output.c:377:             break;
+ ; D:\TC\src\output.c:314:             break;
 	jmp	.L25	 ;
 .L38:
- ; D:\TC\src\output.c:354:             OUT(0, false, "type: \"name\"\n");
+ ; D:\TC\src\output.c:291:             ast_output(0, false, "type: \"name\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:354:             OUT(0, false, "type: \"name\"\n");
+ ; D:\TC\src\output.c:291:             ast_output(0, false, "type: \"name\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$13, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC20(%rip), %rcx	 ;, tmp103
 	call	fwrite	 ;
- ; D:\TC\src\output.c:355:             OUT(0, true, "name\n");
+ ; D:\TC\src\output.c:292:             ast_output(0, true, "name\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:355:             OUT(0, true, "name\n");
+ ; D:\TC\src\output.c:292:             ast_output(0, true, "name\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC17(%rip), %rcx	 ;, tmp104
 	call	fwrite	 ;
- ; D:\TC\src\output.c:356:             output_name(var_access_ptr->content.name, outfile, indent + 1, parser);
-	movq	8(%rdi), %rcx	 ; variable_access_18(D)->content.name, variable_access_18(D)->content.name
+ ; D:\TC\src\output.c:293:             output_name(variable_access->content.name, outfile, indent + 1, parser);
+	movq	8(%rdi), %rcx	 ; variable_access_19(D)->content.name, variable_access_19(D)->content.name
 	movq	%rsi, %r9	 ; parser,
 	leaq	1(%rbp), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_name	 ;
 .L25:
- ; D:\TC\src\output.c:389: }
+ ; D:\TC\src\output.c:326: }
 	addq	$40, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
@@ -695,96 +695,96 @@ output_variable_access:
 	popq	%r15	 ;
 	ret	
 .L34:
- ; D:\TC\src\output.c:367:                 OUT(1, false, "arguments[%d]\n", ++index);
+ ; D:\TC\src\output.c:304:                 ast_output(1, false, "arguments[%d]\n", ++index);
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r14, %rdx	 ; _5,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:367:                 OUT(1, false, "arguments[%d]\n", ++index);
+ ; D:\TC\src\output.c:304:                 ast_output(1, false, "arguments[%d]\n", ++index);
 	addl	$1, %r12d	 ;, index
 	movl	%r12d, %r8d	 ; index,
 	movq	%r15, %rdx	 ; tmp126,
 	movq	%rbx, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:368:                 output_expression(arg, outfile, indent + 2, parser);
+ ; D:\TC\src\output.c:305:                 output_expression(arg, outfile, indent + 2, parser);
 	movq	%rsi, %r9	 ; parser,
 	movq	%rbp, %r8	 ; tmp127,
 	movq	%rbx, %rdx	 ; outfile,
 	movq	%rdi, %rcx	 ; arg,
 	call	output_expression	 ;
 .L33:
- ; D:\TC\src\output.c:366:             while ((arg = (Expression*)list_pop(args)) != 0) {
+ ; D:\TC\src\output.c:303:             while ((arg = (Expression*)list_pop(args)) != NULL) {
 	movq	%r13, %rcx	 ; args,
 	call	list_pop	 ;
 	movq	%rax, %rdi	 ; tmp133, arg
- ; D:\TC\src\output.c:366:             while ((arg = (Expression*)list_pop(args)) != 0) {
+ ; D:\TC\src\output.c:303:             while ((arg = (Expression*)list_pop(args)) != NULL) {
 	testq	%rax, %rax	 ; arg
 	jne	.L34	 ;,
 	jmp	.L25	 ;
 .L26:
- ; D:\TC\src\output.c:379:             OUT(0, false, "type: \"get_attribute\"\n");
+ ; D:\TC\src\output.c:316:             ast_output(0, false, "type: \"get_attribute\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:379:             OUT(0, false, "type: \"get_attribute\"\n");
+ ; D:\TC\src\output.c:316:             ast_output(0, false, "type: \"get_attribute\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$22, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC28(%rip), %rcx	 ;, tmp119
 	call	fwrite	 ;
- ; D:\TC\src\output.c:380:             OUT(0, false, "object\n");
+ ; D:\TC\src\output.c:317:             ast_output(0, false, "object\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:380:             OUT(0, false, "object\n");
+ ; D:\TC\src\output.c:317:             ast_output(0, false, "object\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$7, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC29(%rip), %rcx	 ;, tmp120
 	call	fwrite	 ;
- ; D:\TC\src\output.c:381:             output_variable_access(var_access_ptr->base, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:318:             output_variable_access(variable_access->base, outfile, indent + 1, parser);
 	leaq	1(%rbp), %r12	 ;, _11
-	movq	(%rdi), %rcx	 ; variable_access_18(D)->base, variable_access_18(D)->base
+	movq	(%rdi), %rcx	 ; variable_access_19(D)->base, variable_access_19(D)->base
 	movq	%rsi, %r9	 ; parser,
 	movq	%r12, %r8	 ; _11,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_variable_access	 ;
- ; D:\TC\src\output.c:382:             OUT(0, true, "attribute_name\n");
+ ; D:\TC\src\output.c:319:             ast_output(0, true, "attribute_name\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:382:             OUT(0, true, "attribute_name\n");
+ ; D:\TC\src\output.c:319:             ast_output(0, true, "attribute_name\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$15, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC30(%rip), %rcx	 ;, tmp122
 	call	fwrite	 ;
- ; D:\TC\src\output.c:383:             output_name(var_access_ptr->content.attr_name, outfile, indent + 1, parser);
-	movq	8(%rdi), %rcx	 ; variable_access_18(D)->content.attr_name, variable_access_18(D)->content.attr_name
+ ; D:\TC\src\output.c:320:             output_name(variable_access->content.attr_name, outfile, indent + 1, parser);
+	movq	8(%rdi), %rcx	 ; variable_access_19(D)->content.attr_name, variable_access_19(D)->content.attr_name
 	movq	%rsi, %r9	 ; parser,
 	movq	%r12, %r8	 ; _11,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:384:             break;
+ ; D:\TC\src\output.c:321:             break;
 	jmp	.L25	 ;
 .L39:
- ; D:\TC\src\output.c:386:             OUT(0, true, "unknown_VariableAccessType: %u\n", var_access_ptr->type);
+ ; D:\TC\src\output.c:323:             ast_output(0, true, "unknown_VariableAccessType: %u\n", variable_access->type);
 	movl	$1, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:386:             OUT(0, true, "unknown_VariableAccessType: %u\n", var_access_ptr->type);
-	movl	16(%rdi), %r8d	 ; variable_access_18(D)->type,
+ ; D:\TC\src\output.c:323:             ast_output(0, true, "unknown_VariableAccessType: %u\n", variable_access->type);
+	movl	16(%rdi), %r8d	 ; variable_access_19(D)->type,
 	leaq	.LC31(%rip), %rdx	 ;, tmp125
 	movq	%rbx, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:389: }
+ ; D:\TC\src\output.c:326: }
 	jmp	.L25	 ;
 	.section .rdata,"dr"
 .LC32:
@@ -825,10 +825,10 @@ output_primary:
 	movq	%rdx, %rbx	 ; tmp137, outfile
 	movq	%r8, %rdi	 ; tmp138, indent
 	movq	%r9, %rbp	 ; tmp139, parser
- ; D:\TC\src\output.c:299:     switch (primary_ptr->type) {
-	cmpl	$8, 8(%rcx)	 ;, primary_15(D)->type
+ ; D:\TC\src\output.c:240:     switch (primary->type) {
+	cmpl	$8, 8(%rcx)	 ;, primary_16(D)->type
 	ja	.L41	 ;,
-	movl	8(%rcx), %eax	 ; primary_15(D)->type, primary_15(D)->type
+	movl	8(%rcx), %eax	 ; primary_16(D)->type, primary_16(D)->type
 	leaq	.L43(%rip), %rdx	 ;, tmp100
 	movslq	(%rdx,%rax,4), %rax	 ;, tmp102
 	addq	%rdx, %rax	 ; tmp100, tmp103
@@ -847,30 +847,30 @@ output_primary:
 	.long	.L42-.L43
 	.text
 .L51:
- ; D:\TC\src\output.c:301:             OUT(0, false, "type: \"integer\"\n");
+ ; D:\TC\src\output.c:242:             ast_output(0, false, "type: \"integer\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:301:             OUT(0, false, "type: \"integer\"\n");
+ ; D:\TC\src\output.c:242:             ast_output(0, false, "type: \"integer\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$16, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC32(%rip), %rcx	 ;, tmp105
 	call	fwrite	 ;
- ; D:\TC\src\output.c:302:             OUT(0, true, "value: %s\n", (primary_ptr->value.literal_value));
+ ; D:\TC\src\output.c:243:             ast_output(0, true, "value: %s\n", primary->value.literal_value);
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:302:             OUT(0, true, "value: %s\n", (primary_ptr->value.literal_value));
-	movq	(%rsi), %r8	 ; primary_15(D)->value.literal_value,
+ ; D:\TC\src\output.c:243:             ast_output(0, true, "value: %s\n", primary->value.literal_value);
+	movq	(%rsi), %r8	 ; primary_16(D)->value.literal_value,
 	leaq	.LC33(%rip), %rdx	 ;, tmp107
 	movq	%rbx, %rcx	 ; outfile,
 	call	fprintf	 ;
 .L40:
- ; D:\TC\src\output.c:344: }
+ ; D:\TC\src\output.c:285: }
 	addq	$40, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
@@ -878,247 +878,247 @@ output_primary:
 	popq	%rbp	 ;
 	ret	
 .L50:
- ; D:\TC\src\output.c:305:             OUT(0, false, "type: \"float\"\n");
+ ; D:\TC\src\output.c:246:             ast_output(0, false, "type: \"float\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:305:             OUT(0, false, "type: \"float\"\n");
+ ; D:\TC\src\output.c:246:             ast_output(0, false, "type: \"float\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$14, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC34(%rip), %rcx	 ;, tmp108
 	call	fwrite	 ;
- ; D:\TC\src\output.c:306:             OUT(0, true, "value: %s\n", (primary_ptr->value.literal_value));
+ ; D:\TC\src\output.c:247:             ast_output(0, true, "value: %s\n", primary->value.literal_value);
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:306:             OUT(0, true, "value: %s\n", (primary_ptr->value.literal_value));
-	movq	(%rsi), %r8	 ; primary_15(D)->value.literal_value,
+ ; D:\TC\src\output.c:247:             ast_output(0, true, "value: %s\n", primary->value.literal_value);
+	movq	(%rsi), %r8	 ; primary_16(D)->value.literal_value,
 	leaq	.LC33(%rip), %rdx	 ;, tmp110
 	movq	%rbx, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:307:             break;
+ ; D:\TC\src\output.c:248:             break;
 	jmp	.L40	 ;
 .L49:
- ; D:\TC\src\output.c:309:             OUT(0, false, "type: \"string\"\n");
+ ; D:\TC\src\output.c:250:             ast_output(0, false, "type: \"string\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:309:             OUT(0, false, "type: \"string\"\n");
+ ; D:\TC\src\output.c:250:             ast_output(0, false, "type: \"string\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$15, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC35(%rip), %rcx	 ;, tmp111
 	call	fwrite	 ;
- ; D:\TC\src\output.c:310:             OUT(0, true, "value: \"%s\"\n", (primary_ptr->value.literal_value));
+ ; D:\TC\src\output.c:251:             ast_output(0, true, "value: \"%s\"\n", primary->value.literal_value);
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:310:             OUT(0, true, "value: \"%s\"\n", (primary_ptr->value.literal_value));
-	movq	(%rsi), %r8	 ; primary_15(D)->value.literal_value,
+ ; D:\TC\src\output.c:251:             ast_output(0, true, "value: \"%s\"\n", primary->value.literal_value);
+	movq	(%rsi), %r8	 ; primary_16(D)->value.literal_value,
 	leaq	.LC36(%rip), %rdx	 ;, tmp113
 	movq	%rbx, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:311:             break;
+ ; D:\TC\src\output.c:252:             break;
 	jmp	.L40	 ;
 .L48:
- ; D:\TC\src\output.c:313:             OUT(0, false, "type: \"boolean\"\n");
+ ; D:\TC\src\output.c:254:             ast_output(0, false, "type: \"boolean\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:313:             OUT(0, false, "type: \"boolean\"\n");
+ ; D:\TC\src\output.c:254:             ast_output(0, false, "type: \"boolean\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$16, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC37(%rip), %rcx	 ;, tmp114
 	call	fwrite	 ;
- ; D:\TC\src\output.c:314:             OUT(0, true, "value: \"true\"\n");
+ ; D:\TC\src\output.c:255:             ast_output(0, true, "value: \"true\"\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:314:             OUT(0, true, "value: \"true\"\n");
+ ; D:\TC\src\output.c:255:             ast_output(0, true, "value: \"true\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$14, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC38(%rip), %rcx	 ;, tmp115
 	call	fwrite	 ;
- ; D:\TC\src\output.c:315:             break;
+ ; D:\TC\src\output.c:256:             break;
 	jmp	.L40	 ;
 .L47:
- ; D:\TC\src\output.c:317:             OUT(0, false, "type: \"boolean\"\n");
+ ; D:\TC\src\output.c:258:             ast_output(0, false, "type: \"boolean\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:317:             OUT(0, false, "type: \"boolean\"\n");
+ ; D:\TC\src\output.c:258:             ast_output(0, false, "type: \"boolean\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$16, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC37(%rip), %rcx	 ;, tmp116
 	call	fwrite	 ;
- ; D:\TC\src\output.c:318:             OUT(0, true, "value: \"false\"\n");
+ ; D:\TC\src\output.c:259:             ast_output(0, true, "value: \"false\"\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:318:             OUT(0, true, "value: \"false\"\n");
+ ; D:\TC\src\output.c:259:             ast_output(0, true, "value: \"false\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$15, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC39(%rip), %rcx	 ;, tmp117
 	call	fwrite	 ;
- ; D:\TC\src\output.c:319:             break;
+ ; D:\TC\src\output.c:260:             break;
 	jmp	.L40	 ;
 .L46:
- ; D:\TC\src\output.c:321:             OUT(0, false, "type: \"expression\"\n");
+ ; D:\TC\src\output.c:262:             ast_output(0, false, "type: \"expression\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:321:             OUT(0, false, "type: \"expression\"\n");
+ ; D:\TC\src\output.c:262:             ast_output(0, false, "type: \"expression\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$19, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC40(%rip), %rcx	 ;, tmp118
 	call	fwrite	 ;
- ; D:\TC\src\output.c:322:             OUT(0, true, "value\n");
+ ; D:\TC\src\output.c:263:             ast_output(0, true, "value\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:322:             OUT(0, true, "value\n");
+ ; D:\TC\src\output.c:263:             ast_output(0, true, "value\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC18(%rip), %rcx	 ;, tmp119
 	call	fwrite	 ;
- ; D:\TC\src\output.c:323:             output_expression(primary_ptr->value.expr, outfile, indent + 1, parser);
-	movq	(%rsi), %rcx	 ; primary_15(D)->value.expr, primary_15(D)->value.expr
+ ; D:\TC\src\output.c:264:             output_expression(primary->value.expr, outfile, indent + 1, parser);
+	movq	(%rsi), %rcx	 ; primary_16(D)->value.expr, primary_16(D)->value.expr
 	movq	%rbp, %r9	 ; parser,
 	leaq	1(%rdi), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
- ; D:\TC\src\output.c:324:             break;
+ ; D:\TC\src\output.c:265:             break;
 	jmp	.L40	 ;
 .L45:
- ; D:\TC\src\output.c:326:             OUT(0, false, "type: \"!\"\n");
+ ; D:\TC\src\output.c:267:             ast_output(0, false, "type: \"!\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:326:             OUT(0, false, "type: \"!\"\n");
+ ; D:\TC\src\output.c:267:             ast_output(0, false, "type: \"!\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$10, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC41(%rip), %rcx	 ;, tmp122
 	call	fwrite	 ;
- ; D:\TC\src\output.c:327:             OUT(0, true, "value\n");
+ ; D:\TC\src\output.c:268:             ast_output(0, true, "value\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:327:             OUT(0, true, "value\n");
+ ; D:\TC\src\output.c:268:             ast_output(0, true, "value\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC18(%rip), %rcx	 ;, tmp123
 	call	fwrite	 ;
- ; D:\TC\src\output.c:328:             output_primary(primary_ptr->value.operand, outfile, indent + 1, parser);
-	movq	(%rsi), %rcx	 ; primary_15(D)->value.operand, primary_15(D)->value.operand
+ ; D:\TC\src\output.c:269:             output_primary(primary->value.operand, outfile, indent + 1, parser);
+	movq	(%rsi), %rcx	 ; primary_16(D)->value.operand, primary_16(D)->value.operand
 	movq	%rbp, %r9	 ; parser,
 	leaq	1(%rdi), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_primary	 ;
- ; D:\TC\src\output.c:329:             break;
+ ; D:\TC\src\output.c:270:             break;
 	jmp	.L40	 ;
 .L44:
- ; D:\TC\src\output.c:331:             OUT(0, false, "type: \"-\"\n");
+ ; D:\TC\src\output.c:272:             ast_output(0, false, "type: \"-\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:331:             OUT(0, false, "type: \"-\"\n");
+ ; D:\TC\src\output.c:272:             ast_output(0, false, "type: \"-\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$10, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC42(%rip), %rcx	 ;, tmp126
 	call	fwrite	 ;
- ; D:\TC\src\output.c:332:             OUT(0, true, "value\n");
+ ; D:\TC\src\output.c:273:             ast_output(0, true, "value\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:332:             OUT(0, true, "value\n");
+ ; D:\TC\src\output.c:273:             ast_output(0, true, "value\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC18(%rip), %rcx	 ;, tmp127
 	call	fwrite	 ;
- ; D:\TC\src\output.c:333:             output_primary(primary_ptr->value.operand, outfile, indent + 1, parser);
-	movq	(%rsi), %rcx	 ; primary_15(D)->value.operand, primary_15(D)->value.operand
+ ; D:\TC\src\output.c:274:             output_primary(primary->value.operand, outfile, indent + 1, parser);
+	movq	(%rsi), %rcx	 ; primary_16(D)->value.operand, primary_16(D)->value.operand
 	movq	%rbp, %r9	 ; parser,
 	leaq	1(%rdi), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_primary	 ;
- ; D:\TC\src\output.c:334:             break;
+ ; D:\TC\src\output.c:275:             break;
 	jmp	.L40	 ;
 .L42:
- ; D:\TC\src\output.c:336:             OUT(0, false, "type: \"variable\"\n");
+ ; D:\TC\src\output.c:277:             ast_output(0, false, "type: \"variable\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:336:             OUT(0, false, "type: \"variable\"\n");
+ ; D:\TC\src\output.c:277:             ast_output(0, false, "type: \"variable\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$17, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC43(%rip), %rcx	 ;, tmp130
 	call	fwrite	 ;
- ; D:\TC\src\output.c:337:             OUT(0, true, "value\n");
+ ; D:\TC\src\output.c:278:             ast_output(0, true, "value\n");
 	movq	%rbp, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:337:             OUT(0, true, "value\n");
+ ; D:\TC\src\output.c:278:             ast_output(0, true, "value\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC18(%rip), %rcx	 ;, tmp131
 	call	fwrite	 ;
- ; D:\TC\src\output.c:338:             output_variable_access(primary_ptr->value.var, outfile, indent + 1, parser);
-	movq	(%rsi), %rcx	 ; primary_15(D)->value.var, primary_15(D)->value.var
+ ; D:\TC\src\output.c:279:             output_variable_access(primary->value.var, outfile, indent + 1, parser);
+	movq	(%rsi), %rcx	 ; primary_16(D)->value.var, primary_16(D)->value.var
 	movq	%rbp, %r9	 ; parser,
 	leaq	1(%rdi), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_variable_access	 ;
- ; D:\TC\src\output.c:339:             break;
+ ; D:\TC\src\output.c:280:             break;
 	jmp	.L40	 ;
 .L41:
- ; D:\TC\src\output.c:341:             OUT(0, true, "unknown_PrimaryType: %u\n", primary_ptr->type);
+ ; D:\TC\src\output.c:282:             ast_output(0, true, "unknown_PrimaryType: %u\n", primary->type);
 	movl	$1, %r8d	 ;,
 	movq	%rdi, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:341:             OUT(0, true, "unknown_PrimaryType: %u\n", primary_ptr->type);
-	movl	8(%rsi), %r8d	 ; primary_15(D)->type,
+ ; D:\TC\src\output.c:282:             ast_output(0, true, "unknown_PrimaryType: %u\n", primary->type);
+	movl	8(%rsi), %r8d	 ; primary_16(D)->type,
 	leaq	.LC44(%rip), %rdx	 ;, tmp135
 	movq	%rbx, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:344: }
+ ; D:\TC\src\output.c:285: }
 	jmp	.L40	 ;
 	.section .rdata,"dr"
 .LC45:
@@ -1178,10 +1178,10 @@ output_statement:
 	movq	%rdx, %rbx	 ; tmp196, outfile
 	movq	%r8, %rbp	 ; tmp197, indent
 	movq	%r9, %rsi	 ; tmp198, parser
- ; D:\TC\src\output.c:159:     switch (statement_ptr->type) {
-	cmpl	$7, 8(%rcx)	 ;, statement_18(D)->type
+ ; D:\TC\src\output.c:124:     switch (statement->type) {
+	cmpl	$7, 8(%rcx)	 ;, statement_19(D)->type
 	ja	.L55	 ;,
-	movl	8(%rcx), %eax	 ; statement_18(D)->type, statement_18(D)->type
+	movl	8(%rcx), %eax	 ; statement_19(D)->type, statement_19(D)->type
 	leaq	.L57(%rip), %rdx	 ;, tmp137
 	movslq	(%rdx,%rax,4), %rax	 ;, tmp139
 	addq	%rdx, %rax	 ; tmp137, tmp140
@@ -1199,145 +1199,145 @@ output_statement:
 	.long	.L56-.L57
 	.text
 .L62:
- ; D:\TC\src\output.c:161:             OUT(0, false, "if_statement\n");
+ ; D:\TC\src\output.c:126:             ast_output(0, false, "if_statement\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:161:             OUT(0, false, "if_statement\n");
+ ; D:\TC\src\output.c:126:             ast_output(0, false, "if_statement\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$13, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC45(%rip), %rcx	 ;, tmp142
 	call	fwrite	 ;
- ; D:\TC\src\output.c:162:             output_if(statement_ptr->stmt.if_stmt, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:127:             output_if(statement->stmt.if_stmt, outfile, indent + 1, parser);
 	leaq	1(%rbp), %r15	 ;, _2
 	movq	%r15, 40(%rsp)	 ; _2, %sfp
-	movq	(%rdi), %r12	 ; statement_18(D)->stmt.if_stmt, _3
- ; D:\TC\src\output.c:208:     list(Statement*) body = list_copy(if_ptr->body);
+	movq	(%rdi), %r12	 ; statement_19(D)->stmt.if_stmt, _3
+ ; D:\TC\src\output.c:169:     list(Statement*) body = list_copy(if_->body);
 	movq	8(%r12), %rcx	 ; _3->body, _3->body
 	call	list_copy	 ;
 	movq	%rax, %rdi	 ; tmp199, body
- ; D:\TC\src\output.c:209:     list(ElseIf*) else_if_list = list_copy(if_ptr->else_if);
+ ; D:\TC\src\output.c:170:     list(ElseIf*) else_if_list = list_copy(if_->else_if);
 	movq	16(%r12), %rcx	 ; _3->else_if, _3->else_if
 	call	list_copy	 ;
 	movq	%rax, %r14	 ; tmp200, else_if_list
- ; D:\TC\src\output.c:210:     list(Statement*) else_body = list_copy(if_ptr->else_body);
+ ; D:\TC\src\output.c:171:     list(Statement*) else_body = list_copy(if_->else_body);
 	movq	24(%r12), %rcx	 ; _3->else_body, _3->else_body
 	call	list_copy	 ;
 	movq	%rax, 32(%rsp)	 ; tmp201, %sfp
- ; D:\TC\src\output.c:211:     OUT(0, false, "condition\n");
+ ; D:\TC\src\output.c:172:     ast_output(0, false, "condition\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r15, %rdx	 ; _2,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:211:     OUT(0, false, "condition\n");
+ ; D:\TC\src\output.c:172:     ast_output(0, false, "condition\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$10, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC46(%rip), %rcx	 ;, tmp146
 	call	fwrite	 ;
- ; D:\TC\src\output.c:212:     output_expression(if_ptr->condition, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:173:     output_expression(if_->condition, outfile, indent + 1, parser);
 	leaq	2(%rbp), %r13	 ;, _57
 	movq	(%r12), %rcx	 ; _3->condition, _3->condition
 	movq	%rsi, %r9	 ; parser,
 	movq	%r13, %r8	 ; _57,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
- ; D:\TC\src\output.c:213:     OUT(0, false, "body\n");
+ ; D:\TC\src\output.c:174:     ast_output(0, false, "body\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r15, %rdx	 ; _2,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:213:     OUT(0, false, "body\n");
+ ; D:\TC\src\output.c:174:     ast_output(0, false, "body\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC47(%rip), %rcx	 ;, tmp148
 	call	fwrite	 ;
 .L65:
- ; D:\TC\src\output.c:215:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:176:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%rdi, %rcx	 ; body,
 	call	list_pop	 ;
 	movq	%rax, %rcx	 ; tmp202, statement
- ; D:\TC\src\output.c:215:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:176:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	 ; statement
 	je	.L87	 ;,
- ; D:\TC\src\output.c:216:         output_statement(statement, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:177:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%rsi, %r9	 ; parser,
 	movq	%r13, %r8	 ; _57,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_statement	 ;
 	jmp	.L65	 ;
 .L87:
- ; D:\TC\src\output.c:217:     OUT(0, false, "else_if\n");
+ ; D:\TC\src\output.c:178:     ast_output(0, false, "else_if\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	40(%rsp), %rdx	 ; %sfp,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:217:     OUT(0, false, "else_if\n");
+ ; D:\TC\src\output.c:178:     ast_output(0, false, "else_if\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$8, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC48(%rip), %rcx	 ;, tmp149
 	call	fwrite	 ;
- ; D:\TC\src\output.c:231:     OUT(0, false, "condition\n");
+ ; D:\TC\src\output.c:188:     ast_output(0, false, "condition\n");
 	leaq	.LC46(%rip), %r15	 ;, tmp191
- ; D:\TC\src\output.c:232:     output_expression(else_if_ptr->condition, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:189:     output_expression(else_if->condition, outfile, indent + 1, parser);
 	addq	$3, %rbp	 ;, _64
 .L67:
- ; D:\TC\src\output.c:219:     while ((else_if = (ElseIf*)list_pop(else_if_list)) != 0)
+ ; D:\TC\src\output.c:180:     while ((else_if = (ElseIf*)list_pop(else_if_list)) != NULL)
 	movq	%r14, %rcx	 ; else_if_list,
 	call	list_pop	 ;
 	movq	%rax, %r12	 ; tmp205, else_if
- ; D:\TC\src\output.c:219:     while ((else_if = (ElseIf*)list_pop(else_if_list)) != 0)
+ ; D:\TC\src\output.c:180:     while ((else_if = (ElseIf*)list_pop(else_if_list)) != NULL)
 	testq	%rax, %rax	 ; else_if
 	je	.L88	 ;,
- ; D:\TC\src\output.c:230:     list(Statement*) body = list_copy(else_if_ptr->body);
+ ; D:\TC\src\output.c:187:     list(Statement*) body = list_copy(else_if->body);
 	movq	8(%r12), %rcx	 ; else_if_60->body, else_if_60->body
 	call	list_copy	 ;
 	movq	%rax, %rdi	 ; tmp203, body
- ; D:\TC\src\output.c:231:     OUT(0, false, "condition\n");
+ ; D:\TC\src\output.c:188:     ast_output(0, false, "condition\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r13, %rdx	 ; _57,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:231:     OUT(0, false, "condition\n");
+ ; D:\TC\src\output.c:188:     ast_output(0, false, "condition\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$10, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	movq	%r15, %rcx	 ; tmp191,
 	call	fwrite	 ;
- ; D:\TC\src\output.c:232:     output_expression(else_if_ptr->condition, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:189:     output_expression(else_if->condition, outfile, indent + 1, parser);
 	movq	(%r12), %rcx	 ; else_if_60->condition, else_if_60->condition
 	movq	%rsi, %r9	 ; parser,
 	movq	%rbp, %r8	 ; _64,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
- ; D:\TC\src\output.c:233:     OUT(0, true, "body\n");
+ ; D:\TC\src\output.c:190:     ast_output(0, true, "body\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%r13, %rdx	 ; _57,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:233:     OUT(0, true, "body\n");
+ ; D:\TC\src\output.c:190:     ast_output(0, true, "body\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC47(%rip), %rcx	 ;,
 	call	fwrite	 ;
 .L68:
- ; D:\TC\src\output.c:235:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:192:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%rdi, %rcx	 ; body,
 	call	list_pop	 ;
- ; D:\TC\src\output.c:235:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:192:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	 ; statement
 	je	.L67	 ;,
- ; D:\TC\src\output.c:236:         output_statement(statement, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:193:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%rsi, %r9	 ; parser,
 	movq	%rbp, %r8	 ; _64,
 	movq	%rbx, %rdx	 ; outfile,
@@ -1345,153 +1345,153 @@ output_statement:
 	call	output_statement	 ;
 	jmp	.L68	 ;
 .L88:
- ; D:\TC\src\output.c:221:     OUT(0, true, "else_body\n");
+ ; D:\TC\src\output.c:182:     ast_output(0, true, "else_body\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	40(%rsp), %rdx	 ; %sfp,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:221:     OUT(0, true, "else_body\n");
+ ; D:\TC\src\output.c:182:     ast_output(0, true, "else_body\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$10, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC49(%rip), %rcx	 ;, tmp154
 	call	fwrite	 ;
 .L71:
- ; D:\TC\src\output.c:222:     while ((statement = (Statement*)list_pop(else_body)) != 0)
+ ; D:\TC\src\output.c:183:     while ((statement = (Statement*)list_pop(else_body)) != NULL)
 	movq	32(%rsp), %rcx	 ; %sfp,
 	call	list_pop	 ;
 	movq	%rax, %rcx	 ; tmp206, statement
- ; D:\TC\src\output.c:222:     while ((statement = (Statement*)list_pop(else_body)) != 0)
+ ; D:\TC\src\output.c:183:     while ((statement = (Statement*)list_pop(else_body)) != NULL)
 	testq	%rax, %rax	 ; statement
 	je	.L54	 ;,
- ; D:\TC\src\output.c:223:         output_statement(statement, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:184:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%rsi, %r9	 ; parser,
 	movq	%r13, %r8	 ; _57,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_statement	 ;
 	jmp	.L71	 ;
 .L60:
- ; D:\TC\src\output.c:165:             OUT(0, false, "for_statement\n");
+ ; D:\TC\src\output.c:130:             ast_output(0, false, "for_statement\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:165:             OUT(0, false, "for_statement\n");
+ ; D:\TC\src\output.c:130:             ast_output(0, false, "for_statement\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$14, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC50(%rip), %rcx	 ;, tmp155
 	call	fwrite	 ;
- ; D:\TC\src\output.c:166:             output_for(statement_ptr->stmt.for_stmt, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:131:             output_for(statement->stmt.for_stmt, outfile, indent + 1, parser);
 	leaq	1(%rbp), %r13	 ;, _4
-	movq	(%rdi), %r12	 ; statement_18(D)->stmt.for_stmt, _5
- ; D:\TC\src\output.c:243:     list(Statement*) body = list_copy(for_ptr->body);
+	movq	(%rdi), %r12	 ; statement_19(D)->stmt.for_stmt, _5
+ ; D:\TC\src\output.c:196:     list(Statement*) body = list_copy(for_->body);
 	movq	24(%r12), %rcx	 ; _5->body, _5->body
 	call	list_copy	 ;
 	movq	%rax, %rdi	 ; tmp207, body
- ; D:\TC\src\output.c:244:     if (for_ptr->initializer != 0) {
+ ; D:\TC\src\output.c:197:     if (for_->initializer != NULL) {
 	cmpq	$0, (%r12)	 ;, _5->initializer
 	je	.L74	 ;,
- ; D:\TC\src\output.c:245:         OUT(0, false, "initializer\n");
+ ; D:\TC\src\output.c:198:         ast_output(0, false, "initializer\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r13, %rdx	 ; _4,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:245:         OUT(0, false, "initializer\n");
+ ; D:\TC\src\output.c:198:         ast_output(0, false, "initializer\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$12, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC51(%rip), %rcx	 ;, tmp157
 	call	fwrite	 ;
- ; D:\TC\src\output.c:246:         output_variable(for_ptr->initializer, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:199:         output_variable(for_->initializer, outfile, indent + 1, parser);
 	movq	(%r12), %rcx	 ; _5->initializer, _5->initializer
 	movq	%rsi, %r9	 ; parser,
 	leaq	2(%rbp), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_variable	 ;
 .L75:
- ; D:\TC\src\output.c:249:     if (for_ptr->condition != 0) {
+ ; D:\TC\src\output.c:202:     if (for_->condition != NULL) {
 	cmpq	$0, 8(%r12)	 ;, _5->condition
 	je	.L76	 ;,
- ; D:\TC\src\output.c:250:         OUT(0, false, "condition\n");
+ ; D:\TC\src\output.c:203:         ast_output(0, false, "condition\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r13, %rdx	 ; _4,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:250:         OUT(0, false, "condition\n");
+ ; D:\TC\src\output.c:203:         ast_output(0, false, "condition\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$10, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC46(%rip), %rcx	 ;, tmp161
 	call	fwrite	 ;
- ; D:\TC\src\output.c:251:         output_expression(for_ptr->condition, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:204:         output_expression(for_->condition, outfile, indent + 1, parser);
 	movq	8(%r12), %rcx	 ; _5->condition, _5->condition
 	movq	%rsi, %r9	 ; parser,
 	leaq	2(%rbp), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
 .L77:
- ; D:\TC\src\output.c:254:     if (for_ptr->increment != 0) {
+ ; D:\TC\src\output.c:207:     if (for_->increment != NULL) {
 	cmpq	$0, 16(%r12)	 ;, _5->increment
 	je	.L78	 ;,
- ; D:\TC\src\output.c:255:         OUT(0, false, "increment\n");
+ ; D:\TC\src\output.c:208:         ast_output(0, false, "increment\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r13, %rdx	 ; _4,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:255:         OUT(0, false, "increment\n");
+ ; D:\TC\src\output.c:208:         ast_output(0, false, "increment\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$10, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC54(%rip), %rcx	 ;, tmp165
 	call	fwrite	 ;
- ; D:\TC\src\output.c:256:         output_expression(for_ptr->increment, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:209:         output_expression(for_->increment, outfile, indent + 1, parser);
 	movq	16(%r12), %rcx	 ; _5->increment, _5->increment
 	movq	%rsi, %r9	 ; parser,
 	leaq	2(%rbp), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
 .L79:
- ; D:\TC\src\output.c:259:     OUT(0, true, "body\n");
+ ; D:\TC\src\output.c:212:     ast_output(0, true, "body\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%r13, %rdx	 ; _4,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:259:     OUT(0, true, "body\n");
+ ; D:\TC\src\output.c:212:     ast_output(0, true, "body\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC47(%rip), %rcx	 ;, tmp169
 	call	fwrite	 ;
- ; D:\TC\src\output.c:262:         output_statement(statement, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:215:         output_statement(statement, outfile, indent + 1, parser);
 	addq	$2, %rbp	 ;, tmp194
 .L80:
- ; D:\TC\src\output.c:261:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:214:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%rdi, %rcx	 ; body,
 	call	list_pop	 ;
 	movq	%rax, %rcx	 ; tmp208, statement
- ; D:\TC\src\output.c:261:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:214:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	 ; statement
 	je	.L54	 ;,
- ; D:\TC\src\output.c:262:         output_statement(statement, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:215:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%rsi, %r9	 ; parser,
 	movq	%rbp, %r8	 ; tmp194,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_statement	 ;
 	jmp	.L80	 ;
 .L74:
- ; D:\TC\src\output.c:248:         OUT(0, false, "initializer: \"NULL\"\n");
+ ; D:\TC\src\output.c:201:         ast_output(0, false, "initializer: \"NULL\"\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r13, %rdx	 ; _4,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:248:         OUT(0, false, "initializer: \"NULL\"\n");
+ ; D:\TC\src\output.c:201:         ast_output(0, false, "initializer: \"NULL\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$20, %r8d	 ;,
 	movl	$1, %edx	 ;,
@@ -1499,13 +1499,13 @@ output_statement:
 	call	fwrite	 ;
 	jmp	.L75	 ;
 .L76:
- ; D:\TC\src\output.c:253:         OUT(0, false, "condition: \"NULL\"\n");
+ ; D:\TC\src\output.c:206:         ast_output(0, false, "condition: \"NULL\"\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r13, %rdx	 ; _4,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:253:         OUT(0, false, "condition: \"NULL\"\n");
+ ; D:\TC\src\output.c:206:         ast_output(0, false, "condition: \"NULL\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$18, %r8d	 ;,
 	movl	$1, %edx	 ;,
@@ -1513,13 +1513,13 @@ output_statement:
 	call	fwrite	 ;
 	jmp	.L77	 ;
 .L78:
- ; D:\TC\src\output.c:258:         OUT(0, false, "increment: \"NULL\"\n");
+ ; D:\TC\src\output.c:211:         ast_output(0, false, "increment: \"NULL\"\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r13, %rdx	 ; _4,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:258:         OUT(0, false, "increment: \"NULL\"\n");
+ ; D:\TC\src\output.c:211:         ast_output(0, false, "increment: \"NULL\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$18, %r8d	 ;,
 	movl	$1, %edx	 ;,
@@ -1527,89 +1527,89 @@ output_statement:
 	call	fwrite	 ;
 	jmp	.L79	 ;
 .L61:
- ; D:\TC\src\output.c:169:             OUT(0, false, "while_statement\n");
+ ; D:\TC\src\output.c:134:             ast_output(0, false, "while_statement\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:169:             OUT(0, false, "while_statement\n");
+ ; D:\TC\src\output.c:134:             ast_output(0, false, "while_statement\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$16, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC56(%rip), %rcx	 ;, tmp171
 	call	fwrite	 ;
- ; D:\TC\src\output.c:170:             output_while(statement_ptr->stmt.while_stmt, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:135:             output_while(statement->stmt.while_stmt, outfile, indent + 1, parser);
 	leaq	1(%rbp), %r12	 ;, _6
-	movq	(%rdi), %r13	 ; statement_18(D)->stmt.while_stmt, _7
- ; D:\TC\src\output.c:269:     list(Statement*) body = list_copy(while_ptr->body);
+	movq	(%rdi), %r13	 ; statement_19(D)->stmt.while_stmt, _7
+ ; D:\TC\src\output.c:218:     list(Statement*) body = list_copy(while_->body);
 	movq	8(%r13), %rcx	 ; _7->body, _7->body
 	call	list_copy	 ;
 	movq	%rax, %rdi	 ; tmp209, body
- ; D:\TC\src\output.c:270:     OUT(0, false, "condition\n");
+ ; D:\TC\src\output.c:219:     ast_output(0, false, "condition\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r12, %rdx	 ; _6,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:270:     OUT(0, false, "condition\n");
+ ; D:\TC\src\output.c:219:     ast_output(0, false, "condition\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$10, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC46(%rip), %rcx	 ;, tmp173
 	call	fwrite	 ;
- ; D:\TC\src\output.c:271:     output_expression(while_ptr->condition, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:220:     output_expression(while_->condition, outfile, indent + 1, parser);
 	addq	$2, %rbp	 ;, _82
 	movq	0(%r13), %rcx	 ; _7->condition, _7->condition
 	movq	%rsi, %r9	 ; parser,
 	movq	%rbp, %r8	 ; _82,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
- ; D:\TC\src\output.c:272:     OUT(0, true, "body\n");
+ ; D:\TC\src\output.c:221:     ast_output(0, true, "body\n");
 	movq	%rsi, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%r12, %rdx	 ; _6,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:272:     OUT(0, true, "body\n");
+ ; D:\TC\src\output.c:221:     ast_output(0, true, "body\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC47(%rip), %rcx	 ;, tmp175
 	call	fwrite	 ;
 .L82:
- ; D:\TC\src\output.c:274:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:223:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%rdi, %rcx	 ; body,
 	call	list_pop	 ;
 	movq	%rax, %rcx	 ; tmp210, statement
- ; D:\TC\src\output.c:274:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:223:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	 ; statement
 	je	.L54	 ;,
- ; D:\TC\src\output.c:275:         output_statement(statement, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:224:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%rsi, %r9	 ; parser,
 	movq	%rbp, %r8	 ; _82,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_statement	 ;
 	jmp	.L82	 ;
 .L63:
- ; D:\TC\src\output.c:173:             OUT(0, false, "variable_declaration_statement\n");
+ ; D:\TC\src\output.c:138:             ast_output(0, false, "variable_declaration_statement\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:173:             OUT(0, false, "variable_declaration_statement\n");
+ ; D:\TC\src\output.c:138:             ast_output(0, false, "variable_declaration_statement\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$31, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC57(%rip), %rcx	 ;, tmp176
 	call	fwrite	 ;
- ; D:\TC\src\output.c:174:             output_variable(statement_ptr->stmt.var, outfile, indent + 1, parser);
-	movq	(%rdi), %rcx	 ; statement_18(D)->stmt.var, statement_18(D)->stmt.var
+ ; D:\TC\src\output.c:139:             output_variable(statement->stmt.var, outfile, indent + 1, parser);
+	movq	(%rdi), %rcx	 ; statement_19(D)->stmt.var, statement_19(D)->stmt.var
 	movq	%rsi, %r9	 ; parser,
 	leaq	1(%rbp), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_variable	 ;
 .L54:
- ; D:\TC\src\output.c:202: }
+ ; D:\TC\src\output.c:167: }
 	addq	$56, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
@@ -1621,119 +1621,119 @@ output_statement:
 	popq	%r15	 ;
 	ret	
 .L59:
- ; D:\TC\src\output.c:177:             if (statement_ptr->stmt.expr == 0) {
-	cmpq	$0, (%rcx)	 ;, statement_18(D)->stmt.expr
+ ; D:\TC\src\output.c:142:             if (statement->stmt.expr == NULL) {
+	cmpq	$0, (%rcx)	 ;, statement_19(D)->stmt.expr
 	je	.L89	 ;,
- ; D:\TC\src\output.c:181:             OUT(0, false, "return_statement\n");
+ ; D:\TC\src\output.c:146:             ast_output(0, false, "return_statement\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:181:             OUT(0, false, "return_statement\n");
+ ; D:\TC\src\output.c:146:             ast_output(0, false, "return_statement\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$17, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC59(%rip), %rcx	 ;, tmp180
 	call	fwrite	 ;
- ; D:\TC\src\output.c:182:             output_expression(statement_ptr->stmt.expr, outfile, indent + 1, parser);
-	movq	(%rdi), %rcx	 ; statement_18(D)->stmt.expr, statement_18(D)->stmt.expr
+ ; D:\TC\src\output.c:147:             output_expression(statement->stmt.expr, outfile, indent + 1, parser);
+	movq	(%rdi), %rcx	 ; statement_19(D)->stmt.expr, statement_19(D)->stmt.expr
 	movq	%rsi, %r9	 ; parser,
 	leaq	1(%rbp), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
- ; D:\TC\src\output.c:183:             break;
+ ; D:\TC\src\output.c:148:             break;
 	jmp	.L54	 ;
 .L89:
- ; D:\TC\src\output.c:178:                 OUT(0, false, "return_statement: \"NULL\"\n");
+ ; D:\TC\src\output.c:143:                 ast_output(0, false, "return_statement: \"NULL\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:178:                 OUT(0, false, "return_statement: \"NULL\"\n");
+ ; D:\TC\src\output.c:143:                 ast_output(0, false, "return_statement: \"NULL\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$25, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC58(%rip), %rcx	 ;, tmp179
 	call	fwrite	 ;
- ; D:\TC\src\output.c:179:                 return;
+ ; D:\TC\src\output.c:144:                 return;
 	jmp	.L54	 ;
 .L58:
- ; D:\TC\src\output.c:185:             OUT(0, false, "break_statement: \"NULL\"\n");
+ ; D:\TC\src\output.c:150:             ast_output(0, false, "break_statement: \"NULL\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:185:             OUT(0, false, "break_statement: \"NULL\"\n");
+ ; D:\TC\src\output.c:150:             ast_output(0, false, "break_statement: \"NULL\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$24, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC60(%rip), %rcx	 ;, tmp183
 	call	fwrite	 ;
- ; D:\TC\src\output.c:186:             return;
+ ; D:\TC\src\output.c:151:             return;
 	jmp	.L54	 ;
 .L56:
- ; D:\TC\src\output.c:188:             OUT(0, false, "continue_statement: \"NULL\"\n");
+ ; D:\TC\src\output.c:153:             ast_output(0, false, "continue_statement: \"NULL\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:188:             OUT(0, false, "continue_statement: \"NULL\"\n");
+ ; D:\TC\src\output.c:153:             ast_output(0, false, "continue_statement: \"NULL\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$27, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC61(%rip), %rcx	 ;, tmp184
 	call	fwrite	 ;
- ; D:\TC\src\output.c:189:             return;
+ ; D:\TC\src\output.c:154:             return;
 	jmp	.L54	 ;
 .L64:
- ; D:\TC\src\output.c:191:             if (statement_ptr->stmt.expr == 0) {
-	cmpq	$0, (%rcx)	 ;, statement_18(D)->stmt.expr
+ ; D:\TC\src\output.c:156:             if (statement->stmt.expr == NULL) {
+	cmpq	$0, (%rcx)	 ;, statement_19(D)->stmt.expr
 	je	.L90	 ;,
- ; D:\TC\src\output.c:195:             OUT(0, false, "expression_statement\n");
+ ; D:\TC\src\output.c:160:             ast_output(0, false, "expression_statement\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:195:             OUT(0, false, "expression_statement\n");
+ ; D:\TC\src\output.c:160:             ast_output(0, false, "expression_statement\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$21, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC63(%rip), %rcx	 ;, tmp186
 	call	fwrite	 ;
- ; D:\TC\src\output.c:196:             output_expression(statement_ptr->stmt.expr, outfile, indent + 1, parser);
-	movq	(%rdi), %rcx	 ; statement_18(D)->stmt.expr, statement_18(D)->stmt.expr
+ ; D:\TC\src\output.c:161:             output_expression(statement->stmt.expr, outfile, indent + 1, parser);
+	movq	(%rdi), %rcx	 ; statement_19(D)->stmt.expr, statement_19(D)->stmt.expr
 	movq	%rsi, %r9	 ; parser,
 	leaq	1(%rbp), %r8	 ;,
 	movq	%rbx, %rdx	 ; outfile,
 	call	output_expression	 ;
- ; D:\TC\src\output.c:197:             break;
+ ; D:\TC\src\output.c:162:             break;
 	jmp	.L54	 ;
 .L90:
- ; D:\TC\src\output.c:192:                 OUT(0, false, "expression_statement: \"NULL\"\n");
+ ; D:\TC\src\output.c:157:                 ast_output(0, false, "expression_statement: \"NULL\"\n");
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:192:                 OUT(0, false, "expression_statement: \"NULL\"\n");
+ ; D:\TC\src\output.c:157:                 ast_output(0, false, "expression_statement: \"NULL\"\n");
 	movq	%rbx, %r9	 ; outfile,
 	movl	$29, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC62(%rip), %rcx	 ;, tmp185
 	call	fwrite	 ;
- ; D:\TC\src\output.c:193:                 return;
+ ; D:\TC\src\output.c:158:                 return;
 	jmp	.L54	 ;
 .L55:
- ; D:\TC\src\output.c:199:             OUT(0, false, "unknown_StatementType: %u\n", statement_ptr->type);
+ ; D:\TC\src\output.c:164:             ast_output(0, false, "unknown_StatementType: %u\n", statement->type);
 	movl	$0, %r8d	 ;,
 	movq	%rbp, %rdx	 ; indent,
 	movq	%rbx, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:199:             OUT(0, false, "unknown_StatementType: %u\n", statement_ptr->type);
-	movl	8(%rdi), %r8d	 ; statement_18(D)->type,
+ ; D:\TC\src\output.c:164:             ast_output(0, false, "unknown_StatementType: %u\n", statement->type);
+	movl	8(%rdi), %r8d	 ; statement_19(D)->type,
 	leaq	.LC64(%rip), %rdx	 ;, tmp190
 	movq	%rbx, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:200:             return;
+ ; D:\TC\src\output.c:165:             return;
 	jmp	.L54	 ;
 	.section .rdata,"dr"
 .LC65:
@@ -1774,42 +1774,42 @@ output_code:
 	movq	%rdx, %r15	 ; tmp186, outfile
 	movq	%r8, 160(%rsp)	 ; tmp187, indent
 	movq	%r9, %r14	 ; tmp188, parser
- ; D:\TC\src\output.c:47:     list(CodeMember*) members = list_copy((code)->members);
+ ; D:\TC\src\output.c:40:     list(CodeMember*) members = list_copy(code->members);
 	movq	(%rcx), %rcx	 ; code_5(D)->members, code_5(D)->members
 	call	list_copy	 ;
 	movq	%rax, 56(%rsp)	 ; tmp189, %sfp
- ; D:\TC\src\output.c:49:     while ((member = (CodeMember*)list_pop(members)) != 0)
+ ; D:\TC\src\output.c:42:     while ((member = (CodeMember*)list_pop(members)) != NULL)
 	jmp	.L92	 ;
 .L93:
- ; D:\TC\src\output.c:31:             OUT(0, false, "function\n");
+ ; D:\TC\src\output.c:27:             ast_output(0, false, "function\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:31:             OUT(0, false, "function\n");
+ ; D:\TC\src\output.c:27:             ast_output(0, false, "function\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$9, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC22(%rip), %rcx	 ;, tmp140
 	call	fwrite	 ;
- ; D:\TC\src\output.c:32:             output_function(code_member_ptr->content.function, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:28:             output_function(code_member->content.function, outfile, indent + 1, parser);
 	movq	160(%rsp), %rax	 ; indent, tmp232
 	leaq	2(%rax), %rsi	 ;, _17
 	movq	%rsi, 32(%rsp)	 ; _17, %sfp
 	movq	(%rbx), %rbx	 ; member_9->content.function, _18
- ; D:\TC\src\output.c:66:     OUT(0, false, "name\n");
+ ; D:\TC\src\output.c:51:     ast_output(0, false, "name\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rsi, %rdx	 ; _17,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:66:     OUT(0, false, "name\n");
+ ; D:\TC\src\output.c:51:     ast_output(0, false, "name\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC17(%rip), %rcx	 ;, tmp141
 	call	fwrite	 ;
- ; D:\TC\src\output.c:67:     output_name(function_ptr->name, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:52:     output_name(function->name, outfile, indent + 1, parser);
 	movq	160(%rsp), %rax	 ; indent, tmp233
 	leaq	3(%rax), %rdi	 ;, _26
 	movq	(%rbx), %rcx	 ; _18->name, _18->name
@@ -1817,70 +1817,70 @@ output_code:
 	movq	%rdi, %r8	 ; _26,
 	movq	%r15, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:68:     OUT(0, false, "return_type\n");
+ ; D:\TC\src\output.c:53:     ast_output(0, false, "return_type\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rsi, %rdx	 ; _17,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:68:     OUT(0, false, "return_type\n");
+ ; D:\TC\src\output.c:53:     ast_output(0, false, "return_type\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$12, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC7(%rip), %rcx	 ;, tmp143
 	call	fwrite	 ;
- ; D:\TC\src\output.c:69:     output_name(function_ptr->return_type, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:54:     output_name(function->return_type, outfile, indent + 1, parser);
 	movq	8(%rbx), %rcx	 ; _18->return_type, _18->return_type
 	movq	%r14, %r9	 ; parser,
 	movq	%rdi, %r8	 ; _26,
 	movq	%r15, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:70:     OUT(0, false, "parameters\n");
+ ; D:\TC\src\output.c:55:     ast_output(0, false, "parameters\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rsi, %rdx	 ; _17,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:70:     OUT(0, false, "parameters\n");
+ ; D:\TC\src\output.c:55:     ast_output(0, false, "parameters\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$11, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC68(%rip), %rcx	 ;, tmp145
 	call	fwrite	 ;
- ; D:\TC\src\output.c:71:     list(Variable*) parameters = list_copy(function_ptr->parameters);
+ ; D:\TC\src\output.c:56:     list(Variable*) parameters = list_copy(function->parameters);
 	movq	16(%rbx), %rcx	 ; _18->parameters, _18->parameters
 	call	list_copy	 ;
 	movq	%rax, %r12	 ; tmp190, parameters
- ; D:\TC\src\output.c:72:     list(Statement*) body = list_copy(function_ptr->body);
+ ; D:\TC\src\output.c:57:     list(Statement*) body = list_copy(function->body);
 	movq	24(%rbx), %rcx	 ; _18->body, _18->body
 	call	list_copy	 ;
 	movq	%rax, %rbp	 ; tmp191, body
- ; D:\TC\src\output.c:74:     int index = -1;
+ ; D:\TC\src\output.c:59:     int index = -1;
 	movl	$-1, %esi	 ;, index
- ; D:\TC\src\output.c:77:         output_variable(parameter, outfile, indent + 2, parser);
+ ; D:\TC\src\output.c:62:         output_variable(parameter, outfile, indent + 2, parser);
 	movq	160(%rsp), %rax	 ; indent, tmp234
 	leaq	4(%rax), %r13	 ;, tmp181
 .L98:
- ; D:\TC\src\output.c:75:     while ((parameter = (Variable*)list_pop(parameters)) != 0) {
+ ; D:\TC\src\output.c:60:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	movq	%r12, %rcx	 ; parameters,
 	call	list_pop	 ;
 	movq	%rax, %rbx	 ; tmp192, parameter
- ; D:\TC\src\output.c:75:     while ((parameter = (Variable*)list_pop(parameters)) != 0) {
+ ; D:\TC\src\output.c:60:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	testq	%rax, %rax	 ; parameter
 	je	.L115	 ;,
- ; D:\TC\src\output.c:76:         OUT(1, false, "parameters[%d]\n", ++index);
+ ; D:\TC\src\output.c:61:         ast_output(1, false, "parameters[%d]\n", ++index);
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; _26,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:76:         OUT(1, false, "parameters[%d]\n", ++index);
+ ; D:\TC\src\output.c:61:         ast_output(1, false, "parameters[%d]\n", ++index);
 	addl	$1, %esi	 ;, index
 	movl	%esi, %r8d	 ; index,
 	leaq	.LC69(%rip), %rdx	 ;,
 	movq	%r15, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:77:         output_variable(parameter, outfile, indent + 2, parser);
+ ; D:\TC\src\output.c:62:         output_variable(parameter, outfile, indent + 2, parser);
 	movq	%r14, %r9	 ; parser,
 	movq	%r13, %r8	 ; tmp181,
 	movq	%r15, %rdx	 ; outfile,
@@ -1888,61 +1888,61 @@ output_code:
 	call	output_variable	 ;
 	jmp	.L98	 ;
 .L115:
- ; D:\TC\src\output.c:79:     OUT(0, true, "body\n");
+ ; D:\TC\src\output.c:64:     ast_output(0, true, "body\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	32(%rsp), %rdx	 ; %sfp,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:79:     OUT(0, true, "body\n");
+ ; D:\TC\src\output.c:64:     ast_output(0, true, "body\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC47(%rip), %rcx	 ;, tmp150
 	call	fwrite	 ;
 .L100:
- ; D:\TC\src\output.c:81:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:66:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%rbp, %rcx	 ; body,
 	call	list_pop	 ;
 	movq	%rax, %rcx	 ; tmp193, statement
- ; D:\TC\src\output.c:81:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:66:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	 ; statement
 	je	.L92	 ;,
- ; D:\TC\src\output.c:82:         output_statement(statement, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:67:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%r14, %r9	 ; parser,
 	movq	%rdi, %r8	 ; _26,
 	movq	%r15, %rdx	 ; outfile,
 	call	output_statement	 ;
 	jmp	.L100	 ;
 .L94:
- ; D:\TC\src\output.c:35:             OUT(0, false, "class\n");
+ ; D:\TC\src\output.c:31:             ast_output(0, false, "class\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:35:             OUT(0, false, "class\n");
+ ; D:\TC\src\output.c:31:             ast_output(0, false, "class\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC70(%rip), %rcx	 ;, tmp151
 	call	fwrite	 ;
- ; D:\TC\src\output.c:36:             output_class(code_member_ptr->content.class_, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:32:             output_class(code_member->content.class_, outfile, indent + 1, parser);
 	movq	160(%rsp), %rax	 ; indent, tmp235
 	leaq	2(%rax), %rsi	 ;, _19
 	movq	(%rbx), %rbx	 ; member_9->content.class_, _20
- ; D:\TC\src\output.c:131:     OUT(0, false, "name\n");
+ ; D:\TC\src\output.c:104:     ast_output(0, false, "name\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rsi, %rdx	 ; _19,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:131:     OUT(0, false, "name\n");
+ ; D:\TC\src\output.c:104:     ast_output(0, false, "name\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC17(%rip), %rcx	 ;, tmp152
 	call	fwrite	 ;
- ; D:\TC\src\output.c:132:     output_name(class_ptr->name, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:105:     output_name(class->name, outfile, indent + 1, parser);
 	movq	160(%rsp), %rax	 ; indent, tmp237
 	addq	$3, %rax	 ;, _38
 	movq	%rax, 40(%rsp)	 ; _38, %sfp
@@ -1951,55 +1951,55 @@ output_code:
 	movq	%rax, %r8	 ; _38,
 	movq	%r15, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:133:     OUT(0, true, "members\n");
+ ; D:\TC\src\output.c:106:     ast_output(0, true, "members\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rsi, %rdx	 ; _19,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:133:     OUT(0, true, "members\n");
+ ; D:\TC\src\output.c:106:     ast_output(0, true, "members\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$8, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC71(%rip), %rcx	 ;, tmp154
 	call	fwrite	 ;
- ; D:\TC\src\output.c:134:     list(ClassMember*) members = list_copy(class_ptr->members);
+ ; D:\TC\src\output.c:107:     list(ClassMember*) members = list_copy(class->members);
 	movq	8(%rbx), %rcx	 ; _20->members, _20->members
 	call	list_copy	 ;
 	movq	%rax, 32(%rsp)	 ; tmp194, %sfp
- ; D:\TC\src\output.c:136:     while ((member = (ClassMember*)list_pop(members)) != 0)
+ ; D:\TC\src\output.c:109:     while ((member = (ClassMember*)list_pop(members)) != NULL)
 	jmp	.L102	 ;
 .L103:
- ; D:\TC\src\output.c:114:             OUT(0, false, "method\n");
+ ; D:\TC\src\output.c:91:             ast_output(0, false, "method\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	40(%rsp), %rdx	 ; %sfp,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:114:             OUT(0, false, "method\n");
+ ; D:\TC\src\output.c:91:             ast_output(0, false, "method\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$7, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC72(%rip), %rcx	 ;,
 	call	fwrite	 ;
- ; D:\TC\src\output.c:115:             output_method(class_member_ptr->content.method, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:92:             output_method(class_member->content.method, outfile, indent + 1, parser);
 	movq	160(%rsp), %rax	 ; indent, tmp239
 	leaq	4(%rax), %rsi	 ;, _44
 	movq	%rsi, 48(%rsp)	 ; _44, %sfp
 	movq	(%rbx), %rbx	 ; member_42->content.method, _45
- ; D:\TC\src\output.c:89:     OUT(0, false, "name\n");
+ ; D:\TC\src\output.c:70:     ast_output(0, false, "name\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rsi, %rdx	 ; _44,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:89:     OUT(0, false, "name\n");
+ ; D:\TC\src\output.c:70:     ast_output(0, false, "name\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC17(%rip), %rcx	 ;, tmp157
 	call	fwrite	 ;
- ; D:\TC\src\output.c:90:     output_name(method_ptr->name, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:71:     output_name(method->name, outfile, indent + 1, parser);
 	movq	160(%rsp), %rax	 ; indent, tmp240
 	leaq	5(%rax), %rdi	 ;, _49
 	movq	(%rbx), %rcx	 ; _45->name, _45->name
@@ -2007,241 +2007,241 @@ output_code:
 	movq	%rdi, %r8	 ; _49,
 	movq	%r15, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:91:     OUT(0, false, "return_type\n");
+ ; D:\TC\src\output.c:72:     ast_output(0, false, "return_type\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rsi, %rdx	 ; _44,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:91:     OUT(0, false, "return_type\n");
+ ; D:\TC\src\output.c:72:     ast_output(0, false, "return_type\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$12, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC7(%rip), %rcx	 ;, tmp159
 	call	fwrite	 ;
- ; D:\TC\src\output.c:92:     output_name(method_ptr->return_type, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:73:     output_name(method->return_type, outfile, indent + 1, parser);
 	movq	8(%rbx), %rcx	 ; _45->return_type, _45->return_type
 	movq	%r14, %r9	 ; parser,
 	movq	%rdi, %r8	 ; _49,
 	movq	%r15, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:93:     OUT(0, false, "parameters\n");
+ ; D:\TC\src\output.c:74:     ast_output(0, false, "parameters\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rsi, %rdx	 ; _44,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:93:     OUT(0, false, "parameters\n");
+ ; D:\TC\src\output.c:74:     ast_output(0, false, "parameters\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$11, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC68(%rip), %rcx	 ;, tmp161
 	call	fwrite	 ;
- ; D:\TC\src\output.c:94:     list(Variable*) parameters = list_copy(method_ptr->parameters);
+ ; D:\TC\src\output.c:75:     list(Variable*) parameters = list_copy(method->parameters);
 	movq	16(%rbx), %rcx	 ; _45->parameters, _45->parameters
 	call	list_copy	 ;
 	movq	%rax, %r12	 ; tmp195, parameters
- ; D:\TC\src\output.c:95:     list(Statement*) body = list_copy(method_ptr->body);
+ ; D:\TC\src\output.c:76:     list(Statement*) body = list_copy(method->body);
 	movq	24(%rbx), %rcx	 ; _45->body, _45->body
 	call	list_copy	 ;
 	movq	%rax, %rbp	 ; tmp196, body
- ; D:\TC\src\output.c:97:     int index = -1;
+ ; D:\TC\src\output.c:78:     int index = -1;
 	movl	$-1, %esi	 ;, index
- ; D:\TC\src\output.c:100:         output_variable(parameter, outfile, indent + 2, parser);
+ ; D:\TC\src\output.c:81:         output_variable(parameter, outfile, indent + 2, parser);
 	movq	160(%rsp), %rax	 ; indent, tmp241
 	leaq	6(%rax), %r13	 ;, tmp176
- ; D:\TC\src\output.c:98:     while ((parameter = (Variable*)list_pop(parameters)) != 0) {
+ ; D:\TC\src\output.c:79:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	jmp	.L106	 ;
 .L107:
- ; D:\TC\src\output.c:99:         OUT(1, false, "parameters[%d]\n", ++index);
+ ; D:\TC\src\output.c:80:         ast_output(1, false, "parameters[%d]\n", ++index);
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rdi, %rdx	 ; _49,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:99:         OUT(1, false, "parameters[%d]\n", ++index);
+ ; D:\TC\src\output.c:80:         ast_output(1, false, "parameters[%d]\n", ++index);
 	addl	$1, %esi	 ;, index
 	movl	%esi, %r8d	 ; index,
 	leaq	.LC69(%rip), %rdx	 ;,
 	movq	%r15, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:100:         output_variable(parameter, outfile, indent + 2, parser);
+ ; D:\TC\src\output.c:81:         output_variable(parameter, outfile, indent + 2, parser);
 	movq	%r14, %r9	 ; parser,
 	movq	%r13, %r8	 ; tmp176,
 	movq	%r15, %rdx	 ; outfile,
 	movq	%rbx, %rcx	 ; parameter,
 	call	output_variable	 ;
 .L106:
- ; D:\TC\src\output.c:98:     while ((parameter = (Variable*)list_pop(parameters)) != 0) {
+ ; D:\TC\src\output.c:79:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	movq	%r12, %rcx	 ; parameters,
 	call	list_pop	 ;
 	movq	%rax, %rbx	 ; tmp197, parameter
- ; D:\TC\src\output.c:98:     while ((parameter = (Variable*)list_pop(parameters)) != 0) {
+ ; D:\TC\src\output.c:79:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	testq	%rax, %rax	 ; parameter
 	jne	.L107	 ;,
- ; D:\TC\src\output.c:102:     OUT(0, true, "body\n");
+ ; D:\TC\src\output.c:83:     ast_output(0, true, "body\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	48(%rsp), %rdx	 ; %sfp,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:102:     OUT(0, true, "body\n");
+ ; D:\TC\src\output.c:83:     ast_output(0, true, "body\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC47(%rip), %rcx	 ;, tmp166
 	call	fwrite	 ;
- ; D:\TC\src\output.c:104:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:85:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	jmp	.L108	 ;
 .L109:
- ; D:\TC\src\output.c:105:         output_statement(statement, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:86:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%r14, %r9	 ; parser,
 	movq	%rdi, %r8	 ; _49,
 	movq	%r15, %rdx	 ; outfile,
 	call	output_statement	 ;
 .L108:
- ; D:\TC\src\output.c:104:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:85:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%rbp, %rcx	 ; body,
 	call	list_pop	 ;
 	movq	%rax, %rcx	 ; tmp198, statement
- ; D:\TC\src\output.c:104:     while ((statement = (Statement*)list_pop(body)) != 0)
+ ; D:\TC\src\output.c:85:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	 ; statement
 	jne	.L109	 ;,
 .L102:
- ; D:\TC\src\output.c:136:     while ((member = (ClassMember*)list_pop(members)) != 0)
+ ; D:\TC\src\output.c:109:     while ((member = (ClassMember*)list_pop(members)) != NULL)
 	movq	32(%rsp), %rcx	 ; %sfp,
 	call	list_pop	 ;
 	movq	%rax, %rbx	 ; tmp199, member
- ; D:\TC\src\output.c:136:     while ((member = (ClassMember*)list_pop(members)) != 0)
+ ; D:\TC\src\output.c:109:     while ((member = (ClassMember*)list_pop(members)) != NULL)
 	testq	%rax, %rax	 ; member
 	je	.L92	 ;,
- ; D:\TC\src\output.c:112:     switch (class_member_ptr->type) {
+ ; D:\TC\src\output.c:89:     switch (class_member->type) {
 	movl	8(%rbx), %eax	 ; member_42->type, _43
- ; D:\TC\src\output.c:112:     switch (class_member_ptr->type) {
+ ; D:\TC\src\output.c:89:     switch (class_member->type) {
 	testl	%eax, %eax	 ; _43
 	je	.L103	 ;,
 	cmpl	$1, %eax	 ;, _43
 	je	.L104	 ;,
- ; D:\TC\src\output.c:122:             OUT(0, false, "unknown_ClassMemberType: %u\n", class_member_ptr->type);
+ ; D:\TC\src\output.c:99:             ast_output(0, false, "unknown_ClassMemberType: %u\n", class_member->type);
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	40(%rsp), %rdx	 ; %sfp,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:122:             OUT(0, false, "unknown_ClassMemberType: %u\n", class_member_ptr->type);
+ ; D:\TC\src\output.c:99:             ast_output(0, false, "unknown_ClassMemberType: %u\n", class_member->type);
 	movl	8(%rbx), %r8d	 ; member_42->type,
 	leaq	.LC74(%rip), %rdx	 ;, tmp171
 	movq	%r15, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:123:             break;
+ ; D:\TC\src\output.c:100:             break;
 	jmp	.L102	 ;
 .L104:
- ; D:\TC\src\output.c:118:             OUT(0, false, "variable\n");
+ ; D:\TC\src\output.c:95:             ast_output(0, false, "variable\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	40(%rsp), %rdx	 ; %sfp,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:118:             OUT(0, false, "variable\n");
+ ; D:\TC\src\output.c:95:             ast_output(0, false, "variable\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$9, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC73(%rip), %rcx	 ;, tmp167
 	call	fwrite	 ;
- ; D:\TC\src\output.c:119:             output_variable(class_member_ptr->content.variable, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:96:             output_variable(class_member->content.variable, outfile, indent + 1, parser);
 	movq	(%rbx), %rcx	 ; member_42->content.variable, member_42->content.variable
 	movq	%r14, %r9	 ; parser,
 	movq	160(%rsp), %rax	 ; indent, tmp242
 	leaq	4(%rax), %r8	 ;,
 	movq	%r15, %rdx	 ; outfile,
 	call	output_variable	 ;
- ; D:\TC\src\output.c:120:             break;
+ ; D:\TC\src\output.c:97:             break;
 	jmp	.L102	 ;
 .L95:
- ; D:\TC\src\output.c:39:             OUT(0, false, "unknown_CodeMemberType: %u\n", code_member_ptr->type);
+ ; D:\TC\src\output.c:35:             ast_output(0, false, "unknown_CodeMemberType: %u\n", code_member->type);
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:39:             OUT(0, false, "unknown_CodeMemberType: %u\n", code_member_ptr->type);
+ ; D:\TC\src\output.c:35:             ast_output(0, false, "unknown_CodeMemberType: %u\n", code_member->type);
 	movl	8(%rbx), %r8d	 ; member_9->type,
 	leaq	.LC75(%rip), %rdx	 ;, tmp173
 	movq	%r15, %rcx	 ; outfile,
 	call	fprintf	 ;
 .L92:
- ; D:\TC\src\output.c:49:     while ((member = (CodeMember*)list_pop(members)) != 0)
+ ; D:\TC\src\output.c:42:     while ((member = (CodeMember*)list_pop(members)) != NULL)
 	movq	56(%rsp), %rcx	 ; %sfp,
 	call	list_pop	 ;
 	movq	%rax, %rbx	 ; tmp200, member
- ; D:\TC\src\output.c:49:     while ((member = (CodeMember*)list_pop(members)) != 0)
+ ; D:\TC\src\output.c:42:     while ((member = (CodeMember*)list_pop(members)) != NULL)
 	testq	%rax, %rax	 ; member
 	je	.L116	 ;,
- ; D:\TC\src\output.c:50:         output_code_member(member, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:43:         output_code_member(member, outfile, indent + 1, parser);
 	movq	160(%rsp), %rax	 ; indent, tmp228
 	leaq	1(%rax), %rdx	 ;, _2
- ; D:\TC\src\output.c:25:     switch (code_member_ptr->type) {
+ ; D:\TC\src\output.c:21:     switch (code_member->type) {
 	movl	8(%rbx), %eax	 ; member_9->type, _14
- ; D:\TC\src\output.c:25:     switch (code_member_ptr->type) {
+ ; D:\TC\src\output.c:21:     switch (code_member->type) {
 	cmpl	$1, %eax	 ;, _14
 	je	.L93	 ;,
 	cmpl	$2, %eax	 ;, _14
 	je	.L94	 ;,
 	testl	%eax, %eax	 ; _14
 	jne	.L95	 ;,
- ; D:\TC\src\output.c:27:             OUT(0, false, "import\n");
+ ; D:\TC\src\output.c:23:             ast_output(0, false, "import\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:27:             OUT(0, false, "import\n");
+ ; D:\TC\src\output.c:23:             ast_output(0, false, "import\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$7, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC66(%rip), %rcx	 ;, tmp135
 	call	fwrite	 ;
- ; D:\TC\src\output.c:28:             output_import(code_member_ptr->content.import, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:24:             output_import(code_member->content.import, outfile, indent + 1, parser);
 	movq	160(%rsp), %rax	 ; indent, tmp229
 	leaq	2(%rax), %rsi	 ;, _15
 	movq	(%rbx), %rbx	 ; member_9->content.import, _16
- ; D:\TC\src\output.c:57:     OUT(0, false, "name\n");
+ ; D:\TC\src\output.c:46:     ast_output(0, false, "name\n");
 	movq	%r14, %r9	 ; parser,
 	movl	$0, %r8d	 ;,
 	movq	%rsi, %rdx	 ; _15,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:57:     OUT(0, false, "name\n");
+ ; D:\TC\src\output.c:46:     ast_output(0, false, "name\n");
 	movq	%r15, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	leaq	.LC17(%rip), %rcx	 ;, tmp136
 	call	fwrite	 ;
- ; D:\TC\src\output.c:58:     output_name(import_ptr->name, outfile, indent + 1, parser);
+ ; D:\TC\src\output.c:47:     output_name(import->name, outfile, indent + 1, parser);
 	movq	(%rbx), %rcx	 ; _16->name, _16->name
 	movq	%r14, %r9	 ; parser,
 	movq	160(%rsp), %rax	 ; indent, tmp230
 	leaq	3(%rax), %r8	 ;,
 	movq	%r15, %rdx	 ; outfile,
 	call	output_name	 ;
- ; D:\TC\src\output.c:59:     OUT(0, true, "source: \"%s\"\n", import_ptr->source != 0 ? import_ptr->source : "NULL");
+ ; D:\TC\src\output.c:48:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 	movq	%r14, %r9	 ; parser,
 	movl	$1, %r8d	 ;,
 	movq	%rsi, %rdx	 ; _15,
 	movq	%r15, %rcx	 ; outfile,
 	call	indention	 ;
- ; D:\TC\src\output.c:59:     OUT(0, true, "source: \"%s\"\n", import_ptr->source != 0 ? import_ptr->source : "NULL");
+ ; D:\TC\src\output.c:48:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 	movq	8(%rbx), %rax	 ; _16->source, _24
- ; D:\TC\src\output.c:59:     OUT(0, true, "source: \"%s\"\n", import_ptr->source != 0 ? import_ptr->source : "NULL");
+ ; D:\TC\src\output.c:48:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 	testq	%rax, %rax	 ; _24
- ; D:\TC\src\output.c:59:     OUT(0, true, "source: \"%s\"\n", import_ptr->source != 0 ? import_ptr->source : "NULL");
+ ; D:\TC\src\output.c:48:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 	leaq	.LC65(%rip), %r8	 ;, tmp174
 	cmovne	%rax, %r8	 ; _24,,
 	leaq	.LC67(%rip), %rdx	 ;, tmp139
 	movq	%r15, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:\TC\src\output.c:60: }
+ ; D:\TC\src\output.c:49: }
 	jmp	.L92	 ;
 .L116:
- ; D:\TC\src\output.c:51: }
+ ; D:\TC\src\output.c:44: }
 	addq	$72, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;

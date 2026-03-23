@@ -76,12 +76,15 @@ increase_memory_size:
 	movl	$1, %ecx
 	movb	$0, initialized(%rip)
 	call	exit
+	.section .rdata,"dr"
+.LC2:
+	.ascii "init\0"
+	.text
 	.p2align 4
-	.globl	init
-	.def	init;	.scl	2;	.type	32;	.endef
+	.def	init;	.scl	3;	.type	32;	.endef
 init:
 	cmpb	$0, initialized(%rip)
-	jne	.L32
+	jne	.L33
 	pushq	%rbp
 	movq	%rsp, %rbp
 	pushq	%r12
@@ -91,10 +94,10 @@ init:
 	andq	$-16, %rsp
 	subq	$48, %rsp
 	cmpq	$0, struct_memory(%rip)
-	je	.L35
+	je	.L36
 .L17:
 	cmpq	$0, string_memory(%rip)
-	je	.L36
+	je	.L37
 .L19:
 	leaq	keywordStrings(%rip), %rbx
 	movl	$1, %edi
@@ -108,13 +111,13 @@ init:
 .L21:
 	testq	%rdx, %rdx
 	je	.L22
-.L37:
+.L38:
 	call	create_string_check.part.0
 	addq	$8, %rbx
 	addq	$8, %rsi
 	movzbl	initialized(%rip), %edi
 	movq	%rax, -8(%rsi)
-	cmpq	%rbx, %r12
+	cmpq	%r12, %rbx
 	je	.L24
 .L23:
 	movq	(%rbx), %rcx
@@ -130,7 +133,7 @@ init:
 	movq	40(%rsp), %rdx
 	movq	32(%rsp), %rcx
 	testq	%rdx, %rdx
-	jne	.L37
+	jne	.L38
 	.p2align 4,,10
 	.p2align 3
 .L22:
@@ -138,7 +141,7 @@ init:
 	movq	$0, (%rsi)
 	movzbl	initialized(%rip), %edi
 	addq	$8, %rsi
-	cmpq	%r12, %rbx
+	cmpq	%rbx, %r12
 	jne	.L23
 	.p2align 4,,10
 	.p2align 3
@@ -153,12 +156,12 @@ init:
 .L27:
 	testq	%rdx, %rdx
 	je	.L28
-.L38:
+.L39:
 	call	create_string_check.part.0
 	addq	$8, %rbx
 	addq	$8, %rsi
 	movq	%rax, -8(%rsi)
-	cmpq	%rbx, %rdi
+	cmpq	%rdi, %rbx
 	je	.L30
 .L29:
 	movq	(%rbx), %rcx
@@ -174,7 +177,7 @@ init:
 	movq	32(%rsp), %rdx
 	movq	40(%rsp), %rcx
 	testq	%rdx, %rdx
-	jne	.L38
+	jne	.L39
 	.p2align 4,,10
 	.p2align 3
 .L28:
@@ -183,7 +186,16 @@ init:
 	addq	$8, %rsi
 	cmpq	%rbx, %rdi
 	jne	.L29
+	.p2align 4,,10
+	.p2align 3
 .L30:
+	cmpb	$0, initialized(%rip)
+	je	.L40
+.L31:
+	movl	$4, %edx
+	leaq	.LC2(%rip), %rcx
+	call	create_string_check.part.0
+	movq	%rax, CONSTRUCTOR_NAME(%rip)
 	movq	keywordList(%rip), %rax
 	movq	%rax, IMPORT_KEYWORD(%rip)
 	movq	8+keywordList(%rip), %rax
@@ -297,15 +309,20 @@ init:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L32:
+.L40:
+	call	init
+	jmp	.L31
+	.p2align 4,,10
+	.p2align 3
+.L33:
 	ret
-.L36:
+.L37:
 	movl	$32, %ecx
 	call	malloc
 	movq	%rax, string_memory(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L39
+	je	.L41
 	movl	$1024, %ecx
 	call	malloc
 	movdqa	.LC1(%rip), %xmm0
@@ -314,13 +331,13 @@ init:
 	movq	$1024, string_memory_count(%rip)
 	movups	%xmm0, (%rbx)
 	jmp	.L19
-.L35:
+.L36:
 	movl	$32, %ecx
 	call	malloc
 	movq	%rax, struct_memory(%rip)
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L40
+	je	.L42
 	movl	$1024, %ecx
 	call	malloc
 	movdqa	.LC1(%rip), %xmm0
@@ -329,7 +346,7 @@ init:
 	movq	$1024, struct_memory_count(%rip)
 	movups	%xmm0, (%rbx)
 	jmp	.L17
-.L39:
+.L41:
 	call	__getreent
 	movl	$30, %r8d
 	movl	$1, %edx
@@ -339,7 +356,7 @@ init:
 	movl	$1, %ecx
 	movb	$0, initialized(%rip)
 	call	exit
-.L40:
+.L42:
 	call	__getreent
 	movl	$30, %r8d
 	movl	$1, %edx
@@ -351,12 +368,12 @@ init:
 	call	exit
 	.section .rdata,"dr"
 	.align 8
-.LC2:
+.LC3:
 	.ascii "Info: Allocate big memory block of size %zu bytes\12\0"
 	.align 8
-.LC3:
-	.ascii "struct_memory->used % ALIGN_SIZE == 0\0"
 .LC4:
+	.ascii "struct_memory->used % ALIGN_SIZE == 0\0"
+.LC5:
 	.ascii "D:\\TC\\src\\lib.c\0"
 	.text
 	.p2align 4
@@ -370,34 +387,34 @@ create_string_check.part.0:
 	movq	%rdx, %rbx
 	subq	$40, %rsp
 	cmpq	$1022, %rdx
-	ja	.L49
+	ja	.L51
 	movq	string_memory(%rip), %rdx
 	movq	8(%rdx), %rcx
 	leaq	(%rbx,%rcx), %rax
 	cmpq	(%rdx), %rax
-	jnb	.L50
-.L44:
+	jnb	.L52
+.L46:
 	leaq	1(%rcx,%rbx), %rax
 	movq	24(%rdx), %rsi
 	movq	%rax, 8(%rdx)
 	addq	%rcx, %rsi
-.L43:
+.L45:
 	movq	%rbx, %r8
 	movq	%rdi, %rdx
 	movq	%rsi, %rcx
 	call	strncpy
 	movb	$0, (%rsi,%rbx)
 	cmpb	$0, initialized(%rip)
-	je	.L51
-.L45:
+	je	.L53
+.L47:
 	movq	struct_memory(%rip), %r8
 	movq	8(%r8), %rdx
 	leaq	24(%rdx), %rax
 	cmpq	(%r8), %rax
-	jnb	.L52
-.L46:
+	jnb	.L54
+.L48:
 	testb	$7, %dl
-	jne	.L53
+	jne	.L55
 	movq	all_string_list(%rip), %rax
 	movq	%rdx, %rcx
 	addq	$24, %rdx
@@ -418,15 +435,15 @@ create_string_check.part.0:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L50:
+.L52:
 	xorl	%ecx, %ecx
 	call	increase_memory_size
 	movq	string_memory(%rip), %rdx
 	movq	8(%rdx), %rcx
-	jmp	.L44
+	jmp	.L46
 	.p2align 4,,10
 	.p2align 3
-.L49:
+.L51:
 	leaq	1(%rdx), %rbp
 	addq	%rbp, string_memory_count(%rip)
 	movq	%rbp, %rcx
@@ -435,11 +452,11 @@ create_string_check.part.0:
 	movq	%rax, %rsi
 	call	__getreent
 	movq	%rbp, %r8
-	leaq	.LC2(%rip), %rdx
+	leaq	.LC3(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
 	testq	%rsi, %rsi
-	jne	.L43
+	jne	.L45
 	call	__getreent
 	movl	$30, %r8d
 	movl	$1, %edx
@@ -450,23 +467,60 @@ create_string_check.part.0:
 	call	exit
 	.p2align 4,,10
 	.p2align 3
-.L52:
+.L54:
 	movl	$1, %ecx
 	call	increase_memory_size
 	movq	struct_memory(%rip), %r8
 	movq	8(%r8), %rdx
-	jmp	.L46
+	jmp	.L48
 	.p2align 4,,10
 	.p2align 3
-.L51:
-	call	init
-	jmp	.L45
 .L53:
-	leaq	.LC3(%rip), %r9
+	call	init
+	jmp	.L47
+.L55:
+	leaq	.LC4(%rip), %r9
 	leaq	__func__.0(%rip), %r8
-	movl	$258, %edx
-	leaq	.LC4(%rip), %rcx
+	movl	$261, %edx
+	leaq	.LC5(%rip), %rcx
 	call	__assert_func
+	.p2align 4
+	.globl	create_string_not_check
+	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
+create_string_not_check:
+	cmpb	$0, initialized(%rip)
+	je	.L66
+	testq	%rcx, %rcx
+	je	.L61
+	testq	%rdx, %rdx
+	je	.L61
+	jmp	create_string_check.part.0
+	.p2align 4,,10
+	.p2align 3
+.L66:
+	subq	$56, %rsp
+	movq	%rdx, 40(%rsp)
+	movq	%rcx, 32(%rsp)
+	call	init
+	movq	32(%rsp), %rcx
+	movq	40(%rsp), %rdx
+	testq	%rcx, %rcx
+	je	.L58
+	testq	%rdx, %rdx
+	je	.L58
+	addq	$56, %rsp
+	jmp	create_string_check.part.0
+	.p2align 4,,10
+	.p2align 3
+.L61:
+	xorl	%eax, %eax
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L58:
+	xorl	%eax, %eax
+	addq	$56, %rsp
+	ret
 	.p2align 4
 	.globl	create_string
 	.def	create_string;	.scl	2;	.type	32;	.endef
@@ -480,29 +534,29 @@ create_string:
 	pushq	%rbx
 	subq	$32, %rsp
 	cmpb	$0, initialized(%rip)
-	je	.L70
-.L55:
+	je	.L83
+.L68:
 	testq	%rbp, %rbp
-	je	.L60
+	je	.L73
 	testq	%rsi, %rsi
-	je	.L60
+	je	.L73
 	movq	all_string_list(%rip), %rbx
 	testq	%rbx, %rbx
-	je	.L57
+	je	.L70
 	xorl	%r12d, %r12d
-	jmp	.L59
+	jmp	.L72
 	.p2align 4,,10
 	.p2align 3
-.L58:
+.L71:
 	movq	16(%rbx), %rbx
 	testq	%rbx, %rbx
-	je	.L71
-.L59:
+	je	.L84
+.L72:
 	cmpq	8(%rbx), %rsi
-	jne	.L58
+	jne	.L71
 	movq	(%rbx), %rdi
 	testq	%rdi, %rdi
-	je	.L58
+	je	.L71
 	movq	%rsi, %r8
 	movq	%rbp, %rdx
 	movq	%rdi, %rcx
@@ -511,10 +565,10 @@ create_string:
 	testl	%eax, %eax
 	cmove	%rdi, %r12
 	testq	%rbx, %rbx
-	jne	.L59
-.L71:
+	jne	.L72
+.L84:
 	testq	%r12, %r12
-	je	.L57
+	je	.L70
 	addq	$32, %rsp
 	movq	%r12, %rax
 	popq	%rbx
@@ -525,7 +579,7 @@ create_string:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L57:
+.L70:
 	addq	$32, %rsp
 	movq	%rsi, %rdx
 	movq	%rbp, %rcx
@@ -537,12 +591,12 @@ create_string:
 	jmp	create_string_check.part.0
 	.p2align 4,,10
 	.p2align 3
-.L70:
+.L83:
 	call	init
-	jmp	.L55
+	jmp	.L68
 	.p2align 4,,10
 	.p2align 3
-.L60:
+.L73:
 	addq	$32, %rsp
 	xorl	%r12d, %r12d
 	popq	%rbx
@@ -560,18 +614,18 @@ alloc_memory:
 	movq	%rcx, %rbx
 	subq	$32, %rsp
 	cmpb	$0, initialized(%rip)
-	je	.L77
-.L73:
+	je	.L90
+.L86:
 	movq	struct_memory(%rip), %rdx
+	addq	$7, %rbx
+	andq	$-8, %rbx
 	movq	8(%rdx), %rcx
 	leaq	(%rcx,%rbx), %rax
 	cmpq	(%rdx), %rax
-	jnb	.L78
-.L74:
-	addq	$7, %rbx
-	andq	$-8, %rbx
+	jnb	.L91
+.L87:
 	testb	$7, %cl
-	jne	.L79
+	jne	.L92
 	addq	%rcx, %rbx
 	movq	%rcx, %rax
 	addq	$1, memoryBlockCount(%rip)
@@ -583,22 +637,22 @@ alloc_memory:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L77:
+.L90:
 	call	init
-	jmp	.L73
+	jmp	.L86
 	.p2align 4,,10
 	.p2align 3
-.L78:
+.L91:
 	movl	$1, %ecx
 	call	increase_memory_size
 	movq	struct_memory(%rip), %rdx
 	movq	8(%rdx), %rcx
-	jmp	.L74
-.L79:
-	leaq	.LC3(%rip), %r9
+	jmp	.L87
+.L92:
+	leaq	.LC4(%rip), %r9
 	leaq	__func__.0(%rip), %r8
-	movl	$258, %edx
-	leaq	.LC4(%rip), %rcx
+	movl	$261, %edx
+	leaq	.LC5(%rip), %rcx
 	call	__assert_func
 	.p2align 4
 	.globl	is_keyword
@@ -608,36 +662,36 @@ is_keyword:
 	movq	%rcx, %rbx
 	subq	$32, %rsp
 	cmpb	$0, initialized(%rip)
-	je	.L87
-.L81:
+	je	.L100
+.L94:
 	leaq	keywordList(%rip), %rax
 	leaq	176(%rax), %rdx
-	jmp	.L83
+	jmp	.L96
 	.p2align 4,,10
 	.p2align 3
-.L89:
+.L102:
 	addq	$8, %rax
 	cmpq	%rax, %rdx
-	je	.L88
-.L83:
+	je	.L101
+.L96:
 	cmpq	%rbx, (%rax)
-	jne	.L89
+	jne	.L102
 	addq	$32, %rsp
 	movl	$1, %eax
 	popq	%rbx
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L88:
+.L101:
 	addq	$32, %rsp
 	xorl	%eax, %eax
 	popq	%rbx
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L87:
+.L100:
 	call	init
-	jmp	.L81
+	jmp	.L94
 	.p2align 4
 	.globl	string_equal
 	.def	string_equal;	.scl	2;	.type	32;	.endef
@@ -646,12 +700,12 @@ string_equal:
 	sete	%al
 	ret
 	.section .rdata,"dr"
-.LC5:
-	.ascii "\0"
 .LC6:
+	.ascii "\0"
+.LC7:
 	.ascii "%zu/%zu bytes\0"
 	.align 8
-.LC7:
+.LC8:
 	.ascii "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu\0"
 	.text
 	.p2align 4
@@ -667,21 +721,21 @@ get_info:
 	subq	$64, %rsp
 	movq	all_string_list(%rip), %rax
 	testq	%rax, %rax
-	je	.L92
+	je	.L105
 	.p2align 4,,10
 	.p2align 3
-.L93:
+.L106:
 	movq	16(%rax), %rax
 	addq	$1, %rbx
 	testq	%rax, %rax
-	jne	.L93
-.L92:
+	jne	.L106
+.L105:
 	cmpb	$0, initialized(%rip)
-	je	.L100
-.L94:
-	leaq	.LC5(%rip), %rsi
+	je	.L113
+.L107:
+	leaq	.LC6(%rip), %rsi
 	movl	$48, %edx
-	leaq	.LC6(%rip), %r12
+	leaq	.LC7(%rip), %r12
 	movq	%rsi, %rcx
 	call	create_string_check.part.0
 	movq	struct_memory_count(%rip), %r9
@@ -693,8 +747,8 @@ get_info:
 	addq	8(%rax), %r8
 	call	sprintf
 	cmpb	$0, initialized(%rip)
-	je	.L101
-.L95:
+	je	.L114
+.L108:
 	movl	$48, %edx
 	movq	%rsi, %rcx
 	call	create_string_check.part.0
@@ -707,8 +761,8 @@ get_info:
 	addq	8(%rax), %r8
 	call	sprintf
 	cmpb	$0, initialized(%rip)
-	je	.L102
-.L96:
+	je	.L115
+.L109:
 	movq	%rsi, %rcx
 	movl	$240, %edx
 	call	create_string_check.part.0
@@ -718,7 +772,7 @@ get_info:
 	movq	%rax, %rsi
 	movq	memoryBlockCount(%rip), %rax
 	movq	%rbp, 32(%rsp)
-	leaq	.LC7(%rip), %rdx
+	leaq	.LC8(%rip), %rdx
 	movq	%rsi, %rcx
 	movq	%rax, 48(%rsp)
 	call	sprintf
@@ -732,19 +786,19 @@ get_info:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L100:
+.L113:
 	call	init
-	jmp	.L94
+	jmp	.L107
 	.p2align 4,,10
 	.p2align 3
-.L102:
+.L115:
 	call	init
-	jmp	.L96
+	jmp	.L109
 	.p2align 4,,10
 	.p2align 3
-.L101:
+.L114:
 	call	init
-	jmp	.L95
+	jmp	.L108
 	.section .rdata,"dr"
 	.align 8
 __func__.0:
@@ -987,6 +1041,10 @@ FROM_KEYWORD:
 	.align 8
 IMPORT_KEYWORD:
 	.space 8
+	.globl	CONSTRUCTOR_NAME
+	.align 8
+CONSTRUCTOR_NAME:
+	.space 8
 	.globl	all_string_list
 	.align 8
 all_string_list:
@@ -1007,69 +1065,68 @@ struct_memory:
 symbolList:
 	.space 240
 	.section .rdata,"dr"
-.LC8:
-	.ascii "(\0"
 .LC9:
-	.ascii ")\0"
+	.ascii "(\0"
 .LC10:
-	.ascii "{\0"
+	.ascii ")\0"
 .LC11:
-	.ascii "}\0"
+	.ascii "{\0"
 .LC12:
-	.ascii ",\0"
+	.ascii "}\0"
 .LC13:
-	.ascii "!\0"
+	.ascii ",\0"
 .LC14:
-	.ascii ".\0"
+	.ascii "!\0"
 .LC15:
-	.ascii "[\0"
+	.ascii ".\0"
 .LC16:
-	.ascii "]\0"
+	.ascii "[\0"
 .LC17:
-	.ascii ";\0"
+	.ascii "]\0"
 .LC18:
-	.ascii "_\0"
+	.ascii ";\0"
 .LC19:
-	.ascii "+\0"
+	.ascii "_\0"
 .LC20:
-	.ascii "-\0"
+	.ascii "+\0"
 .LC21:
-	.ascii "*\0"
+	.ascii "-\0"
 .LC22:
-	.ascii "/\0"
+	.ascii "*\0"
 .LC23:
-	.ascii "%\0"
+	.ascii "/\0"
 .LC24:
-	.ascii "<\0"
+	.ascii "%\0"
 .LC25:
-	.ascii ">\0"
+	.ascii "<\0"
 .LC26:
-	.ascii "=\0"
+	.ascii ">\0"
 .LC27:
-	.ascii "==\0"
+	.ascii "=\0"
 .LC28:
-	.ascii "!=\0"
+	.ascii "==\0"
 .LC29:
-	.ascii "<=\0"
+	.ascii "!=\0"
 .LC30:
-	.ascii ">=\0"
+	.ascii "<=\0"
 .LC31:
-	.ascii "+=\0"
+	.ascii ">=\0"
 .LC32:
-	.ascii "-=\0"
+	.ascii "+=\0"
 .LC33:
-	.ascii "*=\0"
+	.ascii "-=\0"
 .LC34:
-	.ascii "/=\0"
+	.ascii "*=\0"
 .LC35:
-	.ascii "%=\0"
+	.ascii "/=\0"
 .LC36:
-	.ascii "&&\0"
+	.ascii "%=\0"
 .LC37:
+	.ascii "&&\0"
+.LC38:
 	.ascii "||\0"
 	.align 32
 symbolStrings:
-	.quad	.LC8
 	.quad	.LC9
 	.quad	.LC10
 	.quad	.LC11
@@ -1099,59 +1156,59 @@ symbolStrings:
 	.quad	.LC35
 	.quad	.LC36
 	.quad	.LC37
+	.quad	.LC38
 	.globl	keywordList
 	.bss
 	.align 32
 keywordList:
 	.space 176
 	.section .rdata,"dr"
-.LC38:
-	.ascii "import\0"
 .LC39:
-	.ascii "from\0"
+	.ascii "import\0"
 .LC40:
-	.ascii "func\0"
+	.ascii "from\0"
 .LC41:
-	.ascii "class\0"
+	.ascii "func\0"
 .LC42:
-	.ascii "method\0"
+	.ascii "class\0"
 .LC43:
-	.ascii "self\0"
+	.ascii "method\0"
 .LC44:
-	.ascii "if\0"
+	.ascii "self\0"
 .LC45:
-	.ascii "elif\0"
+	.ascii "if\0"
 .LC46:
-	.ascii "else\0"
+	.ascii "elif\0"
 .LC47:
-	.ascii "while\0"
+	.ascii "else\0"
 .LC48:
-	.ascii "for\0"
+	.ascii "while\0"
 .LC49:
-	.ascii "true\0"
+	.ascii "for\0"
 .LC50:
-	.ascii "false\0"
+	.ascii "true\0"
 .LC51:
-	.ascii "return\0"
+	.ascii "false\0"
 .LC52:
-	.ascii "break\0"
+	.ascii "return\0"
 .LC53:
-	.ascii "continue\0"
+	.ascii "break\0"
 .LC54:
-	.ascii "int\0"
+	.ascii "continue\0"
 .LC55:
-	.ascii "float\0"
+	.ascii "int\0"
 .LC56:
-	.ascii "string\0"
+	.ascii "float\0"
 .LC57:
-	.ascii "bool\0"
+	.ascii "string\0"
 .LC58:
-	.ascii "void\0"
+	.ascii "bool\0"
 .LC59:
+	.ascii "void\0"
+.LC60:
 	.ascii "var\0"
 	.align 32
 keywordStrings:
-	.quad	.LC38
 	.quad	.LC39
 	.quad	.LC40
 	.quad	.LC41
@@ -1173,6 +1230,7 @@ keywordStrings:
 	.quad	.LC57
 	.quad	.LC58
 	.quad	.LC59
+	.quad	.LC60
 	.align 16
 .LC1:
 	.quad	1024

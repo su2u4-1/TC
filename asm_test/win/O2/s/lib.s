@@ -94,13 +94,13 @@ alloc_memory:
 	je	.L20
 .L16:
 	movq	struct_memory(%rip), %rdx
+	addq	$7, %rbx
+	andq	$-8, %rbx
 	movq	8(%rdx), %rcx
 	leaq	(%rcx,%rbx), %rax
 	cmpq	(%rdx), %rax
 	jnb	.L21
 .L17:
-	addq	$7, %rbx
-	andq	$-8, %rbx
 	testb	$7, %cl
 	jne	.L22
 	addq	%rcx, %rbx
@@ -128,7 +128,7 @@ alloc_memory:
 .L22:
 	leaq	.LC2(%rip), %r9
 	leaq	__func__.0(%rip), %r8
-	movl	$258, %edx
+	movl	$261, %edx
 	leaq	.LC3(%rip), %rcx
 	call	__assert_func
 	.section .rdata,"dr"
@@ -271,11 +271,15 @@ create_string_check:
 	movq	8(%rax), %rdx
 	jmp	.L31
 	.p2align 4
-	.globl	create_string
-	.def	create_string;	.scl	2;	.type	32;	.endef
-create_string:
-	movl	$1, %r8d
+	.globl	create_string_not_check
+	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
+create_string_not_check:
+	xorl	%r8d, %r8d
 	jmp	create_string_check
+	.section .rdata,"dr"
+.LC5:
+	.ascii "init\0"
+	.text
 	.p2align 4
 	.def	init.part.0;	.scl	3;	.type	32;	.endef
 init.part.0:
@@ -332,6 +336,11 @@ init.part.0:
 	movq	%rax, -8(%rsi)
 	cmpq	%rdi, %rbx
 	jne	.L60
+	xorl	%r8d, %r8d
+	movl	$4, %edx
+	leaq	.LC5(%rip), %rcx
+	call	create_string_check
+	movq	%rax, CONSTRUCTOR_NAME(%rip)
 	movq	keywordList(%rip), %rax
 	movq	%rax, IMPORT_KEYWORD(%rip)
 	movq	8+keywordList(%rip), %rax
@@ -484,16 +493,11 @@ init.part.0:
 	movb	$0, initialized(%rip)
 	call	exit
 	.p2align 4
-	.globl	init
-	.def	init;	.scl	2;	.type	32;	.endef
-init:
-	cmpb	$0, initialized(%rip)
-	jne	.L61
-	jmp	init.part.0
-	.p2align 4,,10
-	.p2align 3
-.L61:
-	ret
+	.globl	create_string
+	.def	create_string;	.scl	2;	.type	32;	.endef
+create_string:
+	movl	$1, %r8d
+	jmp	create_string_check
 	.p2align 4
 	.globl	is_keyword
 	.def	is_keyword;	.scl	2;	.type	32;	.endef
@@ -502,36 +506,36 @@ is_keyword:
 	movq	%rcx, %rbx
 	subq	$32, %rsp
 	cmpb	$0, initialized(%rip)
-	je	.L70
-.L64:
+	je	.L69
+.L63:
 	leaq	keywordList(%rip), %rax
 	leaq	176(%rax), %rdx
-	jmp	.L66
+	jmp	.L65
 	.p2align 4,,10
 	.p2align 3
-.L72:
+.L71:
 	addq	$8, %rax
 	cmpq	%rax, %rdx
-	je	.L71
-.L66:
+	je	.L70
+.L65:
 	cmpq	%rbx, (%rax)
-	jne	.L72
+	jne	.L71
 	addq	$32, %rsp
 	movl	$1, %eax
 	popq	%rbx
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L71:
+.L70:
 	addq	$32, %rsp
 	xorl	%eax, %eax
 	popq	%rbx
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L70:
+.L69:
 	call	init.part.0
-	jmp	.L64
+	jmp	.L63
 	.p2align 4
 	.globl	string_equal
 	.def	string_equal;	.scl	2;	.type	32;	.endef
@@ -540,12 +544,12 @@ string_equal:
 	sete	%al
 	ret
 	.section .rdata,"dr"
-.LC5:
-	.ascii "\0"
 .LC6:
+	.ascii "\0"
+.LC7:
 	.ascii "%zu/%zu bytes\0"
 	.align 8
-.LC7:
+.LC8:
 	.ascii "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu\0"
 	.text
 	.p2align 4
@@ -561,20 +565,20 @@ get_info:
 	subq	$64, %rsp
 	movq	all_string_list(%rip), %rax
 	testq	%rax, %rax
-	je	.L75
+	je	.L74
 	.p2align 4,,10
 	.p2align 3
-.L76:
+.L75:
 	movq	16(%rax), %rax
 	addq	$1, %rbx
 	testq	%rax, %rax
-	jne	.L76
-.L75:
-	leaq	.LC5(%rip), %rsi
+	jne	.L75
+.L74:
+	leaq	.LC6(%rip), %rsi
 	xorl	%r8d, %r8d
 	movl	$48, %edx
 	movq	%rsi, %rcx
-	leaq	.LC6(%rip), %r12
+	leaq	.LC7(%rip), %r12
 	call	create_string_check
 	movq	struct_memory_count(%rip), %r9
 	movq	%r12, %rdx
@@ -606,7 +610,7 @@ get_info:
 	movq	%rax, %rsi
 	movq	memoryBlockCount(%rip), %rax
 	movq	%rbp, 32(%rsp)
-	leaq	.LC7(%rip), %rdx
+	leaq	.LC8(%rip), %rdx
 	movq	%rsi, %rcx
 	movq	%rax, 48(%rsp)
 	call	sprintf
@@ -860,6 +864,10 @@ FROM_KEYWORD:
 	.align 8
 IMPORT_KEYWORD:
 	.space 8
+	.globl	CONSTRUCTOR_NAME
+	.align 8
+CONSTRUCTOR_NAME:
+	.space 8
 	.globl	all_string_list
 	.align 8
 all_string_list:
@@ -880,69 +888,68 @@ struct_memory:
 symbolList:
 	.space 240
 	.section .rdata,"dr"
-.LC8:
-	.ascii "(\0"
 .LC9:
-	.ascii ")\0"
+	.ascii "(\0"
 .LC10:
-	.ascii "{\0"
+	.ascii ")\0"
 .LC11:
-	.ascii "}\0"
+	.ascii "{\0"
 .LC12:
-	.ascii ",\0"
+	.ascii "}\0"
 .LC13:
-	.ascii "!\0"
+	.ascii ",\0"
 .LC14:
-	.ascii ".\0"
+	.ascii "!\0"
 .LC15:
-	.ascii "[\0"
+	.ascii ".\0"
 .LC16:
-	.ascii "]\0"
+	.ascii "[\0"
 .LC17:
-	.ascii ";\0"
+	.ascii "]\0"
 .LC18:
-	.ascii "_\0"
+	.ascii ";\0"
 .LC19:
-	.ascii "+\0"
+	.ascii "_\0"
 .LC20:
-	.ascii "-\0"
+	.ascii "+\0"
 .LC21:
-	.ascii "*\0"
+	.ascii "-\0"
 .LC22:
-	.ascii "/\0"
+	.ascii "*\0"
 .LC23:
-	.ascii "%\0"
+	.ascii "/\0"
 .LC24:
-	.ascii "<\0"
+	.ascii "%\0"
 .LC25:
-	.ascii ">\0"
+	.ascii "<\0"
 .LC26:
-	.ascii "=\0"
+	.ascii ">\0"
 .LC27:
-	.ascii "==\0"
+	.ascii "=\0"
 .LC28:
-	.ascii "!=\0"
+	.ascii "==\0"
 .LC29:
-	.ascii "<=\0"
+	.ascii "!=\0"
 .LC30:
-	.ascii ">=\0"
+	.ascii "<=\0"
 .LC31:
-	.ascii "+=\0"
+	.ascii ">=\0"
 .LC32:
-	.ascii "-=\0"
+	.ascii "+=\0"
 .LC33:
-	.ascii "*=\0"
+	.ascii "-=\0"
 .LC34:
-	.ascii "/=\0"
+	.ascii "*=\0"
 .LC35:
-	.ascii "%=\0"
+	.ascii "/=\0"
 .LC36:
-	.ascii "&&\0"
+	.ascii "%=\0"
 .LC37:
+	.ascii "&&\0"
+.LC38:
 	.ascii "||\0"
 	.align 32
 symbolStrings:
-	.quad	.LC8
 	.quad	.LC9
 	.quad	.LC10
 	.quad	.LC11
@@ -972,59 +979,59 @@ symbolStrings:
 	.quad	.LC35
 	.quad	.LC36
 	.quad	.LC37
+	.quad	.LC38
 	.globl	keywordList
 	.bss
 	.align 32
 keywordList:
 	.space 176
 	.section .rdata,"dr"
-.LC38:
-	.ascii "import\0"
 .LC39:
-	.ascii "from\0"
+	.ascii "import\0"
 .LC40:
-	.ascii "func\0"
+	.ascii "from\0"
 .LC41:
-	.ascii "class\0"
+	.ascii "func\0"
 .LC42:
-	.ascii "method\0"
+	.ascii "class\0"
 .LC43:
-	.ascii "self\0"
+	.ascii "method\0"
 .LC44:
-	.ascii "if\0"
+	.ascii "self\0"
 .LC45:
-	.ascii "elif\0"
+	.ascii "if\0"
 .LC46:
-	.ascii "else\0"
+	.ascii "elif\0"
 .LC47:
-	.ascii "while\0"
+	.ascii "else\0"
 .LC48:
-	.ascii "for\0"
+	.ascii "while\0"
 .LC49:
-	.ascii "true\0"
+	.ascii "for\0"
 .LC50:
-	.ascii "false\0"
+	.ascii "true\0"
 .LC51:
-	.ascii "return\0"
+	.ascii "false\0"
 .LC52:
-	.ascii "break\0"
+	.ascii "return\0"
 .LC53:
-	.ascii "continue\0"
+	.ascii "break\0"
 .LC54:
-	.ascii "int\0"
+	.ascii "continue\0"
 .LC55:
-	.ascii "float\0"
+	.ascii "int\0"
 .LC56:
-	.ascii "string\0"
+	.ascii "float\0"
 .LC57:
-	.ascii "bool\0"
+	.ascii "string\0"
 .LC58:
-	.ascii "void\0"
+	.ascii "bool\0"
 .LC59:
+	.ascii "void\0"
+.LC60:
 	.ascii "var\0"
 	.align 32
 keywordStrings:
-	.quad	.LC38
 	.quad	.LC39
 	.quad	.LC40
 	.quad	.LC41
@@ -1046,6 +1053,7 @@ keywordStrings:
 	.quad	.LC57
 	.quad	.LC58
 	.quad	.LC59
+	.quad	.LC60
 	.align 16
 .LC1:
 	.quad	1024

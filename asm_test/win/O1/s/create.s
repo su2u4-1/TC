@@ -362,19 +362,17 @@ create_statement:
 	subq	$32, %rsp
 	movl	%ecx, %ebx
 	movq	%rdx, %rsi
-	movq	%r8, %r12
+	movq	%r8, %rbp
 	movq	%r9, %rdi
-	movq	112(%rsp), %rbp
+	movq	112(%rsp), %r12
 	movl	$16, %ecx
 	call	alloc_memory
 	movl	%ebx, 8(%rax)
-	testq	%rbp, %rbp
-	setne	%dl
 	testl	%ebx, %ebx
 	jne	.L46
-	testb	%dl, %dl
+	testq	%r12, %r12
 	je	.L46
-	movq	%rbp, (%rax)
+	movq	%r12, (%rax)
 .L45:
 	addq	$32, %rsp
 	popq	%rbx
@@ -401,9 +399,9 @@ create_statement:
 .L49:
 	cmpl	$3, %ebx
 	jne	.L50
-	testq	%r12, %r12
+	testq	%rbp, %rbp
 	je	.L50
-	movq	%r12, (%rax)
+	movq	%rbp, (%rax)
 	jmp	.L45
 .L50:
 	cmpl	$4, %ebx
@@ -414,24 +412,22 @@ create_statement:
 	jmp	.L45
 .L51:
 	cmpl	$5, %ebx
-	jne	.L52
-	testb	%dl, %dl
-	je	.L52
-	movq	%rbp, (%rax)
-	jmp	.L45
-.L52:
+	je	.L56
 	leal	-6(%rbx), %edx
 	cmpl	$1, %edx
 	ja	.L53
 	movq	$0, (%rax)
 	jmp	.L45
+.L56:
+	movq	%r12, (%rax)
+	jmp	.L45
 .L53:
-	orq	%r12, %rdi
+	orq	%rbp, %rdi
 	orq	%rdi, %rsi
 	movq	%rsi, %rax
 	orq	120(%rsp), %rax
-	orq	%rbp, %rax
-	je	.L56
+	orq	%r12, %rax
+	je	.L57
 	call	__getreent
 	movq	24(%rax), %rcx
 	movl	%ebx, %r8d
@@ -439,7 +435,7 @@ create_statement:
 	call	fprintf
 	movl	$0, %eax
 	jmp	.L45
-.L56:
+.L57:
 	call	__getreent
 	movq	24(%rax), %r9
 	movl	$42, %r8d
@@ -463,7 +459,7 @@ create_if:
 	subq	$40, %rsp
 	movq	%rcx, %rbx
 	testq	%rcx, %rcx
-	je	.L61
+	je	.L62
 	movq	%rdx, %rbp
 	movq	%r8, %rdi
 	movq	%r9, %rsi
@@ -473,14 +469,14 @@ create_if:
 	movq	%rbp, 8(%rax)
 	movq	%rdi, 16(%rax)
 	movq	%rsi, 24(%rax)
-.L57:
+.L58:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	ret
-.L61:
+.L62:
 	call	__getreent
 	movq	24(%rax), %r9
 	movl	$47, %r8d
@@ -488,7 +484,7 @@ create_if:
 	leaq	.LC11(%rip), %rcx
 	call	fwrite
 	movq	%rbx, %rax
-	jmp	.L57
+	jmp	.L58
 	.section .rdata,"dr"
 	.align 8
 .LC12:
@@ -502,18 +498,18 @@ create_else_if:
 	subq	$40, %rsp
 	movq	%rcx, %rbx
 	testq	%rcx, %rcx
-	je	.L66
+	je	.L67
 	movq	%rdx, %rsi
 	movl	$16, %ecx
 	call	alloc_memory
 	movq	%rbx, (%rax)
 	movq	%rsi, 8(%rax)
-.L62:
+.L63:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
 	ret
-.L66:
+.L67:
 	call	__getreent
 	movq	24(%rax), %r9
 	movl	$52, %r8d
@@ -521,7 +517,7 @@ create_else_if:
 	leaq	.LC12(%rip), %rcx
 	call	fwrite
 	movq	%rbx, %rax
-	jmp	.L62
+	jmp	.L63
 	.globl	create_for
 	.def	create_for;	.scl	2;	.type	32;	.endef
 create_for:
@@ -569,7 +565,7 @@ create_while:
 	.ascii "false\0"
 	.align 8
 .LC15:
-	.ascii "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\12\0"
+	.ascii "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\12\0"
 	.align 8
 .LC16:
 	.ascii "Error creating expression: both expr_left and prim_left are NULL\12\0"
@@ -591,20 +587,20 @@ create_expression:
 	testq	%r9, %r9
 	sete	%al
 	cmpb	%al, %dl
-	jne	.L72
+	jne	.L73
 	movq	%r8, %rax
 	orq	%rsi, %rax
-	je	.L90
+	je	.L91
 	movl	$32, %ecx
 	call	alloc_memory
 	movl	%ebx, 24(%rax)
 	testq	%rsi, %rsi
-	je	.L80
+	je	.L81
 	movq	%rsi, (%rax)
-.L81:
+.L82:
 	movq	%rdi, 16(%rax)
-	jmp	.L71
-.L72:
+	jmp	.L72
+.L73:
 	testq	%r9, %r9
 	leaq	.LC13(%rip), %rdi
 	leaq	.LC14(%rip), %rax
@@ -613,12 +609,12 @@ create_expression:
 	movq	%rax, %rbp
 	leaq	.LC13(%rip), %rax
 	cmove	%rax, %rbp
-.L76:
+.L77:
 	testq	%rsi, %rsi
 	leaq	.LC14(%rip), %rsi
 	leaq	.LC13(%rip), %rax
 	cmove	%rax, %rsi
-.L77:
+.L78:
 	cmpl	$19, %ebx
 	leaq	.LC14(%rip), %rbx
 	leaq	.LC13(%rip), %rax
@@ -632,24 +628,24 @@ create_expression:
 	leaq	.LC15(%rip), %rdx
 	call	fprintf
 	movl	$0, %eax
-.L71:
+.L72:
 	addq	$56, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	ret
-.L87:
+.L88:
 	leaq	.LC13(%rip), %rdi
 	movq	%rdi, %rbp
 	movq	%rdi, %rsi
-	jmp	.L77
-.L80:
+	jmp	.L78
+.L81:
 	testq	%rbp, %rbp
-	je	.L82
+	je	.L83
 	movq	%rbp, 8(%rax)
-	jmp	.L81
-.L82:
+	jmp	.L82
+.L83:
 	call	__getreent
 	movq	24(%rax), %r9
 	movl	$65, %r8d
@@ -657,13 +653,13 @@ create_expression:
 	leaq	.LC16(%rip), %rcx
 	call	fwrite
 	movq	%rbp, %rax
-	jmp	.L71
-.L90:
+	jmp	.L72
+.L91:
 	testq	%r9, %r9
-	je	.L87
+	je	.L88
 	leaq	.LC14(%rip), %rdi
 	leaq	.LC13(%rip), %rbp
-	jmp	.L76
+	jmp	.L77
 	.section .rdata,"dr"
 	.align 8
 .LC17:
@@ -688,48 +684,48 @@ create_primary:
 	call	alloc_memory
 	movl	%ebx, 8(%rax)
 	cmpl	$4, %ebx
-	ja	.L92
+	ja	.L93
 	testq	%rsi, %rsi
-	je	.L92
+	je	.L93
 	movq	%rsi, (%rax)
-.L91:
+.L92:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	ret
-.L92:
+.L93:
 	cmpl	$5, %ebx
-	jne	.L94
+	jne	.L95
 	testq	%rbp, %rbp
-	je	.L94
+	je	.L95
 	movq	%rbp, (%rax)
-	jmp	.L91
-.L94:
+	jmp	.L92
+.L95:
 	leal	-6(%rbx), %edx
 	cmpl	$1, %edx
-	ja	.L95
+	ja	.L96
 	testq	%rdi, %rdi
-	jne	.L99
-.L95:
+	jne	.L100
+.L96:
 	cmpl	$8, %ebx
-	jne	.L96
+	jne	.L97
 	cmpq	$0, 112(%rsp)
-	je	.L96
+	je	.L97
 	movq	112(%rsp), %rdi
 	movq	%rdi, (%rax)
-	jmp	.L91
-.L99:
+	jmp	.L92
+.L100:
 	movq	%rdi, (%rax)
-	jmp	.L91
-.L96:
+	jmp	.L92
+.L97:
 	movq	%rdi, %rax
 	orq	112(%rsp), %rax
 	movq	%rbp, %r8
 	orq	%rax, %r8
 	orq	%rsi, %r8
-	jne	.L97
+	jne	.L98
 	call	__getreent
 	movq	24(%rax), %r9
 	movl	$38, %r8d
@@ -737,19 +733,19 @@ create_primary:
 	leaq	.LC17(%rip), %rcx
 	call	fwrite
 	movl	$0, %eax
-	jmp	.L91
-.L97:
+	jmp	.L92
+.L98:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movl	%ebx, %r8d
 	leaq	.LC18(%rip), %rdx
 	call	fprintf
 	movl	$0, %eax
-	jmp	.L91
+	jmp	.L92
 	.section .rdata,"dr"
 	.align 8
 .LC19:
-	.ascii "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\12\0"
+	.ascii "Error creating variable access: base and type mismatch, base == NULL: %s, type == VAR_NAME: %s\12\0"
 	.align 8
 .LC20:
 	.ascii "Error creating variable access: content is NULL\12\0"
@@ -773,7 +769,7 @@ create_variable_access:
 	testq	%rdx, %rdx
 	sete	%al
 	cmpb	%r12b, %al
-	jne	.L113
+	jne	.L114
 	movq	%r8, %rbp
 	movq	%r9, %rdi
 	movl	$24, %ecx
@@ -783,12 +779,12 @@ create_variable_access:
 	testq	%rbp, %rbp
 	setne	%dl
 	testb	%r12b, %r12b
-	je	.L105
+	je	.L106
 	testb	%dl, %dl
-	je	.L105
+	je	.L106
 	movq	%rbp, 8(%rax)
-	jmp	.L100
-.L113:
+	jmp	.L101
+.L114:
 	testl	%ecx, %ecx
 	leaq	.LC14(%rip), %rdi
 	leaq	.LC13(%rip), %rax
@@ -803,7 +799,7 @@ create_variable_access:
 	leaq	.LC19(%rip), %rdx
 	call	fprintf
 	movl	$0, %eax
-.L100:
+.L101:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -811,41 +807,41 @@ create_variable_access:
 	popq	%rbp
 	popq	%r12
 	ret
-.L105:
+.L106:
 	cmpl	$1, %ebx
-	jne	.L106
+	jne	.L107
 	cmpq	$0, 112(%rsp)
-	je	.L106
+	je	.L107
 	movq	112(%rsp), %rdi
 	movq	%rdi, 8(%rax)
-	jmp	.L100
-.L106:
-	cmpl	$3, %ebx
-	jne	.L107
-	testq	%rdi, %rdi
-	je	.L107
-	movq	%rdi, 8(%rax)
-	jmp	.L100
+	jmp	.L101
 .L107:
-	cmpl	$2, %ebx
+	cmpl	$3, %ebx
 	jne	.L108
-	testb	%dl, %dl
+	testq	%rdi, %rdi
 	je	.L108
-	movq	%rbp, 8(%rax)
-	jmp	.L100
+	movq	%rdi, 8(%rax)
+	jmp	.L101
 .L108:
+	cmpl	$2, %ebx
+	jne	.L109
+	testb	%dl, %dl
+	je	.L109
+	movq	%rbp, 8(%rax)
+	jmp	.L101
+.L109:
 	orq	112(%rsp), %rdi
 	movq	%rdi, %r9
 	orq	%rbp, %r9
-	je	.L114
+	je	.L115
 	call	__getreent
 	movq	24(%rax), %rcx
 	movl	%ebx, %r8d
 	leaq	.LC21(%rip), %rdx
 	call	fprintf
 	movl	$0, %eax
-	jmp	.L100
-.L114:
+	jmp	.L101
+.L115:
 	call	__getreent
 	movq	24(%rax), %r9
 	movl	$48, %r8d
@@ -853,7 +849,7 @@ create_variable_access:
 	leaq	.LC20(%rip), %rcx
 	call	fwrite
 	movl	$0, %eax
-	jmp	.L100
+	jmp	.L101
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
 	.def	__getreent;	.scl	2;	.type	32;	.endef

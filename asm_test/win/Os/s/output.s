@@ -14,15 +14,15 @@
 .LC5:
 	.ascii "type\12\0"
 .LC6:
-	.ascii "kind: \"function\"\12\0"
+	.ascii "kind: \"subroutine\"\12\0"
 .LC7:
 	.ascii "return_type\12\0"
 .LC8:
-	.ascii "kind: \"method\"\12\0"
-.LC9:
 	.ascii "kind: \"class\"\12\0"
-.LC10:
+.LC9:
 	.ascii "kind: \"attribute\"\12\0"
+.LC10:
+	.ascii "kind: \"parameter\"\12\0"
 .LC11:
 	.ascii "kind: \"unknown_NameType\"\12\0"
 	.text
@@ -55,13 +55,13 @@ output_name:
 	call	indention
 	movq	%rbx, %rdx
 	leaq	.LC0(%rip), %rcx
-	jmp	.L17
+	jmp	.L16
 .L3:
 	xorl	%r8d, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
 	call	indention
-	movq	(%rdi), %r8
+	movq	16(%rdi), %r8
 	movq	%r14, %rdx
 	movq	%rbx, %rcx
 	call	fprintf
@@ -70,13 +70,13 @@ output_name:
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
 	call	indention
-	movq	8(%rdi), %r8
+	movq	24(%rdi), %r8
 	movq	%r15, %rdx
 	movq	%rbx, %rcx
 	call	fprintf
-	cmpl	$5, 24(%rdi)
+	cmpl	$5, 32(%rdi)
 	ja	.L4
-	movl	24(%rdi), %eax
+	movl	32(%rdi), %eax
 	movq	%rsi, %r9
 	movslq	0(%r13,%rax,4), %rax
 	addq	%r13, %rax
@@ -91,21 +91,13 @@ output_name:
 	.long	.L7-.L6
 	.long	.L5-.L6
 	.text
-.L11:
+.L5:
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
 	movl	$1, %r8d
 	call	indention
 	movq	%rbx, %rdx
 	leaq	.LC3(%rip), %rcx
-	jmp	.L17
-.L10:
-	movq	%rbp, %rdx
-	movq	%rbx, %rcx
-	xorl	%r8d, %r8d
-	call	indention
-	movq	%rbx, %rdx
-	leaq	.LC4(%rip), %rcx
 	jmp	.L16
 .L9:
 	movq	%rbp, %rdx
@@ -113,16 +105,15 @@ output_name:
 	xorl	%r8d, %r8d
 	call	indention
 	movq	%rbx, %rdx
-	leaq	.LC6(%rip), %rcx
-	jmp	.L14
-.L8:
+	leaq	.LC4(%rip), %rcx
+	jmp	.L15
+.L10:
+	xorl	%r8d, %r8d
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
-	xorl	%r8d, %r8d
 	call	indention
 	movq	%rbx, %rdx
-	leaq	.LC8(%rip), %rcx
-.L14:
+	leaq	.LC6(%rip), %rcx
 	call	fputs
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -131,27 +122,23 @@ output_name:
 	call	indention
 	movq	%rbx, %rdx
 	leaq	.LC7(%rip), %rcx
-.L15:
-	call	fputs
-	incq	%r12
-	movq	16(%rdi), %rdi
-	jmp	.L2
-.L7:
+	jmp	.L14
+.L11:
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
 	movl	$1, %r8d
 	call	indention
 	movq	%rbx, %rdx
-	leaq	.LC9(%rip), %rcx
-	jmp	.L17
-.L5:
+	leaq	.LC8(%rip), %rcx
+	jmp	.L16
+.L7:
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
 	xorl	%r8d, %r8d
 	call	indention
 	movq	%rbx, %rdx
-	leaq	.LC10(%rip), %rcx
-.L16:
+	leaq	.LC9(%rip), %rcx
+.L15:
 	call	fputs
 	movq	%rbp, %rdx
 	movq	%rbx, %rcx
@@ -160,6 +147,18 @@ output_name:
 	call	indention
 	movq	%rbx, %rdx
 	leaq	.LC5(%rip), %rcx
+.L14:
+	call	fputs
+	incq	%r12
+	movq	(%rdi), %rdi
+	jmp	.L2
+.L8:
+	movq	%rbp, %rdx
+	movq	%rbx, %rcx
+	xorl	%r8d, %r8d
+	call	indention
+	movq	%rbx, %rdx
+	leaq	.LC10(%rip), %rcx
 	jmp	.L15
 .L4:
 	movq	%rbp, %rdx
@@ -169,7 +168,7 @@ output_name:
 	call	indention
 	movq	%rbx, %rdx
 	leaq	.LC11(%rip), %rcx
-.L17:
+.L16:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -225,7 +224,7 @@ output_expression:
 	pushq	%r14
 	leaq	.LC12(%rip), %r14
 	pushq	%r13
-	leaq	.L24(%rip), %r13
+	leaq	.L23(%rip), %r13
 	pushq	%r12
 	pushq	%rbp
 	movq	%r8, %rbp
@@ -236,10 +235,10 @@ output_expression:
 	pushq	%rbx
 	movq	%rdx, %rbx
 	subq	$32, %rsp
-.L36:
+.L35:
 	movl	24(%rdi), %ecx
 	cmpl	$19, %ecx
-	jne	.L20
+	jne	.L19
 	movq	%rbp, %rdx
 	movq	%rsi, %r9
 	movl	$1, %r8d
@@ -250,10 +249,10 @@ output_expression:
 	addq	$2, %rbp
 	call	fputs
 	movq	8(%rdi), %r12
-.L21:
+.L20:
 	cmpl	$8, 8(%r12)
 	leaq	-1(%rbp), %rdi
-	ja	.L22
+	ja	.L21
 	movl	8(%r12), %eax
 	movq	%rsi, %r9
 	xorl	%r8d, %r8d
@@ -264,27 +263,27 @@ output_expression:
 	jmp	*%rax
 	.section .rdata,"dr"
 	.align 4
-.L24:
-	.long	.L32-.L24
-	.long	.L31-.L24
-	.long	.L30-.L24
-	.long	.L29-.L24
-	.long	.L28-.L24
-	.long	.L27-.L24
-	.long	.L26-.L24
-	.long	.L25-.L24
-	.long	.L23-.L24
+.L23:
+	.long	.L31-.L23
+	.long	.L30-.L23
+	.long	.L29-.L23
+	.long	.L28-.L23
+	.long	.L27-.L23
+	.long	.L26-.L23
+	.long	.L25-.L23
+	.long	.L24-.L23
+	.long	.L22-.L23
 	.text
-.L32:
-	call	indention
-	movq	%rbx, %rdx
-	leaq	.LC14(%rip), %rcx
-	jmp	.L40
 .L31:
 	call	indention
 	movq	%rbx, %rdx
+	leaq	.LC14(%rip), %rcx
+	jmp	.L39
+.L30:
+	call	indention
+	movq	%rbx, %rdx
 	leaq	.LC16(%rip), %rcx
-.L40:
+.L39:
 	call	fputs
 	movq	%rdi, %rdx
 	movq	%rsi, %r9
@@ -293,7 +292,7 @@ output_expression:
 	call	indention
 	movq	(%r12), %r8
 	leaq	.LC15(%rip), %rdx
-.L41:
+.L40:
 	addq	$32, %rsp
 	movq	%rbx, %rcx
 	popq	%rbx
@@ -304,7 +303,7 @@ output_expression:
 	popq	%r13
 	popq	%r14
 	jmp	fprintf
-.L30:
+.L29:
 	call	indention
 	movq	%rbx, %rdx
 	leaq	.LC17(%rip), %rcx
@@ -316,20 +315,7 @@ output_expression:
 	call	indention
 	movq	(%r12), %r8
 	leaq	.LC18(%rip), %rdx
-	jmp	.L41
-.L29:
-	call	indention
-	movq	%rbx, %rdx
-	leaq	.LC19(%rip), %rcx
-	call	fputs
-	movq	%rdi, %rdx
-	movq	%rbx, %rcx
-	movq	%rsi, %r9
-	movl	$1, %r8d
-	call	indention
-	movq	%rbx, %rdx
-	leaq	.LC20(%rip), %rcx
-	jmp	.L42
+	jmp	.L40
 .L28:
 	call	indention
 	movq	%rbx, %rdx
@@ -341,8 +327,21 @@ output_expression:
 	movl	$1, %r8d
 	call	indention
 	movq	%rbx, %rdx
+	leaq	.LC20(%rip), %rcx
+	jmp	.L41
+.L27:
+	call	indention
+	movq	%rbx, %rdx
+	leaq	.LC19(%rip), %rcx
+	call	fputs
+	movq	%rdi, %rdx
+	movq	%rbx, %rcx
+	movq	%rsi, %r9
+	movl	$1, %r8d
+	call	indention
+	movq	%rbx, %rdx
 	leaq	.LC21(%rip), %rcx
-.L42:
+.L41:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -352,7 +351,7 @@ output_expression:
 	popq	%r13
 	popq	%r14
 	jmp	fputs
-.L27:
+.L26:
 	call	indention
 	movq	%rbx, %rdx
 	leaq	.LC22(%rip), %rcx
@@ -366,17 +365,17 @@ output_expression:
 	leaq	.LC23(%rip), %rcx
 	call	fputs
 	movq	(%r12), %rdi
-	jmp	.L36
-.L26:
-	call	indention
-	movq	%rbx, %rdx
-	leaq	.LC24(%rip), %rcx
-	jmp	.L39
+	jmp	.L35
 .L25:
 	call	indention
 	movq	%rbx, %rdx
+	leaq	.LC24(%rip), %rcx
+	jmp	.L38
+.L24:
+	call	indention
+	movq	%rbx, %rdx
 	leaq	.LC25(%rip), %rcx
-.L39:
+.L38:
 	call	fputs
 	movq	%rsi, %r9
 	movq	%rdi, %rdx
@@ -388,8 +387,8 @@ output_expression:
 	leaq	.LC23(%rip), %rcx
 	call	fputs
 	movq	(%r12), %r12
-	jmp	.L21
-.L23:
+	jmp	.L20
+.L22:
 	call	indention
 	movq	%rbx, %rdx
 	leaq	.LC26(%rip), %rcx
@@ -415,7 +414,7 @@ output_expression:
 	popq	%r13
 	popq	%r14
 	jmp	output_variable_access
-.L22:
+.L21:
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
 	movq	%rsi, %r9
@@ -433,7 +432,7 @@ output_expression:
 	popq	%r13
 	popq	%r14
 	jmp	fprintf
-.L20:
+.L19:
 	call	operator_to_string
 	movq	%rsi, %r9
 	xorl	%r8d, %r8d
@@ -471,7 +470,7 @@ output_expression:
 	leaq	.LC30(%rip), %rcx
 	call	fputs
 	movq	16(%rdi), %rdi
-	jmp	.L36
+	jmp	.L35
 	.section .rdata,"dr"
 .LC31:
 	.ascii "name\12\0"
@@ -521,7 +520,7 @@ output_variable:
 	movq	%rdi, %rdx
 	movl	$1, %r8d
 	movq	%rbx, %rcx
-	je	.L44
+	je	.L43
 	call	indention
 	movq	%rbx, %rdx
 	leaq	.LC23(%rip), %rcx
@@ -537,7 +536,7 @@ output_variable:
 	popq	%rbp
 	popq	%r12
 	jmp	output_expression
-.L44:
+.L43:
 	call	indention
 	addq	$32, %rsp
 	movq	%rbx, %rdx
@@ -591,11 +590,11 @@ output_variable_access:
 	subq	$40, %rsp
 	movl	16(%rcx), %eax
 	cmpl	$2, %eax
-	je	.L47
-	ja	.L48
+	je	.L46
+	ja	.L47
 	testl	%eax, %eax
 	leaq	1(%r8), %r13
-	jne	.L56
+	jne	.L55
 	xorl	%r8d, %r8d
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
@@ -614,10 +613,10 @@ output_variable_access:
 	movq	8(%rbp), %rcx
 	movq	%rsi, %r9
 	movq	%r13, %r8
-	jmp	.L60
-.L48:
+	jmp	.L59
+.L47:
 	cmpl	$3, %eax
-	jne	.L61
+	jne	.L60
 	xorl	%r8d, %r8d
 	movq	%rdi, %rdx
 	leaq	1(%rdi), %r12
@@ -661,7 +660,7 @@ output_variable_access:
 	popq	%r14
 	popq	%r15
 	jmp	output_expression
-.L56:
+.L55:
 	movq	8(%rcx), %rcx
 	leaq	.LC37(%rip), %r14
 	call	list_copy
@@ -697,12 +696,12 @@ output_variable_access:
 	movq	%rbx, %rdx
 	leaq	.LC36(%rip), %rcx
 	call	fputs
-.L53:
+.L52:
 	movq	%r12, %rcx
 	call	list_pop
 	movq	%rax, %r15
 	testq	%rax, %rax
-	je	.L62
+	je	.L61
 	movq	%rsi, %r9
 	xorl	%r8d, %r8d
 	movq	%r13, %rdx
@@ -718,8 +717,8 @@ output_variable_access:
 	movq	%rbx, %rdx
 	movq	%r15, %rcx
 	call	output_expression
-	jmp	.L53
-.L47:
+	jmp	.L52
+.L46:
 	xorl	%r8d, %r8d
 	movq	%rdi, %rdx
 	leaq	1(%rdi), %r12
@@ -752,7 +751,7 @@ output_variable_access:
 	movq	8(%rbp), %rcx
 	movq	%rsi, %r9
 	movq	%r12, %r8
-.L60:
+.L59:
 	addq	$40, %rsp
 	movq	%rbx, %rdx
 	popq	%rbx
@@ -764,7 +763,7 @@ output_variable_access:
 	popq	%r14
 	popq	%r15
 	jmp	output_name
-.L61:
+.L60:
 	movq	%rdi, %rdx
 	movq	%rbx, %rcx
 	movl	$1, %r8d
@@ -782,7 +781,7 @@ output_variable_access:
 	popq	%r14
 	popq	%r15
 	jmp	fprintf
-.L62:
+.L61:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -851,9 +850,9 @@ output_statement:
 	cmpl	$7, 8(%rcx)
 	movq	%rdx, 40(%rsp)
 	movq	%r9, 48(%rsp)
-	ja	.L64
+	ja	.L63
 	movl	8(%rcx), %eax
-	leaq	.L66(%rip), %rdx
+	leaq	.L65(%rip), %rdx
 	movq	48(%rsp), %r9
 	xorl	%r8d, %r8d
 	movq	40(%rsp), %rcx
@@ -863,17 +862,17 @@ output_statement:
 	jmp	*%rax
 	.section .rdata,"dr"
 	.align 4
-.L66:
-	.long	.L73-.L66
-	.long	.L72-.L66
-	.long	.L71-.L66
-	.long	.L70-.L66
-	.long	.L69-.L66
-	.long	.L68-.L66
-	.long	.L67-.L66
-	.long	.L65-.L66
+.L65:
+	.long	.L72-.L65
+	.long	.L71-.L65
+	.long	.L70-.L65
+	.long	.L69-.L65
+	.long	.L68-.L65
+	.long	.L67-.L65
+	.long	.L66-.L65
+	.long	.L64-.L65
 	.text
-.L71:
+.L70:
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	1(%rbx), %rdi
@@ -913,18 +912,18 @@ output_statement:
 	movq	40(%rsp), %rdx
 	movq	%r15, %rcx
 	call	fputs
-.L74:
+.L73:
 	movq	%r13, %rcx
 	call	list_pop
 	movq	48(%rsp), %r9
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L99
+	je	.L98
 	movq	40(%rsp), %rdx
 	movq	%rsi, %r8
 	call	output_statement
-	jmp	.L74
-.L99:
+	jmp	.L73
+.L98:
 	movq	40(%rsp), %rcx
 	xorl	%r8d, %r8d
 	movq	%rdi, %rdx
@@ -934,12 +933,12 @@ output_statement:
 	call	fputs
 	leaq	3(%rbx), %rax
 	movq	%rax, 56(%rsp)
-.L76:
+.L75:
 	movq	%r12, %rcx
 	call	list_pop
 	movq	%rax, %r13
 	testq	%rax, %rax
-	je	.L100
+	je	.L99
 	movq	8(%r13), %rcx
 	call	list_copy
 	movq	48(%rsp), %r9
@@ -964,18 +963,18 @@ output_statement:
 	movq	40(%rsp), %rdx
 	movq	%r15, %rcx
 	call	fputs
-.L77:
+.L76:
 	movq	%rbx, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L76
+	je	.L75
 	movq	48(%rsp), %r9
 	movq	56(%rsp), %r8
 	movq	40(%rsp), %rdx
 	call	output_statement
-	jmp	.L77
-.L100:
+	jmp	.L76
+.L99:
 	movq	40(%rsp), %rcx
 	movq	48(%rsp), %r9
 	movq	%rdi, %rdx
@@ -984,18 +983,18 @@ output_statement:
 	movq	40(%rsp), %rdx
 	leaq	.LC49(%rip), %rcx
 	call	fputs
-.L80:
+.L79:
 	movq	%rbp, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L63
+	je	.L62
 	movq	48(%rsp), %r9
 	movq	40(%rsp), %rdx
 	movq	%rsi, %r8
 	call	output_statement
-	jmp	.L80
-.L69:
+	jmp	.L79
+.L68:
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC50(%rip), %rcx
@@ -1010,7 +1009,7 @@ output_statement:
 	movq	48(%rsp), %r9
 	movq	40(%rsp), %rcx
 	movq	%rax, %rbp
-	je	.L83
+	je	.L82
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC51(%rip), %rcx
@@ -1020,19 +1019,19 @@ output_statement:
 	leaq	2(%rbx), %r8
 	movq	40(%rsp), %rdx
 	call	output_variable
-	jmp	.L84
-.L83:
+	jmp	.L83
+.L82:
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC52(%rip), %rcx
 	call	fputs
-.L84:
+.L83:
 	xorl	%r8d, %r8d
 	cmpq	$0, 8(%rsi)
 	movq	48(%rsp), %r9
 	movq	%rdi, %rdx
 	movq	40(%rsp), %rcx
-	je	.L85
+	je	.L84
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC46(%rip), %rcx
@@ -1042,19 +1041,19 @@ output_statement:
 	leaq	2(%rbx), %r8
 	movq	40(%rsp), %rdx
 	call	output_expression
-	jmp	.L86
-.L85:
+	jmp	.L85
+.L84:
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC53(%rip), %rcx
 	call	fputs
-.L86:
+.L85:
 	xorl	%r8d, %r8d
 	cmpq	$0, 16(%rsi)
 	movq	48(%rsp), %r9
 	movq	%rdi, %rdx
 	movq	40(%rsp), %rcx
-	je	.L87
+	je	.L86
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC54(%rip), %rcx
@@ -1064,13 +1063,13 @@ output_statement:
 	leaq	2(%rbx), %r8
 	movq	40(%rsp), %rdx
 	call	output_expression
-	jmp	.L88
-.L87:
+	jmp	.L87
+.L86:
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC55(%rip), %rcx
 	call	fputs
-.L88:
+.L87:
 	movq	48(%rsp), %r9
 	movq	40(%rsp), %rcx
 	movq	%rdi, %rdx
@@ -1080,18 +1079,18 @@ output_statement:
 	movq	40(%rsp), %rdx
 	leaq	.LC47(%rip), %rcx
 	call	fputs
-.L89:
+.L88:
 	movq	%rbp, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L63
+	je	.L62
 	movq	48(%rsp), %r9
 	movq	40(%rsp), %rdx
 	movq	%rbx, %r8
 	call	output_statement
-	jmp	.L89
-.L70:
+	jmp	.L88
+.L69:
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC56(%rip), %rcx
@@ -1123,18 +1122,18 @@ output_statement:
 	movq	40(%rsp), %rdx
 	leaq	.LC47(%rip), %rcx
 	call	fputs
-.L92:
+.L91:
 	movq	%rsi, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L63
+	je	.L62
 	movq	48(%rsp), %r9
 	movq	40(%rsp), %rdx
 	movq	%rbx, %r8
 	call	output_statement
-	jmp	.L92
-.L72:
+	jmp	.L91
+.L71:
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC57(%rip), %rcx
@@ -1153,23 +1152,23 @@ output_statement:
 	popq	%r14
 	popq	%r15
 	jmp	output_variable
-.L68:
+.L67:
 	cmpq	$0, (%rsi)
-	jne	.L94
+	jne	.L93
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC58(%rip), %rcx
-	jmp	.L97
-.L94:
+	jmp	.L96
+.L93:
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC59(%rip), %rcx
-	jmp	.L98
-.L67:
+	jmp	.L97
+.L66:
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC60(%rip), %rcx
-.L97:
+.L96:
 	addq	$72, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -1180,23 +1179,23 @@ output_statement:
 	popq	%r14
 	popq	%r15
 	jmp	fputs
-.L65:
+.L64:
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC61(%rip), %rcx
-	jmp	.L97
-.L73:
+	jmp	.L96
+.L72:
 	cmpq	$0, (%rsi)
-	jne	.L95
+	jne	.L94
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC62(%rip), %rcx
-	jmp	.L97
-.L95:
+	jmp	.L96
+.L94:
 	call	indention
 	movq	40(%rsp), %rdx
 	leaq	.LC63(%rip), %rcx
-.L98:
+.L97:
 	call	fputs
 	movq	(%rsi), %rcx
 	movq	48(%rsp), %r9
@@ -1212,7 +1211,7 @@ output_statement:
 	popq	%r14
 	popq	%r15
 	jmp	output_expression
-.L64:
+.L63:
 	movq	40(%rsp), %rcx
 	movq	48(%rsp), %r9
 	movq	%rbx, %rdx
@@ -1231,7 +1230,7 @@ output_statement:
 	popq	%r14
 	popq	%r15
 	jmp	fprintf
-.L63:
+.L62:
 	addq	$72, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -1284,23 +1283,23 @@ output_code:
 	movq	%r9, 168(%rsp)
 	call	list_copy
 	movq	%rax, 48(%rsp)
-.L102:
+.L101:
 	movq	48(%rsp), %rcx
 	call	list_pop
 	movq	%rax, %rsi
 	testq	%rax, %rax
-	je	.L126
+	je	.L125
 	movl	8(%rsi), %eax
 	movq	168(%rsp), %r9
 	leaq	1(%rbx), %rdx
 	xorl	%r8d, %r8d
 	movq	152(%rsp), %rcx
 	cmpl	$1, %eax
-	je	.L103
+	je	.L102
 	cmpl	$2, %eax
-	je	.L104
+	je	.L103
 	testl	%eax, %eax
-	jne	.L105
+	jne	.L104
 	call	indention
 	leaq	.LC66(%rip), %rcx
 	leaq	2(%rbx), %rdi
@@ -1327,14 +1326,14 @@ output_code:
 	call	indention
 	movq	8(%rsi), %r8
 	testq	%r8, %r8
-	jne	.L106
+	jne	.L105
 	leaq	.LC65(%rip), %r8
-.L106:
+.L105:
 	movq	152(%rsp), %rcx
 	leaq	.LC67(%rip), %rdx
 	call	fprintf
-	jmp	.L102
-.L103:
+	jmp	.L101
+.L102:
 	call	indention
 	leaq	2(%rbx), %rdi
 	orl	$-1, %r13d
@@ -1384,13 +1383,13 @@ output_code:
 	movq	%rax, %r12
 	call	list_copy
 	movq	%rax, %rbp
-.L108:
+.L107:
 	movq	%r12, %rcx
 	call	list_pop
 	movq	168(%rsp), %r9
 	movq	%rax, %r15
 	testq	%rax, %rax
-	je	.L127
+	je	.L126
 	movq	152(%rsp), %rcx
 	xorl	%r8d, %r8d
 	movq	%rsi, %rdx
@@ -1405,8 +1404,8 @@ output_code:
 	movq	%r15, %rcx
 	movq	152(%rsp), %rdx
 	call	output_variable
-	jmp	.L108
-.L127:
+	jmp	.L107
+.L126:
 	movq	152(%rsp), %rcx
 	movq	%rdi, %rdx
 	movl	$1, %r8d
@@ -1414,18 +1413,18 @@ output_code:
 	movq	152(%rsp), %rdx
 	leaq	.LC47(%rip), %rcx
 	call	fputs
-.L110:
+.L109:
 	movq	%rbp, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L102
+	je	.L101
 	movq	168(%rsp), %r9
 	movq	152(%rsp), %rdx
 	movq	%rsi, %r8
 	call	output_statement
-	jmp	.L110
-.L104:
+	jmp	.L109
+.L103:
 	call	indention
 	leaq	.LC70(%rip), %rcx
 	leaq	2(%rbx), %rdi
@@ -1459,17 +1458,17 @@ output_code:
 	movq	8(%rsi), %rcx
 	call	list_copy
 	movq	%rax, 56(%rsp)
-.L112:
+.L111:
 	movq	56(%rsp), %rcx
 	call	list_pop
 	movq	%rax, %rsi
 	testq	%rax, %rax
-	je	.L102
+	je	.L101
 	movl	8(%rsi), %eax
 	testl	%eax, %eax
-	je	.L113
+	je	.L112
 	decl	%eax
-	jne	.L128
+	jne	.L127
 	movq	168(%rsp), %r9
 	movq	32(%rsp), %rdx
 	xorl	%r8d, %r8d
@@ -1483,8 +1482,8 @@ output_code:
 	leaq	4(%rbx), %r8
 	movq	152(%rsp), %rdx
 	call	output_variable
-	jmp	.L112
-.L113:
+	jmp	.L111
+.L112:
 	movq	32(%rsp), %rdx
 	xorl	%r8d, %r8d
 	leaq	4(%rbx), %rdi
@@ -1539,13 +1538,13 @@ output_code:
 	movq	%rax, %r12
 	call	list_copy
 	movq	%rax, %rbp
-.L116:
+.L115:
 	movq	%r12, %rcx
 	call	list_pop
 	movq	168(%rsp), %r9
 	movq	%rax, %rsi
 	testq	%rax, %rax
-	je	.L129
+	je	.L128
 	movq	40(%rsp), %rdx
 	movq	152(%rsp), %rcx
 	xorl	%r8d, %r8d
@@ -1560,8 +1559,8 @@ output_code:
 	movq	%rsi, %rcx
 	movq	152(%rsp), %rdx
 	call	output_variable
-	jmp	.L116
-.L129:
+	jmp	.L115
+.L128:
 	movq	152(%rsp), %rcx
 	movq	%rdi, %rdx
 	movl	$1, %r8d
@@ -1569,18 +1568,18 @@ output_code:
 	movq	152(%rsp), %rdx
 	leaq	.LC47(%rip), %rcx
 	call	fputs
-.L118:
+.L117:
 	movq	%rbp, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	je	.L112
+	je	.L111
 	movq	168(%rsp), %r9
 	movq	40(%rsp), %r8
 	movq	152(%rsp), %rdx
 	call	output_statement
-	jmp	.L118
-.L128:
+	jmp	.L117
+.L127:
 	movq	32(%rsp), %rdx
 	movq	152(%rsp), %rcx
 	xorl	%r8d, %r8d
@@ -1590,15 +1589,15 @@ output_code:
 	movq	152(%rsp), %rcx
 	leaq	.LC74(%rip), %rdx
 	call	fprintf
-	jmp	.L112
-.L105:
+	jmp	.L111
+.L104:
 	call	indention
 	movl	8(%rsi), %r8d
 	movq	152(%rsp), %rcx
 	leaq	.LC75(%rip), %rdx
 	call	fprintf
-	jmp	.L102
-.L126:
+	jmp	.L101
+.L125:
 	addq	$72, %rsp
 	popq	%rbx
 	popq	%rsi

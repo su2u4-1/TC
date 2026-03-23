@@ -25,6 +25,7 @@ extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern char initialized;
 extern StringList* all_string_list;
+extern string CONSTRUCTOR_NAME;
 extern string IMPORT_KEYWORD;
 extern string FROM_KEYWORD;
 extern string FUNC_KEYWORD;
@@ -77,15 +78,15 @@ extern string DIV_ASSIGN_SYMBOL;
 extern string MOD_ASSIGN_SYMBOL;
 extern string AND_SYMBOL;
 extern string OR_SYMBOL;
-typedef struct Name Name;
-typedef struct Scope Scope;
-extern Name* name_void;
-extern Name* name_int;
-extern Name* name_float;
-extern Name* name_string;
-extern Name* name_bool;
-extern Scope* builtin_scope;
-void init(void);
+typedef struct SymbolTable SymbolTable;
+typedef struct Symbol Symbol;
+extern Symbol* name_void;
+extern Symbol* name_int;
+extern Symbol* name_float;
+extern Symbol* name_string;
+extern Symbol* name_bool;
+extern SymbolTable* builtin_scope;
+string create_string_not_check(const char* data, size_t length);
 string create_string(const char* data, size_t length);
 pointer alloc_memory(size_t size);
 char is_keyword(const string str);
@@ -130,11 +131,11 @@ Lexer* create_lexer(string source, size_t length) {
     lexer->length = length;
     lexer->line = 0;
     lexer->column = 0;
-    lexer->peeked_token = 0;
+    lexer->peeked_token = NULL;
     lexer->peeked_position = 0;
     lexer->peeked_line = 0;
     lexer->peeked_column = 0;
-    lexer->current_token = 0;
+    lexer->current_token = NULL;
     return lexer;
 }
 static Token* create_token(TokenType type, string lexeme, size_t line, size_t column) {
@@ -175,7 +176,7 @@ static void move_position(Lexer* lexer, int count) {
 static Token* next_token(Lexer* lexer, char skip_comment) {
     char c = get_current_char(lexer);
     if (c == '\0')
-        return create_token(EOF_TOKEN, 0, lexer->line, lexer->column);
+        return create_token(EOF_TOKEN, NULL, lexer->line, lexer->column);
     else if (c == ' ' || c == '\t' || c == '\r')
         return next_token(lexer, skip_comment);
     else if (c == '\n') {
@@ -216,8 +217,9 @@ static Token* next_token(Lexer* lexer, char skip_comment) {
         if (c != '"') {
             lexer_error("Unterminated string literal", lexer->line, start - 1);
             if (c == '\n') newline(lexer);
-            return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
         }
+        if (lexer->position - start == 1)
+            return create_token(STRING, create_string("\0", 1), lexer->line, column_start);
         return create_token(STRING, create_string(&lexer->source[start], lexer->position - start - 1), lexer->line, column_start);
     } else {
         char p = peek_next_char(lexer);
@@ -324,12 +326,12 @@ static Token* next_token(Lexer* lexer, char skip_comment) {
             return create_token(SYMBOL, ASSIGN_SYMBOL, lexer->line, lexer->column - 1);
         else {
             lexer_error("Unexpected character", lexer->line, lexer->column - 1);
-            return create_token(EOF_TOKEN, 0, 0, 0);
+            return create_token(EOF_TOKEN, NULL, 0, 0);
         }
     }
 }
 Token* get_next_token(Lexer* lexer, char skip_comment) {
-    if (lexer->peeked_token != 0) {
+    if (lexer->peeked_token != NULL) {
         lexer->current_token = lexer->peeked_token;
         lexer->position = lexer->peeked_position;
         lexer->line = lexer->peeked_line;
@@ -341,7 +343,7 @@ Token* get_next_token(Lexer* lexer, char skip_comment) {
     return lexer->current_token = token;
 }
 Token* peek_next_token(Lexer* lexer, char skip_comment) {
-    if (lexer->peeked_token != 0)
+    if (lexer->peeked_token != NULL)
         return lexer->peeked_token;
     size_t saved_position = lexer->position;
     size_t saved_line = lexer->line;
@@ -363,9 +365,9 @@ void reset_lexer(Lexer* lexer) {
     lexer->position = 0;
     lexer->line = 0;
     lexer->column = 0;
-    lexer->peeked_token = 0;
+    lexer->peeked_token = NULL;
     lexer->peeked_position = 0;
     lexer->peeked_line = 0;
     lexer->peeked_column = 0;
-    lexer->current_token = 0;
+    lexer->current_token = NULL;
 }

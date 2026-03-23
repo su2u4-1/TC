@@ -25,6 +25,7 @@ extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern char initialized;
 extern StringList* all_string_list;
+extern string CONSTRUCTOR_NAME;
 extern string IMPORT_KEYWORD;
 extern string FROM_KEYWORD;
 extern string FUNC_KEYWORD;
@@ -77,15 +78,15 @@ extern string DIV_ASSIGN_SYMBOL;
 extern string MOD_ASSIGN_SYMBOL;
 extern string AND_SYMBOL;
 extern string OR_SYMBOL;
-typedef struct Name Name;
-typedef struct Scope Scope;
-extern Name* name_void;
-extern Name* name_int;
-extern Name* name_float;
-extern Name* name_string;
-extern Name* name_bool;
-extern Scope* builtin_scope;
-void init(void);
+typedef struct SymbolTable SymbolTable;
+typedef struct Symbol Symbol;
+extern Symbol* name_void;
+extern Symbol* name_int;
+extern Symbol* name_float;
+extern Symbol* name_string;
+extern Symbol* name_bool;
+extern SymbolTable* builtin_scope;
+string create_string_not_check(const char* data, size_t length);
 string create_string(const char* data, size_t length);
 pointer alloc_memory(size_t size);
 char is_keyword(const string str);
@@ -98,69 +99,71 @@ string symbolList[30] = {0};
 MemoryBlock* struct_memory = NULL;
 MemoryBlock* string_memory = NULL;
 char initialized = 0;
-StringList* all_string_list = 0;
-string IMPORT_KEYWORD = 0;
-string FROM_KEYWORD = 0;
-string FUNC_KEYWORD = 0;
-string CLASS_KEYWORD = 0;
-string METHOD_KEYWORD = 0;
-string SELF_KEYWORD = 0;
-string IF_KEYWORD = 0;
-string ELIF_KEYWORD = 0;
-string ELSE_KEYWORD = 0;
-string WHILE_KEYWORD = 0;
-string FOR_KEYWORD = 0;
-string TRUE_KEYWORD = 0;
-string FALSE_KEYWORD = 0;
-string RETURN_KEYWORD = 0;
-string BREAK_KEYWORD = 0;
-string CONTINUE_KEYWORD = 0;
-string INT_KEYWORD = 0;
-string FLOAT_KEYWORD = 0;
-string STRING_KEYWORD = 0;
-string BOOL_KEYWORD = 0;
-string VOID_KEYWORD = 0;
-string VAR_KEYWORD = 0;
-string L_PAREN_SYMBOL = 0;
-string R_PAREN_SYMBOL = 0;
-string L_BRACE_SYMBOL = 0;
-string R_BRACE_SYMBOL = 0;
-string COMMA_SYMBOL = 0;
-string NOT_SYMBOL = 0;
-string DOT_SYMBOL = 0;
-string L_BRACKET_SYMBOL = 0;
-string R_BRACKET_SYMBOL = 0;
-string SEMICOLON_SYMBOL = 0;
-string UNDERLINE_SYMBOL = 0;
-string ADD_SYMBOL = 0;
-string SUB_SYMBOL = 0;
-string MUL_SYMBOL = 0;
-string DIV_SYMBOL = 0;
-string MOD_SYMBOL = 0;
-string LT_SYMBOL = 0;
-string GT_SYMBOL = 0;
-string ASSIGN_SYMBOL = 0;
-string EQ_SYMBOL = 0;
-string NE_SYMBOL = 0;
-string LE_SYMBOL = 0;
-string GE_SYMBOL = 0;
-string ADD_ASSIGN_SYMBOL = 0;
-string SUB_ASSIGN_SYMBOL = 0;
-string MUL_ASSIGN_SYMBOL = 0;
-string DIV_ASSIGN_SYMBOL = 0;
-string MOD_ASSIGN_SYMBOL = 0;
-string AND_SYMBOL = 0;
-string OR_SYMBOL = 0;
-Name* name_void = 0;
-Name* name_int = 0;
-Name* name_float = 0;
-Name* name_string = 0;
-Name* name_bool = 0;
-Scope* builtin_scope = 0;
+StringList* all_string_list = NULL;
+string CONSTRUCTOR_NAME = NULL;
+string IMPORT_KEYWORD = NULL;
+string FROM_KEYWORD = NULL;
+string FUNC_KEYWORD = NULL;
+string CLASS_KEYWORD = NULL;
+string METHOD_KEYWORD = NULL;
+string SELF_KEYWORD = NULL;
+string IF_KEYWORD = NULL;
+string ELIF_KEYWORD = NULL;
+string ELSE_KEYWORD = NULL;
+string WHILE_KEYWORD = NULL;
+string FOR_KEYWORD = NULL;
+string TRUE_KEYWORD = NULL;
+string FALSE_KEYWORD = NULL;
+string RETURN_KEYWORD = NULL;
+string BREAK_KEYWORD = NULL;
+string CONTINUE_KEYWORD = NULL;
+string INT_KEYWORD = NULL;
+string FLOAT_KEYWORD = NULL;
+string STRING_KEYWORD = NULL;
+string BOOL_KEYWORD = NULL;
+string VOID_KEYWORD = NULL;
+string VAR_KEYWORD = NULL;
+string L_PAREN_SYMBOL = NULL;
+string R_PAREN_SYMBOL = NULL;
+string L_BRACE_SYMBOL = NULL;
+string R_BRACE_SYMBOL = NULL;
+string COMMA_SYMBOL = NULL;
+string NOT_SYMBOL = NULL;
+string DOT_SYMBOL = NULL;
+string L_BRACKET_SYMBOL = NULL;
+string R_BRACKET_SYMBOL = NULL;
+string SEMICOLON_SYMBOL = NULL;
+string UNDERLINE_SYMBOL = NULL;
+string ADD_SYMBOL = NULL;
+string SUB_SYMBOL = NULL;
+string MUL_SYMBOL = NULL;
+string DIV_SYMBOL = NULL;
+string MOD_SYMBOL = NULL;
+string LT_SYMBOL = NULL;
+string GT_SYMBOL = NULL;
+string ASSIGN_SYMBOL = NULL;
+string EQ_SYMBOL = NULL;
+string NE_SYMBOL = NULL;
+string LE_SYMBOL = NULL;
+string GE_SYMBOL = NULL;
+string ADD_ASSIGN_SYMBOL = NULL;
+string SUB_ASSIGN_SYMBOL = NULL;
+string MUL_ASSIGN_SYMBOL = NULL;
+string DIV_ASSIGN_SYMBOL = NULL;
+string MOD_ASSIGN_SYMBOL = NULL;
+string AND_SYMBOL = NULL;
+string OR_SYMBOL = NULL;
+Symbol* name_void = NULL;
+Symbol* name_int = NULL;
+Symbol* name_float = NULL;
+Symbol* name_string = NULL;
+Symbol* name_bool = NULL;
+SymbolTable* builtin_scope = NULL;
 static size_t struct_memory_used = 0;
 static size_t string_memory_used = 0;
 static size_t struct_memory_count = 0;
 static size_t string_memory_count = 0;
+static void init(void);
 static void increase_memory_size(char for_struct) {
     MemoryBlock* new_block = (MemoryBlock*)malloc(sizeof(MemoryBlock));
     if (new_block == NULL) {
@@ -209,7 +212,7 @@ static string create_string_check(const char* data, size_t length, char check) {
         StringList* current = all_string_list;
         string existing = NULL;
         while (current != NULL) {
-            if (current->length == length && current->str != 0 && strncmp(current->str, data, length) == 0)
+            if (current->length == length && current->str != NULL && strncmp(current->str, data, length) == 0)
                 existing = current->str;
             current = current->next;
         }
@@ -233,6 +236,9 @@ static string create_string_check(const char* data, size_t length, char check) {
     new_str->next = all_string_list;
     all_string_list = new_str;
     return str;
+}
+string create_string_not_check(const char* data, size_t length) {
+    return create_string_check(data, length, 0);
 }
 string create_string(const char* data, size_t length) {
     return create_string_check(data, length, 1);
@@ -270,6 +276,7 @@ void init(void) {
         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), 0);
     for (size_t i = 0; i < 30; ++i)
         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), 0);
+    CONSTRUCTOR_NAME = create_string_check("init", 4, 0);
     IMPORT_KEYWORD = keywordList[0];
     FROM_KEYWORD = keywordList[1];
     FUNC_KEYWORD = keywordList[2];
@@ -326,9 +333,9 @@ void init(void) {
 static size_t memoryBlockCount = 0;
 pointer alloc_memory(size_t size) {
     if (!initialized) init();
+    size = (size + sizeof(size_t) - 1) & ~(sizeof(size_t) - 1);
     if (struct_memory->used + size >= struct_memory->size)
         increase_memory_size(1);
-    size = (size + sizeof(size_t) - 1) & ~(sizeof(size_t) - 1);
     assert(struct_memory->used % sizeof(size_t) == 0);
     size_t* ptr = struct_memory->block + (struct_memory->used / sizeof(size_t));
     struct_memory->used += size;
@@ -342,7 +349,7 @@ char is_keyword(const string str) {
             return 1;
     return 0;
 }
-char string_equal(string a, string b) {
+inline char string_equal(string a, string b) {
     return a == b;
 }
 string get_info(void) {

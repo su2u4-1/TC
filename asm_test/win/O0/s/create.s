@@ -493,8 +493,6 @@ create_statement:
 .L42:
 	cmpl	$5, 16(%rbp)
 	jne	.L43
-	cmpq	$0, 48(%rbp)
-	je	.L43
 	movq	-16(%rbp), %rax
 	movq	48(%rbp), %rdx
 	movq	%rdx, (%rax)
@@ -693,7 +691,7 @@ create_while:
 	.ascii "false\0"
 	.align 8
 .LC15:
-	.ascii "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\12\0"
+	.ascii "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\12\0"
 	.align 8
 .LC16:
 	.ascii "Error creating expression: both expr_left and prim_left are NULL\12\0"
@@ -919,7 +917,7 @@ create_primary:
 	.section .rdata,"dr"
 	.align 8
 .LC19:
-	.ascii "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\12\0"
+	.ascii "Error creating variable access: base and type mismatch, base == NULL: %s, type == VAR_NAME: %s\12\0"
 	.align 8
 .LC20:
 	.ascii "Error creating variable access: content is NULL\12\0"

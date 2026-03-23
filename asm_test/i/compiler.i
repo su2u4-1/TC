@@ -25,6 +25,7 @@ extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern char initialized;
 extern StringList* all_string_list;
+extern string CONSTRUCTOR_NAME;
 extern string IMPORT_KEYWORD;
 extern string FROM_KEYWORD;
 extern string FUNC_KEYWORD;
@@ -77,24 +78,25 @@ extern string DIV_ASSIGN_SYMBOL;
 extern string MOD_ASSIGN_SYMBOL;
 extern string AND_SYMBOL;
 extern string OR_SYMBOL;
-typedef struct Name Name;
-typedef struct Scope Scope;
-extern Name* name_void;
-extern Name* name_int;
-extern Name* name_float;
-extern Name* name_string;
-extern Name* name_bool;
-extern Scope* builtin_scope;
-void init(void);
+typedef struct SymbolTable SymbolTable;
+typedef struct Symbol Symbol;
+extern Symbol* name_void;
+extern Symbol* name_int;
+extern Symbol* name_float;
+extern Symbol* name_string;
+extern Symbol* name_bool;
+extern SymbolTable* builtin_scope;
+string create_string_not_check(const char* data, size_t length);
 string create_string(const char* data, size_t length);
 pointer alloc_memory(size_t size);
 char is_keyword(const string str);
 char string_equal(string a, string b);
 string get_info(void);
+typedef struct Token Token;
 typedef struct Lexer Lexer;
 typedef struct Parser Parser;
-void string_append(string dest, const size_t dest_length, const string src, const string new);
 string read_source(FILE* file, size_t* length);
+void output_one_token(FILE* file, Token* token);
 void output_token(FILE* file, Lexer* lexer);
 void output_ast(FILE* file, Lexer* lexer, Parser* parser);
 void parse_file(const string name, char o_token, char o_ast);
@@ -111,14 +113,13 @@ typedef struct File {
 } File;
 string get_cwd(void);
 File* create_file(const string path);
-string absolute_path(string path);
+string absolute_path(string path, string base_path);
 string get_file_name(File* path);
 string get_file_extension(File* path);
 string get_file_dir(File* path);
 string get_full_path(File* path);
 void change_file_extension(File* file, const string new_extension);
 void change_file_name(File* file, const string new_name);
-void normalize_path(File* file);
 typedef enum CodeMemberType {
     CODE_IMPORT,
     CODE_FUNCTION,
@@ -177,14 +178,6 @@ typedef enum VariableAccessType {
     VAR_GET_ATTR,
     VAR_GET_SEQ
 } VariableAccessType;
-typedef enum NameType {
-    NAME_TYPE,
-    NAME_VARIABLE,
-    NAME_FUNCTION,
-    NAME_METHOD,
-    NAME_CLASS,
-    NAME_ATTRIBUTE
-} NameType;
 typedef struct CodeMember CodeMember;
 typedef struct Code Code;
 typedef struct Import Import;
@@ -201,10 +194,16 @@ typedef struct While While;
 typedef struct Expression Expression;
 typedef struct Primary Primary;
 typedef struct VariableAccess VariableAccess;
-typedef struct Scope Scope;
-typedef struct Name Name;
 typedef struct List List;
 typedef struct Node Node;
+typedef enum SymbolTableType {
+    SYMBOL_CLASS,
+    SYMBOL_SUBROUTINE,
+    SYMBOL_VARIABLE,
+    SYMBOL_PARAM,
+    SYMBOL_ATTRIBUTE,
+    SYMBOL_TYPE
+} SymbolType;
 struct CodeMember {
     union {
         Import* import;
@@ -215,25 +214,25 @@ struct CodeMember {
 };
 struct Code {
     List* members;
-    Scope* global_scope;
+    SymbolTable* global_scope;
 };
 struct Import {
-    Name* name;
+    Symbol* name;
     string source;
 };
 struct Function {
-    Name* name;
-    Name* return_type;
+    Symbol* name;
+    Symbol* return_type;
     List* parameters;
     List* body;
-    Scope* function_scope;
+    SymbolTable* function_scope;
 };
 struct Method {
-    Name* name;
-    Name* return_type;
+    Symbol* name;
+    Symbol* return_type;
     List* parameters;
     List* body;
-    Scope* method_scope;
+    SymbolTable* method_scope;
 };
 struct ClassMember {
     union {
@@ -243,13 +242,13 @@ struct ClassMember {
     ClassMemberType type;
 };
 struct Class {
-    Name* name;
+    Symbol* name;
     List* members;
-    Scope* class_scope;
+    SymbolTable* class_scope;
 };
 struct Variable {
-    Name* type;
-    Name* name;
+    Symbol* type;
+    Symbol* name;
     Expression* value;
 };
 struct Statement {
@@ -301,25 +300,12 @@ struct Primary {
 struct VariableAccess {
     VariableAccess* base;
     union {
-        Name* name;
+        Symbol* name;
         List* args;
-        Name* attr_name;
+        Symbol* attr_name;
         Expression* index;
     } content;
     VariableAccessType type;
-};
-struct Scope {
-    Scope* parent;
-    List* names;
-};
-struct Name {
-    string name;
-    size_t id;
-    union {
-        Name* type;
-        Scope* scope;
-    } info;
-    NameType kind;
 };
 struct List {
     Node* head;
@@ -329,11 +315,23 @@ struct Node {
     Node* next;
     pointer content;
 };
+struct SymbolTable {
+    SymbolTable* parent;
+    List* symbols;
+};
+struct Symbol {
+    Symbol* type;
+    SymbolTable* scope;
+    string original_name;
+    size_t id;
+    SymbolType kind;
+};
 typedef struct Lexer Lexer;
 typedef struct Parser Parser;
-Code* parse_code(Lexer* lexer, Scope* now_scope, Parser* parser);
+Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
 void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser);
 typedef struct Parser {
+    File* source_file;
     char in_function;
     char in_method;
     char in_loop;
@@ -341,19 +339,18 @@ typedef struct Parser {
 } Parser;
 typedef struct Token Token;
 List* create_list(void);
-Node* create_node(pointer content);
 void list_append(List* list, pointer item);
 List* list_copy(List* original);
 pointer list_pop(List* list);
-Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info, Scope* scope);
-Scope* create_scope(Scope* parent);
-Name* search(Scope* scope, string name);
+pointer list_pop_back(List* list);
+Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope);
+SymbolTable* create_symbol_table(SymbolTable* parent);
+Symbol* search_name(SymbolTable* scope, string name);
 char is_builtin_type(string type);
-char is_type(Name* type);
-void parser_error(const string message, Token* token);
+void parser_error(const string message, Token* token, string file_name);
 void indention(FILE* out, size_t indent, char is_last, Parser* parser);
-Parser* create_parser(void);
-Name* parse_import_file(string import_name, string source, Scope* scope);
+Parser* create_parser(File* file);
+Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
 OperatorType string_to_operator(string str);
 int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);
@@ -389,21 +386,11 @@ Token* get_next_token(Lexer* lexer, char skip_comment);
 Token* peek_next_token(Lexer* lexer, char skip_comment);
 void reset_lexer(Lexer* lexer);
 Token* peek_current_token(Lexer* lexer);
-void string_append(string dest, const size_t dest_length, const string src, const string new) {
-    size_t src_length = strlen(src), new_length = strlen(new);
-    if (dest_length <= src_length + new_length) {
-        size_t max_src_length = dest_length - new_length - 1;
-        snprintf(dest, dest_length, "%.*s%s", (int)max_src_length, src, new);
-    } else if (src == dest)
-        snprintf(dest + src_length, dest_length - src_length, "%s", new);
-    else
-        snprintf(dest, dest_length, "%s%s", src, new);
-}
 string read_source(FILE* file, size_t* length) {
     fseek(file, 0, SEEK_END);
     *length = (size_t)ftell(file);
     fseek(file, 0, SEEK_SET);
-    string source = create_string("", *length + 1);
+    string source = create_string_not_check("", *length + 1);
     size_t bytes_read = fread(source, 1, *length, file);
     source[bytes_read] = '\0';
     *length = bytes_read;
@@ -413,42 +400,44 @@ string read_source(FILE* file, size_t* length) {
     }
     return source;
 }
+void output_one_token(FILE* file, Token* token) {
+    if (token->type == EOF_TOKEN) {
+        fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+        return;
+    } else if (token->type == IDENTIFIER)
+        fprintf(file, "Token(Type: identifier,  Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == INTEGER)
+        fprintf(file, "Token(Type: integer,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == FLOAT)
+        fprintf(file, "Token(Type: float,       Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == STRING)
+        fprintf(file, "Token(Type: string,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == SYMBOL)
+        fprintf(file, "Token(Type: symbol,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == KEYWORD)
+        fprintf(file, "Token(Type: keyword,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    else if (token->type == COMMENT)
+        fprintf(file, "Token(Type: comment,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+        char c = token->lexeme[i];
+        if (c == '\0')
+            fputs("\\0", file);
+        else if (c == '\n')
+            fputs("\\n", file);
+        else if (c == '\t')
+            fputs("\\t", file);
+        else if (c == '\r')
+            fputs("\\r", file);
+        else
+            fputc(c, file);
+    }
+    fprintf(file, "'\n");
+}
 void output_token(FILE* file, Lexer* lexer) {
     for (Token* current = get_next_token(lexer, 0); current != 0; current = get_next_token(lexer, 0)) {
-        Token* token = current;
-        if (token->type == EOF_TOKEN) {
-            fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+        output_one_token(file, current);
+        if (current->type == EOF_TOKEN)
             break;
-        } else if (token->type == IDENTIFIER)
-            fprintf(file, "Token(Type: identifier,  Line: ");
-        else if (token->type == INTEGER)
-            fprintf(file, "Token(Type: integer,     Line: ");
-        else if (token->type == FLOAT)
-            fprintf(file, "Token(Type: float,       Line: ");
-        else if (token->type == STRING)
-            fprintf(file, "Token(Type: string,      Line: ");
-        else if (token->type == SYMBOL)
-            fprintf(file, "Token(Type: symbol,      Line: ");
-        else if (token->type == KEYWORD)
-            fprintf(file, "Token(Type: keyword,     Line: ");
-        else if (token->type == COMMENT)
-            fprintf(file, "Token(Type: comment,     Line: ");
-        fprintf(file, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        string lexeme_ptr = token->lexeme;
-        for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
-            char c = lexeme_ptr[i];
-            if (c == '\0')
-                fputs("\\0", file);
-            else if (c == '\n')
-                fputs("\\n", file);
-            else if (c == '\t')
-                fputs("\\t", file);
-            else if (c == '\r')
-                fputs("\\r", file);
-            else
-                fputc(c, file);
-        }
-        fprintf(file, "'\n");
     }
     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 }
@@ -481,10 +470,11 @@ void parse_file(const string name, char o_token, char o_ast) {
         }
     }
     reset_lexer(lexer);
-    Parser* parser = create_parser();
+    Parser* parser = create_parser(file);
     if (o_ast) {
         change_file_extension(file, create_string(".ast", 4));
         string out_ast_name = get_full_path(file);
+        change_file_extension(file, create_string(".tc", 3));
         FILE* out_ast_file = fopen(out_ast_name, "w");
         if (out_ast_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_ast_name);

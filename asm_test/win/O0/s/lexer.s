@@ -214,12 +214,14 @@ move_position:
 .LC1:
 	.ascii "Unterminated string literal\0"
 .LC2:
-	.ascii "c != '\\0'\0"
+	.ascii "\0\0"
 .LC3:
-	.ascii "D:\\TC\\src\\lexer.c\0"
+	.ascii "c != '\\0'\0"
 .LC4:
-	.ascii "Unterminated comment\0"
+	.ascii "D:\\TC\\src\\lexer.c\0"
 .LC5:
+	.ascii "Unterminated comment\0"
+.LC6:
 	.ascii "Unexpected character\0"
 	.text
 	.def	next_token;	.scl	3;	.type	32;	.endef
@@ -474,21 +476,20 @@ next_token:
 	movq	%rax, %rcx
 	call	lexer_error
 	cmpb	$10, -17(%rbp)
-	jne	.L46
+	jne	.L45
 	movq	16(%rbp), %rax
 	movq	%rax, %rcx
 	call	newline
-.L46:
-	movq	16(%rbp), %rax
-	movq	24(%rax), %rbx
+.L45:
 	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	subq	-96(%rbp), %rax
-	leaq	-1(%rax), %rdx
+	cmpq	$1, %rax
+	jne	.L46
 	movq	16(%rbp), %rax
-	movq	(%rax), %rcx
-	movq	-96(%rbp), %rax
-	addq	%rcx, %rax
+	movq	24(%rax), %rbx
+	movl	$1, %edx
+	leaq	.LC2(%rip), %rax
 	movq	%rax, %rcx
 	call	create_string
 	movq	-104(%rbp), %rdx
@@ -498,7 +499,7 @@ next_token:
 	movl	$4, %ecx
 	call	create_token
 	jmp	.L19
-.L45:
+.L46:
 	movq	16(%rbp), %rax
 	movq	24(%rax), %rbx
 	movq	16(%rbp), %rax
@@ -610,10 +611,10 @@ next_token:
 	je	.L92
 	cmpb	$0, -17(%rbp)
 	jne	.L53
-	leaq	.LC2(%rip), %r9
+	leaq	.LC3(%rip), %r9
 	leaq	__func__.0(%rip), %r8
-	movl	$125, %edx
-	leaq	.LC3(%rip), %rax
+	movl	$126, %edx
+	leaq	.LC4(%rip), %rax
 	movq	%rax, %rcx
 	call	__assert_func
 .L53:
@@ -639,7 +640,7 @@ next_token:
 	movq	-80(%rbp), %rdx
 	movq	%rdx, %r8
 	movq	%rax, %rdx
-	leaq	.LC4(%rip), %rax
+	leaq	.LC5(%rip), %rax
 	movq	%rax, %rcx
 	call	lexer_error
 	cmpb	$0, 24(%rbp)
@@ -1243,7 +1244,7 @@ next_token:
 	movq	24(%rax), %rax
 	movq	%rdx, %r8
 	movq	%rax, %rdx
-	leaq	.LC5(%rip), %rax
+	leaq	.LC6(%rip), %rax
 	movq	%rax, %rcx
 	call	lexer_error
 	movl	$0, %r9d

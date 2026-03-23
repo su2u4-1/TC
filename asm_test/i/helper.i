@@ -25,6 +25,7 @@ extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern char initialized;
 extern StringList* all_string_list;
+extern string CONSTRUCTOR_NAME;
 extern string IMPORT_KEYWORD;
 extern string FROM_KEYWORD;
 extern string FUNC_KEYWORD;
@@ -77,20 +78,40 @@ extern string DIV_ASSIGN_SYMBOL;
 extern string MOD_ASSIGN_SYMBOL;
 extern string AND_SYMBOL;
 extern string OR_SYMBOL;
-typedef struct Name Name;
-typedef struct Scope Scope;
-extern Name* name_void;
-extern Name* name_int;
-extern Name* name_float;
-extern Name* name_string;
-extern Name* name_bool;
-extern Scope* builtin_scope;
-void init(void);
+typedef struct SymbolTable SymbolTable;
+typedef struct Symbol Symbol;
+extern Symbol* name_void;
+extern Symbol* name_int;
+extern Symbol* name_float;
+extern Symbol* name_string;
+extern Symbol* name_bool;
+extern SymbolTable* builtin_scope;
+string create_string_not_check(const char* data, size_t length);
 string create_string(const char* data, size_t length);
 pointer alloc_memory(size_t size);
 char is_keyword(const string str);
 char string_equal(string a, string b);
 string get_info(void);
+typedef struct StrNode StrNode;
+struct StrNode {
+    string dir;
+    StrNode* next;
+};
+typedef struct File {
+    StrNode* dirs;
+    string extension;
+    string name;
+    string path;
+} File;
+string get_cwd(void);
+File* create_file(const string path);
+string absolute_path(string path, string base_path);
+string get_file_name(File* path);
+string get_file_extension(File* path);
+string get_file_dir(File* path);
+string get_full_path(File* path);
+void change_file_extension(File* file, const string new_extension);
+void change_file_name(File* file, const string new_name);
 typedef enum CodeMemberType {
     CODE_IMPORT,
     CODE_FUNCTION,
@@ -149,14 +170,6 @@ typedef enum VariableAccessType {
     VAR_GET_ATTR,
     VAR_GET_SEQ
 } VariableAccessType;
-typedef enum NameType {
-    NAME_TYPE,
-    NAME_VARIABLE,
-    NAME_FUNCTION,
-    NAME_METHOD,
-    NAME_CLASS,
-    NAME_ATTRIBUTE
-} NameType;
 typedef struct CodeMember CodeMember;
 typedef struct Code Code;
 typedef struct Import Import;
@@ -173,10 +186,16 @@ typedef struct While While;
 typedef struct Expression Expression;
 typedef struct Primary Primary;
 typedef struct VariableAccess VariableAccess;
-typedef struct Scope Scope;
-typedef struct Name Name;
 typedef struct List List;
 typedef struct Node Node;
+typedef enum SymbolTableType {
+    SYMBOL_CLASS,
+    SYMBOL_SUBROUTINE,
+    SYMBOL_VARIABLE,
+    SYMBOL_PARAM,
+    SYMBOL_ATTRIBUTE,
+    SYMBOL_TYPE
+} SymbolType;
 struct CodeMember {
     union {
         Import* import;
@@ -187,25 +206,25 @@ struct CodeMember {
 };
 struct Code {
     List* members;
-    Scope* global_scope;
+    SymbolTable* global_scope;
 };
 struct Import {
-    Name* name;
+    Symbol* name;
     string source;
 };
 struct Function {
-    Name* name;
-    Name* return_type;
+    Symbol* name;
+    Symbol* return_type;
     List* parameters;
     List* body;
-    Scope* function_scope;
+    SymbolTable* function_scope;
 };
 struct Method {
-    Name* name;
-    Name* return_type;
+    Symbol* name;
+    Symbol* return_type;
     List* parameters;
     List* body;
-    Scope* method_scope;
+    SymbolTable* method_scope;
 };
 struct ClassMember {
     union {
@@ -215,13 +234,13 @@ struct ClassMember {
     ClassMemberType type;
 };
 struct Class {
-    Name* name;
+    Symbol* name;
     List* members;
-    Scope* class_scope;
+    SymbolTable* class_scope;
 };
 struct Variable {
-    Name* type;
-    Name* name;
+    Symbol* type;
+    Symbol* name;
     Expression* value;
 };
 struct Statement {
@@ -273,25 +292,12 @@ struct Primary {
 struct VariableAccess {
     VariableAccess* base;
     union {
-        Name* name;
+        Symbol* name;
         List* args;
-        Name* attr_name;
+        Symbol* attr_name;
         Expression* index;
     } content;
     VariableAccessType type;
-};
-struct Scope {
-    Scope* parent;
-    List* names;
-};
-struct Name {
-    string name;
-    size_t id;
-    union {
-        Name* type;
-        Scope* scope;
-    } info;
-    NameType kind;
 };
 struct List {
     Node* head;
@@ -301,11 +307,23 @@ struct Node {
     Node* next;
     pointer content;
 };
+struct SymbolTable {
+    SymbolTable* parent;
+    List* symbols;
+};
+struct Symbol {
+    Symbol* type;
+    SymbolTable* scope;
+    string original_name;
+    size_t id;
+    SymbolType kind;
+};
 typedef struct Lexer Lexer;
 typedef struct Parser Parser;
-Code* parse_code(Lexer* lexer, Scope* now_scope, Parser* parser);
+Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
 void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser);
 typedef struct Parser {
+    File* source_file;
     char in_function;
     char in_method;
     char in_loop;
@@ -313,26 +331,26 @@ typedef struct Parser {
 } Parser;
 typedef struct Token Token;
 List* create_list(void);
-Node* create_node(pointer content);
 void list_append(List* list, pointer item);
 List* list_copy(List* original);
 pointer list_pop(List* list);
-Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info, Scope* scope);
-Scope* create_scope(Scope* parent);
-Name* search(Scope* scope, string name);
+pointer list_pop_back(List* list);
+Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope);
+SymbolTable* create_symbol_table(SymbolTable* parent);
+Symbol* search_name(SymbolTable* scope, string name);
 char is_builtin_type(string type);
-char is_type(Name* type);
-void parser_error(const string message, Token* token);
+void parser_error(const string message, Token* token, string file_name);
 void indention(FILE* out, size_t indent, char is_last, Parser* parser);
-Parser* create_parser(void);
-Name* parse_import_file(string import_name, string source, Scope* scope);
+Parser* create_parser(File* file);
+Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
 OperatorType string_to_operator(string str);
 int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);
+typedef struct Token Token;
 typedef struct Lexer Lexer;
 typedef struct Parser Parser;
-void string_append(string dest, const size_t dest_length, const string src, const string new);
 string read_source(FILE* file, size_t* length);
+void output_one_token(FILE* file, Token* token);
 void output_token(FILE* file, Lexer* lexer);
 void output_ast(FILE* file, Lexer* lexer, Parser* parser);
 void parse_file(const string name, char o_token, char o_ast);
@@ -370,19 +388,23 @@ void reset_lexer(Lexer* lexer);
 Token* peek_current_token(Lexer* lexer);
 List* create_list(void) {
     List* new_list = (List*)alloc_memory(sizeof(List));
-    new_list->head = 0;
-    new_list->tail = 0;
+    new_list->head = NULL;
+    new_list->tail = NULL;
     return new_list;
 }
-Node* create_node(pointer content) {
+static Node* create_node(pointer content) {
     Node* new_node = (Node*)alloc_memory(sizeof(Node));
-    new_node->next = 0;
+    new_node->next = NULL;
     new_node->content = content;
     return new_node;
 }
 void list_append(List* list, pointer item) {
+    if (list == NULL) {
+        fprintf(stderr, "Error: list_append received NULL list\n");
+        return;
+    }
     Node* new_node = create_node(item);
-    if (list->head == 0) {
+    if (list->head == NULL) {
         list->head = new_node;
         list->tail = new_node;
     } else {
@@ -391,101 +413,82 @@ void list_append(List* list, pointer item) {
     }
 }
 List* list_copy(List* original) {
+    if (original == NULL)
+        return NULL;
     List* new_list = create_list();
     new_list->head = original->head;
     new_list->tail = original->tail;
     return new_list;
 }
 pointer list_pop(List* list) {
-    if (list->head == 0)
-        return 0;
+    if (list == NULL || list->head == NULL)
+        return NULL;
     Node* head_node = list->head;
     list->head = head_node->next;
-    if (list->head == 0)
-        list->tail = 0;
+    if (list->head == NULL)
+        list->tail = NULL;
     return head_node->content;
 }
-Name* create_name(string name, NameType kind, Name* name_info, Scope* scope_info, Scope* scope) {
-    static size_t id_counter = 0;
-    Name* result = search(scope, name);
-    if (result != NULL) {
-        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, returning existing name, kind: ", name);
-        switch (result->kind) {
-            case NAME_TYPE:
-                fprintf(stderr, "type\n");
-                break;
-            case NAME_VARIABLE:
-                fprintf(stderr, "variable\n");
-                break;
-            case NAME_FUNCTION:
-                fprintf(stderr, "function\n");
-                break;
-            case NAME_METHOD:
-                fprintf(stderr, "method\n");
-                break;
-            case NAME_CLASS:
-                fprintf(stderr, "class\n");
-                break;
-            case NAME_ATTRIBUTE:
-                fprintf(stderr, "attribute\n");
-                break;
-            default:
-                fprintf(stderr, "unknown\n");
-                break;
-        }
+pointer list_pop_back(List* list) {
+    if (list == NULL || list->head == NULL)
+        return NULL;
+    if (list->head == list->tail) {
+        pointer content = list->head->content;
+        list->head = NULL;
+        list->tail = NULL;
+        return content;
     }
-    Name* new_name = (Name*)alloc_memory(sizeof(Name));
-    new_name->name = name;
+    Node* current = list->head;
+    while (current->next != list->tail)
+        current = current->next;
+    pointer content = list->tail->content;
+    current->next = NULL;
+    list->tail = current;
+    return content;
+}
+Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope) {
+    static size_t id_counter = 0;
+    Symbol* result = search_name(scope, original_name);
+    if (result != NULL)
+        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", original_name, result->kind, result->id, id_counter + 1);
+    Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
+    new_name->original_name = original_name;
     new_name->id = ++id_counter;
     new_name->kind = kind;
-    if ((kind == NAME_VARIABLE || kind == NAME_ATTRIBUTE || kind == NAME_FUNCTION || kind == NAME_METHOD) && name_info != NULL)
-        new_name->info.type = name_info;
-    else if (kind == NAME_CLASS && scope_info != NULL)
-        new_name->info.scope = scope_info;
-    else if (kind == NAME_TYPE)
-        new_name->info.type = NULL;
-    else {
-        if (name_info == NULL && scope_info == NULL && kind != NAME_TYPE)
-            fprintf(stderr, "Error creating name: name_info and scope_info are both NULL for kind %u\n", kind);
-        else
-            fprintf(stderr, "Error creating name: unknown NameType %u\n", kind);
-        return NULL;
-    }
-    list_append(scope->names, (pointer)new_name);
+    new_name->type = type;
+    new_name->scope = scope;
+    if (kind == SYMBOL_CLASS || kind == SYMBOL_SUBROUTINE)
+        list_append(scope->parent->symbols, (pointer)new_name);
+    else
+        list_append(scope->symbols, (pointer)new_name);
     return new_name;
 }
-Scope* create_scope(Scope* parent) {
-    Scope* new_scope = (Scope*)alloc_memory(sizeof(Scope));
-    Scope* scope_ptr = (new_scope);
-    scope_ptr->parent = parent;
-    scope_ptr->names = create_list();
+SymbolTable* create_symbol_table(SymbolTable* parent) {
+    SymbolTable* new_scope = (SymbolTable*)alloc_memory(sizeof(SymbolTable));
+    new_scope->parent = parent;
+    new_scope->symbols = create_list();
     return new_scope;
 }
-Name* search(Scope* scope, string name) {
-    Scope* scope_ptr = (scope);
-    while (scope_ptr != NULL) {
-        List* names = scope_ptr->names;
-        Node* current = ((names))->head;
-        while (current != 0) {
-            Node* node_ptr = (current);
-            Name* current_name = (Name*)node_ptr->content;
-            if (string_equal(current_name->name, name))
+Symbol* search_name(SymbolTable* scope, string name) {
+    while (scope != NULL) {
+        List* names = scope->symbols;
+        Node* current = names->head;
+        while (current != NULL) {
+            Node* node_ptr = current;
+            Symbol* current_name = (Symbol*)node_ptr->content;
+            if (string_equal(current_name->original_name, name))
                 return current_name;
             current = node_ptr->next;
         }
-        scope_ptr = (scope_ptr->parent);
+        scope = scope->parent;
     }
     return NULL;
 }
-char is_builtin_type(string type) {
+inline char is_builtin_type(string type) {
     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 }
-char is_type(Name* type) {
-    Name* type_ptr = (type);
-    return type_ptr->kind == NAME_TYPE || type_ptr->kind == NAME_CLASS;
-}
-void parser_error(const string message, Token* token) {
-    fprintf(stderr, "Parser Error at line %zu, column %zu: %s\n", token->line + 1, token->column + 1, message);
+inline void parser_error(const string message, Token* token, string file_name) {
+    fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 }
 static void set_bool_list(char bool_list[32], size_t index, char value) {
     char word = bool_list[index / 8];
@@ -494,75 +497,65 @@ static void set_bool_list(char bool_list[32], size_t index, char value) {
     else
         bool_list[index / 8] = (char)(word & ~(1 << (index % 8)));
 }
-static char get_bool_list(char bool_list[32], size_t index) {
-    return ((bool_list[index / 8] & (1 << (index % 8))) == 0 ? 0 : 1);
+static inline char get_bool_list(char bool_list[32], size_t index) {
+    return (bool_list[index / 8] & (1 << (index % 8))) != 0;
 }
 void indention(FILE* out, size_t indent, char is_last, Parser* parser) {
-    Parser* parser_ptr = (parser);
+    Parser* parser_ptr = parser;
     set_bool_list(parser_ptr->indent_has_next, indent, !is_last);
     for (size_t i = 1; i < indent; ++i)
         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
     if (indent > 0)
         fprintf(out, is_last ? "└── " : "├── ");
 }
-Parser* create_parser(void) {
+Parser* create_parser(File* file) {
     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
-    Parser* parser_ptr = (new_parser);
-    parser_ptr->in_function = 0;
-    parser_ptr->in_method = 0;
-    parser_ptr->in_loop = 0;
+    new_parser->in_function = 0;
+    new_parser->in_method = 0;
+    new_parser->in_loop = 0;
+    new_parser->source_file = file;
     return new_parser;
 }
-Name* parse_import_file(string import_name, string source, Scope* scope) {
-    Name* name = 0;
+Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file) {
+    Symbol* name = NULL;
     FILE* openfile;
-    char filename[1024];
-    filename[0] = '\0';
-    if (source == 0) {
-        if (strcmp(import_name, "print") == 0)
-            strcpy(filename, "./std/print.tc");
-        else if (strcmp(import_name, "arr") == 0)
-            strcpy(filename, "./std/arr.tc");
-        else {
-            fprintf(stderr, "Error: Standard library file for import not found: %s\n", filename);
-            return 0;
-        }
-    } else {
-        string_append(filename, 1024, filename, source);
-        string_append(filename, 1024, filename, "/");
-        string_append(filename, 1024, filename, import_name);
-        string_append(filename, 1024, filename, ".tc");
-    }
+    string filename;
+    if (source == NULL) {
+        string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
+        sprintf(temp_import_name, "%s.tc", import_name);
+        filename = absolute_path(temp_import_name, "D:/TC/std/");
+    } else
+        filename = absolute_path(source, get_file_dir(source_file));
     openfile = fopen(filename, "r");
     if (openfile == NULL) {
         fprintf(stderr, "Error opening library file for import: %s\n", filename);
-        return 0;
+        return NULL;
     }
     printf("Info: Starting parsing lib file for import: %s\n", filename);
     size_t length = 0;
     string source_code = read_source(openfile, &length);
     fclose(openfile);
-    Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser());
+    Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
     printf("Info: Finished parsing lib file for import: %s\n", filename);
-    if (code == 0) {
+    if (code == NULL) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
-        return 0;
+        return NULL;
     }
-    List* names = ((((code))->global_scope))->names;
-    Node* current = ((names))->head;
-    while (current != 0) {
-        Node* node_ptr = (current);
-        Name* current_name = (Name*)node_ptr->content;
-        if (string_equal(current_name->name, import_name)) {
+    List* names = code->global_scope->symbols;
+    Node* current = names->head;
+    while (current != NULL) {
+        Node* node_ptr = current;
+        Symbol* current_name = (Symbol*)node_ptr->content;
+        if (string_equal(current_name->original_name, import_name)) {
             name = current_name;
             break;
         }
         current = node_ptr->next;
     }
-    if (name != 0) {
-        Scope* scope_ptr = (scope);
-        list_append(scope_ptr->names, (pointer)name);
-    }
+    if (name != NULL)
+        list_append(scope->symbols, (pointer)name);
+    else
+        fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
     return name;
 }
 OperatorType string_to_operator(string str) {
@@ -640,6 +633,6 @@ string operator_to_string(OperatorType op) {
         case OP_DIV: return DIV_SYMBOL;
         case OP_MOD: return MOD_SYMBOL;
         case OP_NONE:
-        default: return 0;
+        default: return NULL;
     }
 }

@@ -14,14 +14,12 @@
 output_code_member:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$48, %rsp
+	subq	$32, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
 	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
 	movl	8(%rax), %eax
 	cmpl	$2, %eax
 	je	.L2
@@ -49,7 +47,7 @@ output_code_member:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -74,7 +72,7 @@ output_code_member:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -99,7 +97,7 @@ output_code_member:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -115,7 +113,7 @@ output_code_member:
 	movl	$0, %r8d
 	movq	%rax, %rcx
 	call	indention
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movl	8(%rax), %edx
 	movq	24(%rbp), %rax
 	movl	%edx, %r8d
@@ -175,13 +173,11 @@ output_code:
 output_import:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$48, %rsp
+	subq	$32, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
-	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -198,7 +194,7 @@ output_import:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -212,11 +208,11 @@ output_import:
 	movl	$1, %r8d
 	movq	%rax, %rcx
 	call	indention
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	testq	%rax, %rax
 	je	.L11
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	jmp	.L12
 .L11:
@@ -249,8 +245,6 @@ output_function:
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
-	movq	16(%rbp), %rax
-	movq	%rax, -16(%rbp)
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -267,7 +261,7 @@ output_function:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -290,7 +284,7 @@ output_function:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -311,16 +305,16 @@ output_function:
 	leaq	.LC8(%rip), %rax
 	movq	%rax, %rcx
 	call	fwrite
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	16(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -24(%rbp)
-	movq	-16(%rbp), %rax
+	movq	%rax, -16(%rbp)
+	movq	16(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -32(%rbp)
+	movq	%rax, -24(%rbp)
 	movl	$-1, -4(%rbp)
 	jmp	.L14
 .L15:
@@ -343,16 +337,16 @@ output_function:
 	leaq	2(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-40(%rbp), %rax
+	movq	-32(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_variable
 .L14:
-	movq	-24(%rbp), %rax
+	movq	-16(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -40(%rbp)
-	cmpq	$0, -40(%rbp)
+	movq	%rax, -32(%rbp)
+	cmpq	$0, -32(%rbp)
 	jne	.L15
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
@@ -374,16 +368,16 @@ output_function:
 	leaq	1(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-48(%rbp), %rax
+	movq	-40(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_statement
 .L16:
-	movq	-32(%rbp), %rax
+	movq	-24(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -48(%rbp)
-	cmpq	$0, -48(%rbp)
+	movq	%rax, -40(%rbp)
+	cmpq	$0, -40(%rbp)
 	jne	.L17
 	nop
 	nop
@@ -398,8 +392,6 @@ output_method:
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
-	movq	16(%rbp), %rax
-	movq	%rax, -16(%rbp)
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -416,7 +408,7 @@ output_method:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -439,7 +431,7 @@ output_method:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -460,16 +452,16 @@ output_method:
 	leaq	.LC8(%rip), %rax
 	movq	%rax, %rcx
 	call	fwrite
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	16(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -24(%rbp)
-	movq	-16(%rbp), %rax
+	movq	%rax, -16(%rbp)
+	movq	16(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -32(%rbp)
+	movq	%rax, -24(%rbp)
 	movl	$-1, -4(%rbp)
 	jmp	.L19
 .L20:
@@ -492,16 +484,16 @@ output_method:
 	leaq	2(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-40(%rbp), %rax
+	movq	-32(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_variable
 .L19:
-	movq	-24(%rbp), %rax
+	movq	-16(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -40(%rbp)
-	cmpq	$0, -40(%rbp)
+	movq	%rax, -32(%rbp)
+	cmpq	$0, -32(%rbp)
 	jne	.L20
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
@@ -523,16 +515,16 @@ output_method:
 	leaq	1(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-48(%rbp), %rax
+	movq	-40(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_statement
 .L21:
-	movq	-32(%rbp), %rax
+	movq	-24(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -48(%rbp)
-	cmpq	$0, -48(%rbp)
+	movq	%rax, -40(%rbp)
+	cmpq	$0, -40(%rbp)
 	jne	.L22
 	nop
 	nop
@@ -550,14 +542,12 @@ output_method:
 output_class_member:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$48, %rsp
+	subq	$32, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
 	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
 	movl	8(%rax), %eax
 	testl	%eax, %eax
 	je	.L24
@@ -581,7 +571,7 @@ output_class_member:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -606,7 +596,7 @@ output_class_member:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -622,7 +612,7 @@ output_class_member:
 	movl	$0, %r8d
 	movq	%rax, %rcx
 	call	indention
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movl	8(%rax), %edx
 	movq	24(%rbp), %rax
 	movl	%edx, %r8d
@@ -642,13 +632,11 @@ output_class_member:
 output_class:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$64, %rsp
+	subq	$48, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
-	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -665,7 +653,7 @@ output_class:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -686,27 +674,27 @@ output_class:
 	leaq	.LC14(%rip), %rax
 	movq	%rax, %rcx
 	call	fwrite
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -16(%rbp)
+	movq	%rax, -8(%rbp)
 	jmp	.L30
 .L31:
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-24(%rbp), %rax
+	movq	-16(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_class_member
 .L30:
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -24(%rbp)
-	cmpq	$0, -24(%rbp)
+	movq	%rax, -16(%rbp)
+	cmpq	$0, -16(%rbp)
 	jne	.L31
 	nop
 	nop
@@ -724,13 +712,11 @@ output_class:
 output_variable:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$48, %rsp
+	subq	$32, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
-	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -747,7 +733,7 @@ output_variable:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -770,14 +756,14 @@ output_variable:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_name
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	16(%rax), %rax
 	testq	%rax, %rax
 	je	.L33
@@ -797,7 +783,7 @@ output_variable:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	16(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -853,14 +839,12 @@ output_variable:
 output_statement:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$48, %rsp
+	subq	$32, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
 	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
 	movl	8(%rax), %eax
 	cmpl	$7, %eax
 	ja	.L37
@@ -901,7 +885,7 @@ output_statement:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -926,7 +910,7 @@ output_statement:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -951,7 +935,7 @@ output_statement:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -976,7 +960,7 @@ output_statement:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -985,7 +969,7 @@ output_statement:
 	call	output_variable
 	jmp	.L36
 .L41:
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	testq	%rax, %rax
 	jne	.L48
@@ -1021,7 +1005,7 @@ output_statement:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -1062,7 +1046,7 @@ output_statement:
 	call	fwrite
 	jmp	.L36
 .L46:
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	testq	%rax, %rax
 	jne	.L49
@@ -1098,7 +1082,7 @@ output_statement:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -1114,7 +1098,7 @@ output_statement:
 	movl	$0, %r8d
 	movq	%rax, %rcx
 	call	indention
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movl	8(%rax), %edx
 	movq	24(%rbp), %rax
 	movl	%edx, %r8d
@@ -1143,22 +1127,20 @@ output_if:
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
 	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -16(%rbp)
-	movq	-8(%rbp), %rax
+	movq	%rax, -8(%rbp)
+	movq	16(%rbp), %rax
 	movq	16(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -24(%rbp)
-	movq	-8(%rbp), %rax
+	movq	%rax, -16(%rbp)
+	movq	16(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -32(%rbp)
+	movq	%rax, -24(%rbp)
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -1175,7 +1157,7 @@ output_if:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -1202,16 +1184,16 @@ output_if:
 	leaq	1(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-40(%rbp), %rax
+	movq	-32(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_statement
 .L51:
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -40(%rbp)
-	cmpq	$0, -40(%rbp)
+	movq	%rax, -32(%rbp)
+	cmpq	$0, -32(%rbp)
 	jne	.L52
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
@@ -1233,16 +1215,16 @@ output_if:
 	leaq	1(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-48(%rbp), %rax
+	movq	-40(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_else_if
 .L53:
-	movq	-24(%rbp), %rax
+	movq	-16(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -48(%rbp)
-	cmpq	$0, -48(%rbp)
+	movq	%rax, -40(%rbp)
+	cmpq	$0, -40(%rbp)
 	jne	.L54
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
@@ -1264,16 +1246,16 @@ output_if:
 	leaq	1(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-40(%rbp), %rax
+	movq	-32(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_statement
 .L55:
-	movq	-32(%rbp), %rax
+	movq	-24(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -40(%rbp)
-	cmpq	$0, -40(%rbp)
+	movq	%rax, -32(%rbp)
+	cmpq	$0, -32(%rbp)
 	jne	.L56
 	nop
 	nop
@@ -1283,18 +1265,16 @@ output_if:
 output_else_if:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$64, %rsp
+	subq	$48, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
 	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -16(%rbp)
+	movq	%rax, -8(%rbp)
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -1311,7 +1291,7 @@ output_else_if:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -1338,16 +1318,16 @@ output_else_if:
 	leaq	1(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-24(%rbp), %rax
+	movq	-16(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_statement
 .L58:
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -24(%rbp)
-	cmpq	$0, -24(%rbp)
+	movq	%rax, -16(%rbp)
+	cmpq	$0, -16(%rbp)
 	jne	.L59
 	nop
 	nop
@@ -1369,19 +1349,17 @@ output_else_if:
 output_for:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$64, %rsp
+	subq	$48, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
 	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -16(%rbp)
-	movq	-8(%rbp), %rax
+	movq	%rax, -8(%rbp)
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	testq	%rax, %rax
 	je	.L61
@@ -1401,7 +1379,7 @@ output_for:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -1425,7 +1403,7 @@ output_for:
 	movq	%rax, %rcx
 	call	fwrite
 .L62:
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	testq	%rax, %rax
 	je	.L63
@@ -1445,7 +1423,7 @@ output_for:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -1469,7 +1447,7 @@ output_for:
 	movq	%rax, %rcx
 	call	fwrite
 .L64:
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	16(%rax), %rax
 	testq	%rax, %rax
 	je	.L65
@@ -1489,7 +1467,7 @@ output_for:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	16(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -1533,16 +1511,16 @@ output_for:
 	leaq	1(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-24(%rbp), %rax
+	movq	-16(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_statement
 .L67:
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -24(%rbp)
-	cmpq	$0, -24(%rbp)
+	movq	%rax, -16(%rbp)
+	cmpq	$0, -16(%rbp)
 	jne	.L68
 	nop
 	nop
@@ -1552,18 +1530,16 @@ output_for:
 output_while:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$64, %rsp
+	subq	$48, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
 	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -16(%rbp)
+	movq	%rax, -8(%rbp)
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -1580,7 +1556,7 @@ output_while:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -1607,16 +1583,16 @@ output_while:
 	leaq	1(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-24(%rbp), %rax
+	movq	-16(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_statement
 .L70:
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -24(%rbp)
-	cmpq	$0, -24(%rbp)
+	movq	%rax, -16(%rbp)
+	cmpq	$0, -16(%rbp)
 	jne	.L71
 	nop
 	nop
@@ -1644,8 +1620,6 @@ output_expression:
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
 	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$19, %eax
 	jne	.L73
@@ -1665,7 +1639,7 @@ output_expression:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -1674,11 +1648,11 @@ output_expression:
 	call	output_primary
 	jmp	.L77
 .L73:
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movl	24(%rax), %eax
 	movl	%eax, %ecx
 	call	operator_to_string
-	movq	%rax, -16(%rbp)
+	movq	%rax, -8(%rbp)
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -1686,9 +1660,9 @@ output_expression:
 	movl	$0, %r8d
 	movq	%rax, %rcx
 	call	indention
-	cmpq	$0, -16(%rbp)
+	cmpq	$0, -8(%rbp)
 	je	.L75
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	jmp	.L76
 .L75:
 	leaq	.LC38(%rip), %rax
@@ -1714,7 +1688,7 @@ output_expression:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -1737,7 +1711,7 @@ output_expression:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	16(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -1780,14 +1754,12 @@ output_expression:
 output_primary:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$48, %rsp
+	subq	$32, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
 	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
 	movl	8(%rax), %eax
 	cmpl	$8, %eax
 	ja	.L79
@@ -1834,7 +1806,7 @@ output_primary:
 	movl	$1, %r8d
 	movq	%rax, %rcx
 	call	indention
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rdx
 	movq	24(%rbp), %rax
 	movq	%rdx, %r8
@@ -1864,7 +1836,7 @@ output_primary:
 	movl	$1, %r8d
 	movq	%rax, %rcx
 	call	indention
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rdx
 	movq	24(%rbp), %rax
 	movq	%rdx, %r8
@@ -1894,7 +1866,7 @@ output_primary:
 	movl	$1, %r8d
 	movq	%rax, %rcx
 	call	indention
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rdx
 	movq	24(%rbp), %rax
 	movq	%rdx, %r8
@@ -1993,7 +1965,7 @@ output_primary:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -2032,7 +2004,7 @@ output_primary:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -2071,7 +2043,7 @@ output_primary:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -2110,7 +2082,7 @@ output_primary:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -2126,7 +2098,7 @@ output_primary:
 	movl	$1, %r8d
 	movq	%rax, %rcx
 	call	indention
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 	movl	8(%rax), %edx
 	movq	24(%rbp), %rax
 	movl	%edx, %r8d
@@ -2173,8 +2145,6 @@ output_variable_access:
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
 	movq	16(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
 	movl	16(%rax), %eax
 	cmpl	$3, %eax
 	je	.L92
@@ -2220,7 +2190,7 @@ output_variable_access:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -2229,11 +2199,11 @@ output_variable_access:
 	call	output_name
 	jmp	.L97
 .L96:
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	%rax, %rcx
 	call	list_copy
-	movq	%rax, -24(%rbp)
+	movq	%rax, -16(%rbp)
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -2264,7 +2234,7 @@ output_variable_access:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -2307,16 +2277,16 @@ output_variable_access:
 	leaq	2(%rax), %r8
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-32(%rbp), %rax
+	movq	-24(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_expression
 .L98:
-	movq	-24(%rbp), %rax
+	movq	-16(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
-	movq	%rax, -32(%rbp)
-	cmpq	$0, -32(%rbp)
+	movq	%rax, -24(%rbp)
+	cmpq	$0, -24(%rbp)
 	jne	.L99
 	jmp	.L97
 .L92:
@@ -2350,7 +2320,7 @@ output_variable_access:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -2373,7 +2343,7 @@ output_variable_access:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -2412,7 +2382,7 @@ output_variable_access:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -2435,7 +2405,7 @@ output_variable_access:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -2451,7 +2421,7 @@ output_variable_access:
 	movl	$1, %r8d
 	movq	%rax, %rcx
 	call	indention
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movl	16(%rax), %edx
 	movq	24(%rbp), %rax
 	movl	%edx, %r8d
@@ -2475,13 +2445,13 @@ output_variable_access:
 .LC70:
 	.ascii "kind: \"variable\"\12\0"
 .LC71:
-	.ascii "kind: \"function\"\12\0"
+	.ascii "kind: \"subroutine\"\12\0"
 .LC72:
-	.ascii "kind: \"method\"\12\0"
-.LC73:
 	.ascii "kind: \"class\"\12\0"
-.LC74:
+.LC73:
 	.ascii "kind: \"attribute\"\12\0"
+.LC74:
+	.ascii "kind: \"parameter\"\12\0"
 .LC75:
 	.ascii "kind: \"unknown_NameType\"\12\0"
 	.text
@@ -2489,14 +2459,12 @@ output_variable_access:
 output_name:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$48, %rsp
+	subq	$32, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
-	movq	16(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	cmpq	$0, -8(%rbp)
+	cmpq	$0, 16(%rbp)
 	jne	.L101
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
@@ -2521,8 +2489,8 @@ output_name:
 	movl	$0, %r8d
 	movq	%rax, %rcx
 	call	indention
-	movq	-8(%rbp), %rax
-	movq	(%rax), %rdx
+	movq	16(%rbp), %rax
+	movq	16(%rax), %rdx
 	movq	24(%rbp), %rax
 	movq	%rdx, %r8
 	leaq	.LC67(%rip), %rdx
@@ -2535,15 +2503,15 @@ output_name:
 	movl	$0, %r8d
 	movq	%rax, %rcx
 	call	indention
-	movq	-8(%rbp), %rax
-	movq	8(%rax), %rdx
+	movq	16(%rbp), %rax
+	movq	24(%rax), %rdx
 	movq	24(%rbp), %rax
 	movq	%rdx, %r8
 	leaq	.LC68(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
-	movq	-8(%rbp), %rax
-	movl	24(%rax), %eax
+	movq	16(%rbp), %rax
+	movl	32(%rax), %eax
 	cmpl	$5, %eax
 	ja	.L103
 	movl	%eax, %eax
@@ -2564,7 +2532,7 @@ output_name:
 	.long	.L106-.L105
 	.long	.L104-.L105
 	.text
-.L110:
+.L104:
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -2580,7 +2548,7 @@ output_name:
 	movq	%rax, %rcx
 	call	fwrite
 	jmp	.L100
-.L109:
+.L108:
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -2611,15 +2579,15 @@ output_name:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
-	movq	16(%rax), %rax
+	movq	16(%rbp), %rax
+	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_name
 	jmp	.L100
-.L108:
+.L109:
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -2629,7 +2597,7 @@ output_name:
 	call	indention
 	movq	24(%rbp), %rax
 	movq	%rax, %r9
-	movl	$17, %r8d
+	movl	$19, %r8d
 	movl	$1, %edx
 	leaq	.LC71(%rip), %rax
 	movq	%rax, %rcx
@@ -2650,54 +2618,15 @@ output_name:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
-	movq	16(%rax), %rax
+	movq	16(%rbp), %rax
+	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	%rcx, %r9
 	movq	%rax, %rcx
 	call	output_name
 	jmp	.L100
-.L107:
-	movq	40(%rbp), %rcx
-	movq	32(%rbp), %rdx
-	movq	24(%rbp), %rax
-	movq	%rcx, %r9
-	movl	$0, %r8d
-	movq	%rax, %rcx
-	call	indention
-	movq	24(%rbp), %rax
-	movq	%rax, %r9
-	movl	$15, %r8d
-	movl	$1, %edx
-	leaq	.LC72(%rip), %rax
-	movq	%rax, %rcx
-	call	fwrite
-	movq	40(%rbp), %rcx
-	movq	32(%rbp), %rdx
-	movq	24(%rbp), %rax
-	movq	%rcx, %r9
-	movl	$1, %r8d
-	movq	%rax, %rcx
-	call	indention
-	movq	24(%rbp), %rax
-	movq	%rax, %r9
-	movl	$12, %r8d
-	movl	$1, %edx
-	leaq	.LC7(%rip), %rax
-	movq	%rax, %rcx
-	call	fwrite
-	movq	32(%rbp), %rax
-	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
-	movq	16(%rax), %rax
-	movq	40(%rbp), %rcx
-	movq	24(%rbp), %rdx
-	movq	%rcx, %r9
-	movq	%rax, %rcx
-	call	output_name
-	jmp	.L100
-.L106:
+.L110:
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -2709,11 +2638,50 @@ output_name:
 	movq	%rax, %r9
 	movl	$14, %r8d
 	movl	$1, %edx
-	leaq	.LC73(%rip), %rax
+	leaq	.LC72(%rip), %rax
 	movq	%rax, %rcx
 	call	fwrite
 	jmp	.L100
-.L104:
+.L106:
+	movq	40(%rbp), %rcx
+	movq	32(%rbp), %rdx
+	movq	24(%rbp), %rax
+	movq	%rcx, %r9
+	movl	$0, %r8d
+	movq	%rax, %rcx
+	call	indention
+	movq	24(%rbp), %rax
+	movq	%rax, %r9
+	movl	$18, %r8d
+	movl	$1, %edx
+	leaq	.LC73(%rip), %rax
+	movq	%rax, %rcx
+	call	fwrite
+	movq	40(%rbp), %rcx
+	movq	32(%rbp), %rdx
+	movq	24(%rbp), %rax
+	movq	%rcx, %r9
+	movl	$1, %r8d
+	movq	%rax, %rcx
+	call	indention
+	movq	24(%rbp), %rax
+	movq	%rax, %r9
+	movl	$5, %r8d
+	movl	$1, %edx
+	leaq	.LC15(%rip), %rax
+	movq	%rax, %rcx
+	call	fwrite
+	movq	32(%rbp), %rax
+	leaq	1(%rax), %r8
+	movq	16(%rbp), %rax
+	movq	(%rax), %rax
+	movq	40(%rbp), %rcx
+	movq	24(%rbp), %rdx
+	movq	%rcx, %r9
+	movq	%rax, %rcx
+	call	output_name
+	jmp	.L100
+.L107:
 	movq	40(%rbp), %rcx
 	movq	32(%rbp), %rdx
 	movq	24(%rbp), %rax
@@ -2744,8 +2712,8 @@ output_name:
 	call	fwrite
 	movq	32(%rbp), %rax
 	leaq	1(%rax), %r8
-	movq	-8(%rbp), %rax
-	movq	16(%rax), %rax
+	movq	16(%rbp), %rax
+	movq	(%rax), %rax
 	movq	40(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	%rcx, %r9

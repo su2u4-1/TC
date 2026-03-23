@@ -11,39 +11,45 @@ create_list:
 	movq	%rdx, 8(%rax)
 	addq	$40, %rsp
 	ret
-	.globl	create_node
-	.def	create_node;	.scl	2;	.type	32;	.endef
-create_node:
-	pushq	%rbx
-	movq	%rcx, %rbx
-	movl	$16, %ecx
-	subq	$32, %rsp
-	call	alloc_memory
-	xorl	%edx, %edx
-	movq	%rdx, (%rax)
-	movq	%rbx, 8(%rax)
-	addq	$32, %rsp
-	popq	%rbx
-	ret
+	.section .rdata,"dr"
+.LC0:
+	.ascii "Error: list_append received NULL list\12\0"
+	.text
 	.globl	list_append
 	.def	list_append;	.scl	2;	.type	32;	.endef
 list_append:
+	pushq	%rsi
 	pushq	%rbx
+	subq	$40, %rsp
+	testq	%rcx, %rcx
+	jne	.L4
+	call	__getreent
+	leaq	.LC0(%rip), %rcx
+	movq	24(%rax), %rdx
+	addq	$40, %rsp
+	popq	%rbx
+	popq	%rsi
+	jmp	fputs
+.L4:
 	movq	%rcx, %rbx
-	movq	%rdx, %rcx
-	subq	$32, %rsp
-	call	create_node
+	movl	$16, %ecx
+	movq	%rdx, %rsi
+	call	alloc_memory
+	xorl	%edx, %edx
 	cmpq	$0, (%rbx)
-	jne	.L6
+	movq	%rdx, (%rax)
+	movq	%rsi, 8(%rax)
+	jne	.L5
 	movq	%rax, (%rbx)
-	jmp	.L7
-.L6:
+	jmp	.L8
+.L5:
 	movq	8(%rbx), %rdx
 	movq	%rax, (%rdx)
-.L7:
+.L8:
 	movq	%rax, 8(%rbx)
-	addq	$32, %rsp
+	addq	$40, %rsp
 	popq	%rbx
+	popq	%rsi
 	ret
 	.globl	list_copy
 	.def	list_copy;	.scl	2;	.type	32;	.endef
@@ -51,33 +57,69 @@ list_copy:
 	pushq	%rbx
 	movq	%rcx, %rbx
 	subq	$32, %rsp
+	testq	%rcx, %rcx
+	je	.L11
 	call	create_list
 	movq	(%rbx), %rdx
 	movq	%rdx, (%rax)
 	movq	8(%rbx), %rdx
+	movq	%rax, %rbx
 	movq	%rdx, 8(%rax)
+.L11:
 	addq	$32, %rsp
+	movq	%rbx, %rax
 	popq	%rbx
 	ret
 	.globl	list_pop
 	.def	list_pop;	.scl	2;	.type	32;	.endef
 list_pop:
+	xorl	%eax, %eax
+	testq	%rcx, %rcx
+	je	.L16
 	movq	(%rcx), %rax
 	testq	%rax, %rax
-	je	.L12
+	je	.L16
 	movq	(%rax), %rdx
 	movq	%rdx, (%rcx)
 	testq	%rdx, %rdx
-	jne	.L14
+	jne	.L18
 	xorl	%edx, %edx
 	movq	%rdx, 8(%rcx)
-.L14:
+.L18:
 	movq	8(%rax), %rax
-.L12:
+.L16:
 	ret
-	.globl	create_scope
-	.def	create_scope;	.scl	2;	.type	32;	.endef
-create_scope:
+	.globl	list_pop_back
+	.def	list_pop_back;	.scl	2;	.type	32;	.endef
+list_pop_back:
+	xorl	%eax, %eax
+	testq	%rcx, %rcx
+	je	.L23
+	movq	(%rcx), %rax
+	testq	%rax, %rax
+	je	.L23
+	movq	8(%rcx), %r8
+	cmpq	%r8, %rax
+	jne	.L25
+	xorl	%r9d, %r9d
+	movq	8(%rax), %rax
+	movq	%r9, (%rcx)
+	movq	%r9, 8(%rcx)
+	ret
+.L25:
+	movq	%rax, %rdx
+	movq	(%rax), %rax
+	cmpq	%rax, %r8
+	jne	.L25
+	xorl	%r8d, %r8d
+	movq	8(%rax), %rax
+	movq	%r8, (%rdx)
+	movq	%rdx, 8(%rcx)
+.L23:
+	ret
+	.globl	create_symbol_table
+	.def	create_symbol_table;	.scl	2;	.type	32;	.endef
+create_symbol_table:
 	pushq	%rsi
 	movq	%rcx, %rsi
 	movl	$16, %ecx
@@ -93,9 +135,9 @@ create_scope:
 	popq	%rbx
 	popq	%rsi
 	ret
-	.globl	search
-	.def	search;	.scl	2;	.type	32;	.endef
-search:
+	.globl	search_name
+	.def	search_name;	.scl	2;	.type	32;	.endef
+search_name:
 	pushq	%rbp
 	movq	%rdx, %rbp
 	pushq	%rdi
@@ -103,28 +145,28 @@ search:
 	pushq	%rbx
 	movq	%rcx, %rbx
 	subq	$40, %rsp
-.L21:
+.L35:
 	testq	%rbx, %rbx
-	je	.L27
+	je	.L41
 	movq	8(%rbx), %rax
 	movq	(%rax), %rsi
-.L22:
+.L36:
 	testq	%rsi, %rsi
-	je	.L28
+	je	.L42
 	movq	8(%rsi), %rdi
 	movq	%rbp, %rdx
-	movq	(%rdi), %rcx
+	movq	16(%rdi), %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L20
+	jne	.L34
 	movq	(%rsi), %rsi
-	jmp	.L22
-.L28:
+	jmp	.L36
+.L42:
 	movq	(%rbx), %rbx
-	jmp	.L21
-.L27:
+	jmp	.L35
+.L41:
 	xorl	%edi, %edi
-.L20:
+.L34:
 	addq	$40, %rsp
 	movq	%rdi, %rax
 	popq	%rbx
@@ -133,166 +175,71 @@ search:
 	popq	%rbp
 	ret
 	.section .rdata,"dr"
-.LC0:
-	.ascii "Warning: Name '%s' already exists in the current scope, returning existing name, kind: \0"
 .LC1:
-	.ascii "type\12\0"
-.LC2:
-	.ascii "variable\12\0"
-.LC3:
-	.ascii "function\12\0"
-.LC4:
-	.ascii "method\12\0"
-.LC5:
-	.ascii "class\12\0"
-.LC6:
-	.ascii "attribute\12\0"
-.LC7:
-	.ascii "unknown\12\0"
-.LC8:
-	.ascii "Error creating name: name_info and scope_info are both NULL for kind %u\12\0"
-.LC9:
-	.ascii "Error creating name: unknown NameType %u\12\0"
+	.ascii "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\12\0"
 	.text
-	.globl	create_name
-	.def	create_name;	.scl	2;	.type	32;	.endef
-create_name:
+	.globl	create_symbol
+	.def	create_symbol;	.scl	2;	.type	32;	.endef
+create_symbol:
+	pushq	%r13
 	pushq	%r12
-	movq	%rcx, %r12
+	movq	%r8, %r12
 	pushq	%rbp
-	movq	%r8, %rbp
-	pushq	%rdi
-	movq	%r9, %rdi
-	pushq	%rsi
-	movl	%edx, %esi
+	movl	%edx, %ebp
 	movq	%rcx, %rdx
+	pushq	%rdi
+	movq	%rcx, %rdi
+	movq	%r9, %rcx
+	pushq	%rsi
+	movq	%r9, %rsi
 	pushq	%rbx
-	subq	$32, %rsp
-	movq	112(%rsp), %rcx
-	call	search
+	subq	$72, %rsp
+	call	search_name
 	testq	%rax, %rax
-	je	.L30
-	movq	%rax, %rbx
+	je	.L44
+	movq	id_counter.0(%rip), %rdx
+	movl	32(%rax), %r9d
+	movq	24(%rax), %r13
+	leaq	1(%rdx), %rbx
+	movl	%r9d, 60(%rsp)
 	call	__getreent
-	movq	%r12, %r8
-	leaq	.LC0(%rip), %rdx
+	movl	60(%rsp), %r9d
+	movq	%rdi, %r8
+	leaq	.LC1(%rip), %rdx
 	movq	24(%rax), %rcx
+	movq	%rbx, 40(%rsp)
+	movq	%r13, 32(%rsp)
 	call	fprintf
-	cmpl	$5, 24(%rbx)
-	ja	.L31
-	movl	24(%rbx), %eax
-	leaq	.L33(%rip), %rdx
-	movslq	(%rdx,%rax,4), %rax
-	addq	%rdx, %rax
-	jmp	*%rax
-	.section .rdata,"dr"
-	.align 4
-.L33:
-	.long	.L38-.L33
-	.long	.L37-.L33
-	.long	.L36-.L33
-	.long	.L35-.L33
-	.long	.L34-.L33
-	.long	.L32-.L33
-	.text
-.L38:
-	call	__getreent
-	leaq	.LC1(%rip), %rcx
-	movq	24(%rax), %rdx
-	jmp	.L58
-.L37:
-	call	__getreent
-	leaq	.LC2(%rip), %rcx
-	movq	24(%rax), %rdx
-	jmp	.L58
-.L36:
-	call	__getreent
-	leaq	.LC3(%rip), %rcx
-	movq	24(%rax), %rdx
-	jmp	.L58
-.L35:
-	call	__getreent
-	leaq	.LC4(%rip), %rcx
-	movq	24(%rax), %rdx
-	jmp	.L58
-.L34:
-	call	__getreent
-	leaq	.LC5(%rip), %rcx
-	movq	24(%rax), %rdx
-	jmp	.L58
-.L32:
-	call	__getreent
-	leaq	.LC6(%rip), %rcx
-	movq	24(%rax), %rdx
-	jmp	.L58
-.L31:
-	call	__getreent
-	leaq	.LC7(%rip), %rcx
-	movq	24(%rax), %rdx
-.L58:
-	call	fputs
-.L30:
-	movl	$32, %ecx
+.L44:
+	movl	$40, %ecx
 	call	alloc_memory
-	movq	%r12, (%rax)
+	movq	%rdi, 16(%rax)
 	movq	%rax, %rbx
 	movq	id_counter.0(%rip), %rax
-	movl	%esi, 24(%rbx)
+	movl	%ebp, 32(%rbx)
 	incq	%rax
+	movq	%r12, (%rbx)
 	movq	%rax, id_counter.0(%rip)
-	movq	%rax, 8(%rbx)
-	leal	-1(%rsi), %eax
-	cmpl	$2, %eax
-	jbe	.L39
-	cmpl	$5, %esi
-	je	.L39
-	cmpl	$4, %esi
-	jne	.L42
-	testq	%rdi, %rdi
-	je	.L42
-	movq	%rdi, 16(%rbx)
-	jmp	.L44
-.L39:
-	testq	%rbp, %rbp
-	je	.L43
-	movq	%rbp, 16(%rbx)
-	jmp	.L44
-.L42:
-	testl	%esi, %esi
-	jne	.L43
-	xorl	%eax, %eax
-	movq	%rax, 16(%rbx)
-	jmp	.L44
-.L43:
-	orq	%rbp, %rdi
-	jne	.L45
-	call	__getreent
-	movl	%esi, %r8d
-	leaq	.LC8(%rip), %rdx
-	movq	24(%rax), %rcx
-	jmp	.L59
-.L45:
-	call	__getreent
-	movl	%esi, %r8d
-	leaq	.LC9(%rip), %rdx
-	movq	24(%rax), %rcx
-.L59:
-	call	fprintf
-	xorl	%ebx, %ebx
-	jmp	.L29
-.L44:
-	movq	112(%rsp), %rax
-	movq	%rbx, %rdx
+	movq	%rax, 24(%rbx)
+	movq	%rsi, 8(%rbx)
+	cmpl	$1, %ebp
+	ja	.L45
+	movq	(%rsi), %rax
 	movq	8(%rax), %rcx
+	jmp	.L51
+.L45:
+	movq	8(%rsi), %rcx
+.L51:
+	movq	%rbx, %rdx
 	call	list_append
-.L29:
-	addq	$32, %rsp
+	addq	$72, %rsp
 	movq	%rbx, %rax
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	popq	%r12
+	popq	%r13
 	ret
 	.globl	is_builtin_type
 	.def	is_builtin_type;	.scl	2;	.type	32;	.endef
@@ -304,29 +251,29 @@ is_builtin_type:
 	movq	(%rax), %rdx
 	call	string_equal
 	testb	%al, %al
-	je	.L61
-.L63:
+	je	.L53
+.L55:
 	movl	$1, %eax
-	jmp	.L62
-.L61:
+	jmp	.L54
+.L53:
 	movq	.refptr.FLOAT_KEYWORD(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
 	call	string_equal
 	testb	%al, %al
-	jne	.L63
+	jne	.L55
 	movq	.refptr.STRING_KEYWORD(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
 	call	string_equal
 	testb	%al, %al
-	jne	.L63
+	jne	.L55
 	movq	.refptr.BOOL_KEYWORD(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
 	call	string_equal
 	testb	%al, %al
-	jne	.L63
+	jne	.L55
 	movq	.refptr.VOID_KEYWORD(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -334,50 +281,47 @@ is_builtin_type:
 	testb	%al, %al
 	setne	%al
 	movzbl	%al, %eax
-.L62:
+.L54:
 	addq	$32, %rsp
 	popq	%rbx
 	ret
-	.globl	is_type
-	.def	is_type;	.scl	2;	.type	32;	.endef
-is_type:
-	testl	$-5, 24(%rcx)
-	sete	%al
-	ret
 	.section .rdata,"dr"
-.LC10:
-	.ascii "Parser Error at line %zu, column %zu: %s\12\0"
+.LC2:
+	.ascii "Parser Error at %s:%zu:%zu: %s\12\0"
 	.text
 	.globl	parser_error
 	.def	parser_error;	.scl	2;	.type	32;	.endef
 parser_error:
+	pushq	%rsi
+	movq	%rcx, %rsi
 	pushq	%rbx
-	movq	%rcx, %rbx
-	subq	$64, %rsp
+	subq	$72, %rsp
+	movq	8(%rdx), %r9
 	movq	16(%rdx), %rax
-	movq	8(%rdx), %r8
-	leaq	1(%rax), %r9
-	incq	%r8
+	movq	%r8, 112(%rsp)
+	incq	%r9
+	leaq	1(%rax), %rbx
 	movq	%r9, 56(%rsp)
-	movq	%r8, 48(%rsp)
 	call	__getreent
 	movq	56(%rsp), %r9
-	movq	48(%rsp), %r8
-	leaq	.LC10(%rip), %rdx
+	movq	112(%rsp), %r8
+	leaq	.LC2(%rip), %rdx
 	movq	24(%rax), %rcx
+	movq	%rsi, 40(%rsp)
 	movq	%rbx, 32(%rsp)
 	call	fprintf
-	addq	$64, %rsp
+	addq	$72, %rsp
 	popq	%rbx
+	popq	%rsi
 	ret
 	.section .rdata,"dr"
-.LC11:
+.LC3:
 	.ascii "\342\224\202   \0"
-.LC12:
+.LC4:
 	.ascii "    \0"
-.LC13:
+.LC5:
 	.ascii "\342\224\224\342\224\200\342\224\200 \0"
-.LC14:
+.LC6:
 	.ascii "\342\224\234\342\224\200\342\224\200 \0"
 	.text
 	.globl	indention
@@ -387,7 +331,7 @@ indention:
 	movl	$1, %eax
 	pushq	%r13
 	pushq	%r12
-	leaq	3(%r9), %r12
+	leaq	11(%r9), %r12
 	pushq	%rbp
 	movl	%r8d, %ebp
 	movq	%rdx, %r8
@@ -404,21 +348,21 @@ indention:
 	sall	%cl, %eax
 	movb	(%r8), %dl
 	testb	%bpl, %bpl
-	jne	.L69
+	jne	.L60
 	orl	%eax, %edx
-.L71:
+.L62:
 	movb	%dl, (%r8)
 	movl	$1, %esi
-	leaq	.LC12(%rip), %r13
-	leaq	.LC11(%rip), %r14
-	jmp	.L70
-.L69:
+	leaq	.LC4(%rip), %r13
+	leaq	.LC3(%rip), %r14
+	jmp	.L61
+.L60:
 	notl	%eax
 	andl	%eax, %edx
-	jmp	.L71
-.L70:
+	jmp	.L62
+.L61:
 	cmpq	%rbx, %rsi
-	jnb	.L79
+	jnb	.L70
 	movq	%rsi, %rax
 	movl	%esi, %ecx
 	movq	%r14, %rdx
@@ -431,13 +375,13 @@ indention:
 	cmove	%r13, %rdx
 	incq	%rsi
 	call	fprintf
-	jmp	.L70
-.L79:
+	jmp	.L61
+.L70:
 	testq	%rbx, %rbx
-	je	.L68
+	je	.L59
 	testb	%bpl, %bpl
-	leaq	.LC14(%rip), %rdx
-	leaq	.LC13(%rip), %rax
+	leaq	.LC6(%rip), %rdx
+	leaq	.LC5(%rip), %rax
 	movq	%rdi, %rcx
 	cmovne	%rax, %rdx
 	addq	$32, %rsp
@@ -449,7 +393,7 @@ indention:
 	popq	%r13
 	popq	%r14
 	jmp	fprintf
-.L68:
+.L59:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -462,114 +406,84 @@ indention:
 	.globl	create_parser
 	.def	create_parser;	.scl	2;	.type	32;	.endef
 create_parser:
-	subq	$40, %rsp
-	movl	$35, %ecx
+	pushq	%rbx
+	movq	%rcx, %rbx
+	movl	$48, %ecx
+	subq	$32, %rsp
 	call	alloc_memory
-	movw	$0, (%rax)
-	movb	$0, 2(%rax)
-	addq	$40, %rsp
+	movw	$0, 8(%rax)
+	movb	$0, 10(%rax)
+	movq	%rbx, (%rax)
+	addq	$32, %rsp
+	popq	%rbx
 	ret
 	.section .rdata,"dr"
-.LC15:
-	.ascii "print\0"
-.LC16:
-	.ascii "./std/print.tc\0"
-.LC17:
-	.ascii "arr\0"
-.LC18:
-	.ascii "./std/arr.tc\0"
-.LC19:
-	.ascii "Error: Standard library file for import not found: %s\12\0"
-.LC20:
-	.ascii "/\0"
-.LC21:
-	.ascii ".tc\0"
-.LC22:
+.LC7:
+	.ascii "\0"
+.LC8:
+	.ascii "%s.tc\0"
+.LC9:
+	.ascii "D:/TC/std/\0"
+.LC10:
 	.ascii "r\0"
-.LC23:
+.LC11:
 	.ascii "Error opening library file for import: %s\12\0"
-.LC24:
+.LC12:
 	.ascii "Info: Starting parsing lib file for import: %s\12\0"
-.LC25:
+.LC13:
 	.ascii "Info: Finished parsing lib file for import: %s\12\0"
-.LC26:
+.LC14:
 	.ascii "Error parsing library file for import: %s\12\0"
+.LC15:
+	.ascii "Error: Imported symbol '%s' was not found in %s\12\0"
 	.text
 	.globl	parse_import_file
 	.def	parse_import_file;	.scl	2;	.type	32;	.endef
 parse_import_file:
 	pushq	%r12
+	movq	%r8, %r12
 	pushq	%rbp
-	movq	%r8, %rbp
 	pushq	%rdi
 	pushq	%rsi
 	movq	%rcx, %rsi
 	pushq	%rbx
-	subq	$1088, %rsp
+	subq	$64, %rsp
 	testq	%rdx, %rdx
-	movb	$0, 64(%rsp)
-	leaq	64(%rsp), %rbx
-	jne	.L83
-	leaq	.LC15(%rip), %rdx
-	call	strcmp
-	leaq	.LC16(%rip), %rdx
-	testl	%eax, %eax
-	je	.L96
-	leaq	.LC17(%rip), %rdx
-	movq	%rsi, %rcx
-	call	strcmp
-	testl	%eax, %eax
-	jne	.L86
-	leaq	.LC18(%rip), %rdx
-.L96:
-	movq	%rbx, %rcx
-	call	strcpy
-	jmp	.L85
+	jne	.L74
+	call	strlen
+	leaq	.LC7(%rip), %rcx
+	leaq	4(%rax), %rdx
+	call	create_string_not_check
+	leaq	.LC8(%rip), %rdx
+	movq	%rsi, %r8
+	movq	%rax, %rcx
+	movq	%rax, %rbx
+	call	sprintf
+	leaq	.LC9(%rip), %rdx
+	jmp	.L86
+.L74:
+	movq	%r9, %rcx
+	movq	%rdx, %rbx
+	call	get_file_dir
+	movq	%rax, %rdx
 .L86:
-	call	__getreent
-	movq	%rbx, %r8
-	leaq	.LC19(%rip), %rdx
-	movq	24(%rax), %rcx
-	jmp	.L97
-.L83:
-	movq	%rdx, %r9
-	movq	%rbx, %r8
-	movl	$1024, %edx
 	movq	%rbx, %rcx
-	call	string_append
-	movq	%rbx, %r8
-	movl	$1024, %edx
-	movq	%rbx, %rcx
-	leaq	.LC20(%rip), %r9
-	call	string_append
-	movq	%rsi, %r9
-	movq	%rbx, %r8
-	movl	$1024, %edx
-	movq	%rbx, %rcx
-	call	string_append
-	movq	%rbx, %r8
-	movl	$1024, %edx
-	movq	%rbx, %rcx
-	leaq	.LC21(%rip), %r9
-	call	string_append
-.L85:
-	leaq	.LC22(%rip), %rdx
-	movq	%rbx, %rcx
+	call	absolute_path
+	leaq	.LC10(%rip), %rdx
+	movq	%rax, %rcx
+	movq	%rax, %rbx
 	call	fopen
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	jne	.L88
+	jne	.L76
 	call	__getreent
 	movq	%rbx, %r8
-	leaq	.LC23(%rip), %rdx
+	leaq	.LC11(%rip), %rdx
 	movq	24(%rax), %rcx
-.L97:
-	call	fprintf
-	xorl	%ebx, %ebx
-	jmp	.L82
-.L88:
+	jmp	.L87
+.L76:
 	movq	%rbx, %rdx
-	leaq	.LC24(%rip), %rcx
+	leaq	.LC12(%rip), %rcx
 	call	printf
 	leaq	56(%rsp), %rdx
 	xorl	%eax, %eax
@@ -577,11 +491,14 @@ parse_import_file:
 	movq	%rax, 56(%rsp)
 	call	read_source
 	movq	%rdi, %rcx
-	movq	%rax, %r12
+	movq	%rax, %rbp
 	call	fclose
+	movq	%rbx, %rcx
+	call	create_file
+	movq	%rax, %rcx
 	call	create_parser
 	movq	56(%rsp), %rdx
-	movq	%r12, %rcx
+	movq	%rbp, %rcx
 	movq	%rax, 40(%rsp)
 	movq	.refptr.builtin_scope(%rip), %rax
 	movq	(%rax), %rdi
@@ -591,39 +508,51 @@ parse_import_file:
 	movq	%rax, %rcx
 	call	parse_code
 	movq	%rbx, %rdx
-	leaq	.LC25(%rip), %rcx
+	leaq	.LC13(%rip), %rcx
 	movq	%rax, %rdi
 	call	printf
 	testq	%rdi, %rdi
-	jne	.L90
+	jne	.L78
 	call	__getreent
 	movq	%rbx, %r8
-	leaq	.LC26(%rip), %rdx
+	leaq	.LC14(%rip), %rdx
 	movq	24(%rax), %rcx
-	jmp	.L97
-.L90:
+.L87:
+	call	fprintf
+.L77:
+	xorl	%edi, %edi
+	jmp	.L73
+.L78:
 	movq	8(%rdi), %rax
 	movq	8(%rax), %rax
-	movq	(%rax), %rbx
-.L91:
-	testq	%rbx, %rbx
-	je	.L82
-	movq	8(%rbx), %rdi
+	movq	(%rax), %rbp
+.L80:
+	testq	%rbp, %rbp
+	je	.L88
+	movq	8(%rbp), %rdi
 	movq	%rsi, %rdx
-	movq	(%rdi), %rcx
+	movq	16(%rdi), %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L92
-	movq	(%rbx), %rbx
-	jmp	.L91
-.L92:
-	movq	8(%rbp), %rcx
+	jne	.L81
+	movq	0(%rbp), %rbp
+	jmp	.L80
+.L81:
+	movq	8(%r12), %rcx
 	movq	%rdi, %rdx
-	movq	%rdi, %rbx
 	call	list_append
-.L82:
-	addq	$1088, %rsp
-	movq	%rbx, %rax
+	jmp	.L73
+.L88:
+	call	__getreent
+	movq	%rbx, %r9
+	movq	%rsi, %r8
+	leaq	.LC15(%rip), %rdx
+	movq	24(%rax), %rcx
+	call	fprintf
+	jmp	.L77
+.L73:
+	addq	$64, %rsp
+	movq	%rdi, %rax
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
@@ -642,7 +571,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$13, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.ADD_ASSIGN_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -650,7 +579,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$14, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.SUB_ASSIGN_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -658,7 +587,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$15, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.MUL_ASSIGN_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -666,7 +595,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$16, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.DIV_ASSIGN_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -674,7 +603,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$17, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.MOD_ASSIGN_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -682,7 +611,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$18, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.AND_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -690,7 +619,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$11, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.OR_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -698,7 +627,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$12, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.EQ_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -706,7 +635,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$5, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.NE_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -714,7 +643,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$6, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.LT_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -722,7 +651,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$7, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.GT_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -730,7 +659,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$8, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.LE_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -738,7 +667,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$9, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.GE_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -746,7 +675,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$10, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.ADD_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -754,7 +683,7 @@ string_to_operator:
 	movl	%eax, %edx
 	xorl	%eax, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.SUB_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -762,7 +691,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$1, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.MUL_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -770,7 +699,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$2, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.DIV_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -778,7 +707,7 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$3, %eax
 	testb	%dl, %dl
-	jne	.L98
+	jne	.L89
 	movq	.refptr.MOD_SYMBOL(%rip), %rax
 	movq	%rbx, %rcx
 	movq	(%rax), %rdx
@@ -787,7 +716,7 @@ string_to_operator:
 	sbbl	%eax, %eax
 	andl	$15, %eax
 	addl	$4, %eax
-.L98:
+.L89:
 	addq	$32, %rsp
 	popq	%rbx
 	ret
@@ -796,109 +725,109 @@ string_to_operator:
 operator_precedence:
 	xorl	%eax, %eax
 	cmpl	$18, %ecx
-	ja	.L120
+	ja	.L111
 	movl	%ecx, %ecx
-	leaq	CSWTCH.49(%rip), %rax
+	leaq	CSWTCH.50(%rip), %rax
 	movsbl	(%rax,%rcx), %eax
-.L120:
+.L111:
 	ret
 	.globl	operator_to_string
 	.def	operator_to_string;	.scl	2;	.type	32;	.endef
 operator_to_string:
 	xorl	%eax, %eax
 	cmpl	$18, %ecx
-	ja	.L123
-	leaq	.L126(%rip), %rdx
+	ja	.L114
+	leaq	.L117(%rip), %rdx
 	movl	%ecx, %ecx
 	movslq	(%rdx,%rcx,4), %rax
 	addq	%rdx, %rax
 	jmp	*%rax
 	.section .rdata,"dr"
 	.align 4
-.L126:
-	.long	.L144-.L126
-	.long	.L143-.L126
-	.long	.L142-.L126
-	.long	.L141-.L126
-	.long	.L140-.L126
-	.long	.L139-.L126
-	.long	.L138-.L126
-	.long	.L137-.L126
-	.long	.L136-.L126
-	.long	.L135-.L126
-	.long	.L134-.L126
-	.long	.L133-.L126
-	.long	.L132-.L126
-	.long	.L131-.L126
-	.long	.L130-.L126
-	.long	.L129-.L126
-	.long	.L128-.L126
-	.long	.L127-.L126
-	.long	.L125-.L126
+.L117:
+	.long	.L135-.L117
+	.long	.L134-.L117
+	.long	.L133-.L117
+	.long	.L132-.L117
+	.long	.L131-.L117
+	.long	.L130-.L117
+	.long	.L129-.L117
+	.long	.L128-.L117
+	.long	.L127-.L117
+	.long	.L126-.L117
+	.long	.L125-.L117
+	.long	.L124-.L117
+	.long	.L123-.L117
+	.long	.L122-.L117
+	.long	.L121-.L117
+	.long	.L120-.L117
+	.long	.L119-.L117
+	.long	.L118-.L117
+	.long	.L116-.L117
 	.text
-.L131:
+.L122:
 	movq	.refptr.ASSIGN_SYMBOL(%rip), %rax
-	jmp	.L146
-.L130:
+	jmp	.L137
+.L121:
 	movq	.refptr.ADD_ASSIGN_SYMBOL(%rip), %rax
-	jmp	.L146
-.L129:
+	jmp	.L137
+.L120:
 	movq	.refptr.SUB_ASSIGN_SYMBOL(%rip), %rax
-	jmp	.L146
-.L128:
+	jmp	.L137
+.L119:
 	movq	.refptr.MUL_ASSIGN_SYMBOL(%rip), %rax
-	jmp	.L146
-.L127:
+	jmp	.L137
+.L118:
 	movq	.refptr.DIV_ASSIGN_SYMBOL(%rip), %rax
-	jmp	.L146
-.L125:
+	jmp	.L137
+.L116:
 	movq	.refptr.MOD_ASSIGN_SYMBOL(%rip), %rax
-	jmp	.L146
-.L133:
+	jmp	.L137
+.L124:
 	movq	.refptr.AND_SYMBOL(%rip), %rax
-	jmp	.L146
-.L132:
-	movq	.refptr.OR_SYMBOL(%rip), %rax
-	jmp	.L146
-.L139:
-	movq	.refptr.EQ_SYMBOL(%rip), %rax
-	jmp	.L146
-.L138:
-	movq	.refptr.NE_SYMBOL(%rip), %rax
-	jmp	.L146
-.L137:
-	movq	.refptr.LT_SYMBOL(%rip), %rax
-	jmp	.L146
-.L136:
-	movq	.refptr.GT_SYMBOL(%rip), %rax
-	jmp	.L146
-.L135:
-	movq	.refptr.LE_SYMBOL(%rip), %rax
-	jmp	.L146
-.L134:
-	movq	.refptr.GE_SYMBOL(%rip), %rax
-	jmp	.L146
-.L144:
-	movq	.refptr.ADD_SYMBOL(%rip), %rax
-	jmp	.L146
-.L143:
-	movq	.refptr.SUB_SYMBOL(%rip), %rax
-	jmp	.L146
-.L142:
-	movq	.refptr.MUL_SYMBOL(%rip), %rax
-	jmp	.L146
-.L141:
-	movq	.refptr.DIV_SYMBOL(%rip), %rax
-	jmp	.L146
-.L140:
-	movq	.refptr.MOD_SYMBOL(%rip), %rax
-.L146:
-	movq	(%rax), %rax
+	jmp	.L137
 .L123:
+	movq	.refptr.OR_SYMBOL(%rip), %rax
+	jmp	.L137
+.L130:
+	movq	.refptr.EQ_SYMBOL(%rip), %rax
+	jmp	.L137
+.L129:
+	movq	.refptr.NE_SYMBOL(%rip), %rax
+	jmp	.L137
+.L128:
+	movq	.refptr.LT_SYMBOL(%rip), %rax
+	jmp	.L137
+.L127:
+	movq	.refptr.GT_SYMBOL(%rip), %rax
+	jmp	.L137
+.L126:
+	movq	.refptr.LE_SYMBOL(%rip), %rax
+	jmp	.L137
+.L125:
+	movq	.refptr.GE_SYMBOL(%rip), %rax
+	jmp	.L137
+.L135:
+	movq	.refptr.ADD_SYMBOL(%rip), %rax
+	jmp	.L137
+.L134:
+	movq	.refptr.SUB_SYMBOL(%rip), %rax
+	jmp	.L137
+.L133:
+	movq	.refptr.MUL_SYMBOL(%rip), %rax
+	jmp	.L137
+.L132:
+	movq	.refptr.DIV_SYMBOL(%rip), %rax
+	jmp	.L137
+.L131:
+	movq	.refptr.MOD_SYMBOL(%rip), %rax
+.L137:
+	movq	(%rax), %rax
+.L114:
 	ret
 	.section .rdata,"dr"
 	.align 16
-CSWTCH.49:
+CSWTCH.50:
 	.byte	4
 	.byte	4
 	.byte	5
@@ -921,17 +850,20 @@ CSWTCH.49:
 .lcomm id_counter.0,8,8
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
-	.def	string_equal;	.scl	2;	.type	32;	.endef
 	.def	__getreent;	.scl	2;	.type	32;	.endef
-	.def	fprintf;	.scl	2;	.type	32;	.endef
 	.def	fputs;	.scl	2;	.type	32;	.endef
-	.def	strcmp;	.scl	2;	.type	32;	.endef
-	.def	strcpy;	.scl	2;	.type	32;	.endef
-	.def	string_append;	.scl	2;	.type	32;	.endef
+	.def	string_equal;	.scl	2;	.type	32;	.endef
+	.def	fprintf;	.scl	2;	.type	32;	.endef
+	.def	strlen;	.scl	2;	.type	32;	.endef
+	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
+	.def	sprintf;	.scl	2;	.type	32;	.endef
+	.def	get_file_dir;	.scl	2;	.type	32;	.endef
+	.def	absolute_path;	.scl	2;	.type	32;	.endef
 	.def	fopen;	.scl	2;	.type	32;	.endef
 	.def	printf;	.scl	2;	.type	32;	.endef
 	.def	read_source;	.scl	2;	.type	32;	.endef
 	.def	fclose;	.scl	2;	.type	32;	.endef
+	.def	create_file;	.scl	2;	.type	32;	.endef
 	.def	create_lexer;	.scl	2;	.type	32;	.endef
 	.def	parse_code;	.scl	2;	.type	32;	.endef
 	.section	.rdata$.refptr.MOD_SYMBOL, "dr"

@@ -7,104 +7,6 @@
 	.text
 	.section .rdata,"dr"
 .LC0:
-	.ascii "%.*s%s\0"
-.LC1:
-	.ascii "%s\0"
-.LC2:
-	.ascii "%s%s\0"
-	.text
-	.p2align 4
-	.globl	string_append
-	.def	string_append;	.scl	2;	.type	32;	.endef
-string_append:
-	pushq	%r12	 ;
-	pushq	%rbp	 ;
-	movq	%rcx, %rbp	 ; tmp105, dest
- ; D:\TC\src\compiler.c:8:     size_t src_length = strlen(src), new_length = strlen(new);
-	movq	%r8, %rcx	 ; src,
- ; D:\TC\src\compiler.c:7: void string_append(string dest, const size_t dest_length, const string src, const string new) {
-	pushq	%rdi	 ;
-	movq	%r9, %rdi	 ; tmp108, new
-	pushq	%rsi	 ;
-	movq	%rdx, %rsi	 ; tmp106, dest_length
-	pushq	%rbx	 ;
-	movq	%r8, %rbx	 ; tmp107, src
-	subq	$48, %rsp	 ;,
- ; D:\TC\src\compiler.c:8:     size_t src_length = strlen(src), new_length = strlen(new);
-	call	strlen	 ;
- ; D:\TC\src\compiler.c:8:     size_t src_length = strlen(src), new_length = strlen(new);
-	movq	%rdi, %rcx	 ; new,
- ; D:\TC\src\compiler.c:8:     size_t src_length = strlen(src), new_length = strlen(new);
-	movq	%rax, %r12	 ; tmp109, tmp95
- ; D:\TC\src\compiler.c:8:     size_t src_length = strlen(src), new_length = strlen(new);
-	call	strlen	 ;
- ; D:\TC\src\compiler.c:9:     if (dest_length <= src_length + new_length) {
-	leaq	(%r12,%rax), %rdx	 ;, tmp100
- ; D:\TC\src\compiler.c:9:     if (dest_length <= src_length + new_length) {
-	cmpq	%rsi, %rdx	 ; dest_length, tmp100
-	jnb	.L7	 ;,
- ; D:\TC\src\compiler.c:12:     } else if (src == dest)
-	cmpq	%rbp, %rbx	 ; dest, src
-	je	.L8	 ;,
- ; D:\TC\src\compiler.c:15:         snprintf(dest, dest_length, "%s%s", src, new);
-	movq	%rdi, 32(%rsp)	 ; new,
-	movq	%rbx, %r9	 ; src,
-	movq	%rsi, %rdx	 ; dest_length,
-	movq	%rbp, %rcx	 ; dest,
-	leaq	.LC2(%rip), %r8	 ;,
-	call	snprintf	 ;
- ; D:\TC\src\compiler.c:16: }
-	addq	$48, %rsp	 ;,
-	popq	%rbx	 ;
-	popq	%rsi	 ;
-	popq	%rdi	 ;
-	popq	%rbp	 ;
-	popq	%r12	 ;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L8:
-	addq	$48, %rsp	 ;,
- ; D:\TC\src\compiler.c:13:         snprintf(dest + src_length, dest_length - src_length, "%s", new);
-	subq	%r12, %rsi	 ; tmp95, dest_length
-	leaq	(%rbx,%r12), %rcx	 ;, tmp104
-	movq	%rdi, %r9	 ; new,
- ; D:\TC\src\compiler.c:16: }
-	popq	%rbx	 ;
- ; D:\TC\src\compiler.c:13:         snprintf(dest + src_length, dest_length - src_length, "%s", new);
-	movq	%rsi, %rdx	 ; dest_length, tmp103
-	leaq	.LC1(%rip), %r8	 ;,
- ; D:\TC\src\compiler.c:16: }
-	popq	%rsi	 ;
-	popq	%rdi	 ;
-	popq	%rbp	 ;
-	popq	%r12	 ;
- ; D:\TC\src\compiler.c:13:         snprintf(dest + src_length, dest_length - src_length, "%s", new);
-	jmp	snprintf	 ;
-	.p2align 4,,10
-	.p2align 3
-.L7:
- ; D:\TC\src\compiler.c:11:         snprintf(dest, dest_length, "%.*s%s", (int)max_src_length, src, new);
-	movq	%rdi, 40(%rsp)	 ; new,
- ; D:\TC\src\compiler.c:10:         size_t max_src_length = dest_length - new_length - 1;
-	leaq	-1(%rsi), %r9	 ;, tmp101
- ; D:\TC\src\compiler.c:11:         snprintf(dest, dest_length, "%.*s%s", (int)max_src_length, src, new);
-	movq	%rsi, %rdx	 ; dest_length,
-	movq	%rbp, %rcx	 ; dest,
-	movq	%rbx, 32(%rsp)	 ; src,
-	subl	%eax, %r9d	 ; tmp98,
-	leaq	.LC0(%rip), %r8	 ;,
-	call	snprintf	 ;
- ; D:\TC\src\compiler.c:16: }
-	addq	$48, %rsp	 ;,
-	popq	%rbx	 ;
-	popq	%rsi	 ;
-	popq	%rdi	 ;
-	popq	%rbp	 ;
-	popq	%r12	 ;
-	ret	
-	.section .rdata,"dr"
-.LC3:
 	.ascii "\0"
 	.text
 	.p2align 4
@@ -112,73 +14,73 @@ string_append:
 	.def	read_source;	.scl	2;	.type	32;	.endef
 read_source:
 	pushq	%rdi	 ;
- ; D:\TC\src\compiler.c:18:     fseek(file, 0, SEEK_END);
+ ; D:\TC\src\compiler.c:8:     fseek(file, 0, SEEK_END);
 	movl	$2, %r8d	 ;,
- ; D:\TC\src\compiler.c:17: string read_source(FILE* file, size_t* length) {
+ ; D:\TC\src\compiler.c:7: string read_source(FILE* file, size_t* length) {
 	movq	%rcx, %rdi	 ; tmp102, file
 	pushq	%rsi	 ;
 	movq	%rdx, %rsi	 ; tmp103, length
- ; D:\TC\src\compiler.c:18:     fseek(file, 0, SEEK_END);
+ ; D:\TC\src\compiler.c:8:     fseek(file, 0, SEEK_END);
 	xorl	%edx, %edx	 ;
- ; D:\TC\src\compiler.c:17: string read_source(FILE* file, size_t* length) {
+ ; D:\TC\src\compiler.c:7: string read_source(FILE* file, size_t* length) {
 	pushq	%rbx	 ;
 	subq	$32, %rsp	 ;,
- ; D:\TC\src\compiler.c:18:     fseek(file, 0, SEEK_END);
+ ; D:\TC\src\compiler.c:8:     fseek(file, 0, SEEK_END);
 	call	fseek	 ;
- ; D:\TC\src\compiler.c:19:     *length = (size_t)ftell(file);
+ ; D:\TC\src\compiler.c:9:     *length = (size_t)ftell(file);
 	movq	%rdi, %rcx	 ; file,
 	call	ftell	 ;
- ; D:\TC\src\compiler.c:20:     fseek(file, 0, SEEK_SET);
+ ; D:\TC\src\compiler.c:10:     fseek(file, 0, SEEK_SET);
 	xorl	%r8d, %r8d	 ;
 	xorl	%edx, %edx	 ;
 	movq	%rdi, %rcx	 ; file,
- ; D:\TC\src\compiler.c:19:     *length = (size_t)ftell(file);
+ ; D:\TC\src\compiler.c:9:     *length = (size_t)ftell(file);
 	movq	%rax, (%rsi)	 ; tmp104, *length_19(D)
- ; D:\TC\src\compiler.c:20:     fseek(file, 0, SEEK_SET);
+ ; D:\TC\src\compiler.c:10:     fseek(file, 0, SEEK_SET);
 	call	fseek	 ;
- ; D:\TC\src\compiler.c:22:     string source = create_string("", *length + 1);
+ ; D:\TC\src\compiler.c:12:     string source = create_string_not_check("", *length + 1);
 	movq	(%rsi), %rax	 ; *length_19(D), tmp108
-	leaq	.LC3(%rip), %rcx	 ;, tmp97
+	leaq	.LC0(%rip), %rcx	 ;, tmp97
 	leaq	1(%rax), %rdx	 ;, tmp95
-	call	create_string	 ;
- ; D:\TC\src\compiler.c:23:     size_t bytes_read = fread(source, 1, *length, file);
+	call	create_string_not_check	 ;
+ ; D:\TC\src\compiler.c:13:     size_t bytes_read = fread(source, 1, *length, file);
 	movq	(%rsi), %r8	 ; *length_19(D),
 	movl	$1, %edx	 ;,
 	movq	%rdi, %r9	 ; file,
 	movq	%rax, %rcx	 ; <retval>,
- ; D:\TC\src\compiler.c:22:     string source = create_string("", *length + 1);
+ ; D:\TC\src\compiler.c:12:     string source = create_string_not_check("", *length + 1);
 	movq	%rax, %rbx	 ; tmp105, <retval>
- ; D:\TC\src\compiler.c:23:     size_t bytes_read = fread(source, 1, *length, file);
+ ; D:\TC\src\compiler.c:13:     size_t bytes_read = fread(source, 1, *length, file);
 	call	fread	 ;
- ; D:\TC\src\compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
+ ; D:\TC\src\compiler.c:17:     for (size_t i = 0; i < *length; ++i) {
 	xorl	%edx, %edx	 ; i
- ; D:\TC\src\compiler.c:24:     source[bytes_read] = '\0';
+ ; D:\TC\src\compiler.c:14:     source[bytes_read] = '\0';
 	movb	$0, (%rbx,%rax)	 ;, *_6
- ; D:\TC\src\compiler.c:25:     *length = bytes_read;
+ ; D:\TC\src\compiler.c:15:     *length = bytes_read;
 	movq	%rax, (%rsi)	 ; bytes_read, *length_19(D)
- ; D:\TC\src\compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
+ ; D:\TC\src\compiler.c:17:     for (size_t i = 0; i < *length; ++i) {
 	testq	%rax, %rax	 ; bytes_read
-	je	.L9	 ;,
+	je	.L1	 ;,
 	.p2align 4,,10
 	.p2align 3
-.L10:
- ; D:\TC\src\compiler.c:28:         if (source[i] == '\r' || source[i] == '\t')
+.L2:
+ ; D:\TC\src\compiler.c:18:         if (source[i] == '\r' || source[i] == '\t')
 	movzbl	(%rbx,%rdx), %ecx	 ; MEM[(char *)source_23 + i_34 * 1], tmp100
 	andl	$-5, %ecx	 ;, tmp100
- ; D:\TC\src\compiler.c:28:         if (source[i] == '\r' || source[i] == '\t')
+ ; D:\TC\src\compiler.c:18:         if (source[i] == '\r' || source[i] == '\t')
 	cmpb	$9, %cl	 ;, tmp100
-	jne	.L11	 ;,
- ; D:\TC\src\compiler.c:29:             source[i] = ' ';
+	jne	.L3	 ;,
+ ; D:\TC\src\compiler.c:19:             source[i] = ' ';
 	movb	$32, (%rbx,%rdx)	 ;, MEM[(char *)source_23 + i_34 * 1]
- ; D:\TC\src\compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
+ ; D:\TC\src\compiler.c:17:     for (size_t i = 0; i < *length; ++i) {
 	movq	(%rsi), %rax	 ; *length_19(D), bytes_read
- ; D:\TC\src\compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
+ ; D:\TC\src\compiler.c:17:     for (size_t i = 0; i < *length; ++i) {
 	addq	$1, %rdx	 ;, i
- ; D:\TC\src\compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
+ ; D:\TC\src\compiler.c:17:     for (size_t i = 0; i < *length; ++i) {
 	cmpq	%rax, %rdx	 ; bytes_read, i
-	jb	.L10	 ;,
-.L9:
- ; D:\TC\src\compiler.c:32: }
+	jb	.L2	 ;,
+.L1:
+ ; D:\TC\src\compiler.c:22: }
 	addq	$32, %rsp	 ;,
 	movq	%rbx, %rax	 ; <retval>,
 	popq	%rbx	 ;
@@ -187,13 +89,13 @@ read_source:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L11:
- ; D:\TC\src\compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
+.L3:
+ ; D:\TC\src\compiler.c:17:     for (size_t i = 0; i < *length; ++i) {
 	addq	$1, %rdx	 ;, i
- ; D:\TC\src\compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
+ ; D:\TC\src\compiler.c:17:     for (size_t i = 0; i < *length; ++i) {
 	cmpq	%rax, %rdx	 ; bytes_read, i
-	jb	.L10	 ;,
- ; D:\TC\src\compiler.c:32: }
+	jb	.L2	 ;,
+ ; D:\TC\src\compiler.c:22: }
 	addq	$32, %rsp	 ;,
 	movq	%rbx, %rax	 ; <retval>,
 	popq	%rbx	 ;
@@ -202,304 +104,334 @@ read_source:
 	ret	
 	.section .rdata,"dr"
 	.align 8
-.LC4:
+.LC1:
 	.ascii "Token(Type: EOF,         Line: %zu, Column: %zu)\12\0"
 	.align 8
+.LC2:
+	.ascii "Token(Type: identifier,  Line: %zu, Column: %zu)\11Lexeme: '\0"
+	.align 8
+.LC3:
+	.ascii "Token(Type: integer,     Line: %zu, Column: %zu)\11Lexeme: '\0"
+	.align 8
+.LC4:
+	.ascii "Token(Type: float,       Line: %zu, Column: %zu)\11Lexeme: '\0"
+	.align 8
 .LC5:
-	.ascii "Token(Type: identifier,  Line: \0"
+	.ascii "Token(Type: string,      Line: %zu, Column: %zu)\11Lexeme: '\0"
 	.align 8
 .LC6:
-	.ascii "Token(Type: integer,     Line: \0"
+	.ascii "Token(Type: symbol,      Line: %zu, Column: %zu)\11Lexeme: '\0"
 	.align 8
 .LC7:
-	.ascii "Token(Type: float,       Line: \0"
+	.ascii "Token(Type: keyword,     Line: %zu, Column: %zu)\11Lexeme: '\0"
 	.align 8
 .LC8:
-	.ascii "Token(Type: string,      Line: \0"
-	.align 8
+	.ascii "Token(Type: comment,     Line: %zu, Column: %zu)\11Lexeme: '\0"
 .LC9:
-	.ascii "Token(Type: symbol,      Line: \0"
-	.align 8
-.LC10:
-	.ascii "Token(Type: keyword,     Line: \0"
-	.align 8
-.LC11:
-	.ascii "Token(Type: comment,     Line: \0"
-.LC12:
-	.ascii "%zu, Column: %zu)\11Lexeme: '\0"
-.LC13:
 	.ascii "\\0\0"
-.LC14:
+.LC10:
 	.ascii "\\n\0"
-.LC15:
+.LC11:
 	.ascii "\\t\0"
-.LC16:
+.LC12:
 	.ascii "\\r\0"
-.LC17:
+.LC13:
 	.ascii "'\12\0"
-.LC18:
-	.ascii "\12info by lib:\12    %s\12\0"
 	.text
 	.p2align 4
-	.globl	output_token
-	.def	output_token;	.scl	2;	.type	32;	.endef
-output_token:
-	pushq	%r15	 ;
+	.globl	output_one_token
+	.def	output_one_token;	.scl	2;	.type	32;	.endef
+output_one_token:
 	pushq	%r14	 ;
-	movq	%rdx, %r14	 ; tmp140, lexer
- ; D:\TC\src\compiler.c:34:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
-	xorl	%edx, %edx	 ;
- ; D:\TC\src\compiler.c:33: void output_token(FILE* file, Lexer* lexer) {
 	pushq	%r13	 ;
 	pushq	%r12	 ;
 	pushq	%rbp	 ;
 	pushq	%rdi	 ;
-	movq	%rcx, %rdi	 ; tmp139, file
- ; D:\TC\src\compiler.c:34:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
-	movq	%r14, %rcx	 ; lexer,
- ; D:\TC\src\compiler.c:33: void output_token(FILE* file, Lexer* lexer) {
+	movq	%rcx, %rdi	 ; tmp181, file
 	pushq	%rsi	 ;
+	movq	%rdx, %rsi	 ; tmp182, token
 	pushq	%rbx	 ;
-	subq	$40, %rsp	 ;,
- ; D:\TC\src\compiler.c:34:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
-	call	get_next_token	 ;
- ; D:\TC\src\compiler.c:34:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
-	testq	%rax, %rax	 ; current
-	je	.L29	 ;,
-	movq	%rax, %rbx	 ; tmp141, current
-	leaq	.L21(%rip), %r12	 ;, tmp136
- ; D:\TC\src\compiler.c:64:                 fputs("\\r", file);
-	leaq	.LC16(%rip), %r15	 ;, tmp137
-	.p2align 4,,10
-	.p2align 3
-.L37:
-	cmpl	$7, 24(%rbx)	 ;, current_50->type
-	ja	.L19	 ;,
-	movl	24(%rbx), %eax	 ; current_50->type, current_50->type
-	movslq	(%r12,%rax,4), %rax	 ;, tmp103
-	addq	%r12, %rax	 ; tmp136, tmp104
-	jmp	*%rax	 ; tmp104
+	subq	$32, %rsp	 ;,
+	cmpl	$7, 24(%rdx)	 ;, token_45(D)->type
+	ja	.L11	 ;,
+	movl	24(%rdx), %eax	 ; token_45(D)->type, token_45(D)->type
+	leaq	.L13(%rip), %rdx	 ;, tmp124
+	movslq	(%rdx,%rax,4), %rax	 ;, tmp126
+	addq	%rdx, %rax	 ; tmp124, tmp127
+ ; D:\TC\src\compiler.c:40:         fprintf(file, "Token(Type: comment,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	16(%rsi), %rdx	 ; token_45(D)->column, token_45(D)->column
+	jmp	*%rax	 ; tmp127
 	.section .rdata,"dr"
 	.align 4
-.L21:
-	.long	.L28-.L21
-	.long	.L27-.L21
-	.long	.L26-.L21
-	.long	.L25-.L21
-	.long	.L24-.L21
-	.long	.L23-.L21
-	.long	.L22-.L21
-	.long	.L20-.L21
+.L13:
+	.long	.L20-.L13
+	.long	.L19-.L13
+	.long	.L18-.L13
+	.long	.L17-.L13
+	.long	.L16-.L13
+	.long	.L15-.L13
+	.long	.L14-.L13
+	.long	.L12-.L13
 	.text
 	.p2align 4,,10
 	.p2align 3
-.L22:
- ; D:\TC\src\compiler.c:50:             fprintf(file, "Token(Type: keyword,     Line: ");
-	movq	%rdi, %r9	 ; file,
-	movl	$31, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC10(%rip), %rcx	 ;, tmp116
-	call	fwrite	 ;
-	.p2align 4,,10
-	.p2align 3
-.L19:
- ; D:\TC\src\compiler.c:53:         fprintf(file, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-	movq	16(%rbx), %rdx	 ; current_50->column, current_50->column
-	movq	8(%rbx), %rax	 ; current_50->line, current_50->line
-	movq	%rdi, %rcx	 ; file,
- ; D:\TC\src\compiler.c:60:                 fputs("\\n", file);
-	leaq	.LC14(%rip), %r13	 ;, tmp134
- ; D:\TC\src\compiler.c:58:                 fputs("\\0", file);
-	leaq	.LC13(%rip), %rbp	 ;, tmp135
- ; D:\TC\src\compiler.c:53:         fprintf(file, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+.L18:
+ ; D:\TC\src\compiler.c:30:         fprintf(file, "Token(Type: integer,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	8(%rsi), %rax	 ; token_45(D)->line, token_45(D)->line
 	leaq	1(%rdx), %r9	 ;,
+	leaq	.LC3(%rip), %rdx	 ;, tmp143
 	leaq	1(%rax), %r8	 ;,
-	leaq	.LC12(%rip), %rdx	 ;, tmp122
 	call	fprintf	 ;
- ; D:\TC\src\compiler.c:54:         string lexeme_ptr = token->lexeme;
-	movq	(%rbx), %rsi	 ; current_50->lexeme, lexeme_ptr
- ; D:\TC\src\compiler.c:55:         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
-	xorl	%ebx, %ebx	 ; i
- ; D:\TC\src\compiler.c:55:         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
-	jmp	.L30	 ;
 	.p2align 4,,10
 	.p2align 3
-.L31:
- ; D:\TC\src\compiler.c:59:             else if (c == '\n')
+.L11:
+ ; D:\TC\src\compiler.c:23: void output_one_token(FILE* file, Token* token) {
+	xorl	%ebx, %ebx	 ; i
+ ; D:\TC\src\compiler.c:50:             fputs("\\r", file);
+	leaq	.LC12(%rip), %r12	 ;, tmp178
+ ; D:\TC\src\compiler.c:46:             fputs("\\n", file);
+	leaq	.LC10(%rip), %r13	 ;, tmp179
+ ; D:\TC\src\compiler.c:44:             fputs("\\0", file);
+	leaq	.LC9(%rip), %rbp	 ;, tmp180
+	jmp	.L21	 ;
+	.p2align 4,,10
+	.p2align 3
+.L22:
+ ; D:\TC\src\compiler.c:45:         else if (c == '\n')
 	cmpb	$10, %cl	 ;, c
-	je	.L43	 ;,
- ; D:\TC\src\compiler.c:61:             else if (c == '\t')
+	je	.L29	 ;,
+ ; D:\TC\src\compiler.c:47:         else if (c == '\t')
 	cmpb	$9, %cl	 ;, c
-	je	.L44	 ;,
- ; D:\TC\src\compiler.c:63:             else if (c == '\r')
+	je	.L30	 ;,
+ ; D:\TC\src\compiler.c:49:         else if (c == '\r')
 	cmpb	$13, %cl	 ;, c
-	je	.L45	 ;,
- ; D:\TC\src\compiler.c:66:                 fputc(c, file);
+	je	.L31	 ;,
+ ; D:\TC\src\compiler.c:52:             fputc(c, file);
 	movq	%rdi, %rdx	 ; file,
 	call	fputc	 ;
-.L32:
- ; D:\TC\src\compiler.c:55:         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
+.L23:
+ ; D:\TC\src\compiler.c:41:     for (size_t i = 0; i < strlen(token->lexeme); ++i) {
 	addq	$1, %rbx	 ;, i
-.L30:
- ; D:\TC\src\compiler.c:55:         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
-	movq	%rsi, %rcx	 ; lexeme_ptr,
+.L21:
+ ; D:\TC\src\compiler.c:41:     for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+	movq	(%rsi), %r14	 ; token_45(D)->lexeme, _37
+ ; D:\TC\src\compiler.c:41:     for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+	movq	%r14, %rcx	 ; _37,
 	call	strlen	 ;
- ; D:\TC\src\compiler.c:55:         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
-	cmpq	%rax, %rbx	 ; tmp142, i
-	jnb	.L46	 ;,
- ; D:\TC\src\compiler.c:56:             char c = lexeme_ptr[i];
-	movsbl	(%rsi,%rbx), %ecx	 ; MEM[(char *)lexeme_ptr_35 + i_16 * 1],
- ; D:\TC\src\compiler.c:57:             if (c == '\0')
+ ; D:\TC\src\compiler.c:41:     for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+	cmpq	%rax, %rbx	 ; tmp183, i
+	jnb	.L32	 ;,
+ ; D:\TC\src\compiler.c:42:         char c = token->lexeme[i];
+	movsbl	(%r14,%rbx), %ecx	 ; *_35,
+ ; D:\TC\src\compiler.c:43:         if (c == '\0')
 	testb	%cl, %cl	 ; c
-	jne	.L31	 ;,
- ; D:\TC\src\compiler.c:58:                 fputs("\\0", file);
+	jne	.L22	 ;,
+ ; D:\TC\src\compiler.c:44:             fputs("\\0", file);
 	movq	%rdi, %r9	 ; file,
 	movl	$2, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	movq	%rbp, %rcx	 ; tmp135,
+	movq	%rbp, %rcx	 ; tmp180,
 	call	fwrite	 ;
-	jmp	.L32	 ;
+	jmp	.L23	 ;
 	.p2align 4,,10
 	.p2align 3
-.L23:
- ; D:\TC\src\compiler.c:48:             fprintf(file, "Token(Type: symbol,      Line: ");
+.L31:
+ ; D:\TC\src\compiler.c:50:             fputs("\\r", file);
 	movq	%rdi, %r9	 ; file,
-	movl	$31, %r8d	 ;,
+	movl	$2, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC9(%rip), %rcx	 ;, tmp115
+	movq	%r12, %rcx	 ; tmp178,
 	call	fwrite	 ;
-	jmp	.L19	 ;
+	jmp	.L23	 ;
 	.p2align 4,,10
 	.p2align 3
-.L24:
- ; D:\TC\src\compiler.c:46:             fprintf(file, "Token(Type: string,      Line: ");
-	movq	%rdi, %r9	 ; file,
-	movl	$31, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC8(%rip), %rcx	 ;, tmp114
-	call	fwrite	 ;
-	jmp	.L19	 ;
-	.p2align 4,,10
-	.p2align 3
-.L25:
- ; D:\TC\src\compiler.c:44:             fprintf(file, "Token(Type: float,       Line: ");
-	movq	%rdi, %r9	 ; file,
-	movl	$31, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC7(%rip), %rcx	 ;, tmp113
-	call	fwrite	 ;
-	jmp	.L19	 ;
-	.p2align 4,,10
-	.p2align 3
-.L28:
- ; D:\TC\src\compiler.c:37:             fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
-	movq	16(%rbx), %rdx	 ; current_50->column, current_50->column
-	movq	8(%rbx), %rax	 ; current_50->line, current_50->line
-	movq	%rdi, %rcx	 ; file,
-	leaq	1(%rdx), %r9	 ;,
-	leaq	1(%rax), %r8	 ;,
-	leaq	.LC4(%rip), %rdx	 ;, tmp110
-	call	fprintf	 ;
 .L29:
- ; D:\TC\src\compiler.c:70:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
-	call	get_info	 ;
- ; D:\TC\src\compiler.c:71: }
-	addq	$40, %rsp	 ;,
- ; D:\TC\src\compiler.c:70:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
-	movq	%rdi, %rcx	 ; file,
-	leaq	.LC18(%rip), %rdx	 ;, tmp132
- ; D:\TC\src\compiler.c:71: }
+ ; D:\TC\src\compiler.c:46:             fputs("\\n", file);
+	movq	%rdi, %r9	 ; file,
+	movl	$2, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	movq	%r13, %rcx	 ; tmp179,
+	call	fwrite	 ;
+	jmp	.L23	 ;
+	.p2align 4,,10
+	.p2align 3
+.L32:
+ ; D:\TC\src\compiler.c:55: }
+	addq	$32, %rsp	 ;,
+ ; D:\TC\src\compiler.c:54:     fprintf(file, "'\n");
+	movq	%rdi, %r9	 ; file,
+	movl	$2, %r8d	 ;,
+	movl	$1, %edx	 ;,
+ ; D:\TC\src\compiler.c:55: }
 	popq	%rbx	 ;
- ; D:\TC\src\compiler.c:70:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
-	movq	%rax, %r8	 ;, tmp144
- ; D:\TC\src\compiler.c:71: }
+ ; D:\TC\src\compiler.c:54:     fprintf(file, "'\n");
+	leaq	.LC13(%rip), %rcx	 ;, tmp177
+ ; D:\TC\src\compiler.c:55: }
 	popq	%rsi	 ;
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	popq	%r12	 ;
 	popq	%r13	 ;
 	popq	%r14	 ;
-	popq	%r15	 ;
- ; D:\TC\src\compiler.c:70:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
-	jmp	fprintf	 ;
+ ; D:\TC\src\compiler.c:54:     fprintf(file, "'\n");
+	jmp	fwrite	 ;
+	.p2align 4,,10
+	.p2align 3
+.L30:
+ ; D:\TC\src\compiler.c:48:             fputs("\\t", file);
+	movq	%rdi, %r9	 ; file,
+	movl	$2, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC11(%rip), %rcx	 ;, tmp171
+	call	fwrite	 ;
+	jmp	.L23	 ;
+	.p2align 4,,10
+	.p2align 3
+.L14:
+ ; D:\TC\src\compiler.c:38:         fprintf(file, "Token(Type: keyword,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	8(%rsi), %rax	 ; token_45(D)->line, token_45(D)->line
+	leaq	1(%rdx), %r9	 ;,
+	leaq	.LC7(%rip), %rdx	 ;, tmp163
+	leaq	1(%rax), %r8	 ;,
+	call	fprintf	 ;
+	jmp	.L11	 ;
+	.p2align 4,,10
+	.p2align 3
+.L12:
+ ; D:\TC\src\compiler.c:40:         fprintf(file, "Token(Type: comment,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	8(%rsi), %rax	 ; token_45(D)->line, token_45(D)->line
+	leaq	1(%rdx), %r9	 ;,
+	leaq	.LC8(%rip), %rdx	 ;, tmp168
+	leaq	1(%rax), %r8	 ;,
+	call	fprintf	 ;
+	jmp	.L11	 ;
 	.p2align 4,,10
 	.p2align 3
 .L20:
- ; D:\TC\src\compiler.c:52:             fprintf(file, "Token(Type: comment,     Line: ");
-	movq	%rdi, %r9	 ; file,
-	movl	$31, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC11(%rip), %rcx	 ;, tmp117
-	call	fwrite	 ;
-	jmp	.L19	 ;
+ ; D:\TC\src\compiler.c:25:         fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+	movq	8(%rsi), %rax	 ; token_45(D)->line, token_45(D)->line
+ ; D:\TC\src\compiler.c:55: }
+	addq	$32, %rsp	 ;,
+ ; D:\TC\src\compiler.c:25:         fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+	leaq	1(%rdx), %r9	 ;,
+	leaq	.LC1(%rip), %rdx	 ;, tmp133
+ ; D:\TC\src\compiler.c:55: }
+	popq	%rbx	 ;
+	popq	%rsi	 ;
+ ; D:\TC\src\compiler.c:25:         fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+	leaq	1(%rax), %r8	 ;,
+ ; D:\TC\src\compiler.c:55: }
+	popq	%rdi	 ;
+	popq	%rbp	 ;
+	popq	%r12	 ;
+	popq	%r13	 ;
+	popq	%r14	 ;
+ ; D:\TC\src\compiler.c:25:         fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+	jmp	fprintf	 ;
 	.p2align 4,,10
 	.p2align 3
-.L26:
- ; D:\TC\src\compiler.c:42:             fprintf(file, "Token(Type: integer,     Line: ");
-	movq	%rdi, %r9	 ; file,
-	movl	$31, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC6(%rip), %rcx	 ;, tmp112
-	call	fwrite	 ;
-	jmp	.L19	 ;
+.L19:
+ ; D:\TC\src\compiler.c:28:         fprintf(file, "Token(Type: identifier,  Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	8(%rsi), %rax	 ; token_45(D)->line, token_45(D)->line
+	leaq	1(%rdx), %r9	 ;,
+	leaq	.LC2(%rip), %rdx	 ;, tmp138
+	leaq	1(%rax), %r8	 ;,
+	call	fprintf	 ;
+	jmp	.L11	 ;
 	.p2align 4,,10
 	.p2align 3
-.L27:
- ; D:\TC\src\compiler.c:40:             fprintf(file, "Token(Type: identifier,  Line: ");
-	movq	%rdi, %r9	 ; file,
-	movl	$31, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC5(%rip), %rcx	 ;, tmp111
-	call	fwrite	 ;
-	jmp	.L19	 ;
+.L17:
+ ; D:\TC\src\compiler.c:32:         fprintf(file, "Token(Type: float,       Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	8(%rsi), %rax	 ; token_45(D)->line, token_45(D)->line
+	leaq	1(%rdx), %r9	 ;,
+	leaq	.LC4(%rip), %rdx	 ;, tmp148
+	leaq	1(%rax), %r8	 ;,
+	call	fprintf	 ;
+	jmp	.L11	 ;
 	.p2align 4,,10
 	.p2align 3
-.L45:
- ; D:\TC\src\compiler.c:64:                 fputs("\\r", file);
-	movq	%rdi, %r9	 ; file,
-	movl	$2, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	movq	%r15, %rcx	 ; tmp137,
-	call	fwrite	 ;
-	jmp	.L32	 ;
+.L16:
+ ; D:\TC\src\compiler.c:34:         fprintf(file, "Token(Type: string,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	8(%rsi), %rax	 ; token_45(D)->line, token_45(D)->line
+	leaq	1(%rdx), %r9	 ;,
+	leaq	.LC5(%rip), %rdx	 ;, tmp153
+	leaq	1(%rax), %r8	 ;,
+	call	fprintf	 ;
+	jmp	.L11	 ;
 	.p2align 4,,10
 	.p2align 3
-.L43:
- ; D:\TC\src\compiler.c:60:                 fputs("\\n", file);
-	movq	%rdi, %r9	 ; file,
-	movl	$2, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	movq	%r13, %rcx	 ; tmp134,
-	call	fwrite	 ;
-	jmp	.L32	 ;
-	.p2align 4,,10
-	.p2align 3
-.L46:
- ; D:\TC\src\compiler.c:68:         fprintf(file, "'\n");
-	movq	%rdi, %r9	 ; file,
-	movl	$2, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC17(%rip), %rcx	 ;, tmp131
-	call	fwrite	 ;
- ; D:\TC\src\compiler.c:34:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
+.L15:
+ ; D:\TC\src\compiler.c:36:         fprintf(file, "Token(Type: symbol,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	8(%rsi), %rax	 ; token_45(D)->line, token_45(D)->line
+	leaq	1(%rdx), %r9	 ;,
+	leaq	.LC6(%rip), %rdx	 ;, tmp158
+	leaq	1(%rax), %r8	 ;,
+	call	fprintf	 ;
+	jmp	.L11	 ;
+	.section .rdata,"dr"
+.LC14:
+	.ascii "\12info by lib:\12    %s\12\0"
+	.text
+	.p2align 4
+	.globl	output_token
+	.def	output_token;	.scl	2;	.type	32;	.endef
+output_token:
+	pushq	%rdi	 ;
+	movq	%rdx, %rdi	 ; tmp89, lexer
+ ; D:\TC\src\compiler.c:57:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
 	xorl	%edx, %edx	 ;
-	movq	%r14, %rcx	 ; lexer,
+ ; D:\TC\src\compiler.c:56: void output_token(FILE* file, Lexer* lexer) {
+	pushq	%rsi	 ;
+	movq	%rcx, %rsi	 ; tmp88, file
+ ; D:\TC\src\compiler.c:57:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
+	movq	%rdi, %rcx	 ; lexer,
+ ; D:\TC\src\compiler.c:56: void output_token(FILE* file, Lexer* lexer) {
+	pushq	%rbx	 ;
+	subq	$32, %rsp	 ;,
+ ; D:\TC\src\compiler.c:57:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
 	call	get_next_token	 ;
-	movq	%rax, %rbx	 ; tmp143, current
- ; D:\TC\src\compiler.c:34:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
+ ; D:\TC\src\compiler.c:57:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
 	testq	%rax, %rax	 ; current
-	jne	.L37	 ;,
-	jmp	.L29	 ;
+	je	.L34	 ;,
+	movq	%rax, %rbx	 ; tmp90, current
+	jmp	.L35	 ;
 	.p2align 4,,10
 	.p2align 3
-.L44:
- ; D:\TC\src\compiler.c:62:                 fputs("\\t", file);
-	movq	%rdi, %r9	 ; file,
-	movl	$2, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC15(%rip), %rcx	 ;, tmp125
-	call	fwrite	 ;
-	jmp	.L32	 ;
+.L41:
+ ; D:\TC\src\compiler.c:57:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
+	xorl	%edx, %edx	 ;
+	movq	%rdi, %rcx	 ; lexer,
+	call	get_next_token	 ;
+	movq	%rax, %rbx	 ; tmp91, current
+ ; D:\TC\src\compiler.c:57:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
+	testq	%rax, %rax	 ; current
+	je	.L34	 ;,
+.L35:
+ ; D:\TC\src\compiler.c:58:         output_one_token(file, current);
+	movq	%rbx, %rdx	 ; current,
+	movq	%rsi, %rcx	 ; file,
+	call	output_one_token	 ;
+ ; D:\TC\src\compiler.c:59:         if (current->type == EOF_TOKEN)
+	movl	24(%rbx), %eax	 ; current_18->type,
+	testl	%eax, %eax	 ;
+	jne	.L41	 ;,
+.L34:
+ ; D:\TC\src\compiler.c:62:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	call	get_info	 ;
+ ; D:\TC\src\compiler.c:63: }
+	addq	$32, %rsp	 ;,
+ ; D:\TC\src\compiler.c:62:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	movq	%rsi, %rcx	 ; file,
+	leaq	.LC14(%rip), %rdx	 ;, tmp87
+ ; D:\TC\src\compiler.c:63: }
+	popq	%rbx	 ;
+ ; D:\TC\src\compiler.c:62:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	movq	%rax, %r8	 ;, tmp92
+ ; D:\TC\src\compiler.c:63: }
+	popq	%rsi	 ;
+	popq	%rdi	 ;
+ ; D:\TC\src\compiler.c:62:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	jmp	fprintf	 ;
 	.p2align 4
 	.globl	output_ast
 	.def	output_ast;	.scl	2;	.type	32;	.endef
@@ -510,110 +442,113 @@ output_ast:
 	movq	%rcx, %rbx	 ; tmp91, file
 	movq	%rdx, %rcx	 ; tmp92, lexer
 	subq	$40, %rsp	 ;,
- ; D:\TC\src\compiler.c:73:     Code* ast_root = parse_code(lexer, builtin_scope, parser);
+ ; D:\TC\src\compiler.c:65:     Code* ast_root = parse_code(lexer, builtin_scope, parser);
 	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp88
 	movq	(%rax), %rdx	 ; builtin_scope, builtin_scope
 	call	parse_code	 ;
- ; D:\TC\src\compiler.c:74:     output_code(ast_root, file, 0, parser);
+ ; D:\TC\src\compiler.c:66:     output_code(ast_root, file, 0, parser);
 	movq	%rbx, %rdx	 ; file,
 	movq	%rsi, %r9	 ; parser,
 	xorl	%r8d, %r8d	 ;
- ; D:\TC\src\compiler.c:73:     Code* ast_root = parse_code(lexer, builtin_scope, parser);
+ ; D:\TC\src\compiler.c:65:     Code* ast_root = parse_code(lexer, builtin_scope, parser);
 	movq	%rax, %rcx	 ; tmp94, ast_root
- ; D:\TC\src\compiler.c:74:     output_code(ast_root, file, 0, parser);
+ ; D:\TC\src\compiler.c:66:     output_code(ast_root, file, 0, parser);
 	call	output_code	 ;
- ; D:\TC\src\compiler.c:75:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+ ; D:\TC\src\compiler.c:67:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 	call	get_info	 ;
- ; D:\TC\src\compiler.c:76: }
+ ; D:\TC\src\compiler.c:68: }
 	addq	$40, %rsp	 ;,
- ; D:\TC\src\compiler.c:75:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+ ; D:\TC\src\compiler.c:67:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 	movq	%rbx, %rcx	 ; file,
-	leaq	.LC18(%rip), %rdx	 ;, tmp90
- ; D:\TC\src\compiler.c:76: }
+	leaq	.LC14(%rip), %rdx	 ;, tmp90
+ ; D:\TC\src\compiler.c:68: }
 	popq	%rbx	 ;
- ; D:\TC\src\compiler.c:75:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+ ; D:\TC\src\compiler.c:67:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 	movq	%rax, %r8	 ;, tmp95
- ; D:\TC\src\compiler.c:76: }
+ ; D:\TC\src\compiler.c:68: }
 	popq	%rsi	 ;
- ; D:\TC\src\compiler.c:75:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+ ; D:\TC\src\compiler.c:67:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 	jmp	fprintf	 ;
 	.section .rdata,"dr"
-.LC19:
+.LC15:
 	.ascii "r\0"
-.LC20:
+.LC16:
 	.ascii "Error opening file: %s\0"
-.LC21:
+.LC17:
 	.ascii ".token\0"
-.LC22:
+.LC18:
 	.ascii "w\0"
-.LC23:
+.LC19:
 	.ascii "Error opening file: %s\12\0"
-.LC24:
+.LC20:
 	.ascii ".ast\0"
+.LC21:
+	.ascii ".tc\0"
 	.text
 	.p2align 4
 	.globl	parse_file
 	.def	parse_file;	.scl	2;	.type	32;	.endef
 parse_file:
 	pushq	%r12	 ;
-	movl	%edx, %r12d	 ; tmp126, o_token
+	movl	%edx, %r12d	 ; tmp132, o_token
 	pushq	%rbp	 ;
-	movl	%r8d, %ebp	 ; tmp127, o_ast
+	movl	%r8d, %ebp	 ; tmp133, o_ast
 	pushq	%rdi	 ;
 	pushq	%rsi	 ;
 	pushq	%rbx	 ;
 	subq	$48, %rsp	 ;,
- ; D:\TC\src\compiler.c:78:     File* file = create_file(name);
+ ; D:\TC\src\compiler.c:70:     File* file = create_file(name);
 	call	create_file	 ;
- ; D:\TC\src\compiler.c:79:     string filename = get_full_path(file);
+ ; D:\TC\src\compiler.c:71:     string filename = get_full_path(file);
 	movq	%rax, %rcx	 ; file,
- ; D:\TC\src\compiler.c:78:     File* file = create_file(name);
-	movq	%rax, %rsi	 ; tmp128, file
- ; D:\TC\src\compiler.c:79:     string filename = get_full_path(file);
+ ; D:\TC\src\compiler.c:70:     File* file = create_file(name);
+	movq	%rax, %rsi	 ; tmp134, file
+ ; D:\TC\src\compiler.c:71:     string filename = get_full_path(file);
 	call	get_full_path	 ;
- ; D:\TC\src\compiler.c:81:     FILE* source_file = fopen(filename, "r");
-	leaq	.LC19(%rip), %rdx	 ;, tmp109
- ; D:\TC\src\compiler.c:80:     size_t length = 0;
+ ; D:\TC\src\compiler.c:73:     FILE* source_file = fopen(filename, "r");
+	leaq	.LC15(%rip), %rdx	 ;, tmp113
+ ; D:\TC\src\compiler.c:72:     size_t length = 0;
 	movq	$0, 40(%rsp)	 ;, length
- ; D:\TC\src\compiler.c:81:     FILE* source_file = fopen(filename, "r");
+ ; D:\TC\src\compiler.c:73:     FILE* source_file = fopen(filename, "r");
 	movq	%rax, %rcx	 ; filename,
- ; D:\TC\src\compiler.c:79:     string filename = get_full_path(file);
-	movq	%rax, %rdi	 ; tmp129, filename
- ; D:\TC\src\compiler.c:81:     FILE* source_file = fopen(filename, "r");
+ ; D:\TC\src\compiler.c:71:     string filename = get_full_path(file);
+	movq	%rax, %rdi	 ; tmp135, filename
+ ; D:\TC\src\compiler.c:73:     FILE* source_file = fopen(filename, "r");
 	call	fopen	 ;
- ; D:\TC\src\compiler.c:82:     if (source_file == NULL) {
+ ; D:\TC\src\compiler.c:74:     if (source_file == NULL) {
 	testq	%rax, %rax	 ; source_file
-	je	.L57	 ;,
-	movq	%rax, %rbx	 ; tmp130, source_file
- ; D:\TC\src\compiler.c:86:     string source = read_source(source_file, &length);
-	leaq	40(%rsp), %rdx	 ;, tmp112
+	je	.L58	 ;,
+ ; D:\TC\src\compiler.c:78:     string source = read_source(source_file, &length);
+	leaq	40(%rsp), %rdx	 ;, tmp116
+	movq	%rax, %rbx	 ; tmp136, source_file
 	movq	%rax, %rcx	 ; source_file,
 	call	read_source	 ;
- ; D:\TC\src\compiler.c:87:     fclose(source_file);
+ ; D:\TC\src\compiler.c:79:     fclose(source_file);
 	movq	%rbx, %rcx	 ; source_file,
- ; D:\TC\src\compiler.c:86:     string source = read_source(source_file, &length);
-	movq	%rax, %rdi	 ; tmp132, source
- ; D:\TC\src\compiler.c:87:     fclose(source_file);
+ ; D:\TC\src\compiler.c:78:     string source = read_source(source_file, &length);
+	movq	%rax, %rdi	 ; tmp138, source
+ ; D:\TC\src\compiler.c:79:     fclose(source_file);
 	call	fclose	 ;
- ; D:\TC\src\compiler.c:88:     Lexer* lexer = create_lexer(source, length);
+ ; D:\TC\src\compiler.c:80:     Lexer* lexer = create_lexer(source, length);
 	movq	40(%rsp), %rdx	 ; length,
 	movq	%rdi, %rcx	 ; source,
 	call	create_lexer	 ;
-	movq	%rax, %rbx	 ; tmp133, lexer
- ; D:\TC\src\compiler.c:89:     if (o_token) {
+	movq	%rax, %rdi	 ; tmp139, lexer
+ ; D:\TC\src\compiler.c:81:     if (o_token) {
 	testb	%r12b, %r12b	 ; o_token
-	jne	.L58	 ;,
-.L51:
- ; D:\TC\src\compiler.c:100:     reset_lexer(lexer);
-	movq	%rbx, %rcx	 ; lexer,
-	call	reset_lexer	 ;
- ; D:\TC\src\compiler.c:101:     Parser* parser = create_parser();
-	call	create_parser	 ;
-	movq	%rax, %rdi	 ; tmp138, parser
- ; D:\TC\src\compiler.c:102:     if (o_ast) {
-	testb	%bpl, %bpl	 ; o_ast
 	jne	.L59	 ;,
- ; D:\TC\src\compiler.c:113: }
+.L46:
+ ; D:\TC\src\compiler.c:92:     reset_lexer(lexer);
+	movq	%rdi, %rcx	 ; lexer,
+	call	reset_lexer	 ;
+ ; D:\TC\src\compiler.c:93:     Parser* parser = create_parser(file);
+	movq	%rsi, %rcx	 ; file,
+	call	create_parser	 ;
+	movq	%rax, %rbx	 ; tmp147, parser
+ ; D:\TC\src\compiler.c:94:     if (o_ast) {
+	testb	%bpl, %bpl	 ; o_ast
+	jne	.L60	 ;,
+ ; D:\TC\src\compiler.c:106: }
 	addq	$48, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
@@ -623,159 +558,191 @@ parse_file:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L58:
- ; D:\TC\src\compiler.c:90:         change_file_extension(file, create_string(".token", 6));
-	movl	$6, %edx	 ;,
-	leaq	.LC21(%rip), %rcx	 ;, tmp114
-	call	create_string	 ;
- ; D:\TC\src\compiler.c:90:         change_file_extension(file, create_string(".token", 6));
-	movq	%rsi, %rcx	 ; file,
- ; D:\TC\src\compiler.c:90:         change_file_extension(file, create_string(".token", 6));
-	movq	%rax, %rdx	 ; tmp134, _4
- ; D:\TC\src\compiler.c:90:         change_file_extension(file, create_string(".token", 6));
-	call	change_file_extension	 ;
- ; D:\TC\src\compiler.c:91:         string out_token_name = get_full_path(file);
-	movq	%rsi, %rcx	 ; file,
-	call	get_full_path	 ;
- ; D:\TC\src\compiler.c:92:         FILE* out_token_file = fopen(out_token_name, "w");
-	leaq	.LC22(%rip), %rdx	 ;, tmp115
-	movq	%rax, %rcx	 ; out_token_name,
- ; D:\TC\src\compiler.c:91:         string out_token_name = get_full_path(file);
-	movq	%rax, %r12	 ; tmp135, out_token_name
- ; D:\TC\src\compiler.c:92:         FILE* out_token_file = fopen(out_token_name, "w");
-	call	fopen	 ;
-	movq	%rax, %rdi	 ; tmp136, out_token_file
- ; D:\TC\src\compiler.c:93:         if (out_token_file == NULL)
-	testq	%rax, %rax	 ; out_token_file
-	je	.L60	 ;,
- ; D:\TC\src\compiler.c:96:             output_token(out_token_file, lexer);
-	movq	%rbx, %rdx	 ; lexer,
-	movq	%rax, %rcx	 ; out_token_file,
-	call	output_token	 ;
- ; D:\TC\src\compiler.c:97:             fclose(out_token_file);
-	movq	%rdi, %rcx	 ; out_token_file,
-	call	fclose	 ;
-	jmp	.L51	 ;
-	.p2align 4,,10
-	.p2align 3
 .L59:
- ; D:\TC\src\compiler.c:103:         change_file_extension(file, create_string(".ast", 4));
-	movl	$4, %edx	 ;,
-	leaq	.LC24(%rip), %rcx	 ;, tmp118
+ ; D:\TC\src\compiler.c:82:         change_file_extension(file, create_string(".token", 6));
+	movl	$6, %edx	 ;,
+	leaq	.LC17(%rip), %rcx	 ;, tmp118
 	call	create_string	 ;
- ; D:\TC\src\compiler.c:103:         change_file_extension(file, create_string(".ast", 4));
+ ; D:\TC\src\compiler.c:82:         change_file_extension(file, create_string(".token", 6));
 	movq	%rsi, %rcx	 ; file,
- ; D:\TC\src\compiler.c:103:         change_file_extension(file, create_string(".ast", 4));
-	movq	%rax, %rdx	 ; tmp139, _7
- ; D:\TC\src\compiler.c:103:         change_file_extension(file, create_string(".ast", 4));
+ ; D:\TC\src\compiler.c:82:         change_file_extension(file, create_string(".token", 6));
+	movq	%rax, %rdx	 ; tmp140, _4
+ ; D:\TC\src\compiler.c:82:         change_file_extension(file, create_string(".token", 6));
 	call	change_file_extension	 ;
- ; D:\TC\src\compiler.c:104:         string out_ast_name = get_full_path(file);
+ ; D:\TC\src\compiler.c:83:         string out_token_name = get_full_path(file);
 	movq	%rsi, %rcx	 ; file,
 	call	get_full_path	 ;
- ; D:\TC\src\compiler.c:105:         FILE* out_ast_file = fopen(out_ast_name, "w");
-	leaq	.LC22(%rip), %rdx	 ;, tmp119
-	movq	%rax, %rcx	 ; out_ast_name,
- ; D:\TC\src\compiler.c:104:         string out_ast_name = get_full_path(file);
-	movq	%rax, %rbp	 ; tmp140, out_ast_name
- ; D:\TC\src\compiler.c:105:         FILE* out_ast_file = fopen(out_ast_name, "w");
+ ; D:\TC\src\compiler.c:84:         FILE* out_token_file = fopen(out_token_name, "w");
+	leaq	.LC18(%rip), %rdx	 ;, tmp119
+	movq	%rax, %rcx	 ; out_token_name,
+ ; D:\TC\src\compiler.c:83:         string out_token_name = get_full_path(file);
+	movq	%rax, %rbx	 ; tmp141, out_token_name
+ ; D:\TC\src\compiler.c:84:         FILE* out_token_file = fopen(out_token_name, "w");
 	call	fopen	 ;
-	movq	%rax, %rsi	 ; tmp141, out_ast_file
- ; D:\TC\src\compiler.c:106:         if (out_ast_file == NULL)
-	testq	%rax, %rax	 ; out_ast_file
-	je	.L61	 ;,
- ; D:\TC\src\compiler.c:73:     Code* ast_root = parse_code(lexer, builtin_scope, parser);
-	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp122
-	movq	%rdi, %r8	 ; parser,
-	movq	%rbx, %rcx	 ; lexer,
-	movq	(%rax), %rdx	 ; builtin_scope, builtin_scope
-	call	parse_code	 ;
- ; D:\TC\src\compiler.c:74:     output_code(ast_root, file, 0, parser);
-	movq	%rdi, %r9	 ; parser,
-	movq	%rsi, %rdx	 ; out_ast_file,
-	xorl	%r8d, %r8d	 ;
- ; D:\TC\src\compiler.c:73:     Code* ast_root = parse_code(lexer, builtin_scope, parser);
-	movq	%rax, %rcx	 ; tmp143, ast_root
- ; D:\TC\src\compiler.c:74:     output_code(ast_root, file, 0, parser);
-	call	output_code	 ;
- ; D:\TC\src\compiler.c:75:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
-	call	get_info	 ;
- ; D:\TC\src\compiler.c:75:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
-	movq	%rsi, %rcx	 ; out_ast_file,
-	leaq	.LC18(%rip), %rdx	 ;, tmp124
- ; D:\TC\src\compiler.c:75:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
-	movq	%rax, %r8	 ;, tmp144
- ; D:\TC\src\compiler.c:75:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	movq	%rax, %r12	 ; tmp142, out_token_file
+ ; D:\TC\src\compiler.c:85:         if (out_token_file == NULL)
+	testq	%rax, %rax	 ; out_token_file
+	jne	.L47	 ;,
+ ; D:\TC\src\compiler.c:86:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
+	call	__getreent	 ;
+ ; D:\TC\src\compiler.c:86:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
+	movq	%rbx, %r8	 ; out_token_name,
+	leaq	.LC19(%rip), %rdx	 ;, tmp121
+	movq	24(%rax), %rcx	 ; _5->_stderr, _5->_stderr
 	call	fprintf	 ;
- ; D:\TC\src\compiler.c:113: }
-	addq	$48, %rsp	 ;,
- ; D:\TC\src\compiler.c:110:             fclose(out_ast_file);
-	movq	%rsi, %rcx	 ; out_ast_file,
- ; D:\TC\src\compiler.c:113: }
-	popq	%rbx	 ;
-	popq	%rsi	 ;
-	popq	%rdi	 ;
-	popq	%rbp	 ;
-	popq	%r12	 ;
- ; D:\TC\src\compiler.c:110:             fclose(out_ast_file);
-	jmp	fclose	 ;
+	jmp	.L46	 ;
 	.p2align 4,,10
 	.p2align 3
 .L61:
- ; D:\TC\src\compiler.c:107:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
-	call	__getreent	 ;
- ; D:\TC\src\compiler.c:107:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
-	movq	%rbp, %r8	 ; out_ast_name,
-	leaq	.LC23(%rip), %rdx	 ;, tmp121
-	movq	24(%rax), %rcx	 ; _8->_stderr, _8->_stderr
- ; D:\TC\src\compiler.c:113: }
-	addq	$48, %rsp	 ;,
-	popq	%rbx	 ;
-	popq	%rsi	 ;
-	popq	%rdi	 ;
-	popq	%rbp	 ;
-	popq	%r12	 ;
- ; D:\TC\src\compiler.c:107:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
-	jmp	fprintf	 ;
+ ; D:\TC\src\compiler.c:58:         output_one_token(file, current);
+	movq	%rax, %rdx	 ; current,
+	movq	%r12, %rcx	 ; out_token_file,
+	call	output_one_token	 ;
+ ; D:\TC\src\compiler.c:59:         if (current->type == EOF_TOKEN)
+	movl	24(%rbx), %eax	 ; current_78->type,
+	testl	%eax, %eax	 ;
+	je	.L48	 ;,
+.L47:
+ ; D:\TC\src\compiler.c:57:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
+	xorl	%edx, %edx	 ;
+	movq	%rdi, %rcx	 ; lexer,
+	call	get_next_token	 ;
+	movq	%rax, %rbx	 ; tmp144, current
+ ; D:\TC\src\compiler.c:57:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
+	testq	%rax, %rax	 ; current
+	jne	.L61	 ;,
+.L48:
+ ; D:\TC\src\compiler.c:62:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	call	get_info	 ;
+ ; D:\TC\src\compiler.c:62:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	movq	%r12, %rcx	 ; out_token_file,
+	leaq	.LC14(%rip), %rdx	 ;, tmp122
+ ; D:\TC\src\compiler.c:62:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	movq	%rax, %r8	 ;, tmp146
+ ; D:\TC\src\compiler.c:62:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	call	fprintf	 ;
+ ; D:\TC\src\compiler.c:89:             fclose(out_token_file);
+	movq	%r12, %rcx	 ; out_token_file,
+	call	fclose	 ;
+	jmp	.L46	 ;
 	.p2align 4,,10
 	.p2align 3
 .L60:
- ; D:\TC\src\compiler.c:94:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
-	call	__getreent	 ;
- ; D:\TC\src\compiler.c:94:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
-	movq	%r12, %r8	 ; out_token_name,
-	leaq	.LC23(%rip), %rdx	 ;, tmp117
-	movq	24(%rax), %rcx	 ; _5->_stderr, _5->_stderr
+ ; D:\TC\src\compiler.c:95:         change_file_extension(file, create_string(".ast", 4));
+	movl	$4, %edx	 ;,
+	leaq	.LC20(%rip), %rcx	 ;, tmp123
+	call	create_string	 ;
+ ; D:\TC\src\compiler.c:95:         change_file_extension(file, create_string(".ast", 4));
+	movq	%rsi, %rcx	 ; file,
+ ; D:\TC\src\compiler.c:95:         change_file_extension(file, create_string(".ast", 4));
+	movq	%rax, %rdx	 ; tmp148, _7
+ ; D:\TC\src\compiler.c:95:         change_file_extension(file, create_string(".ast", 4));
+	call	change_file_extension	 ;
+ ; D:\TC\src\compiler.c:96:         string out_ast_name = get_full_path(file);
+	movq	%rsi, %rcx	 ; file,
+	call	get_full_path	 ;
+ ; D:\TC\src\compiler.c:97:         change_file_extension(file, create_string(".tc", 3));
+	movl	$3, %edx	 ;,
+	leaq	.LC21(%rip), %rcx	 ;, tmp124
+ ; D:\TC\src\compiler.c:96:         string out_ast_name = get_full_path(file);
+	movq	%rax, %rbp	 ; tmp149, out_ast_name
+ ; D:\TC\src\compiler.c:97:         change_file_extension(file, create_string(".tc", 3));
+	call	create_string	 ;
+ ; D:\TC\src\compiler.c:97:         change_file_extension(file, create_string(".tc", 3));
+	movq	%rsi, %rcx	 ; file,
+ ; D:\TC\src\compiler.c:97:         change_file_extension(file, create_string(".tc", 3));
+	movq	%rax, %rdx	 ; tmp150, _8
+ ; D:\TC\src\compiler.c:97:         change_file_extension(file, create_string(".tc", 3));
+	call	change_file_extension	 ;
+ ; D:\TC\src\compiler.c:98:         FILE* out_ast_file = fopen(out_ast_name, "w");
+	leaq	.LC18(%rip), %rdx	 ;, tmp125
+	movq	%rbp, %rcx	 ; out_ast_name,
+	call	fopen	 ;
+	movq	%rax, %rsi	 ; tmp151, out_ast_file
+ ; D:\TC\src\compiler.c:99:         if (out_ast_file == NULL)
+	testq	%rax, %rax	 ; out_ast_file
+	je	.L62	 ;,
+ ; D:\TC\src\compiler.c:65:     Code* ast_root = parse_code(lexer, builtin_scope, parser);
+	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp128
+	movq	%rbx, %r8	 ; parser,
+	movq	%rdi, %rcx	 ; lexer,
+	movq	(%rax), %rdx	 ; builtin_scope, builtin_scope
+	call	parse_code	 ;
+ ; D:\TC\src\compiler.c:66:     output_code(ast_root, file, 0, parser);
+	movq	%rbx, %r9	 ; parser,
+	movq	%rsi, %rdx	 ; out_ast_file,
+	xorl	%r8d, %r8d	 ;
+ ; D:\TC\src\compiler.c:65:     Code* ast_root = parse_code(lexer, builtin_scope, parser);
+	movq	%rax, %rcx	 ; tmp153, ast_root
+ ; D:\TC\src\compiler.c:66:     output_code(ast_root, file, 0, parser);
+	call	output_code	 ;
+ ; D:\TC\src\compiler.c:67:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	call	get_info	 ;
+ ; D:\TC\src\compiler.c:67:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	movq	%rsi, %rcx	 ; out_ast_file,
+	leaq	.LC14(%rip), %rdx	 ;, tmp130
+ ; D:\TC\src\compiler.c:67:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	movq	%rax, %r8	 ;, tmp154
+ ; D:\TC\src\compiler.c:67:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 	call	fprintf	 ;
-	jmp	.L51	 ;
+ ; D:\TC\src\compiler.c:106: }
+	addq	$48, %rsp	 ;,
+ ; D:\TC\src\compiler.c:103:             fclose(out_ast_file);
+	movq	%rsi, %rcx	 ; out_ast_file,
+ ; D:\TC\src\compiler.c:106: }
+	popq	%rbx	 ;
+	popq	%rsi	 ;
+	popq	%rdi	 ;
+	popq	%rbp	 ;
+	popq	%r12	 ;
+ ; D:\TC\src\compiler.c:103:             fclose(out_ast_file);
+	jmp	fclose	 ;
 	.p2align 4,,10
 	.p2align 3
-.L57:
- ; D:\TC\src\compiler.c:83:         fprintf(stderr, "Error opening file: %s", filename);
+.L62:
+ ; D:\TC\src\compiler.c:100:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
 	call	__getreent	 ;
- ; D:\TC\src\compiler.c:83:         fprintf(stderr, "Error opening file: %s", filename);
-	movq	%rdi, %r8	 ; filename,
-	leaq	.LC20(%rip), %rdx	 ;, tmp111
-	movq	24(%rax), %rcx	 ; _1->_stderr, _1->_stderr
- ; D:\TC\src\compiler.c:113: }
+ ; D:\TC\src\compiler.c:100:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
+	movq	%rbp, %r8	 ; out_ast_name,
+	leaq	.LC19(%rip), %rdx	 ;, tmp127
+	movq	24(%rax), %rcx	 ; _9->_stderr, _9->_stderr
+ ; D:\TC\src\compiler.c:106: }
 	addq	$48, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	popq	%r12	 ;
- ; D:\TC\src\compiler.c:107:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
+ ; D:\TC\src\compiler.c:100:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
+	jmp	fprintf	 ;
+	.p2align 4,,10
+	.p2align 3
+.L58:
+ ; D:\TC\src\compiler.c:75:         fprintf(stderr, "Error opening file: %s", filename);
+	call	__getreent	 ;
+ ; D:\TC\src\compiler.c:75:         fprintf(stderr, "Error opening file: %s", filename);
+	movq	%rdi, %r8	 ; filename,
+	leaq	.LC16(%rip), %rdx	 ;, tmp115
+	movq	24(%rax), %rcx	 ; _1->_stderr, _1->_stderr
+ ; D:\TC\src\compiler.c:106: }
+	addq	$48, %rsp	 ;,
+	popq	%rbx	 ;
+	popq	%rsi	 ;
+	popq	%rdi	 ;
+	popq	%rbp	 ;
+	popq	%r12	 ;
+ ; D:\TC\src\compiler.c:100:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
 	jmp	fprintf	 ;
 	.ident	"GCC: (GNU) 13.2.0"
-	.def	strlen;	.scl	2;	.type	32;	.endef
-	.def	snprintf;	.scl	2;	.type	32;	.endef
 	.def	fseek;	.scl	2;	.type	32;	.endef
 	.def	ftell;	.scl	2;	.type	32;	.endef
-	.def	create_string;	.scl	2;	.type	32;	.endef
+	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
 	.def	fread;	.scl	2;	.type	32;	.endef
-	.def	get_next_token;	.scl	2;	.type	32;	.endef
-	.def	fwrite;	.scl	2;	.type	32;	.endef
 	.def	fprintf;	.scl	2;	.type	32;	.endef
 	.def	fputc;	.scl	2;	.type	32;	.endef
+	.def	strlen;	.scl	2;	.type	32;	.endef
+	.def	fwrite;	.scl	2;	.type	32;	.endef
+	.def	get_next_token;	.scl	2;	.type	32;	.endef
 	.def	get_info;	.scl	2;	.type	32;	.endef
 	.def	parse_code;	.scl	2;	.type	32;	.endef
 	.def	output_code;	.scl	2;	.type	32;	.endef
@@ -786,6 +753,7 @@ parse_file:
 	.def	create_lexer;	.scl	2;	.type	32;	.endef
 	.def	reset_lexer;	.scl	2;	.type	32;	.endef
 	.def	create_parser;	.scl	2;	.type	32;	.endef
+	.def	create_string;	.scl	2;	.type	32;	.endef
 	.def	change_file_extension;	.scl	2;	.type	32;	.endef
 	.def	__getreent;	.scl	2;	.type	32;	.endef
 	.section	.rdata$.refptr.builtin_scope, "dr"

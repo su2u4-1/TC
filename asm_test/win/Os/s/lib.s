@@ -80,6 +80,8 @@ alloc_memory:
 	call	init
 .L11:
 	movq	struct_memory(%rip), %rax
+	addq	$7, %rbx
+	andq	$-8, %rbx
 	movq	8(%rax), %rdx
 	addq	%rbx, %rdx
 	cmpq	(%rax), %rdx
@@ -88,14 +90,12 @@ alloc_memory:
 	call	increase_memory_size
 .L12:
 	movq	struct_memory(%rip), %rcx
-	addq	$7, %rbx
-	andq	$-8, %rbx
 	movq	8(%rcx), %rdx
 	testb	$7, %dl
 	je	.L13
 	leaq	.LC1(%rip), %r9
 	leaq	__func__.0(%rip), %r8
-	movl	$258, %edx
+	movl	$261, %edx
 	leaq	.LC2(%rip), %rcx
 	call	__assert_func
 .L13:
@@ -218,13 +218,16 @@ create_string_check:
 	popq	%rbp
 	popq	%r12
 	ret
-	.globl	create_string
-	.def	create_string;	.scl	2;	.type	32;	.endef
-create_string:
-	movl	$1, %r8d
+	.globl	create_string_not_check
+	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
+create_string_not_check:
+	xorl	%r8d, %r8d
 	jmp	create_string_check
-	.globl	init
-	.def	init;	.scl	2;	.type	32;	.endef
+	.section .rdata,"dr"
+.LC4:
+	.ascii "init\0"
+	.text
+	.def	init;	.scl	3;	.type	32;	.endef
 init:
 	cmpb	$0, initialized(%rip)
 	jne	.L44
@@ -314,6 +317,11 @@ init:
 	incq	%rbx
 	cmpq	$30, %rbx
 	jne	.L40
+	xorl	%r8d, %r8d
+	movl	$4, %edx
+	leaq	.LC4(%rip), %rcx
+	call	create_string_check
+	movq	%rax, CONSTRUCTOR_NAME(%rip)
 	movq	keywordList(%rip), %rax
 	movq	%rax, IMPORT_KEYWORD(%rip)
 	movq	8+keywordList(%rip), %rax
@@ -426,6 +434,11 @@ init:
 	ret
 .L44:
 	ret
+	.globl	create_string
+	.def	create_string;	.scl	2;	.type	32;	.endef
+create_string:
+	movl	$1, %r8d
+	jmp	create_string_check
 	.globl	is_keyword
 	.def	is_keyword;	.scl	2;	.type	32;	.endef
 is_keyword:
@@ -433,22 +446,22 @@ is_keyword:
 	movq	%rcx, %rbx
 	subq	$32, %rsp
 	cmpb	$0, initialized(%rip)
-	jne	.L48
+	jne	.L49
 	call	init
-.L48:
+.L49:
 	xorl	%eax, %eax
 	leaq	keywordList(%rip), %rdx
-.L50:
+.L51:
 	cmpq	%rbx, (%rdx,%rax,8)
-	je	.L51
+	je	.L52
 	incq	%rax
 	cmpq	$22, %rax
-	jne	.L50
+	jne	.L51
 	xorl	%eax, %eax
-	jmp	.L47
-.L51:
+	jmp	.L48
+.L52:
 	movb	$1, %al
-.L47:
+.L48:
 	addq	$32, %rsp
 	popq	%rbx
 	ret
@@ -459,11 +472,11 @@ string_equal:
 	sete	%al
 	ret
 	.section .rdata,"dr"
-.LC4:
-	.ascii "\0"
 .LC5:
-	.ascii "%zu/%zu bytes\0"
+	.ascii "\0"
 .LC6:
+	.ascii "%zu/%zu bytes\0"
+.LC7:
 	.ascii "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu\0"
 	.text
 	.globl	get_info
@@ -477,18 +490,18 @@ get_info:
 	pushq	%rbx
 	subq	$64, %rsp
 	movq	all_string_list(%rip), %rax
-.L56:
+.L57:
 	testq	%rax, %rax
-	je	.L59
+	je	.L60
 	movq	16(%rax), %rax
 	incq	%rbp
-	jmp	.L56
-.L59:
-	leaq	.LC4(%rip), %rbx
+	jmp	.L57
+.L60:
+	leaq	.LC5(%rip), %rbx
 	xorl	%r8d, %r8d
 	movl	$48, %edx
 	movq	%rbx, %rcx
-	leaq	.LC5(%rip), %r12
+	leaq	.LC6(%rip), %r12
 	call	create_string_check
 	movq	struct_memory_count(%rip), %r9
 	movq	%r12, %rdx
@@ -520,7 +533,7 @@ get_info:
 	movq	%rax, %rbx
 	movq	memoryBlockCount(%rip), %rax
 	movq	%rdi, 32(%rsp)
-	leaq	.LC6(%rip), %rdx
+	leaq	.LC7(%rip), %rdx
 	movq	%rbx, %rcx
 	movq	%rax, 48(%rsp)
 	call	sprintf
@@ -774,6 +787,10 @@ FROM_KEYWORD:
 	.align 8
 IMPORT_KEYWORD:
 	.space 8
+	.globl	CONSTRUCTOR_NAME
+	.align 8
+CONSTRUCTOR_NAME:
+	.space 8
 	.globl	all_string_list
 	.align 8
 all_string_list:
@@ -794,69 +811,68 @@ struct_memory:
 symbolList:
 	.space 240
 	.section .rdata,"dr"
-.LC7:
-	.ascii "(\0"
 .LC8:
-	.ascii ")\0"
+	.ascii "(\0"
 .LC9:
-	.ascii "{\0"
+	.ascii ")\0"
 .LC10:
-	.ascii "}\0"
+	.ascii "{\0"
 .LC11:
-	.ascii ",\0"
+	.ascii "}\0"
 .LC12:
-	.ascii "!\0"
+	.ascii ",\0"
 .LC13:
-	.ascii ".\0"
+	.ascii "!\0"
 .LC14:
-	.ascii "[\0"
+	.ascii ".\0"
 .LC15:
-	.ascii "]\0"
+	.ascii "[\0"
 .LC16:
-	.ascii ";\0"
+	.ascii "]\0"
 .LC17:
-	.ascii "_\0"
+	.ascii ";\0"
 .LC18:
-	.ascii "+\0"
+	.ascii "_\0"
 .LC19:
-	.ascii "-\0"
+	.ascii "+\0"
 .LC20:
-	.ascii "*\0"
+	.ascii "-\0"
 .LC21:
-	.ascii "/\0"
+	.ascii "*\0"
 .LC22:
-	.ascii "%\0"
+	.ascii "/\0"
 .LC23:
-	.ascii "<\0"
+	.ascii "%\0"
 .LC24:
-	.ascii ">\0"
+	.ascii "<\0"
 .LC25:
-	.ascii "=\0"
+	.ascii ">\0"
 .LC26:
-	.ascii "==\0"
+	.ascii "=\0"
 .LC27:
-	.ascii "!=\0"
+	.ascii "==\0"
 .LC28:
-	.ascii "<=\0"
+	.ascii "!=\0"
 .LC29:
-	.ascii ">=\0"
+	.ascii "<=\0"
 .LC30:
-	.ascii "+=\0"
+	.ascii ">=\0"
 .LC31:
-	.ascii "-=\0"
+	.ascii "+=\0"
 .LC32:
-	.ascii "*=\0"
+	.ascii "-=\0"
 .LC33:
-	.ascii "/=\0"
+	.ascii "*=\0"
 .LC34:
-	.ascii "%=\0"
+	.ascii "/=\0"
 .LC35:
-	.ascii "&&\0"
+	.ascii "%=\0"
 .LC36:
+	.ascii "&&\0"
+.LC37:
 	.ascii "||\0"
 	.align 32
 symbolStrings:
-	.quad	.LC7
 	.quad	.LC8
 	.quad	.LC9
 	.quad	.LC10
@@ -886,59 +902,59 @@ symbolStrings:
 	.quad	.LC34
 	.quad	.LC35
 	.quad	.LC36
+	.quad	.LC37
 	.globl	keywordList
 	.bss
 	.align 32
 keywordList:
 	.space 176
 	.section .rdata,"dr"
-.LC37:
-	.ascii "import\0"
 .LC38:
-	.ascii "from\0"
+	.ascii "import\0"
 .LC39:
-	.ascii "func\0"
+	.ascii "from\0"
 .LC40:
-	.ascii "class\0"
+	.ascii "func\0"
 .LC41:
-	.ascii "method\0"
+	.ascii "class\0"
 .LC42:
-	.ascii "self\0"
+	.ascii "method\0"
 .LC43:
-	.ascii "if\0"
+	.ascii "self\0"
 .LC44:
-	.ascii "elif\0"
+	.ascii "if\0"
 .LC45:
-	.ascii "else\0"
+	.ascii "elif\0"
 .LC46:
-	.ascii "while\0"
+	.ascii "else\0"
 .LC47:
-	.ascii "for\0"
+	.ascii "while\0"
 .LC48:
-	.ascii "true\0"
+	.ascii "for\0"
 .LC49:
-	.ascii "false\0"
+	.ascii "true\0"
 .LC50:
-	.ascii "return\0"
+	.ascii "false\0"
 .LC51:
-	.ascii "break\0"
+	.ascii "return\0"
 .LC52:
-	.ascii "continue\0"
+	.ascii "break\0"
 .LC53:
-	.ascii "int\0"
+	.ascii "continue\0"
 .LC54:
-	.ascii "float\0"
+	.ascii "int\0"
 .LC55:
-	.ascii "string\0"
+	.ascii "float\0"
 .LC56:
-	.ascii "bool\0"
+	.ascii "string\0"
 .LC57:
-	.ascii "void\0"
+	.ascii "bool\0"
 .LC58:
+	.ascii "void\0"
+.LC59:
 	.ascii "var\0"
 	.align 32
 keywordStrings:
-	.quad	.LC37
 	.quad	.LC38
 	.quad	.LC39
 	.quad	.LC40
@@ -960,6 +976,7 @@ keywordStrings:
 	.quad	.LC56
 	.quad	.LC57
 	.quad	.LC58
+	.quad	.LC59
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	malloc;	.scl	2;	.type	32;	.endef
 	.def	__getreent;	.scl	2;	.type	32;	.endef
