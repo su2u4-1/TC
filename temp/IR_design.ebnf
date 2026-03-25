@@ -7,11 +7,11 @@ attribute ::= identifier(type) attribute_name offset
 parameter ::= identifier(type) parameter_name
 global ::= identifier(type) var_name
 local ::= identifier(type) var_name
-attribute_name ::= "a" integer
-parameter_name ::= "p" integer
-var_name ::= "v" integer
-temp_var_name ::= "t" integer
-block_name ::= "b" integer
+attribute_name ::= "$a" integer
+parameter_name ::= "$p" integer
+var_name ::= "$v" integer
+temp_var_name ::= "$t" integer
+block_name ::= "$b" integer
 instruction ::= add arg(result) arg(var_a) arg(var_b)
               | sub arg(result) arg(var_a) arg(var_b)
               | mul arg(result) arg(var_a) arg(var_b)
