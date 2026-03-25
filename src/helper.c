@@ -70,6 +70,10 @@ pointer list_pop_back(list() list) {
     return content;
 }
 
+bool list_is_empty(list() list) {
+    return list == NULL || list->head == NULL || list->tail == NULL;
+}
+
 // parser helper functions
 Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope) {
     static size_t id_counter = 0;

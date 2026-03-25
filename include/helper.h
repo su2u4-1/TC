@@ -22,6 +22,7 @@ void list_append(list() list, pointer item);
 list() list_copy(list() original);
 pointer list_pop(list() list);
 pointer list_pop_back(list() list);
+bool list_is_empty(list() list);
 
 // parser helper functions
 Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope);
