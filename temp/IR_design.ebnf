@@ -1,10 +1,11 @@
-TAC ::= { design } entry_point { subroutine }
+TAC ::= { design } entry_point global { subroutine }
 design ::= identifier(class_name) integer(size) { attribute }
 entry_point ::= identifier(subroutine_name)
-subroutine ::= identifier(subroutine_name) { parameter } { local } { block }
+subroutine ::= identifier(subroutine_name) identifier(return_type) { parameter } { local } { block }
 block ::= block_name { instruction }
 attribute ::= identifier(type) attribute_name offset
 parameter ::= identifier(type) parameter_name
+global ::= identifier(type) var_name
 local ::= identifier(type) var_name
 attribute_name ::= "a" integer
 parameter_name ::= "p" integer

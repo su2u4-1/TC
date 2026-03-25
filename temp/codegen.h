@@ -6,23 +6,25 @@
 typedef struct TAC {
     list(AttributeTable*) attribute_tables;
     Symbol* entry_point;
+    list(Var*) global_vars;
     list(Subroutine*) subroutines;
 } TAC;
 typedef struct Subroutine {
     Symbol* name;
+    Symbol* return_type;
     list(Var*) parameters;
     list(Var*) local_vars;
     list(Block*) blocks;
 } Subroutine;
-typedef struct Block {
-    Symbol* label;
-    list(Instruction*) instructions;
-} Block;
 typedef struct Var {
     Symbol* original_name;
-    Symbol* name;
+    string name;
     Symbol* type;
 } Var;
+typedef struct Block {
+    Var* label;
+    list(Instruction*) instructions;
+} Block;
 typedef enum ArgType {
     ARG_VARIABLE,
     ARG_INT,
@@ -40,7 +42,7 @@ typedef struct Arg {
         double float_value;
         string string_value;
         bool bool_value;
-        Symbol* label;
+        Var* label;
     } value;
     ArgType type;
 } Arg;
@@ -109,8 +111,7 @@ typedef enum VarType {
 } VarType;
 
 TAC* codegen_code(Code* code);
-void codegen_code_member(CodeMember* code_member, TACStatus* status);
-void codegen_import(Import* import, TACStatus* status);
+void codegen_import(Import* import, TAC* tac, TACStatus* status);
 void codegen_function(Function* function, TACStatus* status);
 void codegen_method(Method* method, TACStatus* status);
 void codegen_class_member(ClassMember* class_member, TACStatus* status);

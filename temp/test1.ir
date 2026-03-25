@@ -5,8 +5,10 @@ TAC {
         }
     ]
     entry_point: main
+    global: []
     subroutines: [
         Test1.constructor {
+            return_type: Test1
             parameters: [
                 int p0
             ]
@@ -28,6 +30,7 @@ TAC {
             ]
         }
         Test1.init {
+            return_type: Test1
             parameters: [
                 Test1 p1
                 int   p2
@@ -44,6 +47,7 @@ TAC {
             ]
         }
         Test1.get_a {
+            return_type: int
             parameters: [
                 Test1 p3
             ]
@@ -58,6 +62,7 @@ TAC {
             ]
         }
         Test1.set_a {
+            return_type: void
             parameters: [
                 Test1 p4
                 int   p5
@@ -74,6 +79,7 @@ TAC {
             ]
         }
         main {
+            return_type: int
             parameters: []
             local: [
                 Test1 v0
