@@ -82,7 +82,9 @@ Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, Symbo
     new_name->kind = kind;
     new_name->type = type;
     new_name->scope = scope;
-    if (kind == SYMBOL_CLASS || kind == SYMBOL_SUBROUTINE)
+    if (scope == NULL)
+        fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\n", original_name, kind, new_name->id);
+    else if (kind == SYMBOL_CLASS || kind == SYMBOL_SUBROUTINE)
         list_append(scope->parent->symbols, (pointer)new_name);
     else
         list_append(scope->symbols, (pointer)new_name);
