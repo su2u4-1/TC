@@ -8,7 +8,7 @@ CodeMember* create_code_member(CodeMemberType type, Import* import_content, Func
     else if (type == CODE_FUNCTION && function_content != NULL)
         code_member->content.function = function_content;
     else if (type == CODE_CLASS && class_content != NULL)
-        code_member->content.class_ = class_content;
+        code_member->content.class = class_content;
     else {
         if (import_content == NULL && function_content == NULL && class_content == NULL)
             fprintf(stderr, "Error creating code member: content is NULL\n");

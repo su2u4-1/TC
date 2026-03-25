@@ -97,7 +97,7 @@ struct CodeMember {
     union {
         Import* import;
         Function* function;
-        Class* class_;
+        Class* class;
     } content;
     CodeMemberType type;
 };

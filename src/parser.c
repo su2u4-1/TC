@@ -44,10 +44,10 @@ Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
                 parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
             list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
-            Class* class_ = parse_class(lexer, global_scope, parser);
-            if (class_ == NULL)
+            Class* class = parse_class(lexer, global_scope, parser);
+            if (class == NULL)
                 parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
-            list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class_));
+            list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
         } else
             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
         token = get_next_token(lexer, true);

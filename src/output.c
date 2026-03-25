@@ -29,7 +29,7 @@ void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, P
             break;
         case CODE_CLASS:
             ast_output(0, false, "class\n");
-            output_class(code_member->content.class_, outfile, indent + 1, parser);
+            output_class(code_member->content.class, outfile, indent + 1, parser);
             break;
         default:
             ast_output(0, false, "unknown_CodeMemberType: %u\n", code_member->type);
