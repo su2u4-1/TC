@@ -4,7 +4,7 @@
 #include "parser.h"
 
 static AttributeTable* find_attribute_table(TACStatus* status, Symbol* name) {
-    list(AttributeTable*) attribute_tables = list_copy(status->attribute_tables);
+    list(AttributeTable*) attribute_tables = list_copy(status->tac->attribute_tables);
     AttributeTable* current;
     while ((current = (AttributeTable*)list_pop(attribute_tables)) != NULL)
         if (current->name == name)
@@ -46,7 +46,7 @@ static TAC* create_tac(void) {
 }
 static TACStatus* create_tac_status(TAC* tac) {
     TACStatus* status = (TACStatus*)alloc_memory(sizeof(TACStatus));
-    status->attribute_tables = tac->attribute_tables;
+    status->tac = tac;
     status->current_subroutine = NULL;
     status->current_block = NULL;
     status->end_labels = create_list();
@@ -87,11 +87,37 @@ static Var* create_var(Symbol* original_name, Symbol* type, VarType kind, TACSta
     }
     var->name = create_string("", 32);
     if (id == (size_t)-1)
-        sprintf(var->name, "%d-error", kind);
+        sprintf(var->name, "$%d-error", kind);
     else
-        sprintf(var->name, "%c%zu", kind, id);
+        sprintf(var->name, "$%c%zu", kind, id);
     var->type = type;
     return var;
+}
+static Instruction* create_instruction(InstructionType type, Arg* arg1, Arg* arg2, Arg* arg3) {
+    Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
+    inst->type = type;
+    inst->arg1 = arg1;
+    inst->arg2 = arg2;
+    inst->arg3 = arg3;
+    return inst;
+}
+static Arg* create_arg(ArgType type, void* value) {
+    Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
+    arg->type = type;
+    switch (type) {
+        case ARG_VARIABLE: arg->value.variable = (Symbol*)value; break;
+        case ARG_INT: arg->value.int_value = *(long long*)value; break;
+        case ARG_FLOAT: arg->value.float_value = *(double*)value; break;
+        case ARG_STRING: arg->value.string_value = (string)value; break;
+        case ARG_BOOL: arg->value.bool_value = *(bool*)value; break;
+        case ARG_VOID: arg->value.string_value = NULL; break;
+        case ARG_LABEL: arg->value.label = (Var*)value; break;
+        case ARG_NONE:
+        default:
+            fprintf(stderr, "[warning] Unsupported argument type for create_arg: %d\n", type);
+            break;
+    }
+    return arg;
 }
 
 TAC* codegen_code(Code* code) {
@@ -106,7 +132,7 @@ TAC* codegen_code(Code* code) {
             if (strcmp(code_member->content.function->name->original_name, "main") == 0)
                 tac->entry_point = code_member->content.function->name;
         } else if (code_member->type == CODE_CLASS)
-            codegen_class(code_member->content.class_, status);
+            codegen_class(code_member->content.class, status);
         else if (code_member->type == CODE_IMPORT)
             codegen_import(code_member->content.import, tac, status);
     }
@@ -117,26 +143,70 @@ void codegen_import(Import* import, TAC* tac, TACStatus* status) {
         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_VAR, status));
 }
 void codegen_function(Function* function, TACStatus* status) {
+    // create subroutine
     Subroutine* subroutine = create_subroutine(function->name, function->return_type);
     status->current_subroutine = subroutine;
-
+    list_append(status->tac->subroutines, (pointer)subroutine);
+    // add parameters
     list(Variable*) parameters = list_copy(function->parameters);
     Variable* parameter;
     while ((parameter = (Variable*)list_pop(parameters)) != NULL)
         list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
-
+    // add block
     Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
     list_append(subroutine->blocks, (pointer)block);
     status->current_block = block;
-
+    // execute statements
     list(Statement*) statements = list_copy(function->body);
     Statement* statement;
     while ((statement = (Statement*)list_pop(statements)) != NULL)
         codegen_statement(statement, status);
+    // reset current subroutine
+    status->current_subroutine = NULL;
 }
-void codegen_method(Method* method, TACStatus* status) {}
-void codegen_class_member(ClassMember* class_member, TACStatus* status) {}
-void codegen_class(Class* class, TACStatus* status) {}
+void codegen_method(Method* method, Symbol* class_name, TACStatus* status) {
+    // create method symbol
+    string method_full_name = create_string("", strlen(class_name->original_name) + 2 + strlen(method->name->original_name));
+    sprintf(method_full_name, "%s.%s", class_name->original_name, method->name->original_name);
+    Symbol* method_symbol = create_symbol(method_full_name, SYMBOL_SUBROUTINE, method->return_type, method->method_scope->parent->parent);
+    // create subroutine
+    Subroutine* subroutine = create_subroutine(method_symbol, method->return_type);
+    status->current_subroutine = subroutine;
+    list_append(status->tac->subroutines, (pointer)subroutine);
+    // add parameters
+    list(Variable*) parameters = list_copy(method->parameters);
+    Variable* parameter;
+    while ((parameter = (Variable*)list_pop(parameters)) != NULL)
+        list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
+    // add block
+    Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
+    list_append(subroutine->blocks, (pointer)block);
+    status->current_block = block;
+    // execute statements
+    list(Statement*) statements = list_copy(method->body);
+    Statement* statement;
+    while ((statement = (Statement*)list_pop(statements)) != NULL)
+        codegen_statement(statement, status);
+    // reset current subroutine
+    status->current_subroutine = NULL;
+}
+void codegen_class(Class* class, TACStatus* status) {
+    list(ClassMember*) members = list_copy(class->members);
+    ClassMember* member;
+    while ((member = (ClassMember*)list_pop(members)) != NULL) {
+        switch (member->type) {
+            case CLASS_METHOD:
+                codegen_method(member->content.method, class->name, status);
+                break;
+            case CLASS_VARIABLE:
+                codegen_variable(member->content.variable, status, VAR_ATTR);
+                break;
+            default:
+                fprintf(stderr, "[warning] Unsupported class member type for codegen_class: %d\n", member->type);
+                break;
+        }
+    }
+}
 void codegen_variable(Variable* variable, TACStatus* status, VarType type) {
     Var* var = create_var(variable->name, variable->type, type, status);
     switch (type) {
@@ -156,10 +226,228 @@ void codegen_variable(Variable* variable, TACStatus* status, VarType type) {
             break;
     }
 }
-void codegen_statement(Statement* statement, TACStatus* status) {}
-void codegen_if(If* if_, TACStatus* status) {}
-void codegen_for(For* for_, TACStatus* status) {}
-void codegen_while(While* while_, TACStatus* status) {}
-Arg* codegen_expression(Expression* expression, TACStatus* status) {}
-Arg* codegen_primary(Primary* primary, TACStatus* status) {}
-Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status) {}
+void codegen_statement(Statement* statement, TACStatus* status) {
+    switch (statement->type) {
+        case EXPRESSION_STATEMENT: codegen_expression(statement->stmt.expr, status); break;
+        case VARIABLE_STATEMENT: codegen_variable(statement->stmt.var, status, VAR_VAR); break;
+        case IF_STATEMENT: codegen_if(statement->stmt.if_stmt, status); break;
+        case WHILE_STATEMENT: codegen_while(statement->stmt.while_stmt, status); break;
+        case FOR_STATEMENT: codegen_for(statement->stmt.for_stmt, status); break;
+        case RETURN_STATEMENT: {
+            Arg* return_value = codegen_expression(statement->stmt.return_expr, status);
+            Instruction* inst = create_instruction(INST_RET, return_value, NULL, NULL);
+            list_append(status->current_block->instructions, (pointer)inst);
+            break;
+        }
+        case BREAK_STATEMENT:
+            if (!list_is_empty(status->end_labels)) {
+                Arg* label = (Arg*)status->end_labels->tail->content;
+                if (label != NULL) {
+                    Instruction* inst = create_instruction(INST_JMP, label, NULL, NULL);
+                    list_append(status->current_block->instructions, (pointer)inst);
+                    break;
+                }
+            }
+            fprintf(stderr, "[warning] 'break' statement used outside of loop\n");
+            break;
+        case CONTINUE_STATEMENT:
+            if (!list_is_empty(status->start_labels)) {
+                Arg* label = (Arg*)status->start_labels->tail->content;
+                if (label != NULL) {
+                    Instruction* inst = create_instruction(INST_JMP, label, NULL, NULL);
+                    list_append(status->current_block->instructions, (pointer)inst);
+                    break;
+                }
+            }
+            fprintf(stderr, "[warning] 'continue' statement used outside of loop\n");
+            break;
+        default:
+            fprintf(stderr, "[warning] Unsupported statement type for codegen_statement: %d\n", statement->type);
+            break;
+    }
+}
+void codegen_if(If* if_, TACStatus* status) {
+    // create labels
+    Var* then_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Var* else_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Var* end_label = NULL;
+    if (list_is_empty(if_->else_if) && list_is_empty(if_->else_body))
+        end_label = else_label;
+    else
+        end_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Arg* end_block_arg = create_arg(ARG_LABEL, end_label);
+    // execute condition
+    Arg* condition = codegen_expression(if_->condition, status);
+    Instruction* inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, then_label), create_arg(ARG_LABEL, else_label));
+    list_append(status->current_block->instructions, (pointer)inst);
+    // add then block
+    Block* then_block = create_block(then_label);
+    list_append(status->current_subroutine->blocks, (pointer)then_block);
+    status->current_block = then_block;
+    // execute then statements
+    list(Statement*) then_statements = list_copy(if_->body);
+    Statement* statement;
+    while ((statement = (Statement*)list_pop(then_statements)) != NULL)
+        codegen_statement(statement, status);
+    // jump to end block
+    Instruction* jump_to_end = create_instruction(INST_JMP, end_block_arg, NULL, NULL);
+    list_append(status->current_block->instructions, (pointer)jump_to_end);
+    // run else if
+    if (!list_is_empty(if_->else_if)) {
+        // iterate else if blocks
+        list(ElseIf*) elif_list = list_copy(if_->else_if);
+        ElseIf* elif;
+        while ((elif = (ElseIf*)list_pop(elif_list)) != NULL) {
+            // add else if condition block
+            Block* else_if_block = create_block(else_label);
+            list_append(status->current_subroutine->blocks, (pointer)else_if_block);
+            status->current_block = else_if_block;
+            // create labels for else if
+            then_label = create_var(NULL, NULL, VAR_BLOCK, status);
+            else_label = create_var(NULL, NULL, VAR_BLOCK, status);
+            // execute condition
+            condition = codegen_expression(elif->condition, status);
+            if (list_is_empty(elif_list) && list_is_empty(if_->else_body))
+                else_label = end_label;
+            inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, then_label), create_arg(ARG_LABEL, else_label));
+            list_append(status->current_block->instructions, (pointer)inst);
+            // add else if block
+            then_block = create_block(then_label);
+            list_append(status->current_subroutine->blocks, (pointer)then_block);
+            status->current_block = then_block;
+            // execute else if statements
+            list(Statement*) elif_statements = list_copy(elif->body);
+            Statement* elif_statement;
+            while ((elif_statement = (Statement*)list_pop(elif_statements)) != NULL)
+                codegen_statement(elif_statement, status);
+            // jump to end block
+            jump_to_end = create_instruction(INST_JMP, end_block_arg, NULL, NULL);
+            list_append(status->current_block->instructions, (pointer)jump_to_end);
+        }
+    }
+    // run else
+    if (!list_is_empty(if_->else_body)) {
+        // add else block
+        Block* else_block = create_block(else_label);
+        list_append(status->current_subroutine->blocks, (pointer)else_block);
+        status->current_block = else_block;
+        // execute else statements
+        list(Statement*) else_statements = list_copy(if_->else_body);
+        Statement* else_statement;
+        while ((else_statement = (Statement*)list_pop(else_statements)) != NULL)
+            codegen_statement(else_statement, status);
+        // jump to end block
+        jump_to_end = create_instruction(INST_JMP, end_block_arg, NULL, NULL);
+        list_append(status->current_block->instructions, (pointer)jump_to_end);
+    }
+    // add end block
+    Block* end_block = create_block(end_label);
+    list_append(status->current_subroutine->blocks, (pointer)end_block);
+    status->current_block = end_block;
+}
+void codegen_for(For* for_, TACStatus* status) {
+    // execute initializer
+    if (for_->initializer != NULL)
+        codegen_variable(for_->initializer, status, VAR_VAR);
+    // create labels
+    Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    if (for_->condition != NULL) {
+        // add condition check block
+        Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, condition_label), NULL, NULL);
+        list_append(status->current_block->instructions, (pointer)inst);
+        Block* condition_block = create_block(condition_label);
+        list_append(status->current_subroutine->blocks, (pointer)condition_block);
+        status->current_block = condition_block;
+        // execute condition
+        Arg* condition = codegen_expression(for_->condition, status);
+        inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, body_label), create_arg(ARG_LABEL, end_label));
+        list_append(status->current_block->instructions, (pointer)inst);
+    } else {
+        // jump to body if no condition
+        Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, body_label), NULL, NULL);
+        list_append(status->current_block->instructions, (pointer)inst);
+    }
+    // add body block
+    Block* body_block = create_block(body_label);
+    list_append(status->current_subroutine->blocks, (pointer)body_block);
+    status->current_block = body_block;
+    // execute body statements
+    Var* increment_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    if (for_->increment != NULL)
+        list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, increment_label));
+    else if (for_->condition != NULL)
+        list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, condition_label));
+    else
+        list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, body_label));
+    list_append(status->end_labels, (pointer)create_arg(ARG_LABEL, end_label));
+    list(Statement*) body_statements = list_copy(for_->body);
+    Statement* statement;
+    while ((statement = (Statement*)list_pop(body_statements)) != NULL)
+        codegen_statement(statement, status);
+    list_pop_back(status->start_labels);
+    list_pop_back(status->end_labels);
+    if (for_->increment != NULL) {
+        // execute increment
+        Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, increment_label), NULL, NULL);
+        list_append(status->current_block->instructions, (pointer)inst);
+        Block* increment_block = create_block(increment_label);
+        list_append(status->current_subroutine->blocks, (pointer)increment_block);
+        status->current_block = increment_block;
+        codegen_expression(for_->increment, status);
+    }
+    // jump to condition check
+    Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, condition_label), NULL, NULL);
+    if (for_->condition == NULL)
+        inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, body_label), NULL, NULL);
+    list_append(status->current_block->instructions, (pointer)inst);
+    // add end block
+    Block* end_block = create_block(end_label);
+    list_append(status->current_subroutine->blocks, (pointer)end_block);
+    status->current_block = end_block;
+}
+void codegen_while(While* while_, TACStatus* status) {
+    // add condition check block
+    Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, condition_label), NULL, NULL);
+    list_append(status->current_block->instructions, (pointer)inst);
+    Block* condition_block = create_block(condition_label);
+    list_append(status->current_subroutine->blocks, (pointer)condition_block);
+    status->current_block = condition_block;
+    // execute condition
+    Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Arg* condition = codegen_expression(while_->condition, status);
+    inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, body_label), create_arg(ARG_LABEL, end_label));
+    list_append(status->current_block->instructions, (pointer)inst);
+    // add body block
+    Block* body_block = create_block(body_label);
+    list_append(status->current_subroutine->blocks, (pointer)body_block);
+    status->current_block = body_block;
+    // execute body statements
+    list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, condition_label));
+    list_append(status->end_labels, (pointer)create_arg(ARG_LABEL, end_label));
+    list(Statement*) body_statements = list_copy(while_->body);
+    Statement* statement;
+    while ((statement = (Statement*)list_pop(body_statements)) != NULL)
+        codegen_statement(statement, status);
+    list_pop_back(status->start_labels);
+    list_pop_back(status->end_labels);
+    // jump to condition check
+    inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, condition_label), NULL, NULL);
+    list_append(status->current_block->instructions, (pointer)inst);
+    // add end block
+    Block* end_block = create_block(end_label);
+    list_append(status->current_subroutine->blocks, (pointer)end_block);
+    status->current_block = end_block;
+}
+Arg* codegen_expression(Expression* expression, TACStatus* status) {
+    return NULL;
+}
+Arg* codegen_primary(Primary* primary, TACStatus* status) {
+    return NULL;
+}
+Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status) {
+    return NULL;
+}
