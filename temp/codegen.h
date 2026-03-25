@@ -4,7 +4,7 @@
 #include "parser.h"
 
 typedef struct TAC {
-    list(SymbolTable*) designs;
+    list(AttributeTable*) attribute_tables;
     Symbol* entry_point;
     list(Subroutine*) subroutines;
 } TAC;
@@ -78,15 +78,26 @@ typedef struct Instruction {
     Arg* arg3;
     InstructionType type;
 } Instruction;
-
+typedef struct AttributeTable {
+    list(Attribute*) attributes;
+    Symbol* name;
+} AttributeTable;
+typedef struct Attribute {
+    Symbol* var_name;
+    Symbol* type;
+    size_t offset;
+} Attribute;
 typedef struct TACStatus {
-    list(SymbolTable*) designs;
+    list(AttributeTable*) attribute_tables;
     Subroutine* current_subroutine;
     Block* current_block;
     list(Arg*) end_labels;
     list(Arg*) start_labels;
-    size_t id_count;
-    bool is_get;
+    size_t attr_count;
+    size_t param_count;
+    size_t var_count;
+    size_t temp_count;
+    size_t block_count;
 } TACStatus;
 
 typedef enum VarType {
