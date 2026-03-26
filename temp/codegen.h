@@ -33,18 +33,22 @@ typedef enum ArgType {
     ARG_BOOL,
     ARG_VOID,
     ARG_LABEL,
+    ARG_SUBROUTINE,
     ARG_NONE
 } ArgType;
 typedef struct Arg {
     union {
-        Symbol* variable;
+        Var* variable;
         long long int_value;
         double float_value;
         string string_value;
         bool bool_value;
         Var* label;
+        Var* subroutine;
     } value;
-    ArgType type;
+    ArgType kind;
+    Symbol* type;
+    bool is_get;
 } Arg;
 typedef enum InstructionType {
     INST_ADD,       // +
@@ -83,6 +87,7 @@ typedef struct Instruction {
 typedef struct AttributeTable {
     list(Attribute*) attributes;
     Symbol* name;
+    size_t size;
 } AttributeTable;
 typedef struct Attribute {
     Symbol* var_name;
@@ -100,6 +105,7 @@ typedef struct TACStatus {
     size_t var_count;
     size_t temp_count;
     size_t block_count;
+    size_t subroutine_count;
 } TACStatus;
 
 typedef enum VarType {
@@ -108,6 +114,7 @@ typedef enum VarType {
     VAR_VAR = 'v',
     VAR_TEMP = 't',
     VAR_BLOCK = 'b',
+    VAR_SUBROUTINE = 'f'
 } VarType;
 
 TAC* codegen_code(Code* code);

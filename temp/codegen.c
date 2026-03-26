@@ -11,6 +11,29 @@ static AttributeTable* find_attribute_table(TACStatus* status, Symbol* name) {
             return current;
     return NULL;
 }
+static AttributeTable* create_attribute_table(Symbol* name) {
+    AttributeTable* table = (AttributeTable*)alloc_memory(sizeof(AttributeTable));
+    table->attributes = create_list();
+    table->name = name;
+    table->size = 0;
+    return table;
+}
+static Attribute* create_attribute(Symbol* var_name, Symbol* type, AttributeTable* table, size_t offset) {
+    Attribute* attr = (Attribute*)alloc_memory(sizeof(Attribute));
+    attr->var_name = var_name;
+    attr->type = type;
+    // attr->offset = offset;
+    // if (offset == 0) {
+    //     // TODO: handle different type sizes
+    //     attr->offset = table->size;
+    //     table->size += 8;
+    // }
+    list_append(table->attributes, (pointer)attr);
+    return attr;
+}
+static bool is_assignment_operator(OperatorType op) {
+    return op == OP_ASSIGN || op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN;
+}
 static InstructionType get_instruction_type(OperatorType op) {
     switch (op) {
         case OP_ADD:
@@ -56,6 +79,7 @@ static TACStatus* create_tac_status(TAC* tac) {
     status->var_count = 0;
     status->temp_count = 0;
     status->block_count = 0;
+    status->subroutine_count = 0;
     return status;
 }
 static Subroutine* create_subroutine(Symbol* name, Symbol* return_type) {
@@ -83,6 +107,7 @@ static Var* create_var(Symbol* original_name, Symbol* type, VarType kind, TACSta
         case VAR_VAR: id = status->var_count++; break;
         case VAR_TEMP: id = status->temp_count++; break;
         case VAR_BLOCK: id = status->block_count++; break;
+        case VAR_SUBROUTINE: id = status->subroutine_count++; break;
         default: id = (size_t)-1; break;
     }
     var->name = create_string("", 32);
@@ -101,21 +126,57 @@ static Instruction* create_instruction(InstructionType type, Arg* arg1, Arg* arg
     inst->arg3 = arg3;
     return inst;
 }
-static Arg* create_arg(ArgType type, void* value) {
+static Arg* create_arg(ArgType kind, void* value) {
     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-    arg->type = type;
-    switch (type) {
-        case ARG_VARIABLE: arg->value.variable = (Symbol*)value; break;
-        case ARG_INT: arg->value.int_value = *(long long*)value; break;
-        case ARG_FLOAT: arg->value.float_value = *(double*)value; break;
-        case ARG_STRING: arg->value.string_value = (string)value; break;
-        case ARG_BOOL: arg->value.bool_value = *(bool*)value; break;
-        case ARG_VOID: arg->value.string_value = NULL; break;
-        case ARG_LABEL: arg->value.label = (Var*)value; break;
+    arg->kind = kind;
+    arg->type = NULL;
+    switch (kind) {
+        case ARG_VARIABLE:
+            arg->value.variable = (Var*)value;
+            arg->type = arg->value.variable->type;
+            break;
+        case ARG_INT:
+            arg->value.int_value = *(long long*)value;
+            arg->type = name_int;
+            break;
+        case ARG_FLOAT:
+            arg->value.float_value = *(double*)value;
+            arg->type = name_float;
+            break;
+        case ARG_STRING:
+            arg->value.string_value = (string)value;
+            arg->type = name_string;
+            break;
+        case ARG_BOOL:
+            arg->value.bool_value = *(bool*)value;
+            arg->type = name_bool;
+            break;
+        case ARG_VOID:
+            arg->value.string_value = NULL;
+            arg->type = name_void;
+            break;
+        case ARG_LABEL:
+            arg->value.label = (Var*)value;
+            break;
+        case ARG_SUBROUTINE:
+            arg->value.subroutine = (Var*)value;
+            arg->type = arg->value.subroutine->type;
+            break;
         case ARG_NONE:
         default:
-            fprintf(stderr, "[warning] Unsupported argument type for create_arg: %d\n", type);
+            fprintf(stderr, "[warning] Unsupported argument type for create_arg: %d\n", kind);
             break;
+    }
+    arg->is_get = false;
+    return arg;
+}
+static Arg* load_rvalue(Arg* arg, TACStatus* status) {
+    if (arg == NULL)
+        return NULL;
+    if (arg->is_get) {
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, arg->type, VAR_TEMP, status));
+        list_append(status->current_block->instructions, (pointer)create_instruction(INST_LOAD, temp, arg, NULL));
+        return temp;
     }
     return arg;
 }
@@ -141,12 +202,19 @@ TAC* codegen_code(Code* code) {
 void codegen_import(Import* import, TAC* tac, TACStatus* status) {
     if (import->name->kind == SYMBOL_VARIABLE)
         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_VAR, status));
+    else if (import->name->kind == SYMBOL_SUBROUTINE)
+        list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_SUBROUTINE, status));
+    else if (import->name->kind == SYMBOL_CLASS)
+        list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name));
+    else
+        fprintf(stderr, "[warning] Unsupported symbol kind for import: %d\n", import->name->kind);
 }
 void codegen_function(Function* function, TACStatus* status) {
     // create subroutine
     Subroutine* subroutine = create_subroutine(function->name, function->return_type);
     status->current_subroutine = subroutine;
     list_append(status->tac->subroutines, (pointer)subroutine);
+    // list_append(status->tac->global_vars, (pointer)create_var(function->name, function->name->type, VAR_SUBROUTINE, status));
     // add parameters
     list(Variable*) parameters = list_copy(function->parameters);
     Variable* parameter;
@@ -173,11 +241,18 @@ void codegen_method(Method* method, Symbol* class_name, TACStatus* status) {
     Subroutine* subroutine = create_subroutine(method_symbol, method->return_type);
     status->current_subroutine = subroutine;
     list_append(status->tac->subroutines, (pointer)subroutine);
+    // list_append(status->tac->global_vars, (pointer)create_var(method_symbol, method_symbol->type, VAR_SUBROUTINE, status));
     // add parameters
     list(Variable*) parameters = list_copy(method->parameters);
     Variable* parameter;
-    while ((parameter = (Variable*)list_pop(parameters)) != NULL)
+    // size_t param_count = 0;
+    while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
         list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
+        // ++param_count;
+    }
+    // AttributeTable* attr_table = find_attribute_table(status, class_name);
+    // Attribute* attr = create_attribute(method_symbol, method_symbol->type, attr_table, param_count);
+    // list_append(attr_table->attributes, (pointer)attr);
     // add block
     Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
     list_append(subroutine->blocks, (pointer)block);
@@ -193,6 +268,8 @@ void codegen_method(Method* method, Symbol* class_name, TACStatus* status) {
 void codegen_class(Class* class, TACStatus* status) {
     list(ClassMember*) members = list_copy(class->members);
     ClassMember* member;
+    // AttributeTable* attr_table = create_attribute_table(class->name);
+    // list_append(status->tac->attribute_tables, (pointer)attr_table);
     while ((member = (ClassMember*)list_pop(members)) != NULL) {
         switch (member->type) {
             case CLASS_METHOD:
@@ -219,7 +296,15 @@ void codegen_variable(Variable* variable, TACStatus* status, VarType type) {
         case VAR_TEMP:
             list_append(status->current_subroutine->local_vars, (pointer)var);
             break;
-        case VAR_ATTR:
+        case VAR_SUBROUTINE:
+            list_append(status->tac->global_vars, (pointer)var);
+            break;
+        case VAR_ATTR: {
+            // AttributeTable* attr_table = (AttributeTable*)list_pop_back(status->tac->attribute_tables);
+            // list_append(status->tac->attribute_tables, (pointer)attr_table);
+            // create_attribute(variable->name, variable->type, attr_table, 0);
+            break;
+        }
         case VAR_BLOCK:
         default:
             fprintf(stderr, "[warning] Unsupported variable type for codegen_variable: %d\n", type);
@@ -443,11 +528,126 @@ void codegen_while(While* while_, TACStatus* status) {
     status->current_block = end_block;
 }
 Arg* codegen_expression(Expression* expression, TACStatus* status) {
-    return NULL;
+    if (expression->operator == OP_NONE)
+        return codegen_primary(expression->prim_left, status);
+    Arg* right = load_rvalue(codegen_expression(expression->right, status), status);
+    InstructionType op = get_instruction_type(expression->operator);
+    Arg* left = codegen_expression(expression->expr_left, status);
+    Instruction* inst;
+    if (is_assignment_operator(expression->operator)) {
+        if (op != INST_ASSIGN) {
+            Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, left->type, VAR_TEMP, status));
+            inst = create_instruction(op, temp, load_rvalue(left, status), right);
+            list_append(status->current_block->instructions, (pointer)inst);
+            right = temp;
+        }
+        if (left->kind != ARG_VARIABLE)
+            fprintf(stderr, "[warning] Left-hand side of assignment is not a variable\n");
+        inst = create_instruction(INST_ASSIGN, left, right, NULL);
+        if (left->is_get)
+            inst = create_instruction(INST_STORE, left, right, NULL);
+    } else {
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, left->type, VAR_TEMP, status));
+        inst = create_instruction(op, temp, load_rvalue(left, status), right);
+        right = temp;
+    }
+    list_append(status->current_block->instructions, (pointer)inst);
+    return right;
 }
 Arg* codegen_primary(Primary* primary, TACStatus* status) {
-    return NULL;
+    switch (primary->type) {
+        case PRIM_INTEGER: {
+            long long t = strtoll(primary->value.literal_value, NULL, 10);
+            return create_arg(ARG_INT, &t);
+        }
+        case PRIM_FLOAT: {
+            double t = strtod(primary->value.literal_value, NULL);
+            return create_arg(ARG_FLOAT, &t);
+        }
+        case PRIM_STRING: return create_arg(ARG_STRING, primary->value.literal_value);
+        case PRIM_TRUE: {
+            bool t = true;
+            return create_arg(ARG_BOOL, &t);
+        }
+        case PRIM_FALSE: {
+            bool t = false;
+            return create_arg(ARG_BOOL, &t);
+        }
+        case PRIM_EXPRESSION: return codegen_expression(primary->value.expr, status);
+        case PRIM_NOT_OPERAND: {
+            Arg* operand = load_rvalue(codegen_primary(primary->value.operand, status), status);
+            Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, name_bool, VAR_TEMP, status));
+            Instruction* inst = create_instruction(INST_NOT, temp, operand, NULL);
+            list_append(status->current_block->instructions, (pointer)inst);
+            return temp;
+        }
+        case PRIM_NEG_OPERAND: {
+            Arg* operand = load_rvalue(codegen_primary(primary->value.operand, status), status);
+            Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, operand->type, VAR_TEMP, status));
+            Instruction* inst = NULL;
+            long long zero_int = 0;
+            double neg_one_float = -1.0;
+            if (operand->type == name_int)
+                inst = create_instruction(INST_SUB, temp, create_arg(ARG_INT, &zero_int), operand);
+            else if (operand->type == name_float)
+                inst = create_instruction(INST_MUL, temp, create_arg(ARG_FLOAT, &neg_one_float), operand);
+            else {
+                fprintf(stderr, "[warning] Unsupported type for negation: %s\n", operand->type->original_name);
+                return NULL;
+            }
+            list_append(status->current_block->instructions, (pointer)inst);
+            return temp;
+        }
+        case PRIM_VARIABLE_ACCESS: return codegen_variable_access(primary->value.var, status);
+        default:
+            fprintf(stderr, "[warning] Unsupported primary type for codegen_primary: %d\n", primary->type);
+            return NULL;
+    }
 }
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status) {
-    return NULL;
+    // if (variable_access == NULL) return NULL;
+    // if ((variable_access->base == NULL) != (variable_access->type == VAR_NAME)) {
+    //     fprintf(stderr, "[error] Invalid variable access: base is %s but type is %d\n", variable_access->base == NULL ? "NULL" : "not NULL", variable_access->type);
+    //     return NULL;
+    // }
+    // if (variable_access->type == VAR_NAME) {
+    //     if (variable_access->content.name->kind == SYMBOL_SUBROUTINE) {
+    //         list(Var*) vars = list_copy(status->tac->global_vars);
+    //         Var* var;
+    //         while ((var = (Var*)list_pop(vars)) != NULL) {
+    //             if (var->original_name == variable_access->content.name) {
+    //                 return create_arg(ARG_SUBROUTINE, var);
+    //             }
+    //         }
+    //     } else {
+    //         Var* var = create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status);
+    //         return create_arg(ARG_VARIABLE, var);
+    //     }
+    // }
+    // if (variable_access->base == NULL) {
+    //     fprintf(stderr, "[error] Invalid variable access: base is NULL for non-name type\n");
+    //     return NULL;
+    // }
+    // Arg* base = codegen_variable_access(variable_access->base, status);
+    // if (base == NULL) {
+    //     fprintf(stderr, "[error] Failed to generate code for variable access base\n");
+    //     return NULL;
+    // }
+    // if (variable_access->type == VAR_FUNC_CALL) {
+    //     list(Expression*) args = list_copy(variable_access->content.args);
+    //     Expression* arg;
+    //     long long arg_count = 0;
+    //     while ((arg = (Expression*)list_pop(args)) != NULL) {
+    //         codegen_expression(arg, status);
+    //         ++arg_count;
+    //     }
+    //     Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, NULL, VAR_TEMP, status));
+    //     Instruction* inst = create_instruction(INST_CALL, temp, base, create_arg(ARG_INT, &arg_count));
+    //     list_append(status->current_block->instructions, (pointer)inst);
+    //     return temp;
+    // } else if (variable_access->type == VAR_GET_ATTR) {
+    //     variable_access->content.attr_name;
+    // } else if (variable_access->type == VAR_GET_SEQ) {
+    //     variable_access->content.index;
+    // }
 }
