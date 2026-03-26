@@ -21,9 +21,8 @@ CodeMember* create_code_member(CodeMemberType type, Import* import_content, Func
 
 Code* create_code(list(CodeMember*) members, SymbolTable* global_scope) {
     Code* code = (Code*)alloc_memory(sizeof(Code));
-    Code* code_ptr = code;
-    code_ptr->members = members;
-    code_ptr->global_scope = global_scope;
+    code->members = members;
+    code->global_scope = global_scope;
     return code;
 }
 
@@ -33,9 +32,8 @@ Import* create_import(Symbol* name, string source) {
         return NULL;
     }
     Import* import = (Import*)alloc_memory(sizeof(Import));
-    Import* import_ptr = import;
-    import_ptr->name = name;
-    import_ptr->source = source;
+    import->name = name;
+    import->source = source;
     return import;
 }
 
@@ -45,12 +43,11 @@ Function* create_function(Symbol* name, Symbol* return_type, list(Variable*) par
         return NULL;
     }
     Function* function = (Function*)alloc_memory(sizeof(Function));
-    Function* function_ptr = function;
-    function_ptr->name = name;
-    function_ptr->return_type = return_type;
-    function_ptr->parameters = parameters;
-    function_ptr->body = body;
-    function_ptr->function_scope = function_scope;
+    function->name = name;
+    function->return_type = return_type;
+    function->parameters = parameters;
+    function->body = body;
+    function->function_scope = function_scope;
     return function;
 }
 
@@ -60,23 +57,21 @@ Method* create_method(Symbol* name, Symbol* return_type, list(Variable*) paramet
         return NULL;
     }
     Method* method = (Method*)alloc_memory(sizeof(Method));
-    Method* method_ptr = method;
-    method_ptr->name = name;
-    method_ptr->return_type = return_type;
-    method_ptr->parameters = parameters;
-    method_ptr->body = body;
-    method_ptr->method_scope = method_scope;
+    method->name = name;
+    method->return_type = return_type;
+    method->parameters = parameters;
+    method->body = body;
+    method->method_scope = method_scope;
     return method;
 }
 
 ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content) {
     ClassMember* class_member = (ClassMember*)alloc_memory(sizeof(ClassMember));
-    ClassMember* class_member_ptr = class_member;
-    class_member_ptr->type = type;
+    class_member->type = type;
     if (type == CLASS_METHOD && method_content != NULL)
-        class_member_ptr->content.method = method_content;
+        class_member->content.method = method_content;
     else if (type == CLASS_VARIABLE && variable_content != NULL)
-        class_member_ptr->content.variable = variable_content;
+        class_member->content.variable = variable_content;
     else {
         if (method_content == NULL && variable_content == NULL)
             fprintf(stderr, "Error creating class member: content is NULL\n");
@@ -93,10 +88,9 @@ Class* create_class(Symbol* name, list(ClassMember*) members, SymbolTable* class
         return NULL;
     }
     Class* class = (Class*)alloc_memory(sizeof(Class));
-    Class* class_ptr = class;
-    class_ptr->name = name;
-    class_ptr->members = members;
-    class_ptr->class_scope = class_scope;
+    class->name = name;
+    class->members = members;
+    class->class_scope = class_scope;
     return class;
 }
 
@@ -106,31 +100,29 @@ Variable* create_variable(Symbol* type, Symbol* name, Expression* value) {
         return NULL;
     }
     Variable* variable = (Variable*)alloc_memory(sizeof(Variable));
-    Variable* variable_ptr = variable;
-    variable_ptr->type = type;
-    variable_ptr->name = name;
-    variable_ptr->value = value;
+    variable->type = type;
+    variable->name = name;
+    variable->value = value;
     return variable;
 }
 
 Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt) {
     Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
-    Statement* statement_ptr = statement;
-    statement_ptr->type = type;
+    statement->type = type;
     if (type == EXPRESSION_STATEMENT && expr != NULL)
-        statement_ptr->stmt.expr = expr;
+        statement->stmt.expr = expr;
     else if (type == VARIABLE_STATEMENT && var_stmt != NULL)
-        statement_ptr->stmt.var = var_stmt;
+        statement->stmt.var = var_stmt;
     else if (type == IF_STATEMENT && if_stmt != NULL)
-        statement_ptr->stmt.if_stmt = if_stmt;
+        statement->stmt.if_stmt = if_stmt;
     else if (type == WHILE_STATEMENT && while_stmt != NULL)
-        statement_ptr->stmt.while_stmt = while_stmt;
+        statement->stmt.while_stmt = while_stmt;
     else if (type == FOR_STATEMENT && for_stmt != NULL)
-        statement_ptr->stmt.for_stmt = for_stmt;
+        statement->stmt.for_stmt = for_stmt;
     else if (type == RETURN_STATEMENT)
-        statement_ptr->stmt.return_expr = expr;
+        statement->stmt.return_expr = expr;
     else if (type == BREAK_STATEMENT || type == CONTINUE_STATEMENT)
-        statement_ptr->stmt.expr = NULL;
+        statement->stmt.expr = NULL;
     else {
         if (if_stmt == NULL && while_stmt == NULL && for_stmt == NULL && expr == NULL && var_stmt == NULL)
             fprintf(stderr, "Error creating statement: content is NULL\n");
@@ -147,11 +139,10 @@ If* create_if(Expression* condition, list(Statement*) body, list(ElseIf*) else_i
         return NULL;
     }
     If* if_ = (If*)alloc_memory(sizeof(If));
-    If* if_ptr = if_;
-    if_ptr->condition = condition;
-    if_ptr->body = body;
-    if_ptr->else_if = else_if;
-    if_ptr->else_body = else_body;
+    if_->condition = condition;
+    if_->body = body;
+    if_->else_if = else_if;
+    if_->else_body = else_body;
     return if_;
 }
 
@@ -161,27 +152,24 @@ ElseIf* create_else_if(Expression* condition, list(Statement*) body) {
         return NULL;
     }
     ElseIf* else_if = (ElseIf*)alloc_memory(sizeof(ElseIf));
-    ElseIf* else_if_ptr = else_if;
-    else_if_ptr->condition = condition;
-    else_if_ptr->body = body;
+    else_if->condition = condition;
+    else_if->body = body;
     return else_if;
 }
 
 For* create_for(Variable* initializer, Expression* condition, Expression* increment, list(Statement*) body) {
     For* for_ = (For*)alloc_memory(sizeof(For));
-    For* for_ptr = for_;
-    for_ptr->initializer = initializer;
-    for_ptr->condition = condition;
-    for_ptr->increment = increment;
-    for_ptr->body = body;
+    for_->initializer = initializer;
+    for_->condition = condition;
+    for_->increment = increment;
+    for_->body = body;
     return for_;
 }
 
 While* create_while(Expression* condition, list(Statement*) body) {
     While* while_ = (While*)alloc_memory(sizeof(While));
-    While* while_ptr = while_;
-    while_ptr->condition = condition;
-    while_ptr->body = body;
+    while_->condition = condition;
+    while_->body = body;
     return while_;
 }
 
@@ -195,32 +183,30 @@ Expression* create_expression(OperatorType operator, Expression* expr_left, Prim
         return NULL;
     }
     Expression* expression = (Expression*)alloc_memory(sizeof(Expression));
-    Expression* expression_ptr = expression;
-    expression_ptr->operator = operator;
+    expression->operator = operator;
     if (expr_left != NULL)
-        expression_ptr->expr_left = expr_left;
+        expression->expr_left = expr_left;
     else if (prim_left != NULL)
-        expression_ptr->prim_left = prim_left;
+        expression->prim_left = prim_left;
     else {
         fprintf(stderr, "Error creating expression: both expr_left and prim_left are NULL\n");
         return NULL;
     }
-    expression_ptr->right = right;
+    expression->right = right;
     return expression;
 }
 
 Primary* create_primary(PrimaryType type, string str_value, Expression* expr_value, Primary* prim_value, VariableAccess* variable_value) {
     Primary* primary = (Primary*)alloc_memory(sizeof(Primary));
-    Primary* primary_ptr = primary;
-    primary_ptr->type = type;
+    primary->type = type;
     if ((type == PRIM_INTEGER || type == PRIM_FLOAT || type == PRIM_STRING || type == PRIM_TRUE || type == PRIM_FALSE) && str_value != NULL)
-        primary_ptr->value.literal_value = str_value;
+        primary->value.literal_value = str_value;
     else if (type == PRIM_EXPRESSION && expr_value != NULL)
-        primary_ptr->value.expr = expr_value;
+        primary->value.expr = expr_value;
     else if ((type == PRIM_NOT_OPERAND || type == PRIM_NEG_OPERAND) && prim_value != NULL)
-        primary_ptr->value.operand = prim_value;
+        primary->value.operand = prim_value;
     else if (type == PRIM_VARIABLE_ACCESS && variable_value != NULL)
-        primary_ptr->value.var = variable_value;
+        primary->value.var = variable_value;
     else {
         if (str_value == NULL && expr_value == NULL && prim_value == NULL && variable_value == NULL)
             fprintf(stderr, "Error creating primary: value is NULL\n");
@@ -237,17 +223,16 @@ VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* 
         return NULL;
     }
     VariableAccess* variable_access = (VariableAccess*)alloc_memory(sizeof(VariableAccess));
-    VariableAccess* variable_access_ptr = variable_access;
-    variable_access_ptr->type = type;
-    variable_access_ptr->base = base;
+    variable_access->type = type;
+    variable_access->base = base;
     if (type == VAR_NAME && name_content != NULL)
-        variable_access_ptr->content.name = name_content;
+        variable_access->content.name = name_content;
     else if (type == VAR_FUNC_CALL && args_content != NULL)
-        variable_access_ptr->content.args = args_content;
+        variable_access->content.args = args_content;
     else if (type == VAR_GET_SEQ && expr_content != NULL)
-        variable_access_ptr->content.index = expr_content;
+        variable_access->content.index = expr_content;
     else if (type == VAR_GET_ATTR && name_content != NULL)
-        variable_access_ptr->content.attr_name = name_content;
+        variable_access->content.attr_name = name_content;
     else {
         if (name_content == NULL && expr_content == NULL && args_content == NULL)
             fprintf(stderr, "Error creating variable access: content is NULL\n");
