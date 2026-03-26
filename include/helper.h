@@ -25,7 +25,7 @@ pointer list_pop_back(list() list);
 bool list_is_empty(list() list);
 
 // parser helper functions
-Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope);
+Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node);
 SymbolTable* create_symbol_table(SymbolTable* parent);
 Symbol* search_name(SymbolTable* scope, string name);
 bool is_builtin_type(string type);

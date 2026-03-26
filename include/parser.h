@@ -219,14 +219,15 @@ struct Symbol {
     // for SYMBOL_LOCAL_VAR and SYMBOL_PARAM, type points to the variable type symbol
     // for SYMBOL_ATTRIBUTE, type points to the attribute type symbol
     Symbol* type;
-    // for SYMBOL_CLASS and SYMBOL_SUBROUTINE, scope of the class or subroutine
-    // for SYMBOL_LOCAL_VAR and SYMBOL_PARAM, scope of the declaring function or method
-    // for SYMBOL_ATTRIBUTE, scope of the declaring class
-    // for SYMBOL_TYPE, scope of global scope
-    SymbolTable* scope;
-    string original_name;
+    string name;
     size_t id;
     SymbolType kind;
+    union {
+        Class* class;        // for SYMBOL_CLASS
+        Function* function;  // for SYMBOL_FUNCTION
+        Method* method;      // for SYMBOL_METHOD
+        SymbolTable* scope;  // for SYMBOL_VARIABLE, SYMBOL_PARAM, SYMBOL_ATTRIBUTE, SYMBOL_TYPE. use current scope for them to allow searching
+    } ast_node;
 };
 
 typedef struct Lexer Lexer;

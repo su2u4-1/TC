@@ -120,7 +120,7 @@ typedef enum VarType {
 TAC* codegen_code(Code* code);
 void codegen_import(Import* import, TAC* tac, TACStatus* status);
 void codegen_function(Function* function, TACStatus* status);
-void codegen_method(Method* method, Symbol* class_name, TACStatus* status);
+void codegen_method(Method* method, TACStatus* status);
 void codegen_class_member(ClassMember* class_member, TACStatus* status);
 void codegen_class(Class* class, TACStatus* status);
 void codegen_variable(Variable* variable, TACStatus* status, VarType type);

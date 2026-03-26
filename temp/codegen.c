@@ -18,17 +18,31 @@ static AttributeTable* create_attribute_table(Symbol* name) {
     table->size = 0;
     return table;
 }
+static size_t get_type_size(Symbol* type) {
+    if (type == NULL)
+        return 0;
+    if (type == name_int || type == name_float || type == name_string)
+        return 8;
+    if (type == name_bool || type == name_void)
+        return 1;
+    if (type->kind == SYMBOL_CLASS)
+        return type->ast_node.class->size;
+    fprintf(stderr, "[warning] Unsupported type for size lookup: %s\n", type->name);
+    return 8;
+}
 static Attribute* create_attribute(Symbol* var_name, Symbol* type, AttributeTable* table, size_t offset) {
     Attribute* attr = (Attribute*)alloc_memory(sizeof(Attribute));
     attr->var_name = var_name;
     attr->type = type;
-    // attr->offset = offset;
-    // if (offset == 0) {
-    //     // TODO: handle different type sizes
-    //     attr->offset = table->size;
-    //     table->size += 8;
-    // }
-    list_append(table->attributes, (pointer)attr);
+    attr->offset = offset;
+    if (offset == 0) {
+        attr->offset = table->size;
+        table->size += get_type_size(type);
+    }
+    if (table == NULL || table->attributes == NULL)
+        fprintf(stderr, "Error: create_attribute received NULL table or attributes list\n");
+    else
+        list_append(table->attributes, (pointer)attr);
     return attr;
 }
 static bool is_assignment_operator(OperatorType op) {
@@ -190,7 +204,7 @@ TAC* codegen_code(Code* code) {
     while ((code_member = (CodeMember*)list_pop(members)) != NULL) {
         if (code_member->type == CODE_FUNCTION) {
             codegen_function(code_member->content.function, status);
-            if (strcmp(code_member->content.function->name->original_name, "main") == 0)
+            if (strcmp(code_member->content.function->name->name, "main") == 0)
                 tac->entry_point = code_member->content.function->name;
         } else if (code_member->type == CODE_CLASS)
             codegen_class(code_member->content.class, status);
@@ -202,7 +216,7 @@ TAC* codegen_code(Code* code) {
 void codegen_import(Import* import, TAC* tac, TACStatus* status) {
     if (import->name->kind == SYMBOL_VARIABLE)
         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_VAR, status));
-    else if (import->name->kind == SYMBOL_SUBROUTINE)
+    else if (import->name->kind == SYMBOL_FUNCTION || import->name->kind == SYMBOL_METHOD)
         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_SUBROUTINE, status));
     else if (import->name->kind == SYMBOL_CLASS)
         list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name));
@@ -214,7 +228,6 @@ void codegen_function(Function* function, TACStatus* status) {
     Subroutine* subroutine = create_subroutine(function->name, function->return_type);
     status->current_subroutine = subroutine;
     list_append(status->tac->subroutines, (pointer)subroutine);
-    // list_append(status->tac->global_vars, (pointer)create_var(function->name, function->name->type, VAR_SUBROUTINE, status));
     // add parameters
     list(Variable*) parameters = list_copy(function->parameters);
     Variable* parameter;
@@ -232,27 +245,16 @@ void codegen_function(Function* function, TACStatus* status) {
     // reset current subroutine
     status->current_subroutine = NULL;
 }
-void codegen_method(Method* method, Symbol* class_name, TACStatus* status) {
-    // create method symbol
-    string method_full_name = create_string("", strlen(class_name->original_name) + 2 + strlen(method->name->original_name));
-    sprintf(method_full_name, "%s.%s", class_name->original_name, method->name->original_name);
-    Symbol* method_symbol = create_symbol(method_full_name, SYMBOL_SUBROUTINE, method->return_type, method->method_scope->parent->parent);
+void codegen_method(Method* method, TACStatus* status) {
     // create subroutine
-    Subroutine* subroutine = create_subroutine(method_symbol, method->return_type);
+    Subroutine* subroutine = create_subroutine(method->name, method->return_type);
     status->current_subroutine = subroutine;
     list_append(status->tac->subroutines, (pointer)subroutine);
-    // list_append(status->tac->global_vars, (pointer)create_var(method_symbol, method_symbol->type, VAR_SUBROUTINE, status));
     // add parameters
     list(Variable*) parameters = list_copy(method->parameters);
     Variable* parameter;
-    // size_t param_count = 0;
-    while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
+    while ((parameter = (Variable*)list_pop(parameters)) != NULL)
         list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
-        // ++param_count;
-    }
-    // AttributeTable* attr_table = find_attribute_table(status, class_name);
-    // Attribute* attr = create_attribute(method_symbol, method_symbol->type, attr_table, param_count);
-    // list_append(attr_table->attributes, (pointer)attr);
     // add block
     Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
     list_append(subroutine->blocks, (pointer)block);
@@ -268,12 +270,14 @@ void codegen_method(Method* method, Symbol* class_name, TACStatus* status) {
 void codegen_class(Class* class, TACStatus* status) {
     list(ClassMember*) members = list_copy(class->members);
     ClassMember* member;
-    // AttributeTable* attr_table = create_attribute_table(class->name);
-    // list_append(status->tac->attribute_tables, (pointer)attr_table);
+    AttributeTable* attr_table = create_attribute_table(class->name);
+    // parser already computes class object size; keep it for later type-size lookup in codegen.
+    attr_table->size = class->size;
+    list_append(status->tac->attribute_tables, (pointer)attr_table);
     while ((member = (ClassMember*)list_pop(members)) != NULL) {
         switch (member->type) {
             case CLASS_METHOD:
-                codegen_method(member->content.method, class->name, status);
+                codegen_method(member->content.method, status);
                 break;
             case CLASS_VARIABLE:
                 codegen_variable(member->content.variable, status, VAR_ATTR);
@@ -300,9 +304,9 @@ void codegen_variable(Variable* variable, TACStatus* status, VarType type) {
             list_append(status->tac->global_vars, (pointer)var);
             break;
         case VAR_ATTR: {
-            // AttributeTable* attr_table = (AttributeTable*)list_pop_back(status->tac->attribute_tables);
-            // list_append(status->tac->attribute_tables, (pointer)attr_table);
-            // create_attribute(variable->name, variable->type, attr_table, 0);
+            AttributeTable* attr_table = (AttributeTable*)list_pop_back(status->tac->attribute_tables);
+            list_append(status->tac->attribute_tables, (pointer)attr_table);
+            create_attribute(variable->name, variable->type, attr_table, 0);
             break;
         }
         case VAR_BLOCK:
@@ -592,7 +596,7 @@ Arg* codegen_primary(Primary* primary, TACStatus* status) {
             else if (operand->type == name_float)
                 inst = create_instruction(INST_MUL, temp, create_arg(ARG_FLOAT, &neg_one_float), operand);
             else {
-                fprintf(stderr, "[warning] Unsupported type for negation: %s\n", operand->type->original_name);
+                fprintf(stderr, "[warning] Unsupported type for negation: %s\n", operand->type->name);
                 return NULL;
             }
             list_append(status->current_block->instructions, (pointer)inst);
@@ -605,49 +609,5 @@ Arg* codegen_primary(Primary* primary, TACStatus* status) {
     }
 }
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status) {
-    // if (variable_access == NULL) return NULL;
-    // if ((variable_access->base == NULL) != (variable_access->type == VAR_NAME)) {
-    //     fprintf(stderr, "[error] Invalid variable access: base is %s but type is %d\n", variable_access->base == NULL ? "NULL" : "not NULL", variable_access->type);
-    //     return NULL;
-    // }
-    // if (variable_access->type == VAR_NAME) {
-    //     if (variable_access->content.name->kind == SYMBOL_SUBROUTINE) {
-    //         list(Var*) vars = list_copy(status->tac->global_vars);
-    //         Var* var;
-    //         while ((var = (Var*)list_pop(vars)) != NULL) {
-    //             if (var->original_name == variable_access->content.name) {
-    //                 return create_arg(ARG_SUBROUTINE, var);
-    //             }
-    //         }
-    //     } else {
-    //         Var* var = create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status);
-    //         return create_arg(ARG_VARIABLE, var);
-    //     }
-    // }
-    // if (variable_access->base == NULL) {
-    //     fprintf(stderr, "[error] Invalid variable access: base is NULL for non-name type\n");
-    //     return NULL;
-    // }
-    // Arg* base = codegen_variable_access(variable_access->base, status);
-    // if (base == NULL) {
-    //     fprintf(stderr, "[error] Failed to generate code for variable access base\n");
-    //     return NULL;
-    // }
-    // if (variable_access->type == VAR_FUNC_CALL) {
-    //     list(Expression*) args = list_copy(variable_access->content.args);
-    //     Expression* arg;
-    //     long long arg_count = 0;
-    //     while ((arg = (Expression*)list_pop(args)) != NULL) {
-    //         codegen_expression(arg, status);
-    //         ++arg_count;
-    //     }
-    //     Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, NULL, VAR_TEMP, status));
-    //     Instruction* inst = create_instruction(INST_CALL, temp, base, create_arg(ARG_INT, &arg_count));
-    //     list_append(status->current_block->instructions, (pointer)inst);
-    //     return temp;
-    // } else if (variable_access->type == VAR_GET_ATTR) {
-    //     variable_access->content.attr_name;
-    // } else if (variable_access->type == VAR_GET_SEQ) {
-    //     variable_access->content.index;
-    // }
+    return NULL;
 }

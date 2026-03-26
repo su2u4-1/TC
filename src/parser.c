@@ -102,7 +102,8 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
         return NULL;
     }
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_FUNCTION, return_type, function_scope);
+    Function* function = (Function*)alloc_memory(sizeof(Function));
+    Symbol* name = create_symbol(token->lexeme, SYMBOL_FUNCTION, return_type, function);
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
@@ -149,7 +150,7 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     parser->in_function = false;
     if (!have_return && return_type != name_void)
         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
-    return create_function(name, return_type, parameters, body, function_scope);
+    return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
 }
 Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, Parser* parser) {
     Token* token = NULL;
@@ -170,7 +171,8 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
         return NULL;
     }
-    Symbol* name = create_symbol(make_method_name(class_name->original_name, token->lexeme), SYMBOL_METHOD, return_type, method_scope);
+    Method* method = (Method*)alloc_memory(sizeof(Method));
+    Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
@@ -224,7 +226,7 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
     parser->in_method = false;
     if (!have_return && return_type != name_void)
         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
-    return create_method(name, return_type, parameters, body, method_scope);
+    return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
 }
 Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     Token* token = NULL;
@@ -234,7 +236,8 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
         return NULL;
     }
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_CLASS, NULL, class_scope);
+    Class* class = (Class*)alloc_memory(sizeof(Class));
+    Symbol* name = create_symbol(token->lexeme, SYMBOL_CLASS, NULL, class);
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
         parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
@@ -265,7 +268,7 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
                 else if (type->kind == SYMBOL_CLASS)
                     size += 8;  // pointer to object
                 else
-                    fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->original_name, type->original_name);
+                    fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->name, type->name);
             }
             token = get_next_token(lexer, true);
             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
@@ -274,7 +277,7 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
         token = get_next_token(lexer, true);
     }
-    string constructor_name = make_method_name(name->original_name, DEFAULT_CONSTRUCTOR_NAME);
+    string constructor_name = make_method_name(name->name, DEFAULT_CONSTRUCTOR_NAME);
     Symbol* constructor = search_name(class_scope, constructor_name);
     if (constructor == NULL) {
         SymbolTable* constructor_scope = create_symbol_table(class_scope);
@@ -282,7 +285,7 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     if (constructor->kind != SYMBOL_METHOD)
         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
-    return create_class(name, members, class_scope, size);
+    return create_class_use_ptr(class, name, members, class_scope, size);
 }
 Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     Token* token = NULL;
@@ -661,17 +664,17 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                 current_type = base_name->type;
         }
         if (var_scope == NULL && current_type != NULL && current_type->kind == SYMBOL_CLASS)
-            var_scope = current_type->scope;
+            var_scope = current_type->ast_node.class->class_scope;
         if (string_equal(token->lexeme, L_PAREN_SYMBOL)) {
             token = get_next_token(lexer, true);  // consume '('
             if (base_name == NULL)
                 parser_error("Cannot call undefined variable", token, get_full_path(parser->source_file));
             else if (base_name->kind == SYMBOL_CLASS) {
-                string name = make_method_name(base_name->original_name, DEFAULT_CONSTRUCTOR_NAME);
-                list(Symbol*) symbols = list_copy(base_name->scope->symbols);
+                string name = make_method_name(base_name->name, DEFAULT_CONSTRUCTOR_NAME);
+                list(Symbol*) symbols = list_copy(base_name->ast_node.class->class_scope->symbols);
                 Symbol* symbol;
                 while ((symbol = (Symbol*)list_pop(symbols)) != NULL) {
-                    if (strcmp(symbol->original_name, name) == 0) {
+                    if (strcmp(symbol->name, name) == 0) {
                         base_name = symbol;
                         break;
                     }
@@ -700,7 +703,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
             current_type = NULL;
             var_scope = NULL;
             if (base_name->kind == SYMBOL_CLASS)
-                var_scope = base_name->scope;
+                var_scope = base_name->ast_node.class->class_scope;
         } else if (string_equal(token->lexeme, L_BRACKET_SYMBOL)) {
             token = get_next_token(lexer, true);  // consume '['
             token = get_next_token(lexer, true);
@@ -729,15 +732,15 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                 string class_name = NULL;
                 if (current_type != NULL) {
                     if (current_type->kind == SYMBOL_CLASS)
-                        class_name = current_type->original_name;
+                        class_name = current_type->name;
                     else if (current_type->type != NULL && current_type->type->kind == SYMBOL_CLASS)
-                        class_name = current_type->type->original_name;
+                        class_name = current_type->type->name;
                 }
                 list(Symbol*) symbols = list_copy(var_scope->symbols);
                 Symbol* symbol;
                 string name = make_method_name(class_name, token->lexeme);
                 while ((symbol = (Symbol*)list_pop(symbols)) != NULL) {
-                    if (strcmp(symbol->original_name, name) == 0) {
+                    if (strcmp(symbol->name, name) == 0) {
                         base_name = symbol;
                         break;
                     }

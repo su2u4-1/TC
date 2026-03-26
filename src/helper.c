@@ -75,21 +75,43 @@ bool list_is_empty(list() list) {
 }
 
 // parser helper functions
-Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope) {
+Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node) {
     static size_t id_counter = 0;
-    Symbol* result = search_name(scope, original_name);
+    SymbolTable* scope = NULL;
+    switch (kind) {
+        case SYMBOL_CLASS: scope = ((Class*)ast_node)->class_scope->parent; break;
+        case SYMBOL_FUNCTION: scope = ((Function*)ast_node)->function_scope->parent; break;
+        case SYMBOL_METHOD: scope = ((Method*)ast_node)->method_scope->parent; break;
+        case SYMBOL_VARIABLE:
+        case SYMBOL_PARAM:
+        case SYMBOL_ATTRIBUTE:
+        case SYMBOL_TYPE: scope = (SymbolTable*)ast_node; break;
+        default:
+            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %d\n", kind);
+            break;
+    }
+    Symbol* result = search_name(scope, name);
     if (result != NULL)
-        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", original_name, result->kind, result->id, id_counter + 1);
+        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
-    new_name->original_name = original_name;
+    new_name->name = name;
     new_name->id = ++id_counter;
     new_name->kind = kind;
     new_name->type = type;
-    new_name->scope = scope;
+    switch (kind) {
+        case SYMBOL_CLASS: new_name->ast_node.class = (Class*)ast_node; break;
+        case SYMBOL_FUNCTION: new_name->ast_node.function = (Function*)ast_node; break;
+        case SYMBOL_METHOD: new_name->ast_node.method = (Method*)ast_node; break;
+        case SYMBOL_VARIABLE:
+        case SYMBOL_PARAM:
+        case SYMBOL_ATTRIBUTE:
+        case SYMBOL_TYPE: new_name->ast_node.scope = (SymbolTable*)ast_node; break;
+        default:
+            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %d\n", kind);
+            break;
+    }
     if (scope == NULL)
-        fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\n", original_name, kind, new_name->id);
-    else if (kind == SYMBOL_CLASS || kind == SYMBOL_FUNCTION || kind == SYMBOL_METHOD)
-        list_append(scope->parent->symbols, (pointer)new_name);
+        fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\n", name, kind, new_name->id);
     else
         list_append(scope->symbols, (pointer)new_name);
     return new_name;
@@ -109,7 +131,7 @@ Symbol* search_name(SymbolTable* scope, string name) {
         while (current != NULL) {
             Node* node_ptr = current;
             Symbol* current_name = (Symbol*)node_ptr->content;
-            if (string_equal(current_name->original_name, name))
+            if (string_equal(current_name->name, name))
                 return current_name;
             current = node_ptr->next;
         }
@@ -187,7 +209,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
     while (current != NULL) {
         Node* node_ptr = current;
         Symbol* current_name = (Symbol*)node_ptr->content;
-        if (string_equal(current_name->original_name, import_name)) {
+        if (string_equal(current_name->name, import_name)) {
             name = current_name;
             break;
         }

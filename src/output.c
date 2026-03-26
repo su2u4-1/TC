@@ -329,7 +329,7 @@ void output_name(Symbol* name, FILE* outfile, size_t indent, Parser* parser) {
         ast_output(0, true, "Name pointer: \"NULL\"\n");
         return;
     }
-    ast_output(0, false, "name: \"%s\"\n", name->original_name);
+    ast_output(0, false, "name: \"%s\"\n", name->name);
     ast_output(0, false, "id: %zu\n", name->id);
     switch (name->kind) {
         case SYMBOL_TYPE:
