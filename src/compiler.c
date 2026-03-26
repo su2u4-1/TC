@@ -1,6 +1,5 @@
 #include "compiler.h"
 
-#include "file.h"
 #include "helper.h"
 #include "lexer.h"
 

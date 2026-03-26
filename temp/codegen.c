@@ -1,7 +1,6 @@
 #include "codegen.h"
 
 #include "helper.h"
-#include "parser.h"
 
 static AttributeTable* find_attribute_table(TACStatus* status, Symbol* name) {
     list(AttributeTable*) attribute_tables = list_copy(status->tac->attribute_tables);
