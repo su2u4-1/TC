@@ -135,6 +135,7 @@ struct Class {
     Symbol* name;
     list(ClassMember*) members;
     SymbolTable* class_scope;
+    size_t size;
 };
 
 struct Variable {

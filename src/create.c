@@ -82,7 +82,7 @@ ClassMember* create_class_member(ClassMemberType type, Method* method_content, V
     return class_member;
 }
 
-Class* create_class(Symbol* name, list(ClassMember*) members, SymbolTable* class_scope) {
+Class* create_class(Symbol* name, list(ClassMember*) members, SymbolTable* class_scope, size_t size) {
     if (name == NULL) {
         fprintf(stderr, "Error creating class: name is NULL\n");
         return NULL;
@@ -91,6 +91,7 @@ Class* create_class(Symbol* name, list(ClassMember*) members, SymbolTable* class
     class->name = name;
     class->members = members;
     class->class_scope = class_scope;
+    class->size = size;
     return class;
 }
 

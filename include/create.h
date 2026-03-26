@@ -10,7 +10,7 @@ Import* create_import(Symbol* name, string source);
 Function* create_function(Symbol* name, Symbol* return_type, list(Variable*) parameters, list(Statement*) body, SymbolTable* function_scope);
 Method* create_method(Symbol* name, Symbol* return_type, list(Variable*) parameters, list(Statement*) body, SymbolTable* method_scope);
 ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content);
-Class* create_class(Symbol* name, list(ClassMember*) members, SymbolTable* class_scope);
+Class* create_class(Symbol* name, list(ClassMember*) members, SymbolTable* class_scope, size_t size);
 Variable* create_variable(Symbol* type, Symbol* name, Expression* value);
 Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt);
 If* create_if(Expression* condition, list(Statement*) body, list(ElseIf*) else_if, list(Statement*) else_body);

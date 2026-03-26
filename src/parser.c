@@ -1,5 +1,4 @@
 #include "create.h"
-#include "file.h"
 #include "helper.h"
 #include "lexer.h"
 
@@ -243,6 +242,7 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     list(ClassMember*) members = create_list();
     token = get_next_token(lexer, true);
+    size_t size = 0;
     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
             Method* method = parse_method(lexer, class_scope, name, parser);
@@ -254,7 +254,19 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             Variable* variable = parse_variable(lexer, class_scope, parser);
             if (variable == NULL)
                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
-            list_append(members, (pointer)create_class_member(CLASS_VARIABLE, NULL, variable));
+            ClassMember* member = create_class_member(CLASS_VARIABLE, NULL, variable);
+            list_append(members, (pointer)member);
+            if (member->type == CLASS_VARIABLE) {
+                Symbol* type = member->content.variable->type;
+                if (type == name_int || type == name_float || type == name_string)
+                    size += 8;
+                else if (type == name_bool || type == name_void)
+                    size += 1;
+                else if (type->kind == SYMBOL_CLASS)
+                    size += 8;  // pointer to object
+                else
+                    fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->original_name, type->original_name);
+            }
             token = get_next_token(lexer, true);
             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
                 parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
@@ -270,7 +282,7 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     if (constructor->kind != SYMBOL_METHOD)
         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
-    return create_class(name, members, class_scope);
+    return create_class(name, members, class_scope, size);
 }
 Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     Token* token = NULL;
@@ -655,7 +667,15 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
             if (base_name == NULL)
                 parser_error("Cannot call undefined variable", token, get_full_path(parser->source_file));
             else if (base_name->kind == SYMBOL_CLASS) {
-                base_name = search_name(base_name->scope, make_method_name(base_name->original_name, DEFAULT_CONSTRUCTOR_NAME));
+                string name = make_method_name(base_name->original_name, DEFAULT_CONSTRUCTOR_NAME);
+                list(Symbol*) symbols = list_copy(base_name->scope->symbols);
+                Symbol* symbol;
+                while ((symbol = (Symbol*)list_pop(symbols)) != NULL) {
+                    if (strcmp(symbol->original_name, name) == 0) {
+                        base_name = symbol;
+                        break;
+                    }
+                }
                 base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
             }
             if (base_name != NULL && base_name->kind != SYMBOL_FUNCTION && base_name->kind != SYMBOL_METHOD)
@@ -713,7 +733,15 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                     else if (current_type->type != NULL && current_type->type->kind == SYMBOL_CLASS)
                         class_name = current_type->type->original_name;
                 }
-                base_name = search_name(var_scope, make_method_name(class_name, token->lexeme));
+                list(Symbol*) symbols = list_copy(var_scope->symbols);
+                Symbol* symbol;
+                string name = make_method_name(class_name, token->lexeme);
+                while ((symbol = (Symbol*)list_pop(symbols)) != NULL) {
+                    if (strcmp(symbol->original_name, name) == 0) {
+                        base_name = symbol;
+                        break;
+                    }
+                }
             }
             if (base_name == NULL) {
                 parser_error("Unknown attribute name", token, get_full_path(parser->source_file));

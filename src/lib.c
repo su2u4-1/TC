@@ -274,9 +274,7 @@ bool is_keyword(const string str) {
 }
 
 inline bool string_equal(string a, string b) {
-    if (a == b) return true;
-    if (a == NULL || b == NULL) return false;
-    return strcmp(a, b) == 0;
+    return a == b;
 }
 
 string get_info(void) {
