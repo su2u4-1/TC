@@ -1,6 +1,9 @@
+#include "parser.h"
+
 #include "create.h"
 #include "helper.h"
 #include "lexer.h"
+#include "lib.h"
 
 // parser functions
 static Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
@@ -17,6 +20,7 @@ static Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* pars
 static VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
 
 Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 0 Starting parse_code\n");
     if (builtin_scope == NULL) {
         builtin_scope = create_symbol_table(NULL);
         name_void = create_symbol(VOID_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
@@ -51,13 +55,16 @@ Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
         token = get_next_token(lexer, true);
     }
+    // printf("[DEBUG] 1 Finished parse_code\n");
     return create_code(members, global_scope);
 }
 Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 2 Starting parse_import\n");
     Token* token = NULL;
     token = get_next_token(lexer, true);
     if (token->type != IDENTIFIER) {
         parser_error("Expected identifier after 'import'", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 3 Finished parse_import with error\n");
         return NULL;
     }
     string import_name = token->lexeme;
@@ -67,6 +74,7 @@ Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         token = get_next_token(lexer, true);
         if (token->type != STRING) {
             parser_error("Expected string literal after 'from'", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 4 Finished parse_import with error\n");
             return NULL;
         }
         source = token->lexeme;
@@ -74,6 +82,7 @@ Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
         parser_error("Expected ';' at end of import statement", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 5 Finished parse_import with error\n");
         return NULL;
     }
     Symbol* name;
@@ -82,31 +91,38 @@ Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         fprintf(stderr, "Failed to import module '%s' from source '%s'\n", import_name, source);
         name = create_symbol(import_name, SYMBOL_VARIABLE, name_void, now_scope);
     }
+    // printf("[DEBUG] 6 Finished parse_import\n");
     return create_import(name, source);
 }
 Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 7 Starting parse_function\n");
     Token* token = NULL;
     SymbolTable* function_scope = create_symbol_table(now_scope);
     token = get_next_token(lexer, true);
     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
         parser_error("Expected function return type after 'func'", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 8 Finished parse_function with error\n");
         return NULL;
     }
     Symbol* return_type = search_name(now_scope, token->lexeme);
     if (return_type == NULL) {
         parser_error("Unknown function return type", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 9 Finished parse_function with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
     if (token->type != IDENTIFIER) {
         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 10 Finished parse_function with error\n");
         return NULL;
     }
     Function* function = (Function*)alloc_memory(sizeof(Function));
+    function->function_scope = function_scope;
     Symbol* name = create_symbol(token->lexeme, SYMBOL_FUNCTION, return_type, function);
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 11 Finished parse_function with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
@@ -124,12 +140,14 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             token = get_next_token(lexer, true);
         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
             parser_error("Expected ',' or ')' after function parameter", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 12 Finished parse_function with error\n");
             return NULL;
         }
     }
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
         parser_error("Expected '{' to start function body", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 13 Finished parse_function with error\n");
         return NULL;
     }
     list(Statement*) body = create_list();
@@ -150,32 +168,39 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     parser->in_function = false;
     if (!have_return && return_type != name_void)
         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
+    // printf("[DEBUG] 14 Finished parse_function\n");
     return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
 }
 Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, Parser* parser) {
+    // printf("[DEBUG] 15 Starting parse_method\n");
     Token* token = NULL;
     SymbolTable* method_scope = create_symbol_table(now_scope);
     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, class_name, method_scope);
     token = get_next_token(lexer, true);
     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
         parser_error("Expected method return type after 'method'", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 16 Finished parse_method with error\n");
         return NULL;
     }
     Symbol* return_type = search_name(now_scope, token->lexeme);
     if (return_type == NULL) {
         parser_error("Unknown return type for method", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 17 Finished parse_method with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
     if (token->type != IDENTIFIER) {
         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 18 Finished parse_method with error\n");
         return NULL;
     }
     Method* method = (Method*)alloc_memory(sizeof(Method));
+    method->method_scope = method_scope;
     Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 19 Finished parse_method with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
@@ -204,6 +229,7 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
         parser_error("Expected '{' to start method body", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 20 Finished parse_method with error\n");
         return NULL;
     }
     list(Statement*) body = create_list();
@@ -226,21 +252,26 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
     parser->in_method = false;
     if (!have_return && return_type != name_void)
         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
+    // printf("[DEBUG] 21 Finished parse_method\n");
     return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
 }
 Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 22 Starting parse_class\n");
     Token* token = NULL;
     SymbolTable* class_scope = create_symbol_table(now_scope);
     token = get_next_token(lexer, true);
     if (token->type != IDENTIFIER) {
         parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 23 Finished parse_class with error\n");
         return NULL;
     }
     Class* class = (Class*)alloc_memory(sizeof(Class));
+    class->class_scope = class_scope;
     Symbol* name = create_symbol(token->lexeme, SYMBOL_CLASS, NULL, class);
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
         parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 24 Finished parse_class with error\n");
         return NULL;
     }
     list(ClassMember*) members = create_list();
@@ -280,18 +311,28 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     string constructor_name = make_method_name(name->name, DEFAULT_CONSTRUCTOR_NAME);
     Symbol* constructor = search_name(class_scope, constructor_name);
     if (constructor == NULL) {
-        SymbolTable* constructor_scope = create_symbol_table(class_scope);
-        constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, constructor_scope);
+        Method* method = (Method*)alloc_memory(sizeof(Method));
+        method->method_scope = create_symbol_table(class_scope);
+        constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, method);
+        list(Variable*) parameters = create_list();
+        Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+        list_append(parameters, (pointer)create_variable(name, self, NULL));
+        list(Statement*) body = create_list();
+        list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+        create_method_use_ptr(method, constructor, name, parameters, create_list(), method->method_scope);
     }
     if (constructor->kind != SYMBOL_METHOD)
         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
+    // printf("[DEBUG] 25 Finished parse_class\n");
     return create_class_use_ptr(class, name, members, class_scope, size);
 }
 Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 26 Starting parse_variable\n");
     Token* token = NULL;
     token = peek_current_token(lexer);
     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
         parser_error("Expected variable type", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 27 Finished parse_variable with error\n");
         return NULL;
     }
     Symbol* type = search_name(now_scope, token->lexeme);
@@ -314,9 +355,11 @@ Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         if (value == NULL)
             parser_error("Failed to parse variable initializer", token, get_full_path(parser->source_file));
     }
+    // printf("[DEBUG] 28 Finished parse_variable\n");
     return create_variable(type, name, value);
 }
 Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 29 Starting parse_statement\n");
     Token* token = NULL;
     token = peek_current_token(lexer);
     Statement* statement = NULL;
@@ -332,18 +375,22 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
             statement = create_statement(VARIABLE_STATEMENT, NULL, NULL, NULL, NULL, parse_variable(lexer, now_scope, parser));
         } else if (string_equal(token->lexeme, RETURN_KEYWORD)) {
             token = get_next_token(lexer, true);
-            if (token->type == SYMBOL && string_equal(token->lexeme, SEMICOLON_SYMBOL))
+            if (token->type == SYMBOL && string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+                // printf("[DEBUG] 30 Finished parse_statement\n");
                 return create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL);
+            }
             statement = create_statement(RETURN_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
         } else if (string_equal(token->lexeme, BREAK_KEYWORD)) {
             if (!parser->in_loop) {
                 parser_error("Cannot use 'break' outside of a loop", token, get_full_path(parser->source_file));
+                // printf("[DEBUG] 31 Finished parse_statement with error\n");
                 return NULL;
             }
             statement = create_statement(BREAK_STATEMENT, NULL, NULL, NULL, NULL, NULL);
         } else if (string_equal(token->lexeme, CONTINUE_KEYWORD)) {
             if (!parser->in_loop) {
                 parser_error("Cannot use 'continue' outside of a loop", token, get_full_path(parser->source_file));
+                // printf("[DEBUG] 32 Finished parse_statement with error\n");
                 return NULL;
             }
             statement = create_statement(CONTINUE_STATEMENT, NULL, NULL, NULL, NULL, NULL);
@@ -357,13 +404,16 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
         parser_error("Expected ';' after statement", token, get_full_path(parser->source_file));
+    // printf("[DEBUG] 33 Finished parse_statement\n");
     return statement;
 }
 If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 34 Starting parse_if\n");
     Token* token = NULL;
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after 'if'", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 35 Finished parse_if with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
@@ -373,11 +423,13 @@ If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
         parser_error("Expected ')' after if condition", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 36 Finished parse_if with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
         parser_error("Expected '{' to start if body", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 37 Finished parse_if with error\n");
         return NULL;
     }
     list(Statement*) body = create_list();
@@ -397,6 +449,7 @@ If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         token = get_next_token(lexer, true);
         if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
             parser_error("Expected '(' after 'elif'", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 38 Finished parse_if with error\n");
             return NULL;
         }
         token = get_next_token(lexer, true);
@@ -406,11 +459,13 @@ If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         token = get_next_token(lexer, true);
         if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
             parser_error("Expected ')' after else-if condition", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 39 Finished parse_if with error\n");
             return NULL;
         }
         token = get_next_token(lexer, true);
         if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
             parser_error("Expected '{' to start else-if body", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 40 Finished parse_if with error\n");
             return NULL;
         }
         list(Statement*) elif_body = create_list();
@@ -430,6 +485,7 @@ If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         token = get_next_token(lexer, true);
         if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
             parser_error("Expected '{' to start else body", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 41 Finished parse_if with error\n");
             return NULL;
         }
         token = get_next_token(lexer, true);
@@ -442,13 +498,16 @@ If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         }
     }
     token = peek_current_token(lexer);
+    // printf("[DEBUG] 42 Finished parse_if\n");
     return create_if(condition, body, else_if, else_body);
 }
 For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 43 Starting parse_for\n");
     Token* token = NULL;
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after 'for'", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 44 Finished parse_for with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
@@ -461,6 +520,7 @@ For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
         parser_error("Expected ';' after for loop initializer", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 45 Finished parse_for with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
@@ -473,6 +533,7 @@ For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
         parser_error("Expected ';' after for loop condition", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 46 Finished parse_for with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
@@ -485,11 +546,13 @@ For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
         parser_error("Expected ')' after for loop increment", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 47 Finished parse_for with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
         parser_error("Expected '{' to start for loop body", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 48 Finished parse_for with error\n");
         return NULL;
     }
     list(Statement*) body = create_list();
@@ -503,13 +566,16 @@ For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         token = get_next_token(lexer, true);
     }
     parser->in_loop = false;
+    // printf("[DEBUG] 49 Finished parse_for\n");
     return create_for(initializer, condition, increment, body);
 }
 While* parse_while(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 50 Starting parse_while\n");
     Token* token = NULL;
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after 'while'", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 51 Finished parse_while with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
@@ -519,11 +585,13 @@ While* parse_while(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
         parser_error("Expected ')' after while condition", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 52 Finished parse_while with error\n");
         return NULL;
     }
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
         parser_error("Expected '{' to start while body", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 53 Finished parse_while with error\n");
         return NULL;
     }
     list(Statement*) body = create_list();
@@ -537,9 +605,11 @@ While* parse_while(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         token = get_next_token(lexer, true);
     }
     parser->in_loop = false;
+    // printf("[DEBUG] 54 Finished parse_while\n");
     return create_while(condition, body);
 }
 static Expression* parse_expr_prec(Lexer* lexer, Expression* expr_left, int min_prec, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 55 Starting parse_expr_prec\n");
     Token* token = NULL;
     token = peek_next_token(lexer, true);
     while (token->type == SYMBOL) {
@@ -552,6 +622,7 @@ static Expression* parse_expr_prec(Lexer* lexer, Expression* expr_left, int min_
         Primary* right_primary = parse_primary(lexer, now_scope, parser);
         if (right_primary == NULL) {
             parser_error("Failed to parse right operand", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 56 Finished parse_expr_prec with error\n");
             return NULL;
         }
         Expression* right = create_expression(OP_NONE, NULL, right_primary, NULL);
@@ -562,25 +633,32 @@ static Expression* parse_expr_prec(Lexer* lexer, Expression* expr_left, int min_
             if (next_op == OP_NONE || next_prec <= op_prec)
                 break;
             right = parse_expr_prec(lexer, right, next_prec, now_scope, parser);
-            if (right == NULL)
+            if (right == NULL) {
+                // printf("[DEBUG] 57 Finished parse_expr_prec with error\n");
                 return NULL;
+            }
             token = peek_next_token(lexer, true);
         }
         expr_left = create_expression(op, expr_left, NULL, right);
         token = peek_next_token(lexer, true);
     }
     token = peek_current_token(lexer);
+    // printf("[DEBUG] 58 Finished parse_expr_prec\n");
     return expr_left;
 }
 Expression* parse_expression(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 59 Starting parse_expression\n");
     Primary* left_primary = parse_primary(lexer, now_scope, parser);
     if (left_primary == NULL) {
         parser_error("Failed to parse expression primary", peek_current_token(lexer), get_full_path(parser->source_file));
+        // printf("[DEBUG] 60 Finished parse_expression with error\n");
         return NULL;
     }
+    // printf("[DEBUG] 61 Finished parse_expression\n");
     return parse_expr_prec(lexer, create_expression(OP_NONE, NULL, left_primary, NULL), 0, now_scope, parser);
 }
 Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 62 Starting parse_primary\n");
     Token* token = NULL;
     token = peek_current_token(lexer);
     PrimaryType type;
@@ -609,11 +687,13 @@ Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         expr_value = parse_expression(lexer, now_scope, parser);
         if (expr_value == NULL) {
             parser_error("Failed to parse parenthesized expression", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 63 Finished parse_primary with error\n");
             return NULL;
         }
         token = get_next_token(lexer, true);
         if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
             parser_error("Expected ')' after expression", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 64 Finished parse_primary with error\n");
             return NULL;
         }
     } else if (token->type == SYMBOL && string_equal(token->lexeme, NOT_SYMBOL)) {
@@ -622,6 +702,7 @@ Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         prim_value = parse_primary(lexer, now_scope, parser);
         if (prim_value == NULL) {
             parser_error("Failed to parse operand of unary '!'", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 65 Finished parse_primary with error\n");
             return NULL;
         }
     } else if (token->type == SYMBOL && string_equal(token->lexeme, SUB_SYMBOL)) {
@@ -630,6 +711,7 @@ Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         prim_value = parse_primary(lexer, now_scope, parser);
         if (prim_value == NULL) {
             parser_error("Failed to parse operand of unary '-'", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 66 Finished parse_primary with error\n");
             return NULL;
         }
     } else if (token->type == IDENTIFIER || (token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD) && parser->in_method)) {
@@ -637,18 +719,23 @@ Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         variable_value = parse_variable_access(lexer, now_scope, parser);
         if (variable_value == NULL) {
             parser_error("Failed to parse variable access", token, get_full_path(parser->source_file));
+            // printf("[DEBUG] 67 Finished parse_primary with error\n");
             return NULL;
         }
     } else {
         parser_error("Unexpected token in primary expression", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 68 Finished parse_primary with error\n");
         return NULL;
     }
+    // printf("[DEBUG] 69 Finished parse_primary\n");
     return create_primary(type, str_value, expr_value, prim_value, variable_value);
 }
 VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+    // printf("[DEBUG] 70 Starting parse_variable_access\n");
     Token* token = peek_current_token(lexer);
     if (token->type != IDENTIFIER && !(token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD))) {
         parser_error("Expected variable name in variable access", token, get_full_path(parser->source_file));
+        // printf("[DEBUG] 71 Finished parse_variable_access with error\n");
         return NULL;
     }
     Symbol* current_type = NULL;
@@ -695,6 +782,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                     token = get_next_token(lexer, true);
                 else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
                     parser_error("Expected ',' or ')' after function call argument", token, get_full_path(parser->source_file));
+                    // printf("[DEBUG] 72 Finished parse_variable_access with error\n");
                     return NULL;
                 }
             }
@@ -713,6 +801,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
             token = get_next_token(lexer, true);
             if (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACKET_SYMBOL)) {
                 parser_error("Expected ']' after sequence index", token, get_full_path(parser->source_file));
+                // printf("[DEBUG] 73 Finished parse_variable_access with error\n");
                 return NULL;
             }
             base = create_variable_access(VAR_GET_SEQ, base, NULL, index, NULL);
@@ -721,10 +810,12 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
             token = get_next_token(lexer, true);
             if (var_scope == NULL) {
                 parser_error("Cannot access attribute without a valid scope", token, get_full_path(parser->source_file));
+                // printf("[DEBUG] 74 Finished parse_variable_access with error\n");
                 return NULL;
             }
             if (token->type != IDENTIFIER) {
                 parser_error("Expected attribute name after '.'", token, get_full_path(parser->source_file));
+                // printf("[DEBUG] 75 Finished parse_variable_access with error\n");
                 return NULL;
             }
             base_name = search_name(var_scope, token->lexeme);
@@ -748,6 +839,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
             }
             if (base_name == NULL) {
                 parser_error("Unknown attribute name", token, get_full_path(parser->source_file));
+                // printf("[DEBUG] 76 Finished parse_variable_access with error\n");
                 return NULL;
             }
             base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
@@ -757,5 +849,6 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
             break;
         token = peek_next_token(lexer, true);
     }
+    // printf("[DEBUG] 77 Finished parse_variable_access\n");
     return base;
 }
