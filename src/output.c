@@ -340,8 +340,13 @@ void output_name(Symbol* name, FILE* outfile, size_t indent, Parser* parser) {
             ast_output(0, true, "type\n");
             output_name(name->type, outfile, indent + 1, parser);
             break;
-        case SYMBOL_SUBROUTINE:
-            ast_output(0, false, "kind: \"subroutine\"\n");
+        case SYMBOL_FUNCTION:
+            ast_output(0, false, "kind: \"function\"\n");
+            ast_output(0, true, "return_type\n");
+            output_name(name->type, outfile, indent + 1, parser);
+            break;
+        case SYMBOL_METHOD:
+            ast_output(0, false, "kind: \"method\"\n");
             ast_output(0, true, "return_type\n");
             output_name(name->type, outfile, indent + 1, parser);
             break;

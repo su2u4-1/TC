@@ -88,7 +88,7 @@ Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, Symbo
     new_name->scope = scope;
     if (scope == NULL)
         fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\n", original_name, kind, new_name->id);
-    else if (kind == SYMBOL_CLASS || kind == SYMBOL_SUBROUTINE)
+    else if (kind == SYMBOL_CLASS || kind == SYMBOL_FUNCTION || kind == SYMBOL_METHOD)
         list_append(scope->parent->symbols, (pointer)new_name);
     else
         list_append(scope->symbols, (pointer)new_name);
@@ -197,6 +197,12 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
         list_append(scope->symbols, (pointer)name);
     else
         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
+    return name;
+}
+
+string make_method_name(string class_name, string method_name) {
+    string name = create_string("", strlen(class_name) + strlen(method_name) + 2);
+    sprintf(name, "%s.%s", class_name, method_name);
     return name;
 }
 

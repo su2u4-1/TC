@@ -33,6 +33,7 @@ void parser_error(const string message, Token* token, string file_name);
 void indention(FILE* out, size_t indent, bool is_last, Parser* parser);
 Parser* create_parser(File* file);
 Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
+string make_method_name(string class_name, string method_name);
 
 // operator helper functions
 OperatorType string_to_operator(string str);

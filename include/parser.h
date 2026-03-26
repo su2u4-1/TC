@@ -86,7 +86,8 @@ typedef struct Node Node;
 
 typedef enum SymbolTableType {
     SYMBOL_CLASS,
-    SYMBOL_SUBROUTINE,
+    SYMBOL_FUNCTION,
+    SYMBOL_METHOD,
     SYMBOL_VARIABLE,
     SYMBOL_PARAM,
     SYMBOL_ATTRIBUTE,

@@ -103,7 +103,7 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
         return NULL;
     }
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_SUBROUTINE, return_type, function_scope);
+    Symbol* name = create_symbol(token->lexeme, SYMBOL_FUNCTION, return_type, function_scope);
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
@@ -171,7 +171,7 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
         return NULL;
     }
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_SUBROUTINE, return_type, method_scope);
+    Symbol* name = create_symbol(make_method_name(class_name->original_name, token->lexeme), SYMBOL_METHOD, return_type, method_scope);
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
@@ -262,12 +262,13 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
         token = get_next_token(lexer, true);
     }
-    Symbol* constructor = search_name(class_scope, CONSTRUCTOR_NAME);
+    string constructor_name = make_method_name(name->original_name, DEFAULT_CONSTRUCTOR_NAME);
+    Symbol* constructor = search_name(class_scope, constructor_name);
     if (constructor == NULL) {
         SymbolTable* constructor_scope = create_symbol_table(class_scope);
-        constructor = create_symbol(CONSTRUCTOR_NAME, SYMBOL_SUBROUTINE, name, constructor_scope);
+        constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, constructor_scope);
     }
-    if (constructor->kind != SYMBOL_SUBROUTINE)
+    if (constructor->kind != SYMBOL_METHOD)
         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
     return create_class(name, members, class_scope);
 }
@@ -654,10 +655,10 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
             if (base_name == NULL)
                 parser_error("Cannot call undefined variable", token, get_full_path(parser->source_file));
             else if (base_name->kind == SYMBOL_CLASS) {
-                base_name = search_name(base_name->scope, CONSTRUCTOR_NAME);
+                base_name = search_name(base_name->scope, make_method_name(base_name->original_name, DEFAULT_CONSTRUCTOR_NAME));
                 base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
             }
-            if (base_name != NULL && base_name->kind != SYMBOL_SUBROUTINE)
+            if (base_name != NULL && base_name->kind != SYMBOL_FUNCTION && base_name->kind != SYMBOL_METHOD)
                 parser_error("Cannot call non-function variable", token, get_full_path(parser->source_file));
             token = get_next_token(lexer, true);
             list(Expression*) args = create_list();
@@ -704,6 +705,16 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                 return NULL;
             }
             base_name = search_name(var_scope, token->lexeme);
+            if (base_name == NULL) {
+                string class_name = NULL;
+                if (current_type != NULL) {
+                    if (current_type->kind == SYMBOL_CLASS)
+                        class_name = current_type->original_name;
+                    else if (current_type->type != NULL && current_type->type->kind == SYMBOL_CLASS)
+                        class_name = current_type->type->original_name;
+                }
+                base_name = search_name(var_scope, make_method_name(class_name, token->lexeme));
+            }
             if (base_name == NULL) {
                 parser_error("Unknown attribute name", token, get_full_path(parser->source_file));
                 return NULL;
