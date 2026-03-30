@@ -258,6 +258,110 @@
 │       │       │                       ├── name: "int"
 │       │       │                       ├── id: 2
 │       │       │                       └── kind: "type"
+│       ├── method
+│       │   ├── name
+│       │   │   ├── name: "Test1.$constructor"
+│       │   │   ├── id: 18
+│       │   │   ├── kind: "method"
+│       │   │   └── return_type
+│       │   │       ├── name: "Test1"
+│       │   │       ├── id: 8
+│       │   │       └── kind: "class"
+│       │   ├── return_type
+│       │   │   ├── name: "Test1"
+│       │   │   ├── id: 8
+│       │   │   └── kind: "class"
+│       │   ├── parameters
+│       │   │   ├── parameters[0]
+│       │   │   │   ├── type
+│       │   │   │   │   ├── name: "Test1"
+│       │   │   │   │   ├── id: 8
+│       │   │   │   │   └── kind: "class"
+│       │   │   │   ├── name
+│       │   │   │   │   ├── name: "self"
+│       │   │   │   │   ├── id: 19
+│       │   │   │   │   ├── kind: "variable"
+│       │   │   │   │   └── type
+│       │   │   │   │       ├── name: "Test1"
+│       │   │   │   │       ├── id: 8
+│       │   │   │   │       └── kind: "class"
+│       │   │   │   └── value: "NULL"
+│       │   │   ├── parameters[1]
+│       │   │   │   ├── type
+│       │   │   │   │   ├── name: "int"
+│       │   │   │   │   ├── id: 2
+│       │   │   │   │   └── kind: "type"
+│       │   │   │   ├── name
+│       │   │   │   │   ├── name: "value"
+│       │   │   │   │   ├── id: 12
+│       │   │   │   │   ├── kind: "variable"
+│       │   │   │   │   └── type
+│       │   │   │   │       ├── name: "int"
+│       │   │   │   │       ├── id: 2
+│       │   │   │   │       └── kind: "type"
+│       │   │   │   └── value: "NULL"
+│       │   └── body
+│       │       ├── expression_statement
+│       │       │   ├── operator: "="
+│       │       │   ├── left
+│       │       │   │   └── primary
+│       │       │   │       ├── type: "variable"
+│       │       │   │       └── value
+│       │       │   │           ├── type: "name"
+│       │       │   │           └── name
+│       │       │   │               ├── name: "a"
+│       │       │   │               ├── id: 9
+│       │       │   │               ├── kind: "variable"
+│       │       │   │               └── type
+│       │       │   │                   ├── name: "int"
+│       │       │   │                   ├── id: 2
+│       │       │   │                   └── kind: "type"
+│       │       │   └── right
+│       │       │       └── primary
+│       │       │           ├── type: "integer"
+│       │       │           └── value: 10
+│       │       ├── return_statement
+│       │       │   └── primary
+│       │       │       ├── type: "variable"
+│       │       │       └── value
+│       │       │           ├── type: "function_call"
+│       │       │           ├── function
+│       │       │           │   ├── type: "name"
+│       │       │           │   └── name
+│       │       │           │       ├── name: "Test1.init"
+│       │       │           │       ├── id: 11
+│       │       │           │       ├── kind: "method"
+│       │       │           │       └── return_type
+│       │       │           │           ├── name: "Test1"
+│       │       │           │           ├── id: 8
+│       │       │           │           └── kind: "class"
+│       │       │           └── arguments
+│       │       │               ├── arguments[0]
+│       │       │               │   └── primary
+│       │       │               │       ├── type: "variable"
+│       │       │               │       └── value
+│       │       │               │           ├── type: "name"
+│       │       │               │           └── name
+│       │       │               │               ├── name: "self"
+│       │       │               │               ├── id: 19
+│       │       │               │               ├── kind: "variable"
+│       │       │               │               └── type
+│       │       │               │                   ├── name: "Test1"
+│       │       │               │                   ├── id: 8
+│       │       │               │                   └── kind: "class"
+│       │       │               ├── arguments[1]
+│       │       │               │   └── primary
+│       │       │               │       ├── type: "variable"
+│       │       │               │       └── value
+│       │       │               │           ├── type: "name"
+│       │       │               │           └── name
+│       │       │               │               ├── name: "value"
+│       │       │               │               ├── id: 12
+│       │       │               │               ├── kind: "variable"
+│       │       │               │               └── type
+│       │       │               │                   ├── name: "int"
+│       │       │               │                   ├── id: 2
+│       │       │               │                   └── kind: "type"
 ├── function
 │   ├── name
 │   │   ├── name: "main"
@@ -300,8 +404,8 @@
 │       │               │   │       ├── id: 8
 │       │               │   │       └── kind: "class"
 │       │               │   └── attribute_name
-│       │               │       ├── name: "Test1.init"
-│       │               │       ├── id: 11
+│       │               │       ├── name: "Test1.$constructor"
+│       │               │       ├── id: 18
 │       │               │       ├── kind: "method"
 │       │               │       └── return_type
 │       │               │           ├── name: "Test1"
@@ -466,4 +570,4 @@
 │       │       └── value: 0
 
 info by lib:
-    Platform: 2, Structure Memory Used: 16840/17408 bytes, String Memory Used: 2141/3072 bytes, stringCount: 118, Memory Block Count: 641
+    Platform: 2, Structure Memory Used: 17328/18432 bytes, String Memory Used: 2183/3072 bytes, stringCount: 120, Memory Block Count: 664

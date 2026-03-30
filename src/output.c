@@ -18,6 +18,7 @@ static void output_variable_access(VariableAccess* variable_access, FILE* outfil
 static void output_name(Symbol* name, FILE* outfile, size_t indent, Parser* parser);
 
 void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 78 Starting output_code_member\n");
     switch (code_member->type) {
         case CODE_IMPORT:
             ast_output(0, false, "import\n");
@@ -35,19 +36,25 @@ void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, P
             ast_output(0, false, "unknown_CodeMemberType: %u\n", code_member->type);
             break;
     }
+    // printf("[DEBUG] 79 Finished output_code_member\n");
 }
 void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 80 Starting output_code\n");
     list(CodeMember*) members = list_copy(code->members);
     CodeMember* member;
     while ((member = (CodeMember*)list_pop(members)) != NULL)
         output_code_member(member, outfile, indent + 1, parser);
+    // printf("[DEBUG] 81 Finished output_code\n");
 }
 void output_import(Import* import, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 82 Starting output_import\n");
     ast_output(0, false, "name\n");
     output_name(import->name, outfile, indent + 1, parser);
     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
+    // printf("[DEBUG] 83 Finished output_import\n");
 }
 void output_function(Function* function, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 84 Starting output_function\n");
     ast_output(0, false, "name\n");
     output_name(function->name, outfile, indent + 1, parser);
     ast_output(0, false, "return_type\n");
@@ -65,8 +72,10 @@ void output_function(Function* function, FILE* outfile, size_t indent, Parser* p
     Statement* statement;
     while ((statement = (Statement*)list_pop(body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
+    // printf("[DEBUG] 85 Finished output_function\n");
 }
 void output_method(Method* method, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 86 Starting output_method\n");
     ast_output(0, false, "name\n");
     output_name(method->name, outfile, indent + 1, parser);
     ast_output(0, false, "return_type\n");
@@ -84,8 +93,10 @@ void output_method(Method* method, FILE* outfile, size_t indent, Parser* parser)
     Statement* statement;
     while ((statement = (Statement*)list_pop(body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
+    // printf("[DEBUG] 87 Finished output_method\n");
 }
 void output_class_member(ClassMember* class_member, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 88 Starting output_class_member\n");
     switch (class_member->type) {
         case CLASS_METHOD:
             ast_output(0, false, "method\n");
@@ -99,8 +110,10 @@ void output_class_member(ClassMember* class_member, FILE* outfile, size_t indent
             ast_output(0, false, "unknown_ClassMemberType: %u\n", class_member->type);
             break;
     }
+    // printf("[DEBUG] 89 Finished output_class_member\n");
 }
 void output_class(Class* class, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 90 Starting output_class\n");
     ast_output(0, false, "name\n");
     output_name(class->name, outfile, indent + 1, parser);
     ast_output(0, true, "members\n");
@@ -108,8 +121,10 @@ void output_class(Class* class, FILE* outfile, size_t indent, Parser* parser) {
     ClassMember* member;
     while ((member = (ClassMember*)list_pop(members)) != NULL)
         output_class_member(member, outfile, indent + 1, parser);
+    // printf("[DEBUG] 91 Finished output_class\n");
 }
 void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 92 Starting output_variable\n");
     ast_output(0, false, "type\n");
     output_name(variable->type, outfile, indent + 1, parser);
     ast_output(0, false, "name\n");
@@ -119,8 +134,10 @@ void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* p
         output_expression(variable->value, outfile, indent + 1, parser);
     } else
         ast_output(0, true, "value: \"NULL\"\n");
+    // printf("[DEBUG] 93 Finished output_variable\n");
 }
 void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 94 Starting output_statement\n");
     switch (statement->type) {
         case IF_STATEMENT:
             ast_output(0, false, "if_statement\n");
@@ -141,6 +158,7 @@ void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser
         case RETURN_STATEMENT:
             if (statement->stmt.expr == NULL) {
                 ast_output(0, false, "return_statement: \"NULL\"\n");
+                // printf("[DEBUG] 95 Finished output_statement\n");
                 return;
             }
             ast_output(0, false, "return_statement\n");
@@ -148,13 +166,14 @@ void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser
             break;
         case BREAK_STATEMENT:
             ast_output(0, false, "break_statement: \"NULL\"\n");
-            return;
+            break;
         case CONTINUE_STATEMENT:
             ast_output(0, false, "continue_statement: \"NULL\"\n");
-            return;
+            break;
         case EXPRESSION_STATEMENT:
             if (statement->stmt.expr == NULL) {
                 ast_output(0, false, "expression_statement: \"NULL\"\n");
+                // printf("[DEBUG] 96 Finished output_statement\n");
                 return;
             }
             ast_output(0, false, "expression_statement\n");
@@ -162,10 +181,12 @@ void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser
             break;
         default:
             ast_output(0, false, "unknown_StatementType: %u\n", statement->type);
-            return;
+            break;
     }
+    // printf("[DEBUG] 97 Finished output_statement\n");
 }
 void output_if(If* if_, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 98 Starting output_if\n");
     list(Statement*) body = list_copy(if_->body);
     list(ElseIf*) else_if_list = list_copy(if_->else_if);
     list(Statement*) else_body = list_copy(if_->else_body);
@@ -182,8 +203,10 @@ void output_if(If* if_, FILE* outfile, size_t indent, Parser* parser) {
     ast_output(0, true, "else_body\n");
     while ((statement = (Statement*)list_pop(else_body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
+    // printf("[DEBUG] 99 Finished output_if\n");
 }
 void output_else_if(ElseIf* else_if, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 100 Starting output_else_if\n");
     list(Statement*) body = list_copy(else_if->body);
     ast_output(0, false, "condition\n");
     output_expression(else_if->condition, outfile, indent + 1, parser);
@@ -191,8 +214,10 @@ void output_else_if(ElseIf* else_if, FILE* outfile, size_t indent, Parser* parse
     Statement* statement;
     while ((statement = (Statement*)list_pop(body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
+    // printf("[DEBUG] 101 Finished output_else_if\n");
 }
 void output_for(For* for_, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 102 Starting output_for\n");
     list(Statement*) body = list_copy(for_->body);
     if (for_->initializer != NULL) {
         ast_output(0, false, "initializer\n");
@@ -213,8 +238,10 @@ void output_for(For* for_, FILE* outfile, size_t indent, Parser* parser) {
     Statement* statement;
     while ((statement = (Statement*)list_pop(body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
+    // printf("[DEBUG] 103 Finished output_for\n");
 }
 void output_while(While* while_, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 104 Starting output_while\n");
     list(Statement*) body = list_copy(while_->body);
     ast_output(0, false, "condition\n");
     output_expression(while_->condition, outfile, indent + 1, parser);
@@ -222,8 +249,10 @@ void output_while(While* while_, FILE* outfile, size_t indent, Parser* parser) {
     Statement* statement;
     while ((statement = (Statement*)list_pop(body)) != NULL)
         output_statement(statement, outfile, indent + 1, parser);
+    // printf("[DEBUG] 105 Finished output_while\n");
 }
 void output_expression(Expression* expression, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 106 Starting output_expression\n");
     if (expression->operator == OP_NONE) {
         ast_output(0, true, "primary\n");
         output_primary(expression->prim_left, outfile, indent + 1, parser);
@@ -235,8 +264,10 @@ void output_expression(Expression* expression, FILE* outfile, size_t indent, Par
         ast_output(0, true, "right\n");
         output_expression(expression->right, outfile, indent + 1, parser);
     }
+    // printf("[DEBUG] 107 Finished output_expression\n");
 }
 void output_primary(Primary* primary, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 108 Starting output_primary\n");
     switch (primary->type) {
         case PRIM_INTEGER:
             ast_output(0, false, "type: \"integer\"\n");
@@ -282,8 +313,10 @@ void output_primary(Primary* primary, FILE* outfile, size_t indent, Parser* pars
             ast_output(0, true, "unknown_PrimaryType: %u\n", primary->type);
             break;
     }
+    // printf("[DEBUG] 109 Finished output_primary\n");
 }
 void output_variable_access(VariableAccess* variable_access, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 110 Starting output_variable_access\n");
     list(Expression*) args;
     int index;
     switch (variable_access->type) {
@@ -323,10 +356,13 @@ void output_variable_access(VariableAccess* variable_access, FILE* outfile, size
             ast_output(0, true, "unknown_VariableAccessType: %u\n", variable_access->type);
             break;
     }
+    // printf("[DEBUG] 111 Finished output_variable_access\n");
 }
 void output_name(Symbol* name, FILE* outfile, size_t indent, Parser* parser) {
+    // printf("[DEBUG] 112 Starting output_name\n");
     if (name == NULL) {
         ast_output(0, true, "Name pointer: \"NULL\"\n");
+        // printf("[DEBUG] 113 Finished output_name with NULL\n");
         return;
     }
     ast_output(0, false, "name: \"%s\"\n", name->name);
@@ -367,4 +403,5 @@ void output_name(Symbol* name, FILE* outfile, size_t indent, Parser* parser) {
             ast_output(0, true, "kind: \"unknown_NameType\"\n");
             break;
     }
+    // printf("[DEBUG] 113 Finished output_name\n");
 }

@@ -28,6 +28,7 @@ bool list_is_empty(list() list);
 Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node);
 SymbolTable* create_symbol_table(SymbolTable* parent);
 Symbol* search_name(SymbolTable* scope, string name);
+Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
 bool is_builtin_type(string type);
 void parser_error(const string message, Token* token, string file_name);
 void indention(FILE* out, size_t indent, bool is_last, Parser* parser);

@@ -308,21 +308,52 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
         token = get_next_token(lexer, true);
     }
-    string constructor_name = make_method_name(name->name, DEFAULT_CONSTRUCTOR_NAME);
-    Symbol* constructor = search_name(class_scope, constructor_name);
-    if (constructor == NULL) {
+    string init_name = make_method_name(name->name, DEFAULT_INIT_NAME);
+    Symbol* init = search_name_use_strcmp(class_scope, init_name);
+    if (init == NULL) {
         Method* method = (Method*)alloc_memory(sizeof(Method));
         method->method_scope = create_symbol_table(class_scope);
-        constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, method);
+        init = create_symbol(init_name, SYMBOL_METHOD, name, method);
         list(Variable*) parameters = create_list();
         Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
         list_append(parameters, (pointer)create_variable(name, self, NULL));
         list(Statement*) body = create_list();
         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
-        create_method_use_ptr(method, constructor, name, parameters, create_list(), method->method_scope);
+        create_method_use_ptr(method, init, name, parameters, body, method->method_scope);
+        list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
     }
-    if (constructor->kind != SYMBOL_METHOD)
+    if (init->kind != SYMBOL_METHOD)
         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
+    string constructor_name = make_method_name(name->name, DEFAULT_CONSTRUCTOR_NAME);
+    Method* method = (Method*)alloc_memory(sizeof(Method));
+    method->method_scope = create_symbol_table(class_scope);
+    Symbol* constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, method);
+    list(Variable*) parameters = create_list();
+    Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+    list_append(parameters, (pointer)create_variable(name, self, NULL));
+    list(Variable*) init_params = list_copy(init->ast_node.method->parameters);
+    Variable* param;
+    while ((param = (Variable*)list_pop(init_params)) != NULL) {
+        if (string_equal(param->name->name, SELF_KEYWORD)) continue;
+        list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
+    }
+    list(statement*) body = create_list();
+    list(ClassMember*) ms = list_copy(members);
+    ClassMember* mb;
+    while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
+        if (mb->type == CLASS_VARIABLE) {
+            Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, mb->content.variable->name, NULL, NULL)), NULL);
+            Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+            list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+        }
+    }
+    list(Expression*) args = create_list();
+    list(Variable*) params = list_copy(parameters);
+    while ((param = (Variable*)list_pop(params)) != NULL)
+        list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+    list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+    create_method_use_ptr(method, constructor, name, parameters, body, method->method_scope);
+    list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
     // printf("[DEBUG] 25 Finished parse_class\n");
     return create_class_use_ptr(class, name, members, class_scope, size);
 }
@@ -758,14 +789,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                 parser_error("Cannot call undefined variable", token, get_full_path(parser->source_file));
             else if (base_name->kind == SYMBOL_CLASS) {
                 string name = make_method_name(base_name->name, DEFAULT_CONSTRUCTOR_NAME);
-                list(Symbol*) symbols = list_copy(base_name->ast_node.class->class_scope->symbols);
-                Symbol* symbol;
-                while ((symbol = (Symbol*)list_pop(symbols)) != NULL) {
-                    if (strcmp(symbol->name, name) == 0) {
-                        base_name = symbol;
-                        break;
-                    }
-                }
+                base_name = search_name_use_strcmp(base_name->ast_node.class->class_scope, name);
                 base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
             }
             if (base_name != NULL && base_name->kind != SYMBOL_FUNCTION && base_name->kind != SYMBOL_METHOD)
@@ -827,15 +851,8 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                     else if (current_type->type != NULL && current_type->type->kind == SYMBOL_CLASS)
                         class_name = current_type->type->name;
                 }
-                list(Symbol*) symbols = list_copy(var_scope->symbols);
-                Symbol* symbol;
                 string name = make_method_name(class_name, token->lexeme);
-                while ((symbol = (Symbol*)list_pop(symbols)) != NULL) {
-                    if (strcmp(symbol->name, name) == 0) {
-                        base_name = symbol;
-                        break;
-                    }
-                }
+                base_name = search_name_use_strcmp(var_scope, name);
             }
             if (base_name == NULL) {
                 parser_error("Unknown attribute name", token, get_full_path(parser->source_file));

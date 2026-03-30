@@ -124,6 +124,22 @@ SymbolTable* create_symbol_table(SymbolTable* parent) {
     return new_scope;
 }
 
+Symbol* search_name_use_strcmp(SymbolTable* scope, string name) {
+    while (scope != NULL) {
+        list(Symbol*) names = scope->symbols;
+        Node* current = names->head;
+        while (current != NULL) {
+            Node* node_ptr = current;
+            Symbol* current_name = (Symbol*)node_ptr->content;
+            if (strcmp(current_name->name, name) == 0)
+                return current_name;
+            current = node_ptr->next;
+        }
+        scope = scope->parent;
+    }
+    return NULL;
+}
+
 Symbol* search_name(SymbolTable* scope, string name) {
     while (scope != NULL) {
         list(Symbol*) names = scope->symbols;

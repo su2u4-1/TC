@@ -64,6 +64,7 @@ extern bool initialized;
 
 extern StringList* all_string_list;
 
+extern string DEFAULT_INIT_NAME;
 extern string DEFAULT_CONSTRUCTOR_NAME;
 
 extern string IMPORT_KEYWORD;     // keyword `import`
