@@ -221,13 +221,13 @@ struct Symbol {
     Symbol* type;
     string name;
     size_t id;
-    SymbolType kind;
     union {
         Class* class;        // for SYMBOL_CLASS
         Function* function;  // for SYMBOL_FUNCTION
         Method* method;      // for SYMBOL_METHOD
         SymbolTable* scope;  // for SYMBOL_VARIABLE, SYMBOL_PARAM, SYMBOL_ATTRIBUTE, SYMBOL_TYPE. use current scope for them to allow searching
     } ast_node;
+    SymbolType kind;
 };
 
 typedef struct Lexer Lexer;
