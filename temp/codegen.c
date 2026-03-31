@@ -193,6 +193,100 @@ static Arg* load_rvalue(Arg* arg, TACStatus* status) {
     }
     return arg;
 }
+// written by ai
+static Var* find_var_by_symbol(list(Var*) vars, Symbol* symbol) {
+    if (vars == NULL || symbol == NULL)
+        return NULL;
+    Node* current = vars->head;
+    while (current != NULL) {
+        Var* var = (Var*)current->content;
+        if (var != NULL && var->original_name == symbol)
+            return var;
+        current = current->next;
+    }
+    return NULL;
+}
+// written by ai
+static Var* resolve_named_var(Symbol* symbol, TACStatus* status) {
+    if (symbol == NULL || status == NULL)
+        return NULL;
+    if (status->current_subroutine != NULL) {
+        Var* var = find_var_by_symbol(status->current_subroutine->parameters, symbol);
+        if (var != NULL)
+            return var;
+        var = find_var_by_symbol(status->current_subroutine->local_vars, symbol);
+        if (var != NULL)
+            return var;
+    }
+    return find_var_by_symbol(status->tac->global_vars, symbol);
+}
+// written by ai
+static Var* find_self_parameter(TACStatus* status) {
+    if (status == NULL || status->current_subroutine == NULL)
+        return NULL;
+    Node* current = status->current_subroutine->parameters->head;
+    while (current != NULL) {
+        Var* var = (Var*)current->content;
+        if (var != NULL && var->original_name != NULL && string_equal(var->original_name->name, SELF_KEYWORD))
+            return var;
+        current = current->next;
+    }
+    return NULL;
+}
+// written by ai
+static Var* create_attribute_ref_var(Symbol* class_type, Symbol* attr_name, TACStatus* status) {
+    if (attr_name == NULL)
+        return NULL;
+    AttributeTable* table = find_attribute_table(status, class_type);
+    if (table == NULL || table->attributes == NULL)
+        return create_var(attr_name, attr_name->type, VAR_ATTR, status);
+    size_t index = 0;
+    bool found = false;
+    list(Attribute*) attrs = list_copy(table->attributes);
+    Attribute* attr;
+    while ((attr = (Attribute*)list_pop(attrs)) != NULL) {
+        if (attr->var_name == attr_name) {
+            found = true;
+            break;
+        }
+        ++index;
+    }
+    Var* var = (Var*)alloc_memory(sizeof(Var));
+    var->original_name = attr_name;
+    var->type = attr_name->type;
+    var->name = create_string("", 32);
+    if (!found)
+        fprintf(stderr, "[warning] Attribute '%s' not found in class '%s', fallback index %zu\n", attr_name->name, class_type != NULL ? class_type->name : "<unknown>", index);
+    sprintf(var->name, "$a%zu", index);
+    return var;
+}
+// written by ai
+static Arg* emit_attribute_access(Arg* object, Symbol* attr_name, TACStatus* status) {
+    if (object == NULL || attr_name == NULL) {
+        fprintf(stderr, "[warning] Invalid attribute access\n");
+        return NULL;
+    }
+    Arg* object_value = load_rvalue(object, status);
+    if (object_value == NULL)
+        return NULL;
+    Symbol* class_type = NULL;
+    if (object_value->type != NULL && object_value->type->kind == SYMBOL_CLASS)
+        class_type = object_value->type;
+    Var* attr_var = create_attribute_ref_var(class_type, attr_name, status);
+    Arg* result = create_arg(ARG_VARIABLE, create_var(NULL, attr_name->type, VAR_TEMP, status));
+    Instruction* inst = create_instruction(INST_GET_ATTR, result, object_value, create_arg(ARG_VARIABLE, attr_var));
+    list_append(status->current_block->instructions, (pointer)inst);
+    result->is_get = true;
+    return result;
+}
+// written by ai
+static void emit_param_instruction(Arg* value, TACStatus* status) {
+    if (value == NULL || status == NULL)
+        return;
+    long long size = (long long)get_type_size(value->type);
+    Instruction* inst = create_instruction(INST_PARAM, create_arg(ARG_INT, &size), value, NULL);
+    list_append(status->current_block->instructions, (pointer)inst);
+}
 
 TAC* codegen_code(Code* code) {
     TAC* tac = create_tac();
@@ -607,6 +701,133 @@ Arg* codegen_primary(Primary* primary, TACStatus* status) {
             return NULL;
     }
 }
+// written by ai
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status) {
+    if (variable_access == NULL || status == NULL) {
+        fprintf(stderr, "[warning] Invalid variable access input\n");
+        return NULL;
+    }
+    if (variable_access->type == VAR_NAME) {
+        Symbol* name = variable_access->content.name;
+        if (name == NULL) {
+            fprintf(stderr, "[warning] Variable access name is NULL\n");
+            return NULL;
+        }
+        Var* existing = resolve_named_var(name, status);
+        if (existing != NULL)
+            return create_arg(ARG_VARIABLE, existing);
+        if (name->kind == SYMBOL_FUNCTION || name->kind == SYMBOL_METHOD || name->kind == SYMBOL_CLASS)
+            return create_arg(ARG_SUBROUTINE, create_var(name, name->type, VAR_SUBROUTINE, status));
+        Var* self = find_self_parameter(status);
+        if (self != NULL && self->type != NULL && self->type->kind == SYMBOL_CLASS && name->ast_node.scope == self->type->ast_node.class->class_scope)
+            return emit_attribute_access(create_arg(ARG_VARIABLE, self), name, status);
+        fprintf(stderr, "[warning] Unresolved variable access for '%s', creating fallback local\n", name->name);
+        return create_arg(ARG_VARIABLE, create_var(name, name->type, VAR_VAR, status));
+    }
+
+    if (variable_access->type == VAR_GET_ATTR) {
+        if (variable_access->base == NULL || variable_access->content.attr_name == NULL) {
+            fprintf(stderr, "[warning] Invalid get-attribute access\n");
+            return NULL;
+        }
+        Symbol* attr_name = variable_access->content.attr_name;
+        if (attr_name->kind == SYMBOL_METHOD || attr_name->kind == SYMBOL_FUNCTION)
+            return create_arg(ARG_SUBROUTINE, create_var(attr_name, attr_name->type, VAR_SUBROUTINE, status));
+        Arg* object = codegen_variable_access(variable_access->base, status);
+        if (object == NULL) {
+            fprintf(stderr, "[warning] Failed to generate object for get-attribute access\n");
+            return NULL;
+        }
+        return emit_attribute_access(object, attr_name, status);
+    }
+
+    if (variable_access->type == VAR_GET_SEQ) {
+        if (variable_access->base == NULL || variable_access->content.index == NULL) {
+            fprintf(stderr, "[warning] Invalid get-sequence access\n");
+            return NULL;
+        }
+        Arg* sequence = load_rvalue(codegen_variable_access(variable_access->base, status), status);
+        Arg* index = load_rvalue(codegen_expression(variable_access->content.index, status), status);
+        if (sequence == NULL || index == NULL) {
+            fprintf(stderr, "[warning] Failed to generate sequence/index for get-sequence access\n");
+            return NULL;
+        }
+        Symbol* element_type = name_int;
+        if (sequence->type == name_float || sequence->type == name_bool || sequence->type == name_string)
+            element_type = sequence->type;
+        Arg* result = create_arg(ARG_VARIABLE, create_var(NULL, element_type, VAR_TEMP, status));
+        Instruction* inst = create_instruction(INST_GET_ELEM, result, sequence, index);
+        list_append(status->current_block->instructions, (pointer)inst);
+        result->is_get = true;
+        return result;
+    }
+
+    if (variable_access->type == VAR_FUNC_CALL) {
+        if (variable_access->base == NULL) {
+            fprintf(stderr, "[warning] Invalid function call without callee\n");
+            return NULL;
+        }
+
+        Symbol* callee_name = NULL;
+        Arg* receiver = NULL;
+        VariableAccess* callee_access = variable_access->base;
+        if (callee_access->type == VAR_GET_ATTR && callee_access->content.attr_name != NULL &&
+            (callee_access->content.attr_name->kind == SYMBOL_METHOD || callee_access->content.attr_name->kind == SYMBOL_FUNCTION)) {
+            callee_name = callee_access->content.attr_name;
+            if (callee_access->base != NULL) {
+                bool is_class_constructor_call = false;
+                if (callee_access->base->type == VAR_NAME && callee_access->base->content.name != NULL && callee_access->base->content.name->kind == SYMBOL_CLASS)
+                    is_class_constructor_call = true;
+                if (!is_class_constructor_call)
+                    receiver = load_rvalue(codegen_variable_access(callee_access->base, status), status);
+            }
+        }
+        if (callee_name == NULL) {
+            Arg* callee = codegen_variable_access(callee_access, status);
+            if (callee == NULL) {
+                fprintf(stderr, "[warning] Failed to generate callee for function call\n");
+                return NULL;
+            }
+            if (callee->kind == ARG_SUBROUTINE && callee->value.subroutine != NULL)
+                callee_name = callee->value.subroutine->original_name;
+            else if (callee->kind == ARG_VARIABLE && callee->value.variable != NULL && callee->value.variable->original_name != NULL) {
+                Symbol* maybe_subroutine = callee->value.variable->original_name;
+                if (maybe_subroutine->kind == SYMBOL_FUNCTION || maybe_subroutine->kind == SYMBOL_METHOD)
+                    callee_name = maybe_subroutine;
+            }
+        }
+        if (callee_name == NULL) {
+            fprintf(stderr, "[warning] Unsupported callee in function call\n");
+            return NULL;
+        }
+
+        size_t argument_count = 0;
+        if (receiver != NULL) {
+            emit_param_instruction(receiver, status);
+            ++argument_count;
+        }
+        list(Expression*) args = list_copy(variable_access->content.args);
+        Expression* arg_expr;
+        while ((arg_expr = (Expression*)list_pop(args)) != NULL) {
+            Arg* arg_value = load_rvalue(codegen_expression(arg_expr, status), status);
+            if (arg_value == NULL) {
+                fprintf(stderr, "[warning] Failed to generate function call argument\n");
+                return NULL;
+            }
+            emit_param_instruction(arg_value, status);
+            ++argument_count;
+        }
+
+        Arg* result = create_arg(ARG_VOID, NULL);
+        if (callee_name->type != NULL && callee_name->type != name_void)
+            result = create_arg(ARG_VARIABLE, create_var(NULL, callee_name->type, VAR_TEMP, status));
+        long long count = (long long)argument_count;
+        Arg* callee_arg = create_arg(ARG_SUBROUTINE, create_var(callee_name, callee_name->type, VAR_SUBROUTINE, status));
+        Instruction* call_inst = create_instruction(INST_CALL, result, callee_arg, create_arg(ARG_INT, &count));
+        list_append(status->current_block->instructions, (pointer)call_inst);
+        return result;
+    }
+
+    fprintf(stderr, "[warning] Unsupported variable access type for codegen_variable_access: %d\n", variable_access->type);
     return NULL;
 }
