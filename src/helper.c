@@ -166,10 +166,7 @@ inline void parser_error(const string message, Token* token, string file_name) {
 
 static void set_bool_list(char bool_list[32], size_t index, bool value) {
     char word = bool_list[index / 8];
-    if (value)
-        bool_list[index / 8] = (char)(word | (1 << (index % 8)));
-    else
-        bool_list[index / 8] = (char)(word & ~(1 << (index % 8)));
+    bool_list[index / 8] = (char)(value ? (word | (1 << (index % 8))) : (word & ~(1 << (index % 8))));
 }
 
 static inline bool get_bool_list(char bool_list[32], size_t index) {

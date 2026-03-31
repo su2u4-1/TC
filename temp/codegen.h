@@ -46,8 +46,8 @@ typedef struct Arg {
         Var* label;
         Var* subroutine;
     } value;
-    ArgType kind;
     Symbol* type;
+    ArgType kind;
     bool is_get;
 } Arg;
 typedef enum InstructionType {
