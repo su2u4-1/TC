@@ -189,9 +189,13 @@ initialized:
 	.align 8
 all_string_list:
 	.space 8
-	.globl	CONSTRUCTOR_NAME
+	.globl	DEFAULT_INIT_NAME
 	.align 8
-CONSTRUCTOR_NAME:
+DEFAULT_INIT_NAME:
+	.space 8
+	.globl	DEFAULT_CONSTRUCTOR_NAME
+	.align 8
+DEFAULT_CONSTRUCTOR_NAME:
 	.space 8
 	.globl	IMPORT_KEYWORD
 	.align 8
@@ -724,6 +728,8 @@ create_string:
 	.section .rdata,"dr"
 .LC54:
 	.ascii "init\0"
+.LC55:
+	.ascii "$constructor\0"
 	.text
 	.def	init;	.scl	3;	.type	32;	.endef
 init:
@@ -856,7 +862,13 @@ init:
 	leaq	.LC54(%rip), %rax
 	movq	%rax, %rcx
 	call	create_string_check
-	movq	%rax, CONSTRUCTOR_NAME(%rip)
+	movq	%rax, DEFAULT_INIT_NAME(%rip)
+	movl	$0, %r8d
+	movl	$13, %edx
+	leaq	.LC55(%rip), %rax
+	movq	%rax, %rcx
+	call	create_string_check
+	movq	%rax, DEFAULT_CONSTRUCTOR_NAME(%rip)
 	movq	keywordList(%rip), %rax
 	movq	%rax, IMPORT_KEYWORD(%rip)
 	movq	8+keywordList(%rip), %rax
@@ -971,9 +983,9 @@ init:
 .lcomm memoryBlockCount,8,8
 	.section .rdata,"dr"
 	.align 8
-.LC55:
-	.ascii "struct_memory->used % ALIGN_SIZE == 0\0"
 .LC56:
+	.ascii "struct_memory->used % ALIGN_SIZE == 0\0"
+.LC57:
 	.ascii "D:\\TC\\src\\lib.c\0"
 	.text
 	.globl	alloc_memory
@@ -1008,10 +1020,10 @@ alloc_memory:
 	andl	$7, %eax
 	testq	%rax, %rax
 	je	.L42
-	leaq	.LC55(%rip), %r9
+	leaq	.LC56(%rip), %r9
 	leaq	__func__.0(%rip), %r8
-	movl	$261, %edx
-	leaq	.LC56(%rip), %rax
+	movl	$263, %edx
+	leaq	.LC57(%rip), %rax
 	movq	%rax, %rcx
 	call	__assert_func
 .L42:
@@ -1082,12 +1094,12 @@ string_equal:
 	popq	%rbp
 	ret
 	.section .rdata,"dr"
-.LC57:
-	.ascii "\0"
 .LC58:
+	.ascii "\0"
+.LC59:
 	.ascii "%zu/%zu bytes\0"
 	.align 8
-.LC59:
+.LC60:
 	.ascii "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu\0"
 	.text
 	.globl	get_info
@@ -1110,7 +1122,7 @@ get_info:
 	jne	.L54
 	movl	$0, %r8d
 	movl	$48, %edx
-	leaq	.LC57(%rip), %rax
+	leaq	.LC58(%rip), %rax
 	movq	%rax, %rcx
 	call	create_string_check
 	movq	%rax, -24(%rbp)
@@ -1122,12 +1134,12 @@ get_info:
 	movq	-24(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rdx, %r8
-	leaq	.LC58(%rip), %rdx
+	leaq	.LC59(%rip), %rdx
 	movq	%rax, %rcx
 	call	sprintf
 	movl	$0, %r8d
 	movl	$48, %edx
-	leaq	.LC57(%rip), %rax
+	leaq	.LC58(%rip), %rax
 	movq	%rax, %rcx
 	call	create_string_check
 	movq	%rax, -32(%rbp)
@@ -1139,12 +1151,12 @@ get_info:
 	movq	-32(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rdx, %r8
-	leaq	.LC58(%rip), %rdx
+	leaq	.LC59(%rip), %rdx
 	movq	%rax, %rcx
 	call	sprintf
 	movl	$0, %r8d
 	movl	$240, %edx
-	leaq	.LC57(%rip), %rax
+	leaq	.LC58(%rip), %rax
 	movq	%rax, %rcx
 	call	create_string_check
 	movq	%rax, -40(%rbp)
@@ -1158,7 +1170,7 @@ get_info:
 	movq	%rdx, 32(%rsp)
 	movq	%rcx, %r9
 	movl	$2, %r8d
-	leaq	.LC59(%rip), %rdx
+	leaq	.LC60(%rip), %rdx
 	movq	%rax, %rcx
 	call	sprintf
 	movq	-40(%rbp), %rax

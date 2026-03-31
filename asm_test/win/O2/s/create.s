@@ -146,35 +146,24 @@ create_import:
 	.ascii "Error creating function: name or return_type is NULL\12\0"
 	.text
 	.p2align 4
-	.globl	create_function
-	.def	create_function;	.scl	2;	.type	32;	.endef
-create_function:
-	pushq	%rbp
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rbx
+	.globl	create_function_use_ptr
+	.def	create_function_use_ptr;	.scl	2;	.type	32;	.endef
+create_function_use_ptr:
 	subq	$40, %rsp
-	testq	%rcx, %rcx
-	je	.L41
-	movq	%rdx, %rsi
 	testq	%rdx, %rdx
 	je	.L41
-	movq	%rcx, %rbx
-	movl	$40, %ecx
-	movq	%r8, %rbp
-	movq	%r9, %rdi
-	call	alloc_memory
-	movq	112(%rsp), %rdx
-	movq	%rbx, (%rax)
-	movq	%rsi, 8(%rax)
-	movq	%rbp, 16(%rax)
-	movq	%rdi, 24(%rax)
-	movq	%rdx, 32(%rax)
+	testq	%r8, %r8
+	je	.L41
+	movq	80(%rsp), %rax
+	movq	%rdx, (%rcx)
+	movq	%r8, 8(%rcx)
+	movq	%rax, 24(%rcx)
+	movq	88(%rsp), %rax
+	movq	%r9, 16(%rcx)
+	movq	%rax, 32(%rcx)
+	movq	%rcx, %rax
+.L37:
 	addq	$40, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbp
 	ret
 	.p2align 4,,10
 	.p2align 3
@@ -185,22 +174,12 @@ create_function:
 	leaq	.LC3(%rip), %rcx
 	movq	24(%rax), %r9
 	call	fwrite
-	addq	$40, %rsp
 	xorl	%eax, %eax
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbp
-	ret
-	.section .rdata,"dr"
-	.align 8
-.LC4:
-	.ascii "Error creating method: name or return_type is NULL\12\0"
-	.text
+	jmp	.L37
 	.p2align 4
-	.globl	create_method
-	.def	create_method;	.scl	2;	.type	32;	.endef
-create_method:
+	.globl	create_function
+	.def	create_function;	.scl	2;	.type	32;	.endef
+create_function:
 	pushq	%rbp
 	pushq	%rdi
 	pushq	%rsi
@@ -231,6 +210,89 @@ create_method:
 	.p2align 4,,10
 	.p2align 3
 .L47:
+	call	__getreent
+	movl	$53, %r8d
+	movl	$1, %edx
+	leaq	.LC3(%rip), %rcx
+	movq	24(%rax), %r9
+	call	fwrite
+	addq	$40, %rsp
+	xorl	%eax, %eax
+	popq	%rbx
+	popq	%rsi
+	popq	%rdi
+	popq	%rbp
+	ret
+	.section .rdata,"dr"
+	.align 8
+.LC4:
+	.ascii "Error creating method: name or return_type is NULL\12\0"
+	.text
+	.p2align 4
+	.globl	create_method_use_ptr
+	.def	create_method_use_ptr;	.scl	2;	.type	32;	.endef
+create_method_use_ptr:
+	subq	$40, %rsp
+	testq	%rdx, %rdx
+	je	.L53
+	testq	%r8, %r8
+	je	.L53
+	movq	80(%rsp), %rax
+	movq	%rdx, (%rcx)
+	movq	%r8, 8(%rcx)
+	movq	%rax, 24(%rcx)
+	movq	88(%rsp), %rax
+	movq	%r9, 16(%rcx)
+	movq	%rax, 32(%rcx)
+	movq	%rcx, %rax
+.L49:
+	addq	$40, %rsp
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L53:
+	call	__getreent
+	movl	$51, %r8d
+	movl	$1, %edx
+	leaq	.LC4(%rip), %rcx
+	movq	24(%rax), %r9
+	call	fwrite
+	xorl	%eax, %eax
+	jmp	.L49
+	.p2align 4
+	.globl	create_method
+	.def	create_method;	.scl	2;	.type	32;	.endef
+create_method:
+	pushq	%rbp
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rbx
+	subq	$40, %rsp
+	testq	%rcx, %rcx
+	je	.L59
+	movq	%rdx, %rsi
+	testq	%rdx, %rdx
+	je	.L59
+	movq	%rcx, %rbx
+	movl	$40, %ecx
+	movq	%r8, %rbp
+	movq	%r9, %rdi
+	call	alloc_memory
+	movq	112(%rsp), %rdx
+	movq	%rbx, (%rax)
+	movq	%rsi, 8(%rax)
+	movq	%rbp, 16(%rax)
+	movq	%rdi, 24(%rax)
+	movq	%rdx, 32(%rax)
+	addq	$40, %rsp
+	popq	%rbx
+	popq	%rsi
+	popq	%rdi
+	popq	%rbp
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L59:
 	call	__getreent
 	movl	$51, %r8d
 	movl	$1, %edx
@@ -267,11 +329,11 @@ create_class_member:
 	call	alloc_memory
 	movl	%ebx, 8(%rax)
 	testl	%ebx, %ebx
-	jne	.L50
+	jne	.L62
 	testq	%rsi, %rsi
-	je	.L50
+	je	.L62
 	movq	%rsi, (%rax)
-.L49:
+.L61:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -279,11 +341,11 @@ create_class_member:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L50:
+.L62:
 	cmpl	$1, %ebx
-	jne	.L52
+	jne	.L64
 	testq	%rdi, %rdi
-	je	.L52
+	je	.L64
 	movq	%rdi, (%rax)
 	addq	$32, %rsp
 	popq	%rbx
@@ -292,9 +354,9 @@ create_class_member:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L52:
+.L64:
 	orq	%rdi, %rsi
-	jne	.L54
+	jne	.L66
 	call	__getreent
 	movl	$45, %r8d
 	movl	$1, %edx
@@ -302,49 +364,41 @@ create_class_member:
 	movq	24(%rax), %r9
 	call	fwrite
 	xorl	%eax, %eax
-	jmp	.L49
+	jmp	.L61
 	.p2align 4,,10
 	.p2align 3
-.L54:
+.L66:
 	call	__getreent
 	movl	%ebx, %r8d
 	leaq	.LC6(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
 	xorl	%eax, %eax
-	jmp	.L49
+	jmp	.L61
 	.section .rdata,"dr"
 	.align 8
 .LC7:
 	.ascii "Error creating class: name is NULL\12\0"
 	.text
 	.p2align 4
-	.globl	create_class
-	.def	create_class;	.scl	2;	.type	32;	.endef
-create_class:
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rbx
-	subq	$32, %rsp
-	testq	%rcx, %rcx
-	je	.L73
-	movq	%rcx, %rbx
-	movl	$24, %ecx
-	movq	%rdx, %rdi
-	movq	%r8, %rsi
-	call	alloc_memory
-	movq	%rbx, (%rax)
-	movq	%rdi, 8(%rax)
-	movq	%rsi, 16(%rax)
-.L69:
-	addq	$32, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
+	.globl	create_class_use_ptr
+	.def	create_class_use_ptr;	.scl	2;	.type	32;	.endef
+create_class_use_ptr:
+	subq	$40, %rsp
+	testq	%rdx, %rdx
+	je	.L85
+	movq	80(%rsp), %rax
+	movq	%rdx, (%rcx)
+	movq	%r8, 8(%rcx)
+	movq	%r9, 16(%rcx)
+	movq	%rax, 24(%rcx)
+	movq	%rcx, %rax
+.L81:
+	addq	$40, %rsp
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L73:
+.L85:
 	call	__getreent
 	movl	$35, %r8d
 	movl	$1, %edx
@@ -352,7 +406,46 @@ create_class:
 	movq	24(%rax), %r9
 	call	fwrite
 	xorl	%eax, %eax
-	jmp	.L69
+	jmp	.L81
+	.p2align 4
+	.globl	create_class
+	.def	create_class;	.scl	2;	.type	32;	.endef
+create_class:
+	pushq	%rbp
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rbx
+	subq	$40, %rsp
+	testq	%rcx, %rcx
+	je	.L90
+	movq	%rcx, %rbx
+	movl	$32, %ecx
+	movq	%rdx, %rbp
+	movq	%r8, %rdi
+	movq	%r9, %rsi
+	call	alloc_memory
+	movq	%rbx, (%rax)
+	movq	%rbp, 8(%rax)
+	movq	%rdi, 16(%rax)
+	movq	%rsi, 24(%rax)
+.L86:
+	addq	$40, %rsp
+	popq	%rbx
+	popq	%rsi
+	popq	%rdi
+	popq	%rbp
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L90:
+	call	__getreent
+	movl	$35, %r8d
+	movl	$1, %edx
+	leaq	.LC7(%rip), %rcx
+	movq	24(%rax), %r9
+	call	fwrite
+	xorl	%eax, %eax
+	jmp	.L86
 	.section .rdata,"dr"
 	.align 8
 .LC8:
@@ -367,10 +460,10 @@ create_variable:
 	pushq	%rbx
 	subq	$32, %rsp
 	testq	%rcx, %rcx
-	je	.L78
+	je	.L95
 	movq	%rdx, %rsi
 	testq	%rdx, %rdx
-	je	.L78
+	je	.L95
 	movq	%rcx, %rbx
 	movl	$24, %ecx
 	movq	%r8, %rdi
@@ -385,7 +478,7 @@ create_variable:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L78:
+.L95:
 	call	__getreent
 	movl	$46, %r8d
 	movl	$1, %edx
@@ -425,12 +518,12 @@ create_statement:
 	call	alloc_memory
 	movl	%ebx, 8(%rax)
 	testl	%ebx, %ebx
-	jne	.L81
+	jne	.L98
 	testq	%r12, %r12
-	je	.L81
-.L123:
+	je	.L98
+.L140:
 	movq	%r12, (%rax)
-.L80:
+.L97:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -440,11 +533,11 @@ create_statement:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L81:
+.L98:
 	cmpl	$1, %ebx
-	jne	.L83
+	jne	.L100
 	cmpq	$0, 120(%rsp)
-	je	.L83
+	je	.L100
 	movq	120(%rsp), %rdi
 	movq	%rdi, (%rax)
 	addq	$32, %rsp
@@ -456,11 +549,11 @@ create_statement:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L83:
+.L100:
 	cmpl	$2, %ebx
-	jne	.L85
+	jne	.L102
 	testq	%rsi, %rsi
-	je	.L85
+	je	.L102
 	movq	%rsi, (%rax)
 	addq	$32, %rsp
 	popq	%rbx
@@ -471,47 +564,47 @@ create_statement:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L85:
+.L102:
 	cmpl	$3, %ebx
-	jne	.L86
+	jne	.L103
 	testq	%rbp, %rbp
-	je	.L86
+	je	.L103
 	movq	%rbp, (%rax)
-	jmp	.L80
+	jmp	.L97
 	.p2align 4,,10
 	.p2align 3
-.L86:
+.L103:
 	cmpl	$4, %ebx
-	jne	.L87
+	jne	.L104
 	testq	%rdi, %rdi
-	je	.L87
+	je	.L104
 	movq	%rdi, (%rax)
-	jmp	.L80
+	jmp	.L97
 	.p2align 4,,10
 	.p2align 3
-.L87:
+.L104:
 	cmpl	$5, %ebx
-	je	.L123
+	je	.L140
 	leal	-6(%rbx), %edx
 	cmpl	$1, %edx
-	ja	.L89
+	ja	.L106
 	movq	$0, (%rax)
-	jmp	.L80
-.L89:
+	jmp	.L97
+.L106:
 	orq	%rbp, %rdi
 	movq	120(%rsp), %rax
 	orq	%rdi, %rsi
 	orq	%rsi, %rax
 	orq	%r12, %rax
-	je	.L124
+	je	.L141
 	call	__getreent
 	movl	%ebx, %r8d
 	leaq	.LC10(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
 	xorl	%eax, %eax
-	jmp	.L80
-.L124:
+	jmp	.L97
+.L141:
 	call	__getreent
 	movl	$42, %r8d
 	movl	$1, %edx
@@ -519,7 +612,7 @@ create_statement:
 	movq	24(%rax), %r9
 	call	fwrite
 	xorl	%eax, %eax
-	jmp	.L80
+	jmp	.L97
 	.section .rdata,"dr"
 	.align 8
 .LC11:
@@ -535,7 +628,7 @@ create_if:
 	pushq	%rbx
 	subq	$40, %rsp
 	testq	%rcx, %rcx
-	je	.L129
+	je	.L146
 	movq	%rcx, %rbx
 	movl	$32, %ecx
 	movq	%rdx, %rbp
@@ -546,7 +639,7 @@ create_if:
 	movq	%rbp, 8(%rax)
 	movq	%rdi, 16(%rax)
 	movq	%rsi, 24(%rax)
-.L125:
+.L142:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -555,7 +648,7 @@ create_if:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L129:
+.L146:
 	call	__getreent
 	movl	$47, %r8d
 	movl	$1, %edx
@@ -563,7 +656,7 @@ create_if:
 	movq	24(%rax), %r9
 	call	fwrite
 	xorl	%eax, %eax
-	jmp	.L125
+	jmp	.L142
 	.section .rdata,"dr"
 	.align 8
 .LC12:
@@ -577,21 +670,21 @@ create_else_if:
 	pushq	%rbx
 	subq	$40, %rsp
 	testq	%rcx, %rcx
-	je	.L134
+	je	.L151
 	movq	%rcx, %rbx
 	movl	$16, %ecx
 	movq	%rdx, %rsi
 	call	alloc_memory
 	movq	%rbx, (%rax)
 	movq	%rsi, 8(%rax)
-.L130:
+.L147:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L134:
+.L151:
 	call	__getreent
 	movl	$52, %r8d
 	movl	$1, %edx
@@ -599,7 +692,7 @@ create_else_if:
 	movq	24(%rax), %r9
 	call	fwrite
 	xorl	%eax, %eax
-	jmp	.L130
+	jmp	.L147
 	.p2align 4
 	.globl	create_for
 	.def	create_for;	.scl	2;	.type	32;	.endef
@@ -673,19 +766,19 @@ create_expression:
 	testq	%r9, %r9
 	sete	%al
 	cmpb	%al, %dl
-	jne	.L140
+	jne	.L157
 	movq	%r8, %rax
 	orq	%rdi, %rax
-	je	.L157
+	je	.L174
 	movl	$32, %ecx
 	call	alloc_memory
 	movl	%ebx, 24(%rax)
 	testq	%rdi, %rdi
-	je	.L147
+	je	.L164
 	movq	%rdi, (%rax)
-.L148:
+.L165:
 	movq	%rsi, 16(%rax)
-.L139:
+.L156:
 	addq	$48, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -695,16 +788,16 @@ create_expression:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L157:
+.L174:
 	leaq	.LC13(%rip), %rbp
 	testq	%r9, %r9
-	je	.L151
+	je	.L168
 	leaq	.LC14(%rip), %r12
 	movq	%rbp, %rsi
-	jmp	.L142
+	jmp	.L159
 	.p2align 4,,10
 	.p2align 3
-.L140:
+.L157:
 	leaq	.LC13(%rip), %rax
 	leaq	.LC14(%rip), %r9
 	testq	%rsi, %rsi
@@ -716,7 +809,7 @@ create_expression:
 	testq	%rdi, %rdi
 	cmovne	%r9, %rax
 	movq	%rax, %rsi
-.L142:
+.L159:
 	cmpl	$19, %ebx
 	leaq	.LC13(%rip), %rax
 	leaq	.LC14(%rip), %rbx
@@ -730,21 +823,21 @@ create_expression:
 	movq	%rbp, 32(%rsp)
 	call	fprintf
 	xorl	%eax, %eax
-	jmp	.L139
+	jmp	.L156
 	.p2align 4,,10
 	.p2align 3
-.L151:
+.L168:
 	movq	%rbp, %r12
 	movq	%rbp, %rsi
-	jmp	.L142
+	jmp	.L159
 	.p2align 4,,10
 	.p2align 3
-.L147:
+.L164:
 	testq	%rbp, %rbp
-	je	.L149
+	je	.L166
 	movq	%rbp, 8(%rax)
-	jmp	.L148
-.L149:
+	jmp	.L165
+.L166:
 	call	__getreent
 	movl	$65, %r8d
 	movl	$1, %edx
@@ -752,7 +845,7 @@ create_expression:
 	movq	24(%rax), %r9
 	call	fwrite
 	xorl	%eax, %eax
-	jmp	.L139
+	jmp	.L156
 	.section .rdata,"dr"
 	.align 8
 .LC17:
@@ -778,11 +871,11 @@ create_primary:
 	call	alloc_memory
 	movl	%ebx, 8(%rax)
 	cmpl	$4, %ebx
-	ja	.L159
+	ja	.L176
 	testq	%rsi, %rsi
-	je	.L159
+	je	.L176
 	movq	%rsi, (%rax)
-.L158:
+.L175:
 	addq	$40, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -791,11 +884,11 @@ create_primary:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L159:
+.L176:
 	cmpl	$5, %ebx
-	jne	.L161
+	jne	.L178
 	testq	%rbp, %rbp
-	je	.L161
+	je	.L178
 	movq	%rbp, (%rax)
 	addq	$40, %rsp
 	popq	%rbx
@@ -805,16 +898,16 @@ create_primary:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L161:
+.L178:
 	leal	-6(%rbx), %edx
 	cmpl	$1, %edx
-	jbe	.L190
+	jbe	.L207
 	cmpl	$8, %ebx
-	jne	.L164
+	jne	.L181
 	cmpq	$0, 112(%rsp)
-	je	.L164
+	je	.L181
 	movq	112(%rsp), %rdi
-.L189:
+.L206:
 	movq	%rdi, (%rax)
 	addq	$40, %rsp
 	popq	%rbx
@@ -824,16 +917,16 @@ create_primary:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L190:
+.L207:
 	testq	%rdi, %rdi
-	jne	.L189
-.L164:
+	jne	.L206
+.L181:
 	movq	112(%rsp), %rax
 	movq	%rbp, %r8
 	orq	%rdi, %rax
 	orq	%rax, %r8
 	orq	%r8, %rsi
-	jne	.L165
+	jne	.L182
 	call	__getreent
 	movl	$38, %r8d
 	movl	$1, %edx
@@ -841,17 +934,17 @@ create_primary:
 	movq	24(%rax), %r9
 	call	fwrite
 	xorl	%eax, %eax
-	jmp	.L158
+	jmp	.L175
 	.p2align 4,,10
 	.p2align 3
-.L165:
+.L182:
 	call	__getreent
 	movl	%ebx, %r8d
 	leaq	.LC18(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
 	xorl	%eax, %eax
-	jmp	.L158
+	jmp	.L175
 	.section .rdata,"dr"
 	.align 8
 .LC19:
@@ -880,7 +973,7 @@ create_variable_access:
 	testq	%rdx, %rdx
 	sete	%r12b
 	cmpb	%al, %r12b
-	jne	.L231
+	jne	.L248
 	movq	%r8, %rdi
 	movl	$24, %ecx
 	movq	%r9, %rbp
@@ -890,12 +983,12 @@ create_variable_access:
 	setne	%dl
 	movq	%rsi, (%rax)
 	testb	%r12b, %r12b
-	je	.L196
+	je	.L213
 	testb	%dl, %dl
-	je	.L196
-.L230:
+	je	.L213
+.L247:
 	movq	%rdi, 8(%rax)
-.L191:
+.L208:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -905,11 +998,11 @@ create_variable_access:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L196:
+.L213:
 	cmpl	$1, %ebx
-	jne	.L198
+	jne	.L215
 	cmpq	$0, 112(%rsp)
-	je	.L198
+	je	.L215
 	movq	112(%rsp), %rsi
 	movq	%rsi, 8(%rax)
 	addq	$32, %rsp
@@ -921,7 +1014,7 @@ create_variable_access:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L231:
+.L248:
 	leaq	.LC13(%rip), %rax
 	leaq	.LC14(%rip), %r8
 	testl	%ecx, %ecx
@@ -937,36 +1030,36 @@ create_variable_access:
 	movq	24(%rax), %rcx
 	call	fprintf
 	xorl	%eax, %eax
-	jmp	.L191
+	jmp	.L208
 	.p2align 4,,10
 	.p2align 3
-.L198:
+.L215:
 	cmpl	$3, %ebx
-	jne	.L200
+	jne	.L217
 	testq	%rbp, %rbp
-	je	.L200
+	je	.L217
 	movq	%rbp, 8(%rax)
-	jmp	.L191
+	jmp	.L208
 	.p2align 4,,10
 	.p2align 3
-.L200:
+.L217:
 	cmpl	$2, %ebx
-	jne	.L201
+	jne	.L218
 	testb	%dl, %dl
-	jne	.L230
-.L201:
+	jne	.L247
+.L218:
 	movq	112(%rsp), %r9
 	orq	%rbp, %r9
 	orq	%r9, %rdi
-	je	.L232
+	je	.L249
 	call	__getreent
 	movl	%ebx, %r8d
 	leaq	.LC21(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
 	xorl	%eax, %eax
-	jmp	.L191
-.L232:
+	jmp	.L208
+.L249:
 	call	__getreent
 	movl	$48, %r8d
 	movl	$1, %edx
@@ -974,7 +1067,7 @@ create_variable_access:
 	movq	24(%rax), %r9
 	call	fwrite
 	xorl	%eax, %eax
-	jmp	.L191
+	jmp	.L208
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
 	.def	__getreent;	.scl	2;	.type	32;	.endef

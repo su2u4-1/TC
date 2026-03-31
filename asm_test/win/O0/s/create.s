@@ -94,11 +94,9 @@ create_code:
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
 	movq	16(%rbp), %rdx
 	movq	%rdx, (%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
@@ -134,11 +132,9 @@ create_import:
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
 	movq	16(%rbp), %rdx
 	movq	%rdx, (%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
@@ -150,19 +146,19 @@ create_import:
 .LC3:
 	.ascii "Error creating function: name or return_type is NULL\12\0"
 	.text
-	.globl	create_function
-	.def	create_function;	.scl	2;	.type	32;	.endef
-create_function:
+	.globl	create_function_use_ptr
+	.def	create_function_use_ptr;	.scl	2;	.type	32;	.endef
+create_function_use_ptr:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$48, %rsp
+	subq	$32, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
-	cmpq	$0, 16(%rbp)
-	je	.L15
 	cmpq	$0, 24(%rbp)
+	je	.L15
+	cmpq	$0, 32(%rbp)
 	jne	.L16
 .L15:
 	call	__getreent
@@ -176,41 +172,31 @@ create_function:
 	movl	$0, %eax
 	jmp	.L17
 .L16:
-	movl	$40, %ecx
-	call	alloc_memory
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movq	16(%rbp), %rdx
-	movq	%rdx, (%rax)
-	movq	-16(%rbp), %rax
+	movq	16(%rbp), %rax
 	movq	24(%rbp), %rdx
-	movq	%rdx, 8(%rax)
-	movq	-16(%rbp), %rax
+	movq	%rdx, (%rax)
+	movq	16(%rbp), %rax
 	movq	32(%rbp), %rdx
-	movq	%rdx, 16(%rax)
-	movq	-16(%rbp), %rax
+	movq	%rdx, 8(%rax)
+	movq	16(%rbp), %rax
 	movq	40(%rbp), %rdx
-	movq	%rdx, 24(%rax)
-	movq	-16(%rbp), %rax
+	movq	%rdx, 16(%rax)
+	movq	16(%rbp), %rax
 	movq	48(%rbp), %rdx
+	movq	%rdx, 24(%rax)
+	movq	16(%rbp), %rax
+	movq	56(%rbp), %rdx
 	movq	%rdx, 32(%rax)
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax
 .L17:
 	leave
 	ret
-	.section .rdata,"dr"
-	.align 8
-.LC4:
-	.ascii "Error creating method: name or return_type is NULL\12\0"
-	.text
-	.globl	create_method
-	.def	create_method;	.scl	2;	.type	32;	.endef
-create_method:
+	.globl	create_function
+	.def	create_function;	.scl	2;	.type	32;	.endef
+create_function:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$48, %rsp
+	subq	$64, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -223,9 +209,9 @@ create_method:
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rax, %r9
-	movl	$51, %r8d
+	movl	$53, %r8d
 	movl	$1, %edx
-	leaq	.LC4(%rip), %rax
+	leaq	.LC3(%rip), %rax
 	movq	%rax, %rcx
 	call	fwrite
 	movl	$0, %eax
@@ -234,25 +220,109 @@ create_method:
 	movl	$40, %ecx
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
+	movq	32(%rbp), %r9
+	movq	24(%rbp), %r8
 	movq	16(%rbp), %rdx
-	movq	%rdx, (%rax)
-	movq	-16(%rbp), %rax
-	movq	24(%rbp), %rdx
-	movq	%rdx, 8(%rax)
-	movq	-16(%rbp), %rax
-	movq	32(%rbp), %rdx
-	movq	%rdx, 16(%rax)
-	movq	-16(%rbp), %rax
-	movq	40(%rbp), %rdx
-	movq	%rdx, 24(%rax)
-	movq	-16(%rbp), %rax
-	movq	48(%rbp), %rdx
-	movq	%rdx, 32(%rax)
 	movq	-8(%rbp), %rax
+	movq	48(%rbp), %rcx
+	movq	%rcx, 40(%rsp)
+	movq	40(%rbp), %rcx
+	movq	%rcx, 32(%rsp)
+	movq	%rax, %rcx
+	call	create_function_use_ptr
 .L21:
+	leave
+	ret
+	.section .rdata,"dr"
+	.align 8
+.LC4:
+	.ascii "Error creating method: name or return_type is NULL\12\0"
+	.text
+	.globl	create_method_use_ptr
+	.def	create_method_use_ptr;	.scl	2;	.type	32;	.endef
+create_method_use_ptr:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rcx, 16(%rbp)
+	movq	%rdx, 24(%rbp)
+	movq	%r8, 32(%rbp)
+	movq	%r9, 40(%rbp)
+	cmpq	$0, 24(%rbp)
+	je	.L23
+	cmpq	$0, 32(%rbp)
+	jne	.L24
+.L23:
+	call	__getreent
+	movq	24(%rax), %rax
+	movq	%rax, %r9
+	movl	$51, %r8d
+	movl	$1, %edx
+	leaq	.LC4(%rip), %rax
+	movq	%rax, %rcx
+	call	fwrite
+	movl	$0, %eax
+	jmp	.L25
+.L24:
+	movq	16(%rbp), %rax
+	movq	24(%rbp), %rdx
+	movq	%rdx, (%rax)
+	movq	16(%rbp), %rax
+	movq	32(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	movq	16(%rbp), %rax
+	movq	40(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	16(%rbp), %rax
+	movq	48(%rbp), %rdx
+	movq	%rdx, 24(%rax)
+	movq	16(%rbp), %rax
+	movq	56(%rbp), %rdx
+	movq	%rdx, 32(%rax)
+	movq	16(%rbp), %rax
+.L25:
+	leave
+	ret
+	.globl	create_method
+	.def	create_method;	.scl	2;	.type	32;	.endef
+create_method:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$64, %rsp
+	movq	%rcx, 16(%rbp)
+	movq	%rdx, 24(%rbp)
+	movq	%r8, 32(%rbp)
+	movq	%r9, 40(%rbp)
+	cmpq	$0, 16(%rbp)
+	je	.L27
+	cmpq	$0, 24(%rbp)
+	jne	.L28
+.L27:
+	call	__getreent
+	movq	24(%rax), %rax
+	movq	%rax, %r9
+	movl	$51, %r8d
+	movl	$1, %edx
+	leaq	.LC4(%rip), %rax
+	movq	%rax, %rcx
+	call	fwrite
+	movl	$0, %eax
+	jmp	.L29
+.L28:
+	movl	$40, %ecx
+	call	alloc_memory
+	movq	%rax, -8(%rbp)
+	movq	32(%rbp), %r9
+	movq	24(%rbp), %r8
+	movq	16(%rbp), %rdx
+	movq	-8(%rbp), %rax
+	movq	48(%rbp), %rcx
+	movq	%rcx, 40(%rsp)
+	movq	40(%rbp), %rcx
+	movq	%rcx, 32(%rsp)
+	movq	%rax, %rcx
+	call	create_method_use_ptr
+.L29:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -276,32 +346,30 @@ create_class_member:
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
 	movl	16(%rbp), %edx
 	movl	%edx, 8(%rax)
 	cmpl	$0, 16(%rbp)
-	jne	.L23
+	jne	.L31
 	cmpq	$0, 24(%rbp)
-	je	.L23
-	movq	-16(%rbp), %rax
+	je	.L31
+	movq	-8(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L24
-.L23:
+	jmp	.L32
+.L31:
 	cmpl	$1, 16(%rbp)
-	jne	.L25
+	jne	.L33
 	cmpq	$0, 32(%rbp)
-	je	.L25
-	movq	-16(%rbp), %rax
+	je	.L33
+	movq	-8(%rbp), %rax
 	movq	32(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L24
-.L25:
+	jmp	.L32
+.L33:
 	cmpq	$0, 24(%rbp)
-	jne	.L26
+	jne	.L34
 	cmpq	$0, 32(%rbp)
-	jne	.L26
+	jne	.L34
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rax, %r9
@@ -310,8 +378,8 @@ create_class_member:
 	leaq	.LC5(%rip), %rax
 	movq	%rax, %rcx
 	call	fwrite
-	jmp	.L27
-.L26:
+	jmp	.L35
+.L34:
 	call	__getreent
 	movq	24(%rax), %rax
 	movl	16(%rbp), %edx
@@ -319,12 +387,12 @@ create_class_member:
 	leaq	.LC6(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
-.L27:
+.L35:
 	movl	$0, %eax
-	jmp	.L28
-.L24:
+	jmp	.L36
+.L32:
 	movq	-8(%rbp), %rax
-.L28:
+.L36:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -332,17 +400,18 @@ create_class_member:
 .LC7:
 	.ascii "Error creating class: name is NULL\12\0"
 	.text
-	.globl	create_class
-	.def	create_class;	.scl	2;	.type	32;	.endef
-create_class:
+	.globl	create_class_use_ptr
+	.def	create_class_use_ptr;	.scl	2;	.type	32;	.endef
+create_class_use_ptr:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$48, %rsp
+	subq	$32, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
-	cmpq	$0, 16(%rbp)
-	jne	.L30
+	movq	%r9, 40(%rbp)
+	cmpq	$0, 24(%rbp)
+	jne	.L38
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rax, %r9
@@ -352,24 +421,59 @@ create_class:
 	movq	%rax, %rcx
 	call	fwrite
 	movl	$0, %eax
-	jmp	.L31
-.L30:
-	movl	$24, %ecx
+	jmp	.L39
+.L38:
+	movq	16(%rbp), %rax
+	movq	24(%rbp), %rdx
+	movq	%rdx, (%rax)
+	movq	16(%rbp), %rax
+	movq	32(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	movq	16(%rbp), %rax
+	movq	40(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	16(%rbp), %rax
+	movq	48(%rbp), %rdx
+	movq	%rdx, 24(%rax)
+	movq	16(%rbp), %rax
+.L39:
+	leave
+	ret
+	.globl	create_class
+	.def	create_class;	.scl	2;	.type	32;	.endef
+create_class:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$64, %rsp
+	movq	%rcx, 16(%rbp)
+	movq	%rdx, 24(%rbp)
+	movq	%r8, 32(%rbp)
+	movq	%r9, 40(%rbp)
+	cmpq	$0, 16(%rbp)
+	jne	.L41
+	call	__getreent
+	movq	24(%rax), %rax
+	movq	%rax, %r9
+	movl	$35, %r8d
+	movl	$1, %edx
+	leaq	.LC7(%rip), %rax
+	movq	%rax, %rcx
+	call	fwrite
+	movl	$0, %eax
+	jmp	.L42
+.L41:
+	movl	$32, %ecx
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
+	movq	32(%rbp), %r9
+	movq	24(%rbp), %r8
 	movq	16(%rbp), %rdx
-	movq	%rdx, (%rax)
-	movq	-16(%rbp), %rax
-	movq	24(%rbp), %rdx
-	movq	%rdx, 8(%rax)
-	movq	-16(%rbp), %rax
-	movq	32(%rbp), %rdx
-	movq	%rdx, 16(%rax)
 	movq	-8(%rbp), %rax
-.L31:
+	movq	40(%rbp), %rcx
+	movq	%rcx, 32(%rsp)
+	movq	%rax, %rcx
+	call	create_class_use_ptr
+.L42:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -387,10 +491,10 @@ create_variable:
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
 	cmpq	$0, 16(%rbp)
-	je	.L33
+	je	.L44
 	cmpq	$0, 24(%rbp)
-	jne	.L34
-.L33:
+	jne	.L45
+.L44:
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rax, %r9
@@ -400,24 +504,22 @@ create_variable:
 	movq	%rax, %rcx
 	call	fwrite
 	movl	$0, %eax
-	jmp	.L35
-.L34:
+	jmp	.L46
+.L45:
 	movl	$24, %ecx
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
 	movq	16(%rbp), %rdx
 	movq	%rdx, (%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	32(%rbp), %rdx
 	movq	%rdx, 16(%rax)
 	movq	-8(%rbp), %rax
-.L35:
+.L46:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -442,81 +544,79 @@ create_statement:
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
 	movl	16(%rbp), %edx
 	movl	%edx, 8(%rax)
 	cmpl	$0, 16(%rbp)
-	jne	.L37
+	jne	.L48
 	cmpq	$0, 48(%rbp)
-	je	.L37
-	movq	-16(%rbp), %rax
+	je	.L48
+	movq	-8(%rbp), %rax
 	movq	48(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L38
-.L37:
+	jmp	.L49
+.L48:
 	cmpl	$1, 16(%rbp)
-	jne	.L39
+	jne	.L50
 	cmpq	$0, 56(%rbp)
-	je	.L39
-	movq	-16(%rbp), %rax
+	je	.L50
+	movq	-8(%rbp), %rax
 	movq	56(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L38
-.L39:
+	jmp	.L49
+.L50:
 	cmpl	$2, 16(%rbp)
-	jne	.L40
+	jne	.L51
 	cmpq	$0, 24(%rbp)
-	je	.L40
-	movq	-16(%rbp), %rax
+	je	.L51
+	movq	-8(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L38
-.L40:
+	jmp	.L49
+.L51:
 	cmpl	$3, 16(%rbp)
-	jne	.L41
+	jne	.L52
 	cmpq	$0, 32(%rbp)
-	je	.L41
-	movq	-16(%rbp), %rax
+	je	.L52
+	movq	-8(%rbp), %rax
 	movq	32(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L38
-.L41:
+	jmp	.L49
+.L52:
 	cmpl	$4, 16(%rbp)
-	jne	.L42
+	jne	.L53
 	cmpq	$0, 40(%rbp)
-	je	.L42
-	movq	-16(%rbp), %rax
+	je	.L53
+	movq	-8(%rbp), %rax
 	movq	40(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L38
-.L42:
+	jmp	.L49
+.L53:
 	cmpl	$5, 16(%rbp)
-	jne	.L43
-	movq	-16(%rbp), %rax
+	jne	.L54
+	movq	-8(%rbp), %rax
 	movq	48(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L38
-.L43:
+	jmp	.L49
+.L54:
 	cmpl	$6, 16(%rbp)
-	je	.L44
+	je	.L55
 	cmpl	$7, 16(%rbp)
-	jne	.L45
-.L44:
-	movq	-16(%rbp), %rax
+	jne	.L56
+.L55:
+	movq	-8(%rbp), %rax
 	movq	$0, (%rax)
-	jmp	.L38
-.L45:
+	jmp	.L49
+.L56:
 	cmpq	$0, 24(%rbp)
-	jne	.L46
+	jne	.L57
 	cmpq	$0, 32(%rbp)
-	jne	.L46
+	jne	.L57
 	cmpq	$0, 40(%rbp)
-	jne	.L46
+	jne	.L57
 	cmpq	$0, 48(%rbp)
-	jne	.L46
+	jne	.L57
 	cmpq	$0, 56(%rbp)
-	jne	.L46
+	jne	.L57
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rax, %r9
@@ -525,8 +625,8 @@ create_statement:
 	leaq	.LC9(%rip), %rax
 	movq	%rax, %rcx
 	call	fwrite
-	jmp	.L47
-.L46:
+	jmp	.L58
+.L57:
 	call	__getreent
 	movq	24(%rax), %rax
 	movl	16(%rbp), %edx
@@ -534,12 +634,12 @@ create_statement:
 	leaq	.LC10(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
-.L47:
+.L58:
 	movl	$0, %eax
-	jmp	.L48
-.L38:
+	jmp	.L59
+.L49:
 	movq	-8(%rbp), %rax
-.L48:
+.L59:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -558,7 +658,7 @@ create_if:
 	movq	%r8, 32(%rbp)
 	movq	%r9, 40(%rbp)
 	cmpq	$0, 16(%rbp)
-	jne	.L50
+	jne	.L61
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rax, %r9
@@ -568,27 +668,25 @@ create_if:
 	movq	%rax, %rcx
 	call	fwrite
 	movl	$0, %eax
-	jmp	.L51
-.L50:
+	jmp	.L62
+.L61:
 	movl	$32, %ecx
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
 	movq	16(%rbp), %rdx
 	movq	%rdx, (%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	32(%rbp), %rdx
 	movq	%rdx, 16(%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	40(%rbp), %rdx
 	movq	%rdx, 24(%rax)
 	movq	-8(%rbp), %rax
-.L51:
+.L62:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -605,7 +703,7 @@ create_else_if:
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	cmpq	$0, 16(%rbp)
-	jne	.L53
+	jne	.L64
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rax, %r9
@@ -615,21 +713,19 @@ create_else_if:
 	movq	%rax, %rcx
 	call	fwrite
 	movl	$0, %eax
-	jmp	.L54
-.L53:
+	jmp	.L65
+.L64:
 	movl	$16, %ecx
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
 	movq	16(%rbp), %rdx
 	movq	%rdx, (%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
-.L54:
+.L65:
 	leave
 	ret
 	.globl	create_for
@@ -646,17 +742,15 @@ create_for:
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
 	movq	16(%rbp), %rdx
 	movq	%rdx, (%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	32(%rbp), %rdx
 	movq	%rdx, 16(%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	40(%rbp), %rdx
 	movq	%rdx, 24(%rax)
 	movq	-8(%rbp), %rax
@@ -674,11 +768,9 @@ create_while:
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
 	movq	16(%rbp), %rdx
 	movq	%rdx, (%rax)
-	movq	-16(%rbp), %rax
+	movq	-8(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
@@ -716,40 +808,40 @@ create_expression:
 	sete	%al
 	xorl	%edx, %eax
 	testb	%al, %al
-	jne	.L60
+	jne	.L71
 	cmpq	$0, 24(%rbp)
-	jne	.L61
+	jne	.L72
 	cmpq	$0, 32(%rbp)
-	jne	.L61
-.L60:
+	jne	.L72
+.L71:
 	cmpq	$0, 40(%rbp)
-	jne	.L62
+	jne	.L73
 	leaq	.LC13(%rip), %rsi
-	jmp	.L63
-.L62:
+	jmp	.L74
+.L73:
 	leaq	.LC14(%rip), %rsi
-.L63:
+.L74:
 	cmpq	$0, 32(%rbp)
-	jne	.L64
+	jne	.L75
 	leaq	.LC13(%rip), %rbx
-	jmp	.L65
-.L64:
+	jmp	.L76
+.L75:
 	leaq	.LC14(%rip), %rbx
-.L65:
+.L76:
 	cmpq	$0, 24(%rbp)
-	jne	.L66
+	jne	.L77
 	leaq	.LC13(%rip), %r12
-	jmp	.L67
-.L66:
+	jmp	.L78
+.L77:
 	leaq	.LC14(%rip), %r12
-.L67:
+.L78:
 	cmpl	$19, 16(%rbp)
-	jne	.L68
+	jne	.L79
 	leaq	.LC13(%rip), %rdi
-	jmp	.L69
-.L68:
+	jmp	.L80
+.L79:
 	leaq	.LC14(%rip), %rdi
-.L69:
+.L80:
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rsi, 40(%rsp)
@@ -760,30 +852,28 @@ create_expression:
 	movq	%rax, %rcx
 	call	fprintf
 	movl	$0, %eax
-	jmp	.L70
-.L61:
+	jmp	.L81
+.L72:
 	movl	$32, %ecx
 	call	alloc_memory
 	movq	%rax, -40(%rbp)
 	movq	-40(%rbp), %rax
-	movq	%rax, -48(%rbp)
-	movq	-48(%rbp), %rax
 	movl	16(%rbp), %edx
 	movl	%edx, 24(%rax)
 	cmpq	$0, 24(%rbp)
-	je	.L71
-	movq	-48(%rbp), %rax
+	je	.L82
+	movq	-40(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L72
-.L71:
+	jmp	.L83
+.L82:
 	cmpq	$0, 32(%rbp)
-	je	.L73
-	movq	-48(%rbp), %rax
+	je	.L84
+	movq	-40(%rbp), %rax
 	movq	32(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	jmp	.L72
-.L73:
+	jmp	.L83
+.L84:
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rax, %r9
@@ -793,13 +883,13 @@ create_expression:
 	movq	%rax, %rcx
 	call	fwrite
 	movl	$0, %eax
-	jmp	.L70
-.L72:
-	movq	-48(%rbp), %rax
+	jmp	.L81
+.L83:
+	movq	-40(%rbp), %rax
 	movq	40(%rbp), %rdx
 	movq	%rdx, 16(%rax)
 	movq	-40(%rbp), %rax
-.L70:
+.L81:
 	addq	$64, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -829,66 +919,64 @@ create_primary:
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
 	movl	16(%rbp), %edx
 	movl	%edx, 8(%rax)
 	cmpl	$0, 16(%rbp)
-	je	.L75
+	je	.L86
 	cmpl	$1, 16(%rbp)
-	je	.L75
+	je	.L86
 	cmpl	$2, 16(%rbp)
-	je	.L75
+	je	.L86
 	cmpl	$3, 16(%rbp)
-	je	.L75
+	je	.L86
 	cmpl	$4, 16(%rbp)
-	jne	.L76
-.L75:
+	jne	.L87
+.L86:
 	cmpq	$0, 24(%rbp)
-	je	.L76
-	movq	-16(%rbp), %rax
+	je	.L87
+	movq	-8(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L77
-.L76:
+	jmp	.L88
+.L87:
 	cmpl	$5, 16(%rbp)
-	jne	.L78
+	jne	.L89
 	cmpq	$0, 32(%rbp)
-	je	.L78
-	movq	-16(%rbp), %rax
+	je	.L89
+	movq	-8(%rbp), %rax
 	movq	32(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L77
-.L78:
+	jmp	.L88
+.L89:
 	cmpl	$6, 16(%rbp)
-	je	.L79
+	je	.L90
 	cmpl	$7, 16(%rbp)
-	jne	.L80
-.L79:
+	jne	.L91
+.L90:
 	cmpq	$0, 40(%rbp)
-	je	.L80
-	movq	-16(%rbp), %rax
+	je	.L91
+	movq	-8(%rbp), %rax
 	movq	40(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L77
-.L80:
+	jmp	.L88
+.L91:
 	cmpl	$8, 16(%rbp)
-	jne	.L81
+	jne	.L92
 	cmpq	$0, 48(%rbp)
-	je	.L81
-	movq	-16(%rbp), %rax
+	je	.L92
+	movq	-8(%rbp), %rax
 	movq	48(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L77
-.L81:
+	jmp	.L88
+.L92:
 	cmpq	$0, 24(%rbp)
-	jne	.L82
+	jne	.L93
 	cmpq	$0, 32(%rbp)
-	jne	.L82
+	jne	.L93
 	cmpq	$0, 40(%rbp)
-	jne	.L82
+	jne	.L93
 	cmpq	$0, 48(%rbp)
-	jne	.L82
+	jne	.L93
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rax, %r9
@@ -897,8 +985,8 @@ create_primary:
 	leaq	.LC17(%rip), %rax
 	movq	%rax, %rcx
 	call	fwrite
-	jmp	.L83
-.L82:
+	jmp	.L94
+.L93:
 	call	__getreent
 	movq	24(%rax), %rax
 	movl	16(%rbp), %edx
@@ -906,12 +994,12 @@ create_primary:
 	leaq	.LC18(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
-.L83:
+.L94:
 	movl	$0, %eax
-	jmp	.L84
-.L77:
+	jmp	.L95
+.L88:
 	movq	-8(%rbp), %rax
-.L84:
+.L95:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -943,21 +1031,21 @@ create_variable_access:
 	sete	%al
 	xorl	%edx, %eax
 	testb	%al, %al
-	je	.L86
+	je	.L97
 	cmpl	$0, 16(%rbp)
-	jne	.L87
+	jne	.L98
 	leaq	.LC13(%rip), %rsi
-	jmp	.L88
-.L87:
+	jmp	.L99
+.L98:
 	leaq	.LC14(%rip), %rsi
-.L88:
+.L99:
 	cmpq	$0, 24(%rbp)
-	jne	.L89
+	jne	.L100
 	leaq	.LC13(%rip), %rbx
-	jmp	.L90
-.L89:
+	jmp	.L101
+.L100:
 	leaq	.LC14(%rip), %rbx
-.L90:
+.L101:
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rsi, %r9
@@ -966,61 +1054,59 @@ create_variable_access:
 	movq	%rax, %rcx
 	call	fprintf
 	movl	$0, %eax
-	jmp	.L91
-.L86:
+	jmp	.L102
+.L97:
 	movl	$24, %ecx
 	call	alloc_memory
 	movq	%rax, -24(%rbp)
 	movq	-24(%rbp), %rax
-	movq	%rax, -32(%rbp)
-	movq	-32(%rbp), %rax
 	movl	16(%rbp), %edx
 	movl	%edx, 16(%rax)
-	movq	-32(%rbp), %rax
+	movq	-24(%rbp), %rax
 	movq	24(%rbp), %rdx
 	movq	%rdx, (%rax)
 	cmpl	$0, 16(%rbp)
-	jne	.L92
+	jne	.L103
 	cmpq	$0, 32(%rbp)
-	je	.L92
-	movq	-32(%rbp), %rax
+	je	.L103
+	movq	-24(%rbp), %rax
 	movq	32(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	jmp	.L93
-.L92:
+	jmp	.L104
+.L103:
 	cmpl	$1, 16(%rbp)
-	jne	.L94
+	jne	.L105
 	cmpq	$0, 48(%rbp)
-	je	.L94
-	movq	-32(%rbp), %rax
+	je	.L105
+	movq	-24(%rbp), %rax
 	movq	48(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	jmp	.L93
-.L94:
+	jmp	.L104
+.L105:
 	cmpl	$3, 16(%rbp)
-	jne	.L95
+	jne	.L106
 	cmpq	$0, 40(%rbp)
-	je	.L95
-	movq	-32(%rbp), %rax
+	je	.L106
+	movq	-24(%rbp), %rax
 	movq	40(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	jmp	.L93
-.L95:
+	jmp	.L104
+.L106:
 	cmpl	$2, 16(%rbp)
-	jne	.L96
+	jne	.L107
 	cmpq	$0, 32(%rbp)
-	je	.L96
-	movq	-32(%rbp), %rax
+	je	.L107
+	movq	-24(%rbp), %rax
 	movq	32(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	jmp	.L93
-.L96:
+	jmp	.L104
+.L107:
 	cmpq	$0, 32(%rbp)
-	jne	.L97
+	jne	.L108
 	cmpq	$0, 40(%rbp)
-	jne	.L97
+	jne	.L108
 	cmpq	$0, 48(%rbp)
-	jne	.L97
+	jne	.L108
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	%rax, %r9
@@ -1029,8 +1115,8 @@ create_variable_access:
 	leaq	.LC20(%rip), %rax
 	movq	%rax, %rcx
 	call	fwrite
-	jmp	.L98
-.L97:
+	jmp	.L109
+.L108:
 	call	__getreent
 	movq	24(%rax), %rax
 	movl	16(%rbp), %edx
@@ -1038,12 +1124,12 @@ create_variable_access:
 	leaq	.LC21(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
-.L98:
+.L109:
 	movl	$0, %eax
-	jmp	.L91
-.L93:
+	jmp	.L102
+.L104:
 	movq	-24(%rbp), %rax
-.L91:
+.L102:
 	addq	$48, %rsp
 	popq	%rbx
 	popq	%rsi

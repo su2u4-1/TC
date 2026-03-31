@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +24,8 @@ extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern char initialized;
 extern StringList* all_string_list;
-extern string CONSTRUCTOR_NAME;
+extern string DEFAULT_INIT_NAME;
+extern string DEFAULT_CONSTRUCTOR_NAME;
 extern string IMPORT_KEYWORD;
 extern string FROM_KEYWORD;
 extern string FUNC_KEYWORD;
@@ -190,7 +190,8 @@ typedef struct List List;
 typedef struct Node Node;
 typedef enum SymbolTableType {
     SYMBOL_CLASS,
-    SYMBOL_SUBROUTINE,
+    SYMBOL_FUNCTION,
+    SYMBOL_METHOD,
     SYMBOL_VARIABLE,
     SYMBOL_PARAM,
     SYMBOL_ATTRIBUTE,
@@ -200,7 +201,7 @@ struct CodeMember {
     union {
         Import* import;
         Function* function;
-        Class* class_;
+        Class* class;
     } content;
     CodeMemberType type;
 };
@@ -237,6 +238,7 @@ struct Class {
     Symbol* name;
     List* members;
     SymbolTable* class_scope;
+    size_t size;
 };
 struct Variable {
     Symbol* type;
@@ -313,9 +315,14 @@ struct SymbolTable {
 };
 struct Symbol {
     Symbol* type;
-    SymbolTable* scope;
-    string original_name;
+    string name;
     size_t id;
+    union {
+        Class* class;
+        Function* function;
+        Method* method;
+        SymbolTable* scope;
+    } ast_node;
     SymbolType kind;
 };
 typedef struct Lexer Lexer;
@@ -335,14 +342,17 @@ void list_append(List* list, pointer item);
 List* list_copy(List* original);
 pointer list_pop(List* list);
 pointer list_pop_back(List* list);
-Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope);
+char list_is_empty(List* list);
+Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node);
 SymbolTable* create_symbol_table(SymbolTable* parent);
 Symbol* search_name(SymbolTable* scope, string name);
+Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
 char is_builtin_type(string type);
 void parser_error(const string message, Token* token, string file_name);
 void indention(FILE* out, size_t indent, char is_last, Parser* parser);
 Parser* create_parser(File* file);
 Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
+string make_method_name(string class_name, string method_name);
 OperatorType string_to_operator(string str);
 int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);
@@ -446,19 +456,46 @@ pointer list_pop_back(List* list) {
     list->tail = current;
     return content;
 }
-Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope) {
+char list_is_empty(List* list) {
+    return list == NULL || list->head == NULL || list->tail == NULL;
+}
+Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node) {
     static size_t id_counter = 0;
-    Symbol* result = search_name(scope, original_name);
+    SymbolTable* scope = NULL;
+    switch (kind) {
+        case SYMBOL_CLASS: scope = ((Class*)ast_node)->class_scope->parent; break;
+        case SYMBOL_FUNCTION: scope = ((Function*)ast_node)->function_scope->parent; break;
+        case SYMBOL_METHOD: scope = ((Method*)ast_node)->method_scope->parent; break;
+        case SYMBOL_VARIABLE:
+        case SYMBOL_PARAM:
+        case SYMBOL_ATTRIBUTE:
+        case SYMBOL_TYPE: scope = (SymbolTable*)ast_node; break;
+        default:
+            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %d\n", kind);
+            break;
+    }
+    Symbol* result = search_name(scope, name);
     if (result != NULL)
-        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", original_name, result->kind, result->id, id_counter + 1);
+        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
-    new_name->original_name = original_name;
+    new_name->name = name;
     new_name->id = ++id_counter;
     new_name->kind = kind;
     new_name->type = type;
-    new_name->scope = scope;
-    if (kind == SYMBOL_CLASS || kind == SYMBOL_SUBROUTINE)
-        list_append(scope->parent->symbols, (pointer)new_name);
+    switch (kind) {
+        case SYMBOL_CLASS: new_name->ast_node.class = (Class*)ast_node; break;
+        case SYMBOL_FUNCTION: new_name->ast_node.function = (Function*)ast_node; break;
+        case SYMBOL_METHOD: new_name->ast_node.method = (Method*)ast_node; break;
+        case SYMBOL_VARIABLE:
+        case SYMBOL_PARAM:
+        case SYMBOL_ATTRIBUTE:
+        case SYMBOL_TYPE: new_name->ast_node.scope = (SymbolTable*)ast_node; break;
+        default:
+            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %d\n", kind);
+            break;
+    }
+    if (scope == NULL)
+        fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\n", name, kind, new_name->id);
     else
         list_append(scope->symbols, (pointer)new_name);
     return new_name;
@@ -469,6 +506,21 @@ SymbolTable* create_symbol_table(SymbolTable* parent) {
     new_scope->symbols = create_list();
     return new_scope;
 }
+Symbol* search_name_use_strcmp(SymbolTable* scope, string name) {
+    while (scope != NULL) {
+        List* names = scope->symbols;
+        Node* current = names->head;
+        while (current != NULL) {
+            Node* node_ptr = current;
+            Symbol* current_name = (Symbol*)node_ptr->content;
+            if (strcmp(current_name->name, name) == 0)
+                return current_name;
+            current = node_ptr->next;
+        }
+        scope = scope->parent;
+    }
+    return NULL;
+}
 Symbol* search_name(SymbolTable* scope, string name) {
     while (scope != NULL) {
         List* names = scope->symbols;
@@ -476,7 +528,7 @@ Symbol* search_name(SymbolTable* scope, string name) {
         while (current != NULL) {
             Node* node_ptr = current;
             Symbol* current_name = (Symbol*)node_ptr->content;
-            if (string_equal(current_name->original_name, name))
+            if (string_equal(current_name->name, name))
                 return current_name;
             current = node_ptr->next;
         }
@@ -492,10 +544,7 @@ inline void parser_error(const string message, Token* token, string file_name) {
 }
 static void set_bool_list(char bool_list[32], size_t index, char value) {
     char word = bool_list[index / 8];
-    if (value)
-        bool_list[index / 8] = (char)(word | (1 << (index % 8)));
-    else
-        bool_list[index / 8] = (char)(word & ~(1 << (index % 8)));
+    bool_list[index / 8] = (char)(value ? (word | (1 << (index % 8))) : (word & ~(1 << (index % 8))));
 }
 static inline char get_bool_list(char bool_list[32], size_t index) {
     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
@@ -546,7 +595,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
     while (current != NULL) {
         Node* node_ptr = current;
         Symbol* current_name = (Symbol*)node_ptr->content;
-        if (string_equal(current_name->original_name, import_name)) {
+        if (string_equal(current_name->name, import_name)) {
             name = current_name;
             break;
         }
@@ -556,6 +605,11 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
         list_append(scope->symbols, (pointer)name);
     else
         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
+    return name;
+}
+string make_method_name(string class_name, string method_name) {
+    string name = create_string("", strlen(class_name) + strlen(method_name) + 2);
+    sprintf(name, "%s.%s", class_name, method_name);
     return name;
 }
 OperatorType string_to_operator(string str) {

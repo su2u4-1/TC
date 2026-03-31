@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +24,8 @@ extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern char initialized;
 extern StringList* all_string_list;
-extern string CONSTRUCTOR_NAME;
+extern string DEFAULT_INIT_NAME;
+extern string DEFAULT_CONSTRUCTOR_NAME;
 extern string IMPORT_KEYWORD;
 extern string FROM_KEYWORD;
 extern string FUNC_KEYWORD;
@@ -198,7 +198,8 @@ typedef struct List List;
 typedef struct Node Node;
 typedef enum SymbolTableType {
     SYMBOL_CLASS,
-    SYMBOL_SUBROUTINE,
+    SYMBOL_FUNCTION,
+    SYMBOL_METHOD,
     SYMBOL_VARIABLE,
     SYMBOL_PARAM,
     SYMBOL_ATTRIBUTE,
@@ -208,7 +209,7 @@ struct CodeMember {
     union {
         Import* import;
         Function* function;
-        Class* class_;
+        Class* class;
     } content;
     CodeMemberType type;
 };
@@ -245,6 +246,7 @@ struct Class {
     Symbol* name;
     List* members;
     SymbolTable* class_scope;
+    size_t size;
 };
 struct Variable {
     Symbol* type;
@@ -321,9 +323,14 @@ struct SymbolTable {
 };
 struct Symbol {
     Symbol* type;
-    SymbolTable* scope;
-    string original_name;
+    string name;
     size_t id;
+    union {
+        Class* class;
+        Function* function;
+        Method* method;
+        SymbolTable* scope;
+    } ast_node;
     SymbolType kind;
 };
 typedef struct Lexer Lexer;
@@ -343,14 +350,17 @@ void list_append(List* list, pointer item);
 List* list_copy(List* original);
 pointer list_pop(List* list);
 pointer list_pop_back(List* list);
-Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope);
+char list_is_empty(List* list);
+Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node);
 SymbolTable* create_symbol_table(SymbolTable* parent);
 Symbol* search_name(SymbolTable* scope, string name);
+Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
 char is_builtin_type(string type);
 void parser_error(const string message, Token* token, string file_name);
 void indention(FILE* out, size_t indent, char is_last, Parser* parser);
 Parser* create_parser(File* file);
 Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
+string make_method_name(string class_name, string method_name);
 OperatorType string_to_operator(string str);
 int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);

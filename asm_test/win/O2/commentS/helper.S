@@ -231,105 +231,143 @@ list_pop_back:
 	xorl	%eax, %eax	 ; <retval>
  ; D:\TC\src\helper.c:71: }
 	ret	
+	.p2align 4
+	.globl	list_is_empty
+	.def	list_is_empty;	.scl	2;	.type	32;	.endef
+list_is_empty:
+	movl	$1, %eax	 ;, <retval>
+ ; D:\TC\src\helper.c:74:     return list == NULL || list->head == NULL || list->tail == NULL;
+	testq	%rcx, %rcx	 ; list
+	je	.L37	 ;,
+ ; D:\TC\src\helper.c:74:     return list == NULL || list->head == NULL || list->tail == NULL;
+	cmpq	$0, (%rcx)	 ;, list_4(D)->head
+	je	.L37	 ;,
+ ; D:\TC\src\helper.c:74:     return list == NULL || list->head == NULL || list->tail == NULL;
+	cmpq	$0, 8(%rcx)	 ;, list_4(D)->tail
+	sete	%al	 ;, <retval>
+.L37:
+ ; D:\TC\src\helper.c:75: }
+	ret	
 	.section .rdata,"dr"
 	.align 8
 .LC1:
+	.ascii "Warning: Creating symbol with unknown SymbolType: %d\12\0"
+	.align 8
+.LC2:
+	.ascii "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %d\12\0"
+	.align 8
+.LC3:
+	.ascii "Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\12\0"
+	.align 8
+.LC4:
 	.ascii "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\12\0"
 	.text
 	.p2align 4
 	.globl	create_symbol
 	.def	create_symbol;	.scl	2;	.type	32;	.endef
 create_symbol:
+	pushq	%r15	 ;
 	pushq	%r14	 ;
+	movq	%r8, %r14	 ; tmp137, type
 	pushq	%r13	 ;
-	movq	%r8, %r13	 ; tmp116, type
+	movq	%r9, %r13	 ; tmp138, ast_node
 	pushq	%r12	 ;
-	movl	%edx, %r12d	 ; tmp115, kind
 	pushq	%rbp	 ;
-	movq	%r9, %rbp	 ; tmp117, scope
+	movl	%edx, %ebp	 ; tmp136, kind
 	pushq	%rdi	 ;
-	movq	%rcx, %rdi	 ; tmp114, original_name
+	movq	%rcx, %rdi	 ; tmp135, name
 	pushq	%rsi	 ;
 	pushq	%rbx	 ;
-	subq	$48, %rsp	 ;,
- ; D:\TC\src\helper.c:100:     while (scope != NULL) {
-	testq	%r9, %r9	 ; scope
-	je	.L45	 ;,
-	movq	%r9, %r14	 ; scope, scope
-.L42:
- ; D:\TC\src\helper.c:102:         Node* current = names->head;
-	movq	8(%r14), %rax	 ; scope_49->symbols, scope_49->symbols
-	movq	(%rax), %rbx	 ; names_34->head, current
- ; D:\TC\src\helper.c:103:         while (current != NULL) {
+	subq	$56, %rsp	 ;,
+ ; D:\TC\src\helper.c:81:     switch (kind) {
+	cmpl	$2, %edx	 ;, kind
+	je	.L43	 ;,
+	ja	.L44	 ;,
+	testl	%edx, %edx	 ; kind
+	je	.L75	 ;,
+.L43:
+ ; D:\TC\src\helper.c:84:         case SYMBOL_METHOD: scope = ((Method*)ast_node)->method_scope->parent; break;
+	movq	32(%r13), %rax	 ;, MEM[(struct Method *)ast_node_26(D)].method_scope
+	movq	(%rax), %r15	 ;* MEM[(struct Method *)ast_node_26(D)].method_scope, scope
+.L48:
+ ; D:\TC\src\helper.c:144:     while (scope != NULL) {
+	testq	%r15, %r15	 ; scope
+	je	.L50	 ;,
+	movq	%r15, %r12	 ; scope, scope
+.L54:
+ ; D:\TC\src\helper.c:146:         Node* current = names->head;
+	movq	8(%r12), %rax	 ; scope_71->symbols, scope_71->symbols
+	movq	(%rax), %rbx	 ; names_56->head, current
+ ; D:\TC\src\helper.c:147:         while (current != NULL) {
 	testq	%rbx, %rbx	 ; current
-	jne	.L41	 ;,
-	jmp	.L39	 ;
+	jne	.L53	 ;,
+	jmp	.L51	 ;
 	.p2align 4,,10
 	.p2align 3
-.L55:
- ; D:\TC\src\helper.c:108:             current = node_ptr->next;
-	movq	(%rbx), %rbx	 ; current_50->next, current
- ; D:\TC\src\helper.c:103:         while (current != NULL) {
+.L76:
+ ; D:\TC\src\helper.c:152:             current = node_ptr->next;
+	movq	(%rbx), %rbx	 ; current_72->next, current
+ ; D:\TC\src\helper.c:147:         while (current != NULL) {
 	testq	%rbx, %rbx	 ; current
-	je	.L39	 ;,
-.L41:
- ; D:\TC\src\helper.c:105:             Symbol* current_name = (Symbol*)node_ptr->content;
-	movq	8(%rbx), %rsi	 ; current_50->content, current_name
- ; D:\TC\src\helper.c:106:             if (string_equal(current_name->original_name, name))
-	movq	%rdi, %rdx	 ; original_name,
-	movq	16(%rsi), %rcx	 ; current_name_37->original_name, current_name_37->original_name
+	je	.L51	 ;,
+.L53:
+ ; D:\TC\src\helper.c:149:             Symbol* current_name = (Symbol*)node_ptr->content;
+	movq	8(%rbx), %rsi	 ; current_72->content, current_name
+ ; D:\TC\src\helper.c:150:             if (string_equal(current_name->name, name))
+	movq	%rdi, %rdx	 ; name,
+	movq	8(%rsi), %rcx	 ; current_name_59->name, current_name_59->name
 	call	string_equal	 ;
- ; D:\TC\src\helper.c:106:             if (string_equal(current_name->original_name, name))
-	testb	%al, %al	 ; tmp118
-	je	.L55	 ;,
- ; D:\TC\src\helper.c:78:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", original_name, result->kind, result->id, id_counter + 1);
-	movq	id_counter.0(%rip), %rax	 ; id_counter, tmp123
-	movq	24(%rsi), %r14	 ; current_name_37->id, _3
- ; D:\TC\src\helper.c:78:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", original_name, result->kind, result->id, id_counter + 1);
-	movl	32(%rsi), %esi	 ; current_name_37->kind, _4
- ; D:\TC\src\helper.c:78:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", original_name, result->kind, result->id, id_counter + 1);
-	leaq	1(%rax), %rbx	 ;, _2
- ; D:\TC\src\helper.c:78:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", original_name, result->kind, result->id, id_counter + 1);
+ ; D:\TC\src\helper.c:150:             if (string_equal(current_name->name, name))
+	testb	%al, %al	 ; tmp142
+	je	.L76	 ;,
+ ; D:\TC\src\helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+	movq	id_counter.0(%rip), %rax	 ; id_counter, tmp149
+	movq	16(%rsi), %r12	 ; current_name_59->id, _8
+ ; D:\TC\src\helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+	movl	32(%rsi), %esi	 ; current_name_59->kind, _9
+ ; D:\TC\src\helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+	leaq	1(%rax), %rbx	 ;, _7
+ ; D:\TC\src\helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
 	call	__getreent	 ;
- ; D:\TC\src\helper.c:78:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", original_name, result->kind, result->id, id_counter + 1);
-	movl	%esi, %r9d	 ; _4,
-	movq	%rdi, %r8	 ; original_name,
-	leaq	.LC1(%rip), %rdx	 ;, tmp113
-	movq	24(%rax), %rcx	 ; _5->_stderr, _5->_stderr
-	movq	%rbx, 40(%rsp)	 ; _2,
-	movq	%r14, 32(%rsp)	 ; _3,
+ ; D:\TC\src\helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+	movl	%esi, %r9d	 ; _9,
+	movq	%rdi, %r8	 ; name,
+	leaq	.LC4(%rip), %rdx	 ;, tmp134
+	movq	24(%rax), %rcx	 ; _10->_stderr, _10->_stderr
+	movq	%rbx, 40(%rsp)	 ; _7,
+	movq	%r12, 32(%rsp)	 ; _8,
 	call	fprintf	 ;
-.L45:
- ; D:\TC\src\helper.c:79:     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
+.L50:
+ ; D:\TC\src\helper.c:96:     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
 	movl	$40, %ecx	 ;,
 	call	alloc_memory	 ;
- ; D:\TC\src\helper.c:80:     new_name->original_name = original_name;
-	movq	%rdi, 16(%rax)	 ; original_name, new_name_22->original_name
- ; D:\TC\src\helper.c:79:     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
-	movq	%rax, %rbx	 ; tmp119, <retval>
- ; D:\TC\src\helper.c:81:     new_name->id = ++id_counter;
-	movq	id_counter.0(%rip), %rax	 ; id_counter, tmp122
- ; D:\TC\src\helper.c:82:     new_name->kind = kind;
-	movl	%r12d, 32(%rbx)	 ; kind, new_name_22->kind
- ; D:\TC\src\helper.c:81:     new_name->id = ++id_counter;
-	addq	$1, %rax	 ;, _8
- ; D:\TC\src\helper.c:83:     new_name->type = type;
-	movq	%r13, (%rbx)	 ; type, new_name_22->type
- ; D:\TC\src\helper.c:81:     new_name->id = ++id_counter;
-	movq	%rax, id_counter.0(%rip)	 ; _8, id_counter
-	movq	%rax, 24(%rbx)	 ; _8, new_name_22->id
- ; D:\TC\src\helper.c:84:     new_name->scope = scope;
-	movq	%rbp, 8(%rbx)	 ; scope, new_name_22->scope
- ; D:\TC\src\helper.c:85:     if (kind == SYMBOL_CLASS || kind == SYMBOL_SUBROUTINE)
-	cmpl	$1, %r12d	 ;, kind
-	jbe	.L56	 ;,
- ; D:\TC\src\helper.c:88:         list_append(scope->symbols, (pointer)new_name);
-	movq	8(%rbp), %rcx	 ; scope_15(D)->symbols, scope_15(D)->symbols
+ ; D:\TC\src\helper.c:97:     new_name->name = name;
+	movq	%rdi, 8(%rax)	 ; name, new_name_39->name
+ ; D:\TC\src\helper.c:96:     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
+	movq	%rax, %rbx	 ; tmp143, <retval>
+ ; D:\TC\src\helper.c:98:     new_name->id = ++id_counter;
+	movq	id_counter.0(%rip), %rax	 ; id_counter, tmp148
+ ; D:\TC\src\helper.c:99:     new_name->kind = kind;
+	movl	%ebp, 32(%rbx)	 ; kind, new_name_39->kind
+ ; D:\TC\src\helper.c:98:     new_name->id = ++id_counter;
+	addq	$1, %rax	 ;, _13
+ ; D:\TC\src\helper.c:100:     new_name->type = type;
+	movq	%r14, (%rbx)	 ; type, new_name_39->type
+ ; D:\TC\src\helper.c:98:     new_name->id = ++id_counter;
+	movq	%rax, id_counter.0(%rip)	 ; _13, id_counter
+	movq	%rax, 16(%rbx)	 ; _13, new_name_39->id
+ ; D:\TC\src\helper.c:104:         case SYMBOL_METHOD: new_name->ast_node.method = (Method*)ast_node; break;
+	movq	%r13, 24(%rbx)	 ; ast_node,
+ ; D:\TC\src\helper.c:113:     if (scope == NULL)
+	testq	%r15, %r15	 ; scope
+	je	.L72	 ;,
+ ; D:\TC\src\helper.c:116:         list_append(scope->symbols, (pointer)new_name);
+	movq	8(%r15), %rcx	 ; scope_89->symbols, scope_89->symbols
 	movq	%rbx, %rdx	 ; <retval>,
 	call	list_append	 ;
-.L37:
- ; D:\TC\src\helper.c:90: }
-	addq	$48, %rsp	 ;,
+.L42:
+ ; D:\TC\src\helper.c:118: }
+	addq	$56, %rsp	 ;,
 	movq	%rbx, %rax	 ; <retval>,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
@@ -338,25 +376,78 @@ create_symbol:
 	popq	%r12	 ;
 	popq	%r13	 ;
 	popq	%r14	 ;
+	popq	%r15	 ;
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L39:
- ; D:\TC\src\helper.c:110:         scope = scope->parent;
-	movq	(%r14), %r14	 ; scope_49->parent, scope
- ; D:\TC\src\helper.c:100:     while (scope != NULL) {
-	testq	%r14, %r14	 ; scope
-	jne	.L42	 ;,
-	jmp	.L45	 ;
+.L44:
+ ; D:\TC\src\helper.c:81:     switch (kind) {
+	leal	-3(%rdx), %eax	 ;, tmp116
+	movq	%r9, %r15	 ; ast_node, scope
+	cmpl	$3, %eax	 ;, tmp116
+	jbe	.L48	 ;,
+ ; D:\TC\src\helper.c:90:             fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %d\n", kind);
+	call	__getreent	 ;
+ ; D:\TC\src\helper.c:90:             fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %d\n", kind);
+	movl	%ebp, %r8d	 ; kind,
+	leaq	.LC1(%rip), %rdx	 ;, tmp121
+	movq	24(%rax), %rcx	 ; _4->_stderr, _4->_stderr
+	call	fprintf	 ;
+ ; D:\TC\src\helper.c:96:     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
+	movl	$40, %ecx	 ;,
+	call	alloc_memory	 ;
+ ; D:\TC\src\helper.c:97:     new_name->name = name;
+	movq	%rdi, 8(%rax)	 ; name, new_name_79->name
+ ; D:\TC\src\helper.c:96:     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
+	movq	%rax, %rbx	 ; tmp140, <retval>
+ ; D:\TC\src\helper.c:98:     new_name->id = ++id_counter;
+	movq	id_counter.0(%rip), %rax	 ; id_counter, tmp147
+ ; D:\TC\src\helper.c:99:     new_name->kind = kind;
+	movl	%ebp, 32(%rbx)	 ; kind, new_name_79->kind
+ ; D:\TC\src\helper.c:98:     new_name->id = ++id_counter;
+	addq	$1, %rax	 ;, _82
+ ; D:\TC\src\helper.c:100:     new_name->type = type;
+	movq	%r14, (%rbx)	 ; type, new_name_79->type
+ ; D:\TC\src\helper.c:98:     new_name->id = ++id_counter;
+	movq	%rax, 16(%rbx)	 ; _82, new_name_79->id
+	movq	%rax, id_counter.0(%rip)	 ; _82, id_counter
+ ; D:\TC\src\helper.c:110:             fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %d\n", kind);
+	call	__getreent	 ;
+ ; D:\TC\src\helper.c:110:             fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %d\n", kind);
+	movl	%ebp, %r8d	 ; kind,
+	leaq	.LC2(%rip), %rdx	 ;, tmp124
+	movq	24(%rax), %rcx	 ; _14->_stderr, _14->_stderr
+	call	fprintf	 ;
+.L72:
+ ; D:\TC\src\helper.c:114:         fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\n", name, kind, new_name->id);
+	movq	16(%rbx), %rsi	 ; new_name_91->id, _16
+ ; D:\TC\src\helper.c:114:         fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\n", name, kind, new_name->id);
+	call	__getreent	 ;
+ ; D:\TC\src\helper.c:114:         fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\n", name, kind, new_name->id);
+	movl	%ebp, %r9d	 ; kind,
+	movq	%rdi, %r8	 ; name,
+	leaq	.LC3(%rip), %rdx	 ;, tmp129
+	movq	24(%rax), %rcx	 ; _17->_stderr, _17->_stderr
+	movq	%rsi, 32(%rsp)	 ; _16,
+	call	fprintf	 ;
+	jmp	.L42	 ;
 	.p2align 4,,10
 	.p2align 3
-.L56:
- ; D:\TC\src\helper.c:86:         list_append(scope->parent->symbols, (pointer)new_name);
-	movq	0(%rbp), %rax	 ; scope_15(D)->parent, scope_15(D)->parent
-	movq	%rbx, %rdx	 ; <retval>,
-	movq	8(%rax), %rcx	 ; _9->symbols, _9->symbols
-	call	list_append	 ;
-	jmp	.L37	 ;
+.L51:
+ ; D:\TC\src\helper.c:154:         scope = scope->parent;
+	movq	(%r12), %r12	 ; scope_71->parent, scope
+ ; D:\TC\src\helper.c:144:     while (scope != NULL) {
+	testq	%r12, %r12	 ; scope
+	jne	.L54	 ;,
+	jmp	.L50	 ;
+	.p2align 4,,10
+	.p2align 3
+.L75:
+ ; D:\TC\src\helper.c:82:         case SYMBOL_CLASS: scope = ((Class*)ast_node)->class_scope->parent; break;
+	movq	16(%r9), %rax	 ; MEM[(struct Class *)ast_node_26(D)].class_scope, MEM[(struct Class *)ast_node_26(D)].class_scope
+	movq	(%rax), %r15	 ;* MEM[(struct Class *)ast_node_26(D)].class_scope, scope
+ ; D:\TC\src\helper.c:82:         case SYMBOL_CLASS: scope = ((Class*)ast_node)->class_scope->parent; break;
+	jmp	.L48	 ;
 	.p2align 4
 	.globl	create_symbol_table
 	.def	create_symbol_table;	.scl	2;	.type	32;	.endef
@@ -365,32 +456,100 @@ create_symbol_table:
 	movq	%rsp, %rbp	 ;,
 	pushq	%rsi	 ;
 	movq	%rcx, %rsi	 ; tmp87, parent
- ; D:\TC\src\helper.c:93:     SymbolTable* new_scope = (SymbolTable*)alloc_memory(sizeof(SymbolTable));
+ ; D:\TC\src\helper.c:121:     SymbolTable* new_scope = (SymbolTable*)alloc_memory(sizeof(SymbolTable));
 	movl	$16, %ecx	 ;,
- ; D:\TC\src\helper.c:92: SymbolTable* create_symbol_table(SymbolTable* parent) {
+ ; D:\TC\src\helper.c:120: SymbolTable* create_symbol_table(SymbolTable* parent) {
 	pushq	%rbx	 ;
 	andq	$-16, %rsp	 ;,
 	subq	$32, %rsp	 ;,
- ; D:\TC\src\helper.c:93:     SymbolTable* new_scope = (SymbolTable*)alloc_memory(sizeof(SymbolTable));
+ ; D:\TC\src\helper.c:121:     SymbolTable* new_scope = (SymbolTable*)alloc_memory(sizeof(SymbolTable));
 	call	alloc_memory	 ;
  ; D:\TC\src\helper.c:8:     List* new_list = (List*)alloc_memory(sizeof(List));
 	movl	$16, %ecx	 ;,
- ; D:\TC\src\helper.c:94:     new_scope->parent = parent;
+ ; D:\TC\src\helper.c:122:     new_scope->parent = parent;
 	movq	%rsi, (%rax)	 ; parent, new_scope_3->parent
- ; D:\TC\src\helper.c:93:     SymbolTable* new_scope = (SymbolTable*)alloc_memory(sizeof(SymbolTable));
+ ; D:\TC\src\helper.c:121:     SymbolTable* new_scope = (SymbolTable*)alloc_memory(sizeof(SymbolTable));
 	movq	%rax, %rbx	 ; tmp88, <retval>
  ; D:\TC\src\helper.c:8:     List* new_list = (List*)alloc_memory(sizeof(List));
 	call	alloc_memory	 ;
  ; D:\TC\src\helper.c:9:     new_list->head = NULL;
 	pxor	%xmm0, %xmm0	 ; tmp85
 	movups	%xmm0, (%rax)	 ; tmp85, MEM <vector(2) long unsigned int> [(struct Node * *)new_list_7]
- ; D:\TC\src\helper.c:95:     new_scope->symbols = create_list();
+ ; D:\TC\src\helper.c:123:     new_scope->symbols = create_list();
 	movq	%rax, 8(%rbx)	 ; new_list, new_scope_3->symbols
- ; D:\TC\src\helper.c:97: }
+ ; D:\TC\src\helper.c:125: }
 	leaq	-16(%rbp), %rsp	 ;,
 	movq	%rbx, %rax	 ; <retval>,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
+	popq	%rbp	 ;
+	ret	
+	.p2align 4
+	.globl	search_name_use_strcmp
+	.def	search_name_use_strcmp;	.scl	2;	.type	32;	.endef
+search_name_use_strcmp:
+	pushq	%rbp	 ;
+	pushq	%rdi	 ;
+	pushq	%rsi	 ;
+	pushq	%rbx	 ;
+	subq	$40, %rsp	 ;,
+ ; D:\TC\src\helper.c:128:     while (scope != NULL) {
+	testq	%rcx, %rcx	 ; scope
+	je	.L84	 ;,
+	movq	%rcx, %rbp	 ; tmp93, scope
+	movq	%rdx, %rdi	 ; tmp94, name
+.L83:
+ ; D:\TC\src\helper.c:130:         Node* current = names->head;
+	movq	8(%rbp), %rax	 ; scope_16->symbols, scope_16->symbols
+	movq	(%rax), %rbx	 ; names_8->head, current
+ ; D:\TC\src\helper.c:131:         while (current != NULL) {
+	testq	%rbx, %rbx	 ; current
+	jne	.L82	 ;,
+	jmp	.L81	 ;
+	.p2align 4,,10
+	.p2align 3
+.L94:
+ ; D:\TC\src\helper.c:136:             current = node_ptr->next;
+	movq	(%rbx), %rbx	 ; current_17->next, current
+ ; D:\TC\src\helper.c:131:         while (current != NULL) {
+	testq	%rbx, %rbx	 ; current
+	je	.L81	 ;,
+.L82:
+ ; D:\TC\src\helper.c:133:             Symbol* current_name = (Symbol*)node_ptr->content;
+	movq	8(%rbx), %rsi	 ; current_17->content, <retval>
+ ; D:\TC\src\helper.c:134:             if (strcmp(current_name->name, name) == 0)
+	movq	%rdi, %rdx	 ; name,
+	movq	8(%rsi), %rcx	 ; current_name_12->name, current_name_12->name
+	call	strcmp	 ;
+ ; D:\TC\src\helper.c:134:             if (strcmp(current_name->name, name) == 0)
+	testl	%eax, %eax	 ; tmp95
+	jne	.L94	 ;,
+ ; D:\TC\src\helper.c:141: }
+	addq	$40, %rsp	 ;,
+	movq	%rsi, %rax	 ; <retval>,
+	popq	%rbx	 ;
+	popq	%rsi	 ;
+	popq	%rdi	 ;
+	popq	%rbp	 ;
+	ret	
+	.p2align 4,,10
+	.p2align 3
+.L81:
+ ; D:\TC\src\helper.c:138:         scope = scope->parent;
+	movq	0(%rbp), %rbp	 ; scope_16->parent, scope
+ ; D:\TC\src\helper.c:128:     while (scope != NULL) {
+	testq	%rbp, %rbp	 ; scope
+	jne	.L83	 ;,
+.L84:
+ ; D:\TC\src\helper.c:141: }
+	addq	$40, %rsp	 ;,
+ ; D:\TC\src\helper.c:140:     return NULL;
+	xorl	%esi, %esi	 ; <retval>
+ ; D:\TC\src\helper.c:141: }
+	popq	%rbx	 ;
+	movq	%rsi, %rax	 ; <retval>,
+	popq	%rsi	 ;
+	popq	%rdi	 ;
 	popq	%rbp	 ;
 	ret	
 	.p2align 4
@@ -402,38 +561,38 @@ search_name:
 	pushq	%rsi	 ;
 	pushq	%rbx	 ;
 	subq	$40, %rsp	 ;,
- ; D:\TC\src\helper.c:100:     while (scope != NULL) {
+ ; D:\TC\src\helper.c:144:     while (scope != NULL) {
 	testq	%rcx, %rcx	 ; scope
-	je	.L60	 ;,
+	je	.L96	 ;,
 	movq	%rcx, %rbp	 ; tmp92, scope
 	movq	%rdx, %rdi	 ; tmp93, name
-.L64:
- ; D:\TC\src\helper.c:102:         Node* current = names->head;
+.L100:
+ ; D:\TC\src\helper.c:146:         Node* current = names->head;
 	movq	8(%rbp), %rax	 ; scope_22->symbols, scope_22->symbols
 	movq	(%rax), %rbx	 ; names_12->head, current
- ; D:\TC\src\helper.c:103:         while (current != NULL) {
+ ; D:\TC\src\helper.c:147:         while (current != NULL) {
 	testq	%rbx, %rbx	 ; current
-	jne	.L63	 ;,
-	jmp	.L61	 ;
+	jne	.L99	 ;,
+	jmp	.L97	 ;
 	.p2align 4,,10
 	.p2align 3
-.L74:
- ; D:\TC\src\helper.c:108:             current = node_ptr->next;
+.L110:
+ ; D:\TC\src\helper.c:152:             current = node_ptr->next;
 	movq	(%rbx), %rbx	 ; current_23->next, current
- ; D:\TC\src\helper.c:103:         while (current != NULL) {
+ ; D:\TC\src\helper.c:147:         while (current != NULL) {
 	testq	%rbx, %rbx	 ; current
-	je	.L61	 ;,
-.L63:
- ; D:\TC\src\helper.c:105:             Symbol* current_name = (Symbol*)node_ptr->content;
+	je	.L97	 ;,
+.L99:
+ ; D:\TC\src\helper.c:149:             Symbol* current_name = (Symbol*)node_ptr->content;
 	movq	8(%rbx), %rsi	 ; current_23->content, <retval>
- ; D:\TC\src\helper.c:106:             if (string_equal(current_name->original_name, name))
+ ; D:\TC\src\helper.c:150:             if (string_equal(current_name->name, name))
 	movq	%rdi, %rdx	 ; name,
-	movq	16(%rsi), %rcx	 ; current_name_15->original_name, current_name_15->original_name
+	movq	8(%rsi), %rcx	 ; current_name_15->name, current_name_15->name
 	call	string_equal	 ;
- ; D:\TC\src\helper.c:106:             if (string_equal(current_name->original_name, name))
+ ; D:\TC\src\helper.c:150:             if (string_equal(current_name->name, name))
 	testb	%al, %al	 ; tmp94
-	je	.L74	 ;,
- ; D:\TC\src\helper.c:113: }
+	je	.L110	 ;,
+ ; D:\TC\src\helper.c:157: }
 	addq	$40, %rsp	 ;,
 	movq	%rsi, %rax	 ; <retval>,
 	popq	%rbx	 ;
@@ -443,18 +602,18 @@ search_name:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L61:
- ; D:\TC\src\helper.c:110:         scope = scope->parent;
+.L97:
+ ; D:\TC\src\helper.c:154:         scope = scope->parent;
 	movq	0(%rbp), %rbp	 ; scope_22->parent, scope
- ; D:\TC\src\helper.c:100:     while (scope != NULL) {
+ ; D:\TC\src\helper.c:144:     while (scope != NULL) {
 	testq	%rbp, %rbp	 ; scope
-	jne	.L64	 ;,
-.L60:
- ; D:\TC\src\helper.c:113: }
+	jne	.L100	 ;,
+.L96:
+ ; D:\TC\src\helper.c:157: }
 	addq	$40, %rsp	 ;,
- ; D:\TC\src\helper.c:112:     return NULL;
+ ; D:\TC\src\helper.c:156:     return NULL;
 	xorl	%esi, %esi	 ; <retval>
- ; D:\TC\src\helper.c:113: }
+ ; D:\TC\src\helper.c:157: }
 	popq	%rbx	 ;
 	movq	%rsi, %rax	 ; <retval>,
 	popq	%rsi	 ;
@@ -468,61 +627,61 @@ is_builtin_type:
 	pushq	%rbx	 ;
 	movq	%rcx, %rbx	 ; tmp107, type
 	subq	$32, %rsp	 ;,
- ; D:\TC\src\helper.c:116:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+ ; D:\TC\src\helper.c:160:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 	movq	.refptr.INT_KEYWORD(%rip), %rax	 ;, tmp95
 	movq	(%rax), %rdx	 ; INT_KEYWORD, INT_KEYWORD
 	call	string_equal	 ;
- ; D:\TC\src\helper.c:116:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+ ; D:\TC\src\helper.c:160:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 	testb	%al, %al	 ; tmp108
-	je	.L76	 ;,
-.L78:
- ; D:\TC\src\helper.c:115: inline bool is_builtin_type(string type) {
+	je	.L112	 ;,
+.L114:
+ ; D:\TC\src\helper.c:159: inline bool is_builtin_type(string type) {
 	movl	$1, %eax	 ;, <retval>
-.L75:
- ; D:\TC\src\helper.c:117: }
+.L111:
+ ; D:\TC\src\helper.c:161: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L76:
- ; D:\TC\src\helper.c:116:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+.L112:
+ ; D:\TC\src\helper.c:160:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 	movq	.refptr.FLOAT_KEYWORD(%rip), %rax	 ;, tmp97
 	movq	%rbx, %rcx	 ; type,
 	movq	(%rax), %rdx	 ; FLOAT_KEYWORD, FLOAT_KEYWORD
 	call	string_equal	 ;
- ; D:\TC\src\helper.c:116:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+ ; D:\TC\src\helper.c:160:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 	testb	%al, %al	 ; tmp109
-	jne	.L78	 ;,
- ; D:\TC\src\helper.c:116:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+	jne	.L114	 ;,
+ ; D:\TC\src\helper.c:160:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 	movq	.refptr.STRING_KEYWORD(%rip), %rax	 ;, tmp99
 	movq	%rbx, %rcx	 ; type,
 	movq	(%rax), %rdx	 ; STRING_KEYWORD, STRING_KEYWORD
 	call	string_equal	 ;
- ; D:\TC\src\helper.c:116:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+ ; D:\TC\src\helper.c:160:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 	testb	%al, %al	 ; tmp110
-	jne	.L78	 ;,
- ; D:\TC\src\helper.c:116:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+	jne	.L114	 ;,
+ ; D:\TC\src\helper.c:160:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 	movq	.refptr.BOOL_KEYWORD(%rip), %rax	 ;, tmp101
 	movq	%rbx, %rcx	 ; type,
 	movq	(%rax), %rdx	 ; BOOL_KEYWORD, BOOL_KEYWORD
 	call	string_equal	 ;
- ; D:\TC\src\helper.c:116:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+ ; D:\TC\src\helper.c:160:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 	testb	%al, %al	 ; tmp111
-	jne	.L78	 ;,
- ; D:\TC\src\helper.c:116:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+	jne	.L114	 ;,
+ ; D:\TC\src\helper.c:160:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 	movq	.refptr.VOID_KEYWORD(%rip), %rax	 ;, tmp103
 	movq	%rbx, %rcx	 ; type,
 	movq	(%rax), %rdx	 ; VOID_KEYWORD, VOID_KEYWORD
 	call	string_equal	 ;
- ; D:\TC\src\helper.c:116:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+ ; D:\TC\src\helper.c:160:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 	testb	%al, %al	 ; tmp112
 	setne	%al	 ;, <retval>
- ; D:\TC\src\helper.c:116:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
-	jmp	.L75	 ;
+ ; D:\TC\src\helper.c:160:     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
+	jmp	.L111	 ;
 	.section .rdata,"dr"
 	.align 8
-.LC2:
+.LC5:
 	.ascii "Parser Error at %s:%zu:%zu: %s\12\0"
 	.text
 	.p2align 4
@@ -536,22 +695,22 @@ parser_error:
 	pushq	%rbx	 ;
 	movq	%r8, %rbx	 ; tmp97, file_name
 	subq	$56, %rsp	 ;,
- ; D:\TC\src\helper.c:120:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+ ; D:\TC\src\helper.c:164:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 	movq	16(%rdx), %rax	 ; token_8(D)->column, tmp100
 	movq	8(%rdx), %rsi	 ; token_8(D)->line, token_8(D)->line
 	leaq	1(%rax), %rdi	 ;, _2
 	addq	$1, %rsi	 ;, _4
- ; D:\TC\src\helper.c:120:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+ ; D:\TC\src\helper.c:164:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 	call	__getreent	 ;
- ; D:\TC\src\helper.c:120:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+ ; D:\TC\src\helper.c:164:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 	movq	%rsi, %r9	 ; _4,
 	movq	%rbx, %r8	 ; file_name,
-	leaq	.LC2(%rip), %rdx	 ;, tmp94
+	leaq	.LC5(%rip), %rdx	 ;, tmp94
 	movq	24(%rax), %rcx	 ; _5->_stderr, _5->_stderr
 	movq	%rbp, 40(%rsp)	 ; message,
 	movq	%rdi, 32(%rsp)	 ; _2,
 	call	fprintf	 ;
- ; D:\TC\src\helper.c:121: }
+ ; D:\TC\src\helper.c:165: }
 	addq	$56, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
@@ -559,13 +718,13 @@ parser_error:
 	popq	%rbp	 ;
 	ret	
 	.section .rdata,"dr"
-.LC3:
-	.ascii "\342\224\202   \0"
-.LC4:
-	.ascii "    \0"
-.LC5:
-	.ascii "\342\224\224\342\224\200\342\224\200 \0"
 .LC6:
+	.ascii "\342\224\202   \0"
+.LC7:
+	.ascii "    \0"
+.LC8:
+	.ascii "\342\224\224\342\224\200\342\224\200 \0"
+.LC9:
 	.ascii "\342\224\234\342\224\200\342\224\200 \0"
 	.text
 	.p2align 4
@@ -573,92 +732,92 @@ parser_error:
 	.def	indention;	.scl	2;	.type	32;	.endef
 indention:
 	pushq	%r14	 ;
- ; D:\TC\src\helper.c:126:         bool_list[index / 8] = (char)(word | (1 << (index % 8)));
+ ; D:\TC\src\helper.c:169:     bool_list[index / 8] = (char)(value ? (word | (1 << (index % 8))) : (word & ~(1 << (index % 8))));
 	movl	$1, %eax	 ;, tmp112
- ; D:\TC\src\helper.c:135: void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
+ ; D:\TC\src\helper.c:176: void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
 	movl	%r8d, %r14d	 ; tmp125, is_last
 	pushq	%r13	 ;
 	pushq	%r12	 ;
 	pushq	%rbp	 ;
 	movq	%rcx, %rbp	 ; tmp123, out
 	pushq	%rdi	 ;
- ; D:\TC\src\helper.c:137:     set_bool_list(parser_ptr->indent_has_next, indent, !is_last);
+ ; D:\TC\src\helper.c:178:     set_bool_list(parser_ptr->indent_has_next, indent, !is_last);
 	leaq	11(%r9), %rdi	 ;, _3
- ; D:\TC\src\helper.c:135: void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
+ ; D:\TC\src\helper.c:176: void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
 	pushq	%rsi	 ;
 	movq	%rdx, %rsi	 ; tmp124, indent
- ; D:\TC\src\helper.c:124:     char word = bool_list[index / 8];
+ ; D:\TC\src\helper.c:168:     char word = bool_list[index / 8];
 	shrq	$3, %rdx	 ;, tmp109
- ; D:\TC\src\helper.c:135: void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
+ ; D:\TC\src\helper.c:176: void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
 	pushq	%rbx	 ;
- ; D:\TC\src\helper.c:126:         bool_list[index / 8] = (char)(word | (1 << (index % 8)));
+ ; D:\TC\src\helper.c:169:     bool_list[index / 8] = (char)(value ? (word | (1 << (index % 8))) : (word & ~(1 << (index % 8))));
 	movl	%esi, %ecx	 ; indent, tmp110
- ; D:\TC\src\helper.c:124:     char word = bool_list[index / 8];
+ ; D:\TC\src\helper.c:168:     char word = bool_list[index / 8];
 	addq	%rdi, %rdx	 ; _3, _28
- ; D:\TC\src\helper.c:126:         bool_list[index / 8] = (char)(word | (1 << (index % 8)));
+ ; D:\TC\src\helper.c:169:     bool_list[index / 8] = (char)(value ? (word | (1 << (index % 8))) : (word & ~(1 << (index % 8))));
 	andl	$7, %ecx	 ;, tmp110
- ; D:\TC\src\helper.c:126:         bool_list[index / 8] = (char)(word | (1 << (index % 8)));
+ ; D:\TC\src\helper.c:169:     bool_list[index / 8] = (char)(value ? (word | (1 << (index % 8))) : (word & ~(1 << (index % 8))));
 	sall	%cl, %eax	 ; tmp110, tmp111
- ; D:\TC\src\helper.c:135: void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
+ ; D:\TC\src\helper.c:176: void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
 	subq	$32, %rsp	 ;,
- ; D:\TC\src\helper.c:124:     char word = bool_list[index / 8];
+ ; D:\TC\src\helper.c:168:     char word = bool_list[index / 8];
 	movzbl	(%rdx), %r8d	 ; *_28, word
- ; D:\TC\src\helper.c:125:     if (value)
+ ; D:\TC\src\helper.c:169:     bool_list[index / 8] = (char)(value ? (word | (1 << (index % 8))) : (word & ~(1 << (index % 8))));
 	testb	%r14b, %r14b	 ; is_last
-	jne	.L83	 ;,
- ; D:\TC\src\helper.c:126:         bool_list[index / 8] = (char)(word | (1 << (index % 8)));
+	jne	.L119	 ;,
+ ; D:\TC\src\helper.c:169:     bool_list[index / 8] = (char)(value ? (word | (1 << (index % 8))) : (word & ~(1 << (index % 8))));
 	orl	%eax, %r8d	 ; tmp111, tmp113
 	movb	%r8b, (%rdx)	 ; tmp113, *_28
- ; D:\TC\src\helper.c:138:     for (size_t i = 1; i < indent; ++i)
+ ; D:\TC\src\helper.c:179:     for (size_t i = 1; i < indent; ++i)
 	cmpq	$1, %rsi	 ;, indent
-	jbe	.L95	 ;,
-.L84:
- ; D:\TC\src\helper.c:135: void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
+	jbe	.L130	 ;,
+.L120:
+ ; D:\TC\src\helper.c:179:     for (size_t i = 1; i < indent; ++i)
 	movl	$1, %ebx	 ;, i
- ; D:\TC\src\helper.c:139:         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
-	leaq	.LC4(%rip), %r13	 ;, tmp121
-	leaq	.LC3(%rip), %r12	 ;, tmp122
+ ; D:\TC\src\helper.c:180:         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
+	leaq	.LC7(%rip), %r13	 ;, tmp121
+	leaq	.LC6(%rip), %r12	 ;, tmp122
 	.p2align 4,,10
 	.p2align 3
-.L90:
- ; D:\TC\src\helper.c:132:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
+.L125:
+ ; D:\TC\src\helper.c:173:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
 	movq	%rbx, %rax	 ; i, tmp116
- ; D:\TC\src\helper.c:132:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
+ ; D:\TC\src\helper.c:173:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
 	movl	%ebx, %ecx	 ; i, tmp118
- ; D:\TC\src\helper.c:139:         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
-	movq	%r12, %rdx	 ; tmp122, iftmp.9_5
- ; D:\TC\src\helper.c:132:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
+ ; D:\TC\src\helper.c:180:         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
+	movq	%r12, %rdx	 ; tmp122, iftmp.10_5
+ ; D:\TC\src\helper.c:173:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
 	shrq	$3, %rax	 ;, tmp116
- ; D:\TC\src\helper.c:132:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
+ ; D:\TC\src\helper.c:173:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
 	andl	$7, %ecx	 ;, tmp118
- ; D:\TC\src\helper.c:132:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
+ ; D:\TC\src\helper.c:173:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
 	movsbl	(%rdi,%rax), %eax	 ; *_19, *_19
- ; D:\TC\src\helper.c:132:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
+ ; D:\TC\src\helper.c:173:     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
 	sarl	%cl, %eax	 ; tmp118, tmp119
- ; D:\TC\src\helper.c:139:         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
+ ; D:\TC\src\helper.c:180:         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
 	movq	%rbp, %rcx	 ; out,
- ; D:\TC\src\helper.c:139:         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
+ ; D:\TC\src\helper.c:180:         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
 	testb	$1, %al	 ;, tmp119
-	cmove	%r13, %rdx	 ; tmp121,, iftmp.9_5
- ; D:\TC\src\helper.c:138:     for (size_t i = 1; i < indent; ++i)
+	cmove	%r13, %rdx	 ; tmp121,, iftmp.10_5
+ ; D:\TC\src\helper.c:179:     for (size_t i = 1; i < indent; ++i)
 	addq	$1, %rbx	 ;, i
- ; D:\TC\src\helper.c:139:         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
+ ; D:\TC\src\helper.c:180:         fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
 	call	fprintf	 ;
- ; D:\TC\src\helper.c:138:     for (size_t i = 1; i < indent; ++i)
+ ; D:\TC\src\helper.c:179:     for (size_t i = 1; i < indent; ++i)
 	cmpq	%rbx, %rsi	 ; i, indent
-	jne	.L90	 ;,
- ; D:\TC\src\helper.c:141:         fprintf(out, is_last ? "└── " : "├── ");
+	jne	.L125	 ;,
+ ; D:\TC\src\helper.c:182:         fprintf(out, is_last ? "└── " : "├── ");
 	testb	%r14b, %r14b	 ; is_last
-	je	.L85	 ;,
-.L87:
- ; D:\TC\src\helper.c:141:         fprintf(out, is_last ? "└── " : "├── ");
-	leaq	.LC5(%rip), %rdx	 ;, iftmp.10_6
-.L91:
- ; D:\TC\src\helper.c:142: }
+	je	.L121	 ;,
+.L123:
+ ; D:\TC\src\helper.c:182:         fprintf(out, is_last ? "└── " : "├── ");
+	leaq	.LC8(%rip), %rdx	 ;, iftmp.11_6
+.L126:
+ ; D:\TC\src\helper.c:183: }
 	addq	$32, %rsp	 ;,
- ; D:\TC\src\helper.c:141:         fprintf(out, is_last ? "└── " : "├── ");
+ ; D:\TC\src\helper.c:182:         fprintf(out, is_last ? "└── " : "├── ");
 	movq	%rbp, %rcx	 ; out,
- ; D:\TC\src\helper.c:142: }
+ ; D:\TC\src\helper.c:183: }
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
@@ -666,23 +825,24 @@ indention:
 	popq	%r12	 ;
 	popq	%r13	 ;
 	popq	%r14	 ;
- ; D:\TC\src\helper.c:141:         fprintf(out, is_last ? "└── " : "├── ");
+ ; D:\TC\src\helper.c:182:         fprintf(out, is_last ? "└── " : "├── ");
 	jmp	fprintf	 ;
 	.p2align 4,,10
 	.p2align 3
-.L83:
- ; D:\TC\src\helper.c:128:         bool_list[index / 8] = (char)(word & ~(1 << (index % 8)));
+.L119:
+ ; D:\TC\src\helper.c:169:     bool_list[index / 8] = (char)(value ? (word | (1 << (index % 8))) : (word & ~(1 << (index % 8))));
 	notl	%eax	 ; tmp114
+ ; D:\TC\src\helper.c:169:     bool_list[index / 8] = (char)(value ? (word | (1 << (index % 8))) : (word & ~(1 << (index % 8))));
 	andl	%r8d, %eax	 ; word, tmp115
 	movb	%al, (%rdx)	 ; tmp115, *_28
- ; D:\TC\src\helper.c:138:     for (size_t i = 1; i < indent; ++i)
+ ; D:\TC\src\helper.c:179:     for (size_t i = 1; i < indent; ++i)
 	cmpq	$1, %rsi	 ;, indent
-	ja	.L84	 ;,
- ; D:\TC\src\helper.c:140:     if (indent > 0)
+	ja	.L120	 ;,
+ ; D:\TC\src\helper.c:181:     if (indent > 0)
 	testq	%rsi, %rsi	 ; indent
-	jne	.L87	 ;,
-.L82:
- ; D:\TC\src\helper.c:142: }
+	jne	.L123	 ;,
+.L118:
+ ; D:\TC\src\helper.c:183: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
@@ -692,62 +852,62 @@ indention:
 	popq	%r13	 ;
 	popq	%r14	 ;
 	ret	
-.L95:
- ; D:\TC\src\helper.c:140:     if (indent > 0)
+.L130:
+ ; D:\TC\src\helper.c:181:     if (indent > 0)
 	testq	%rsi, %rsi	 ; indent
-	je	.L82	 ;,
+	je	.L118	 ;,
 	.p2align 4,,10
 	.p2align 3
-.L85:
- ; D:\TC\src\helper.c:141:         fprintf(out, is_last ? "└── " : "├── ");
-	leaq	.LC6(%rip), %rdx	 ;, iftmp.10_6
-	jmp	.L91	 ;
+.L121:
+ ; D:\TC\src\helper.c:182:         fprintf(out, is_last ? "└── " : "├── ");
+	leaq	.LC9(%rip), %rdx	 ;, iftmp.11_6
+	jmp	.L126	 ;
 	.p2align 4
 	.globl	create_parser
 	.def	create_parser;	.scl	2;	.type	32;	.endef
 create_parser:
 	pushq	%rbx	 ;
 	movq	%rcx, %rbx	 ; tmp86, file
- ; D:\TC\src\helper.c:145:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
+ ; D:\TC\src\helper.c:186:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
 	movl	$48, %ecx	 ;,
- ; D:\TC\src\helper.c:144: Parser* create_parser(File* file) {
+ ; D:\TC\src\helper.c:185: Parser* create_parser(File* file) {
 	subq	$32, %rsp	 ;,
- ; D:\TC\src\helper.c:145:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
+ ; D:\TC\src\helper.c:186:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
 	call	alloc_memory	 ;
- ; D:\TC\src\helper.c:146:     new_parser->in_function = false;
+ ; D:\TC\src\helper.c:187:     new_parser->in_function = false;
 	xorl	%edx, %edx	 ;
 	movw	%dx, 8(%rax)	 ;, MEM <vector(2) char> [(char *)new_parser_3 + 8B]
- ; D:\TC\src\helper.c:148:     new_parser->in_loop = false;
+ ; D:\TC\src\helper.c:189:     new_parser->in_loop = false;
 	movb	$0, 10(%rax)	 ;, new_parser_3->in_loop
- ; D:\TC\src\helper.c:149:     new_parser->source_file = file;
+ ; D:\TC\src\helper.c:190:     new_parser->source_file = file;
 	movq	%rbx, (%rax)	 ; file, new_parser_3->source_file
- ; D:\TC\src\helper.c:151: }
+ ; D:\TC\src\helper.c:192: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
 	ret	
 	.section .rdata,"dr"
-.LC7:
-	.ascii "\0"
-.LC8:
-	.ascii "%s.tc\0"
-.LC9:
-	.ascii "D:/TC/std/\0"
 .LC10:
+	.ascii "\0"
+.LC11:
+	.ascii "%s.tc\0"
+.LC12:
+	.ascii "D:/TC/std/\0"
+.LC13:
 	.ascii "r\0"
 	.align 8
-.LC11:
+.LC14:
 	.ascii "Error opening library file for import: %s\12\0"
 	.align 8
-.LC12:
+.LC15:
 	.ascii "Info: Starting parsing lib file for import: %s\12\0"
 	.align 8
-.LC13:
+.LC16:
 	.ascii "Info: Finished parsing lib file for import: %s\12\0"
 	.align 8
-.LC14:
+.LC17:
 	.ascii "Error parsing library file for import: %s\12\0"
 	.align 8
-.LC15:
+.LC18:
 	.ascii "Error: Imported symbol '%s' was not found in %s\12\0"
 	.text
 	.p2align 4
@@ -763,122 +923,122 @@ parse_import_file:
 	pushq	%rsi	 ;
 	pushq	%rbx	 ;
 	subq	$56, %rsp	 ;,
- ; D:\TC\src\helper.c:157:     if (source == NULL) {
+ ; D:\TC\src\helper.c:198:     if (source == NULL) {
 	testq	%rdx, %rdx	 ; source
-	je	.L113	 ;,
+	je	.L148	 ;,
 	movq	%r9, %rcx	 ; tmp140, source_file
 	movq	%rdx, %rbx	 ; tmp138, source
- ; D:\TC\src\helper.c:163:         filename = absolute_path(source, get_file_dir(source_file));
+ ; D:\TC\src\helper.c:204:         filename = absolute_path(source, get_file_dir(source_file));
 	call	get_file_dir	 ;
- ; D:\TC\src\helper.c:163:         filename = absolute_path(source, get_file_dir(source_file));
+ ; D:\TC\src\helper.c:204:         filename = absolute_path(source, get_file_dir(source_file));
 	movq	%rbx, %rcx	 ; source,
- ; D:\TC\src\helper.c:163:         filename = absolute_path(source, get_file_dir(source_file));
+ ; D:\TC\src\helper.c:204:         filename = absolute_path(source, get_file_dir(source_file));
 	movq	%rax, %rdx	 ; tmp144, _3
- ; D:\TC\src\helper.c:163:         filename = absolute_path(source, get_file_dir(source_file));
+ ; D:\TC\src\helper.c:204:         filename = absolute_path(source, get_file_dir(source_file));
 	call	absolute_path	 ;
 	movq	%rax, %rbp	 ; tmp145, filename
-.L100:
- ; D:\TC\src\helper.c:164:     openfile = fopen(filename, "r");
-	leaq	.LC10(%rip), %rdx	 ;, tmp119
+.L135:
+ ; D:\TC\src\helper.c:205:     openfile = fopen(filename, "r");
+	leaq	.LC13(%rip), %rdx	 ;, tmp119
 	movq	%rbp, %rcx	 ; filename,
 	call	fopen	 ;
 	movq	%rax, %rbx	 ; tmp146, openfile
- ; D:\TC\src\helper.c:165:     if (openfile == NULL) {
+ ; D:\TC\src\helper.c:206:     if (openfile == NULL) {
 	testq	%rax, %rax	 ; openfile
-	je	.L114	 ;,
- ; D:\TC\src\helper.c:169:     printf("Info: Starting parsing lib file for import: %s\n", filename);
+	je	.L149	 ;,
+ ; D:\TC\src\helper.c:210:     printf("Info: Starting parsing lib file for import: %s\n", filename);
 	movq	%rbp, %rdx	 ; filename,
-	leaq	.LC12(%rip), %rcx	 ;, tmp122
+	leaq	.LC15(%rip), %rcx	 ;, tmp122
 	call	printf	 ;
- ; D:\TC\src\helper.c:171:     string source_code = read_source(openfile, &length);
+ ; D:\TC\src\helper.c:212:     string source_code = read_source(openfile, &length);
 	leaq	40(%rsp), %rdx	 ;, tmp123
 	movq	%rbx, %rcx	 ; openfile,
- ; D:\TC\src\helper.c:170:     size_t length = 0;
+ ; D:\TC\src\helper.c:211:     size_t length = 0;
 	movq	$0, 40(%rsp)	 ;, length
- ; D:\TC\src\helper.c:171:     string source_code = read_source(openfile, &length);
+ ; D:\TC\src\helper.c:212:     string source_code = read_source(openfile, &length);
 	call	read_source	 ;
- ; D:\TC\src\helper.c:172:     fclose(openfile);
+ ; D:\TC\src\helper.c:213:     fclose(openfile);
 	movq	%rbx, %rcx	 ; openfile,
- ; D:\TC\src\helper.c:171:     string source_code = read_source(openfile, &length);
+ ; D:\TC\src\helper.c:212:     string source_code = read_source(openfile, &length);
 	movq	%rax, %rsi	 ; tmp148, source_code
- ; D:\TC\src\helper.c:172:     fclose(openfile);
+ ; D:\TC\src\helper.c:213:     fclose(openfile);
 	call	fclose	 ;
- ; D:\TC\src\helper.c:173:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+ ; D:\TC\src\helper.c:214:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
 	movq	%rbp, %rcx	 ; filename,
 	call	create_file	 ;
- ; D:\TC\src\helper.c:145:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
+ ; D:\TC\src\helper.c:186:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
 	movl	$48, %ecx	 ;,
- ; D:\TC\src\helper.c:173:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+ ; D:\TC\src\helper.c:214:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
 	movq	%rax, %r13	 ; tmp149, _6
- ; D:\TC\src\helper.c:145:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
+ ; D:\TC\src\helper.c:186:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
 	call	alloc_memory	 ;
- ; D:\TC\src\helper.c:173:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+ ; D:\TC\src\helper.c:214:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
 	movq	40(%rsp), %rdx	 ; length,
 	movq	%rsi, %rcx	 ; source_code,
- ; D:\TC\src\helper.c:145:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
+ ; D:\TC\src\helper.c:186:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
 	movq	%rax, %rbx	 ; tmp150, new_parser
- ; D:\TC\src\helper.c:146:     new_parser->in_function = false;
+ ; D:\TC\src\helper.c:187:     new_parser->in_function = false;
 	xorl	%eax, %eax	 ;
 	movw	%ax, 8(%rbx)	 ;, MEM <vector(2) char> [(char *)new_parser_68 + 8B]
- ; D:\TC\src\helper.c:173:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+ ; D:\TC\src\helper.c:214:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
 	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp125
- ; D:\TC\src\helper.c:149:     new_parser->source_file = file;
+ ; D:\TC\src\helper.c:190:     new_parser->source_file = file;
 	movq	%r13, (%rbx)	 ; _6, new_parser_68->source_file
- ; D:\TC\src\helper.c:148:     new_parser->in_loop = false;
+ ; D:\TC\src\helper.c:189:     new_parser->in_loop = false;
 	movb	$0, 10(%rbx)	 ;, new_parser_68->in_loop
- ; D:\TC\src\helper.c:173:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	(%rax), %r13	 ; builtin_scope, builtin_scope.11_8
+ ; D:\TC\src\helper.c:214:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+	movq	(%rax), %r13	 ; builtin_scope, builtin_scope.13_8
 	call	create_lexer	 ;
- ; D:\TC\src\helper.c:173:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+ ; D:\TC\src\helper.c:214:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
 	movq	%rbx, %r8	 ; new_parser,
-	movq	%r13, %rdx	 ; builtin_scope.11_8,
- ; D:\TC\src\helper.c:173:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+	movq	%r13, %rdx	 ; builtin_scope.13_8,
+ ; D:\TC\src\helper.c:214:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
 	movq	%rax, %rcx	 ; tmp151, _10
- ; D:\TC\src\helper.c:173:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+ ; D:\TC\src\helper.c:214:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
 	call	parse_code	 ;
- ; D:\TC\src\helper.c:174:     printf("Info: Finished parsing lib file for import: %s\n", filename);
+ ; D:\TC\src\helper.c:215:     printf("Info: Finished parsing lib file for import: %s\n", filename);
 	movq	%rbp, %rdx	 ; filename,
-	leaq	.LC13(%rip), %rcx	 ;, tmp127
- ; D:\TC\src\helper.c:173:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+	leaq	.LC16(%rip), %rcx	 ;, tmp127
+ ; D:\TC\src\helper.c:214:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
 	movq	%rax, %rbx	 ; tmp152, code
- ; D:\TC\src\helper.c:174:     printf("Info: Finished parsing lib file for import: %s\n", filename);
+ ; D:\TC\src\helper.c:215:     printf("Info: Finished parsing lib file for import: %s\n", filename);
 	call	printf	 ;
- ; D:\TC\src\helper.c:175:     if (code == NULL) {
+ ; D:\TC\src\helper.c:216:     if (code == NULL) {
 	testq	%rbx, %rbx	 ; code
-	je	.L115	 ;,
- ; D:\TC\src\helper.c:179:     list(Node*) names = code->global_scope->symbols;
+	je	.L150	 ;,
+ ; D:\TC\src\helper.c:220:     list(Node*) names = code->global_scope->symbols;
 	movq	8(%rbx), %rax	 ; code_51->global_scope, code_51->global_scope
- ; D:\TC\src\helper.c:180:     Node* current = names->head;
+ ; D:\TC\src\helper.c:221:     Node* current = names->head;
 	movq	8(%rax), %rax	 ; _13->symbols, _13->symbols
 	movq	(%rax), %rbx	 ; names_53->head, current
- ; D:\TC\src\helper.c:181:     while (current != NULL) {
+ ; D:\TC\src\helper.c:222:     while (current != NULL) {
 	testq	%rbx, %rbx	 ; current
-	jne	.L107	 ;,
-	jmp	.L105	 ;
+	jne	.L142	 ;,
+	jmp	.L140	 ;
 	.p2align 4,,10
 	.p2align 3
-.L116:
- ; D:\TC\src\helper.c:188:         current = node_ptr->next;
+.L151:
+ ; D:\TC\src\helper.c:229:         current = node_ptr->next;
 	movq	(%rbx), %rbx	 ; current_74->next, current
- ; D:\TC\src\helper.c:181:     while (current != NULL) {
+ ; D:\TC\src\helper.c:222:     while (current != NULL) {
 	testq	%rbx, %rbx	 ; current
-	je	.L105	 ;,
-.L107:
- ; D:\TC\src\helper.c:183:         Symbol* current_name = (Symbol*)node_ptr->content;
+	je	.L140	 ;,
+.L142:
+ ; D:\TC\src\helper.c:224:         Symbol* current_name = (Symbol*)node_ptr->content;
 	movq	8(%rbx), %rsi	 ; current_74->content, <retval>
- ; D:\TC\src\helper.c:184:         if (string_equal(current_name->original_name, import_name)) {
+ ; D:\TC\src\helper.c:225:         if (string_equal(current_name->name, import_name)) {
 	movq	%rdi, %rdx	 ; import_name,
-	movq	16(%rsi), %rcx	 ; current_name_56->original_name, current_name_56->original_name
+	movq	8(%rsi), %rcx	 ; current_name_56->name, current_name_56->name
 	call	string_equal	 ;
- ; D:\TC\src\helper.c:184:         if (string_equal(current_name->original_name, import_name)) {
+ ; D:\TC\src\helper.c:225:         if (string_equal(current_name->name, import_name)) {
 	testb	%al, %al	 ; tmp154
-	je	.L116	 ;,
- ; D:\TC\src\helper.c:191:         list_append(scope->symbols, (pointer)name);
+	je	.L151	 ;,
+ ; D:\TC\src\helper.c:232:         list_append(scope->symbols, (pointer)name);
 	movq	8(%r12), %rcx	 ; scope_61(D)->symbols, scope_61(D)->symbols
 	movq	%rsi, %rdx	 ; <retval>,
 	call	list_append	 ;
-.L98:
- ; D:\TC\src\helper.c:195: }
+.L133:
+ ; D:\TC\src\helper.c:236: }
 	addq	$56, %rsp	 ;,
 	movq	%rsi, %rax	 ; <retval>,
 	popq	%rbx	 ;
@@ -890,68 +1050,110 @@ parse_import_file:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L113:
- ; D:\TC\src\helper.c:159:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
+.L148:
+ ; D:\TC\src\helper.c:200:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
 	call	strlen	 ;
- ; D:\TC\src\helper.c:159:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
-	leaq	.LC7(%rip), %rcx	 ;, tmp116
+ ; D:\TC\src\helper.c:200:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
+	leaq	.LC10(%rip), %rcx	 ;, tmp116
 	leaq	4(%rax), %rdx	 ;, tmp115
 	call	create_string_not_check	 ;
- ; D:\TC\src\helper.c:160:         sprintf(temp_import_name, "%s.tc", import_name);
+ ; D:\TC\src\helper.c:201:         sprintf(temp_import_name, "%s.tc", import_name);
 	movq	%rdi, %r8	 ; import_name,
-	leaq	.LC8(%rip), %rdx	 ;, tmp117
- ; D:\TC\src\helper.c:159:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
+	leaq	.LC11(%rip), %rdx	 ;, tmp117
+ ; D:\TC\src\helper.c:200:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
 	movq	%rax, %rbx	 ; tmp142, temp_import_name
- ; D:\TC\src\helper.c:160:         sprintf(temp_import_name, "%s.tc", import_name);
+ ; D:\TC\src\helper.c:201:         sprintf(temp_import_name, "%s.tc", import_name);
 	movq	%rax, %rcx	 ; temp_import_name,
 	call	sprintf	 ;
- ; D:\TC\src\helper.c:161:         filename = absolute_path(temp_import_name, std_path);
-	leaq	.LC9(%rip), %rdx	 ;, tmp118
+ ; D:\TC\src\helper.c:202:         filename = absolute_path(temp_import_name, std_path);
+	leaq	.LC12(%rip), %rdx	 ;, tmp118
 	movq	%rbx, %rcx	 ; temp_import_name,
 	call	absolute_path	 ;
 	movq	%rax, %rbp	 ; tmp143, filename
-	jmp	.L100	 ;
+	jmp	.L135	 ;
 	.p2align 4,,10
 	.p2align 3
-.L105:
- ; D:\TC\src\helper.c:193:         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
+.L140:
+ ; D:\TC\src\helper.c:234:         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
 	call	__getreent	 ;
- ; D:\TC\src\helper.c:193:         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
+ ; D:\TC\src\helper.c:234:         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
 	movq	%rbp, %r9	 ; filename,
 	movq	%rdi, %r8	 ; import_name,
- ; D:\TC\src\helper.c:167:         return NULL;
+ ; D:\TC\src\helper.c:208:         return NULL;
 	xorl	%esi, %esi	 ; <retval>
- ; D:\TC\src\helper.c:193:         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
+ ; D:\TC\src\helper.c:234:         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
 	movq	24(%rax), %rcx	 ; _17->_stderr, _17->_stderr
-	leaq	.LC15(%rip), %rdx	 ;, tmp134
+	leaq	.LC18(%rip), %rdx	 ;, tmp134
 	call	fprintf	 ;
-	jmp	.L98	 ;
+	jmp	.L133	 ;
 	.p2align 4,,10
 	.p2align 3
-.L114:
- ; D:\TC\src\helper.c:166:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
+.L149:
+ ; D:\TC\src\helper.c:207:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
 	call	__getreent	 ;
- ; D:\TC\src\helper.c:166:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
+ ; D:\TC\src\helper.c:207:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
 	movq	%rbp, %r8	 ; filename,
-	leaq	.LC11(%rip), %rdx	 ;, tmp121
- ; D:\TC\src\helper.c:167:         return NULL;
+	leaq	.LC14(%rip), %rdx	 ;, tmp121
+ ; D:\TC\src\helper.c:208:         return NULL;
 	xorl	%esi, %esi	 ; <retval>
- ; D:\TC\src\helper.c:166:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
+ ; D:\TC\src\helper.c:207:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
 	movq	24(%rax), %rcx	 ; _4->_stderr, _4->_stderr
 	call	fprintf	 ;
-	jmp	.L98	 ;
-.L115:
- ; D:\TC\src\helper.c:176:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
+	jmp	.L133	 ;
+.L150:
+ ; D:\TC\src\helper.c:217:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
 	call	__getreent	 ;
- ; D:\TC\src\helper.c:176:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
+ ; D:\TC\src\helper.c:217:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
 	movq	%rbp, %r8	 ; filename,
-	leaq	.LC14(%rip), %rdx	 ;, tmp129
- ; D:\TC\src\helper.c:167:         return NULL;
+	leaq	.LC17(%rip), %rdx	 ;, tmp129
+ ; D:\TC\src\helper.c:208:         return NULL;
 	xorl	%esi, %esi	 ; <retval>
- ; D:\TC\src\helper.c:176:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
+ ; D:\TC\src\helper.c:217:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
 	movq	24(%rax), %rcx	 ; _11->_stderr, _11->_stderr
 	call	fprintf	 ;
-	jmp	.L98	 ;
+	jmp	.L133	 ;
+	.section .rdata,"dr"
+.LC19:
+	.ascii "%s.%s\0"
+	.text
+	.p2align 4
+	.globl	make_method_name
+	.def	make_method_name;	.scl	2;	.type	32;	.endef
+make_method_name:
+	pushq	%rdi	 ;
+	movq	%rdx, %rdi	 ; tmp101, method_name
+	pushq	%rsi	 ;
+	movq	%rcx, %rsi	 ; tmp100, class_name
+	pushq	%rbx	 ;
+	subq	$32, %rsp	 ;,
+ ; D:\TC\src\helper.c:239:     string name = create_string("", strlen(class_name) + strlen(method_name) + 2);
+	call	strlen	 ;
+ ; D:\TC\src\helper.c:239:     string name = create_string("", strlen(class_name) + strlen(method_name) + 2);
+	movq	%rdi, %rcx	 ; method_name,
+ ; D:\TC\src\helper.c:239:     string name = create_string("", strlen(class_name) + strlen(method_name) + 2);
+	movq	%rax, %rbx	 ; tmp102, tmp90
+ ; D:\TC\src\helper.c:239:     string name = create_string("", strlen(class_name) + strlen(method_name) + 2);
+	call	strlen	 ;
+ ; D:\TC\src\helper.c:239:     string name = create_string("", strlen(class_name) + strlen(method_name) + 2);
+	leaq	.LC10(%rip), %rcx	 ;, tmp97
+	leaq	2(%rbx,%rax), %rdx	 ;, tmp96
+	call	create_string	 ;
+ ; D:\TC\src\helper.c:240:     sprintf(name, "%s.%s", class_name, method_name);
+	movq	%rdi, %r9	 ; method_name,
+	movq	%rsi, %r8	 ; class_name,
+	leaq	.LC19(%rip), %rdx	 ;, tmp98
+	movq	%rax, %rcx	 ; <retval>,
+ ; D:\TC\src\helper.c:239:     string name = create_string("", strlen(class_name) + strlen(method_name) + 2);
+	movq	%rax, %rbx	 ; tmp104, <retval>
+ ; D:\TC\src\helper.c:240:     sprintf(name, "%s.%s", class_name, method_name);
+	call	sprintf	 ;
+ ; D:\TC\src\helper.c:242: }
+	addq	$32, %rsp	 ;,
+	movq	%rbx, %rax	 ; <retval>,
+	popq	%rbx	 ;
+	popq	%rsi	 ;
+	popq	%rdi	 ;
+	ret	
 	.p2align 4
 	.globl	string_to_operator
 	.def	string_to_operator;	.scl	2;	.type	32;	.endef
@@ -959,421 +1161,421 @@ string_to_operator:
 	pushq	%rbx	 ;
 	movq	%rcx, %rbx	 ; tmp159, str
 	subq	$32, %rsp	 ;,
- ; D:\TC\src\helper.c:199:     if (string_equal(str, ASSIGN_SYMBOL)) return OP_ASSIGN;
+ ; D:\TC\src\helper.c:246:     if (string_equal(str, ASSIGN_SYMBOL)) return OP_ASSIGN;
 	movq	.refptr.ASSIGN_SYMBOL(%rip), %rax	 ;, tmp122
 	movq	(%rax), %rdx	 ; ASSIGN_SYMBOL, ASSIGN_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp160
- ; D:\TC\src\helper.c:199:     if (string_equal(str, ASSIGN_SYMBOL)) return OP_ASSIGN;
+ ; D:\TC\src\helper.c:246:     if (string_equal(str, ASSIGN_SYMBOL)) return OP_ASSIGN;
 	movl	$13, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:199:     if (string_equal(str, ASSIGN_SYMBOL)) return OP_ASSIGN;
+ ; D:\TC\src\helper.c:246:     if (string_equal(str, ASSIGN_SYMBOL)) return OP_ASSIGN;
 	testb	%dl, %dl	 ; tmp160
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:200:     else if (string_equal(str, ADD_ASSIGN_SYMBOL)) return OP_ADD_ASSIGN;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:247:     else if (string_equal(str, ADD_ASSIGN_SYMBOL)) return OP_ADD_ASSIGN;
 	movq	.refptr.ADD_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp124
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; ADD_ASSIGN_SYMBOL, ADD_ASSIGN_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp161
- ; D:\TC\src\helper.c:200:     else if (string_equal(str, ADD_ASSIGN_SYMBOL)) return OP_ADD_ASSIGN;
+ ; D:\TC\src\helper.c:247:     else if (string_equal(str, ADD_ASSIGN_SYMBOL)) return OP_ADD_ASSIGN;
 	movl	$14, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:200:     else if (string_equal(str, ADD_ASSIGN_SYMBOL)) return OP_ADD_ASSIGN;
+ ; D:\TC\src\helper.c:247:     else if (string_equal(str, ADD_ASSIGN_SYMBOL)) return OP_ADD_ASSIGN;
 	testb	%dl, %dl	 ; tmp161
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:201:     else if (string_equal(str, SUB_ASSIGN_SYMBOL)) return OP_SUB_ASSIGN;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:248:     else if (string_equal(str, SUB_ASSIGN_SYMBOL)) return OP_SUB_ASSIGN;
 	movq	.refptr.SUB_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp126
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; SUB_ASSIGN_SYMBOL, SUB_ASSIGN_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp162
- ; D:\TC\src\helper.c:201:     else if (string_equal(str, SUB_ASSIGN_SYMBOL)) return OP_SUB_ASSIGN;
+ ; D:\TC\src\helper.c:248:     else if (string_equal(str, SUB_ASSIGN_SYMBOL)) return OP_SUB_ASSIGN;
 	movl	$15, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:201:     else if (string_equal(str, SUB_ASSIGN_SYMBOL)) return OP_SUB_ASSIGN;
+ ; D:\TC\src\helper.c:248:     else if (string_equal(str, SUB_ASSIGN_SYMBOL)) return OP_SUB_ASSIGN;
 	testb	%dl, %dl	 ; tmp162
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:202:     else if (string_equal(str, MUL_ASSIGN_SYMBOL)) return OP_MUL_ASSIGN;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:249:     else if (string_equal(str, MUL_ASSIGN_SYMBOL)) return OP_MUL_ASSIGN;
 	movq	.refptr.MUL_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp128
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; MUL_ASSIGN_SYMBOL, MUL_ASSIGN_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp163
- ; D:\TC\src\helper.c:202:     else if (string_equal(str, MUL_ASSIGN_SYMBOL)) return OP_MUL_ASSIGN;
+ ; D:\TC\src\helper.c:249:     else if (string_equal(str, MUL_ASSIGN_SYMBOL)) return OP_MUL_ASSIGN;
 	movl	$16, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:202:     else if (string_equal(str, MUL_ASSIGN_SYMBOL)) return OP_MUL_ASSIGN;
+ ; D:\TC\src\helper.c:249:     else if (string_equal(str, MUL_ASSIGN_SYMBOL)) return OP_MUL_ASSIGN;
 	testb	%dl, %dl	 ; tmp163
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:203:     else if (string_equal(str, DIV_ASSIGN_SYMBOL)) return OP_DIV_ASSIGN;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:250:     else if (string_equal(str, DIV_ASSIGN_SYMBOL)) return OP_DIV_ASSIGN;
 	movq	.refptr.DIV_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp130
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; DIV_ASSIGN_SYMBOL, DIV_ASSIGN_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp164
- ; D:\TC\src\helper.c:203:     else if (string_equal(str, DIV_ASSIGN_SYMBOL)) return OP_DIV_ASSIGN;
+ ; D:\TC\src\helper.c:250:     else if (string_equal(str, DIV_ASSIGN_SYMBOL)) return OP_DIV_ASSIGN;
 	movl	$17, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:203:     else if (string_equal(str, DIV_ASSIGN_SYMBOL)) return OP_DIV_ASSIGN;
+ ; D:\TC\src\helper.c:250:     else if (string_equal(str, DIV_ASSIGN_SYMBOL)) return OP_DIV_ASSIGN;
 	testb	%dl, %dl	 ; tmp164
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:204:     else if (string_equal(str, MOD_ASSIGN_SYMBOL)) return OP_MOD_ASSIGN;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:251:     else if (string_equal(str, MOD_ASSIGN_SYMBOL)) return OP_MOD_ASSIGN;
 	movq	.refptr.MOD_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp132
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; MOD_ASSIGN_SYMBOL, MOD_ASSIGN_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp165
- ; D:\TC\src\helper.c:204:     else if (string_equal(str, MOD_ASSIGN_SYMBOL)) return OP_MOD_ASSIGN;
+ ; D:\TC\src\helper.c:251:     else if (string_equal(str, MOD_ASSIGN_SYMBOL)) return OP_MOD_ASSIGN;
 	movl	$18, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:204:     else if (string_equal(str, MOD_ASSIGN_SYMBOL)) return OP_MOD_ASSIGN;
+ ; D:\TC\src\helper.c:251:     else if (string_equal(str, MOD_ASSIGN_SYMBOL)) return OP_MOD_ASSIGN;
 	testb	%dl, %dl	 ; tmp165
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:205:     else if (string_equal(str, AND_SYMBOL)) return OP_AND;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:252:     else if (string_equal(str, AND_SYMBOL)) return OP_AND;
 	movq	.refptr.AND_SYMBOL(%rip), %rax	 ;, tmp134
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; AND_SYMBOL, AND_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp166
- ; D:\TC\src\helper.c:205:     else if (string_equal(str, AND_SYMBOL)) return OP_AND;
+ ; D:\TC\src\helper.c:252:     else if (string_equal(str, AND_SYMBOL)) return OP_AND;
 	movl	$11, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:205:     else if (string_equal(str, AND_SYMBOL)) return OP_AND;
+ ; D:\TC\src\helper.c:252:     else if (string_equal(str, AND_SYMBOL)) return OP_AND;
 	testb	%dl, %dl	 ; tmp166
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:206:     else if (string_equal(str, OR_SYMBOL)) return OP_OR;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:253:     else if (string_equal(str, OR_SYMBOL)) return OP_OR;
 	movq	.refptr.OR_SYMBOL(%rip), %rax	 ;, tmp136
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; OR_SYMBOL, OR_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp167
- ; D:\TC\src\helper.c:206:     else if (string_equal(str, OR_SYMBOL)) return OP_OR;
+ ; D:\TC\src\helper.c:253:     else if (string_equal(str, OR_SYMBOL)) return OP_OR;
 	movl	$12, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:206:     else if (string_equal(str, OR_SYMBOL)) return OP_OR;
+ ; D:\TC\src\helper.c:253:     else if (string_equal(str, OR_SYMBOL)) return OP_OR;
 	testb	%dl, %dl	 ; tmp167
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:207:     else if (string_equal(str, EQ_SYMBOL)) return OP_EQ;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:254:     else if (string_equal(str, EQ_SYMBOL)) return OP_EQ;
 	movq	.refptr.EQ_SYMBOL(%rip), %rax	 ;, tmp138
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; EQ_SYMBOL, EQ_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp168
- ; D:\TC\src\helper.c:207:     else if (string_equal(str, EQ_SYMBOL)) return OP_EQ;
+ ; D:\TC\src\helper.c:254:     else if (string_equal(str, EQ_SYMBOL)) return OP_EQ;
 	movl	$5, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:207:     else if (string_equal(str, EQ_SYMBOL)) return OP_EQ;
+ ; D:\TC\src\helper.c:254:     else if (string_equal(str, EQ_SYMBOL)) return OP_EQ;
 	testb	%dl, %dl	 ; tmp168
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:208:     else if (string_equal(str, NE_SYMBOL)) return OP_NE;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:255:     else if (string_equal(str, NE_SYMBOL)) return OP_NE;
 	movq	.refptr.NE_SYMBOL(%rip), %rax	 ;, tmp140
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; NE_SYMBOL, NE_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp169
- ; D:\TC\src\helper.c:208:     else if (string_equal(str, NE_SYMBOL)) return OP_NE;
+ ; D:\TC\src\helper.c:255:     else if (string_equal(str, NE_SYMBOL)) return OP_NE;
 	movl	$6, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:208:     else if (string_equal(str, NE_SYMBOL)) return OP_NE;
+ ; D:\TC\src\helper.c:255:     else if (string_equal(str, NE_SYMBOL)) return OP_NE;
 	testb	%dl, %dl	 ; tmp169
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:209:     else if (string_equal(str, LT_SYMBOL)) return OP_LT;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:256:     else if (string_equal(str, LT_SYMBOL)) return OP_LT;
 	movq	.refptr.LT_SYMBOL(%rip), %rax	 ;, tmp142
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; LT_SYMBOL, LT_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp170
- ; D:\TC\src\helper.c:209:     else if (string_equal(str, LT_SYMBOL)) return OP_LT;
+ ; D:\TC\src\helper.c:256:     else if (string_equal(str, LT_SYMBOL)) return OP_LT;
 	movl	$7, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:209:     else if (string_equal(str, LT_SYMBOL)) return OP_LT;
+ ; D:\TC\src\helper.c:256:     else if (string_equal(str, LT_SYMBOL)) return OP_LT;
 	testb	%dl, %dl	 ; tmp170
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:210:     else if (string_equal(str, GT_SYMBOL)) return OP_GT;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:257:     else if (string_equal(str, GT_SYMBOL)) return OP_GT;
 	movq	.refptr.GT_SYMBOL(%rip), %rax	 ;, tmp144
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; GT_SYMBOL, GT_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp171
- ; D:\TC\src\helper.c:210:     else if (string_equal(str, GT_SYMBOL)) return OP_GT;
+ ; D:\TC\src\helper.c:257:     else if (string_equal(str, GT_SYMBOL)) return OP_GT;
 	movl	$8, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:210:     else if (string_equal(str, GT_SYMBOL)) return OP_GT;
+ ; D:\TC\src\helper.c:257:     else if (string_equal(str, GT_SYMBOL)) return OP_GT;
 	testb	%dl, %dl	 ; tmp171
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:211:     else if (string_equal(str, LE_SYMBOL)) return OP_LE;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:258:     else if (string_equal(str, LE_SYMBOL)) return OP_LE;
 	movq	.refptr.LE_SYMBOL(%rip), %rax	 ;, tmp146
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; LE_SYMBOL, LE_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp172
- ; D:\TC\src\helper.c:211:     else if (string_equal(str, LE_SYMBOL)) return OP_LE;
+ ; D:\TC\src\helper.c:258:     else if (string_equal(str, LE_SYMBOL)) return OP_LE;
 	movl	$9, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:211:     else if (string_equal(str, LE_SYMBOL)) return OP_LE;
+ ; D:\TC\src\helper.c:258:     else if (string_equal(str, LE_SYMBOL)) return OP_LE;
 	testb	%dl, %dl	 ; tmp172
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:212:     else if (string_equal(str, GE_SYMBOL)) return OP_GE;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:259:     else if (string_equal(str, GE_SYMBOL)) return OP_GE;
 	movq	.refptr.GE_SYMBOL(%rip), %rax	 ;, tmp148
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; GE_SYMBOL, GE_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp173
- ; D:\TC\src\helper.c:212:     else if (string_equal(str, GE_SYMBOL)) return OP_GE;
+ ; D:\TC\src\helper.c:259:     else if (string_equal(str, GE_SYMBOL)) return OP_GE;
 	movl	$10, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:212:     else if (string_equal(str, GE_SYMBOL)) return OP_GE;
+ ; D:\TC\src\helper.c:259:     else if (string_equal(str, GE_SYMBOL)) return OP_GE;
 	testb	%dl, %dl	 ; tmp173
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:213:     else if (string_equal(str, ADD_SYMBOL)) return OP_ADD;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:260:     else if (string_equal(str, ADD_SYMBOL)) return OP_ADD;
 	movq	.refptr.ADD_SYMBOL(%rip), %rax	 ;, tmp150
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; ADD_SYMBOL, ADD_SYMBOL
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp174
- ; D:\TC\src\helper.c:213:     else if (string_equal(str, ADD_SYMBOL)) return OP_ADD;
+ ; D:\TC\src\helper.c:260:     else if (string_equal(str, ADD_SYMBOL)) return OP_ADD;
 	xorl	%eax, %eax	 ; <retval>
- ; D:\TC\src\helper.c:213:     else if (string_equal(str, ADD_SYMBOL)) return OP_ADD;
+ ; D:\TC\src\helper.c:260:     else if (string_equal(str, ADD_SYMBOL)) return OP_ADD;
 	testb	%dl, %dl	 ; tmp174
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:214:     else if (string_equal(str, SUB_SYMBOL)) return OP_SUB;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:261:     else if (string_equal(str, SUB_SYMBOL)) return OP_SUB;
 	movq	.refptr.SUB_SYMBOL(%rip), %rax	 ;, tmp152
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; SUB_SYMBOL,
 	call	string_equal	 ;
 	movl	%eax, %edx	 ;, tmp175
- ; D:\TC\src\helper.c:214:     else if (string_equal(str, SUB_SYMBOL)) return OP_SUB;
+ ; D:\TC\src\helper.c:261:     else if (string_equal(str, SUB_SYMBOL)) return OP_SUB;
 	movl	$1, %eax	 ;, <retval>
- ; D:\TC\src\helper.c:214:     else if (string_equal(str, SUB_SYMBOL)) return OP_SUB;
+ ; D:\TC\src\helper.c:261:     else if (string_equal(str, SUB_SYMBOL)) return OP_SUB;
 	testb	%dl, %dl	 ; tmp175
-	jne	.L117	 ;,
- ; D:\TC\src\helper.c:215:     else if (string_equal(str, MUL_SYMBOL)) return OP_MUL;
+	jne	.L154	 ;,
+ ; D:\TC\src\helper.c:262:     else if (string_equal(str, MUL_SYMBOL)) return OP_MUL;
 	movq	.refptr.MUL_SYMBOL(%rip), %rax	 ;, tmp153
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; MUL_SYMBOL,
 	call	string_equal	 ;
- ; D:\TC\src\helper.c:215:     else if (string_equal(str, MUL_SYMBOL)) return OP_MUL;
+ ; D:\TC\src\helper.c:262:     else if (string_equal(str, MUL_SYMBOL)) return OP_MUL;
 	testb	%al, %al	 ; tmp176
-	jne	.L135	 ;,
- ; D:\TC\src\helper.c:216:     else if (string_equal(str, DIV_SYMBOL)) return OP_DIV;
+	jne	.L172	 ;,
+ ; D:\TC\src\helper.c:263:     else if (string_equal(str, DIV_SYMBOL)) return OP_DIV;
 	movq	.refptr.DIV_SYMBOL(%rip), %rax	 ;, tmp154
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; DIV_SYMBOL,
 	call	string_equal	 ;
- ; D:\TC\src\helper.c:216:     else if (string_equal(str, DIV_SYMBOL)) return OP_DIV;
+ ; D:\TC\src\helper.c:263:     else if (string_equal(str, DIV_SYMBOL)) return OP_DIV;
 	testb	%al, %al	 ; tmp177
-	jne	.L136	 ;,
- ; D:\TC\src\helper.c:217:     else if (string_equal(str, MOD_SYMBOL)) return OP_MOD;
+	jne	.L173	 ;,
+ ; D:\TC\src\helper.c:264:     else if (string_equal(str, MOD_SYMBOL)) return OP_MOD;
 	movq	.refptr.MOD_SYMBOL(%rip), %rax	 ;, tmp155
 	movq	%rbx, %rcx	 ; str,
 	movq	(%rax), %rdx	 ; MOD_SYMBOL,
 	call	string_equal	 ;
- ; D:\TC\src\helper.c:217:     else if (string_equal(str, MOD_SYMBOL)) return OP_MOD;
+ ; D:\TC\src\helper.c:264:     else if (string_equal(str, MOD_SYMBOL)) return OP_MOD;
 	cmpb	$1, %al	 ;, _38
 	sbbl	%eax, %eax	 ; <retval>
 	andl	$15, %eax	 ;, <retval>
 	addl	$4, %eax	 ;, <retval>
-.L117:
- ; D:\TC\src\helper.c:219: }
+.L154:
+ ; D:\TC\src\helper.c:266: }
 	addq	$32, %rsp	 ;,
 	popq	%rbx	 ;
 	ret	
-.L135:
- ; D:\TC\src\helper.c:215:     else if (string_equal(str, MUL_SYMBOL)) return OP_MUL;
+.L172:
+ ; D:\TC\src\helper.c:262:     else if (string_equal(str, MUL_SYMBOL)) return OP_MUL;
 	movl	$2, %eax	 ;, <retval>
-	jmp	.L117	 ;
-.L136:
- ; D:\TC\src\helper.c:216:     else if (string_equal(str, DIV_SYMBOL)) return OP_DIV;
+	jmp	.L154	 ;
+.L173:
+ ; D:\TC\src\helper.c:263:     else if (string_equal(str, DIV_SYMBOL)) return OP_DIV;
 	movl	$3, %eax	 ;, <retval>
-	jmp	.L117	 ;
+	jmp	.L154	 ;
 	.p2align 4
 	.globl	operator_precedence
 	.def	operator_precedence;	.scl	2;	.type	32;	.endef
 operator_precedence:
- ; D:\TC\src\helper.c:221: int operator_precedence(OperatorType op) {
+ ; D:\TC\src\helper.c:268: int operator_precedence(OperatorType op) {
 	xorl	%eax, %eax	 ; <retval>
 	cmpl	$18, %ecx	 ;, op
-	ja	.L139	 ;,
+	ja	.L176	 ;,
 	movl	%ecx, %ecx	 ; op, op
-	leaq	CSWTCH.50(%rip), %rax	 ;, tmp84
-	movl	(%rax,%rcx,4), %eax	 ; CSWTCH.50[op_2(D)], <retval>
-.L139:
- ; D:\TC\src\helper.c:251: }
+	leaq	CSWTCH.55(%rip), %rax	 ;, tmp84
+	movl	(%rax,%rcx,4), %eax	 ; CSWTCH.55[op_2(D)], <retval>
+.L176:
+ ; D:\TC\src\helper.c:298: }
 	ret	
 	.section	.text.unlikely,"x"
-.LCOLDB16:
+.LCOLDB20:
 	.text
-.LHOTB16:
+.LHOTB20:
 	.p2align 4
 	.globl	operator_to_string
 	.def	operator_to_string;	.scl	2;	.type	32;	.endef
 operator_to_string:
- ; D:\TC\src\helper.c:254:     switch (op) {
+ ; D:\TC\src\helper.c:301:     switch (op) {
 	cmpl	$18, %ecx	 ;, op
-	ja	.L164	 ;,
-	leaq	.L145(%rip), %rdx	 ;, tmp85
+	ja	.L201	 ;,
+	leaq	.L182(%rip), %rdx	 ;, tmp85
 	movl	%ecx, %ecx	 ; op, op
 	movslq	(%rdx,%rcx,4), %rax	 ;, tmp87
 	addq	%rdx, %rax	 ; tmp85, tmp88
 	jmp	*%rax	 ; tmp88
 	.section .rdata,"dr"
 	.align 4
-.L145:
-	.long	.L163-.L145
-	.long	.L162-.L145
-	.long	.L161-.L145
-	.long	.L160-.L145
-	.long	.L159-.L145
-	.long	.L158-.L145
-	.long	.L157-.L145
-	.long	.L156-.L145
-	.long	.L155-.L145
-	.long	.L154-.L145
-	.long	.L153-.L145
-	.long	.L152-.L145
-	.long	.L151-.L145
-	.long	.L150-.L145
-	.long	.L149-.L145
-	.long	.L148-.L145
-	.long	.L147-.L145
-	.long	.L146-.L145
-	.long	.L144-.L145
+.L182:
+	.long	.L200-.L182
+	.long	.L199-.L182
+	.long	.L198-.L182
+	.long	.L197-.L182
+	.long	.L196-.L182
+	.long	.L195-.L182
+	.long	.L194-.L182
+	.long	.L193-.L182
+	.long	.L192-.L182
+	.long	.L191-.L182
+	.long	.L190-.L182
+	.long	.L189-.L182
+	.long	.L188-.L182
+	.long	.L187-.L182
+	.long	.L186-.L182
+	.long	.L185-.L182
+	.long	.L184-.L182
+	.long	.L183-.L182
+	.long	.L181-.L182
 	.text
 	.p2align 4,,10
 	.p2align 3
-.L146:
- ; D:\TC\src\helper.c:259:         case OP_DIV_ASSIGN: return DIV_ASSIGN_SYMBOL;
+.L183:
+ ; D:\TC\src\helper.c:306:         case OP_DIV_ASSIGN: return DIV_ASSIGN_SYMBOL;
 	movq	.refptr.DIV_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp94
 	movq	(%rax), %rax	 ; DIV_ASSIGN_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L147:
- ; D:\TC\src\helper.c:258:         case OP_MUL_ASSIGN: return MUL_ASSIGN_SYMBOL;
+.L184:
+ ; D:\TC\src\helper.c:305:         case OP_MUL_ASSIGN: return MUL_ASSIGN_SYMBOL;
 	movq	.refptr.MUL_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp93
 	movq	(%rax), %rax	 ; MUL_ASSIGN_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L148:
- ; D:\TC\src\helper.c:257:         case OP_SUB_ASSIGN: return SUB_ASSIGN_SYMBOL;
+.L185:
+ ; D:\TC\src\helper.c:304:         case OP_SUB_ASSIGN: return SUB_ASSIGN_SYMBOL;
 	movq	.refptr.SUB_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp92
 	movq	(%rax), %rax	 ; SUB_ASSIGN_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L149:
- ; D:\TC\src\helper.c:256:         case OP_ADD_ASSIGN: return ADD_ASSIGN_SYMBOL;
+.L186:
+ ; D:\TC\src\helper.c:303:         case OP_ADD_ASSIGN: return ADD_ASSIGN_SYMBOL;
 	movq	.refptr.ADD_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp91
 	movq	(%rax), %rax	 ; ADD_ASSIGN_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L150:
- ; D:\TC\src\helper.c:255:         case OP_ASSIGN: return ASSIGN_SYMBOL;
+.L187:
+ ; D:\TC\src\helper.c:302:         case OP_ASSIGN: return ASSIGN_SYMBOL;
 	movq	.refptr.ASSIGN_SYMBOL(%rip), %rax	 ;, tmp90
 	movq	(%rax), %rax	 ; ASSIGN_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L151:
- ; D:\TC\src\helper.c:262:         case OP_OR: return OR_SYMBOL;
+.L188:
+ ; D:\TC\src\helper.c:309:         case OP_OR: return OR_SYMBOL;
 	movq	.refptr.OR_SYMBOL(%rip), %rax	 ;, tmp97
 	movq	(%rax), %rax	 ; OR_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L152:
- ; D:\TC\src\helper.c:261:         case OP_AND: return AND_SYMBOL;
+.L189:
+ ; D:\TC\src\helper.c:308:         case OP_AND: return AND_SYMBOL;
 	movq	.refptr.AND_SYMBOL(%rip), %rax	 ;, tmp96
 	movq	(%rax), %rax	 ; AND_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L153:
- ; D:\TC\src\helper.c:268:         case OP_GE: return GE_SYMBOL;
+.L190:
+ ; D:\TC\src\helper.c:315:         case OP_GE: return GE_SYMBOL;
 	movq	.refptr.GE_SYMBOL(%rip), %rax	 ;, tmp103
 	movq	(%rax), %rax	 ; GE_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L154:
- ; D:\TC\src\helper.c:267:         case OP_LE: return LE_SYMBOL;
+.L191:
+ ; D:\TC\src\helper.c:314:         case OP_LE: return LE_SYMBOL;
 	movq	.refptr.LE_SYMBOL(%rip), %rax	 ;, tmp102
 	movq	(%rax), %rax	 ; LE_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L155:
- ; D:\TC\src\helper.c:266:         case OP_GT: return GT_SYMBOL;
+.L192:
+ ; D:\TC\src\helper.c:313:         case OP_GT: return GT_SYMBOL;
 	movq	.refptr.GT_SYMBOL(%rip), %rax	 ;, tmp101
 	movq	(%rax), %rax	 ; GT_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L156:
- ; D:\TC\src\helper.c:265:         case OP_LT: return LT_SYMBOL;
+.L193:
+ ; D:\TC\src\helper.c:312:         case OP_LT: return LT_SYMBOL;
 	movq	.refptr.LT_SYMBOL(%rip), %rax	 ;, tmp100
 	movq	(%rax), %rax	 ; LT_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L157:
- ; D:\TC\src\helper.c:264:         case OP_NE: return NE_SYMBOL;
+.L194:
+ ; D:\TC\src\helper.c:311:         case OP_NE: return NE_SYMBOL;
 	movq	.refptr.NE_SYMBOL(%rip), %rax	 ;, tmp99
 	movq	(%rax), %rax	 ; NE_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L158:
- ; D:\TC\src\helper.c:263:         case OP_EQ: return EQ_SYMBOL;
+.L195:
+ ; D:\TC\src\helper.c:310:         case OP_EQ: return EQ_SYMBOL;
 	movq	.refptr.EQ_SYMBOL(%rip), %rax	 ;, tmp98
 	movq	(%rax), %rax	 ; EQ_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L159:
- ; D:\TC\src\helper.c:273:         case OP_MOD: return MOD_SYMBOL;
+.L196:
+ ; D:\TC\src\helper.c:320:         case OP_MOD: return MOD_SYMBOL;
 	movq	.refptr.MOD_SYMBOL(%rip), %rax	 ;, tmp108
 	movq	(%rax), %rax	 ; MOD_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L160:
- ; D:\TC\src\helper.c:272:         case OP_DIV: return DIV_SYMBOL;
+.L197:
+ ; D:\TC\src\helper.c:319:         case OP_DIV: return DIV_SYMBOL;
 	movq	.refptr.DIV_SYMBOL(%rip), %rax	 ;, tmp107
 	movq	(%rax), %rax	 ; DIV_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L161:
- ; D:\TC\src\helper.c:271:         case OP_MUL: return MUL_SYMBOL;
+.L198:
+ ; D:\TC\src\helper.c:318:         case OP_MUL: return MUL_SYMBOL;
 	movq	.refptr.MUL_SYMBOL(%rip), %rax	 ;, tmp106
 	movq	(%rax), %rax	 ; MUL_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L162:
- ; D:\TC\src\helper.c:270:         case OP_SUB: return SUB_SYMBOL;
+.L199:
+ ; D:\TC\src\helper.c:317:         case OP_SUB: return SUB_SYMBOL;
 	movq	.refptr.SUB_SYMBOL(%rip), %rax	 ;, tmp105
 	movq	(%rax), %rax	 ; SUB_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L163:
- ; D:\TC\src\helper.c:269:         case OP_ADD: return ADD_SYMBOL;
+.L200:
+ ; D:\TC\src\helper.c:316:         case OP_ADD: return ADD_SYMBOL;
 	movq	.refptr.ADD_SYMBOL(%rip), %rax	 ;, tmp104
 	movq	(%rax), %rax	 ; ADD_SYMBOL, <retval>
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L144:
- ; D:\TC\src\helper.c:260:         case OP_MOD_ASSIGN: return MOD_ASSIGN_SYMBOL;
+.L181:
+ ; D:\TC\src\helper.c:307:         case OP_MOD_ASSIGN: return MOD_ASSIGN_SYMBOL;
 	movq	.refptr.MOD_ASSIGN_SYMBOL(%rip), %rax	 ;, tmp95
 	movq	(%rax), %rax	 ; MOD_ASSIGN_SYMBOL, <retval>
 	ret	
 	.section	.text.unlikely,"x"
 	.def	operator_to_string.cold;	.scl	3;	.type	32;	.endef
 operator_to_string.cold:
-.L164:
- ; D:\TC\src\helper.c:254:     switch (op) {
+.L201:
+ ; D:\TC\src\helper.c:301:     switch (op) {
 	xorl	%eax, %eax	 ; <retval>
 	ret	
 	.text
 	.section	.text.unlikely,"x"
-.LCOLDE16:
+.LCOLDE20:
 	.text
-.LHOTE16:
+.LHOTE20:
 	.section .rdata,"dr"
 	.align 32
-CSWTCH.50:
+CSWTCH.55:
 	.long	4
 	.long	4
 	.long	5
@@ -1400,6 +1602,7 @@ CSWTCH.50:
 	.def	fwrite;	.scl	2;	.type	32;	.endef
 	.def	string_equal;	.scl	2;	.type	32;	.endef
 	.def	fprintf;	.scl	2;	.type	32;	.endef
+	.def	strcmp;	.scl	2;	.type	32;	.endef
 	.def	get_file_dir;	.scl	2;	.type	32;	.endef
 	.def	absolute_path;	.scl	2;	.type	32;	.endef
 	.def	fopen;	.scl	2;	.type	32;	.endef
@@ -1412,6 +1615,7 @@ CSWTCH.50:
 	.def	strlen;	.scl	2;	.type	32;	.endef
 	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
 	.def	sprintf;	.scl	2;	.type	32;	.endef
+	.def	create_string;	.scl	2;	.type	32;	.endef
 	.section	.rdata$.refptr.MOD_SYMBOL, "dr"
 	.globl	.refptr.MOD_SYMBOL
 	.linkonce	discard

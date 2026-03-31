@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +24,8 @@ extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern char initialized;
 extern StringList* all_string_list;
-extern string CONSTRUCTOR_NAME;
+extern string DEFAULT_INIT_NAME;
+extern string DEFAULT_CONSTRUCTOR_NAME;
 extern string IMPORT_KEYWORD;
 extern string FROM_KEYWORD;
 extern string FUNC_KEYWORD;

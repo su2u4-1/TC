@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +24,8 @@ extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern char initialized;
 extern StringList* all_string_list;
-extern string CONSTRUCTOR_NAME;
+extern string DEFAULT_INIT_NAME;
+extern string DEFAULT_CONSTRUCTOR_NAME;
 extern string IMPORT_KEYWORD;
 extern string FROM_KEYWORD;
 extern string FUNC_KEYWORD;
@@ -190,7 +190,8 @@ typedef struct List List;
 typedef struct Node Node;
 typedef enum SymbolTableType {
     SYMBOL_CLASS,
-    SYMBOL_SUBROUTINE,
+    SYMBOL_FUNCTION,
+    SYMBOL_METHOD,
     SYMBOL_VARIABLE,
     SYMBOL_PARAM,
     SYMBOL_ATTRIBUTE,
@@ -200,7 +201,7 @@ struct CodeMember {
     union {
         Import* import;
         Function* function;
-        Class* class_;
+        Class* class;
     } content;
     CodeMemberType type;
 };
@@ -237,6 +238,7 @@ struct Class {
     Symbol* name;
     List* members;
     SymbolTable* class_scope;
+    size_t size;
 };
 struct Variable {
     Symbol* type;
@@ -313,9 +315,14 @@ struct SymbolTable {
 };
 struct Symbol {
     Symbol* type;
-    SymbolTable* scope;
-    string original_name;
+    string name;
     size_t id;
+    union {
+        Class* class;
+        Function* function;
+        Method* method;
+        SymbolTable* scope;
+    } ast_node;
     SymbolType kind;
 };
 typedef struct Lexer Lexer;
@@ -335,14 +342,17 @@ void list_append(List* list, pointer item);
 List* list_copy(List* original);
 pointer list_pop(List* list);
 pointer list_pop_back(List* list);
-Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope);
+char list_is_empty(List* list);
+Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node);
 SymbolTable* create_symbol_table(SymbolTable* parent);
 Symbol* search_name(SymbolTable* scope, string name);
+Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
 char is_builtin_type(string type);
 void parser_error(const string message, Token* token, string file_name);
 void indention(FILE* out, size_t indent, char is_last, Parser* parser);
 Parser* create_parser(File* file);
 Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
+string make_method_name(string class_name, string method_name);
 OperatorType string_to_operator(string str);
 int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);
@@ -374,7 +384,7 @@ void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, P
             break;
         case CODE_CLASS:
             indention(outfile, indent + 0, 0, parser), fprintf(outfile, "class\n");
-            output_class(code_member->content.class_, outfile, indent + 1, parser);
+            output_class(code_member->content.class, outfile, indent + 1, parser);
             break;
         default:
             indention(outfile, indent + 0, 0, parser), fprintf(outfile, "unknown_CodeMemberType: %u\n", code_member->type);
@@ -493,10 +503,10 @@ void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser
             break;
         case BREAK_STATEMENT:
             indention(outfile, indent + 0, 0, parser), fprintf(outfile, "break_statement: \"NULL\"\n");
-            return;
+            break;
         case CONTINUE_STATEMENT:
             indention(outfile, indent + 0, 0, parser), fprintf(outfile, "continue_statement: \"NULL\"\n");
-            return;
+            break;
         case EXPRESSION_STATEMENT:
             if (statement->stmt.expr == NULL) {
                 indention(outfile, indent + 0, 0, parser), fprintf(outfile, "expression_statement: \"NULL\"\n");
@@ -507,7 +517,7 @@ void output_statement(Statement* statement, FILE* outfile, size_t indent, Parser
             break;
         default:
             indention(outfile, indent + 0, 0, parser), fprintf(outfile, "unknown_StatementType: %u\n", statement->type);
-            return;
+            break;
     }
 }
 void output_if(If* if_, FILE* outfile, size_t indent, Parser* parser) {
@@ -674,7 +684,7 @@ void output_name(Symbol* name, FILE* outfile, size_t indent, Parser* parser) {
         indention(outfile, indent + 0, 1, parser), fprintf(outfile, "Name pointer: \"NULL\"\n");
         return;
     }
-    indention(outfile, indent + 0, 0, parser), fprintf(outfile, "name: \"%s\"\n", name->original_name);
+    indention(outfile, indent + 0, 0, parser), fprintf(outfile, "name: \"%s\"\n", name->name);
     indention(outfile, indent + 0, 0, parser), fprintf(outfile, "id: %zu\n", name->id);
     switch (name->kind) {
         case SYMBOL_TYPE:
@@ -685,8 +695,13 @@ void output_name(Symbol* name, FILE* outfile, size_t indent, Parser* parser) {
             indention(outfile, indent + 0, 1, parser), fprintf(outfile, "type\n");
             output_name(name->type, outfile, indent + 1, parser);
             break;
-        case SYMBOL_SUBROUTINE:
-            indention(outfile, indent + 0, 0, parser), fprintf(outfile, "kind: \"subroutine\"\n");
+        case SYMBOL_FUNCTION:
+            indention(outfile, indent + 0, 0, parser), fprintf(outfile, "kind: \"function\"\n");
+            indention(outfile, indent + 0, 1, parser), fprintf(outfile, "return_type\n");
+            output_name(name->type, outfile, indent + 1, parser);
+            break;
+        case SYMBOL_METHOD:
+            indention(outfile, indent + 0, 0, parser), fprintf(outfile, "kind: \"method\"\n");
             indention(outfile, indent + 0, 1, parser), fprintf(outfile, "return_type\n");
             output_name(name->type, outfile, indent + 1, parser);
             break;

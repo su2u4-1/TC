@@ -3,7 +3,7 @@
 rm -rf asm_test/fake_std 2>/dev/null
 mkdir -p asm_test/fake_std
 
-HEADERS=(assert.h stddef.h stdio.h stdlib.h string.h direct.h unistd.h)
+HEADERS=(assert.h stdio.h stdlib.h string.h direct.h unistd.h)
 
 for h in "${HEADERS[@]}"; do
     name="${h%.h}"
@@ -26,6 +26,7 @@ gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "src/lib.c" -o "./as
 gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "src/main.c" -o "./asm_test/i/main.i"
 gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "src/output.c" -o "./asm_test/i/output.i"
 gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "src/parser.c" -o "./asm_test/i/parser.i"
+gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" -I"temp" "temp/codegen.c" -o "./asm_test/i/parser.i"
 
 for f in asm_test/i/*.i; do
     echo "Restoring $f ..."
@@ -49,6 +50,7 @@ gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protectio
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -I"include" "src/main.c" -o "./asm_test/wsl/O0/s/main.s"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -I"include" "src/output.c" -o "./asm_test/wsl/O0/s/output.s"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -I"include" "src/parser.c" -o "./asm_test/wsl/O0/s/parser.s"
+gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -I"include" -I"temp" "temp/codegen.c" -o "./asm_test/wsl/O0/s/parser.s"
 echo ".s files created for O0."
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -fverbose-asm -I"include" "src/compiler.c" -o "./asm_test/wsl/O0/commentS/compiler.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -fverbose-asm -I"include" "src/create.c" -o "./asm_test/wsl/O0/commentS/create.S"
@@ -59,6 +61,7 @@ gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protectio
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -fverbose-asm -I"include" "src/main.c" -o "./asm_test/wsl/O0/commentS/main.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -fverbose-asm -I"include" "src/output.c" -o "./asm_test/wsl/O0/commentS/output.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -fverbose-asm -I"include" "src/parser.c" -o "./asm_test/wsl/O0/commentS/parser.S"
+gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -fverbose-asm -I"include" -I"temp" "temp/codegen.c" -o "./asm_test/wsl/O0/commentS/parser.S"
 echo ".S files with comments created for O0."
 
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O1 -I"include" "src/compiler.c" -o "./asm_test/wsl/O1/s/compiler.s"
@@ -70,6 +73,7 @@ gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protectio
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O1 -I"include" "src/main.c" -o "./asm_test/wsl/O1/s/main.s"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O1 -I"include" "src/output.c" -o "./asm_test/wsl/O1/s/output.s"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O1 -I"include" "src/parser.c" -o "./asm_test/wsl/O1/s/parser.s"
+gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O1 -I"include" -I"temp" "temp/codegen.c" -o "./asm_test/wsl/O1/s/parser.s"
 echo ".s files created for O1."
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O1 -fverbose-asm -I"include" "src/compiler.c" -o "./asm_test/wsl/O1/commentS/compiler.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O1 -fverbose-asm -I"include" "src/create.c" -o "./asm_test/wsl/O1/commentS/create.S"
@@ -80,6 +84,7 @@ gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protectio
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O1 -fverbose-asm -I"include" "src/main.c" -o "./asm_test/wsl/O1/commentS/main.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O1 -fverbose-asm -I"include" "src/output.c" -o "./asm_test/wsl/O1/commentS/output.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O1 -fverbose-asm -I"include" "src/parser.c" -o "./asm_test/wsl/O1/commentS/parser.S"
+gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O1 -fverbose-asm -I"include" -I"temp" "temp/codegen.c" -o "./asm_test/wsl/O1/commentS/parser.S"
 echo ".S files with comments created for O1."
 
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O2 -I"include" "src/compiler.c" -o "./asm_test/wsl/O2/s/compiler.s"
@@ -91,6 +96,7 @@ gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protectio
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O2 -I"include" "src/main.c" -o "./asm_test/wsl/O2/s/main.s"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O2 -I"include" "src/output.c" -o "./asm_test/wsl/O2/s/output.s"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O2 -I"include" "src/parser.c" -o "./asm_test/wsl/O2/s/parser.s"
+gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O2 -I"include" -I"temp" "temp/codegen.c" -o "./asm_test/wsl/O2/s/parser.s"
 echo ".s files created for O2."
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O2 -fverbose-asm -I"include" "src/compiler.c" -o "./asm_test/wsl/O2/commentS/compiler.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O2 -fverbose-asm -I"include" "src/create.c" -o "./asm_test/wsl/O2/commentS/create.S"
@@ -101,6 +107,7 @@ gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protectio
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O2 -fverbose-asm -I"include" "src/main.c" -o "./asm_test/wsl/O2/commentS/main.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O2 -fverbose-asm -I"include" "src/output.c" -o "./asm_test/wsl/O2/commentS/output.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O2 -fverbose-asm -I"include" "src/parser.c" -o "./asm_test/wsl/O2/commentS/parser.S"
+gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O2 -fverbose-asm -I"include" -I"temp" "temp/codegen.c" -o "./asm_test/wsl/O2/commentS/parser.S"
 echo ".S files with comments created for O2."
 
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O3 -I"include" "src/compiler.c" -o "./asm_test/wsl/O3/s/compiler.s"
@@ -112,6 +119,7 @@ gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protectio
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O3 -I"include" "src/main.c" -o "./asm_test/wsl/O3/s/main.s"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O3 -I"include" "src/output.c" -o "./asm_test/wsl/O3/s/output.s"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O3 -I"include" "src/parser.c" -o "./asm_test/wsl/O3/s/parser.s"
+gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O3 -I"include" -I"temp" "temp/codegen.c" -o "./asm_test/wsl/O3/s/parser.s"
 echo ".s files created for O3."
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O3 -fverbose-asm -I"include" "src/compiler.c" -o "./asm_test/wsl/O3/commentS/compiler.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O3 -fverbose-asm -I"include" "src/create.c" -o "./asm_test/wsl/O3/commentS/create.S"
@@ -122,6 +130,7 @@ gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protectio
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O3 -fverbose-asm -I"include" "src/main.c" -o "./asm_test/wsl/O3/commentS/main.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O3 -fverbose-asm -I"include" "src/output.c" -o "./asm_test/wsl/O3/commentS/output.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O3 -fverbose-asm -I"include" "src/parser.c" -o "./asm_test/wsl/O3/commentS/parser.S"
+gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O3 -fverbose-asm -I"include" -I"temp" "temp/codegen.c" -o "./asm_test/wsl/O3/commentS/parser.S"
 echo ".S files with comments created for O3."
 
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -Os -I"include" "src/compiler.c" -o "./asm_test/wsl/Os/s/compiler.s"
@@ -133,6 +142,7 @@ gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protectio
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -Os -I"include" "src/main.c" -o "./asm_test/wsl/Os/s/main.s"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -Os -I"include" "src/output.c" -o "./asm_test/wsl/Os/s/output.s"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -Os -I"include" "src/parser.c" -o "./asm_test/wsl/Os/s/parser.s"
+gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -Os -I"include" -I"temp" "temp/codegen.c" -o "./asm_test/wsl/Os/s/parser.s"
 echo ".s files created for Os."
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -Os -fverbose-asm -I"include" "src/compiler.c" -o "./asm_test/wsl/Os/commentS/compiler.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -Os -fverbose-asm -I"include" "src/create.c" -o "./asm_test/wsl/Os/commentS/create.S"
@@ -143,6 +153,7 @@ gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protectio
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -Os -fverbose-asm -I"include" "src/main.c" -o "./asm_test/wsl/Os/commentS/main.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -Os -fverbose-asm -I"include" "src/output.c" -o "./asm_test/wsl/Os/commentS/output.S"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -Os -fverbose-asm -I"include" "src/parser.c" -o "./asm_test/wsl/Os/commentS/parser.S"
+gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -Os -fverbose-asm -I"include" -I"temp" "temp/codegen.c" -o "./asm_test/wsl/Os/commentS/parser.S"
 echo ".S files with comments created for Os."
 
 for O in O0 O1 O2 O3 Os; do

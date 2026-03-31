@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +24,8 @@ extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern char initialized;
 extern StringList* all_string_list;
-extern string CONSTRUCTOR_NAME;
+extern string DEFAULT_INIT_NAME;
+extern string DEFAULT_CONSTRUCTOR_NAME;
 extern string IMPORT_KEYWORD;
 extern string FROM_KEYWORD;
 extern string FUNC_KEYWORD;
@@ -170,7 +170,8 @@ typedef struct List List;
 typedef struct Node Node;
 typedef enum SymbolTableType {
     SYMBOL_CLASS,
-    SYMBOL_SUBROUTINE,
+    SYMBOL_FUNCTION,
+    SYMBOL_METHOD,
     SYMBOL_VARIABLE,
     SYMBOL_PARAM,
     SYMBOL_ATTRIBUTE,
@@ -180,7 +181,7 @@ struct CodeMember {
     union {
         Import* import;
         Function* function;
-        Class* class_;
+        Class* class;
     } content;
     CodeMemberType type;
 };
@@ -217,6 +218,7 @@ struct Class {
     Symbol* name;
     List* members;
     SymbolTable* class_scope;
+    size_t size;
 };
 struct Variable {
     Symbol* type;
@@ -293,9 +295,14 @@ struct SymbolTable {
 };
 struct Symbol {
     Symbol* type;
-    SymbolTable* scope;
-    string original_name;
+    string name;
     size_t id;
+    union {
+        Class* class;
+        Function* function;
+        Method* method;
+        SymbolTable* scope;
+    } ast_node;
     SymbolType kind;
 };
 typedef struct Lexer Lexer;
@@ -305,10 +312,13 @@ void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser);
 CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content);
 Code* create_code(List* members, SymbolTable* global_scope);
 Import* create_import(Symbol* name, string source);
+Function* create_function_use_ptr(Function* function, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* function_scope);
 Function* create_function(Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* function_scope);
+Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* method_scope);
 Method* create_method(Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* method_scope);
 ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content);
-Class* create_class(Symbol* name, List* members, SymbolTable* class_scope);
+Class* create_class_use_ptr(Class* class, Symbol* name, List* members, SymbolTable* class_scope, size_t size);
+Class* create_class(Symbol* name, List* members, SymbolTable* class_scope, size_t size);
 Variable* create_variable(Symbol* type, Symbol* name, Expression* value);
 Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt);
 If* create_if(Expression* condition, List* body, List* else_if, List* else_body);
@@ -351,14 +361,17 @@ void list_append(List* list, pointer item);
 List* list_copy(List* original);
 pointer list_pop(List* list);
 pointer list_pop_back(List* list);
-Symbol* create_symbol(string original_name, SymbolType kind, Symbol* type, SymbolTable* scope);
+char list_is_empty(List* list);
+Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node);
 SymbolTable* create_symbol_table(SymbolTable* parent);
 Symbol* search_name(SymbolTable* scope, string name);
+Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
 char is_builtin_type(string type);
 void parser_error(const string message, Token* token, string file_name);
 void indention(FILE* out, size_t indent, char is_last, Parser* parser);
 Parser* create_parser(File* file);
 Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
+string make_method_name(string class_name, string method_name);
 OperatorType string_to_operator(string str);
 int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);
@@ -433,10 +446,10 @@ Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
                 parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
             list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
-            Class* class_ = parse_class(lexer, global_scope, parser);
-            if (class_ == NULL)
+            Class* class = parse_class(lexer, global_scope, parser);
+            if (class == NULL)
                 parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
-            list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class_));
+            list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
         } else
             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
         token = get_next_token(lexer, 1);
@@ -492,7 +505,9 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
         return NULL;
     }
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_SUBROUTINE, return_type, function_scope);
+    Function* function = (Function*)alloc_memory(sizeof(Function));
+    function->function_scope = function_scope;
+    Symbol* name = create_symbol(token->lexeme, SYMBOL_FUNCTION, return_type, function);
     token = get_next_token(lexer, 1);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
@@ -539,7 +554,7 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     parser->in_function = 0;
     if (!have_return && return_type != name_void)
         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
-    return create_function(name, return_type, parameters, body, function_scope);
+    return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
 }
 Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, Parser* parser) {
     Token* token = NULL;
@@ -560,7 +575,9 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
         return NULL;
     }
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_SUBROUTINE, return_type, method_scope);
+    Method* method = (Method*)alloc_memory(sizeof(Method));
+    method->method_scope = method_scope;
+    Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
     token = get_next_token(lexer, 1);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
@@ -614,7 +631,7 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
     parser->in_method = 0;
     if (!have_return && return_type != name_void)
         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
-    return create_method(name, return_type, parameters, body, method_scope);
+    return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
 }
 Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     Token* token = NULL;
@@ -624,7 +641,9 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
         return NULL;
     }
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_CLASS, NULL, class_scope);
+    Class* class = (Class*)alloc_memory(sizeof(Class));
+    class->class_scope = class_scope;
+    Symbol* name = create_symbol(token->lexeme, SYMBOL_CLASS, NULL, class);
     token = get_next_token(lexer, 1);
     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
         parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
@@ -632,6 +651,7 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     List* members = create_list();
     token = get_next_token(lexer, 1);
+    size_t size = 0;
     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
             Method* method = parse_method(lexer, class_scope, name, parser);
@@ -643,7 +663,19 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             Variable* variable = parse_variable(lexer, class_scope, parser);
             if (variable == NULL)
                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
-            list_append(members, (pointer)create_class_member(CLASS_VARIABLE, NULL, variable));
+            ClassMember* member = create_class_member(CLASS_VARIABLE, NULL, variable);
+            list_append(members, (pointer)member);
+            if (member->type == CLASS_VARIABLE) {
+                Symbol* type = member->content.variable->type;
+                if (type == name_int || type == name_float || type == name_string)
+                    size += 8;
+                else if (type == name_bool || type == name_void)
+                    size += 1;
+                else if (type->kind == SYMBOL_CLASS)
+                    size += 8;
+                else
+                    fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->name, type->name);
+            }
             token = get_next_token(lexer, 1);
             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
                 parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
@@ -651,14 +683,53 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
         token = get_next_token(lexer, 1);
     }
-    Symbol* constructor = search_name(class_scope, CONSTRUCTOR_NAME);
-    if (constructor == NULL) {
-        SymbolTable* constructor_scope = create_symbol_table(class_scope);
-        constructor = create_symbol(CONSTRUCTOR_NAME, SYMBOL_SUBROUTINE, name, constructor_scope);
+    string init_name = make_method_name(name->name, DEFAULT_INIT_NAME);
+    Symbol* init = search_name_use_strcmp(class_scope, init_name);
+    if (init == NULL) {
+        Method* method = (Method*)alloc_memory(sizeof(Method));
+        method->method_scope = create_symbol_table(class_scope);
+        init = create_symbol(init_name, SYMBOL_METHOD, name, method);
+        List* parameters = create_list();
+        Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+        list_append(parameters, (pointer)create_variable(name, self, NULL));
+        List* body = create_list();
+        list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+        create_method_use_ptr(method, init, name, parameters, body, method->method_scope);
+        list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
     }
-    if (constructor->kind != SYMBOL_SUBROUTINE)
+    if (init->kind != SYMBOL_METHOD)
         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
-    return create_class(name, members, class_scope);
+    string constructor_name = make_method_name(name->name, DEFAULT_CONSTRUCTOR_NAME);
+    Method* method = (Method*)alloc_memory(sizeof(Method));
+    method->method_scope = create_symbol_table(class_scope);
+    Symbol* constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, method);
+    List* parameters = create_list();
+    Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+    list_append(parameters, (pointer)create_variable(name, self, NULL));
+    List* init_params = list_copy(init->ast_node.method->parameters);
+    Variable* param;
+    while ((param = (Variable*)list_pop(init_params)) != NULL) {
+        if (string_equal(param->name->name, SELF_KEYWORD)) continue;
+        list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
+    }
+    List* body = create_list();
+    List* ms = list_copy(members);
+    ClassMember* mb;
+    while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
+        if (mb->type == CLASS_VARIABLE) {
+            Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, mb->content.variable->name, NULL, NULL)), NULL);
+            Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+            list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+        }
+    }
+    List* args = create_list();
+    List* params = list_copy(parameters);
+    while ((param = (Variable*)list_pop(params)) != NULL)
+        list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+    list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+    create_method_use_ptr(method, constructor, name, parameters, body, method->method_scope);
+    list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+    return create_class_use_ptr(class, name, members, class_scope, size);
 }
 Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     Token* token = NULL;
@@ -705,8 +776,9 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
             statement = create_statement(VARIABLE_STATEMENT, NULL, NULL, NULL, NULL, parse_variable(lexer, now_scope, parser));
         } else if (string_equal(token->lexeme, RETURN_KEYWORD)) {
             token = get_next_token(lexer, 1);
-            if (token->type == SYMBOL && string_equal(token->lexeme, SEMICOLON_SYMBOL))
+            if (token->type == SYMBOL && string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
                 return create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL);
+            }
             statement = create_statement(RETURN_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
         } else if (string_equal(token->lexeme, BREAK_KEYWORD)) {
             if (!parser->in_loop) {
@@ -935,8 +1007,9 @@ static Expression* parse_expr_prec(Lexer* lexer, Expression* expr_left, int min_
             if (next_op == OP_NONE || next_prec <= op_prec)
                 break;
             right = parse_expr_prec(lexer, right, next_prec, now_scope, parser);
-            if (right == NULL)
+            if (right == NULL) {
                 return NULL;
+            }
             token = peek_next_token(lexer, 1);
         }
         expr_left = create_expression(op, expr_left, NULL, right);
@@ -1037,16 +1110,17 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                 current_type = base_name->type;
         }
         if (var_scope == NULL && current_type != NULL && current_type->kind == SYMBOL_CLASS)
-            var_scope = current_type->scope;
+            var_scope = current_type->ast_node.class->class_scope;
         if (string_equal(token->lexeme, L_PAREN_SYMBOL)) {
             token = get_next_token(lexer, 1);
             if (base_name == NULL)
                 parser_error("Cannot call undefined variable", token, get_full_path(parser->source_file));
             else if (base_name->kind == SYMBOL_CLASS) {
-                base_name = search_name(base_name->scope, CONSTRUCTOR_NAME);
+                string name = make_method_name(base_name->name, DEFAULT_CONSTRUCTOR_NAME);
+                base_name = search_name_use_strcmp(base_name->ast_node.class->class_scope, name);
                 base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
             }
-            if (base_name != NULL && base_name->kind != SYMBOL_SUBROUTINE)
+            if (base_name != NULL && base_name->kind != SYMBOL_FUNCTION && base_name->kind != SYMBOL_METHOD)
                 parser_error("Cannot call non-function variable", token, get_full_path(parser->source_file));
             token = get_next_token(lexer, 1);
             List* args = create_list();
@@ -1068,7 +1142,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
             current_type = NULL;
             var_scope = NULL;
             if (base_name->kind == SYMBOL_CLASS)
-                var_scope = base_name->scope;
+                var_scope = base_name->ast_node.class->class_scope;
         } else if (string_equal(token->lexeme, L_BRACKET_SYMBOL)) {
             token = get_next_token(lexer, 1);
             token = get_next_token(lexer, 1);
@@ -1093,6 +1167,17 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                 return NULL;
             }
             base_name = search_name(var_scope, token->lexeme);
+            if (base_name == NULL) {
+                string class_name = NULL;
+                if (current_type != NULL) {
+                    if (current_type->kind == SYMBOL_CLASS)
+                        class_name = current_type->name;
+                    else if (current_type->type != NULL && current_type->type->kind == SYMBOL_CLASS)
+                        class_name = current_type->type->name;
+                }
+                string name = make_method_name(class_name, token->lexeme);
+                base_name = search_name_use_strcmp(var_scope, name);
+            }
             if (base_name == NULL) {
                 parser_error("Unknown attribute name", token, get_full_path(parser->source_file));
                 return NULL;

@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +24,8 @@ extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern char initialized;
 extern StringList* all_string_list;
-extern string CONSTRUCTOR_NAME;
+extern string DEFAULT_INIT_NAME;
+extern string DEFAULT_CONSTRUCTOR_NAME;
 extern string IMPORT_KEYWORD;
 extern string FROM_KEYWORD;
 extern string FUNC_KEYWORD;
@@ -100,7 +100,8 @@ MemoryBlock* struct_memory = NULL;
 MemoryBlock* string_memory = NULL;
 char initialized = 0;
 StringList* all_string_list = NULL;
-string CONSTRUCTOR_NAME = NULL;
+string DEFAULT_INIT_NAME = NULL;
+string DEFAULT_CONSTRUCTOR_NAME = NULL;
 string IMPORT_KEYWORD = NULL;
 string FROM_KEYWORD = NULL;
 string FUNC_KEYWORD = NULL;
@@ -276,7 +277,8 @@ void init(void) {
         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), 0);
     for (size_t i = 0; i < 30; ++i)
         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), 0);
-    CONSTRUCTOR_NAME = create_string_check("init", 4, 0);
+    DEFAULT_INIT_NAME = create_string_check("init", 4, 0);
+    DEFAULT_CONSTRUCTOR_NAME = create_string_check("$constructor", 13, 0);
     IMPORT_KEYWORD = keywordList[0];
     FROM_KEYWORD = keywordList[1];
     FUNC_KEYWORD = keywordList[2];
