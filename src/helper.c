@@ -173,11 +173,10 @@ static inline bool get_bool_list(char bool_list[32], size_t index) {
     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
 }
 
-void indention(FILE* out, size_t indent, bool is_last, Parser* parser) {
-    Parser* parser_ptr = parser;
-    set_bool_list(parser_ptr->indent_has_next, indent, !is_last);
+void indention(FILE* out, size_t indent, bool is_last, char indent_has_next[32]) {
+    set_bool_list(indent_has_next, indent, !is_last);
     for (size_t i = 1; i < indent; ++i)
-        fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
+        fprintf(out, get_bool_list(indent_has_next, i) ? "│   " : "    ");
     if (indent > 0)
         fprintf(out, is_last ? "└── " : "├── ");
 }

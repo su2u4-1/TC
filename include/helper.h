@@ -4,14 +4,13 @@
 #include "file.h"
 #include "parser.h"
 
-#define ast_output(x, is_last, ...) indention(outfile, indent + x, is_last, parser), fprintf(outfile, __VA_ARGS__)
+#define ast_output(x, is_last, ...) indention(outfile, indent + x, is_last, indent_has_next), fprintf(outfile, __VA_ARGS__)
 
 typedef struct Parser {
     File* source_file;
     bool in_function;
     bool in_method;
     bool in_loop;
-    char indent_has_next[32];
 } Parser;
 
 typedef struct Token Token;
@@ -31,7 +30,7 @@ Symbol* search_name(SymbolTable* scope, string name);
 Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
 bool is_builtin_type(string type);
 void parser_error(const string message, Token* token, string file_name);
-void indention(FILE* out, size_t indent, bool is_last, Parser* parser);
+void indention(FILE* out, size_t indent, bool is_last, char indent_has_next[32]);
 Parser* create_parser(File* file);
 Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
 string make_method_name(string class_name, string method_name);

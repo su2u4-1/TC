@@ -62,7 +62,8 @@ void output_token(FILE* file, Lexer* lexer) {
 }
 void output_ast(FILE* file, Lexer* lexer, Parser* parser) {
     Code* ast_root = parse_code(lexer, builtin_scope, parser);
-    output_code(ast_root, file, 0, parser);
+    char indent_has_next[32];
+    output_code(ast_root, file, 0, indent_has_next);
     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 }
 void parse_file(const string name, bool o_token, bool o_ast) {
