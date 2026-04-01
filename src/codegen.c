@@ -2,14 +2,6 @@
 
 #include "helper.h"
 
-static AttributeTable* find_attribute_table(TACStatus* status, Symbol* name) {
-    list(AttributeTable*) attribute_tables = list_copy(status->tac->attribute_tables);
-    AttributeTable* current;
-    while ((current = (AttributeTable*)list_pop(attribute_tables)) != NULL)
-        if (current->name == name)
-            return current;
-    return NULL;
-}
 static AttributeTable* create_attribute_table(Symbol* name) {
     AttributeTable* table = (AttributeTable*)alloc_memory(sizeof(AttributeTable));
     table->attributes = create_list();
@@ -44,7 +36,7 @@ static Attribute* create_attribute(Symbol* var_name, Symbol* type, AttributeTabl
         list_append(table->attributes, (pointer)attr);
     return attr;
 }
-static bool is_assignment_operator(OperatorType op) {
+static inline bool is_assignment_operator(OperatorType op) {
     return op == OP_ASSIGN || op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN;
 }
 static InstructionType get_instruction_type(OperatorType op) {
@@ -608,4 +600,5 @@ Arg* codegen_primary(Primary* primary, TACStatus* status) {
     }
 }
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status) {
+    return NULL;
 }
