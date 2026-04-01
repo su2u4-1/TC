@@ -87,12 +87,12 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_ATTRIBUTE:
         case SYMBOL_TYPE: scope = (SymbolTable*)ast_node; break;
         default:
-            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %d\n", kind);
+            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %u\n", kind);
             break;
     }
     Symbol* result = search_name(scope, name);
     if (result != NULL)
-        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
     new_name->name = name;
     new_name->id = ++id_counter;
@@ -107,11 +107,11 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_ATTRIBUTE:
         case SYMBOL_TYPE: new_name->ast_node.scope = (SymbolTable*)ast_node; break;
         default:
-            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %d\n", kind);
+            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
             break;
     }
     if (scope == NULL)
-        fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\n", name, kind, new_name->id);
+        fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
     else
         list_append(scope->symbols, (pointer)new_name);
     return new_name;
