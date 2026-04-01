@@ -3,7 +3,7 @@
 rmdir /s /q asm_test\fake_std 2>nul
 mkdir asm_test\fake_std
 
-set HEADERS=assert.h stdio.h stdlib.h string.h direct.h unistd.h
+set HEADERS=assert.h ctype.h stdio.h stdlib.h string.h direct.h unistd.h
 
 for %%h in (%HEADERS%) do (
     (

@@ -3,7 +3,7 @@
 rm -rf asm_test/fake_std 2>/dev/null
 mkdir -p asm_test/fake_std
 
-HEADERS=(assert.h stdio.h stdlib.h string.h direct.h unistd.h)
+HEADERS=(assert.h ctype.h stdio.h stdlib.h string.h direct.h unistd.h)
 
 for h in "${HEADERS[@]}"; do
     name="${h%.h}"
