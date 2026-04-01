@@ -215,6 +215,8 @@ struct SymbolTable {
 };
 struct Symbol {
     // for SYMBOL_CLASS and SYMBOL_TYPE, type is NULL
+    // but if name == arr, type points to the array element type
+    /// TODO: ^this
     // for SYMBOL_SUBROUTINE, type points to the return type symbol
     // for SYMBOL_LOCAL_VAR and SYMBOL_PARAM, type points to the variable type symbol
     // for SYMBOL_ATTRIBUTE, type points to the attribute type symbol

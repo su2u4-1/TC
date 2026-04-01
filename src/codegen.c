@@ -600,5 +600,80 @@ Arg* codegen_primary(Primary* primary, TACStatus* status) {
     }
 }
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status) {
-    return NULL;
+    if (variable_access->type == VAR_NAME && variable_access->content.name != NULL) {
+        return create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status));
+    }
+    if (variable_access->base == NULL) {
+        fprintf(stderr, "[warning] Unsupported variable access with NULL base\n");
+        return NULL;
+    }
+    Arg* base = load_rvalue(codegen_variable_access(variable_access->base, status), status);
+    if (base == NULL) {
+        fprintf(stderr, "[warning] Failed to generate variable access for base\n");
+        return NULL;
+    }
+    if (variable_access->type == VAR_GET_ATTR) {
+        if (base->type->kind == SYMBOL_CLASS || base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
+            printf(stderr, "[warning] Attempting to access attribute of non-object type: %s\n", base->type->name);
+            return NULL;
+        }
+        Symbol* attr = search_name_use_strcmp(base->type->ast_node.scope, make_method_name(base->type->name, variable_access->content.attr_name->name));
+        if (attr == NULL) {
+            fprintf(stderr, "[warning] Attribute '%s' not found in type '%s'\n", variable_access->content.attr_name->name, base->type->name);
+            return NULL;
+        }
+        if (attr->kind == SYMBOL_METHOD || attr->kind == SYMBOL_FUNCTION) {
+            return create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
+        }
+        if (attr->kind != SYMBOL_ATTRIBUTE) {
+            fprintf(stderr, "[warning] Symbol '%s' in type '%s' is not an attribute\n", variable_access->content.attr_name->name, base->type->name);
+            return NULL;
+        }
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(attr, attr->type, VAR_TEMP, status));
+        Instruction* inst = create_instruction(INST_GET_ATTR, temp, base, create_arg(ARG_STRING, variable_access->content.attr_name->name));
+        temp->is_get = true;
+        list_append(status->current_block->instructions, (pointer)inst);
+        return temp;
+    } else if (variable_access->type == VAR_GET_SEQ) {
+        if (base->type->kind != SYMBOL_VARIABLE && base->type->kind != SYMBOL_PARAM && base->type->kind != SYMBOL_ATTRIBUTE) {
+            fprintf(stderr, "[warning] Attempting to index non-array type: %s\n", base->type->name);
+            return NULL;
+        }
+        if (strcmp(base->type->name, "arr") != 0) {
+            fprintf(stderr, "[warning] Attempting to index non-array type: %s\n", base->type->name);
+            return NULL;
+        }
+        Arg* index = load_rvalue(codegen_expression(variable_access->content.index, status), status);
+        if (index == NULL) {
+            fprintf(stderr, "[warning] Failed to generate variable access for index\n");
+            return NULL;
+        }
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type->type, VAR_TEMP, status));
+        Instruction* inst = create_instruction(INST_GET_ELEM, temp, base, index);
+        temp->is_get = true;
+        list_append(status->current_block->instructions, (pointer)inst);
+        return temp;
+    } else if (variable_access->type == VAR_FUNC_CALL) {
+        if (base->type->kind != SYMBOL_FUNCTION && base->type->kind != SYMBOL_METHOD) {
+            fprintf(stderr, "[warning] Attempting to call non-function type: %s\n", base->type->name);
+            return NULL;
+        }
+        list(Expression*) args = list_copy(variable_access->content.args);
+        Expression* arg_expr;
+        long long arg_count = 0;
+        while ((arg_expr = (Expression*)list_pop(args)) != NULL) {
+            Arg* arg = codegen_expression(arg_expr, status);
+            Instruction* inst = create_instruction(INST_PARAM, arg, NULL, NULL);
+            list_append(status->current_block->instructions, (pointer)inst);
+            arg_count++;
+        }
+        printf("[DEBUG]: function: '%s', return type: '%s'\n", base->value.variable->original_name->name, base->type->name);
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type, VAR_TEMP, status));
+        Instruction* inst = create_instruction(INST_CALL, temp, base, create_arg(ARG_INT, &arg_count));
+        list_append(status->current_block->instructions, (pointer)inst);
+        return temp;
+    } else {
+        fprintf(stderr, "[warning] Unsupported variable access type for codegen_variable_access: %u\n", variable_access->type);
+        return NULL;
+    }
 }
