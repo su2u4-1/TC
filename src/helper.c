@@ -179,6 +179,11 @@ void indention(FILE* out, size_t indent, bool is_last, char indent_has_next[32])
         fprintf(out, is_last ? "└── " : "├── ");
 }
 
+void indention_tac(FILE* out, size_t indent) {
+    for (size_t i = 0; i < indent * 4; ++i)
+        putc(' ', out);
+}
+
 Parser* create_parser(File* file) {
     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
     new_parser->in_function = false;

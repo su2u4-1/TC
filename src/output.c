@@ -1,5 +1,7 @@
+#include "codegen.h"
 #include "helper.h"
 
+// output AST
 static void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, char indent_has_next[32]);
 static void output_import(Import* import, FILE* outfile, size_t indent, char indent_has_next[32]);
 static void output_function(Function* function, FILE* outfile, size_t indent, char indent_has_next[32]);
@@ -361,7 +363,7 @@ void output_variable_access(VariableAccess* variable_access, FILE* outfile, size
 void output_name(Symbol* name, FILE* outfile, size_t indent, char indent_has_next[32]) {
     // printf("[DEBUG] 112 Starting output_name\n");
     if (name == NULL) {
-        ast_output(0, true, "Name pointer: \"NULL\"\n");
+        ast_output(0, true, "Name: \"NULL\"\n");
         // printf("[DEBUG] 113 Finished output_name with NULL\n");
         return;
     }
@@ -404,4 +406,62 @@ void output_name(Symbol* name, FILE* outfile, size_t indent, char indent_has_nex
             break;
     }
     // printf("[DEBUG] 113 Finished output_name\n");
+}
+
+// output TAC
+static void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent);
+static void output_var(Var* var, FILE* outfile, size_t indent);
+static void output_block(Block* block, FILE* outfile, size_t indent);
+static void output_arg(Arg* arg, FILE* outfile, size_t indent);
+static void output_instruction(Instruction* instruction, FILE* outfile, size_t indent);
+static void output_attribute_table(AttributeTable* attribute_table, FILE* outfile, size_t indent);
+static void output_attribute(Attribute* attribute, FILE* outfile, size_t indent);
+
+void output_TAC(TAC* code, FILE* outfile, size_t indent) {
+    if (code == NULL) {
+        tac_output(indent, "TAC: \"NULL\"\n");
+        return;
+    }
+}
+void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent) {
+    if (subroutine == NULL) {
+        tac_output(indent, "Subroutine: \"NULL\"\n");
+        return;
+    }
+}
+void output_var(Var* var, FILE* outfile, size_t indent) {
+    if (var == NULL) {
+        tac_output(indent, "Var: \"NULL\"\n");
+        return;
+    }
+}
+void output_block(Block* block, FILE* outfile, size_t indent) {
+    if (block == NULL) {
+        tac_output(indent, "Block: \"NULL\"\n");
+        return;
+    }
+}
+void output_arg(Arg* arg, FILE* outfile, size_t indent) {
+    if (arg == NULL) {
+        tac_output(indent, "Arg: \"NULL\"\n");
+        return;
+    }
+}
+void output_instruction(Instruction* instruction, FILE* outfile, size_t indent) {
+    if (instruction == NULL) {
+        tac_output(indent, "Instruction: \"NULL\"\n");
+        return;
+    }
+}
+void output_attribute_table(AttributeTable* attribute_table, FILE* outfile, size_t indent) {
+    if (attribute_table == NULL) {
+        tac_output(indent, "AttributeTable: \"NULL\"\n");
+        return;
+    }
+}
+void output_attribute(Attribute* attribute, FILE* outfile, size_t indent) {
+    if (attribute == NULL) {
+        tac_output(indent, "Attribute: \"NULL\"\n");
+        return;
+    }
 }

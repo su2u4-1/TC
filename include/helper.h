@@ -5,6 +5,7 @@
 #include "parser.h"
 
 #define ast_output(x, is_last, ...) indention(outfile, indent + x, is_last, indent_has_next), fprintf(outfile, __VA_ARGS__)
+#define tac_output(x, ...) indention_tac(outfile, x), fprintf(outfile, __VA_ARGS__)
 
 typedef struct Parser {
     File* source_file;
@@ -31,6 +32,7 @@ Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
 bool is_builtin_type(string type);
 void parser_error(const string message, Token* token, string file_name);
 void indention(FILE* out, size_t indent, bool is_last, char indent_has_next[32]);
+void indention_tac(FILE* out, size_t indent);
 Parser* create_parser(File* file);
 Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
 string make_method_name(string class_name, string method_name);

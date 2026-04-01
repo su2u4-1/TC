@@ -133,4 +133,6 @@ Arg* codegen_expression(Expression* expression, TACStatus* status);
 Arg* codegen_primary(Primary* primary, TACStatus* status);
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status);
 
+void output_TAC(TAC* code, FILE* outfile, size_t indent);
+
 #endif  // CODEGEN_H
