@@ -2,6 +2,7 @@
 #define LIB_H
 
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,20 +13,24 @@
 #define ALIGN_SIZE sizeof(size_t)
 #define defaultMemorySize 1024  // 1 KB
 #define sizeDigit 20
-#define std_path "D:/TC/std/"
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #ifdef _MSC_VER
 #define PLATFORM 1  // MSVC
+#define std_path "D:/TC/std/"
 #else
 #define PLATFORM 2  // MinGW
+#define std_path "D:/TC/std/"
 #endif
 #elif defined(__linux__) || defined(__gnu_linux__)
 #define PLATFORM 3  // LINUX
+#define std_path "/home/su2u4/code/TC/std/"
 #elif defined(__APPLE__) && defined(__MACH__)
 #define PLATFORM 4  // MACOS
+#define std_path "NOT SUPPORTED"
 #else
 #define PLATFORM 0  // UNKNOWN
+#define std_path "NOT SUPPORTED"
 #endif
 
 #if PLATFORM == 1
