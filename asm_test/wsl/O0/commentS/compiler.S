@@ -7,100 +7,6 @@
 	.text
 	.section	.rodata
 .LC0:
-	.string	"%.*s%s"
-.LC1:
-	.string	"%s"
-.LC2:
-	.string	"%s%s"
-	.text
-	.globl	string_append
-	.type	string_append, @function
-string_append:
-	pushq	%rbp	;
-	movq	%rsp, %rbp	;,
-	subq	$64, %rsp	;,
-	movq	%rdi, -40(%rbp)	; dest, dest
-	movq	%rsi, -48(%rbp)	; dest_length, dest_length
-	movq	%rdx, -56(%rbp)	; src, src
-	movq	%rcx, -64(%rbp)	; new, new
-; src/compiler.c:8:     size_t src_length = strlen(src), new_length = strlen(new);
-	movq	-56(%rbp), %rax	; src, tmp87
-	movq	%rax, %rdi	; tmp87,
-	call	*strlen@GOTPCREL(%rip)	;
-	movq	%rax, -8(%rbp)	; tmp88, src_length
-; src/compiler.c:8:     size_t src_length = strlen(src), new_length = strlen(new);
-	movq	-64(%rbp), %rax	; new, tmp89
-	movq	%rax, %rdi	; tmp89,
-	call	*strlen@GOTPCREL(%rip)	;
-	movq	%rax, -16(%rbp)	; tmp90, new_length
-; src/compiler.c:9:     if (dest_length <= src_length + new_length) {
-	movq	-8(%rbp), %rdx	; src_length, tmp91
-	movq	-16(%rbp), %rax	; new_length, tmp92
-	addq	%rdx, %rax	; tmp91, _1
-; src/compiler.c:9:     if (dest_length <= src_length + new_length) {
-	cmpq	-48(%rbp), %rax	; dest_length, _1
-	jb	.L2	;,
-; src/compiler.c:10:         size_t max_src_length = dest_length - new_length - 1;
-	movq	-48(%rbp), %rax	; dest_length, tmp93
-	subq	-16(%rbp), %rax	; new_length, _2
-; src/compiler.c:10:         size_t max_src_length = dest_length - new_length - 1;
-	subq	$1, %rax	;, tmp94
-	movq	%rax, -24(%rbp)	; tmp94, max_src_length
-; src/compiler.c:11:         snprintf(dest, dest_length, "%.*s%s", (int)max_src_length, src, new);
-	movq	-24(%rbp), %rax	; max_src_length, tmp95
-	movl	%eax, %edi	; tmp95, _3
-	movq	-64(%rbp), %rcx	; new, tmp96
-	movq	-56(%rbp), %rdx	; src, tmp97
-	movq	-48(%rbp), %rsi	; dest_length, tmp98
-	movq	-40(%rbp), %rax	; dest, tmp99
-	movq	%rcx, %r9	; tmp96,
-	movq	%rdx, %r8	; tmp97,
-	movl	%edi, %ecx	; _3,
-	leaq	.LC0(%rip), %rdx	;, tmp100
-	movq	%rax, %rdi	; tmp99,
-	movl	$0, %eax	;,
-	call	*snprintf@GOTPCREL(%rip)	;
-; src/compiler.c:16: }
-	jmp	.L5	;
-.L2:
-; src/compiler.c:12:     } else if (src == dest)
-	movq	-56(%rbp), %rax	; src, tmp101
-	cmpq	-40(%rbp), %rax	; dest, tmp101
-	jne	.L4	;,
-; src/compiler.c:13:         snprintf(dest + src_length, dest_length - src_length, "%s", new);
-	movq	-48(%rbp), %rax	; dest_length, tmp102
-	subq	-8(%rbp), %rax	; src_length, _4
-	movq	-40(%rbp), %rcx	; dest, tmp103
-	movq	-8(%rbp), %rdx	; src_length, tmp104
-	leaq	(%rcx,%rdx), %rdi	;, _5
-	movq	-64(%rbp), %rdx	; new, tmp105
-	movq	%rdx, %rcx	; tmp105,
-	leaq	.LC1(%rip), %rdx	;, tmp106
-	movq	%rax, %rsi	; _4,
-	movl	$0, %eax	;,
-	call	*snprintf@GOTPCREL(%rip)	;
-; src/compiler.c:16: }
-	jmp	.L5	;
-.L4:
-; src/compiler.c:15:         snprintf(dest, dest_length, "%s%s", src, new);
-	movq	-64(%rbp), %rcx	; new, tmp107
-	movq	-56(%rbp), %rdx	; src, tmp108
-	movq	-48(%rbp), %rsi	; dest_length, tmp109
-	movq	-40(%rbp), %rax	; dest, tmp110
-	movq	%rcx, %r8	; tmp107,
-	movq	%rdx, %rcx	; tmp108,
-	leaq	.LC2(%rip), %rdx	;, tmp111
-	movq	%rax, %rdi	; tmp110,
-	movl	$0, %eax	;,
-	call	*snprintf@GOTPCREL(%rip)	;
-.L5:
-; src/compiler.c:16: }
-	nop	
-	leave	
-	ret	
-	.size	string_append, .-string_append
-	.section	.rodata
-.LC3:
 	.string	""
 	.text
 	.globl	read_source
@@ -111,38 +17,38 @@ read_source:
 	subq	$48, %rsp	;,
 	movq	%rdi, -40(%rbp)	; file, file
 	movq	%rsi, -48(%rbp)	; length, length
-; src/compiler.c:18:     fseek(file, 0, SEEK_END);
+; src/compiler.c:7:     fseek(file, 0, SEEK_END);
 	movq	-40(%rbp), %rax	; file, tmp96
 	movl	$2, %edx	;,
 	movl	$0, %esi	;,
 	movq	%rax, %rdi	; tmp96,
 	call	*fseek@GOTPCREL(%rip)	;
-; src/compiler.c:19:     *length = (size_t)ftell(file);
+; src/compiler.c:8:     *length = (size_t)ftell(file);
 	movq	-40(%rbp), %rax	; file, tmp97
 	movq	%rax, %rdi	; tmp97,
 	call	*ftell@GOTPCREL(%rip)	;
-; src/compiler.c:19:     *length = (size_t)ftell(file);
+; src/compiler.c:8:     *length = (size_t)ftell(file);
 	movq	%rax, %rdx	; _1, _2
-; src/compiler.c:19:     *length = (size_t)ftell(file);
+; src/compiler.c:8:     *length = (size_t)ftell(file);
 	movq	-48(%rbp), %rax	; length, tmp98
 	movq	%rdx, (%rax)	; _2, *length_20(D)
-; src/compiler.c:20:     fseek(file, 0, SEEK_SET);
+; src/compiler.c:9:     fseek(file, 0, SEEK_SET);
 	movq	-40(%rbp), %rax	; file, tmp99
 	movl	$0, %edx	;,
 	movl	$0, %esi	;,
 	movq	%rax, %rdi	; tmp99,
 	call	*fseek@GOTPCREL(%rip)	;
-; src/compiler.c:22:     string source = create_string("", *length + 1);
+; src/compiler.c:11:     string source = create_string_not_check("", *length + 1);
 	movq	-48(%rbp), %rax	; length, tmp100
 	movq	(%rax), %rax	; *length_20(D), _3
-; src/compiler.c:22:     string source = create_string("", *length + 1);
+; src/compiler.c:11:     string source = create_string_not_check("", *length + 1);
 	addq	$1, %rax	;, _4
 	movq	%rax, %rsi	; _4,
-	leaq	.LC3(%rip), %rax	;, tmp101
+	leaq	.LC0(%rip), %rax	;, tmp101
 	movq	%rax, %rdi	; tmp101,
-	call	*create_string@GOTPCREL(%rip)	;
+	call	*create_string_not_check@GOTPCREL(%rip)	;
 	movq	%rax, -16(%rbp)	; tmp102, source
-; src/compiler.c:23:     size_t bytes_read = fread(source, 1, *length, file);
+; src/compiler.c:12:     size_t bytes_read = fread(source, 1, *length, file);
 	movq	-48(%rbp), %rax	; length, tmp103
 	movq	(%rax), %rdx	; *length_20(D), _5
 	movq	-40(%rbp), %rcx	; file, tmp104
@@ -151,98 +57,388 @@ read_source:
 	movq	%rax, %rdi	; tmp105,
 	call	*fread@GOTPCREL(%rip)	;
 	movq	%rax, -24(%rbp)	; tmp106, bytes_read
-; src/compiler.c:24:     source[bytes_read] = '\0';
+; src/compiler.c:13:     source[bytes_read] = '\0';
 	movq	-16(%rbp), %rdx	; source, tmp107
 	movq	-24(%rbp), %rax	; bytes_read, tmp108
 	addq	%rdx, %rax	; tmp107, _6
-; src/compiler.c:24:     source[bytes_read] = '\0';
+; src/compiler.c:13:     source[bytes_read] = '\0';
 	movb	$0, (%rax)	;, *_6
-; src/compiler.c:25:     *length = bytes_read;
+; src/compiler.c:14:     *length = bytes_read;
 	movq	-48(%rbp), %rax	; length, tmp109
 	movq	-24(%rbp), %rdx	; bytes_read, tmp110
 	movq	%rdx, (%rax)	; tmp110, *length_20(D)
-; src/compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
+; src/compiler.c:16:     for (size_t i = 0; i < *length; ++i) {
 	movq	$0, -8(%rbp)	;, i
-; src/compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
-	jmp	.L7	;
-.L10:
-; src/compiler.c:28:         if (source[i] == '\r' || source[i] == '\t')
+; src/compiler.c:16:     for (size_t i = 0; i < *length; ++i) {
+	jmp	.L2	;
+.L5:
+; src/compiler.c:17:         if (source[i] == '\r' || source[i] == '\t')
 	movq	-16(%rbp), %rdx	; source, tmp111
 	movq	-8(%rbp), %rax	; i, tmp112
 	addq	%rdx, %rax	; tmp111, _7
 	movzbl	(%rax), %eax	; *_7, _8
-; src/compiler.c:28:         if (source[i] == '\r' || source[i] == '\t')
+; src/compiler.c:17:         if (source[i] == '\r' || source[i] == '\t')
 	cmpb	$13, %al	;, _8
-	je	.L8	;,
-; src/compiler.c:28:         if (source[i] == '\r' || source[i] == '\t')
+	je	.L3	;,
+; src/compiler.c:17:         if (source[i] == '\r' || source[i] == '\t')
 	movq	-16(%rbp), %rdx	; source, tmp113
 	movq	-8(%rbp), %rax	; i, tmp114
 	addq	%rdx, %rax	; tmp113, _9
 	movzbl	(%rax), %eax	; *_9, _10
-; src/compiler.c:28:         if (source[i] == '\r' || source[i] == '\t')
+; src/compiler.c:17:         if (source[i] == '\r' || source[i] == '\t')
 	cmpb	$9, %al	;, _10
-	jne	.L9	;,
-.L8:
-; src/compiler.c:29:             source[i] = ' ';
+	jne	.L4	;,
+.L3:
+; src/compiler.c:18:             source[i] = ' ';
 	movq	-16(%rbp), %rdx	; source, tmp115
 	movq	-8(%rbp), %rax	; i, tmp116
 	addq	%rdx, %rax	; tmp115, _11
-; src/compiler.c:29:             source[i] = ' ';
+; src/compiler.c:18:             source[i] = ' ';
 	movb	$32, (%rax)	;, *_11
-.L9:
-; src/compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
+.L4:
+; src/compiler.c:16:     for (size_t i = 0; i < *length; ++i) {
 	addq	$1, -8(%rbp)	;, i
-.L7:
-; src/compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
+.L2:
+; src/compiler.c:16:     for (size_t i = 0; i < *length; ++i) {
 	movq	-48(%rbp), %rax	; length, tmp117
 	movq	(%rax), %rax	; *length_20(D), _12
-; src/compiler.c:27:     for (size_t i = 0; i < *length; ++i) {
+; src/compiler.c:16:     for (size_t i = 0; i < *length; ++i) {
 	cmpq	%rax, -8(%rbp)	; _12, i
-	jb	.L10	;,
-; src/compiler.c:31:     return source;
+	jb	.L5	;,
+; src/compiler.c:20:     return source;
 	movq	-16(%rbp), %rax	; source, _30
-; src/compiler.c:32: }
+; src/compiler.c:21: }
 	leave	
 	ret	
 	.size	read_source, .-read_source
 	.section	.rodata
 	.align 8
-.LC4:
+.LC1:
 	.string	"Token(Type: EOF,         Line: %zu, Column: %zu)\n"
 	.align 8
+.LC2:
+	.string	"Token(Type: identifier,  Line: %zu, Column: %zu)\tLexeme: '"
+	.align 8
+.LC3:
+	.string	"Token(Type: integer,     Line: %zu, Column: %zu)\tLexeme: '"
+	.align 8
+.LC4:
+	.string	"Token(Type: float,       Line: %zu, Column: %zu)\tLexeme: '"
+	.align 8
 .LC5:
-	.string	"Token(Type: identifier,  Line: "
+	.string	"Token(Type: string,      Line: %zu, Column: %zu)\tLexeme: '"
 	.align 8
 .LC6:
-	.string	"Token(Type: integer,     Line: "
+	.string	"Token(Type: symbol,      Line: %zu, Column: %zu)\tLexeme: '"
 	.align 8
 .LC7:
-	.string	"Token(Type: float,       Line: "
+	.string	"Token(Type: keyword,     Line: %zu, Column: %zu)\tLexeme: '"
 	.align 8
 .LC8:
-	.string	"Token(Type: string,      Line: "
-	.align 8
+	.string	"Token(Type: comment,     Line: %zu, Column: %zu)\tLexeme: '"
 .LC9:
-	.string	"Token(Type: symbol,      Line: "
-	.align 8
-.LC10:
-	.string	"Token(Type: keyword,     Line: "
-	.align 8
-.LC11:
-	.string	"Token(Type: comment,     Line: "
-.LC12:
-	.string	"%zu, Column: %zu)\tLexeme: '"
-.LC13:
 	.string	"\\0"
-.LC14:
+.LC10:
 	.string	"\\n"
-.LC15:
+.LC11:
 	.string	"\\t"
-.LC16:
+.LC12:
 	.string	"\\r"
-.LC17:
+.LC13:
 	.string	"'\n"
-.LC18:
+	.text
+	.globl	output_one_token
+	.type	output_one_token, @function
+output_one_token:
+	pushq	%rbp	;
+	movq	%rsp, %rbp	;,
+	subq	$32, %rsp	;,
+	movq	%rdi, -24(%rbp)	; file, file
+	movq	%rsi, -32(%rbp)	; token, token
+; src/compiler.c:23:     if (token->type == EOF_TOKEN) {
+	movq	-32(%rbp), %rax	; token, tmp127
+	movl	24(%rax), %eax	; token_52(D)->type, _1
+; src/compiler.c:23:     if (token->type == EOF_TOKEN) {
+	testl	%eax, %eax	; _1
+	jne	.L8	;,
+; src/compiler.c:24:         fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp128
+	movq	16(%rax), %rax	; token_52(D)->column, _2
+; src/compiler.c:24:         fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rcx	;, _3
+; src/compiler.c:24:         fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp129
+	movq	8(%rax), %rax	; token_52(D)->line, _4
+; src/compiler.c:24:         fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rdx	;, _5
+	movq	-24(%rbp), %rax	; file, tmp130
+	leaq	.LC1(%rip), %rsi	;, tmp131
+	movq	%rax, %rdi	; tmp130,
+	movl	$0, %eax	;,
+	call	*fprintf@GOTPCREL(%rip)	;
+; src/compiler.c:25:         return;
+	jmp	.L7	;
+.L8:
+; src/compiler.c:26:     } else if (token->type == IDENTIFIER)
+	movq	-32(%rbp), %rax	; token, tmp132
+	movl	24(%rax), %eax	; token_52(D)->type, _6
+; src/compiler.c:26:     } else if (token->type == IDENTIFIER)
+	cmpl	$1, %eax	;, _6
+	jne	.L10	;,
+; src/compiler.c:27:         fprintf(file, "Token(Type: identifier,  Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp133
+	movq	16(%rax), %rax	; token_52(D)->column, _7
+; src/compiler.c:27:         fprintf(file, "Token(Type: identifier,  Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rcx	;, _8
+; src/compiler.c:27:         fprintf(file, "Token(Type: identifier,  Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp134
+	movq	8(%rax), %rax	; token_52(D)->line, _9
+; src/compiler.c:27:         fprintf(file, "Token(Type: identifier,  Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rdx	;, _10
+	movq	-24(%rbp), %rax	; file, tmp135
+	leaq	.LC2(%rip), %rsi	;, tmp136
+	movq	%rax, %rdi	; tmp135,
+	movl	$0, %eax	;,
+	call	*fprintf@GOTPCREL(%rip)	;
+	jmp	.L11	;
+.L10:
+; src/compiler.c:28:     else if (token->type == INTEGER)
+	movq	-32(%rbp), %rax	; token, tmp137
+	movl	24(%rax), %eax	; token_52(D)->type, _11
+; src/compiler.c:28:     else if (token->type == INTEGER)
+	cmpl	$2, %eax	;, _11
+	jne	.L12	;,
+; src/compiler.c:29:         fprintf(file, "Token(Type: integer,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp138
+	movq	16(%rax), %rax	; token_52(D)->column, _12
+; src/compiler.c:29:         fprintf(file, "Token(Type: integer,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rcx	;, _13
+; src/compiler.c:29:         fprintf(file, "Token(Type: integer,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp139
+	movq	8(%rax), %rax	; token_52(D)->line, _14
+; src/compiler.c:29:         fprintf(file, "Token(Type: integer,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rdx	;, _15
+	movq	-24(%rbp), %rax	; file, tmp140
+	leaq	.LC3(%rip), %rsi	;, tmp141
+	movq	%rax, %rdi	; tmp140,
+	movl	$0, %eax	;,
+	call	*fprintf@GOTPCREL(%rip)	;
+	jmp	.L11	;
+.L12:
+; src/compiler.c:30:     else if (token->type == FLOAT)
+	movq	-32(%rbp), %rax	; token, tmp142
+	movl	24(%rax), %eax	; token_52(D)->type, _16
+; src/compiler.c:30:     else if (token->type == FLOAT)
+	cmpl	$3, %eax	;, _16
+	jne	.L13	;,
+; src/compiler.c:31:         fprintf(file, "Token(Type: float,       Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp143
+	movq	16(%rax), %rax	; token_52(D)->column, _17
+; src/compiler.c:31:         fprintf(file, "Token(Type: float,       Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rcx	;, _18
+; src/compiler.c:31:         fprintf(file, "Token(Type: float,       Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp144
+	movq	8(%rax), %rax	; token_52(D)->line, _19
+; src/compiler.c:31:         fprintf(file, "Token(Type: float,       Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rdx	;, _20
+	movq	-24(%rbp), %rax	; file, tmp145
+	leaq	.LC4(%rip), %rsi	;, tmp146
+	movq	%rax, %rdi	; tmp145,
+	movl	$0, %eax	;,
+	call	*fprintf@GOTPCREL(%rip)	;
+	jmp	.L11	;
+.L13:
+; src/compiler.c:32:     else if (token->type == STRING)
+	movq	-32(%rbp), %rax	; token, tmp147
+	movl	24(%rax), %eax	; token_52(D)->type, _21
+; src/compiler.c:32:     else if (token->type == STRING)
+	cmpl	$4, %eax	;, _21
+	jne	.L14	;,
+; src/compiler.c:33:         fprintf(file, "Token(Type: string,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp148
+	movq	16(%rax), %rax	; token_52(D)->column, _22
+; src/compiler.c:33:         fprintf(file, "Token(Type: string,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rcx	;, _23
+; src/compiler.c:33:         fprintf(file, "Token(Type: string,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp149
+	movq	8(%rax), %rax	; token_52(D)->line, _24
+; src/compiler.c:33:         fprintf(file, "Token(Type: string,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rdx	;, _25
+	movq	-24(%rbp), %rax	; file, tmp150
+	leaq	.LC5(%rip), %rsi	;, tmp151
+	movq	%rax, %rdi	; tmp150,
+	movl	$0, %eax	;,
+	call	*fprintf@GOTPCREL(%rip)	;
+	jmp	.L11	;
+.L14:
+; src/compiler.c:34:     else if (token->type == SYMBOL)
+	movq	-32(%rbp), %rax	; token, tmp152
+	movl	24(%rax), %eax	; token_52(D)->type, _26
+; src/compiler.c:34:     else if (token->type == SYMBOL)
+	cmpl	$5, %eax	;, _26
+	jne	.L15	;,
+; src/compiler.c:35:         fprintf(file, "Token(Type: symbol,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp153
+	movq	16(%rax), %rax	; token_52(D)->column, _27
+; src/compiler.c:35:         fprintf(file, "Token(Type: symbol,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rcx	;, _28
+; src/compiler.c:35:         fprintf(file, "Token(Type: symbol,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp154
+	movq	8(%rax), %rax	; token_52(D)->line, _29
+; src/compiler.c:35:         fprintf(file, "Token(Type: symbol,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rdx	;, _30
+	movq	-24(%rbp), %rax	; file, tmp155
+	leaq	.LC6(%rip), %rsi	;, tmp156
+	movq	%rax, %rdi	; tmp155,
+	movl	$0, %eax	;,
+	call	*fprintf@GOTPCREL(%rip)	;
+	jmp	.L11	;
+.L15:
+; src/compiler.c:36:     else if (token->type == KEYWORD)
+	movq	-32(%rbp), %rax	; token, tmp157
+	movl	24(%rax), %eax	; token_52(D)->type, _31
+; src/compiler.c:36:     else if (token->type == KEYWORD)
+	cmpl	$6, %eax	;, _31
+	jne	.L16	;,
+; src/compiler.c:37:         fprintf(file, "Token(Type: keyword,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp158
+	movq	16(%rax), %rax	; token_52(D)->column, _32
+; src/compiler.c:37:         fprintf(file, "Token(Type: keyword,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rcx	;, _33
+; src/compiler.c:37:         fprintf(file, "Token(Type: keyword,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp159
+	movq	8(%rax), %rax	; token_52(D)->line, _34
+; src/compiler.c:37:         fprintf(file, "Token(Type: keyword,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rdx	;, _35
+	movq	-24(%rbp), %rax	; file, tmp160
+	leaq	.LC7(%rip), %rsi	;, tmp161
+	movq	%rax, %rdi	; tmp160,
+	movl	$0, %eax	;,
+	call	*fprintf@GOTPCREL(%rip)	;
+	jmp	.L11	;
+.L16:
+; src/compiler.c:38:     else if (token->type == COMMENT)
+	movq	-32(%rbp), %rax	; token, tmp162
+	movl	24(%rax), %eax	; token_52(D)->type, _36
+; src/compiler.c:38:     else if (token->type == COMMENT)
+	cmpl	$7, %eax	;, _36
+	jne	.L11	;,
+; src/compiler.c:39:         fprintf(file, "Token(Type: comment,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp163
+	movq	16(%rax), %rax	; token_52(D)->column, _37
+; src/compiler.c:39:         fprintf(file, "Token(Type: comment,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rcx	;, _38
+; src/compiler.c:39:         fprintf(file, "Token(Type: comment,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	movq	-32(%rbp), %rax	; token, tmp164
+	movq	8(%rax), %rax	; token_52(D)->line, _39
+; src/compiler.c:39:         fprintf(file, "Token(Type: comment,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+	leaq	1(%rax), %rdx	;, _40
+	movq	-24(%rbp), %rax	; file, tmp165
+	leaq	.LC8(%rip), %rsi	;, tmp166
+	movq	%rax, %rdi	; tmp165,
+	movl	$0, %eax	;,
+	call	*fprintf@GOTPCREL(%rip)	;
+.L11:
+; src/compiler.c:40:     for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+	movq	$0, -8(%rbp)	;, i
+; src/compiler.c:40:     for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+	jmp	.L17	;
+.L23:
+; src/compiler.c:41:         char c = token->lexeme[i];
+	movq	-32(%rbp), %rax	; token, tmp167
+	movq	(%rax), %rdx	; token_52(D)->lexeme, _41
+; src/compiler.c:41:         char c = token->lexeme[i];
+	movq	-8(%rbp), %rax	; i, tmp168
+	addq	%rdx, %rax	; _41, _42
+; src/compiler.c:41:         char c = token->lexeme[i];
+	movzbl	(%rax), %eax	; *_42, tmp169
+	movb	%al, -9(%rbp)	; tmp169, c
+; src/compiler.c:42:         if (c == '\0')
+	cmpb	$0, -9(%rbp)	;, c
+	jne	.L18	;,
+; src/compiler.c:43:             fputs("\\0", file);
+	movq	-24(%rbp), %rax	; file, tmp170
+	movq	%rax, %rcx	; tmp170,
+	movl	$2, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC9(%rip), %rax	;, tmp171
+	movq	%rax, %rdi	; tmp171,
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L19	;
+.L18:
+; src/compiler.c:44:         else if (c == '\n')
+	cmpb	$10, -9(%rbp)	;, c
+	jne	.L20	;,
+; src/compiler.c:45:             fputs("\\n", file);
+	movq	-24(%rbp), %rax	; file, tmp172
+	movq	%rax, %rcx	; tmp172,
+	movl	$2, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC10(%rip), %rax	;, tmp173
+	movq	%rax, %rdi	; tmp173,
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L19	;
+.L20:
+; src/compiler.c:46:         else if (c == '\t')
+	cmpb	$9, -9(%rbp)	;, c
+	jne	.L21	;,
+; src/compiler.c:47:             fputs("\\t", file);
+	movq	-24(%rbp), %rax	; file, tmp174
+	movq	%rax, %rcx	; tmp174,
+	movl	$2, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC11(%rip), %rax	;, tmp175
+	movq	%rax, %rdi	; tmp175,
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L19	;
+.L21:
+; src/compiler.c:48:         else if (c == '\r')
+	cmpb	$13, -9(%rbp)	;, c
+	jne	.L22	;,
+; src/compiler.c:49:             fputs("\\r", file);
+	movq	-24(%rbp), %rax	; file, tmp176
+	movq	%rax, %rcx	; tmp176,
+	movl	$2, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC12(%rip), %rax	;, tmp177
+	movq	%rax, %rdi	; tmp177,
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L19	;
+.L22:
+; src/compiler.c:51:             fputc(c, file);
+	movsbl	-9(%rbp), %eax	; c, _43
+	movq	-24(%rbp), %rdx	; file, tmp178
+	movq	%rdx, %rsi	; tmp178,
+	movl	%eax, %edi	; _43,
+	call	*fputc@GOTPCREL(%rip)	;
+.L19:
+; src/compiler.c:40:     for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+	addq	$1, -8(%rbp)	;, i
+.L17:
+; src/compiler.c:40:     for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+	movq	-32(%rbp), %rax	; token, tmp179
+	movq	(%rax), %rax	; token_52(D)->lexeme, _44
+; src/compiler.c:40:     for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+	movq	%rax, %rdi	; _44,
+	call	*strlen@GOTPCREL(%rip)	;
+; src/compiler.c:40:     for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+	cmpq	%rax, -8(%rbp)	; _45, i
+	jb	.L23	;,
+; src/compiler.c:53:     fprintf(file, "'\n");
+	movq	-24(%rbp), %rax	; file, tmp180
+	movq	%rax, %rcx	; tmp180,
+	movl	$2, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC13(%rip), %rax	;, tmp181
+	movq	%rax, %rdi	; tmp181,
+	call	*fwrite@GOTPCREL(%rip)	;
+.L7:
+; src/compiler.c:54: }
+	leave	
+	ret	
+	.size	output_one_token, .-output_one_token
+	.section	.rodata
+.LC14:
 	.string	"\ninfo by lib:\n    %s\n"
 	.text
 	.globl	output_token
@@ -250,286 +446,56 @@ read_source:
 output_token:
 	pushq	%rbp	;
 	movq	%rsp, %rbp	;,
-	subq	$64, %rsp	;,
-	movq	%rdi, -56(%rbp)	; file, file
-	movq	%rsi, -64(%rbp)	; lexer, lexer
-; src/compiler.c:34:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
-	movq	-64(%rbp), %rax	; lexer, tmp102
+	subq	$32, %rsp	;,
+	movq	%rdi, -24(%rbp)	; file, file
+	movq	%rsi, -32(%rbp)	; lexer, lexer
+; src/compiler.c:56:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
+	movq	-32(%rbp), %rax	; lexer, tmp84
 	movl	$0, %esi	;,
-	movq	%rax, %rdi	; tmp102,
+	movq	%rax, %rdi	; tmp84,
 	call	*get_next_token@GOTPCREL(%rip)	;
-	movq	%rax, -8(%rbp)	; tmp103, current
-; src/compiler.c:34:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
-	jmp	.L13	;
-.L30:
-; src/compiler.c:35:         Token* token = current;
-	movq	-8(%rbp), %rax	; current, tmp104
-	movq	%rax, -24(%rbp)	; tmp104, token
-; src/compiler.c:36:         if (token->type == EOF_TOKEN) {
-	movq	-24(%rbp), %rax	; token, tmp105
-	movl	24(%rax), %eax	; token_32->type, _1
-; src/compiler.c:36:         if (token->type == EOF_TOKEN) {
-	testl	%eax, %eax	; _1
-	jne	.L14	;,
-; src/compiler.c:37:             fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
-	movq	-24(%rbp), %rax	; token, tmp106
-	movq	16(%rax), %rax	; token_32->column, _2
-; src/compiler.c:37:             fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
-	leaq	1(%rax), %rcx	;, _3
-; src/compiler.c:37:             fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
-	movq	-24(%rbp), %rax	; token, tmp107
-	movq	8(%rax), %rax	; token_32->line, _4
-; src/compiler.c:37:             fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
-	leaq	1(%rax), %rdx	;, _5
-	movq	-56(%rbp), %rax	; file, tmp108
-	leaq	.LC4(%rip), %rsi	;, tmp109
-	movq	%rax, %rdi	; tmp108,
-	movl	$0, %eax	;,
-	call	*fprintf@GOTPCREL(%rip)	;
-; src/compiler.c:38:             break;
-	jmp	.L15	;
-.L14:
-; src/compiler.c:39:         } else if (token->type == IDENTIFIER)
-	movq	-24(%rbp), %rax	; token, tmp110
-	movl	24(%rax), %eax	; token_32->type, _6
-; src/compiler.c:39:         } else if (token->type == IDENTIFIER)
-	cmpl	$1, %eax	;, _6
-	jne	.L16	;,
-; src/compiler.c:40:             fprintf(file, "Token(Type: identifier,  Line: ");
-	movq	-56(%rbp), %rax	; file, tmp111
-	movq	%rax, %rcx	; tmp111,
-	movl	$31, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC5(%rip), %rax	;, tmp112
-	movq	%rax, %rdi	; tmp112,
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L17	;
-.L16:
-; src/compiler.c:41:         else if (token->type == INTEGER)
-	movq	-24(%rbp), %rax	; token, tmp113
-	movl	24(%rax), %eax	; token_32->type, _7
-; src/compiler.c:41:         else if (token->type == INTEGER)
-	cmpl	$2, %eax	;, _7
-	jne	.L18	;,
-; src/compiler.c:42:             fprintf(file, "Token(Type: integer,     Line: ");
-	movq	-56(%rbp), %rax	; file, tmp114
-	movq	%rax, %rcx	; tmp114,
-	movl	$31, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC6(%rip), %rax	;, tmp115
-	movq	%rax, %rdi	; tmp115,
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L17	;
-.L18:
-; src/compiler.c:43:         else if (token->type == FLOAT)
-	movq	-24(%rbp), %rax	; token, tmp116
-	movl	24(%rax), %eax	; token_32->type, _8
-; src/compiler.c:43:         else if (token->type == FLOAT)
-	cmpl	$3, %eax	;, _8
-	jne	.L19	;,
-; src/compiler.c:44:             fprintf(file, "Token(Type: float,       Line: ");
-	movq	-56(%rbp), %rax	; file, tmp117
-	movq	%rax, %rcx	; tmp117,
-	movl	$31, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC7(%rip), %rax	;, tmp118
-	movq	%rax, %rdi	; tmp118,
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L17	;
-.L19:
-; src/compiler.c:45:         else if (token->type == STRING)
-	movq	-24(%rbp), %rax	; token, tmp119
-	movl	24(%rax), %eax	; token_32->type, _9
-; src/compiler.c:45:         else if (token->type == STRING)
-	cmpl	$4, %eax	;, _9
-	jne	.L20	;,
-; src/compiler.c:46:             fprintf(file, "Token(Type: string,      Line: ");
-	movq	-56(%rbp), %rax	; file, tmp120
-	movq	%rax, %rcx	; tmp120,
-	movl	$31, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC8(%rip), %rax	;, tmp121
-	movq	%rax, %rdi	; tmp121,
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L17	;
-.L20:
-; src/compiler.c:47:         else if (token->type == SYMBOL)
-	movq	-24(%rbp), %rax	; token, tmp122
-	movl	24(%rax), %eax	; token_32->type, _10
-; src/compiler.c:47:         else if (token->type == SYMBOL)
-	cmpl	$5, %eax	;, _10
-	jne	.L21	;,
-; src/compiler.c:48:             fprintf(file, "Token(Type: symbol,      Line: ");
-	movq	-56(%rbp), %rax	; file, tmp123
-	movq	%rax, %rcx	; tmp123,
-	movl	$31, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC9(%rip), %rax	;, tmp124
-	movq	%rax, %rdi	; tmp124,
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L17	;
-.L21:
-; src/compiler.c:49:         else if (token->type == KEYWORD)
-	movq	-24(%rbp), %rax	; token, tmp125
-	movl	24(%rax), %eax	; token_32->type, _11
-; src/compiler.c:49:         else if (token->type == KEYWORD)
-	cmpl	$6, %eax	;, _11
-	jne	.L22	;,
-; src/compiler.c:50:             fprintf(file, "Token(Type: keyword,     Line: ");
-	movq	-56(%rbp), %rax	; file, tmp126
-	movq	%rax, %rcx	; tmp126,
-	movl	$31, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC10(%rip), %rax	;, tmp127
-	movq	%rax, %rdi	; tmp127,
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L17	;
-.L22:
-; src/compiler.c:51:         else if (token->type == COMMENT)
-	movq	-24(%rbp), %rax	; token, tmp128
-	movl	24(%rax), %eax	; token_32->type, _12
-; src/compiler.c:51:         else if (token->type == COMMENT)
-	cmpl	$7, %eax	;, _12
-	jne	.L17	;,
-; src/compiler.c:52:             fprintf(file, "Token(Type: comment,     Line: ");
-	movq	-56(%rbp), %rax	; file, tmp129
-	movq	%rax, %rcx	; tmp129,
-	movl	$31, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC11(%rip), %rax	;, tmp130
-	movq	%rax, %rdi	; tmp130,
-	call	*fwrite@GOTPCREL(%rip)	;
-.L17:
-; src/compiler.c:53:         fprintf(file, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-	movq	-24(%rbp), %rax	; token, tmp131
-	movq	16(%rax), %rax	; token_32->column, _13
-; src/compiler.c:53:         fprintf(file, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-	leaq	1(%rax), %rcx	;, _14
-; src/compiler.c:53:         fprintf(file, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-	movq	-24(%rbp), %rax	; token, tmp132
-	movq	8(%rax), %rax	; token_32->line, _15
-; src/compiler.c:53:         fprintf(file, "%zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-	leaq	1(%rax), %rdx	;, _16
-	movq	-56(%rbp), %rax	; file, tmp133
-	leaq	.LC12(%rip), %rsi	;, tmp134
-	movq	%rax, %rdi	; tmp133,
-	movl	$0, %eax	;,
-	call	*fprintf@GOTPCREL(%rip)	;
-; src/compiler.c:54:         string lexeme_ptr = token->lexeme;
-	movq	-24(%rbp), %rax	; token, tmp135
-	movq	(%rax), %rax	; token_32->lexeme, tmp136
-	movq	%rax, -32(%rbp)	; tmp136, lexeme_ptr
-; src/compiler.c:55:         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
-	movq	$0, -16(%rbp)	;, i
-; src/compiler.c:55:         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
-	jmp	.L23	;
-.L29:
-; src/compiler.c:56:             char c = lexeme_ptr[i];
-	movq	-32(%rbp), %rdx	; lexeme_ptr, tmp137
-	movq	-16(%rbp), %rax	; i, tmp138
-	addq	%rdx, %rax	; tmp137, _17
-; src/compiler.c:56:             char c = lexeme_ptr[i];
-	movzbl	(%rax), %eax	; *_17, tmp139
-	movb	%al, -33(%rbp)	; tmp139, c
-; src/compiler.c:57:             if (c == '\0')
-	cmpb	$0, -33(%rbp)	;, c
-	jne	.L24	;,
-; src/compiler.c:58:                 fputs("\\0", file);
-	movq	-56(%rbp), %rax	; file, tmp140
-	movq	%rax, %rcx	; tmp140,
-	movl	$2, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC13(%rip), %rax	;, tmp141
-	movq	%rax, %rdi	; tmp141,
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L25	;
-.L24:
-; src/compiler.c:59:             else if (c == '\n')
-	cmpb	$10, -33(%rbp)	;, c
-	jne	.L26	;,
-; src/compiler.c:60:                 fputs("\\n", file);
-	movq	-56(%rbp), %rax	; file, tmp142
-	movq	%rax, %rcx	; tmp142,
-	movl	$2, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC14(%rip), %rax	;, tmp143
-	movq	%rax, %rdi	; tmp143,
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L25	;
-.L26:
-; src/compiler.c:61:             else if (c == '\t')
-	cmpb	$9, -33(%rbp)	;, c
-	jne	.L27	;,
-; src/compiler.c:62:                 fputs("\\t", file);
-	movq	-56(%rbp), %rax	; file, tmp144
-	movq	%rax, %rcx	; tmp144,
-	movl	$2, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC15(%rip), %rax	;, tmp145
-	movq	%rax, %rdi	; tmp145,
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L25	;
-.L27:
-; src/compiler.c:63:             else if (c == '\r')
-	cmpb	$13, -33(%rbp)	;, c
-	jne	.L28	;,
-; src/compiler.c:64:                 fputs("\\r", file);
-	movq	-56(%rbp), %rax	; file, tmp146
-	movq	%rax, %rcx	; tmp146,
-	movl	$2, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC16(%rip), %rax	;, tmp147
-	movq	%rax, %rdi	; tmp147,
-	call	*fwrite@GOTPCREL(%rip)	;
+	movq	%rax, -8(%rbp)	; tmp85, current
+; src/compiler.c:56:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
 	jmp	.L25	;
 .L28:
-; src/compiler.c:66:                 fputc(c, file);
-	movsbl	-33(%rbp), %eax	; c, _18
-	movq	-56(%rbp), %rdx	; file, tmp148
-	movq	%rdx, %rsi	; tmp148,
-	movl	%eax, %edi	; _18,
-	call	*fputc@GOTPCREL(%rip)	;
-.L25:
-; src/compiler.c:55:         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
-	addq	$1, -16(%rbp)	;, i
-.L23:
-; src/compiler.c:55:         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
-	movq	-32(%rbp), %rax	; lexeme_ptr, tmp149
-	movq	%rax, %rdi	; tmp149,
-	call	*strlen@GOTPCREL(%rip)	;
-; src/compiler.c:55:         for (size_t i = 0; i < strlen(lexeme_ptr); ++i) {
-	cmpq	%rax, -16(%rbp)	; _19, i
-	jb	.L29	;,
-; src/compiler.c:68:         fprintf(file, "'\n");
-	movq	-56(%rbp), %rax	; file, tmp150
-	movq	%rax, %rcx	; tmp150,
-	movl	$2, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC17(%rip), %rax	;, tmp151
-	movq	%rax, %rdi	; tmp151,
-	call	*fwrite@GOTPCREL(%rip)	;
-; src/compiler.c:34:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
-	movq	-64(%rbp), %rax	; lexer, tmp152
+; src/compiler.c:57:         output_one_token(file, current);
+	movq	-8(%rbp), %rdx	; current, tmp86
+	movq	-24(%rbp), %rax	; file, tmp87
+	movq	%rdx, %rsi	; tmp86,
+	movq	%rax, %rdi	; tmp87,
+	call	output_one_token	;
+; src/compiler.c:58:         if (current->type == EOF_TOKEN)
+	movq	-8(%rbp), %rax	; current, tmp88
+	movl	24(%rax), %eax	; current_3->type, _1
+; src/compiler.c:58:         if (current->type == EOF_TOKEN)
+	testl	%eax, %eax	; _1
+	je	.L29	;,
+; src/compiler.c:56:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
+	movq	-32(%rbp), %rax	; lexer, tmp89
 	movl	$0, %esi	;,
-	movq	%rax, %rdi	; tmp152,
+	movq	%rax, %rdi	; tmp89,
 	call	*get_next_token@GOTPCREL(%rip)	;
-	movq	%rax, -8(%rbp)	; tmp153, current
-.L13:
-; src/compiler.c:34:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
+	movq	%rax, -8(%rbp)	; tmp90, current
+.L25:
+; src/compiler.c:56:     for (Token* current = get_next_token(lexer, false); current != 0; current = get_next_token(lexer, false)) {
 	cmpq	$0, -8(%rbp)	;, current
-	jne	.L30	;,
-.L15:
-; src/compiler.c:70:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	jne	.L28	;,
+	jmp	.L27	;
+.L29:
+; src/compiler.c:59:             break;
+	nop	
+.L27:
+; src/compiler.c:61:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 	call	*get_info@GOTPCREL(%rip)	;
-	movq	%rax, %rdx	;, _20
-; src/compiler.c:70:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
-	movq	-56(%rbp), %rax	; file, tmp154
-	leaq	.LC18(%rip), %rcx	;, tmp155
-	movq	%rcx, %rsi	; tmp155,
-	movq	%rax, %rdi	; tmp154,
+	movq	%rax, %rdx	;, _2
+; src/compiler.c:61:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+	movq	-24(%rbp), %rax	; file, tmp91
+	leaq	.LC14(%rip), %rcx	;, tmp92
+	movq	%rcx, %rsi	; tmp92,
+	movq	%rax, %rdi	; tmp91,
 	movl	$0, %eax	;,
 	call	*fprintf@GOTPCREL(%rip)	;
-; src/compiler.c:71: }
+; src/compiler.c:62: }
 	nop	
 	leave	
 	ret	
@@ -543,7 +509,7 @@ output_ast:
 	movq	%rdi, -24(%rbp)	; file, file
 	movq	%rsi, -32(%rbp)	; lexer, lexer
 	movq	%rdx, -40(%rbp)	; parser, parser
-; src/compiler.c:73:     Code* ast_root = parse_code(lexer, builtin_scope, parser);
+; src/compiler.c:64:     Code* ast_root = parse_code(lexer, builtin_scope, parser);
 	movq	builtin_scope(%rip), %rcx	; builtin_scope, builtin_scope.0_1
 	movq	-40(%rbp), %rdx	; parser, tmp84
 	movq	-32(%rbp), %rax	; lexer, tmp85
@@ -551,7 +517,7 @@ output_ast:
 	movq	%rax, %rdi	; tmp85,
 	call	*parse_code@GOTPCREL(%rip)	;
 	movq	%rax, -8(%rbp)	; tmp86, ast_root
-; src/compiler.c:74:     output_code(ast_root, file, 0, parser);
+; src/compiler.c:65:     output_code(ast_root, file, 0, parser);
 	movq	-40(%rbp), %rdx	; parser, tmp87
 	movq	-24(%rbp), %rsi	; file, tmp88
 	movq	-8(%rbp), %rax	; ast_root, tmp89
@@ -559,34 +525,36 @@ output_ast:
 	movl	$0, %edx	;,
 	movq	%rax, %rdi	; tmp89,
 	call	*output_code@GOTPCREL(%rip)	;
-; src/compiler.c:75:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+; src/compiler.c:66:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 	call	*get_info@GOTPCREL(%rip)	;
 	movq	%rax, %rdx	;, _2
-; src/compiler.c:75:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+; src/compiler.c:66:     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 	movq	-24(%rbp), %rax	; file, tmp90
-	leaq	.LC18(%rip), %rcx	;, tmp91
+	leaq	.LC14(%rip), %rcx	;, tmp91
 	movq	%rcx, %rsi	; tmp91,
 	movq	%rax, %rdi	; tmp90,
 	movl	$0, %eax	;,
 	call	*fprintf@GOTPCREL(%rip)	;
-; src/compiler.c:76: }
+; src/compiler.c:67: }
 	nop	
 	leave	
 	ret	
 	.size	output_ast, .-output_ast
 	.section	.rodata
-.LC19:
+.LC15:
 	.string	"r"
-.LC20:
+.LC16:
 	.string	"Error opening file: %s"
-.LC21:
+.LC17:
 	.string	".token"
-.LC22:
+.LC18:
 	.string	"w"
-.LC23:
+.LC19:
 	.string	"Error opening file: %s\n"
-.LC24:
+.LC20:
 	.string	".ast"
+.LC21:
+	.string	".tc"
 	.text
 	.globl	parse_file
 	.type	parse_file, @function
@@ -595,170 +563,183 @@ parse_file:
 	movq	%rsp, %rbp	;,
 	subq	$112, %rsp	;,
 	movq	%rdi, -104(%rbp)	; name, name
-	movl	%esi, %ecx	; o_token, tmp88
-	movl	%edx, %eax	; o_ast, tmp90
-	movl	%ecx, %edx	; tmp88, tmp89
-	movb	%dl, -108(%rbp)	; tmp89, o_token
-	movb	%al, -112(%rbp)	; tmp91, o_ast
-; src/compiler.c:78:     File* file = create_file(name);
-	movq	-104(%rbp), %rax	; name, tmp92
-	movq	%rax, %rdi	; tmp92,
+	movl	%esi, %ecx	; o_token, tmp89
+	movl	%edx, %eax	; o_ast, tmp91
+	movl	%ecx, %edx	; tmp89, tmp90
+	movb	%dl, -108(%rbp)	; tmp90, o_token
+	movb	%al, -112(%rbp)	; tmp92, o_ast
+; src/compiler.c:69:     File* file = create_file(name);
+	movq	-104(%rbp), %rax	; name, tmp93
+	movq	%rax, %rdi	; tmp93,
 	call	*create_file@GOTPCREL(%rip)	;
-	movq	%rax, -8(%rbp)	; tmp93, file
-; src/compiler.c:79:     string filename = get_full_path(file);
-	movq	-8(%rbp), %rax	; file, tmp94
-	movq	%rax, %rdi	; tmp94,
+	movq	%rax, -8(%rbp)	; tmp94, file
+; src/compiler.c:70:     string filename = get_full_path(file);
+	movq	-8(%rbp), %rax	; file, tmp95
+	movq	%rax, %rdi	; tmp95,
 	call	*get_full_path@GOTPCREL(%rip)	;
-	movq	%rax, -16(%rbp)	; tmp95, filename
-; src/compiler.c:80:     size_t length = 0;
+	movq	%rax, -16(%rbp)	; tmp96, filename
+; src/compiler.c:71:     size_t length = 0;
 	movq	$0, -88(%rbp)	;, length
-; src/compiler.c:81:     FILE* source_file = fopen(filename, "r");
-	movq	-16(%rbp), %rax	; filename, tmp96
-	leaq	.LC19(%rip), %rdx	;, tmp97
-	movq	%rdx, %rsi	; tmp97,
-	movq	%rax, %rdi	; tmp96,
+; src/compiler.c:72:     FILE* source_file = fopen(filename, "r");
+	movq	-16(%rbp), %rax	; filename, tmp97
+	leaq	.LC15(%rip), %rdx	;, tmp98
+	movq	%rdx, %rsi	; tmp98,
+	movq	%rax, %rdi	; tmp97,
 	call	*fopen@GOTPCREL(%rip)	;
-	movq	%rax, -24(%rbp)	; tmp98, source_file
-; src/compiler.c:82:     if (source_file == NULL) {
+	movq	%rax, -24(%rbp)	; tmp99, source_file
+; src/compiler.c:73:     if (source_file == NULL) {
 	cmpq	$0, -24(%rbp)	;, source_file
-	jne	.L33	;,
-; src/compiler.c:83:         fprintf(stderr, "Error opening file: %s", filename);
+	jne	.L32	;,
+; src/compiler.c:74:         fprintf(stderr, "Error opening file: %s", filename);
 	movq	stderr(%rip), %rax	; stderr, stderr.1_1
-	movq	-16(%rbp), %rdx	; filename, tmp99
-	leaq	.LC20(%rip), %rcx	;, tmp100
-	movq	%rcx, %rsi	; tmp100,
+	movq	-16(%rbp), %rdx	; filename, tmp100
+	leaq	.LC16(%rip), %rcx	;, tmp101
+	movq	%rcx, %rsi	; tmp101,
 	movq	%rax, %rdi	; stderr.1_1,
 	movl	$0, %eax	;,
 	call	*fprintf@GOTPCREL(%rip)	;
-	jmp	.L32	;
-.L33:
-; src/compiler.c:86:     string source = read_source(source_file, &length);
-	leaq	-88(%rbp), %rdx	;, tmp101
-	movq	-24(%rbp), %rax	; source_file, tmp102
-	movq	%rdx, %rsi	; tmp101,
-	movq	%rax, %rdi	; tmp102,
+	jmp	.L31	;
+.L32:
+; src/compiler.c:77:     string source = read_source(source_file, &length);
+	leaq	-88(%rbp), %rdx	;, tmp102
+	movq	-24(%rbp), %rax	; source_file, tmp103
+	movq	%rdx, %rsi	; tmp102,
+	movq	%rax, %rdi	; tmp103,
 	call	read_source	;
-	movq	%rax, -32(%rbp)	; tmp103, source
-; src/compiler.c:87:     fclose(source_file);
-	movq	-24(%rbp), %rax	; source_file, tmp104
-	movq	%rax, %rdi	; tmp104,
-	call	*fclose@GOTPCREL(%rip)	;
-; src/compiler.c:88:     Lexer* lexer = create_lexer(source, length);
-	movq	-88(%rbp), %rdx	; length, length.2_2
-	movq	-32(%rbp), %rax	; source, tmp105
-	movq	%rdx, %rsi	; length.2_2,
+	movq	%rax, -32(%rbp)	; tmp104, source
+; src/compiler.c:78:     fclose(source_file);
+	movq	-24(%rbp), %rax	; source_file, tmp105
 	movq	%rax, %rdi	; tmp105,
+	call	*fclose@GOTPCREL(%rip)	;
+; src/compiler.c:79:     Lexer* lexer = create_lexer(source, length);
+	movq	-88(%rbp), %rdx	; length, length.2_2
+	movq	-32(%rbp), %rax	; source, tmp106
+	movq	%rdx, %rsi	; length.2_2,
+	movq	%rax, %rdi	; tmp106,
 	call	*create_lexer@GOTPCREL(%rip)	;
-	movq	%rax, -40(%rbp)	; tmp106, lexer
-; src/compiler.c:89:     if (o_token) {
+	movq	%rax, -40(%rbp)	; tmp107, lexer
+; src/compiler.c:80:     if (o_token) {
 	cmpb	$0, -108(%rbp)	;, o_token
-	je	.L35	;,
-; src/compiler.c:90:         change_file_extension(file, create_string(".token", 6));
+	je	.L34	;,
+; src/compiler.c:81:         change_file_extension(file, create_string(".token", 6));
 	movl	$6, %esi	;,
-	leaq	.LC21(%rip), %rax	;, tmp107
-	movq	%rax, %rdi	; tmp107,
+	leaq	.LC17(%rip), %rax	;, tmp108
+	movq	%rax, %rdi	; tmp108,
 	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rdx	;, _3
-; src/compiler.c:90:         change_file_extension(file, create_string(".token", 6));
-	movq	-8(%rbp), %rax	; file, tmp108
-	movq	%rdx, %rsi	; _3,
-	movq	%rax, %rdi	; tmp108,
-	call	*change_file_extension@GOTPCREL(%rip)	;
-; src/compiler.c:91:         string out_token_name = get_full_path(file);
+; src/compiler.c:81:         change_file_extension(file, create_string(".token", 6));
 	movq	-8(%rbp), %rax	; file, tmp109
+	movq	%rdx, %rsi	; _3,
 	movq	%rax, %rdi	; tmp109,
+	call	*change_file_extension@GOTPCREL(%rip)	;
+; src/compiler.c:82:         string out_token_name = get_full_path(file);
+	movq	-8(%rbp), %rax	; file, tmp110
+	movq	%rax, %rdi	; tmp110,
 	call	*get_full_path@GOTPCREL(%rip)	;
-	movq	%rax, -48(%rbp)	; tmp110, out_token_name
-; src/compiler.c:92:         FILE* out_token_file = fopen(out_token_name, "w");
-	movq	-48(%rbp), %rax	; out_token_name, tmp111
-	leaq	.LC22(%rip), %rdx	;, tmp112
-	movq	%rdx, %rsi	; tmp112,
-	movq	%rax, %rdi	; tmp111,
+	movq	%rax, -48(%rbp)	; tmp111, out_token_name
+; src/compiler.c:83:         FILE* out_token_file = fopen(out_token_name, "w");
+	movq	-48(%rbp), %rax	; out_token_name, tmp112
+	leaq	.LC18(%rip), %rdx	;, tmp113
+	movq	%rdx, %rsi	; tmp113,
+	movq	%rax, %rdi	; tmp112,
 	call	*fopen@GOTPCREL(%rip)	;
-	movq	%rax, -56(%rbp)	; tmp113, out_token_file
-; src/compiler.c:93:         if (out_token_file == NULL)
+	movq	%rax, -56(%rbp)	; tmp114, out_token_file
+; src/compiler.c:84:         if (out_token_file == NULL)
 	cmpq	$0, -56(%rbp)	;, out_token_file
-	jne	.L36	;,
-; src/compiler.c:94:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
+	jne	.L35	;,
+; src/compiler.c:85:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
 	movq	stderr(%rip), %rax	; stderr, stderr.3_4
-	movq	-48(%rbp), %rdx	; out_token_name, tmp114
-	leaq	.LC23(%rip), %rcx	;, tmp115
-	movq	%rcx, %rsi	; tmp115,
+	movq	-48(%rbp), %rdx	; out_token_name, tmp115
+	leaq	.LC19(%rip), %rcx	;, tmp116
+	movq	%rcx, %rsi	; tmp116,
 	movq	%rax, %rdi	; stderr.3_4,
 	movl	$0, %eax	;,
 	call	*fprintf@GOTPCREL(%rip)	;
-	jmp	.L35	;
-.L36:
-; src/compiler.c:96:             output_token(out_token_file, lexer);
-	movq	-40(%rbp), %rdx	; lexer, tmp116
-	movq	-56(%rbp), %rax	; out_token_file, tmp117
-	movq	%rdx, %rsi	; tmp116,
-	movq	%rax, %rdi	; tmp117,
-	call	output_token	;
-; src/compiler.c:97:             fclose(out_token_file);
-	movq	-56(%rbp), %rax	; out_token_file, tmp118
-	movq	%rax, %rdi	; tmp118,
-	call	*fclose@GOTPCREL(%rip)	;
+	jmp	.L34	;
 .L35:
-; src/compiler.c:100:     reset_lexer(lexer);
-	movq	-40(%rbp), %rax	; lexer, tmp119
+; src/compiler.c:87:             output_token(out_token_file, lexer);
+	movq	-40(%rbp), %rdx	; lexer, tmp117
+	movq	-56(%rbp), %rax	; out_token_file, tmp118
+	movq	%rdx, %rsi	; tmp117,
+	movq	%rax, %rdi	; tmp118,
+	call	output_token	;
+; src/compiler.c:88:             fclose(out_token_file);
+	movq	-56(%rbp), %rax	; out_token_file, tmp119
 	movq	%rax, %rdi	; tmp119,
+	call	*fclose@GOTPCREL(%rip)	;
+.L34:
+; src/compiler.c:91:     reset_lexer(lexer);
+	movq	-40(%rbp), %rax	; lexer, tmp120
+	movq	%rax, %rdi	; tmp120,
 	call	*reset_lexer@GOTPCREL(%rip)	;
-; src/compiler.c:101:     Parser* parser = create_parser();
-	call	*create_parser@GOTPCREL(%rip)	;
-	movq	%rax, -64(%rbp)	; tmp120, parser
-; src/compiler.c:102:     if (o_ast) {
-	cmpb	$0, -112(%rbp)	;, o_ast
-	je	.L32	;,
-; src/compiler.c:103:         change_file_extension(file, create_string(".ast", 4));
-	movl	$4, %esi	;,
-	leaq	.LC24(%rip), %rax	;, tmp121
+; src/compiler.c:92:     Parser* parser = create_parser(file);
+	movq	-8(%rbp), %rax	; file, tmp121
 	movq	%rax, %rdi	; tmp121,
+	call	*create_parser@GOTPCREL(%rip)	;
+	movq	%rax, -64(%rbp)	; tmp122, parser
+; src/compiler.c:93:     if (o_ast) {
+	cmpb	$0, -112(%rbp)	;, o_ast
+	je	.L31	;,
+; src/compiler.c:94:         change_file_extension(file, create_string(".ast", 4));
+	movl	$4, %esi	;,
+	leaq	.LC20(%rip), %rax	;, tmp123
+	movq	%rax, %rdi	; tmp123,
 	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rdx	;, _5
-; src/compiler.c:103:         change_file_extension(file, create_string(".ast", 4));
-	movq	-8(%rbp), %rax	; file, tmp122
+; src/compiler.c:94:         change_file_extension(file, create_string(".ast", 4));
+	movq	-8(%rbp), %rax	; file, tmp124
 	movq	%rdx, %rsi	; _5,
-	movq	%rax, %rdi	; tmp122,
+	movq	%rax, %rdi	; tmp124,
 	call	*change_file_extension@GOTPCREL(%rip)	;
-; src/compiler.c:104:         string out_ast_name = get_full_path(file);
-	movq	-8(%rbp), %rax	; file, tmp123
-	movq	%rax, %rdi	; tmp123,
-	call	*get_full_path@GOTPCREL(%rip)	;
-	movq	%rax, -72(%rbp)	; tmp124, out_ast_name
-; src/compiler.c:105:         FILE* out_ast_file = fopen(out_ast_name, "w");
-	movq	-72(%rbp), %rax	; out_ast_name, tmp125
-	leaq	.LC22(%rip), %rdx	;, tmp126
-	movq	%rdx, %rsi	; tmp126,
+; src/compiler.c:95:         string out_ast_name = get_full_path(file);
+	movq	-8(%rbp), %rax	; file, tmp125
 	movq	%rax, %rdi	; tmp125,
+	call	*get_full_path@GOTPCREL(%rip)	;
+	movq	%rax, -72(%rbp)	; tmp126, out_ast_name
+; src/compiler.c:96:         change_file_extension(file, create_string(".tc", 3));
+	movl	$3, %esi	;,
+	leaq	.LC21(%rip), %rax	;, tmp127
+	movq	%rax, %rdi	; tmp127,
+	call	*create_string@GOTPCREL(%rip)	;
+	movq	%rax, %rdx	;, _6
+; src/compiler.c:96:         change_file_extension(file, create_string(".tc", 3));
+	movq	-8(%rbp), %rax	; file, tmp128
+	movq	%rdx, %rsi	; _6,
+	movq	%rax, %rdi	; tmp128,
+	call	*change_file_extension@GOTPCREL(%rip)	;
+; src/compiler.c:97:         FILE* out_ast_file = fopen(out_ast_name, "w");
+	movq	-72(%rbp), %rax	; out_ast_name, tmp129
+	leaq	.LC18(%rip), %rdx	;, tmp130
+	movq	%rdx, %rsi	; tmp130,
+	movq	%rax, %rdi	; tmp129,
 	call	*fopen@GOTPCREL(%rip)	;
-	movq	%rax, -80(%rbp)	; tmp127, out_ast_file
-; src/compiler.c:106:         if (out_ast_file == NULL)
+	movq	%rax, -80(%rbp)	; tmp131, out_ast_file
+; src/compiler.c:98:         if (out_ast_file == NULL)
 	cmpq	$0, -80(%rbp)	;, out_ast_file
-	jne	.L38	;,
-; src/compiler.c:107:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
-	movq	stderr(%rip), %rax	; stderr, stderr.4_6
-	movq	-72(%rbp), %rdx	; out_ast_name, tmp128
-	leaq	.LC23(%rip), %rcx	;, tmp129
-	movq	%rcx, %rsi	; tmp129,
-	movq	%rax, %rdi	; stderr.4_6,
+	jne	.L37	;,
+; src/compiler.c:99:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
+	movq	stderr(%rip), %rax	; stderr, stderr.4_7
+	movq	-72(%rbp), %rdx	; out_ast_name, tmp132
+	leaq	.LC19(%rip), %rcx	;, tmp133
+	movq	%rcx, %rsi	; tmp133,
+	movq	%rax, %rdi	; stderr.4_7,
 	movl	$0, %eax	;,
 	call	*fprintf@GOTPCREL(%rip)	;
-	jmp	.L32	;
-.L38:
-; src/compiler.c:109:             output_ast(out_ast_file, lexer, parser);
-	movq	-64(%rbp), %rdx	; parser, tmp130
-	movq	-40(%rbp), %rcx	; lexer, tmp131
-	movq	-80(%rbp), %rax	; out_ast_file, tmp132
-	movq	%rcx, %rsi	; tmp131,
-	movq	%rax, %rdi	; tmp132,
+	jmp	.L31	;
+.L37:
+; src/compiler.c:101:             output_ast(out_ast_file, lexer, parser);
+	movq	-64(%rbp), %rdx	; parser, tmp134
+	movq	-40(%rbp), %rcx	; lexer, tmp135
+	movq	-80(%rbp), %rax	; out_ast_file, tmp136
+	movq	%rcx, %rsi	; tmp135,
+	movq	%rax, %rdi	; tmp136,
 	call	output_ast	;
-; src/compiler.c:110:             fclose(out_ast_file);
-	movq	-80(%rbp), %rax	; out_ast_file, tmp133
-	movq	%rax, %rdi	; tmp133,
+; src/compiler.c:102:             fclose(out_ast_file);
+	movq	-80(%rbp), %rax	; out_ast_file, tmp137
+	movq	%rax, %rdi	; tmp137,
 	call	*fclose@GOTPCREL(%rip)	;
-.L32:
-; src/compiler.c:113: }
+.L31:
+; src/compiler.c:105: }
 	leave	
 	ret	
 	.size	parse_file, .-parse_file

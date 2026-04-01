@@ -214,12 +214,15 @@ move_position:
 .LC1:
 	.string	"Unterminated string literal"
 .LC2:
-	.string	"src/lexer.c"
+	.string	""
+	.string	""
 .LC3:
-	.string	"c != '\\0'"
+	.string	"src/lexer.c"
 .LC4:
-	.string	"Unterminated comment"
+	.string	"c != '\\0'"
 .LC5:
+	.string	"Unterminated comment"
+.LC6:
 	.string	"Unexpected character"
 	.text
 	.type	next_token, @function
@@ -473,22 +476,20 @@ next_token:
 	movq	%rax, %rdi
 	call	lexer_error
 	cmpb	$10, -17(%rbp)
-	jne	.L46
+	jne	.L45
 	movq	-136(%rbp), %rax
 	movq	%rax, %rdi
 	call	newline
-.L46:
-	movq	-136(%rbp), %rax
-	movq	24(%rax), %rbx
+.L45:
 	movq	-136(%rbp), %rax
 	movq	8(%rax), %rax
 	subq	-96(%rbp), %rax
-	leaq	-1(%rax), %rdx
+	cmpq	$1, %rax
+	jne	.L46
 	movq	-136(%rbp), %rax
-	movq	(%rax), %rcx
-	movq	-96(%rbp), %rax
-	addq	%rcx, %rax
-	movq	%rdx, %rsi
+	movq	24(%rax), %rbx
+	movl	$1, %esi
+	leaq	.LC2(%rip), %rax
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
@@ -498,7 +499,7 @@ next_token:
 	movl	$4, %edi
 	call	create_token
 	jmp	.L19
-.L45:
+.L46:
 	movq	-136(%rbp), %rax
 	movq	24(%rax), %rbx
 	movq	-136(%rbp), %rax
@@ -615,10 +616,10 @@ next_token:
 	jne	.L53
 	leaq	__PRETTY_FUNCTION__.0(%rip), %rax
 	movq	%rax, %rcx
-	movl	$125, %edx
-	leaq	.LC2(%rip), %rax
-	movq	%rax, %rsi
+	movl	$126, %edx
 	leaq	.LC3(%rip), %rax
+	movq	%rax, %rsi
+	leaq	.LC4(%rip), %rax
 	movq	%rax, %rdi
 	call	*__assert_fail@GOTPCREL(%rip)
 .L53:
@@ -643,7 +644,7 @@ next_token:
 	movq	24(%rax), %rax
 	movq	-80(%rbp), %rdx
 	movq	%rax, %rsi
-	leaq	.LC4(%rip), %rax
+	leaq	.LC5(%rip), %rax
 	movq	%rax, %rdi
 	call	lexer_error
 	cmpb	$0, -140(%rbp)
@@ -1160,7 +1161,7 @@ next_token:
 	movq	-136(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	%rax, %rsi
-	leaq	.LC5(%rip), %rax
+	leaq	.LC6(%rip), %rax
 	movq	%rax, %rdi
 	call	lexer_error
 	movl	$0, %ecx

@@ -22,6 +22,7 @@ create_file:
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, -8(%rbp)
 	movq	-24(%rbp), %rax
+	movl	$0, %esi
 	movq	%rax, %rdi
 	call	absolute_path
 	movq	-8(%rbp), %rdx
@@ -44,29 +45,39 @@ create_file:
 absolute_path:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$64, %rsp
-	movq	%rdi, -56(%rbp)
-	movq	-56(%rbp), %rax
+	subq	$48, %rsp
+	movq	%rdi, -40(%rbp)
+	movq	%rsi, -48(%rbp)
+	movq	-40(%rbp), %rax
+	movq	%rax, %rdi
+	call	*strlen@GOTPCREL(%rip)
+	movq	%rax, %rdx
+	movq	-40(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*create_string_not_check@GOTPCREL(%rip)
+	movq	%rax, -40(%rbp)
+	movq	-40(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
 	movq	%rax, -8(%rbp)
 	movq	$0, -16(%rbp)
 	jmp	.L6
 .L10:
-	movq	-56(%rbp), %rdx
+	movq	-40(%rbp), %rdx
 	movq	-16(%rbp), %rax
 	addq	%rdx, %rax
 	movzbl	(%rax), %eax
 	cmpb	$92, %al
 	jne	.L7
-	movq	-56(%rbp), %rdx
+	movq	-40(%rbp), %rdx
 	movq	-16(%rbp), %rax
 	addq	%rdx, %rax
 	movb	$47, (%rax)
 .L7:
 	cmpq	$1, -16(%rbp)
 	jbe	.L8
-	movq	-56(%rbp), %rdx
+	movq	-40(%rbp), %rdx
 	movq	-16(%rbp), %rax
 	addq	%rdx, %rax
 	movzbl	(%rax), %eax
@@ -74,14 +85,14 @@ absolute_path:
 	jne	.L8
 	movq	-16(%rbp), %rax
 	leaq	-1(%rax), %rdx
-	movq	-56(%rbp), %rax
+	movq	-40(%rbp), %rax
 	addq	%rdx, %rax
 	movzbl	(%rax), %eax
 	cmpb	$46, %al
 	jne	.L8
 	movq	-16(%rbp), %rax
 	leaq	-2(%rax), %rdx
-	movq	-56(%rbp), %rax
+	movq	-40(%rbp), %rax
 	addq	%rdx, %rax
 	movzbl	(%rax), %eax
 	cmpb	$47, %al
@@ -90,11 +101,11 @@ absolute_path:
 	subq	-16(%rbp), %rax
 	movq	-16(%rbp), %rdx
 	leaq	1(%rdx), %rcx
-	movq	-56(%rbp), %rdx
+	movq	-40(%rbp), %rdx
 	leaq	(%rcx,%rdx), %rsi
 	movq	-16(%rbp), %rdx
 	leaq	-1(%rdx), %rcx
-	movq	-56(%rbp), %rdx
+	movq	-40(%rbp), %rdx
 	addq	%rdx, %rcx
 	movq	%rax, %rdx
 	movq	%rcx, %rdi
@@ -104,7 +115,7 @@ absolute_path:
 .L8:
 	cmpq	$0, -16(%rbp)
 	je	.L9
-	movq	-56(%rbp), %rdx
+	movq	-40(%rbp), %rdx
 	movq	-16(%rbp), %rax
 	addq	%rdx, %rax
 	movzbl	(%rax), %eax
@@ -112,7 +123,7 @@ absolute_path:
 	jne	.L9
 	movq	-16(%rbp), %rax
 	leaq	-1(%rax), %rdx
-	movq	-56(%rbp), %rax
+	movq	-40(%rbp), %rax
 	addq	%rdx, %rax
 	movzbl	(%rax), %eax
 	cmpb	$47, %al
@@ -121,9 +132,9 @@ absolute_path:
 	subq	-16(%rbp), %rax
 	movq	-16(%rbp), %rdx
 	leaq	1(%rdx), %rcx
-	movq	-56(%rbp), %rdx
+	movq	-40(%rbp), %rdx
 	leaq	(%rcx,%rdx), %rsi
-	movq	-56(%rbp), %rcx
+	movq	-40(%rbp), %rcx
 	movq	-16(%rbp), %rdx
 	addq	%rdx, %rcx
 	movq	%rax, %rdx
@@ -137,50 +148,107 @@ absolute_path:
 	movq	-16(%rbp), %rax
 	cmpq	-8(%rbp), %rax
 	jb	.L10
-	cmpq	$0, -8(%rbp)
-	je	.L11
-	movq	-56(%rbp), %rax
+	cmpq	$1, -8(%rbp)
+	jbe	.L11
+	movq	-40(%rbp), %rax
 	movzbl	(%rax), %eax
-	cmpb	$47, %al
+	cmpb	$64, %al
+	jle	.L11
+	movq	-40(%rbp), %rax
+	movzbl	(%rax), %eax
+	cmpb	$90, %al
+	jg	.L11
+	movq	-40(%rbp), %rax
+	addq	$1, %rax
+	movzbl	(%rax), %eax
+	cmpb	$58, %al
 	jne	.L11
-	movq	-56(%rbp), %rax
+	movq	-40(%rbp), %rax
+	movzbl	(%rax), %eax
+	addl	$32, %eax
+	movl	%eax, %edx
+	movq	-40(%rbp), %rax
+	movb	%dl, (%rax)
+	movq	-40(%rbp), %rax
+	leaq	1(%rax), %rcx
+	movq	-8(%rbp), %rdx
+	movq	-40(%rbp), %rax
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	call	*memmove@GOTPCREL(%rip)
+	movq	-40(%rbp), %rax
+	movb	$47, (%rax)
+	movq	-40(%rbp), %rax
+	addq	$2, %rax
+	movb	$47, (%rax)
+	movq	-40(%rbp), %rax
 	jmp	.L12
 .L11:
-	call	get_cwd
-	movq	%rax, -24(%rbp)
-	cmpq	$0, -24(%rbp)
+	cmpq	$1, -8(%rbp)
+	jbe	.L13
+	movq	-40(%rbp), %rax
+	movzbl	(%rax), %eax
+	cmpb	$64, %al
+	jle	.L13
+	movq	-40(%rbp), %rax
+	movzbl	(%rax), %eax
+	cmpb	$90, %al
+	jg	.L13
+	movq	-40(%rbp), %rax
+	addq	$1, %rax
+	movzbl	(%rax), %eax
+	cmpb	$58, %al
 	jne	.L13
-	movq	-56(%rbp), %rax
+	movq	-40(%rbp), %rax
 	jmp	.L12
 .L13:
-	movq	-24(%rbp), %rax
+	cmpq	$0, -8(%rbp)
+	je	.L14
+	movq	-40(%rbp), %rax
+	movzbl	(%rax), %eax
+	cmpb	$47, %al
+	jne	.L14
+	movq	-40(%rbp), %rax
+	jmp	.L12
+.L14:
+	cmpq	$0, -48(%rbp)
+	jne	.L15
+	call	get_cwd
+	movq	%rax, -48(%rbp)
+.L15:
+	cmpq	$0, -48(%rbp)
+	jne	.L16
+	movq	-40(%rbp), %rax
+	jmp	.L12
+.L16:
+	movq	-48(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
 	movq	-8(%rbp), %rdx
 	addq	%rdx, %rax
 	addq	$2, %rax
-	movq	%rax, -32(%rbp)
-	movq	-32(%rbp), %rax
+	movq	%rax, -24(%rbp)
+	movq	-24(%rbp), %rax
 	movq	%rax, %rsi
 	leaq	.LC0(%rip), %rax
 	movq	%rax, %rdi
-	call	*create_string@GOTPCREL(%rip)
-	movq	%rax, -40(%rbp)
-	movq	-56(%rbp), %rcx
-	movq	-24(%rbp), %rdx
-	movq	-40(%rbp), %rax
+	call	*create_string_not_check@GOTPCREL(%rip)
+	movq	%rax, -32(%rbp)
+	movq	-40(%rbp), %rcx
+	movq	-48(%rbp), %rdx
+	movq	-32(%rbp), %rax
 	leaq	.LC1(%rip), %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*sprintf@GOTPCREL(%rip)
-	movq	-24(%rbp), %rax
-	movq	%rax, %rdi
-	call	*free@GOTPCREL(%rip)
-	movq	-32(%rbp), %rdx
-	movq	-40(%rbp), %rax
+	movq	-24(%rbp), %rdx
+	movq	-32(%rbp), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)
+	movl	$0, %esi
+	movq	%rax, %rdi
+	call	absolute_path
 .L12:
 	leave
 	ret
@@ -221,21 +289,21 @@ get_file_dir:
 	movq	-56(%rbp), %rax
 	movq	(%rax), %rax
 	testq	%rax, %rax
-	jne	.L19
+	jne	.L22
 	movl	$0, %eax
-	jmp	.L20
-.L19:
+	jmp	.L23
+.L22:
 	movq	$0, -8(%rbp)
 	movq	$0, -16(%rbp)
 	movq	-56(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, -24(%rbp)
-	jmp	.L21
-.L23:
+	jmp	.L24
+.L26:
 	movq	-24(%rbp), %rax
 	movq	8(%rax), %rax
 	testq	%rax, %rax
-	je	.L22
+	je	.L25
 	movq	-24(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rdi
@@ -244,32 +312,32 @@ get_file_dir:
 	movq	-48(%rbp), %rax
 	addq	%rax, -8(%rbp)
 	addq	$1, -16(%rbp)
-.L22:
+.L25:
 	movq	-24(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	%rax, -24(%rbp)
-.L21:
-	cmpq	$0, -24(%rbp)
-	jne	.L23
-	cmpq	$0, -16(%rbp)
-	jne	.L24
-	movl	$0, %eax
-	jmp	.L20
 .L24:
+	cmpq	$0, -24(%rbp)
+	jne	.L26
+	cmpq	$0, -16(%rbp)
+	jne	.L27
+	movl	$0, %eax
+	jmp	.L23
+.L27:
 	cmpq	$1, -16(%rbp)
-	jbe	.L25
+	jbe	.L28
 	movq	-16(%rbp), %rdx
 	movq	-8(%rbp), %rax
 	addq	%rdx, %rax
 	subq	$1, %rax
 	movq	%rax, -8(%rbp)
-.L25:
+.L28:
 	movq	-8(%rbp), %rax
 	addq	$1, %rax
 	movq	%rax, %rsi
 	leaq	.LC0(%rip), %rax
 	movq	%rax, %rdi
-	call	*create_string@GOTPCREL(%rip)
+	call	*create_string_not_check@GOTPCREL(%rip)
 	movq	%rax, -40(%rbp)
 	movq	-40(%rbp), %rax
 	movb	$0, (%rax)
@@ -277,14 +345,14 @@ get_file_dir:
 	movq	(%rax), %rax
 	movq	%rax, -24(%rbp)
 	movb	$1, -25(%rbp)
-	jmp	.L26
-.L29:
+	jmp	.L29
+.L32:
 	movq	-24(%rbp), %rax
 	movq	8(%rax), %rax
 	testq	%rax, %rax
-	je	.L27
+	je	.L30
 	cmpb	$0, -25(%rbp)
-	jne	.L28
+	jne	.L31
 	movq	-24(%rbp), %rax
 	movq	(%rax), %rax
 	leaq	.LC2(%rip), %rdx
@@ -292,11 +360,11 @@ get_file_dir:
 	movq	%rax, %rdi
 	call	*strcmp@GOTPCREL(%rip)
 	testl	%eax, %eax
-	je	.L28
+	je	.L31
 	movq	-40(%rbp), %rax
 	movzbl	(%rax), %eax
 	testb	%al, %al
-	je	.L28
+	je	.L31
 	movq	-40(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
@@ -305,7 +373,7 @@ get_file_dir:
 	addq	%rdx, %rax
 	movzbl	(%rax), %eax
 	cmpb	$47, %al
-	je	.L28
+	je	.L31
 	movq	-40(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
@@ -313,7 +381,7 @@ get_file_dir:
 	movq	-40(%rbp), %rax
 	addq	%rdx, %rax
 	movw	$47, (%rax)
-.L28:
+.L31:
 	movq	-24(%rbp), %rax
 	movq	(%rax), %rdx
 	movq	-40(%rbp), %rax
@@ -321,13 +389,13 @@ get_file_dir:
 	movq	%rax, %rdi
 	call	*strcat@GOTPCREL(%rip)
 	movb	$0, -25(%rbp)
-.L27:
+.L30:
 	movq	-24(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	%rax, -24(%rbp)
-.L26:
+.L29:
 	cmpq	$0, -24(%rbp)
-	jne	.L29
+	jne	.L32
 	movq	-40(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
@@ -336,7 +404,7 @@ get_file_dir:
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)
-.L20:
+.L23:
 	leave
 	ret
 	.size	get_file_dir, .-get_file_dir
@@ -353,39 +421,39 @@ get_full_path:
 	.size	get_full_path, .-get_full_path
 	.section	.rodata
 .LC3:
-	.string	"%s"
+	.string	"%s/%s%s"
+.LC4:
+	.string	"%s%s"
 	.text
-	.globl	change_file_extension
-	.type	change_file_extension, @function
-change_file_extension:
+	.type	rebuild_full_path, @function
+rebuild_full_path:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	pushq	%rbx
 	subq	$72, %rsp
 	movq	%rdi, -72(%rbp)
-	movq	%rsi, -80(%rbp)
-	movq	-72(%rbp), %rax
-	movq	-80(%rbp), %rdx
-	movq	%rdx, 8(%rax)
 	movq	-72(%rbp), %rax
 	movq	%rax, %rdi
 	call	get_file_dir
 	movq	%rax, -32(%rbp)
 	cmpq	$0, -32(%rbp)
-	je	.L33
+	je	.L36
 	movq	-32(%rbp), %rax
-	jmp	.L34
-.L33:
-	leaq	.LC0(%rip), %rax
-.L34:
-	movq	%rax, -40(%rbp)
-	cmpq	$0, -80(%rbp)
-	je	.L35
-	movq	-80(%rbp), %rax
-	jmp	.L36
-.L35:
-	leaq	.LC0(%rip), %rax
+	jmp	.L37
 .L36:
+	leaq	.LC0(%rip), %rax
+.L37:
+	movq	%rax, -40(%rbp)
+	movq	-72(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	je	.L38
+	movq	-72(%rbp), %rax
+	movq	8(%rax), %rax
+	jmp	.L39
+.L38:
+	leaq	.LC0(%rip), %rax
+.L39:
 	movq	%rax, -48(%rbp)
 	movq	-40(%rbp), %rax
 	movq	%rax, %rdi
@@ -398,53 +466,49 @@ change_file_extension:
 	addq	%rbx, %rax
 	addq	$1, %rax
 	movq	%rax, -24(%rbp)
-	cmpq	$0, -80(%rbp)
-	je	.L37
+	movq	-72(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	je	.L40
 	movq	-48(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
 	addq	%rax, -24(%rbp)
-.L37:
+.L40:
 	movq	-24(%rbp), %rax
 	addq	$1, %rax
 	movq	%rax, %rsi
 	leaq	.LC0(%rip), %rax
 	movq	%rax, %rdi
-	call	*create_string@GOTPCREL(%rip)
+	call	*create_string_not_check@GOTPCREL(%rip)
 	movq	%rax, -56(%rbp)
 	cmpq	$0, -32(%rbp)
-	je	.L38
+	je	.L41
 	movq	-40(%rbp), %rax
 	movzbl	(%rax), %eax
 	testb	%al, %al
-	je	.L38
+	je	.L41
 	movq	-72(%rbp), %rax
 	movq	16(%rax), %rcx
+	movq	-48(%rbp), %rsi
 	movq	-40(%rbp), %rdx
 	movq	-56(%rbp), %rax
-	leaq	.LC1(%rip), %rsi
+	movq	%rsi, %r8
+	leaq	.LC3(%rip), %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*sprintf@GOTPCREL(%rip)
-	jmp	.L39
-.L38:
+	jmp	.L42
+.L41:
 	movq	-72(%rbp), %rax
 	movq	16(%rax), %rdx
+	movq	-48(%rbp), %rcx
 	movq	-56(%rbp), %rax
-	leaq	.LC3(%rip), %rcx
-	movq	%rcx, %rsi
+	leaq	.LC4(%rip), %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*sprintf@GOTPCREL(%rip)
-.L39:
-	cmpq	$0, -80(%rbp)
-	je	.L40
-	movq	-80(%rbp), %rdx
-	movq	-56(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*strcat@GOTPCREL(%rip)
-.L40:
+.L42:
 	movq	-56(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
@@ -459,191 +523,122 @@ change_file_extension:
 	movq	-8(%rbp), %rbx
 	leave
 	ret
+	.size	rebuild_full_path, .-rebuild_full_path
+	.globl	change_file_extension
+	.type	change_file_extension, @function
+change_file_extension:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$16, %rsp
+	movq	%rdi, -8(%rbp)
+	movq	%rsi, -16(%rbp)
+	movq	-8(%rbp), %rax
+	movq	-16(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	movq	-8(%rbp), %rax
+	movq	%rax, %rdi
+	call	rebuild_full_path
+	nop
+	leave
+	ret
 	.size	change_file_extension, .-change_file_extension
-	.section	.rodata
-.LC4:
-	.string	"%s%s"
-.LC5:
-	.string	"%s/%s%s"
-	.text
 	.globl	change_file_name
 	.type	change_file_name, @function
 change_file_name:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	pushq	%rbx
-	subq	$104, %rsp
-	movq	%rdi, -104(%rbp)
-	movq	%rsi, -112(%rbp)
-	movq	-104(%rbp), %rax
-	movq	-112(%rbp), %rdx
+	subq	$48, %rsp
+	movq	%rdi, -40(%rbp)
+	movq	%rsi, -48(%rbp)
+	movq	-40(%rbp), %rax
+	movq	-48(%rbp), %rdx
 	movq	%rdx, 16(%rax)
-	movq	-104(%rbp), %rax
+	movq	-40(%rbp), %rax
 	movq	(%rax), %rax
-	testq	%rax, %rax
-	je	.L42
-	movq	-104(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, -24(%rbp)
-	jmp	.L43
-.L48:
-	movq	-24(%rbp), %rax
-	movq	8(%rax), %rax
-	testq	%rax, %rax
-	jne	.L44
-	movq	-104(%rbp), %rax
-	movq	8(%rax), %rax
 	testq	%rax, %rax
 	je	.L45
-	movq	-104(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	-40(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, -8(%rbp)
 	jmp	.L46
-.L45:
-	leaq	.LC0(%rip), %rax
-.L46:
-	movq	%rax, -48(%rbp)
-	movq	-112(%rbp), %rax
-	movq	%rax, %rdi
-	call	*strlen@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-	movq	-104(%rbp), %rax
+.L51:
+	movq	-8(%rbp), %rax
 	movq	8(%rax), %rax
 	testq	%rax, %rax
-	je	.L47
+	jne	.L47
+	movq	-40(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	je	.L48
+	movq	-40(%rbp), %rax
+	movq	8(%rax), %rax
+	jmp	.L49
+.L48:
+	leaq	.LC0(%rip), %rax
+.L49:
+	movq	%rax, -24(%rbp)
 	movq	-48(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
-	addq	%rax, -32(%rbp)
-.L47:
-	movq	-32(%rbp), %rax
-	addq	$1, %rax
-	movq	%rax, %rsi
-	leaq	.LC0(%rip), %rax
-	movq	%rax, %rdi
-	call	*create_string@GOTPCREL(%rip)
-	movq	%rax, -56(%rbp)
-	movq	-48(%rbp), %rcx
-	movq	-112(%rbp), %rdx
-	movq	-56(%rbp), %rax
-	leaq	.LC4(%rip), %rsi
-	movq	%rax, %rdi
-	movl	$0, %eax
-	call	*sprintf@GOTPCREL(%rip)
-	movq	-56(%rbp), %rax
-	movq	%rax, %rdi
-	call	*strlen@GOTPCREL(%rip)
-	movq	%rax, %rdx
-	movq	-56(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*create_string@GOTPCREL(%rip)
-	movq	-24(%rbp), %rdx
-	movq	%rax, (%rdx)
-	jmp	.L42
-.L44:
-	movq	-24(%rbp), %rax
-	movq	8(%rax), %rax
-	movq	%rax, -24(%rbp)
-.L43:
-	cmpq	$0, -24(%rbp)
-	jne	.L48
-.L42:
-	movq	-104(%rbp), %rax
-	movq	%rax, %rdi
-	call	get_file_dir
-	movq	%rax, -64(%rbp)
-	cmpq	$0, -64(%rbp)
-	je	.L49
-	movq	-64(%rbp), %rax
-	jmp	.L50
-.L49:
-	leaq	.LC0(%rip), %rax
-.L50:
-	movq	%rax, -72(%rbp)
-	movq	-104(%rbp), %rax
-	movq	8(%rax), %rax
-	testq	%rax, %rax
-	je	.L51
-	movq	-104(%rbp), %rax
-	movq	8(%rax), %rax
-	jmp	.L52
-.L51:
-	leaq	.LC0(%rip), %rax
-.L52:
-	movq	%rax, -80(%rbp)
-	movq	-72(%rbp), %rax
-	movq	%rax, %rdi
-	call	*strlen@GOTPCREL(%rip)
-	movq	%rax, %rbx
-	movq	-112(%rbp), %rax
-	movq	%rax, %rdi
-	call	*strlen@GOTPCREL(%rip)
-	addq	%rbx, %rax
-	addq	$1, %rax
-	movq	%rax, -40(%rbp)
-	movq	-104(%rbp), %rax
-	movq	8(%rax), %rax
-	testq	%rax, %rax
-	je	.L53
-	movq	-80(%rbp), %rax
-	movq	%rax, %rdi
-	call	*strlen@GOTPCREL(%rip)
-	addq	%rax, -40(%rbp)
-.L53:
+	movq	%rax, -16(%rbp)
 	movq	-40(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	je	.L50
+	movq	-24(%rbp), %rax
+	movq	%rax, %rdi
+	call	*strlen@GOTPCREL(%rip)
+	addq	%rax, -16(%rbp)
+.L50:
+	movq	-16(%rbp), %rax
 	addq	$1, %rax
 	movq	%rax, %rsi
 	leaq	.LC0(%rip), %rax
 	movq	%rax, %rdi
-	call	*create_string@GOTPCREL(%rip)
-	movq	%rax, -88(%rbp)
-	cmpq	$0, -64(%rbp)
-	je	.L54
-	movq	-72(%rbp), %rax
-	movzbl	(%rax), %eax
-	testb	%al, %al
-	je	.L54
-	movq	-80(%rbp), %rsi
-	movq	-112(%rbp), %rcx
-	movq	-72(%rbp), %rdx
-	movq	-88(%rbp), %rax
-	movq	%rsi, %r8
-	leaq	.LC5(%rip), %rsi
-	movq	%rax, %rdi
-	movl	$0, %eax
-	call	*sprintf@GOTPCREL(%rip)
-	jmp	.L55
-.L54:
-	movq	-80(%rbp), %rcx
-	movq	-112(%rbp), %rdx
-	movq	-88(%rbp), %rax
+	call	*create_string_not_check@GOTPCREL(%rip)
+	movq	%rax, -32(%rbp)
+	movq	-24(%rbp), %rcx
+	movq	-48(%rbp), %rdx
+	movq	-32(%rbp), %rax
 	leaq	.LC4(%rip), %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*sprintf@GOTPCREL(%rip)
-.L55:
-	movq	-88(%rbp), %rax
+	movq	-32(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
 	movq	%rax, %rdx
-	movq	-88(%rbp), %rax
+	movq	-32(%rbp), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)
-	movq	-104(%rbp), %rdx
-	movq	%rax, 24(%rdx)
+	movq	-8(%rbp), %rdx
+	movq	%rax, (%rdx)
+	jmp	.L45
+.L47:
+	movq	-8(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -8(%rbp)
+.L46:
+	cmpq	$0, -8(%rbp)
+	jne	.L51
+.L45:
+	movq	-40(%rbp), %rax
+	movq	%rax, %rdi
+	call	rebuild_full_path
 	nop
-	movq	-8(%rbp), %rbx
 	leave
 	ret
 	.size	change_file_name, .-change_file_name
 	.section	.rodata
+	.align 8
+.LC5:
+	.string	"Warning: Path component too long, truncating to %zu characters\n"
 .LC6:
 	.string	"."
 .LC7:
 	.string	".."
 	.text
-	.globl	normalize_path
 	.type	normalize_path, @function
 normalize_path:
 	pushq	%rbp
@@ -654,76 +649,87 @@ normalize_path:
 	movq	24(%rax), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
-	movq	%rax, -80(%rbp)
-	movq	-80(%rbp), %rax
+	movq	%rax, -88(%rbp)
+	movq	-88(%rbp), %rax
 	addq	$1, %rax
 	movq	%rax, %rsi
 	leaq	.LC0(%rip), %rax
 	movq	%rax, %rdi
-	call	*create_string@GOTPCREL(%rip)
-	movq	%rax, -88(%rbp)
+	call	*create_string_not_check@GOTPCREL(%rip)
+	movq	%rax, -96(%rbp)
 	movq	-424(%rbp), %rax
 	movq	24(%rax), %rdx
-	movq	-88(%rbp), %rax
+	movq	-96(%rbp), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*strcpy@GOTPCREL(%rip)
 	movq	$0, -8(%rbp)
 	movq	$0, -16(%rbp)
 	movq	$0, -24(%rbp)
-	cmpq	$0, -80(%rbp)
-	je	.L57
-	movq	-88(%rbp), %rax
+	cmpq	$0, -88(%rbp)
+	je	.L53
+	movq	-96(%rbp), %rax
 	movzbl	(%rax), %eax
 	cmpb	$47, %al
-	jne	.L57
+	jne	.L53
 	movl	$16, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
-	movq	%rax, -96(%rbp)
+	movq	%rax, -104(%rbp)
 	movl	$1, %esi
 	leaq	.LC2(%rip), %rax
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)
-	movq	-96(%rbp), %rdx
+	movq	-104(%rbp), %rdx
 	movq	%rax, (%rdx)
-	movq	-96(%rbp), %rax
+	movq	-104(%rbp), %rax
 	movq	$0, 8(%rax)
-	movq	-96(%rbp), %rax
+	movq	-104(%rbp), %rax
 	movq	%rax, -8(%rbp)
-	movq	-96(%rbp), %rax
+	movq	-104(%rbp), %rax
 	movq	%rax, -16(%rbp)
 	movq	$1, -24(%rbp)
-.L57:
+.L53:
 	movq	-24(%rbp), %rax
 	movq	%rax, -32(%rbp)
-	jmp	.L58
-.L72:
+	jmp	.L54
+.L69:
 	movq	-32(%rbp), %rax
-	cmpq	-80(%rbp), %rax
-	je	.L59
-	movq	-88(%rbp), %rdx
+	cmpq	-88(%rbp), %rax
+	je	.L55
+	movq	-96(%rbp), %rdx
 	movq	-32(%rbp), %rax
 	addq	%rdx, %rax
 	movzbl	(%rax), %eax
 	cmpb	$47, %al
-	jne	.L60
-.L59:
+	jne	.L56
+.L55:
 	movq	-32(%rbp), %rax
 	cmpq	%rax, -24(%rbp)
-	jnb	.L61
+	jnb	.L57
 	movq	-32(%rbp), %rax
 	subq	-24(%rbp), %rax
-	movq	%rax, -128(%rbp)
-	movq	-88(%rbp), %rdx
+	movq	%rax, -40(%rbp)
+	cmpq	$255, -40(%rbp)
+	jbe	.L58
+	movq	$255, -40(%rbp)
+	movq	stderr(%rip), %rax
+	movq	-40(%rbp), %rdx
+	leaq	.LC5(%rip), %rcx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*fprintf@GOTPCREL(%rip)
+.L58:
+	movq	-96(%rbp), %rdx
 	movq	-24(%rbp), %rax
 	leaq	(%rdx,%rax), %rcx
-	movq	-128(%rbp), %rdx
+	movq	-40(%rbp), %rdx
 	leaq	-416(%rbp), %rax
 	movq	%rcx, %rsi
 	movq	%rax, %rdi
 	call	*strncpy@GOTPCREL(%rip)
 	leaq	-416(%rbp), %rdx
-	movq	-128(%rbp), %rax
+	movq	-40(%rbp), %rax
 	addq	%rdx, %rax
 	movb	$0, (%rax)
 	leaq	-416(%rbp), %rax
@@ -732,19 +738,19 @@ normalize_path:
 	movq	%rax, %rdi
 	call	*strcmp@GOTPCREL(%rip)
 	testl	%eax, %eax
-	je	.L61
+	je	.L57
 	leaq	-416(%rbp), %rax
 	leaq	.LC7(%rip), %rdx
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*strcmp@GOTPCREL(%rip)
 	testl	%eax, %eax
-	jne	.L63
+	jne	.L60
 	cmpq	$0, -16(%rbp)
-	je	.L64
+	je	.L61
 	movq	-16(%rbp), %rax
 	cmpq	-8(%rbp), %rax
-	je	.L64
+	je	.L61
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
 	leaq	.LC7(%rip), %rdx
@@ -752,7 +758,7 @@ normalize_path:
 	movq	%rax, %rdi
 	call	*strcmp@GOTPCREL(%rip)
 	testl	%eax, %eax
-	jne	.L65
+	jne	.L62
 	movl	$16, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, -144(%rbp)
@@ -769,33 +775,33 @@ normalize_path:
 	movq	%rdx, 8(%rax)
 	movq	-144(%rbp), %rax
 	movq	%rax, -16(%rbp)
-	jmp	.L83
-.L65:
+	jmp	.L80
+.L62:
 	movq	-8(%rbp), %rax
-	movq	%rax, -40(%rbp)
-	jmp	.L67
-.L69:
-	movq	-40(%rbp), %rax
+	movq	%rax, -48(%rbp)
+	jmp	.L64
+.L66:
+	movq	-48(%rbp), %rax
 	movq	8(%rax), %rax
-	movq	%rax, -40(%rbp)
-.L67:
-	cmpq	$0, -40(%rbp)
-	je	.L68
-	movq	-40(%rbp), %rax
+	movq	%rax, -48(%rbp)
+.L64:
+	cmpq	$0, -48(%rbp)
+	je	.L65
+	movq	-48(%rbp), %rax
 	movq	8(%rax), %rax
 	cmpq	%rax, -16(%rbp)
-	jne	.L69
-.L68:
-	cmpq	$0, -40(%rbp)
-	je	.L83
-	movq	-40(%rbp), %rax
+	jne	.L66
+.L65:
+	cmpq	$0, -48(%rbp)
+	je	.L80
+	movq	-48(%rbp), %rax
 	movq	$0, 8(%rax)
-	movq	-40(%rbp), %rax
+	movq	-48(%rbp), %rax
 	movq	%rax, -16(%rbp)
-	jmp	.L83
-.L64:
+	jmp	.L80
+.L61:
 	cmpq	$0, -8(%rbp)
-	jne	.L61
+	jne	.L57
 	movl	$16, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, -152(%rbp)
@@ -811,16 +817,16 @@ normalize_path:
 	movq	%rax, -8(%rbp)
 	movq	-152(%rbp), %rax
 	movq	%rax, -16(%rbp)
-	jmp	.L61
-.L63:
+	jmp	.L57
+.L60:
 	leaq	-416(%rbp), %rax
 	movzbl	(%rax), %eax
 	testb	%al, %al
-	je	.L61
+	je	.L57
 	movl	$16, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, -136(%rbp)
-	movq	-128(%rbp), %rdx
+	movq	-40(%rbp), %rdx
 	leaq	-416(%rbp), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
@@ -830,174 +836,174 @@ normalize_path:
 	movq	-136(%rbp), %rax
 	movq	$0, 8(%rax)
 	cmpq	$0, -16(%rbp)
-	je	.L71
+	je	.L68
 	movq	-16(%rbp), %rax
 	movq	-136(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-.L71:
+.L68:
 	movq	-136(%rbp), %rax
 	movq	%rax, -16(%rbp)
 	cmpq	$0, -8(%rbp)
-	jne	.L61
+	jne	.L57
 	movq	-136(%rbp), %rax
 	movq	%rax, -8(%rbp)
-	jmp	.L61
-.L83:
+	jmp	.L57
+.L80:
 	nop
-.L61:
+.L57:
 	movq	-32(%rbp), %rax
 	addq	$1, %rax
 	movq	%rax, -24(%rbp)
-.L60:
+.L56:
 	addq	$1, -32(%rbp)
-.L58:
+.L54:
 	movq	-32(%rbp), %rax
-	cmpq	%rax, -80(%rbp)
-	jnb	.L72
+	cmpq	%rax, -88(%rbp)
+	jnb	.L69
 	movq	-424(%rbp), %rax
 	movq	-8(%rbp), %rdx
 	movq	%rdx, (%rax)
 	cmpq	$0, -16(%rbp)
-	je	.L73
+	je	.L70
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
 	movl	$46, %esi
 	movq	%rax, %rdi
 	call	*strrchr@GOTPCREL(%rip)
-	movq	%rax, -104(%rbp)
-	cmpq	$0, -104(%rbp)
-	je	.L74
+	movq	%rax, -112(%rbp)
+	cmpq	$0, -112(%rbp)
+	je	.L71
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
-	cmpq	%rax, -104(%rbp)
-	je	.L74
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	-104(%rbp), %rdx
-	subq	%rax, %rdx
-	movq	%rdx, -112(%rbp)
+	cmpq	%rax, -112(%rbp)
+	je	.L71
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	-112(%rbp), %rdx
+	subq	%rax, %rdx
+	movq	%rdx, -120(%rbp)
+	movq	-16(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-120(%rbp), %rdx
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	-424(%rbp), %rdx
 	movq	%rax, 16(%rdx)
-	movq	-104(%rbp), %rax
+	movq	-112(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
 	movq	%rax, %rdx
-	movq	-104(%rbp), %rax
+	movq	-112(%rbp), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	-424(%rbp), %rdx
 	movq	%rax, 8(%rdx)
-	jmp	.L76
-.L74:
+	jmp	.L73
+.L71:
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rdx
 	movq	-424(%rbp), %rax
 	movq	%rdx, 16(%rax)
 	movq	-424(%rbp), %rax
 	movq	$0, 8(%rax)
-	jmp	.L76
-.L73:
+	jmp	.L73
+.L70:
 	movq	-424(%rbp), %rax
 	movq	$0, 16(%rax)
 	movq	-424(%rbp), %rax
 	movq	$0, 8(%rax)
-.L76:
-	movq	$0, -48(%rbp)
+.L73:
+	movq	$0, -56(%rbp)
 	movq	-8(%rbp), %rax
-	movq	%rax, -56(%rbp)
-	movq	$0, -64(%rbp)
-	jmp	.L77
-.L78:
-	movq	-56(%rbp), %rax
+	movq	%rax, -64(%rbp)
+	movq	$0, -72(%rbp)
+	jmp	.L74
+.L75:
+	movq	-64(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
-	addq	%rax, -48(%rbp)
-	addq	$1, -64(%rbp)
-	movq	-56(%rbp), %rax
+	addq	%rax, -56(%rbp)
+	addq	$1, -72(%rbp)
+	movq	-64(%rbp), %rax
 	movq	8(%rax), %rax
-	movq	%rax, -56(%rbp)
-.L77:
-	cmpq	$0, -56(%rbp)
-	jne	.L78
-	cmpq	$1, -64(%rbp)
-	jbe	.L79
-	movq	-64(%rbp), %rdx
-	movq	-48(%rbp), %rax
+	movq	%rax, -64(%rbp)
+.L74:
+	cmpq	$0, -64(%rbp)
+	jne	.L75
+	cmpq	$1, -72(%rbp)
+	jbe	.L76
+	movq	-72(%rbp), %rdx
+	movq	-56(%rbp), %rax
 	addq	%rdx, %rax
 	subq	$1, %rax
-	movq	%rax, -48(%rbp)
-.L79:
-	movq	-48(%rbp), %rax
+	movq	%rax, -56(%rbp)
+.L76:
+	movq	-56(%rbp), %rax
 	addq	$1, %rax
 	movq	%rax, %rsi
 	leaq	.LC0(%rip), %rax
 	movq	%rax, %rdi
-	call	*create_string@GOTPCREL(%rip)
-	movq	%rax, -120(%rbp)
-	movq	-120(%rbp), %rax
+	call	*create_string_not_check@GOTPCREL(%rip)
+	movq	%rax, -128(%rbp)
+	movq	-128(%rbp), %rax
 	movb	$0, (%rax)
 	movq	-8(%rbp), %rax
-	movq	%rax, -56(%rbp)
-	movb	$1, -65(%rbp)
-	jmp	.L80
-.L82:
-	cmpb	$0, -65(%rbp)
-	jne	.L81
-	movq	-56(%rbp), %rax
+	movq	%rax, -64(%rbp)
+	movb	$1, -73(%rbp)
+	jmp	.L77
+.L79:
+	cmpb	$0, -73(%rbp)
+	jne	.L78
+	movq	-64(%rbp), %rax
 	movq	(%rax), %rax
 	leaq	.LC2(%rip), %rdx
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*strcmp@GOTPCREL(%rip)
 	testl	%eax, %eax
-	je	.L81
-	movq	-120(%rbp), %rax
+	je	.L78
+	movq	-128(%rbp), %rax
 	movzbl	(%rax), %eax
 	testb	%al, %al
-	je	.L81
-	movq	-120(%rbp), %rax
+	je	.L78
+	movq	-128(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
 	leaq	-1(%rax), %rdx
-	movq	-120(%rbp), %rax
+	movq	-128(%rbp), %rax
 	addq	%rdx, %rax
 	movzbl	(%rax), %eax
 	cmpb	$47, %al
-	je	.L81
-	movq	-120(%rbp), %rax
+	je	.L78
+	movq	-128(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
 	movq	%rax, %rdx
-	movq	-120(%rbp), %rax
+	movq	-128(%rbp), %rax
 	addq	%rdx, %rax
 	movw	$47, (%rax)
-.L81:
-	movq	-56(%rbp), %rax
+.L78:
+	movq	-64(%rbp), %rax
 	movq	(%rax), %rdx
-	movq	-120(%rbp), %rax
+	movq	-128(%rbp), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*strcat@GOTPCREL(%rip)
-	movb	$0, -65(%rbp)
-	movq	-56(%rbp), %rax
+	movb	$0, -73(%rbp)
+	movq	-64(%rbp), %rax
 	movq	8(%rax), %rax
-	movq	%rax, -56(%rbp)
-.L80:
-	cmpq	$0, -56(%rbp)
-	jne	.L82
-	movq	-120(%rbp), %rax
+	movq	%rax, -64(%rbp)
+.L77:
+	cmpq	$0, -64(%rbp)
+	jne	.L79
+	movq	-128(%rbp), %rax
 	movq	%rax, %rdi
 	call	*strlen@GOTPCREL(%rip)
 	movq	%rax, %rdx
-	movq	-120(%rbp), %rax
+	movq	-128(%rbp), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)

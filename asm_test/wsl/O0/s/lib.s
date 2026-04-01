@@ -205,6 +205,18 @@ initialized:
 	.size	all_string_list, 8
 all_string_list:
 	.zero	8
+	.globl	DEFAULT_INIT_NAME
+	.align 8
+	.type	DEFAULT_INIT_NAME, @object
+	.size	DEFAULT_INIT_NAME, 8
+DEFAULT_INIT_NAME:
+	.zero	8
+	.globl	DEFAULT_CONSTRUCTOR_NAME
+	.align 8
+	.type	DEFAULT_CONSTRUCTOR_NAME, @object
+	.size	DEFAULT_CONSTRUCTOR_NAME, 8
+DEFAULT_CONSTRUCTOR_NAME:
+	.zero	8
 	.globl	IMPORT_KEYWORD
 	.align 8
 	.type	IMPORT_KEYWORD, @object
@@ -824,6 +836,23 @@ create_string_check:
 	leave
 	ret
 	.size	create_string_check, .-create_string_check
+	.globl	create_string_not_check
+	.type	create_string_not_check, @function
+create_string_not_check:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$16, %rsp
+	movq	%rdi, -8(%rbp)
+	movq	%rsi, -16(%rbp)
+	movq	-16(%rbp), %rcx
+	movq	-8(%rbp), %rax
+	movl	$0, %edx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	call	create_string_check
+	leave
+	ret
+	.size	create_string_not_check, .-create_string_not_check
 	.globl	create_string
 	.type	create_string, @function
 create_string:
@@ -841,7 +870,12 @@ create_string:
 	leave
 	ret
 	.size	create_string, .-create_string
-	.globl	init
+	.section	.rodata
+.LC54:
+	.string	"init"
+.LC55:
+	.string	"$constructor"
+	.text
 	.type	init, @function
 init:
 	pushq	%rbp
@@ -850,46 +884,14 @@ init:
 	subq	$24, %rsp
 	movzbl	initialized(%rip), %eax
 	testb	%al, %al
-	jne	.L36
+	jne	.L38
 	movq	struct_memory(%rip), %rax
-	testq	%rax, %rax
-	jne	.L28
-	movl	$32, %edi
-	call	*malloc@GOTPCREL(%rip)
-	movq	%rax, struct_memory(%rip)
-	movq	struct_memory(%rip), %rax
-	testq	%rax, %rax
-	jne	.L29
-	movq	stderr(%rip), %rax
-	movq	%rax, %rcx
-	movl	$30, %edx
-	movl	$1, %esi
-	leaq	.LC52(%rip), %rax
-	movq	%rax, %rdi
-	call	*fwrite@GOTPCREL(%rip)
-	movb	$0, initialized(%rip)
-	movl	$1, %edi
-	call	*exit@GOTPCREL(%rip)
-.L29:
-	movq	struct_memory(%rip), %rbx
-	movl	$1024, %edi
-	call	*malloc@GOTPCREL(%rip)
-	movq	%rax, 24(%rbx)
-	movq	struct_memory(%rip), %rax
-	movq	$1024, (%rax)
-	movq	struct_memory(%rip), %rax
-	movq	$0, 8(%rax)
-	movq	struct_memory(%rip), %rax
-	movq	$0, 16(%rax)
-	movq	$1024, struct_memory_count(%rip)
-.L28:
-	movq	string_memory(%rip), %rax
 	testq	%rax, %rax
 	jne	.L30
 	movl	$32, %edi
 	call	*malloc@GOTPCREL(%rip)
-	movq	%rax, string_memory(%rip)
-	movq	string_memory(%rip), %rax
+	movq	%rax, struct_memory(%rip)
+	movq	struct_memory(%rip), %rax
 	testq	%rax, %rax
 	jne	.L31
 	movq	stderr(%rip), %rax
@@ -903,6 +905,38 @@ init:
 	movl	$1, %edi
 	call	*exit@GOTPCREL(%rip)
 .L31:
+	movq	struct_memory(%rip), %rbx
+	movl	$1024, %edi
+	call	*malloc@GOTPCREL(%rip)
+	movq	%rax, 24(%rbx)
+	movq	struct_memory(%rip), %rax
+	movq	$1024, (%rax)
+	movq	struct_memory(%rip), %rax
+	movq	$0, 8(%rax)
+	movq	struct_memory(%rip), %rax
+	movq	$0, 16(%rax)
+	movq	$1024, struct_memory_count(%rip)
+.L30:
+	movq	string_memory(%rip), %rax
+	testq	%rax, %rax
+	jne	.L32
+	movl	$32, %edi
+	call	*malloc@GOTPCREL(%rip)
+	movq	%rax, string_memory(%rip)
+	movq	string_memory(%rip), %rax
+	testq	%rax, %rax
+	jne	.L33
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$30, %edx
+	movl	$1, %esi
+	leaq	.LC52(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	movb	$0, initialized(%rip)
+	movl	$1, %edi
+	call	*exit@GOTPCREL(%rip)
+.L33:
 	movq	string_memory(%rip), %rbx
 	movl	$1024, %edi
 	call	*malloc@GOTPCREL(%rip)
@@ -914,11 +948,11 @@ init:
 	movq	string_memory(%rip), %rax
 	movq	$0, 16(%rax)
 	movq	$1024, string_memory_count(%rip)
-.L30:
+.L32:
 	movb	$1, initialized(%rip)
 	movq	$0, -24(%rbp)
-	jmp	.L32
-.L33:
+	jmp	.L34
+.L35:
 	movq	-24(%rbp), %rax
 	leaq	0(,%rax,8), %rdx
 	leaq	keywordStrings(%rip), %rax
@@ -939,12 +973,12 @@ init:
 	leaq	keywordList(%rip), %rdx
 	movq	%rax, (%rcx,%rdx)
 	addq	$1, -24(%rbp)
-.L32:
+.L34:
 	cmpq	$21, -24(%rbp)
-	jbe	.L33
+	jbe	.L35
 	movq	$0, -32(%rbp)
-	jmp	.L34
-.L35:
+	jmp	.L36
+.L37:
 	movq	-32(%rbp), %rax
 	leaq	0(,%rax,8), %rdx
 	leaq	symbolStrings(%rip), %rax
@@ -965,9 +999,21 @@ init:
 	leaq	symbolList(%rip), %rdx
 	movq	%rax, (%rcx,%rdx)
 	addq	$1, -32(%rbp)
-.L34:
+.L36:
 	cmpq	$29, -32(%rbp)
-	jbe	.L35
+	jbe	.L37
+	movl	$0, %edx
+	movl	$4, %esi
+	leaq	.LC54(%rip), %rax
+	movq	%rax, %rdi
+	call	create_string_check
+	movq	%rax, DEFAULT_INIT_NAME(%rip)
+	movl	$0, %edx
+	movl	$13, %esi
+	leaq	.LC55(%rip), %rax
+	movq	%rax, %rdi
+	call	create_string_check
+	movq	%rax, DEFAULT_CONSTRUCTOR_NAME(%rip)
 	movq	keywordList(%rip), %rax
 	movq	%rax, IMPORT_KEYWORD(%rip)
 	movq	8+keywordList(%rip), %rax
@@ -1072,10 +1118,10 @@ init:
 	movq	%rax, AND_SYMBOL(%rip)
 	movq	232+symbolList(%rip), %rax
 	movq	%rax, OR_SYMBOL(%rip)
-	jmp	.L25
-.L36:
+	jmp	.L27
+.L38:
 	nop
-.L25:
+.L27:
 	movq	-8(%rbp), %rbx
 	leave
 	ret
@@ -1083,10 +1129,10 @@ init:
 	.local	memoryBlockCount
 	.comm	memoryBlockCount,8,8
 	.section	.rodata
-.LC54:
+.LC56:
 	.string	"src/lib.c"
 	.align 8
-.LC55:
+.LC57:
 	.string	"struct_memory->used % ALIGN_SIZE == 0"
 	.text
 	.globl	alloc_memory
@@ -1098,9 +1144,13 @@ alloc_memory:
 	movq	%rdi, -24(%rbp)
 	movzbl	initialized(%rip), %eax
 	testb	%al, %al
-	jne	.L38
+	jne	.L40
 	call	init
-.L38:
+.L40:
+	movq	-24(%rbp), %rax
+	addq	$7, %rax
+	andq	$-8, %rax
+	movq	%rax, -24(%rbp)
 	movq	struct_memory(%rip), %rax
 	movq	8(%rax), %rdx
 	movq	-24(%rbp), %rax
@@ -1108,28 +1158,24 @@ alloc_memory:
 	movq	struct_memory(%rip), %rax
 	movq	(%rax), %rax
 	cmpq	%rax, %rdx
-	jb	.L39
+	jb	.L41
 	movl	$1, %edi
 	call	increase_memory_size
-.L39:
-	movq	-24(%rbp), %rax
-	addq	$7, %rax
-	andq	$-8, %rax
-	movq	%rax, -24(%rbp)
+.L41:
 	movq	struct_memory(%rip), %rax
 	movq	8(%rax), %rax
 	andl	$7, %eax
 	testq	%rax, %rax
-	je	.L40
+	je	.L42
 	leaq	__PRETTY_FUNCTION__.0(%rip), %rax
 	movq	%rax, %rcx
-	movl	$258, %edx
-	leaq	.LC54(%rip), %rax
+	movl	$263, %edx
+	leaq	.LC56(%rip), %rax
 	movq	%rax, %rsi
-	leaq	.LC55(%rip), %rax
+	leaq	.LC57(%rip), %rax
 	movq	%rax, %rdi
 	call	*__assert_fail@GOTPCREL(%rip)
-.L40:
+.L42:
 	movq	struct_memory(%rip), %rax
 	movq	24(%rax), %rdx
 	movq	struct_memory(%rip), %rax
@@ -1159,12 +1205,12 @@ is_keyword:
 	movq	%rdi, -24(%rbp)
 	movzbl	initialized(%rip), %eax
 	testb	%al, %al
-	jne	.L43
+	jne	.L45
 	call	init
-.L43:
+.L45:
 	movq	$0, -8(%rbp)
-	jmp	.L44
-.L47:
+	jmp	.L46
+.L49:
 	movq	-8(%rbp), %rax
 	leaq	0(,%rax,8), %rdx
 	leaq	keywordList(%rip), %rax
@@ -1174,16 +1220,16 @@ is_keyword:
 	movq	%rax, %rdi
 	call	string_equal
 	testb	%al, %al
-	je	.L45
+	je	.L47
 	movl	$1, %eax
-	jmp	.L46
-.L45:
+	jmp	.L48
+.L47:
 	addq	$1, -8(%rbp)
-.L44:
-	cmpq	$21, -8(%rbp)
-	jbe	.L47
-	movl	$0, %eax
 .L46:
+	cmpq	$21, -8(%rbp)
+	jbe	.L49
+	movl	$0, %eax
+.L48:
 	leave
 	ret
 	.size	is_keyword, .-is_keyword
@@ -1201,12 +1247,12 @@ string_equal:
 	ret
 	.size	string_equal, .-string_equal
 	.section	.rodata
-.LC56:
+.LC58:
 	.string	""
-.LC57:
+.LC59:
 	.string	"%zu/%zu bytes"
 	.align 8
-.LC58:
+.LC60:
 	.string	"Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu"
 	.text
 	.globl	get_info
@@ -1218,18 +1264,18 @@ get_info:
 	movq	$0, -8(%rbp)
 	movq	all_string_list(%rip), %rax
 	movq	%rax, -16(%rbp)
-	jmp	.L51
-.L52:
+	jmp	.L53
+.L54:
 	addq	$1, -8(%rbp)
 	movq	-16(%rbp), %rax
 	movq	16(%rax), %rax
 	movq	%rax, -16(%rbp)
-.L51:
+.L53:
 	cmpq	$0, -16(%rbp)
-	jne	.L52
+	jne	.L54
 	movl	$0, %edx
 	movl	$48, %esi
-	leaq	.LC56(%rip), %rax
+	leaq	.LC58(%rip), %rax
 	movq	%rax, %rdi
 	call	create_string_check
 	movq	%rax, -24(%rbp)
@@ -1241,13 +1287,13 @@ get_info:
 	movq	-24(%rbp), %rax
 	movq	%rdx, %rcx
 	movq	%rsi, %rdx
-	leaq	.LC57(%rip), %rsi
+	leaq	.LC59(%rip), %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*sprintf@GOTPCREL(%rip)
 	movl	$0, %edx
 	movl	$48, %esi
-	leaq	.LC56(%rip), %rax
+	leaq	.LC58(%rip), %rax
 	movq	%rax, %rdi
 	call	create_string_check
 	movq	%rax, -32(%rbp)
@@ -1259,13 +1305,13 @@ get_info:
 	movq	-32(%rbp), %rax
 	movq	%rdx, %rcx
 	movq	%rsi, %rdx
-	leaq	.LC57(%rip), %rsi
+	leaq	.LC59(%rip), %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*sprintf@GOTPCREL(%rip)
 	movl	$0, %edx
 	movl	$240, %esi
-	leaq	.LC56(%rip), %rax
+	leaq	.LC58(%rip), %rax
 	movq	%rax, %rdi
 	call	create_string_check
 	movq	%rax, -40(%rbp)
@@ -1280,7 +1326,7 @@ get_info:
 	movq	%rsi, %r8
 	movq	%rdx, %rcx
 	movl	$3, %edx
-	leaq	.LC58(%rip), %rsi
+	leaq	.LC60(%rip), %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*sprintf@GOTPCREL(%rip)

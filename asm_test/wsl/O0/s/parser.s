@@ -1,3972 +1,3887 @@
-	.file	"parser.c"
+	.file	"codegen.c"
 	.text
+	.type	find_attribute_table, @function
+find_attribute_table:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	movq	%rsi, -32(%rbp)
+	movq	-24(%rbp), %rax
+	movq	(%rax), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -8(%rbp)
+	jmp	.L2
+.L4:
+	movq	-16(%rbp), %rax
+	movq	8(%rax), %rax
+	cmpq	%rax, -32(%rbp)
+	jne	.L2
+	movq	-16(%rbp), %rax
+	jmp	.L3
+.L2:
+	movq	-8(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -16(%rbp)
+	cmpq	$0, -16(%rbp)
+	jne	.L4
+	movl	$0, %eax
+.L3:
+	leave
+	ret
+	.size	find_attribute_table, .-find_attribute_table
+	.type	create_attribute_table, @function
+create_attribute_table:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	movl	$24, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
+	movq	%rax, -8(%rbp)
+	call	*create_list@GOTPCREL(%rip)
+	movq	-8(%rbp), %rdx
+	movq	%rax, (%rdx)
+	movq	-8(%rbp), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 16(%rax)
+	movq	-8(%rbp), %rax
+	leave
+	ret
+	.size	create_attribute_table, .-create_attribute_table
 	.section	.rodata
 	.align 8
 .LC0:
-	.string	"Failed to parse import statement"
-	.align 8
-.LC1:
-	.string	"Failed to parse function declaration"
-	.align 8
-.LC2:
-	.string	"Failed to parse class declaration"
-	.align 8
-.LC3:
-	.string	"Unexpected token in code member"
+	.string	"[warning] Unsupported type for size lookup: %s\n"
 	.text
-	.globl	parse_code
-	.type	parse_code, @function
-parse_code:
+	.type	get_type_size, @function
+get_type_size:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$96, %rsp
-	movq	%rdi, -72(%rbp)
-	movq	%rsi, -80(%rbp)
-	movq	%rdx, -88(%rbp)
-	movq	builtin_scope(%rip), %rax
-	testq	%rax, %rax
-	jne	.L2
-	movl	$0, %edi
-	call	*create_scope@GOTPCREL(%rip)
-	movq	%rax, builtin_scope(%rip)
-	movq	builtin_scope(%rip), %rdx
-	movq	VOID_KEYWORD(%rip), %rax
-	movq	%rdx, %r8
-	movl	$0, %ecx
-	movl	$0, %edx
-	movl	$0, %esi
-	movq	%rax, %rdi
-	call	*create_name@GOTPCREL(%rip)
-	movq	%rax, name_void(%rip)
-	movq	builtin_scope(%rip), %rdx
-	movq	INT_KEYWORD(%rip), %rax
-	movq	%rdx, %r8
-	movl	$0, %ecx
-	movl	$0, %edx
-	movl	$0, %esi
-	movq	%rax, %rdi
-	call	*create_name@GOTPCREL(%rip)
-	movq	%rax, name_int(%rip)
-	movq	builtin_scope(%rip), %rdx
-	movq	FLOAT_KEYWORD(%rip), %rax
-	movq	%rdx, %r8
-	movl	$0, %ecx
-	movl	$0, %edx
-	movl	$0, %esi
-	movq	%rax, %rdi
-	call	*create_name@GOTPCREL(%rip)
-	movq	%rax, name_float(%rip)
-	movq	builtin_scope(%rip), %rdx
-	movq	STRING_KEYWORD(%rip), %rax
-	movq	%rdx, %r8
-	movl	$0, %ecx
-	movl	$0, %edx
-	movl	$0, %esi
-	movq	%rax, %rdi
-	call	*create_name@GOTPCREL(%rip)
-	movq	%rax, name_string(%rip)
-	movq	builtin_scope(%rip), %rdx
-	movq	BOOL_KEYWORD(%rip), %rax
-	movq	%rdx, %r8
-	movl	$0, %ecx
-	movl	$0, %edx
-	movl	$0, %esi
-	movq	%rax, %rdi
-	call	*create_name@GOTPCREL(%rip)
-	movq	%rax, name_bool(%rip)
-.L2:
-	cmpq	$0, -80(%rbp)
-	jne	.L3
-	movq	builtin_scope(%rip), %rax
-	movq	%rax, -80(%rbp)
-.L3:
-	movq	$0, -8(%rbp)
-	movq	$0, -16(%rbp)
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -24(%rbp)
-	movq	-80(%rbp), %rax
-	movq	%rax, %rdi
-	call	*create_scope@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L4
-.L13:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L5
-	movq	IMPORT_KEYWORD(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L5
-	movq	-32(%rbp), %rdx
-	movq	-72(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	parse_import
-	movq	%rax, -40(%rbp)
-	cmpq	$0, -40(%rbp)
-	jne	.L6
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC0(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L6:
-	movq	-40(%rbp), %rax
-	movl	$0, %ecx
-	movl	$0, %edx
-	movq	%rax, %rsi
-	movl	$0, %edi
-	call	*create_code_member@GOTPCREL(%rip)
-	movq	%rax, %rdx
-	movq	-24(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	jmp	.L7
-.L5:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L8
-	movq	FUNC_KEYWORD(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L8
-	movq	-88(%rbp), %rdx
-	movq	-32(%rbp), %rcx
-	movq	-72(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_function
-	movq	%rax, -48(%rbp)
-	cmpq	$0, -48(%rbp)
-	jne	.L9
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC1(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L9:
-	movq	-48(%rbp), %rax
-	movl	$0, %ecx
-	movq	%rax, %rdx
-	movl	$0, %esi
-	movl	$1, %edi
-	call	*create_code_member@GOTPCREL(%rip)
-	movq	%rax, %rdx
-	movq	-24(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	jmp	.L7
-.L8:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L10
-	movq	CLASS_KEYWORD(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L10
-	movq	-88(%rbp), %rdx
-	movq	-32(%rbp), %rcx
-	movq	-72(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_class
-	movq	%rax, -56(%rbp)
-	cmpq	$0, -56(%rbp)
-	jne	.L11
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC2(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L11:
-	movq	-56(%rbp), %rax
-	movq	%rax, %rcx
-	movl	$0, %edx
-	movl	$0, %esi
-	movl	$2, %edi
-	call	*create_code_member@GOTPCREL(%rip)
-	movq	%rax, %rdx
-	movq	-24(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	jmp	.L7
-.L10:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC3(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L7:
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L4:
+	subq	$16, %rsp
+	movq	%rdi, -8(%rbp)
 	cmpq	$0, -8(%rbp)
+	jne	.L8
+	movl	$0, %eax
+	jmp	.L9
+.L8:
+	movq	name_int(%rip), %rax
+	cmpq	%rax, -8(%rbp)
+	je	.L10
+	movq	name_float(%rip), %rax
+	cmpq	%rax, -8(%rbp)
+	je	.L10
+	movq	name_string(%rip), %rax
+	cmpq	%rax, -8(%rbp)
+	jne	.L11
+.L10:
+	movl	$8, %eax
+	jmp	.L9
+.L11:
+	movq	name_bool(%rip), %rax
+	cmpq	%rax, -8(%rbp)
 	je	.L12
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	testl	%eax, %eax
+	movq	name_void(%rip), %rax
+	cmpq	%rax, -8(%rbp)
 	jne	.L13
 .L12:
-	movq	-32(%rbp), %rdx
-	movq	-24(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*create_code@GOTPCREL(%rip)
-	leave
-	ret
-	.size	parse_code, .-parse_code
-	.section	.rodata
-	.align 8
-.LC4:
-	.string	"Expected identifier after 'import'"
-	.align 8
-.LC5:
-	.string	"Expected string literal after 'from'"
-	.align 8
-.LC6:
-	.string	"Expected ';' at end of import statement"
-	.text
-	.type	parse_import, @function
-parse_import:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$64, %rsp
-	movq	%rdi, -56(%rbp)
-	movq	%rsi, -64(%rbp)
-	movq	$0, -8(%rbp)
-	movq	$0, -16(%rbp)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
+	movl	$1, %eax
+	jmp	.L9
+.L13:
 	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$1, %eax
-	je	.L16
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC4(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L17
-.L16:
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, -40(%rbp)
-	movq	$0, -24(%rbp)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L18
-	movq	FROM_KEYWORD(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L18
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$4, %eax
-	je	.L19
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC5(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L17
-.L19:
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, -24(%rbp)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L18:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L20
-	movq	SEMICOLON_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L21
-.L20:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC6(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L17
-.L21:
-	movq	-64(%rbp), %rdx
-	movq	-24(%rbp), %rcx
-	movq	-40(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	*parse_import_file@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-	cmpq	$0, -32(%rbp)
-	jne	.L22
-	movq	name_void(%rip), %rdx
-	movq	-64(%rbp), %rcx
-	movq	-40(%rbp), %rax
-	movq	%rcx, %r8
-	movl	$0, %ecx
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*create_name@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-.L22:
-	movq	-24(%rbp), %rdx
-	movq	-32(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*create_import@GOTPCREL(%rip)
-.L17:
-	leave
-	ret
-	.size	parse_import, .-parse_import
-	.section	.rodata
-	.align 8
-.LC7:
-	.string	"Expected function return type after 'func'"
-.LC8:
-	.string	"Unknown function return type"
-	.align 8
-.LC9:
-	.string	"Expected function name after return type"
-	.align 8
-.LC10:
-	.string	"Expected '(' after function name"
-	.align 8
-.LC11:
-	.string	"Failed to parse function parameter"
-	.align 8
-.LC12:
-	.string	"Function parameters cannot have default values"
-	.align 8
-.LC13:
-	.string	"Expected ',' or ')' after function parameter"
-	.align 8
-.LC14:
-	.string	"Expected '{' to start function body"
-	.align 8
-.LC15:
-	.string	"Failed to parse function body statement"
-	.align 8
-.LC16:
-	.string	"Unreachable code after return statement"
-	.align 8
-.LC17:
-	.string	"Function missing return statement"
-	.text
-	.type	parse_function, @function
-parse_function:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$112, %rsp
-	movq	%rdi, -88(%rbp)
-	movq	%rsi, -96(%rbp)
-	movq	%rdx, -104(%rbp)
-	movq	$0, -8(%rbp)
-	movq	$0, -16(%rbp)
-	movq	-96(%rbp), %rax
-	movq	%rax, %rdi
-	call	*create_scope@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-	movq	-88(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$1, %eax
-	je	.L24
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L25
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, %rdi
-	call	*is_builtin_type@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L24
-.L25:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC7(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L26
-.L24:
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rdx
-	movq	-96(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*search@GOTPCREL(%rip)
-	movq	%rax, -40(%rbp)
-	cmpq	$0, -40(%rbp)
-	jne	.L27
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC8(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L26
-.L27:
-	movq	-88(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$1, %eax
-	je	.L28
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC9(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L26
-.L28:
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	-96(%rbp), %rcx
-	movq	-40(%rbp), %rdx
-	movq	%rcx, %r8
-	movl	$0, %ecx
-	movl	$2, %esi
-	movq	%rax, %rdi
-	call	*create_name@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	movq	-88(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L29
-	movq	L_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L30
-.L29:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC10(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L26
-.L30:
-	movq	-88(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -56(%rbp)
-	jmp	.L31
-.L38:
-	movq	-104(%rbp), %rdx
-	movq	-32(%rbp), %rcx
-	movq	-88(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_variable
-	movq	%rax, -80(%rbp)
-	cmpq	$0, -80(%rbp)
-	jne	.L32
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC11(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	jmp	.L33
-.L32:
-	movq	-80(%rbp), %rax
-	movq	16(%rax), %rax
-	testq	%rax, %rax
-	je	.L34
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC12(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	jmp	.L33
-.L34:
-	movq	-80(%rbp), %rdx
-	movq	-56(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-.L33:
-	movq	-88(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L35
-	movq	COMMA_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L35
-	movq	-88(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L31
-.L35:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L37
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L31
-.L37:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC13(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L26
-.L31:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L38
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L38
-	movq	-88(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L39
-	movq	L_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L40
-.L39:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC14(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L26
-.L40:
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -64(%rbp)
-	movq	-104(%rbp), %rax
-	movb	$1, (%rax)
-	movb	$0, -17(%rbp)
-	movq	-88(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L41
-.L45:
-	movq	-104(%rbp), %rdx
-	movq	-32(%rbp), %rcx
-	movq	-88(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_statement
-	movq	%rax, -72(%rbp)
-	cmpq	$0, -72(%rbp)
-	jne	.L42
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC15(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	jmp	.L43
-.L42:
-	cmpb	$0, -17(%rbp)
-	je	.L43
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC16(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L43:
-	movq	-72(%rbp), %rax
-	movl	8(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L44
-	movb	$1, -17(%rbp)
-.L44:
-	movq	-72(%rbp), %rdx
-	movq	-64(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	movq	-88(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L41:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L45
-	movq	R_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L45
-	movq	-104(%rbp), %rax
-	movb	$0, (%rax)
-	cmpb	$0, -17(%rbp)
-	jne	.L46
-	movq	name_void(%rip), %rax
-	cmpq	%rax, -40(%rbp)
-	je	.L46
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC17(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L46:
-	movq	-32(%rbp), %rdi
-	movq	-64(%rbp), %rcx
-	movq	-56(%rbp), %rdx
-	movq	-40(%rbp), %rsi
-	movq	-48(%rbp), %rax
-	movq	%rdi, %r8
-	movq	%rax, %rdi
-	call	*create_function@GOTPCREL(%rip)
-.L26:
-	leave
-	ret
-	.size	parse_function, .-parse_function
-	.section	.rodata
-	.align 8
-.LC18:
-	.string	"Expected method return type after 'method'"
-	.align 8
-.LC19:
-	.string	"Unknown return type for method"
-	.align 8
-.LC20:
-	.string	"Expected method name after return type"
-	.align 8
-.LC21:
-	.string	"Expected '(' after method name"
-	.align 8
-.LC22:
-	.string	"Expected 'self' as first parameter of method"
-	.align 8
-.LC23:
-	.string	"Expected ',' or ')' after method parameter"
-	.align 8
-.LC24:
-	.string	"Failed to parse method parameter"
-	.align 8
-.LC25:
-	.string	"Method parameters cannot have default values"
-	.align 8
-.LC26:
-	.string	"Expected '{' to start method body"
-	.align 8
-.LC27:
-	.string	"Failed to parse method body statement"
-	.align 8
-.LC28:
-	.string	"Method missing return statement"
-	.text
-	.type	parse_method, @function
-parse_method:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	addq	$-128, %rsp
-	movq	%rdi, -104(%rbp)
-	movq	%rsi, -112(%rbp)
-	movq	%rdx, -120(%rbp)
-	movq	%rcx, -128(%rbp)
-	movq	$0, -8(%rbp)
-	movq	$0, -16(%rbp)
-	movq	-112(%rbp), %rax
-	movq	%rax, %rdi
-	call	*create_scope@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-	movq	SELF_KEYWORD(%rip), %rax
-	movq	-32(%rbp), %rcx
-	movq	-120(%rbp), %rdx
-	movq	%rcx, %r8
-	movl	$0, %ecx
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*create_name@GOTPCREL(%rip)
-	movq	%rax, -40(%rbp)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$1, %eax
-	je	.L48
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L49
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, %rdi
-	call	*is_builtin_type@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L48
-.L49:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC18(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L50
-.L48:
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rdx
-	movq	-112(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*search@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	cmpq	$0, -48(%rbp)
-	jne	.L51
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC19(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L50
-.L51:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$1, %eax
-	je	.L52
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC20(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L50
-.L52:
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	-112(%rbp), %rcx
-	movq	-48(%rbp), %rdx
-	movq	%rcx, %r8
-	movl	$0, %ecx
-	movl	$3, %esi
-	movq	%rax, %rdi
-	call	*create_name@GOTPCREL(%rip)
-	movq	%rax, -56(%rbp)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L53
-	movq	L_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L54
-.L53:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC21(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L50
-.L54:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L55
-	movq	SELF_KEYWORD(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L56
-.L55:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC22(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L56:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -64(%rbp)
-	movq	-40(%rbp), %rcx
-	movq	-120(%rbp), %rax
-	movl	$0, %edx
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	*create_variable@GOTPCREL(%rip)
-	movq	%rax, %rdx
-	movq	-64(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	jmp	.L57
-.L65:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L58
-	movq	COMMA_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L58
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-128(%rbp), %rdx
-	movq	-32(%rbp), %rcx
-	movq	-104(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_variable
-	movq	%rax, -72(%rbp)
-	cmpq	$0, -72(%rbp)
-	je	.L59
-	jmp	.L74
-.L58:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L61
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L62
-.L61:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC23(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L50
-.L59:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC24(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	jmp	.L63
-.L74:
-	movq	-72(%rbp), %rax
-	movq	16(%rax), %rax
-	testq	%rax, %rax
-	je	.L64
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC25(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	jmp	.L63
-.L64:
-	movq	-72(%rbp), %rdx
-	movq	-64(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-.L63:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L57:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L65
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L65
-.L62:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L66
-	movq	L_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L67
-.L66:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC26(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L50
-.L67:
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -80(%rbp)
-	movq	-128(%rbp), %rax
-	movb	$1, (%rax)
-	movq	-128(%rbp), %rax
-	movb	$1, 1(%rax)
-	movb	$0, -17(%rbp)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L68
-.L72:
-	movq	-128(%rbp), %rdx
-	movq	-32(%rbp), %rcx
-	movq	-104(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_statement
-	movq	%rax, -88(%rbp)
-	cmpq	$0, -88(%rbp)
-	jne	.L69
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC27(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	jmp	.L70
-.L69:
-	cmpb	$0, -17(%rbp)
-	je	.L70
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC16(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L70:
-	movq	-88(%rbp), %rax
-	movl	8(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L71
-	movb	$1, -17(%rbp)
-.L71:
-	movq	-88(%rbp), %rdx
-	movq	-80(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L68:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L72
-	movq	R_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L72
-	movq	-128(%rbp), %rax
-	movb	$0, (%rax)
-	movq	-128(%rbp), %rax
-	movb	$0, 1(%rax)
-	cmpb	$0, -17(%rbp)
-	jne	.L73
-	movq	name_void(%rip), %rax
-	cmpq	%rax, -48(%rbp)
-	je	.L73
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC28(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L73:
-	movq	-32(%rbp), %rdi
-	movq	-80(%rbp), %rcx
-	movq	-64(%rbp), %rdx
-	movq	-48(%rbp), %rsi
-	movq	-56(%rbp), %rax
-	movq	%rdi, %r8
-	movq	%rax, %rdi
-	call	*create_method@GOTPCREL(%rip)
-.L50:
-	leave
-	ret
-	.size	parse_method, .-parse_method
-	.section	.rodata
-	.align 8
-.LC29:
-	.string	"Expected class name after 'class'"
-	.align 8
-.LC30:
-	.string	"Expected '{' to start class body"
-.LC31:
-	.string	"Failed to parse class method"
-	.align 8
-.LC32:
-	.string	"Failed to parse class variable"
-	.align 8
-.LC33:
-	.string	"Expected ';' after class variable declaration"
-	.align 8
-.LC34:
-	.string	"Unexpected token in class member"
-	.text
-	.type	parse_class, @function
-parse_class:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$96, %rsp
-	movq	%rdi, -72(%rbp)
-	movq	%rsi, -80(%rbp)
-	movq	%rdx, -88(%rbp)
-	movq	$0, -8(%rbp)
-	movq	$0, -16(%rbp)
-	movq	-80(%rbp), %rax
-	movq	%rax, %rdi
-	call	*create_scope@GOTPCREL(%rip)
-	movq	%rax, -24(%rbp)
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$1, %eax
-	je	.L76
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC29(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L77
-.L76:
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	-80(%rbp), %rcx
-	movq	-24(%rbp), %rdx
-	movq	%rcx, %r8
-	movq	%rdx, %rcx
-	movl	$0, %edx
-	movl	$4, %esi
-	movq	%rax, %rdi
-	call	*create_name@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L78
-	movq	L_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L79
-.L78:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC30(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L77
-.L79:
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -40(%rbp)
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L80
-.L88:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L81
-	movq	METHOD_KEYWORD(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L81
-	movq	-88(%rbp), %rcx
-	movq	-32(%rbp), %rdx
-	movq	-24(%rbp), %rsi
-	movq	-72(%rbp), %rax
-	movq	%rax, %rdi
-	call	parse_method
-	movq	%rax, -48(%rbp)
-	cmpq	$0, -48(%rbp)
-	jne	.L82
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC31(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L82:
-	movq	-48(%rbp), %rax
-	movl	$0, %edx
-	movq	%rax, %rsi
-	movl	$0, %edi
-	call	*create_class_member@GOTPCREL(%rip)
-	movq	%rax, %rdx
-	movq	-40(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	jmp	.L83
-.L81:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L84
-	movq	VAR_KEYWORD(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L84
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-88(%rbp), %rdx
-	movq	-24(%rbp), %rcx
-	movq	-72(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_variable
-	movq	%rax, -56(%rbp)
-	cmpq	$0, -56(%rbp)
-	jne	.L85
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC32(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L85:
-	movq	-56(%rbp), %rax
-	movq	%rax, %rdx
-	movl	$0, %esi
-	movl	$1, %edi
-	call	*create_class_member@GOTPCREL(%rip)
-	movq	%rax, %rdx
-	movq	-40(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L86
-	movq	SEMICOLON_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L89
-.L86:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC33(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	jmp	.L89
-.L84:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC34(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	jmp	.L83
-.L89:
-	nop
-.L83:
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L80:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L88
-	movq	R_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L88
-	movq	-24(%rbp), %rdx
-	movq	-40(%rbp), %rcx
-	movq	-32(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	*create_class@GOTPCREL(%rip)
-.L77:
-	leave
-	ret
-	.size	parse_class, .-parse_class
-	.section	.rodata
-.LC35:
-	.string	"Expected variable type"
-	.align 8
-.LC36:
-	.string	"Expected a type for variable declaration"
-.LC37:
-	.string	"Unknown variable type"
-.LC38:
-	.string	"Expected variable name"
-	.align 8
-.LC39:
-	.string	"Failed to parse variable initializer"
-	.text
-	.type	parse_variable, @function
-parse_variable:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$80, %rsp
-	movq	%rdi, -56(%rbp)
-	movq	%rsi, -64(%rbp)
-	movq	%rdx, -72(%rbp)
-	movq	$0, -16(%rbp)
-	movq	$0, -24(%rbp)
-	movq	-56(%rbp), %rax
-	movq	%rax, %rdi
-	call	*peek_current_token@GOTPCREL(%rip)
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$1, %eax
-	je	.L91
-	movq	-24(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L92
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, %rdi
-	call	*is_builtin_type@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L91
-.L92:
-	movq	-16(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC35(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L93
-.L91:
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rdx
-	movq	-64(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*search@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-	cmpq	$0, -32(%rbp)
-	je	.L94
-	movq	-32(%rbp), %rax
-	movq	%rax, -40(%rbp)
-	movq	-40(%rbp), %rax
-	movl	24(%rax), %eax
+	movl	32(%rax), %eax
 	testl	%eax, %eax
-	je	.L95
-	movq	-40(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$4, %eax
-	je	.L95
-	movq	-16(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC36(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	jmp	.L95
-.L94:
-	movq	-16(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC37(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L95:
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$1, %eax
-	je	.L96
-	movq	-16(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC38(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L96:
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rax
-	movq	-64(%rbp), %rcx
-	movq	-32(%rbp), %rdx
-	movq	%rcx, %r8
-	movl	$0, %ecx
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*create_name@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	movq	$0, -8(%rbp)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*peek_next_token@GOTPCREL(%rip)
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L97
-	movq	ASSIGN_SYMBOL(%rip), %rdx
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L97
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movq	%rax, -24(%rbp)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movq	%rax, -24(%rbp)
-	movq	-72(%rbp), %rdx
-	movq	-64(%rbp), %rcx
-	movq	-56(%rbp), %rax
+	jne	.L14
+	movq	-8(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	24(%rax), %rax
+	jmp	.L9
+.L14:
+	movq	-8(%rbp), %rax
+	movq	8(%rax), %rdx
+	movq	stderr(%rip), %rax
+	leaq	.LC0(%rip), %rcx
 	movq	%rcx, %rsi
 	movq	%rax, %rdi
-	call	parse_expression
-	movq	%rax, -8(%rbp)
-	cmpq	$0, -8(%rbp)
-	jne	.L97
-	movq	-16(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC39(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L97:
-	movq	-8(%rbp), %rdx
-	movq	-48(%rbp), %rcx
-	movq	-32(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	*create_variable@GOTPCREL(%rip)
-.L93:
+	movl	$0, %eax
+	call	*fprintf@GOTPCREL(%rip)
+	movl	$8, %eax
+.L9:
 	leave
 	ret
-	.size	parse_variable, .-parse_variable
+	.size	get_type_size, .-get_type_size
 	.section	.rodata
 	.align 8
-.LC40:
-	.string	"Cannot use 'break' outside of a loop"
-	.align 8
-.LC41:
-	.string	"Cannot use 'continue' outside of a loop"
-.LC42:
-	.string	"Failed to parse statement"
-.LC43:
-	.string	"Expected ';' after statement"
+.LC1:
+	.string	"Error: create_attribute received NULL table or attributes list\n"
 	.text
-	.type	parse_statement, @function
-parse_statement:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$64, %rsp
-	movq	%rdi, -40(%rbp)
-	movq	%rsi, -48(%rbp)
-	movq	%rdx, -56(%rbp)
-	movq	$0, -16(%rbp)
-	movq	$0, -24(%rbp)
-	movq	-40(%rbp), %rax
-	movq	%rax, %rdi
-	call	*peek_current_token@GOTPCREL(%rip)
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movq	%rax, -24(%rbp)
-	movq	$0, -8(%rbp)
-	movq	-24(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L99
-	movq	IF_KEYWORD(%rip), %rdx
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L100
-	movq	-56(%rbp), %rdx
-	movq	-48(%rbp), %rcx
-	movq	-40(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_if
-	movl	$0, %r9d
-	movl	$0, %r8d
-	movl	$0, %ecx
-	movl	$0, %edx
-	movq	%rax, %rsi
-	movl	$2, %edi
-	call	*create_statement@GOTPCREL(%rip)
-	jmp	.L101
-.L100:
-	movq	FOR_KEYWORD(%rip), %rdx
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L102
-	movq	-56(%rbp), %rdx
-	movq	-48(%rbp), %rcx
-	movq	-40(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_for
-	movl	$0, %r9d
-	movl	$0, %r8d
-	movq	%rax, %rcx
-	movl	$0, %edx
-	movl	$0, %esi
-	movl	$4, %edi
-	call	*create_statement@GOTPCREL(%rip)
-	jmp	.L101
-.L102:
-	movq	WHILE_KEYWORD(%rip), %rdx
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L103
-	movq	-56(%rbp), %rdx
-	movq	-48(%rbp), %rcx
-	movq	-40(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_while
-	movl	$0, %r9d
-	movl	$0, %r8d
-	movl	$0, %ecx
-	movq	%rax, %rdx
-	movl	$0, %esi
-	movl	$3, %edi
-	call	*create_statement@GOTPCREL(%rip)
-	jmp	.L101
-.L103:
-	movq	VAR_KEYWORD(%rip), %rdx
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L104
-	movq	-40(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	-56(%rbp), %rdx
-	movq	-48(%rbp), %rcx
-	movq	-40(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_variable
-	movq	%rax, %r9
-	movl	$0, %r8d
-	movl	$0, %ecx
-	movl	$0, %edx
-	movl	$0, %esi
-	movl	$1, %edi
-	call	*create_statement@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	jmp	.L105
-.L104:
-	movq	RETURN_KEYWORD(%rip), %rdx
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L106
-	movq	-40(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movq	%rax, -24(%rbp)
-	movq	-56(%rbp), %rdx
-	movq	-48(%rbp), %rcx
-	movq	-40(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_expression
-	movl	$0, %r9d
-	movq	%rax, %r8
-	movl	$0, %ecx
-	movl	$0, %edx
-	movl	$0, %esi
-	movl	$5, %edi
-	call	*create_statement@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	jmp	.L105
-.L106:
-	movq	BREAK_KEYWORD(%rip), %rdx
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L107
-	movq	-56(%rbp), %rax
-	movzbl	2(%rax), %eax
-	testb	%al, %al
-	jne	.L108
-	movq	-16(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC40(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L101
-.L108:
-	movl	$0, %r9d
-	movl	$0, %r8d
-	movl	$0, %ecx
-	movl	$0, %edx
-	movl	$0, %esi
-	movl	$6, %edi
-	call	*create_statement@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	jmp	.L105
-.L107:
-	movq	CONTINUE_KEYWORD(%rip), %rdx
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L109
-	movq	-56(%rbp), %rax
-	movzbl	2(%rax), %eax
-	testb	%al, %al
-	jne	.L110
-	movq	-16(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC41(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L101
-.L110:
-	movl	$0, %r9d
-	movl	$0, %r8d
-	movl	$0, %ecx
-	movl	$0, %edx
-	movl	$0, %esi
-	movl	$7, %edi
-	call	*create_statement@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	jmp	.L105
-.L109:
-	movq	-56(%rbp), %rdx
-	movq	-48(%rbp), %rcx
-	movq	-40(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_expression
-	movl	$0, %r9d
-	movq	%rax, %r8
-	movl	$0, %ecx
-	movl	$0, %edx
-	movl	$0, %esi
-	movl	$0, %edi
-	call	*create_statement@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	jmp	.L105
-.L99:
-	movq	-56(%rbp), %rdx
-	movq	-48(%rbp), %rcx
-	movq	-40(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_expression
-	movl	$0, %r9d
-	movq	%rax, %r8
-	movl	$0, %ecx
-	movl	$0, %edx
-	movl	$0, %esi
-	movl	$0, %edi
-	call	*create_statement@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-.L105:
-	movq	-40(%rbp), %rax
-	movq	%rax, %rdi
-	call	*peek_current_token@GOTPCREL(%rip)
-	movq	%rax, -16(%rbp)
-	cmpq	$0, -8(%rbp)
-	jne	.L111
-	movq	-16(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC42(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L111:
-	movq	-40(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L112
-	movq	SEMICOLON_SYMBOL(%rip), %rdx
-	movq	-24(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L113
-.L112:
-	movq	-16(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC43(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L113:
-	movq	-8(%rbp), %rax
-.L101:
-	leave
-	ret
-	.size	parse_statement, .-parse_statement
-	.section	.rodata
-.LC44:
-	.string	"Expected '(' after 'if'"
-.LC45:
-	.string	"Failed to parse if condition"
-	.align 8
-.LC46:
-	.string	"Expected ')' after if condition"
-.LC47:
-	.string	"Expected '{' to start if body"
-	.align 8
-.LC48:
-	.string	"Failed to parse if body statement"
-.LC49:
-	.string	"Expected '(' after 'elif'"
-	.align 8
-.LC50:
-	.string	"Failed to parse else-if condition"
-	.align 8
-.LC51:
-	.string	"Expected ')' after else-if condition"
-	.align 8
-.LC52:
-	.string	"Expected '{' to start else-if body"
-	.align 8
-.LC53:
-	.string	"Failed to parse else-if body statement"
-	.align 8
-.LC54:
-	.string	"Expected '{' to start else body"
-	.align 8
-.LC55:
-	.string	"Failed to parse else body statement"
-	.text
-	.type	parse_if, @function
-parse_if:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	addq	$-128, %rsp
-	movq	%rdi, -104(%rbp)
-	movq	%rsi, -112(%rbp)
-	movq	%rdx, -120(%rbp)
-	movq	$0, -8(%rbp)
-	movq	$0, -16(%rbp)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L115
-	movq	L_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L116
-.L115:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC44(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L117
-.L116:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-120(%rbp), %rdx
-	movq	-112(%rbp), %rcx
-	movq	-104(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_expression
-	movq	%rax, -24(%rbp)
-	cmpq	$0, -24(%rbp)
-	jne	.L118
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC45(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L118:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L119
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L120
-.L119:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC46(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L117
-.L120:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L121
-	movq	L_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L122
-.L121:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC47(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L117
-.L122:
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L123
-.L125:
-	movq	-120(%rbp), %rdx
-	movq	-112(%rbp), %rcx
-	movq	-104(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_statement
-	movq	%rax, -88(%rbp)
-	cmpq	$0, -88(%rbp)
-	jne	.L124
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC48(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L124:
-	movq	-88(%rbp), %rdx
-	movq	-32(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L123:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L125
-	movq	R_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L125
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -40(%rbp)
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*peek_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L126
-.L138:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L127
-	movq	L_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L128
-.L127:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC49(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L117
-.L128:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-120(%rbp), %rdx
-	movq	-112(%rbp), %rcx
-	movq	-104(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_expression
-	movq	%rax, -56(%rbp)
-	cmpq	$0, -56(%rbp)
-	jne	.L129
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC50(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L129:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L130
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L131
-.L130:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC51(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L117
-.L131:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L132
-	movq	L_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L133
-.L132:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC52(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L117
-.L133:
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -64(%rbp)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L134
-.L136:
-	movq	-120(%rbp), %rdx
-	movq	-112(%rbp), %rcx
-	movq	-104(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_statement
-	movq	%rax, -72(%rbp)
-	cmpq	$0, -72(%rbp)
-	jne	.L135
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC53(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L135:
-	movq	-72(%rbp), %rdx
-	movq	-64(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L134:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L136
-	movq	R_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L136
-	movq	-64(%rbp), %rdx
-	movq	-56(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*create_else_if@GOTPCREL(%rip)
-	movq	%rax, %rdx
-	movq	-40(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*peek_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L126:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L137
-	movq	ELIF_KEYWORD(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L138
-.L137:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L139
-	movq	ELSE_KEYWORD(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L139
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L140
-	movq	L_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L141
-.L140:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC54(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L117
-.L141:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L142
-.L144:
-	movq	-120(%rbp), %rdx
-	movq	-112(%rbp), %rcx
-	movq	-104(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_statement
-	movq	%rax, -80(%rbp)
-	cmpq	$0, -80(%rbp)
-	jne	.L143
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC55(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L143:
-	movq	-80(%rbp), %rdx
-	movq	-48(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L142:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L144
-	movq	R_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L144
-.L139:
-	movq	-104(%rbp), %rax
-	movq	%rax, %rdi
-	call	*peek_current_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-48(%rbp), %rcx
-	movq	-40(%rbp), %rdx
-	movq	-32(%rbp), %rsi
-	movq	-24(%rbp), %rax
-	movq	%rax, %rdi
-	call	*create_if@GOTPCREL(%rip)
-.L117:
-	leave
-	ret
-	.size	parse_if, .-parse_if
-	.section	.rodata
-.LC56:
-	.string	"Expected '(' after 'for'"
-	.align 8
-.LC57:
-	.string	"Failed to parse for loop initializer"
-	.align 8
-.LC58:
-	.string	"Expected ';' after for loop initializer"
-	.align 8
-.LC59:
-	.string	"Failed to parse for loop condition"
-	.align 8
-.LC60:
-	.string	"Expected ';' after for loop condition"
-	.align 8
-.LC61:
-	.string	"Failed to parse for loop increment"
-	.align 8
-.LC62:
-	.string	"Expected ')' after for loop increment"
-	.align 8
-.LC63:
-	.string	"Expected '{' to start for loop body"
-	.align 8
-.LC64:
-	.string	"Failed to parse for loop body statement"
-	.text
-	.type	parse_for, @function
-parse_for:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$96, %rsp
-	movq	%rdi, -72(%rbp)
-	movq	%rsi, -80(%rbp)
-	movq	%rdx, -88(%rbp)
-	movq	$0, -8(%rbp)
-	movq	$0, -16(%rbp)
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L146
-	movq	L_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L147
-.L146:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC56(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L148
-.L147:
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	$0, -24(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L149
-	movq	SEMICOLON_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L150
-.L149:
-	movq	-88(%rbp), %rdx
-	movq	-80(%rbp), %rcx
-	movq	-72(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_variable
-	movq	%rax, -24(%rbp)
-	cmpq	$0, -24(%rbp)
-	jne	.L151
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC57(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L151:
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L150:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L152
-	movq	SEMICOLON_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L153
-.L152:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC58(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L148
-.L153:
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	$0, -32(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L154
-	movq	SEMICOLON_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L155
-.L154:
-	movq	-88(%rbp), %rdx
-	movq	-80(%rbp), %rcx
-	movq	-72(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_expression
-	movq	%rax, -32(%rbp)
-	cmpq	$0, -32(%rbp)
-	jne	.L156
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC59(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L156:
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L155:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L157
-	movq	SEMICOLON_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L158
-.L157:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC60(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L148
-.L158:
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	$0, -40(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L159
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L160
-.L159:
-	movq	-88(%rbp), %rdx
-	movq	-80(%rbp), %rcx
-	movq	-72(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_expression
-	movq	%rax, -40(%rbp)
-	cmpq	$0, -40(%rbp)
-	jne	.L161
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC61(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L161:
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L160:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L162
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L163
-.L162:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC62(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L148
-.L163:
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L164
-	movq	L_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L165
-.L164:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC63(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L148
-.L165:
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	movq	-88(%rbp), %rax
-	movb	$1, 2(%rax)
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L166
-.L168:
-	movq	-88(%rbp), %rdx
-	movq	-80(%rbp), %rcx
-	movq	-72(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_statement
-	movq	%rax, -56(%rbp)
-	cmpq	$0, -56(%rbp)
-	jne	.L167
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC64(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L167:
-	movq	-56(%rbp), %rdx
-	movq	-48(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L166:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L168
-	movq	R_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L168
-	movq	-88(%rbp), %rax
-	movb	$0, 2(%rax)
-	movq	-48(%rbp), %rcx
-	movq	-40(%rbp), %rdx
-	movq	-32(%rbp), %rsi
-	movq	-24(%rbp), %rax
-	movq	%rax, %rdi
-	call	*create_for@GOTPCREL(%rip)
-.L148:
-	leave
-	ret
-	.size	parse_for, .-parse_for
-	.section	.rodata
-.LC65:
-	.string	"Expected '(' after 'while'"
-	.align 8
-.LC66:
-	.string	"Failed to parse while condition"
-	.align 8
-.LC67:
-	.string	"Expected ')' after while condition"
-	.align 8
-.LC68:
-	.string	"Expected '{' to start while body"
-	.align 8
-.LC69:
-	.string	"Failed to parse while body statement"
-	.text
-	.type	parse_while, @function
-parse_while:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$80, %rsp
-	movq	%rdi, -56(%rbp)
-	movq	%rsi, -64(%rbp)
-	movq	%rdx, -72(%rbp)
-	movq	$0, -8(%rbp)
-	movq	$0, -16(%rbp)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L170
-	movq	L_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L171
-.L170:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC65(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L172
-.L171:
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-72(%rbp), %rdx
-	movq	-64(%rbp), %rcx
-	movq	-56(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_expression
-	movq	%rax, -24(%rbp)
-	cmpq	$0, -24(%rbp)
-	jne	.L173
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC66(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L173:
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L174
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L175
-.L174:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC67(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L172
-.L175:
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L176
-	movq	L_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L177
-.L176:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC68(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L172
-.L177:
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-	movq	-72(%rbp), %rax
-	movb	$1, 2(%rax)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L178
-.L180:
-	movq	-72(%rbp), %rdx
-	movq	-64(%rbp), %rcx
-	movq	-56(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_statement
-	movq	%rax, -40(%rbp)
-	cmpq	$0, -40(%rbp)
-	jne	.L179
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC69(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L179:
-	movq	-40(%rbp), %rdx
-	movq	-32(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*list_append@GOTPCREL(%rip)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L178:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L180
-	movq	R_BRACE_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L180
-	movq	-72(%rbp), %rax
-	movb	$0, 2(%rax)
-	movq	-32(%rbp), %rdx
-	movq	-24(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*create_while@GOTPCREL(%rip)
-.L172:
-	leave
-	ret
-	.size	parse_while, .-parse_while
-	.section	.rodata
-.LC70:
-	.string	"Failed to parse right operand"
-	.text
-	.type	parse_expr_prec, @function
-parse_expr_prec:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$96, %rsp
-	movq	%rdi, -56(%rbp)
-	movq	%rsi, -64(%rbp)
-	movl	%edx, -68(%rbp)
-	movq	%rcx, -80(%rbp)
-	movq	%r8, -88(%rbp)
-	movq	$0, -24(%rbp)
-	movq	$0, -8(%rbp)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*peek_next_token@GOTPCREL(%rip)
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	jmp	.L182
-.L190:
-	movq	-8(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, %rdi
-	call	*string_to_operator@GOTPCREL(%rip)
-	movl	%eax, -28(%rbp)
-	movl	-28(%rbp), %eax
-	movl	%eax, %edi
-	call	*operator_precedence@GOTPCREL(%rip)
-	movl	%eax, -32(%rbp)
-	cmpl	$19, -28(%rbp)
-	je	.L183
-	movl	-32(%rbp), %eax
-	cmpl	-68(%rbp), %eax
-	jl	.L183
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-88(%rbp), %rdx
-	movq	-80(%rbp), %rcx
-	movq	-56(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_primary
-	movq	%rax, -40(%rbp)
-	cmpq	$0, -40(%rbp)
-	jne	.L184
-	movq	-24(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC70(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L185
-.L184:
-	movq	-40(%rbp), %rax
-	movl	$0, %ecx
-	movq	%rax, %rdx
-	movl	$0, %esi
-	movl	$19, %edi
-	call	*create_expression@GOTPCREL(%rip)
-	movq	%rax, -16(%rbp)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*peek_next_token@GOTPCREL(%rip)
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	jmp	.L186
-.L189:
-	movq	-8(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, %rdi
-	call	*string_to_operator@GOTPCREL(%rip)
-	movl	%eax, -44(%rbp)
-	movl	-44(%rbp), %eax
-	movl	%eax, %edi
-	call	*operator_precedence@GOTPCREL(%rip)
-	movl	%eax, -48(%rbp)
-	cmpl	$19, -44(%rbp)
-	je	.L187
-	movl	-48(%rbp), %eax
-	cmpl	-32(%rbp), %eax
-	jle	.L187
-	movq	-88(%rbp), %rdi
-	movq	-80(%rbp), %rcx
-	movl	-48(%rbp), %edx
-	movq	-16(%rbp), %rsi
-	movq	-56(%rbp), %rax
-	movq	%rdi, %r8
-	movq	%rax, %rdi
-	call	parse_expr_prec
-	movq	%rax, -16(%rbp)
-	cmpq	$0, -16(%rbp)
-	jne	.L188
-	movl	$0, %eax
-	jmp	.L185
-.L188:
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*peek_next_token@GOTPCREL(%rip)
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movq	%rax, -8(%rbp)
-.L186:
-	movq	-8(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	je	.L189
-.L187:
-	movq	-16(%rbp), %rdx
-	movq	-64(%rbp), %rsi
-	movl	-28(%rbp), %eax
-	movq	%rdx, %rcx
-	movl	$0, %edx
-	movl	%eax, %edi
-	call	*create_expression@GOTPCREL(%rip)
-	movq	%rax, -64(%rbp)
-	movq	-56(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*peek_next_token@GOTPCREL(%rip)
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movq	%rax, -8(%rbp)
-.L182:
-	movq	-8(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	je	.L190
-.L183:
-	movq	-56(%rbp), %rax
-	movq	%rax, %rdi
-	call	*peek_current_token@GOTPCREL(%rip)
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
-	movq	%rax, -8(%rbp)
-	movq	-64(%rbp), %rax
-.L185:
-	leave
-	ret
-	.size	parse_expr_prec, .-parse_expr_prec
-	.section	.rodata
-	.align 8
-.LC71:
-	.string	"Failed to parse expression primary"
-	.text
-	.type	parse_expression, @function
-parse_expression:
+	.type	create_attribute, @function
+create_attribute:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$48, %rsp
 	movq	%rdi, -24(%rbp)
 	movq	%rsi, -32(%rbp)
 	movq	%rdx, -40(%rbp)
+	movq	%rcx, -48(%rbp)
+	movl	$24, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
+	movq	%rax, -8(%rbp)
+	movq	-8(%rbp), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, (%rax)
+	movq	-8(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	movq	-8(%rbp), %rax
+	movq	-48(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	cmpq	$0, -48(%rbp)
+	jne	.L16
+	movq	-40(%rbp), %rax
+	movq	16(%rax), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 16(%rax)
+	movq	-32(%rbp), %rax
+	movq	%rax, %rdi
+	call	get_type_size
 	movq	-40(%rbp), %rdx
-	movq	-32(%rbp), %rcx
-	movq	-24(%rbp), %rax
+	movq	16(%rdx), %rdx
+	addq	%rax, %rdx
+	movq	-40(%rbp), %rax
+	movq	%rdx, 16(%rax)
+.L16:
+	cmpq	$0, -40(%rbp)
+	je	.L17
+	movq	-40(%rbp), %rax
+	movq	(%rax), %rax
+	testq	%rax, %rax
+	jne	.L18
+.L17:
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$63, %edx
+	movl	$1, %esi
+	leaq	.LC1(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	jmp	.L19
+.L18:
+	movq	-40(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+.L19:
+	movq	-8(%rbp), %rax
+	leave
+	ret
+	.size	create_attribute, .-create_attribute
+	.type	is_assignment_operator, @function
+is_assignment_operator:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	movl	%edi, -4(%rbp)
+	cmpl	$13, -4(%rbp)
+	je	.L22
+	cmpl	$14, -4(%rbp)
+	je	.L22
+	cmpl	$15, -4(%rbp)
+	je	.L22
+	cmpl	$16, -4(%rbp)
+	je	.L22
+	cmpl	$17, -4(%rbp)
+	je	.L22
+	cmpl	$18, -4(%rbp)
+	jne	.L23
+.L22:
+	movl	$1, %eax
+	jmp	.L24
+.L23:
+	movl	$0, %eax
+.L24:
+	popq	%rbp
+	ret
+	.size	is_assignment_operator, .-is_assignment_operator
+	.type	get_instruction_type, @function
+get_instruction_type:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	movl	%edi, -4(%rbp)
+	cmpl	$18, -4(%rbp)
+	ja	.L27
+	movl	-4(%rbp), %eax
+	leaq	0(,%rax,4), %rdx
+	leaq	.L29(%rip), %rax
+	movl	(%rdx,%rax), %eax
+	cltq
+	leaq	.L29(%rip), %rdx
+	addq	%rdx, %rax
+	jmp	*%rax
+	.section	.rodata
+	.align 4
+	.align 4
+.L29:
+	.long	.L33-.L29
+	.long	.L32-.L29
+	.long	.L31-.L29
+	.long	.L30-.L29
+	.long	.L28-.L29
+	.long	.L42-.L29
+	.long	.L41-.L29
+	.long	.L40-.L29
+	.long	.L39-.L29
+	.long	.L38-.L29
+	.long	.L37-.L29
+	.long	.L36-.L29
+	.long	.L35-.L29
+	.long	.L34-.L29
+	.long	.L33-.L29
+	.long	.L32-.L29
+	.long	.L31-.L29
+	.long	.L30-.L29
+	.long	.L28-.L29
+	.text
+.L33:
+	movl	$0, %eax
+	jmp	.L43
+.L32:
+	movl	$1, %eax
+	jmp	.L43
+.L31:
+	movl	$2, %eax
+	jmp	.L43
+.L30:
+	movl	$3, %eax
+	jmp	.L43
+.L28:
+	movl	$4, %eax
+	jmp	.L43
+.L34:
+	movl	$14, %eax
+	jmp	.L43
+.L42:
+	movl	$5, %eax
+	jmp	.L43
+.L41:
+	movl	$6, %eax
+	jmp	.L43
+.L40:
+	movl	$7, %eax
+	jmp	.L43
+.L39:
+	movl	$8, %eax
+	jmp	.L43
+.L38:
+	movl	$9, %eax
+	jmp	.L43
+.L37:
+	movl	$10, %eax
+	jmp	.L43
+.L36:
+	movl	$11, %eax
+	jmp	.L43
+.L35:
+	movl	$12, %eax
+	jmp	.L43
+.L27:
+	movl	$25, %eax
+.L43:
+	popq	%rbp
+	ret
+	.size	get_instruction_type, .-get_instruction_type
+	.type	create_tac, @function
+create_tac:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$16, %rsp
+	movl	$32, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
+	movq	%rax, -8(%rbp)
+	call	*create_list@GOTPCREL(%rip)
+	movq	-8(%rbp), %rdx
+	movq	%rax, (%rdx)
+	movq	-8(%rbp), %rax
+	movq	$0, 8(%rax)
+	call	*create_list@GOTPCREL(%rip)
+	movq	-8(%rbp), %rdx
+	movq	%rax, 16(%rdx)
+	call	*create_list@GOTPCREL(%rip)
+	movq	-8(%rbp), %rdx
+	movq	%rax, 24(%rdx)
+	movq	-8(%rbp), %rax
+	leave
+	ret
+	.size	create_tac, .-create_tac
+	.type	create_tac_status, @function
+create_tac_status:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	movl	$88, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
+	movq	%rax, -8(%rbp)
+	movq	-8(%rbp), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, (%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 8(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 16(%rax)
+	call	*create_list@GOTPCREL(%rip)
+	movq	-8(%rbp), %rdx
+	movq	%rax, 24(%rdx)
+	call	*create_list@GOTPCREL(%rip)
+	movq	-8(%rbp), %rdx
+	movq	%rax, 32(%rdx)
+	movq	-8(%rbp), %rax
+	movq	$0, 40(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 48(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 56(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 64(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 72(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 80(%rax)
+	movq	-8(%rbp), %rax
+	leave
+	ret
+	.size	create_tac_status, .-create_tac_status
+	.type	create_subroutine, @function
+create_subroutine:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	movq	%rsi, -32(%rbp)
+	movl	$40, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
+	movq	%rax, -8(%rbp)
+	movq	-8(%rbp), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, (%rax)
+	movq	-8(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	call	*create_list@GOTPCREL(%rip)
+	movq	-8(%rbp), %rdx
+	movq	%rax, 16(%rdx)
+	call	*create_list@GOTPCREL(%rip)
+	movq	-8(%rbp), %rdx
+	movq	%rax, 24(%rdx)
+	call	*create_list@GOTPCREL(%rip)
+	movq	-8(%rbp), %rdx
+	movq	%rax, 32(%rdx)
+	movq	-8(%rbp), %rax
+	leave
+	ret
+	.size	create_subroutine, .-create_subroutine
+	.type	create_block, @function
+create_block:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	movl	$16, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
+	movq	%rax, -8(%rbp)
+	movq	-8(%rbp), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, (%rax)
+	call	*create_list@GOTPCREL(%rip)
+	movq	-8(%rbp), %rdx
+	movq	%rax, 8(%rdx)
+	movq	-8(%rbp), %rax
+	leave
+	ret
+	.size	create_block, .-create_block
+	.section	.rodata
+.LC2:
+	.string	""
+.LC3:
+	.string	"$%d-error"
+.LC4:
+	.string	"$%c%zu"
+	.text
+	.type	create_var, @function
+create_var:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$48, %rsp
+	movq	%rdi, -24(%rbp)
+	movq	%rsi, -32(%rbp)
+	movl	%edx, -36(%rbp)
+	movq	%rcx, -48(%rbp)
+	movl	$24, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
+	movq	%rax, -16(%rbp)
+	movq	-16(%rbp), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, (%rax)
+	movl	-36(%rbp), %eax
+	subl	$97, %eax
+	cmpl	$21, %eax
+	ja	.L53
+	movl	%eax, %eax
+	leaq	0(,%rax,4), %rdx
+	leaq	.L55(%rip), %rax
+	movl	(%rdx,%rax), %eax
+	cltq
+	leaq	.L55(%rip), %rdx
+	addq	%rdx, %rax
+	jmp	*%rax
+	.section	.rodata
+	.align 4
+	.align 4
+.L55:
+	.long	.L60-.L55
+	.long	.L59-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L58-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L57-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L53-.L55
+	.long	.L56-.L55
+	.long	.L53-.L55
+	.long	.L54-.L55
+	.text
+.L60:
+	movq	-48(%rbp), %rax
+	movq	40(%rax), %rax
+	leaq	1(%rax), %rcx
+	movq	-48(%rbp), %rdx
+	movq	%rcx, 40(%rdx)
+	movq	%rax, -8(%rbp)
+	jmp	.L61
+.L57:
+	movq	-48(%rbp), %rax
+	movq	48(%rax), %rax
+	leaq	1(%rax), %rcx
+	movq	-48(%rbp), %rdx
+	movq	%rcx, 48(%rdx)
+	movq	%rax, -8(%rbp)
+	jmp	.L61
+.L54:
+	movq	-48(%rbp), %rax
+	movq	56(%rax), %rax
+	leaq	1(%rax), %rcx
+	movq	-48(%rbp), %rdx
+	movq	%rcx, 56(%rdx)
+	movq	%rax, -8(%rbp)
+	jmp	.L61
+.L56:
+	movq	-48(%rbp), %rax
+	movq	64(%rax), %rax
+	leaq	1(%rax), %rcx
+	movq	-48(%rbp), %rdx
+	movq	%rcx, 64(%rdx)
+	movq	%rax, -8(%rbp)
+	jmp	.L61
+.L59:
+	movq	-48(%rbp), %rax
+	movq	72(%rax), %rax
+	leaq	1(%rax), %rcx
+	movq	-48(%rbp), %rdx
+	movq	%rcx, 72(%rdx)
+	movq	%rax, -8(%rbp)
+	jmp	.L61
+.L58:
+	movq	-48(%rbp), %rax
+	movq	80(%rax), %rax
+	leaq	1(%rax), %rcx
+	movq	-48(%rbp), %rdx
+	movq	%rcx, 80(%rdx)
+	movq	%rax, -8(%rbp)
+	jmp	.L61
+.L53:
+	movq	$-1, -8(%rbp)
+	nop
+.L61:
+	movl	$32, %esi
+	leaq	.LC2(%rip), %rax
+	movq	%rax, %rdi
+	call	*create_string@GOTPCREL(%rip)
+	movq	-16(%rbp), %rdx
+	movq	%rax, 8(%rdx)
+	cmpq	$-1, -8(%rbp)
+	jne	.L62
+	movq	-16(%rbp), %rax
+	movq	8(%rax), %rax
+	movl	-36(%rbp), %edx
+	leaq	.LC3(%rip), %rcx
 	movq	%rcx, %rsi
 	movq	%rax, %rdi
-	call	parse_primary
-	movq	%rax, -8(%rbp)
-	cmpq	$0, -8(%rbp)
-	jne	.L192
-	movq	-24(%rbp), %rax
-	movq	%rax, %rdi
-	call	*peek_current_token@GOTPCREL(%rip)
-	movq	%rax, %rsi
-	leaq	.LC71(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L193
-.L192:
+	call	*sprintf@GOTPCREL(%rip)
+	jmp	.L63
+.L62:
+	movq	-16(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-8(%rbp), %rcx
+	movl	-36(%rbp), %edx
+	leaq	.LC4(%rip), %rsi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*sprintf@GOTPCREL(%rip)
+.L63:
+	movq	-16(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-16(%rbp), %rax
+	leave
+	ret
+	.size	create_var, .-create_var
+	.type	create_instruction, @function
+create_instruction:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$48, %rsp
+	movl	%edi, -20(%rbp)
+	movq	%rsi, -32(%rbp)
+	movq	%rdx, -40(%rbp)
+	movq	%rcx, -48(%rbp)
+	movl	$32, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
+	movq	%rax, -8(%rbp)
+	movq	-8(%rbp), %rax
+	movl	-20(%rbp), %edx
+	movl	%edx, 24(%rax)
+	movq	-8(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, (%rax)
+	movq	-8(%rbp), %rax
+	movq	-40(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	movq	-8(%rbp), %rax
+	movq	-48(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-8(%rbp), %rax
+	leave
+	ret
+	.size	create_instruction, .-create_instruction
+	.section	.rodata
+	.align 8
+.LC5:
+	.string	"[warning] Unsupported argument type for create_arg: %d\n"
+	.text
+	.type	create_arg, @function
+create_arg:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movl	%edi, -20(%rbp)
+	movq	%rsi, -32(%rbp)
+	movl	$24, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
+	movq	%rax, -8(%rbp)
+	movq	-8(%rbp), %rax
+	movl	-20(%rbp), %edx
+	movl	%edx, 16(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 8(%rax)
+	cmpl	$7, -20(%rbp)
+	ja	.L68
+	movl	-20(%rbp), %eax
+	leaq	0(,%rax,4), %rdx
+	leaq	.L70(%rip), %rax
+	movl	(%rdx,%rax), %eax
+	cltq
+	leaq	.L70(%rip), %rdx
+	addq	%rdx, %rax
+	jmp	*%rax
+	.section	.rodata
+	.align 4
+	.align 4
+.L70:
+	.long	.L77-.L70
+	.long	.L76-.L70
+	.long	.L75-.L70
+	.long	.L74-.L70
+	.long	.L73-.L70
+	.long	.L72-.L70
+	.long	.L71-.L70
+	.long	.L69-.L70
+	.text
+.L77:
+	movq	-8(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, (%rax)
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movq	16(%rax), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 8(%rax)
+	jmp	.L78
+.L76:
+	movq	-32(%rbp), %rax
+	movq	(%rax), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, (%rax)
+	movq	name_int(%rip), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 8(%rax)
+	jmp	.L78
+.L75:
+	movq	-32(%rbp), %rax
+	movsd	(%rax), %xmm0
+	movq	-8(%rbp), %rax
+	movsd	%xmm0, (%rax)
+	movq	name_float(%rip), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 8(%rax)
+	jmp	.L78
+.L74:
+	movq	-8(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, (%rax)
+	movq	name_string(%rip), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 8(%rax)
+	jmp	.L78
+.L73:
+	movq	-32(%rbp), %rax
+	movzbl	(%rax), %edx
+	movq	-8(%rbp), %rax
+	movb	%dl, (%rax)
+	movq	name_bool(%rip), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 8(%rax)
+	jmp	.L78
+.L72:
+	movq	-8(%rbp), %rax
+	movq	$0, (%rax)
+	movq	name_void(%rip), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 8(%rax)
+	jmp	.L78
+.L71:
+	movq	-8(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, (%rax)
+	jmp	.L78
+.L69:
+	movq	-8(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, (%rax)
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movq	16(%rax), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 8(%rax)
+	jmp	.L78
+.L68:
+	movq	stderr(%rip), %rax
+	movl	-20(%rbp), %edx
+	leaq	.LC5(%rip), %rcx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*fprintf@GOTPCREL(%rip)
+	nop
+.L78:
+	movq	-8(%rbp), %rax
+	movb	$0, 20(%rax)
+	movq	-8(%rbp), %rax
+	leave
+	ret
+	.size	create_arg, .-create_arg
+	.type	load_rvalue, @function
+load_rvalue:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	movq	%rsi, -32(%rbp)
+	cmpq	$0, -24(%rbp)
+	jne	.L81
+	movl	$0, %eax
+	jmp	.L82
+.L81:
+	movq	-24(%rbp), %rax
+	movzbl	20(%rax), %eax
+	testb	%al, %al
+	je	.L83
+	movq	-24(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, %rcx
+	movl	$116, %edx
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	movq	%rax, -8(%rbp)
+	movq	-24(%rbp), %rdx
 	movq	-8(%rbp), %rax
 	movl	$0, %ecx
-	movq	%rax, %rdx
-	movl	$0, %esi
-	movl	$19, %edi
-	call	*create_expression@GOTPCREL(%rip)
 	movq	%rax, %rsi
-	movq	-40(%rbp), %rcx
-	movq	-32(%rbp), %rdx
-	movq	-24(%rbp), %rax
-	movq	%rcx, %r8
-	movq	%rdx, %rcx
-	movl	$0, %edx
+	movl	$23, %edi
+	call	create_instruction
+	movq	%rax, %rdx
+	movq	-32(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	parse_expr_prec
-.L193:
+	call	*list_append@GOTPCREL(%rip)
+	movq	-8(%rbp), %rax
+	jmp	.L82
+.L83:
+	movq	-24(%rbp), %rax
+.L82:
 	leave
 	ret
-	.size	parse_expression, .-parse_expression
-	.section	.rodata
-	.align 8
-.LC72:
-	.string	"Failed to parse parenthesized expression"
-.LC73:
-	.string	"Expected ')' after expression"
-	.align 8
-.LC74:
-	.string	"Failed to parse operand of unary '!'"
-	.align 8
-.LC75:
-	.string	"Failed to parse operand of unary '-'"
-	.align 8
-.LC76:
-	.string	"Failed to parse variable access"
-	.align 8
-.LC77:
-	.string	"Unexpected token in primary expression"
-	.text
-	.type	parse_primary, @function
-parse_primary:
+	.size	load_rvalue, .-load_rvalue
+	.type	find_var_by_symbol, @function
+find_var_by_symbol:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$96, %rsp
-	movq	%rdi, -72(%rbp)
-	movq	%rsi, -80(%rbp)
-	movq	%rdx, -88(%rbp)
-	movq	$0, -48(%rbp)
-	movq	$0, -56(%rbp)
-	movq	-72(%rbp), %rax
+	movq	%rdi, -24(%rbp)
+	movq	%rsi, -32(%rbp)
+	cmpq	$0, -24(%rbp)
+	je	.L85
+	cmpq	$0, -32(%rbp)
+	jne	.L86
+.L85:
+	movl	$0, %eax
+	jmp	.L87
+.L86:
+	movq	-24(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, -8(%rbp)
+	jmp	.L88
+.L90:
+	movq	-8(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -16(%rbp)
+	cmpq	$0, -16(%rbp)
+	je	.L89
+	movq	-16(%rbp), %rax
+	movq	(%rax), %rax
+	cmpq	%rax, -32(%rbp)
+	jne	.L89
+	movq	-16(%rbp), %rax
+	jmp	.L87
+.L89:
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, -8(%rbp)
+.L88:
+	cmpq	$0, -8(%rbp)
+	jne	.L90
+	movl	$0, %eax
+.L87:
+	popq	%rbp
+	ret
+	.size	find_var_by_symbol, .-find_var_by_symbol
+	.type	resolve_named_var, @function
+resolve_named_var:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	movq	%rsi, -32(%rbp)
+	cmpq	$0, -24(%rbp)
+	je	.L92
+	cmpq	$0, -32(%rbp)
+	jne	.L93
+.L92:
+	movl	$0, %eax
+	jmp	.L94
+.L93:
+	movq	-32(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	je	.L95
+	movq	-32(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	16(%rax), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	*peek_current_token@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	movq	-48(%rbp), %rax
-	movq	%rax, -56(%rbp)
-	movq	$0, -16(%rbp)
-	movq	$0, -24(%rbp)
-	movq	$0, -32(%rbp)
-	movq	$0, -40(%rbp)
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$2, %eax
-	jne	.L195
-	movl	$0, -4(%rbp)
-	movq	-56(%rbp), %rax
+	call	find_var_by_symbol
+	movq	%rax, -8(%rbp)
+	cmpq	$0, -8(%rbp)
+	je	.L96
+	movq	-8(%rbp), %rax
+	jmp	.L94
+.L96:
+	movq	-32(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	24(%rax), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	find_var_by_symbol
+	movq	%rax, -8(%rbp)
+	cmpq	$0, -8(%rbp)
+	je	.L95
+	movq	-8(%rbp), %rax
+	jmp	.L94
+.L95:
+	movq	-32(%rbp), %rax
 	movq	(%rax), %rax
+	movq	16(%rax), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	find_var_by_symbol
+.L94:
+	leave
+	ret
+	.size	resolve_named_var, .-resolve_named_var
+	.type	find_self_parameter, @function
+find_self_parameter:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	cmpq	$0, -24(%rbp)
+	je	.L98
+	movq	-24(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	jne	.L99
+.L98:
+	movl	$0, %eax
+	jmp	.L100
+.L99:
+	movq	-24(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	16(%rax), %rax
+	movq	(%rax), %rax
+	movq	%rax, -8(%rbp)
+	jmp	.L101
+.L103:
+	movq	-8(%rbp), %rax
+	movq	8(%rax), %rax
 	movq	%rax, -16(%rbp)
-	jmp	.L196
-.L195:
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$3, %eax
-	jne	.L197
-	movl	$1, -4(%rbp)
-	movq	-56(%rbp), %rax
+	cmpq	$0, -16(%rbp)
+	je	.L102
+	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L196
-.L197:
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$4, %eax
-	jne	.L198
-	movl	$2, -4(%rbp)
-	movq	-56(%rbp), %rax
+	testq	%rax, %rax
+	je	.L102
+	movq	SELF_KEYWORD(%rip), %rdx
+	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L196
-.L198:
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L199
-	movq	TRUE_KEYWORD(%rip), %rdx
-	movq	-56(%rbp), %rax
-	movq	(%rax), %rax
+	movq	8(%rax), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
-	je	.L199
-	movl	$3, -4(%rbp)
-	movq	-56(%rbp), %rax
+	je	.L102
+	movq	-16(%rbp), %rax
+	jmp	.L100
+.L102:
+	movq	-8(%rbp), %rax
 	movq	(%rax), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L196
-.L199:
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L200
-	movq	FALSE_KEYWORD(%rip), %rdx
-	movq	-56(%rbp), %rax
-	movq	(%rax), %rax
+	movq	%rax, -8(%rbp)
+.L101:
+	cmpq	$0, -8(%rbp)
+	jne	.L103
+	movl	$0, %eax
+.L100:
+	leave
+	ret
+	.size	find_self_parameter, .-find_self_parameter
+	.section	.rodata
+.LC6:
+	.string	"<unknown>"
+	.align 8
+.LC7:
+	.string	"[warning] Attribute '%s' not found in class '%s', fallback index %zu\n"
+.LC8:
+	.string	"$a%zu"
+	.text
+	.type	create_attribute_ref_var, @function
+create_attribute_ref_var:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$80, %rsp
+	movq	%rdi, -56(%rbp)
+	movq	%rsi, -64(%rbp)
+	movq	%rdx, -72(%rbp)
+	cmpq	$0, -64(%rbp)
+	jne	.L105
+	movl	$0, %eax
+	jmp	.L106
+.L105:
+	movq	-56(%rbp), %rdx
+	movq	-72(%rbp), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L200
-	movl	$4, -4(%rbp)
-	movq	-56(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L196
-.L200:
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L201
-	movq	L_PAREN_SYMBOL(%rip), %rdx
-	movq	-56(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L201
-	movl	$5, -4(%rbp)
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	movq	-48(%rbp), %rax
-	movq	%rax, -56(%rbp)
-	movq	-88(%rbp), %rdx
-	movq	-80(%rbp), %rcx
-	movq	-72(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_expression
+	call	find_attribute_table
 	movq	%rax, -24(%rbp)
 	cmpq	$0, -24(%rbp)
-	jne	.L202
-	movq	-48(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC72(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L203
-.L202:
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	movq	-48(%rbp), %rax
-	movq	%rax, -56(%rbp)
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L204
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-56(%rbp), %rax
+	je	.L107
+	movq	-24(%rbp), %rax
 	movq	(%rax), %rax
-	movq	%rdx, %rsi
+	testq	%rax, %rax
+	jne	.L108
+.L107:
+	movq	-64(%rbp), %rax
+	movq	(%rax), %rsi
+	movq	-72(%rbp), %rdx
+	movq	-64(%rbp), %rax
+	movq	%rdx, %rcx
+	movl	$97, %edx
 	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L213
-.L204:
-	movq	-48(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC73(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L203
-.L201:
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L206
-	movq	NOT_SYMBOL(%rip), %rdx
-	movq	-56(%rbp), %rax
+	call	create_var
+	jmp	.L106
+.L108:
+	movq	$0, -8(%rbp)
+	movb	$0, -9(%rbp)
+	movq	-24(%rbp), %rax
 	movq	(%rax), %rax
-	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L206
-	movl	$6, -4(%rbp)
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	movq	-48(%rbp), %rax
-	movq	%rax, -56(%rbp)
-	movq	-88(%rbp), %rdx
-	movq	-80(%rbp), %rcx
-	movq	-72(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_primary
+	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, -32(%rbp)
-	cmpq	$0, -32(%rbp)
-	jne	.L196
-	movq	-48(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC74(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L203
-.L206:
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L208
-	movq	SUB_SYMBOL(%rip), %rdx
-	movq	-56(%rbp), %rax
+	jmp	.L109
+.L112:
+	movq	-40(%rbp), %rax
 	movq	(%rax), %rax
-	movq	%rdx, %rsi
+	cmpq	%rax, -64(%rbp)
+	jne	.L110
+	movb	$1, -9(%rbp)
+	jmp	.L111
+.L110:
+	addq	$1, -8(%rbp)
+.L109:
+	movq	-32(%rbp), %rax
 	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L208
-	movl	$7, -4(%rbp)
-	movq	-72(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	movq	-48(%rbp), %rax
-	movq	%rax, -56(%rbp)
-	movq	-88(%rbp), %rdx
-	movq	-80(%rbp), %rcx
-	movq	-72(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_primary
-	movq	%rax, -32(%rbp)
-	cmpq	$0, -32(%rbp)
-	jne	.L196
-	movq	-48(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC75(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L203
-.L208:
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$1, %eax
-	je	.L210
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L211
-	movq	SELF_KEYWORD(%rip), %rdx
-	movq	-56(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L211
-	movq	-88(%rbp), %rax
-	movzbl	1(%rax), %eax
-	testb	%al, %al
-	je	.L211
-.L210:
-	movl	$8, -4(%rbp)
-	movq	-88(%rbp), %rdx
-	movq	-80(%rbp), %rcx
-	movq	-72(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_variable_access
+	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, -40(%rbp)
 	cmpq	$0, -40(%rbp)
-	jne	.L196
+	jne	.L112
+.L111:
+	movl	$24, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
+	movq	%rax, -48(%rbp)
 	movq	-48(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC76(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L203
-.L211:
+	movq	-64(%rbp), %rdx
+	movq	%rdx, (%rax)
+	movq	-64(%rbp), %rax
+	movq	(%rax), %rdx
 	movq	-48(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC77(%rip), %rax
+	movq	%rdx, 16(%rax)
+	movl	$32, %esi
+	leaq	.LC2(%rip), %rax
 	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
+	call	*create_string@GOTPCREL(%rip)
+	movq	-48(%rbp), %rdx
+	movq	%rax, 8(%rdx)
+	cmpb	$0, -9(%rbp)
+	jne	.L113
+	cmpq	$0, -56(%rbp)
+	je	.L114
+	movq	-56(%rbp), %rax
+	movq	8(%rax), %rax
+	jmp	.L115
+.L114:
+	leaq	.LC6(%rip), %rax
+.L115:
+	movq	-64(%rbp), %rdx
+	movq	8(%rdx), %rdx
+	movq	stderr(%rip), %rdi
+	movq	-8(%rbp), %rcx
+	movq	%rcx, %r8
+	movq	%rax, %rcx
+	leaq	.LC7(%rip), %rax
+	movq	%rax, %rsi
 	movl	$0, %eax
-	jmp	.L203
-.L213:
-	nop
-.L196:
-	movq	-40(%rbp), %rdi
-	movq	-32(%rbp), %rcx
-	movq	-24(%rbp), %rdx
-	movq	-16(%rbp), %rsi
-	movl	-4(%rbp), %eax
-	movq	%rdi, %r8
-	movl	%eax, %edi
-	call	*create_primary@GOTPCREL(%rip)
-.L203:
+	call	*fprintf@GOTPCREL(%rip)
+.L113:
+	movq	-48(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-8(%rbp), %rdx
+	leaq	.LC8(%rip), %rcx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*sprintf@GOTPCREL(%rip)
+	movq	-48(%rbp), %rax
+.L106:
 	leave
 	ret
-	.size	parse_primary, .-parse_primary
+	.size	create_attribute_ref_var, .-create_attribute_ref_var
 	.section	.rodata
 	.align 8
-.LC78:
-	.string	"Expected variable name in variable access"
-	.align 8
-.LC79:
-	.string	"Cannot call undefined variable"
-	.align 8
-.LC80:
-	.string	"Cannot call non-function variable"
-	.align 8
-.LC81:
-	.string	"Failed to parse function call argument"
-	.align 8
-.LC82:
-	.string	"Expected ',' or ')' after function call argument"
-	.align 8
-.LC83:
-	.string	"Failed to parse sequence index"
-	.align 8
-.LC84:
-	.string	"Expected ']' after sequence index"
-	.align 8
-.LC85:
-	.string	"Cannot access attribute without a valid scope"
-	.align 8
-.LC86:
-	.string	"Expected attribute name after '.'"
-.LC87:
-	.string	"Unknown attribute name"
+.LC9:
+	.string	"[warning] Invalid attribute access\n"
 	.text
-	.type	parse_variable_access, @function
-parse_variable_access:
+	.type	emit_attribute_access, @function
+emit_attribute_access:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	addq	$-128, %rsp
-	movq	%rdi, -104(%rbp)
-	movq	%rsi, -112(%rbp)
-	movq	%rdx, -120(%rbp)
-	movq	-104(%rbp), %rax
+	subq	$80, %rsp
+	movq	%rdi, -56(%rbp)
+	movq	%rsi, -64(%rbp)
+	movq	%rdx, -72(%rbp)
+	cmpq	$0, -56(%rbp)
+	je	.L117
+	cmpq	$0, -64(%rbp)
+	jne	.L118
+.L117:
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$35, %edx
+	movl	$1, %esi
+	leaq	.LC9(%rip), %rax
 	movq	%rax, %rdi
-	call	*peek_current_token@GOTPCREL(%rip)
+	call	*fwrite@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L119
+.L118:
+	movq	-72(%rbp), %rdx
+	movq	-56(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	load_rvalue
+	movq	%rax, -16(%rbp)
+	cmpq	$0, -16(%rbp)
+	jne	.L120
+	movl	$0, %eax
+	jmp	.L119
+.L120:
+	movq	$0, -8(%rbp)
+	movq	-16(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	je	.L121
+	movq	-16(%rbp), %rax
+	movq	8(%rax), %rax
+	movl	32(%rax), %eax
+	testl	%eax, %eax
+	jne	.L121
+	movq	-16(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -8(%rbp)
+.L121:
+	movq	-72(%rbp), %rdx
+	movq	-64(%rbp), %rcx
+	movq	-8(%rbp), %rax
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	call	create_attribute_ref_var
+	movq	%rax, -24(%rbp)
+	movq	-64(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-72(%rbp), %rdx
+	movq	%rdx, %rcx
+	movl	$116, %edx
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	movq	%rax, -32(%rbp)
+	movq	-24(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	movq	%rax, %rcx
+	movq	-16(%rbp), %rdx
+	movq	-32(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$15, %edi
+	call	create_instruction
+	movq	%rax, -40(%rbp)
+	movq	-72(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-40(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-32(%rbp), %rax
+	movb	$1, 20(%rax)
+	movq	-32(%rbp), %rax
+.L119:
+	leave
+	ret
+	.size	emit_attribute_access, .-emit_attribute_access
+	.type	emit_param_instruction, @function
+emit_param_instruction:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rdi, -24(%rbp)
+	movq	%rsi, -32(%rbp)
+	cmpq	$0, -24(%rbp)
+	je	.L126
+	cmpq	$0, -32(%rbp)
+	je	.L126
+	movq	-24(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, %rdi
+	call	get_type_size
+	movq	%rax, -16(%rbp)
+	leaq	-16(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$1, %edi
+	call	create_arg
+	movq	%rax, %rsi
+	movq	-24(%rbp), %rax
+	movl	$0, %ecx
+	movq	%rax, %rdx
+	movl	$17, %edi
+	call	create_instruction
+	movq	%rax, -8(%rbp)
+	movq	-32(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L122
+.L126:
+	nop
+.L122:
+	leave
+	ret
+	.size	emit_param_instruction, .-emit_param_instruction
+	.section	.rodata
+.LC10:
+	.string	"main"
+	.text
+	.globl	codegen_code
+	.type	codegen_code, @function
+codegen_code:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$48, %rsp
+	movq	%rdi, -40(%rbp)
+	call	create_tac
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_tac_status
 	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
+	movq	-40(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -24(%rbp)
+	jmp	.L128
+.L132:
+	movq	-32(%rbp), %rax
+	movl	8(%rax), %eax
 	cmpl	$1, %eax
-	je	.L215
+	jne	.L129
+	movq	-32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-16(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_function
+	movq	-32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	(%rax), %rax
+	movq	8(%rax), %rax
+	leaq	.LC10(%rip), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*strcmp@GOTPCREL(%rip)
+	testl	%eax, %eax
+	jne	.L128
+	movq	-32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	(%rax), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, 8(%rax)
+	jmp	.L128
+.L129:
+	movq	-32(%rbp), %rax
+	movl	8(%rax), %eax
+	cmpl	$2, %eax
+	jne	.L131
+	movq	-32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-16(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_class
+	jmp	.L128
+.L131:
+	movq	-32(%rbp), %rax
+	movl	8(%rax), %eax
+	testl	%eax, %eax
+	jne	.L128
+	movq	-32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-16(%rbp), %rdx
+	movq	-8(%rbp), %rcx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	call	codegen_import
+.L128:
+	movq	-24(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -32(%rbp)
+	cmpq	$0, -32(%rbp)
+	jne	.L132
+	movq	-8(%rbp), %rax
+	leave
+	ret
+	.size	codegen_code, .-codegen_code
+	.section	.rodata
+	.align 8
+.LC11:
+	.string	"[warning] Unsupported symbol kind for import: %d\n"
+	.text
+	.globl	codegen_import
+	.type	codegen_import, @function
+codegen_import:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$32, %rsp
+	movq	%rdi, -8(%rbp)
+	movq	%rsi, -16(%rbp)
+	movq	%rdx, -24(%rbp)
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movl	32(%rax), %eax
+	cmpl	$3, %eax
+	jne	.L135
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movq	(%rax), %rsi
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, %rcx
+	movl	$118, %edx
+	movq	%rax, %rdi
+	call	create_var
+	movq	%rax, %rdx
 	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$6, %eax
-	jne	.L216
-	movq	SELF_KEYWORD(%rip), %rdx
+	movq	16(%rax), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L140
+.L135:
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movl	32(%rax), %eax
+	cmpl	$1, %eax
+	je	.L137
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movl	32(%rax), %eax
+	cmpl	$2, %eax
+	jne	.L138
+.L137:
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movq	(%rax), %rsi
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, %rcx
+	movl	$102, %edx
+	movq	%rax, %rdi
+	call	create_var
+	movq	%rax, %rdx
+	movq	-16(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L140
+.L138:
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movl	32(%rax), %eax
+	testl	%eax, %eax
+	jne	.L139
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rdi
+	call	create_attribute_table
+	movq	%rax, %rdx
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L215
-.L216:
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L140
+.L139:
 	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC78(%rip), %rax
+	movq	(%rax), %rax
+	movl	32(%rax), %edx
+	movq	stderr(%rip), %rax
+	leaq	.LC11(%rip), %rcx
+	movq	%rcx, %rsi
 	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L217
-.L215:
-	movq	$0, -24(%rbp)
-	movq	$0, -32(%rbp)
-	movq	$0, -40(%rbp)
-	movq	$0, -56(%rbp)
+	call	*fprintf@GOTPCREL(%rip)
+.L140:
+	nop
+	leave
+	ret
+	.size	codegen_import, .-codegen_import
+	.globl	codegen_function
+	.type	codegen_function, @function
+codegen_function:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$64, %rsp
+	movq	%rdi, -56(%rbp)
+	movq	%rsi, -64(%rbp)
+	movq	-56(%rbp), %rax
+	movq	8(%rax), %rdx
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	create_subroutine
+	movq	%rax, -8(%rbp)
+	movq	-64(%rbp), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	movq	-64(%rbp), %rax
+	movq	(%rax), %rax
+	movq	24(%rax), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-56(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -16(%rbp)
+	jmp	.L142
+.L143:
+	movq	-24(%rbp), %rax
+	movq	(%rax), %rsi
+	movq	-24(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rcx
+	movl	$112, %edx
+	movq	%rax, %rdi
+	call	create_var
+	movq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+.L142:
 	movq	-16(%rbp), %rax
-	movq	(%rax), %rdx
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -24(%rbp)
+	cmpq	$0, -24(%rbp)
+	jne	.L143
+	movq	-64(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -32(%rbp)
+	movq	-8(%rbp), %rax
+	movq	32(%rax), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-64(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-56(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -40(%rbp)
+	jmp	.L144
+.L145:
+	movq	-64(%rbp), %rdx
+	movq	-48(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_statement
+.L144:
+	movq	-40(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -48(%rbp)
+	cmpq	$0, -48(%rbp)
+	jne	.L145
+	movq	-64(%rbp), %rax
+	movq	$0, 8(%rax)
+	nop
+	leave
+	ret
+	.size	codegen_function, .-codegen_function
+	.globl	codegen_method
+	.type	codegen_method, @function
+codegen_method:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$64, %rsp
+	movq	%rdi, -56(%rbp)
+	movq	%rsi, -64(%rbp)
+	movq	-56(%rbp), %rax
+	movq	8(%rax), %rdx
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	create_subroutine
+	movq	%rax, -8(%rbp)
+	movq	-64(%rbp), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, 8(%rax)
+	movq	-64(%rbp), %rax
+	movq	(%rax), %rax
+	movq	24(%rax), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-56(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -16(%rbp)
+	jmp	.L147
+.L148:
+	movq	-24(%rbp), %rax
+	movq	(%rax), %rsi
+	movq	-24(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rcx
+	movl	$112, %edx
+	movq	%rax, %rdi
+	call	create_var
+	movq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+.L147:
+	movq	-16(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -24(%rbp)
+	cmpq	$0, -24(%rbp)
+	jne	.L148
+	movq	-64(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -32(%rbp)
+	movq	-8(%rbp), %rax
+	movq	32(%rax), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-64(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-56(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -40(%rbp)
+	jmp	.L149
+.L150:
+	movq	-64(%rbp), %rdx
+	movq	-48(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_statement
+.L149:
+	movq	-40(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -48(%rbp)
+	cmpq	$0, -48(%rbp)
+	jne	.L150
+	movq	-64(%rbp), %rax
+	movq	$0, 8(%rax)
+	nop
+	leave
+	ret
+	.size	codegen_method, .-codegen_method
+	.section	.rodata
+	.align 8
+.LC12:
+	.string	"[warning] Unsupported class member type for codegen_class: %d\n"
+	.text
+	.globl	codegen_class
+	.type	codegen_class, @function
+codegen_class:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$48, %rsp
+	movq	%rdi, -40(%rbp)
+	movq	%rsi, -48(%rbp)
+	movq	-40(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -8(%rbp)
+	movq	-40(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rdi
+	call	create_attribute_table
+	movq	%rax, -16(%rbp)
+	movq	-40(%rbp), %rax
+	movq	24(%rax), %rdx
+	movq	-16(%rbp), %rax
+	movq	%rdx, 16(%rax)
+	movq	-48(%rbp), %rax
+	movq	(%rax), %rax
+	movq	(%rax), %rax
+	movq	-16(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L152
+.L157:
+	movq	-24(%rbp), %rax
+	movl	8(%rax), %eax
+	testl	%eax, %eax
+	je	.L153
+	cmpl	$1, %eax
+	je	.L154
+	jmp	.L158
+.L153:
+	movq	-24(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-48(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_method
+	jmp	.L152
+.L154:
+	movq	-24(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-48(%rbp), %rcx
+	movl	$97, %edx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	call	codegen_variable
+	jmp	.L152
+.L158:
+	movq	-24(%rbp), %rax
+	movl	8(%rax), %edx
+	movq	stderr(%rip), %rax
+	leaq	.LC12(%rip), %rcx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*fprintf@GOTPCREL(%rip)
+	nop
+.L152:
+	movq	-8(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -24(%rbp)
+	cmpq	$0, -24(%rbp)
+	jne	.L157
+	nop
+	nop
+	leave
+	ret
+	.size	codegen_class, .-codegen_class
+	.section	.rodata
+	.align 8
+.LC13:
+	.string	"[warning] Unsupported variable type for codegen_variable: %d\n"
+	.text
+	.globl	codegen_variable
+	.type	codegen_variable, @function
+codegen_variable:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$48, %rsp
+	movq	%rdi, -24(%rbp)
+	movq	%rsi, -32(%rbp)
+	movl	%edx, -36(%rbp)
+	movq	-24(%rbp), %rax
+	movq	(%rax), %rsi
+	movq	-24(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-32(%rbp), %rcx
+	movl	-36(%rbp), %edx
+	movq	%rax, %rdi
+	call	create_var
+	movq	%rax, -8(%rbp)
+	movl	-36(%rbp), %eax
+	subl	$97, %eax
+	cmpl	$21, %eax
+	ja	.L160
+	movl	%eax, %eax
+	leaq	0(,%rax,4), %rdx
+	leaq	.L162(%rip), %rax
+	movl	(%rdx,%rax), %eax
+	cltq
+	leaq	.L162(%rip), %rdx
+	addq	%rdx, %rax
+	jmp	*%rax
+	.section	.rodata
+	.align 4
+	.align 4
+.L162:
+	.long	.L166-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L165-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L164-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L160-.L162
+	.long	.L163-.L162
+	.long	.L160-.L162
+	.long	.L161-.L162
+	.text
+.L164:
+	movq	-32(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	16(%rax), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L167
+.L161:
+	movq	-32(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	24(%rax), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L167
+.L163:
+	movq	-32(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	24(%rax), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L167
+.L165:
+	movq	-32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	16(%rax), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L167
+.L166:
+	movq	-32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_pop_back@GOTPCREL(%rip)
+	movq	%rax, -16(%rbp)
+	movq	-32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	(%rax), %rax
+	movq	-16(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-24(%rbp), %rax
+	movq	(%rax), %rsi
+	movq	-24(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-16(%rbp), %rdx
+	movl	$0, %ecx
+	movq	%rax, %rdi
+	call	create_attribute
+	jmp	.L167
+.L160:
+	movq	stderr(%rip), %rax
+	movl	-36(%rbp), %edx
+	leaq	.LC13(%rip), %rcx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*fprintf@GOTPCREL(%rip)
+	nop
+.L167:
+	nop
+	leave
+	ret
+	.size	codegen_variable, .-codegen_variable
+	.section	.rodata
+	.align 8
+.LC14:
+	.string	"[warning] 'break' statement used outside of loop\n"
+	.align 8
+.LC15:
+	.string	"[warning] 'continue' statement used outside of loop\n"
+	.align 8
+.LC16:
+	.string	"[warning] Unsupported statement type for codegen_statement: %d\n"
+	.text
+	.globl	codegen_statement
+	.type	codegen_statement, @function
+codegen_statement:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$64, %rsp
+	movq	%rdi, -56(%rbp)
+	movq	%rsi, -64(%rbp)
+	movq	-56(%rbp), %rax
+	movl	8(%rax), %eax
+	cmpl	$7, %eax
+	ja	.L169
+	movl	%eax, %eax
+	leaq	0(,%rax,4), %rdx
+	leaq	.L171(%rip), %rax
+	movl	(%rdx,%rax), %eax
+	cltq
+	leaq	.L171(%rip), %rdx
+	addq	%rdx, %rax
+	jmp	*%rax
+	.section	.rodata
+	.align 4
+	.align 4
+.L171:
+	.long	.L178-.L171
+	.long	.L177-.L171
+	.long	.L176-.L171
+	.long	.L175-.L171
+	.long	.L174-.L171
+	.long	.L173-.L171
+	.long	.L172-.L171
+	.long	.L170-.L171
+	.text
+.L178:
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_expression
+	jmp	.L179
+.L177:
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-64(%rbp), %rcx
+	movl	$118, %edx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	call	codegen_variable
+	jmp	.L179
+.L176:
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_if
+	jmp	.L179
+.L175:
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_while
+	jmp	.L179
+.L174:
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_for
+	jmp	.L179
+.L173:
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_expression
+	movq	%rax, -40(%rbp)
+	movq	-40(%rbp), %rax
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$21, %edi
+	call	create_instruction
+	movq	%rax, -48(%rbp)
+	movq	-64(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-48(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L179
+.L172:
+	movq	-64(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_is_empty@GOTPCREL(%rip)
+	testb	%al, %al
+	jne	.L180
+	movq	-64(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	8(%rax), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -24(%rbp)
+	cmpq	$0, -24(%rbp)
+	je	.L180
+	movq	-24(%rbp), %rax
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -32(%rbp)
+	movq	-64(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L179
+.L180:
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$49, %edx
+	movl	$1, %esi
+	leaq	.LC14(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	jmp	.L179
+.L170:
+	movq	-64(%rbp), %rax
+	movq	32(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_is_empty@GOTPCREL(%rip)
+	testb	%al, %al
+	jne	.L181
+	movq	-64(%rbp), %rax
+	movq	32(%rax), %rax
+	movq	8(%rax), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -8(%rbp)
+	cmpq	$0, -8(%rbp)
+	je	.L181
+	movq	-8(%rbp), %rax
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -16(%rbp)
+	movq	-64(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-16(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L179
+.L181:
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$52, %edx
+	movl	$1, %esi
+	leaq	.LC15(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	jmp	.L179
+.L169:
+	movq	-56(%rbp), %rax
+	movl	8(%rax), %edx
+	movq	stderr(%rip), %rax
+	leaq	.LC16(%rip), %rcx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*fprintf@GOTPCREL(%rip)
+	nop
+.L179:
+	nop
+	leave
+	ret
+	.size	codegen_statement, .-codegen_statement
+	.globl	codegen_if
+	.type	codegen_if, @function
+codegen_if:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	pushq	%rbx
+	subq	$184, %rsp
+	movq	%rdi, -184(%rbp)
+	movq	%rsi, -192(%rbp)
+	movq	-192(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, -40(%rbp)
+	movq	-192(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, -24(%rbp)
+	movq	$0, -32(%rbp)
+	movq	-184(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_is_empty@GOTPCREL(%rip)
+	testb	%al, %al
+	je	.L183
+	movq	-184(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_is_empty@GOTPCREL(%rip)
+	testb	%al, %al
+	je	.L183
+	movq	-24(%rbp), %rax
+	movq	%rax, -32(%rbp)
+	jmp	.L184
+.L183:
+	movq	-192(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, -32(%rbp)
+.L184:
+	movq	-32(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, -48(%rbp)
+	movq	-184(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-192(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_expression
+	movq	%rax, -56(%rbp)
+	movq	-24(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rbx
+	movq	-40(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rdx
+	movq	-56(%rbp), %rax
+	movq	%rbx, %rcx
+	movq	%rax, %rsi
+	movl	$19, %edi
+	call	create_instruction
+	movq	%rax, -64(%rbp)
+	movq	-192(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-40(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -72(%rbp)
+	movq	-192(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-72(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-192(%rbp), %rax
+	movq	-72(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-184(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -80(%rbp)
+	jmp	.L185
+.L186:
+	movq	-192(%rbp), %rdx
+	movq	-88(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_statement
+.L185:
+	movq	-80(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -88(%rbp)
+	cmpq	$0, -88(%rbp)
+	jne	.L186
+	movq	-48(%rbp), %rax
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -96(%rbp)
+	movq	-192(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-96(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-184(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_is_empty@GOTPCREL(%rip)
+	testb	%al, %al
+	jne	.L187
+	movq	-184(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -104(%rbp)
+	jmp	.L188
+.L192:
+	movq	-24(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -120(%rbp)
+	movq	-192(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-120(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-192(%rbp), %rax
+	movq	-120(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-192(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, -40(%rbp)
+	movq	-192(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, -24(%rbp)
+	movq	-112(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-192(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_expression
+	movq	%rax, -56(%rbp)
+	movq	-104(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_is_empty@GOTPCREL(%rip)
+	testb	%al, %al
+	je	.L189
+	movq	-184(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_is_empty@GOTPCREL(%rip)
+	testb	%al, %al
+	je	.L189
+	movq	-32(%rbp), %rax
+	movq	%rax, -24(%rbp)
+.L189:
+	movq	-24(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rbx
+	movq	-40(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rdx
+	movq	-56(%rbp), %rax
+	movq	%rbx, %rcx
+	movq	%rax, %rsi
+	movl	$19, %edi
+	call	create_instruction
+	movq	%rax, -64(%rbp)
+	movq	-192(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-40(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -72(%rbp)
+	movq	-192(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-72(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-192(%rbp), %rax
+	movq	-72(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-112(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -128(%rbp)
+	jmp	.L190
+.L191:
+	movq	-192(%rbp), %rdx
+	movq	-136(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_statement
+.L190:
+	movq	-128(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -136(%rbp)
+	cmpq	$0, -136(%rbp)
+	jne	.L191
+	movq	-48(%rbp), %rax
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -96(%rbp)
+	movq	-192(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-96(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+.L188:
+	movq	-104(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -112(%rbp)
+	cmpq	$0, -112(%rbp)
+	jne	.L192
+.L187:
+	movq	-184(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_is_empty@GOTPCREL(%rip)
+	testb	%al, %al
+	jne	.L193
+	movq	-24(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -144(%rbp)
+	movq	-192(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-144(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-192(%rbp), %rax
+	movq	-144(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-184(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -152(%rbp)
+	jmp	.L194
+.L195:
+	movq	-192(%rbp), %rdx
+	movq	-160(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_statement
+.L194:
+	movq	-152(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -160(%rbp)
+	cmpq	$0, -160(%rbp)
+	jne	.L195
+	movq	-48(%rbp), %rax
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -96(%rbp)
+	movq	-192(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-96(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+.L193:
+	movq	-32(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -168(%rbp)
+	movq	-192(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-168(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-192(%rbp), %rax
+	movq	-168(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	nop
+	movq	-8(%rbp), %rbx
+	leave
+	ret
+	.size	codegen_if, .-codegen_if
+	.globl	codegen_for
+	.type	codegen_for, @function
+codegen_for:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	pushq	%rbx
+	subq	$152, %rsp
+	movq	%rdi, -152(%rbp)
+	movq	%rsi, -160(%rbp)
+	movq	-152(%rbp), %rax
+	movq	(%rax), %rax
+	testq	%rax, %rax
+	je	.L197
+	movq	-152(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-160(%rbp), %rcx
+	movl	$118, %edx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	call	codegen_variable
+.L197:
+	movq	-160(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, -32(%rbp)
+	movq	-160(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, -40(%rbp)
+	movq	-160(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, -48(%rbp)
+	movq	-152(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	je	.L198
+	movq	-32(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -64(%rbp)
+	movq	-160(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-32(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -72(%rbp)
+	movq	-160(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-72(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-160(%rbp), %rax
+	movq	-72(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-152(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-160(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_expression
+	movq	%rax, -80(%rbp)
+	movq	-48(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rbx
+	movq	-40(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rdx
+	movq	-80(%rbp), %rax
+	movq	%rbx, %rcx
+	movq	%rax, %rsi
+	movl	$19, %edi
+	call	create_instruction
+	movq	%rax, -64(%rbp)
+	movq	-160(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L199
+.L198:
+	movq	-40(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -56(%rbp)
+	movq	-160(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-56(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+.L199:
+	movq	-40(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -88(%rbp)
+	movq	-160(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-88(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-160(%rbp), %rax
+	movq	-88(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-160(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, -96(%rbp)
+	movq	-152(%rbp), %rax
+	movq	16(%rax), %rax
+	testq	%rax, %rax
+	je	.L200
+	movq	-96(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rdx
+	movq	-160(%rbp), %rax
+	movq	32(%rax), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L201
+.L200:
+	movq	-152(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	je	.L202
+	movq	-32(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rdx
+	movq	-160(%rbp), %rax
+	movq	32(%rax), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	jmp	.L201
+.L202:
+	movq	-40(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rdx
+	movq	-160(%rbp), %rax
+	movq	32(%rax), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+.L201:
+	movq	-48(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rdx
+	movq	-160(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-152(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -104(%rbp)
+	jmp	.L203
+.L204:
+	movq	-160(%rbp), %rdx
 	movq	-112(%rbp), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	*search@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-	movq	-32(%rbp), %rax
-	movl	$0, %r8d
-	movl	$0, %ecx
-	movq	%rax, %rdx
-	movl	$0, %esi
-	movl	$0, %edi
-	call	*create_variable_access@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
+	call	codegen_statement
+.L203:
 	movq	-104(%rbp), %rax
-	movl	$1, %esi
 	movq	%rax, %rdi
-	call	*peek_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L218
-.L243:
-	cmpq	$0, -32(%rbp)
-	je	.L219
-	movq	-32(%rbp), %rax
-	movq	%rax, -56(%rbp)
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$1, %eax
-	je	.L220
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	je	.L220
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$2, %eax
-	je	.L220
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$3, %eax
-	jne	.L221
-.L220:
-	movq	-56(%rbp), %rax
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -112(%rbp)
+	cmpq	$0, -112(%rbp)
+	jne	.L204
+	movq	-160(%rbp), %rax
+	movq	32(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_pop_back@GOTPCREL(%rip)
+	movq	-160(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_pop_back@GOTPCREL(%rip)
+	movq	-152(%rbp), %rax
 	movq	16(%rax), %rax
-	movq	%rax, -24(%rbp)
-	jmp	.L219
-.L221:
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$4, %eax
-	je	.L222
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	testl	%eax, %eax
-	jne	.L219
-.L222:
-	movq	-32(%rbp), %rax
-	movq	%rax, -24(%rbp)
-.L219:
-	cmpq	$0, -40(%rbp)
-	jne	.L223
-	cmpq	$0, -24(%rbp)
-	je	.L223
-	movq	-24(%rbp), %rax
-	movq	%rax, -64(%rbp)
-	movq	-64(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$4, %eax
-	jne	.L223
-	movq	-64(%rbp), %rax
+	testq	%rax, %rax
+	je	.L205
+	movq	-96(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -120(%rbp)
+	movq	-160(%rbp), %rax
 	movq	16(%rax), %rax
-	movq	%rax, -40(%rbp)
-.L223:
-	movq	L_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-120(%rbp), %rdx
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L224
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-96(%rbp), %rax
 	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	cmpq	$0, -32(%rbp)
-	jne	.L225
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC79(%rip), %rax
+	call	create_block
+	movq	%rax, -128(%rbp)
+	movq	-160(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-128(%rbp), %rdx
+	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L225:
+	call	*list_append@GOTPCREL(%rip)
+	movq	-160(%rbp), %rax
+	movq	-128(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-152(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	-160(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_expression
+.L205:
 	movq	-32(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -24(%rbp)
+	movq	-152(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	jne	.L206
+	movq	-40(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -24(%rbp)
+.L206:
+	movq	-160(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-48(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -136(%rbp)
+	movq	-160(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-136(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-160(%rbp), %rax
+	movq	-136(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	nop
+	movq	-8(%rbp), %rbx
+	leave
+	ret
+	.size	codegen_for, .-codegen_for
+	.globl	codegen_while
+	.type	codegen_while, @function
+codegen_while:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	pushq	%rbx
+	subq	$104, %rsp
+	movq	%rdi, -104(%rbp)
+	movq	%rsi, -112(%rbp)
+	movq	-112(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, -24(%rbp)
+	movq	-24(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movl	$0, %ecx
+	movl	$0, %edx
+	movq	%rax, %rsi
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -32(%rbp)
+	movq	-112(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-24(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -40(%rbp)
+	movq	-112(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-40(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-112(%rbp), %rax
+	movq	-40(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-112(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, -48(%rbp)
+	movq	-112(%rbp), %rax
+	movq	%rax, %rcx
+	movl	$98, %edx
+	movl	$0, %esi
+	movl	$0, %edi
+	call	create_var
 	movq	%rax, -56(%rbp)
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$2, %eax
-	je	.L226
-	movq	-56(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$3, %eax
-	je	.L226
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC80(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L226:
 	movq	-104(%rbp), %rax
-	movl	$1, %esi
+	movq	(%rax), %rax
+	movq	-112(%rbp), %rdx
+	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	call	*create_list@GOTPCREL(%rip)
-	movq	%rax, -80(%rbp)
-	jmp	.L227
-.L232:
-	movq	-120(%rbp), %rdx
-	movq	-112(%rbp), %rcx
-	movq	-104(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_expression
-	movq	%rax, -88(%rbp)
-	cmpq	$0, -88(%rbp)
-	jne	.L228
-	movq	-8(%rbp), %rax
+	call	codegen_expression
+	movq	%rax, -64(%rbp)
+	movq	-56(%rbp), %rax
 	movq	%rax, %rsi
-	leaq	.LC81(%rip), %rax
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rbx
+	movq	-48(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rdx
+	movq	-64(%rbp), %rax
+	movq	%rbx, %rcx
+	movq	%rax, %rsi
+	movl	$19, %edi
+	call	create_instruction
+	movq	%rax, -32(%rbp)
+	movq	-112(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L228:
-	movq	-88(%rbp), %rdx
-	movq	-80(%rbp), %rax
+	call	*list_append@GOTPCREL(%rip)
+	movq	-48(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -72(%rbp)
+	movq	-112(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-72(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-112(%rbp), %rax
+	movq	-72(%rbp), %rdx
+	movq	%rdx, 16(%rax)
+	movq	-24(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rdx
+	movq	-112(%rbp), %rax
+	movq	32(%rax), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-56(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$6, %edi
+	call	create_arg
+	movq	%rax, %rdx
+	movq	-112(%rbp), %rax
+	movq	24(%rax), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
 	call	*list_append@GOTPCREL(%rip)
 	movq	-104(%rbp), %rax
-	movl	$1, %esi
+	movq	8(%rax), %rax
 	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L229
-	movq	COMMA_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -80(%rbp)
+	jmp	.L208
+.L209:
+	movq	-112(%rbp), %rdx
+	movq	-88(%rbp), %rax
 	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L229
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
+	call	codegen_statement
+.L208:
+	movq	-80(%rbp), %rax
 	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	jmp	.L227
-.L229:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L231
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -88(%rbp)
+	cmpq	$0, -88(%rbp)
+	jne	.L209
+	movq	-112(%rbp), %rax
+	movq	32(%rax), %rax
 	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L227
-.L231:
-	movq	-8(%rbp), %rax
+	call	*list_pop_back@GOTPCREL(%rip)
+	movq	-112(%rbp), %rax
+	movq	24(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_pop_back@GOTPCREL(%rip)
+	movq	-24(%rbp), %rax
 	movq	%rax, %rsi
-	leaq	.LC82(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L217
-.L227:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L232
-	movq	R_PAREN_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L232
-	movq	-80(%rbp), %rdx
-	movq	-48(%rbp), %rax
-	movq	%rdx, %r8
+	movl	$6, %edi
+	call	create_arg
 	movl	$0, %ecx
 	movl	$0, %edx
 	movq	%rax, %rsi
-	movl	$1, %edi
-	call	*create_variable_access@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	movq	-56(%rbp), %rax
+	movl	$20, %edi
+	call	create_instruction
+	movq	%rax, -32(%rbp)
+	movq	-112(%rbp), %rax
 	movq	16(%rax), %rax
-	movq	%rax, -32(%rbp)
-	movq	$0, -24(%rbp)
-	movq	$0, -40(%rbp)
-	jmp	.L233
-.L224:
-	movq	L_BRACKET_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L234
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-120(%rbp), %rdx
-	movq	-112(%rbp), %rcx
-	movq	-104(%rbp), %rax
-	movq	%rcx, %rsi
-	movq	%rax, %rdi
-	call	parse_expression
-	movq	%rax, -72(%rbp)
-	cmpq	$0, -72(%rbp)
-	jne	.L235
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC83(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-.L235:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	jne	.L236
-	movq	R_BRACKET_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L237
-.L236:
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC84(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L217
-.L237:
-	movq	-72(%rbp), %rdx
-	movq	-48(%rbp), %rax
-	movl	$0, %r8d
-	movq	%rdx, %rcx
-	movl	$0, %edx
-	movq	%rax, %rsi
-	movl	$3, %edi
-	call	*create_variable_access@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	jmp	.L233
-.L234:
-	movq	DOT_SYMBOL(%rip), %rdx
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	je	.L244
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
-	movq	%rax, %rdi
-	call	*get_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-	cmpq	$0, -40(%rbp)
-	jne	.L239
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC85(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L217
-.L239:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$1, %eax
-	je	.L240
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC86(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L217
-.L240:
-	movq	-16(%rbp), %rax
-	movq	(%rax), %rdx
-	movq	-40(%rbp), %rax
-	movq	%rdx, %rsi
-	movq	%rax, %rdi
-	call	*search@GOTPCREL(%rip)
-	movq	%rax, -32(%rbp)
-	cmpq	$0, -32(%rbp)
-	jne	.L241
-	movq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC87(%rip), %rax
-	movq	%rax, %rdi
-	call	*parser_error@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L217
-.L241:
+	movq	8(%rax), %rax
 	movq	-32(%rbp), %rdx
-	movq	-48(%rbp), %rax
-	movl	$0, %r8d
-	movl	$0, %ecx
-	movq	%rax, %rsi
-	movl	$2, %edi
-	call	*create_variable_access@GOTPCREL(%rip)
-	movq	%rax, -48(%rbp)
-	movq	$0, -24(%rbp)
-	movq	$0, -40(%rbp)
-.L233:
-	movq	-104(%rbp), %rax
-	movl	$1, %esi
+	movq	%rdx, %rsi
 	movq	%rax, %rdi
-	call	*peek_next_token@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movq	%rax, -16(%rbp)
-.L218:
-	movq	-16(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
-	je	.L243
-	jmp	.L242
-.L244:
+	call	*list_append@GOTPCREL(%rip)
+	movq	-56(%rbp), %rax
+	movq	%rax, %rdi
+	call	create_block
+	movq	%rax, -96(%rbp)
+	movq	-112(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	32(%rax), %rax
+	movq	-96(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-112(%rbp), %rax
+	movq	-96(%rbp), %rdx
+	movq	%rdx, 16(%rax)
 	nop
-.L242:
-	movq	-48(%rbp), %rax
-.L217:
+	movq	-8(%rbp), %rbx
 	leave
 	ret
-	.size	parse_variable_access, .-parse_variable_access
+	.size	codegen_while, .-codegen_while
+	.section	.rodata
+	.align 8
+.LC17:
+	.string	"[warning] Left-hand side of assignment is not a variable\n"
+	.text
+	.globl	codegen_expression
+	.type	codegen_expression, @function
+codegen_expression:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$64, %rsp
+	movq	%rdi, -56(%rbp)
+	movq	%rsi, -64(%rbp)
+	movq	-56(%rbp), %rax
+	movl	24(%rax), %eax
+	cmpl	$19, %eax
+	jne	.L211
+	movq	-56(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_primary
+	jmp	.L212
+.L211:
+	movq	-56(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_expression
+	movq	%rax, %rdx
+	movq	-64(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	load_rvalue
+	movq	%rax, -8(%rbp)
+	movq	-56(%rbp), %rax
+	movl	24(%rax), %eax
+	movl	%eax, %edi
+	call	get_instruction_type
+	movl	%eax, -20(%rbp)
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_expression
+	movq	%rax, -32(%rbp)
+	movq	-56(%rbp), %rax
+	movl	24(%rax), %eax
+	movl	%eax, %edi
+	call	is_assignment_operator
+	testb	%al, %al
+	je	.L213
+	cmpl	$14, -20(%rbp)
+	je	.L214
+	movq	-32(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rcx
+	movl	$116, %edx
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	movq	%rax, -48(%rbp)
+	movq	-64(%rbp), %rdx
+	movq	-32(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	load_rvalue
+	movq	%rax, %rdi
+	movq	-8(%rbp), %rdx
+	movq	-48(%rbp), %rsi
+	movl	-20(%rbp), %eax
+	movq	%rdx, %rcx
+	movq	%rdi, %rdx
+	movl	%eax, %edi
+	call	create_instruction
+	movq	%rax, -16(%rbp)
+	movq	-64(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-16(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-48(%rbp), %rax
+	movq	%rax, -8(%rbp)
+.L214:
+	movq	-32(%rbp), %rax
+	movl	16(%rax), %eax
+	testl	%eax, %eax
+	je	.L215
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$57, %edx
+	movl	$1, %esi
+	leaq	.LC17(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+.L215:
+	movq	-8(%rbp), %rdx
+	movq	-32(%rbp), %rax
+	movl	$0, %ecx
+	movq	%rax, %rsi
+	movl	$14, %edi
+	call	create_instruction
+	movq	%rax, -16(%rbp)
+	movq	-32(%rbp), %rax
+	movzbl	20(%rax), %eax
+	testb	%al, %al
+	je	.L216
+	movq	-8(%rbp), %rdx
+	movq	-32(%rbp), %rax
+	movl	$0, %ecx
+	movq	%rax, %rsi
+	movl	$24, %edi
+	call	create_instruction
+	movq	%rax, -16(%rbp)
+	jmp	.L216
+.L213:
+	movq	-32(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-64(%rbp), %rdx
+	movq	%rdx, %rcx
+	movl	$116, %edx
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	movq	%rax, -40(%rbp)
+	movq	-64(%rbp), %rdx
+	movq	-32(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	load_rvalue
+	movq	%rax, %rdi
+	movq	-8(%rbp), %rdx
+	movq	-40(%rbp), %rsi
+	movl	-20(%rbp), %eax
+	movq	%rdx, %rcx
+	movq	%rdi, %rdx
+	movl	%eax, %edi
+	call	create_instruction
+	movq	%rax, -16(%rbp)
+	movq	-40(%rbp), %rax
+	movq	%rax, -8(%rbp)
+.L216:
+	movq	-64(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-16(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-8(%rbp), %rax
+.L212:
+	leave
+	ret
+	.size	codegen_expression, .-codegen_expression
+	.section	.rodata
+	.align 8
+.LC19:
+	.string	"[warning] Unsupported type for negation: %s\n"
+	.align 8
+.LC20:
+	.string	"[warning] Unsupported primary type for codegen_primary: %d\n"
+	.text
+	.globl	codegen_primary
+	.type	codegen_primary, @function
+codegen_primary:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$112, %rsp
+	movq	%rdi, -104(%rbp)
+	movq	%rsi, -112(%rbp)
+	movq	-104(%rbp), %rax
+	movl	8(%rax), %eax
+	cmpl	$8, %eax
+	ja	.L218
+	movl	%eax, %eax
+	leaq	0(,%rax,4), %rdx
+	leaq	.L220(%rip), %rax
+	movl	(%rdx,%rax), %eax
+	cltq
+	leaq	.L220(%rip), %rdx
+	addq	%rdx, %rax
+	jmp	*%rax
+	.section	.rodata
+	.align 4
+	.align 4
+.L220:
+	.long	.L228-.L220
+	.long	.L227-.L220
+	.long	.L226-.L220
+	.long	.L225-.L220
+	.long	.L224-.L220
+	.long	.L223-.L220
+	.long	.L222-.L220
+	.long	.L221-.L220
+	.long	.L219-.L220
+	.text
+.L228:
+	movq	-104(%rbp), %rax
+	movq	(%rax), %rax
+	movl	$10, %edx
+	movl	$0, %esi
+	movq	%rax, %rdi
+	call	*strtoll@GOTPCREL(%rip)
+	movq	%rax, -56(%rbp)
+	leaq	-56(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$1, %edi
+	call	create_arg
+	jmp	.L229
+.L227:
+	movq	-104(%rbp), %rax
+	movq	(%rax), %rax
+	movl	$0, %esi
+	movq	%rax, %rdi
+	call	*strtod@GOTPCREL(%rip)
+	movq	%xmm0, %rax
+	movq	%rax, -64(%rbp)
+	leaq	-64(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$2, %edi
+	call	create_arg
+	jmp	.L229
+.L226:
+	movq	-104(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rsi
+	movl	$3, %edi
+	call	create_arg
+	jmp	.L229
+.L225:
+	movb	$1, -65(%rbp)
+	leaq	-65(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$4, %edi
+	call	create_arg
+	jmp	.L229
+.L224:
+	movb	$0, -66(%rbp)
+	leaq	-66(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$4, %edi
+	call	create_arg
+	jmp	.L229
+.L223:
+	movq	-104(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-112(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_expression
+	jmp	.L229
+.L222:
+	movq	-104(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-112(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_primary
+	movq	%rax, %rdx
+	movq	-112(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	load_rvalue
+	movq	%rax, -32(%rbp)
+	movq	name_bool(%rip), %rax
+	movq	-112(%rbp), %rdx
+	movq	%rdx, %rcx
+	movl	$116, %edx
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	movq	%rax, -40(%rbp)
+	movq	-32(%rbp), %rdx
+	movq	-40(%rbp), %rax
+	movl	$0, %ecx
+	movq	%rax, %rsi
+	movl	$13, %edi
+	call	create_instruction
+	movq	%rax, -48(%rbp)
+	movq	-112(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-48(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-40(%rbp), %rax
+	jmp	.L229
+.L221:
+	movq	-104(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-112(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_primary
+	movq	%rax, %rdx
+	movq	-112(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	load_rvalue
+	movq	%rax, -16(%rbp)
+	movq	-16(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-112(%rbp), %rdx
+	movq	%rdx, %rcx
+	movl	$116, %edx
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	movq	%rax, -24(%rbp)
+	movq	$0, -8(%rbp)
+	movq	$0, -80(%rbp)
+	movsd	.LC18(%rip), %xmm0
+	movsd	%xmm0, -88(%rbp)
+	movq	-16(%rbp), %rax
+	movq	8(%rax), %rdx
+	movq	name_int(%rip), %rax
+	cmpq	%rax, %rdx
+	jne	.L230
+	leaq	-80(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$1, %edi
+	call	create_arg
+	movq	%rax, %rsi
+	movq	-16(%rbp), %rdx
+	movq	-24(%rbp), %rax
+	movq	%rdx, %rcx
+	movq	%rsi, %rdx
+	movq	%rax, %rsi
+	movl	$1, %edi
+	call	create_instruction
+	movq	%rax, -8(%rbp)
+	jmp	.L231
+.L230:
+	movq	-16(%rbp), %rax
+	movq	8(%rax), %rdx
+	movq	name_float(%rip), %rax
+	cmpq	%rax, %rdx
+	jne	.L232
+	leaq	-88(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$2, %edi
+	call	create_arg
+	movq	%rax, %rsi
+	movq	-16(%rbp), %rdx
+	movq	-24(%rbp), %rax
+	movq	%rdx, %rcx
+	movq	%rsi, %rdx
+	movq	%rax, %rsi
+	movl	$2, %edi
+	call	create_instruction
+	movq	%rax, -8(%rbp)
+	jmp	.L231
+.L232:
+	movq	-16(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	8(%rax), %rdx
+	movq	stderr(%rip), %rax
+	leaq	.LC19(%rip), %rcx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*fprintf@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L229
+.L231:
+	movq	-112(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-8(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-24(%rbp), %rax
+	jmp	.L229
+.L219:
+	movq	-104(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-112(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_variable_access
+	jmp	.L229
+.L218:
+	movq	-104(%rbp), %rax
+	movl	8(%rax), %edx
+	movq	stderr(%rip), %rax
+	leaq	.LC20(%rip), %rcx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*fprintf@GOTPCREL(%rip)
+	movl	$0, %eax
+.L229:
+	leave
+	ret
+	.size	codegen_primary, .-codegen_primary
+	.section	.rodata
+	.align 8
+.LC21:
+	.string	"[warning] Invalid variable access input\n"
+	.align 8
+.LC22:
+	.string	"[warning] Variable access name is NULL\n"
+	.align 8
+.LC23:
+	.string	"[warning] Unresolved variable access for '%s', creating fallback local\n"
+	.align 8
+.LC24:
+	.string	"[warning] Invalid get-attribute access\n"
+	.align 8
+.LC25:
+	.string	"[warning] Failed to generate object for get-attribute access\n"
+	.align 8
+.LC26:
+	.string	"[warning] Invalid get-sequence access\n"
+	.align 8
+.LC27:
+	.string	"[warning] Failed to generate sequence/index for get-sequence access\n"
+	.align 8
+.LC28:
+	.string	"[warning] Invalid function call without callee\n"
+	.align 8
+.LC29:
+	.string	"[warning] Failed to generate callee for function call\n"
+	.align 8
+.LC30:
+	.string	"[warning] Unsupported callee in function call\n"
+	.align 8
+.LC31:
+	.string	"[warning] Failed to generate function call argument\n"
+	.align 8
+.LC32:
+	.string	"[warning] Unsupported variable access type for codegen_variable_access: %d\n"
+	.text
+	.globl	codegen_variable_access
+	.type	codegen_variable_access, @function
+codegen_variable_access:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$208, %rsp
+	movq	%rdi, -200(%rbp)
+	movq	%rsi, -208(%rbp)
+	cmpq	$0, -200(%rbp)
+	je	.L235
+	cmpq	$0, -208(%rbp)
+	jne	.L236
+.L235:
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$40, %edx
+	movl	$1, %esi
+	leaq	.LC21(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L237
+.L236:
+	movq	-200(%rbp), %rax
+	movl	16(%rax), %eax
+	testl	%eax, %eax
+	jne	.L238
+	movq	-200(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -168(%rbp)
+	cmpq	$0, -168(%rbp)
+	jne	.L239
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$39, %edx
+	movl	$1, %esi
+	leaq	.LC22(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L237
+.L239:
+	movq	-208(%rbp), %rdx
+	movq	-168(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	resolve_named_var
+	movq	%rax, -176(%rbp)
+	cmpq	$0, -176(%rbp)
+	je	.L240
+	movq	-176(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	jmp	.L237
+.L240:
+	movq	-168(%rbp), %rax
+	movl	32(%rax), %eax
+	cmpl	$1, %eax
+	je	.L241
+	movq	-168(%rbp), %rax
+	movl	32(%rax), %eax
+	cmpl	$2, %eax
+	je	.L241
+	movq	-168(%rbp), %rax
+	movl	32(%rax), %eax
+	testl	%eax, %eax
+	jne	.L242
+.L241:
+	movq	-168(%rbp), %rax
+	movq	(%rax), %rsi
+	movq	-208(%rbp), %rdx
+	movq	-168(%rbp), %rax
+	movq	%rdx, %rcx
+	movl	$102, %edx
+	movq	%rax, %rdi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$7, %edi
+	call	create_arg
+	jmp	.L237
+.L242:
+	movq	-208(%rbp), %rax
+	movq	%rax, %rdi
+	call	find_self_parameter
+	movq	%rax, -184(%rbp)
+	cmpq	$0, -184(%rbp)
+	je	.L243
+	movq	-184(%rbp), %rax
+	movq	16(%rax), %rax
+	testq	%rax, %rax
+	je	.L243
+	movq	-184(%rbp), %rax
+	movq	16(%rax), %rax
+	movl	32(%rax), %eax
+	testl	%eax, %eax
+	jne	.L243
+	movq	-168(%rbp), %rax
+	movq	24(%rax), %rdx
+	movq	-184(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	24(%rax), %rax
+	movq	16(%rax), %rax
+	cmpq	%rax, %rdx
+	jne	.L243
+	movq	-184(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	movq	%rax, %rcx
+	movq	-208(%rbp), %rdx
+	movq	-168(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rcx, %rdi
+	call	emit_attribute_access
+	jmp	.L237
+.L243:
+	movq	-168(%rbp), %rax
+	movq	8(%rax), %rdx
+	movq	stderr(%rip), %rax
+	leaq	.LC23(%rip), %rcx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*fprintf@GOTPCREL(%rip)
+	movq	-168(%rbp), %rax
+	movq	(%rax), %rsi
+	movq	-208(%rbp), %rdx
+	movq	-168(%rbp), %rax
+	movq	%rdx, %rcx
+	movl	$118, %edx
+	movq	%rax, %rdi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	jmp	.L237
+.L238:
+	movq	-200(%rbp), %rax
+	movl	16(%rax), %eax
+	cmpl	$2, %eax
+	jne	.L244
+	movq	-200(%rbp), %rax
+	movq	(%rax), %rax
+	testq	%rax, %rax
+	je	.L245
+	movq	-200(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	jne	.L246
+.L245:
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$39, %edx
+	movl	$1, %esi
+	leaq	.LC24(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L237
+.L246:
+	movq	-200(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -152(%rbp)
+	movq	-152(%rbp), %rax
+	movl	32(%rax), %eax
+	cmpl	$2, %eax
+	je	.L247
+	movq	-152(%rbp), %rax
+	movl	32(%rax), %eax
+	cmpl	$1, %eax
+	jne	.L248
+.L247:
+	movq	-152(%rbp), %rax
+	movq	(%rax), %rsi
+	movq	-208(%rbp), %rdx
+	movq	-152(%rbp), %rax
+	movq	%rdx, %rcx
+	movl	$102, %edx
+	movq	%rax, %rdi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$7, %edi
+	call	create_arg
+	jmp	.L237
+.L248:
+	movq	-200(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-208(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_variable_access
+	movq	%rax, -160(%rbp)
+	cmpq	$0, -160(%rbp)
+	jne	.L249
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$61, %edx
+	movl	$1, %esi
+	leaq	.LC25(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L237
+.L249:
+	movq	-208(%rbp), %rdx
+	movq	-152(%rbp), %rcx
+	movq	-160(%rbp), %rax
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	call	emit_attribute_access
+	jmp	.L237
+.L244:
+	movq	-200(%rbp), %rax
+	movl	16(%rax), %eax
+	cmpl	$3, %eax
+	jne	.L250
+	movq	-200(%rbp), %rax
+	movq	(%rax), %rax
+	testq	%rax, %rax
+	je	.L251
+	movq	-200(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	jne	.L252
+.L251:
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$38, %edx
+	movl	$1, %esi
+	leaq	.LC26(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L237
+.L252:
+	movq	-200(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-208(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_variable_access
+	movq	%rax, %rdx
+	movq	-208(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	load_rvalue
+	movq	%rax, -120(%rbp)
+	movq	-200(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	-208(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_expression
+	movq	%rax, %rdx
+	movq	-208(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	load_rvalue
+	movq	%rax, -128(%rbp)
+	cmpq	$0, -120(%rbp)
+	je	.L253
+	cmpq	$0, -128(%rbp)
+	jne	.L254
+.L253:
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$68, %edx
+	movl	$1, %esi
+	leaq	.LC27(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L237
+.L254:
+	movq	name_int(%rip), %rax
+	movq	%rax, -8(%rbp)
+	movq	-120(%rbp), %rax
+	movq	8(%rax), %rdx
+	movq	name_float(%rip), %rax
+	cmpq	%rax, %rdx
+	je	.L255
+	movq	-120(%rbp), %rax
+	movq	8(%rax), %rdx
+	movq	name_bool(%rip), %rax
+	cmpq	%rax, %rdx
+	je	.L255
+	movq	-120(%rbp), %rax
+	movq	8(%rax), %rdx
+	movq	name_string(%rip), %rax
+	cmpq	%rax, %rdx
+	jne	.L256
+.L255:
+	movq	-120(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -8(%rbp)
+.L256:
+	movq	-208(%rbp), %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, %rcx
+	movl	$116, %edx
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	movq	%rax, -136(%rbp)
+	movq	-128(%rbp), %rcx
+	movq	-120(%rbp), %rdx
+	movq	-136(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$16, %edi
+	call	create_instruction
+	movq	%rax, -144(%rbp)
+	movq	-208(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-144(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-136(%rbp), %rax
+	movb	$1, 20(%rax)
+	movq	-136(%rbp), %rax
+	jmp	.L237
+.L250:
+	movq	-200(%rbp), %rax
+	movl	16(%rax), %eax
+	cmpl	$1, %eax
+	jne	.L257
+	movq	-200(%rbp), %rax
+	movq	(%rax), %rax
+	testq	%rax, %rax
+	jne	.L258
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$47, %edx
+	movl	$1, %esi
+	leaq	.LC28(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L237
+.L258:
+	movq	$0, -16(%rbp)
+	movq	$0, -24(%rbp)
+	movq	-200(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, -56(%rbp)
+	movq	-56(%rbp), %rax
+	movl	16(%rax), %eax
+	cmpl	$2, %eax
+	jne	.L260
+	movq	-56(%rbp), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	je	.L260
+	movq	-56(%rbp), %rax
+	movq	8(%rax), %rax
+	movl	32(%rax), %eax
+	cmpl	$2, %eax
+	je	.L261
+	movq	-56(%rbp), %rax
+	movq	8(%rax), %rax
+	movl	32(%rax), %eax
+	cmpl	$1, %eax
+	jne	.L260
+.L261:
+	movq	-56(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, -16(%rbp)
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	testq	%rax, %rax
+	je	.L260
+	movb	$0, -25(%rbp)
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movl	16(%rax), %eax
+	testl	%eax, %eax
+	jne	.L262
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	8(%rax), %rax
+	testq	%rax, %rax
+	je	.L262
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	8(%rax), %rax
+	movl	32(%rax), %eax
+	testl	%eax, %eax
+	jne	.L262
+	movb	$1, -25(%rbp)
+.L262:
+	cmpb	$0, -25(%rbp)
+	jne	.L260
+	movq	-56(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-208(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_variable_access
+	movq	%rax, %rdx
+	movq	-208(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	load_rvalue
+	movq	%rax, -24(%rbp)
+.L260:
+	cmpq	$0, -16(%rbp)
+	jne	.L263
+	movq	-208(%rbp), %rdx
+	movq	-56(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_variable_access
+	movq	%rax, -64(%rbp)
+	cmpq	$0, -64(%rbp)
+	jne	.L264
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$54, %edx
+	movl	$1, %esi
+	leaq	.LC29(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L237
+.L264:
+	movq	-64(%rbp), %rax
+	movl	16(%rax), %eax
+	cmpl	$7, %eax
+	jne	.L265
+	movq	-64(%rbp), %rax
+	movq	(%rax), %rax
+	testq	%rax, %rax
+	je	.L265
+	movq	-64(%rbp), %rax
+	movq	(%rax), %rax
+	movq	(%rax), %rax
+	movq	%rax, -16(%rbp)
+	jmp	.L263
+.L265:
+	movq	-64(%rbp), %rax
+	movl	16(%rax), %eax
+	testl	%eax, %eax
+	jne	.L263
+	movq	-64(%rbp), %rax
+	movq	(%rax), %rax
+	testq	%rax, %rax
+	je	.L263
+	movq	-64(%rbp), %rax
+	movq	(%rax), %rax
+	movq	(%rax), %rax
+	testq	%rax, %rax
+	je	.L263
+	movq	-64(%rbp), %rax
+	movq	(%rax), %rax
+	movq	(%rax), %rax
+	movq	%rax, -72(%rbp)
+	movq	-72(%rbp), %rax
+	movl	32(%rax), %eax
+	cmpl	$1, %eax
+	je	.L266
+	movq	-72(%rbp), %rax
+	movl	32(%rax), %eax
+	cmpl	$2, %eax
+	jne	.L263
+.L266:
+	movq	-72(%rbp), %rax
+	movq	%rax, -16(%rbp)
+.L263:
+	cmpq	$0, -16(%rbp)
+	jne	.L267
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$46, %edx
+	movl	$1, %esi
+	leaq	.LC30(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L237
+.L267:
+	movq	$0, -40(%rbp)
+	cmpq	$0, -24(%rbp)
+	je	.L268
+	movq	-208(%rbp), %rdx
+	movq	-24(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	emit_param_instruction
+	addq	$1, -40(%rbp)
+.L268:
+	movq	-200(%rbp), %rax
+	movq	8(%rax), %rax
+	movq	%rax, %rdi
+	call	*list_copy@GOTPCREL(%rip)
+	movq	%rax, -80(%rbp)
+	jmp	.L269
+.L271:
+	movq	-208(%rbp), %rdx
+	movq	-88(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	codegen_expression
+	movq	%rax, %rdx
+	movq	-208(%rbp), %rax
+	movq	%rax, %rsi
+	movq	%rdx, %rdi
+	call	load_rvalue
+	movq	%rax, -112(%rbp)
+	cmpq	$0, -112(%rbp)
+	jne	.L270
+	movq	stderr(%rip), %rax
+	movq	%rax, %rcx
+	movl	$52, %edx
+	movl	$1, %esi
+	leaq	.LC31(%rip), %rax
+	movq	%rax, %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	movl	$0, %eax
+	jmp	.L237
+.L270:
+	movq	-208(%rbp), %rdx
+	movq	-112(%rbp), %rax
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	emit_param_instruction
+	addq	$1, -40(%rbp)
+.L269:
+	movq	-80(%rbp), %rax
+	movq	%rax, %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, -88(%rbp)
+	cmpq	$0, -88(%rbp)
+	jne	.L271
+	movl	$0, %esi
+	movl	$5, %edi
+	call	create_arg
+	movq	%rax, -48(%rbp)
+	movq	-16(%rbp), %rax
+	movq	(%rax), %rax
+	testq	%rax, %rax
+	je	.L272
+	movq	-16(%rbp), %rax
+	movq	(%rax), %rdx
+	movq	name_void(%rip), %rax
+	cmpq	%rax, %rdx
+	je	.L272
+	movq	-16(%rbp), %rax
+	movq	(%rax), %rax
+	movq	-208(%rbp), %rdx
+	movq	%rdx, %rcx
+	movl	$116, %edx
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$0, %edi
+	call	create_arg
+	movq	%rax, -48(%rbp)
+.L272:
+	movq	-40(%rbp), %rax
+	movq	%rax, -192(%rbp)
+	movq	-16(%rbp), %rax
+	movq	(%rax), %rsi
+	movq	-208(%rbp), %rdx
+	movq	-16(%rbp), %rax
+	movq	%rdx, %rcx
+	movl	$102, %edx
+	movq	%rax, %rdi
+	call	create_var
+	movq	%rax, %rsi
+	movl	$7, %edi
+	call	create_arg
+	movq	%rax, -96(%rbp)
+	leaq	-192(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$1, %edi
+	call	create_arg
+	movq	%rax, %rcx
+	movq	-96(%rbp), %rdx
+	movq	-48(%rbp), %rax
+	movq	%rax, %rsi
+	movl	$22, %edi
+	call	create_instruction
+	movq	%rax, -104(%rbp)
+	movq	-208(%rbp), %rax
+	movq	16(%rax), %rax
+	movq	8(%rax), %rax
+	movq	-104(%rbp), %rdx
+	movq	%rdx, %rsi
+	movq	%rax, %rdi
+	call	*list_append@GOTPCREL(%rip)
+	movq	-48(%rbp), %rax
+	jmp	.L237
+.L257:
+	movq	-200(%rbp), %rax
+	movl	16(%rax), %edx
+	movq	stderr(%rip), %rax
+	leaq	.LC32(%rip), %rcx
+	movq	%rcx, %rsi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*fprintf@GOTPCREL(%rip)
+	movl	$0, %eax
+.L237:
+	leave
+	ret
+	.size	codegen_variable_access, .-codegen_variable_access
+	.section	.rodata
+	.align 8
+.LC18:
+	.long	0
+	.long	-1074790400
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits

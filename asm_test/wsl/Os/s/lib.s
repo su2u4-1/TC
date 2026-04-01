@@ -79,6 +79,8 @@ alloc_memory:
 	call	init
 .L11:
 	movq	struct_memory(%rip), %rax
+	addq	$7, %rbx
+	andq	$-8, %rbx
 	movq	8(%rax), %rdx
 	addq	%rbx, %rdx
 	cmpq	(%rax), %rdx
@@ -87,13 +89,11 @@ alloc_memory:
 	call	increase_memory_size
 .L12:
 	movq	struct_memory(%rip), %rcx
-	addq	$7, %rbx
-	andq	$-8, %rbx
 	movq	8(%rcx), %rdx
 	testb	$7, %dl
 	je	.L13
 	leaq	__PRETTY_FUNCTION__.0(%rip), %rcx
-	movl	$258, %edx
+	movl	$263, %edx
 	leaq	.LC1(%rip), %rsi
 	leaq	.LC2(%rip), %rdi
 	call	*__assert_fail@GOTPCREL(%rip)
@@ -215,13 +215,18 @@ create_string_check:
 	popq	%r14
 	ret
 	.size	create_string_check, .-create_string_check
-	.globl	create_string
-	.type	create_string, @function
-create_string:
-	movl	$1, %edx
+	.globl	create_string_not_check
+	.type	create_string_not_check, @function
+create_string_not_check:
+	xorl	%edx, %edx
 	jmp	create_string_check
-	.size	create_string, .-create_string
-	.globl	init
+	.size	create_string_not_check, .-create_string_not_check
+	.section	.rodata.str1.1
+.LC4:
+	.string	"init"
+.LC5:
+	.string	"$constructor"
+	.text
 	.type	init, @function
 init:
 	cmpb	$0, initialized(%rip)
@@ -312,6 +317,16 @@ init:
 	movq	%rax, -8(%rbp)
 	cmpq	%r13, %rbx
 	jne	.L40
+	xorl	%edx, %edx
+	movl	$4, %esi
+	leaq	.LC4(%rip), %rdi
+	call	create_string_check
+	xorl	%edx, %edx
+	movl	$13, %esi
+	leaq	.LC5(%rip), %rdi
+	movq	%rax, DEFAULT_INIT_NAME(%rip)
+	call	create_string_check
+	movq	%rax, DEFAULT_CONSTRUCTOR_NAME(%rip)
 	movq	keywordList(%rip), %rax
 	movq	%rax, IMPORT_KEYWORD(%rip)
 	movq	8+keywordList(%rip), %rax
@@ -425,28 +440,34 @@ init:
 .L44:
 	ret
 	.size	init, .-init
+	.globl	create_string
+	.type	create_string, @function
+create_string:
+	movl	$1, %edx
+	jmp	create_string_check
+	.size	create_string, .-create_string
 	.globl	is_keyword
 	.type	is_keyword, @function
 is_keyword:
 	cmpb	$0, initialized(%rip)
 	pushq	%rbx
 	movq	%rdi, %rbx
-	jne	.L48
+	jne	.L49
 	call	init
-.L48:
+.L49:
 	xorl	%eax, %eax
 	leaq	keywordList(%rip), %rdx
-.L50:
+.L51:
 	cmpq	%rbx, (%rdx,%rax,8)
-	je	.L51
+	je	.L52
 	incq	%rax
 	cmpq	$22, %rax
-	jne	.L50
+	jne	.L51
 	xorl	%eax, %eax
-	jmp	.L47
-.L51:
+	jmp	.L48
+.L52:
 	movb	$1, %al
-.L47:
+.L48:
 	popq	%rbx
 	ret
 	.size	is_keyword, .-is_keyword
@@ -458,11 +479,11 @@ string_equal:
 	ret
 	.size	string_equal, .-string_equal
 	.section	.rodata.str1.1
-.LC4:
-	.string	""
-.LC5:
-	.string	"%zu/%zu bytes"
 .LC6:
+	.string	""
+.LC7:
+	.string	"%zu/%zu bytes"
+.LC8:
 	.string	"Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu"
 	.text
 	.globl	get_info
@@ -475,18 +496,18 @@ get_info:
 	pushq	%r12
 	pushq	%rbp
 	pushq	%rbx
-.L56:
+.L57:
 	testq	%rax, %rax
-	je	.L59
+	je	.L60
 	movq	16(%rax), %rax
 	incq	%r13
-	jmp	.L56
-.L59:
-	leaq	.LC4(%rip), %rbx
+	jmp	.L57
+.L60:
+	leaq	.LC6(%rip), %rbx
 	xorl	%edx, %edx
 	movl	$48, %esi
 	movq	%rbx, %rdi
-	leaq	.LC5(%rip), %r14
+	leaq	.LC7(%rip), %r14
 	call	create_string_check
 	movq	%r14, %rcx
 	movq	struct_memory_count(%rip), %r9
@@ -520,7 +541,7 @@ get_info:
 	call	create_string_check
 	movq	%rbp, %r9
 	movl	$3, %r8d
-	leaq	.LC6(%rip), %rcx
+	leaq	.LC8(%rip), %rcx
 	movq	%rax, %rbx
 	pushq	%rax
 	orq	$-1, %rdx
@@ -905,6 +926,18 @@ FROM_KEYWORD:
 	.size	IMPORT_KEYWORD, 8
 IMPORT_KEYWORD:
 	.zero	8
+	.globl	DEFAULT_CONSTRUCTOR_NAME
+	.align 8
+	.type	DEFAULT_CONSTRUCTOR_NAME, @object
+	.size	DEFAULT_CONSTRUCTOR_NAME, 8
+DEFAULT_CONSTRUCTOR_NAME:
+	.zero	8
+	.globl	DEFAULT_INIT_NAME
+	.align 8
+	.type	DEFAULT_INIT_NAME, @object
+	.size	DEFAULT_INIT_NAME, 8
+DEFAULT_INIT_NAME:
+	.zero	8
 	.globl	all_string_list
 	.align 8
 	.type	all_string_list, @object
@@ -935,73 +968,71 @@ struct_memory:
 symbolList:
 	.zero	240
 	.section	.rodata.str1.1
-.LC7:
-	.string	"("
-.LC8:
-	.string	")"
 .LC9:
-	.string	"{"
+	.string	"("
 .LC10:
-	.string	"}"
+	.string	")"
 .LC11:
-	.string	","
+	.string	"{"
 .LC12:
-	.string	"!"
+	.string	"}"
 .LC13:
-	.string	"."
+	.string	","
 .LC14:
-	.string	"["
+	.string	"!"
 .LC15:
-	.string	"]"
+	.string	"."
 .LC16:
-	.string	";"
+	.string	"["
 .LC17:
-	.string	"_"
+	.string	"]"
 .LC18:
-	.string	"+"
+	.string	";"
 .LC19:
-	.string	"-"
+	.string	"_"
 .LC20:
-	.string	"*"
+	.string	"+"
 .LC21:
-	.string	"/"
+	.string	"-"
 .LC22:
-	.string	"%"
+	.string	"*"
 .LC23:
-	.string	"<"
+	.string	"/"
 .LC24:
-	.string	">"
+	.string	"%"
 .LC25:
-	.string	"="
+	.string	"<"
 .LC26:
-	.string	"=="
+	.string	">"
 .LC27:
-	.string	"!="
+	.string	"="
 .LC28:
-	.string	"<="
+	.string	"=="
 .LC29:
-	.string	">="
+	.string	"!="
 .LC30:
-	.string	"+="
+	.string	"<="
 .LC31:
-	.string	"-="
+	.string	">="
 .LC32:
-	.string	"*="
+	.string	"+="
 .LC33:
-	.string	"/="
+	.string	"-="
 .LC34:
-	.string	"%="
+	.string	"*="
 .LC35:
-	.string	"&&"
+	.string	"/="
 .LC36:
+	.string	"%="
+.LC37:
+	.string	"&&"
+.LC38:
 	.string	"||"
 	.section	.data.rel.ro.local,"aw"
 	.align 32
 	.type	symbolStrings, @object
 	.size	symbolStrings, 240
 symbolStrings:
-	.quad	.LC7
-	.quad	.LC8
 	.quad	.LC9
 	.quad	.LC10
 	.quad	.LC11
@@ -1030,6 +1061,8 @@ symbolStrings:
 	.quad	.LC34
 	.quad	.LC35
 	.quad	.LC36
+	.quad	.LC37
+	.quad	.LC38
 	.globl	keywordList
 	.bss
 	.align 32
@@ -1038,57 +1071,55 @@ symbolStrings:
 keywordList:
 	.zero	176
 	.section	.rodata.str1.1
-.LC37:
-	.string	"import"
-.LC38:
-	.string	"from"
 .LC39:
-	.string	"func"
+	.string	"import"
 .LC40:
-	.string	"class"
+	.string	"from"
 .LC41:
-	.string	"method"
+	.string	"func"
 .LC42:
-	.string	"self"
+	.string	"class"
 .LC43:
-	.string	"if"
+	.string	"method"
 .LC44:
-	.string	"elif"
+	.string	"self"
 .LC45:
-	.string	"else"
+	.string	"if"
 .LC46:
-	.string	"while"
+	.string	"elif"
 .LC47:
-	.string	"for"
+	.string	"else"
 .LC48:
-	.string	"true"
+	.string	"while"
 .LC49:
-	.string	"false"
+	.string	"for"
 .LC50:
-	.string	"return"
+	.string	"true"
 .LC51:
-	.string	"break"
+	.string	"false"
 .LC52:
-	.string	"continue"
+	.string	"return"
 .LC53:
-	.string	"int"
+	.string	"break"
 .LC54:
-	.string	"float"
+	.string	"continue"
 .LC55:
-	.string	"string"
+	.string	"int"
 .LC56:
-	.string	"bool"
+	.string	"float"
 .LC57:
-	.string	"void"
+	.string	"string"
 .LC58:
+	.string	"bool"
+.LC59:
+	.string	"void"
+.LC60:
 	.string	"var"
 	.section	.data.rel.ro.local
 	.align 32
 	.type	keywordStrings, @object
 	.size	keywordStrings, 176
 keywordStrings:
-	.quad	.LC37
-	.quad	.LC38
 	.quad	.LC39
 	.quad	.LC40
 	.quad	.LC41
@@ -1109,5 +1140,7 @@ keywordStrings:
 	.quad	.LC56
 	.quad	.LC57
 	.quad	.LC58
+	.quad	.LC59
+	.quad	.LC60
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits

@@ -53,15 +53,15 @@ create_code_member:
 	jne	.L6	;,
 	testq	%rbp, %rbp	; class_content
 	je	.L6	;,
-; src/create.c:11:         code_member->content.class_ = class_content;
-	movq	%rbp, (%rax)	; class_content, code_member_21->content.class_
+; src/create.c:11:         code_member->content.class = class_content;
+	movq	%rbp, (%rax)	; class_content, code_member_21->content.class
 	jmp	.L1	;
 .L6:
-; src/create.c:13:         if (import_content == 0 && function_content == 0 && class_content == 0)
+; src/create.c:13:         if (import_content == NULL && function_content == NULL && class_content == NULL)
 	orq	%r13, %rbp	; function_content, tmp114
 ; src/create.c:14:             fprintf(stderr, "Error creating code member: content is NULL\n");
 	movq	stderr(%rip), %rdi	; stderr, pretmp_16
-; src/create.c:13:         if (import_content == 0 && function_content == 0 && class_content == 0)
+; src/create.c:13:         if (import_content == NULL && function_content == NULL && class_content == NULL)
 	orq	%rbp, %r12	; tmp114, tmp124
 	jne	.L7	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
@@ -76,7 +76,7 @@ create_code_member:
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
 .L8:
-; src/create.c:17:         return 0;
+; src/create.c:17:         return NULL;
 	xorl	%eax, %eax	; <retval>
 .L1:
 ; src/create.c:20: }
@@ -94,17 +94,17 @@ create_code:
 	movq	%rdi, %rbp	; tmp86, members
 ; src/create.c:23:     Code* code = (Code*)alloc_memory(sizeof(Code));
 	movl	$16, %edi	;,
-; src/create.c:22: Code* create_code(list(CodeMember*) members, Scope* global_scope) {
+; src/create.c:22: Code* create_code(list(CodeMember*) members, SymbolTable* global_scope) {
 	pushq	%rbx	;
 	movq	%rsi, %rbx	; tmp87, global_scope
 	pushq	%rax	;
 ; src/create.c:23:     Code* code = (Code*)alloc_memory(sizeof(Code));
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:25:     code_ptr->members = members;
+; src/create.c:24:     code->members = members;
 	movq	%rbp, (%rax)	; members, code_3->members
-; src/create.c:26:     code_ptr->global_scope = global_scope;
+; src/create.c:25:     code->global_scope = global_scope;
 	movq	%rbx, 8(%rax)	; global_scope, code_3->global_scope
-; src/create.c:28: }
+; src/create.c:27: }
 	popq	%rdx	;
 	popq	%rbx	;
 	popq	%rbp	;
@@ -120,28 +120,28 @@ create_import:
 	pushq	%rbp	;
 	pushq	%rbx	;
 	pushq	%rcx	;
-; src/create.c:31:     if (name == 0) {
+; src/create.c:30:     if (name == NULL) {
 	testq	%rdi, %rdi	; name
 	jne	.L32	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC2(%rip), %rdi	;, tmp87
 	call	*fputs@GOTPCREL(%rip)	;
-; src/create.c:33:         return 0;
+; src/create.c:32:         return NULL;
 	xorl	%eax, %eax	; <retval>
 	jmp	.L31	;
 .L32:
 	movq	%rdi, %rbx	; tmp89, name
 	movq	%rsi, %rbp	; tmp90, source
-; src/create.c:35:     Import* import = (Import*)alloc_memory(sizeof(Import));
+; src/create.c:34:     Import* import = (Import*)alloc_memory(sizeof(Import));
 	movl	$16, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:37:     import_ptr->name = name;
+; src/create.c:35:     import->name = name;
 	movq	%rbx, (%rax)	; name, import_7->name
-; src/create.c:38:     import_ptr->source = source;
+; src/create.c:36:     import->source = source;
 	movq	%rbp, 8(%rax)	; source, import_7->source
 .L31:
-; src/create.c:40: }
+; src/create.c:38: }
 	popq	%rdx	;
 	popq	%rbx	;
 	popq	%rbp	;
@@ -151,106 +151,184 @@ create_import:
 .LC3:
 	.string	"Error creating function: name or return_type is NULL\n"
 	.text
+	.globl	create_function_use_ptr
+	.type	create_function_use_ptr, @function
+create_function_use_ptr:
+; src/create.c:41:     if (name == NULL || return_type == NULL) {
+	testq	%rsi, %rsi	; name
+	je	.L39	;,
+	testq	%rdx, %rdx	; return_type
+	jne	.L36	;,
+.L39:
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	leaq	.LC3(%rip), %rdi	;, tmp98
+; src/create.c:40: Function* create_function_use_ptr(Function* function, Symbol* name, Symbol* return_type, list(Variable*) parameters, list(Statement*) body, SymbolTable* function_scope) {
+	pushq	%rax	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	stderr(%rip), %rsi	; stderr,
+	call	*fputs@GOTPCREL(%rip)	;
+	xorl	%eax, %eax	; function
+; src/create.c:51: }
+	popq	%rdx	;
+	ret	
+.L36:
+; src/create.c:45:     function->name = name;
+	movq	%rsi, (%rdi)	; name, function_8(D)->name
+	movq	%rdi, %rax	; tmp100, function
+; src/create.c:46:     function->return_type = return_type;
+	movq	%rdx, 8(%rdi)	; return_type, function_8(D)->return_type
+; src/create.c:47:     function->parameters = parameters;
+	movq	%rcx, 16(%rdi)	; parameters, function_8(D)->parameters
+; src/create.c:48:     function->body = body;
+	movq	%r8, 24(%rdi)	; body, function_8(D)->body
+; src/create.c:49:     function->function_scope = function_scope;
+	movq	%r9, 32(%rdi)	; function_scope, function_8(D)->function_scope
+; src/create.c:51: }
+	ret	
+	.size	create_function_use_ptr, .-create_function_use_ptr
 	.globl	create_function
 	.type	create_function, @function
 create_function:
-	pushq	%r14	;
 	pushq	%r13	;
 	pushq	%r12	;
 	pushq	%rbp	;
 	pushq	%rbx	;
-; src/create.c:43:     if (name == 0 || return_type == 0) {
+	subq	$24, %rsp	;,
+; src/create.c:53:     if (name == NULL || return_type == NULL) {
 	testq	%rdi, %rdi	; name
-	je	.L39	;,
-	movq	%rsi, %rbx	; tmp100, return_type
+	je	.L47	;,
+	movq	%rsi, %rbp	; tmp101, return_type
 	testq	%rsi, %rsi	; return_type
-	jne	.L36	;,
-.L39:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rsi	; stderr,
-	leaq	.LC3(%rip), %rdi	;, tmp97
-	call	*fputs@GOTPCREL(%rip)	;
-; src/create.c:45:         return 0;
-	xorl	%eax, %eax	; <retval>
-	jmp	.L35	;
-.L36:
-	movq	%rdi, %rbp	; tmp99, name
-	movq	%rdx, %r14	; tmp101, parameters
-	movq	%rcx, %r13	; tmp102, body
-	movq	%r8, %r12	; tmp103, function_scope
-; src/create.c:47:     Function* function = (Function*)alloc_memory(sizeof(Function));
+	je	.L47	;,
+	movq	%rdx, %r12	; tmp102, parameters
+	movq	%rcx, %r13	; tmp103, body
+	movq	%r8, 8(%rsp)	; function_scope, %sfp
+	movq	%rdi, %rbx	; tmp100, name
+; src/create.c:57:     Function* function = (Function*)alloc_memory(sizeof(Function));
 	movl	$40, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:49:     function_ptr->name = name;
-	movq	%rbp, (%rax)	; name, function_11->name
-; src/create.c:50:     function_ptr->return_type = return_type;
-	movq	%rbx, 8(%rax)	; return_type, function_11->return_type
-; src/create.c:51:     function_ptr->parameters = parameters;
-	movq	%r14, 16(%rax)	; parameters, function_11->parameters
-; src/create.c:52:     function_ptr->body = body;
-	movq	%r13, 24(%rax)	; body, function_11->body
-; src/create.c:53:     function_ptr->function_scope = function_scope;
-	movq	%r12, 32(%rax)	; function_scope, function_11->function_scope
-.L35:
-; src/create.c:55: }
+; src/create.c:58:     return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
+	movq	8(%rsp), %r9	; %sfp, function_scope
+	movq	%r13, %r8	; body,
+	movq	%r12, %rcx	; parameters,
+; src/create.c:59: }
+	addq	$24, %rsp	;,
+; src/create.c:58:     return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
+	movq	%rbp, %rdx	; return_type,
+	movq	%rbx, %rsi	; name,
+; src/create.c:57:     Function* function = (Function*)alloc_memory(sizeof(Function));
+	movq	%rax, %rdi	; tmp105, function
+; src/create.c:59: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
 	popq	%r13	;
-	popq	%r14	;
+; src/create.c:58:     return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
+	jmp	create_function_use_ptr	;
+.L47:
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	stderr(%rip), %rsi	; stderr,
+	leaq	.LC3(%rip), %rdi	;, tmp98
+	call	*fputs@GOTPCREL(%rip)	;
+; src/create.c:59: }
+	addq	$24, %rsp	;,
+	xorl	%eax, %eax	;
+	popq	%rbx	;
+	popq	%rbp	;
+	popq	%r12	;
+	popq	%r13	;
 	ret	
 	.size	create_function, .-create_function
 	.section	.rodata.str1.1
 .LC4:
 	.string	"Error creating method: name or return_type is NULL\n"
 	.text
+	.globl	create_method_use_ptr
+	.type	create_method_use_ptr, @function
+create_method_use_ptr:
+; src/create.c:62:     if (name == NULL || return_type == NULL) {
+	testq	%rsi, %rsi	; name
+	je	.L54	;,
+	testq	%rdx, %rdx	; return_type
+	jne	.L51	;,
+.L54:
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	leaq	.LC4(%rip), %rdi	;, tmp98
+; src/create.c:61: Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type, list(Variable*) parameters, list(Statement*) body, SymbolTable* method_scope) {
+	pushq	%rax	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	stderr(%rip), %rsi	; stderr,
+	call	*fputs@GOTPCREL(%rip)	;
+	xorl	%eax, %eax	; method
+; src/create.c:72: }
+	popq	%rdx	;
+	ret	
+.L51:
+; src/create.c:66:     method->name = name;
+	movq	%rsi, (%rdi)	; name, method_8(D)->name
+	movq	%rdi, %rax	; tmp100, method
+; src/create.c:67:     method->return_type = return_type;
+	movq	%rdx, 8(%rdi)	; return_type, method_8(D)->return_type
+; src/create.c:68:     method->parameters = parameters;
+	movq	%rcx, 16(%rdi)	; parameters, method_8(D)->parameters
+; src/create.c:69:     method->body = body;
+	movq	%r8, 24(%rdi)	; body, method_8(D)->body
+; src/create.c:70:     method->method_scope = method_scope;
+	movq	%r9, 32(%rdi)	; method_scope, method_8(D)->method_scope
+; src/create.c:72: }
+	ret	
+	.size	create_method_use_ptr, .-create_method_use_ptr
 	.globl	create_method
 	.type	create_method, @function
 create_method:
-	pushq	%r14	;
 	pushq	%r13	;
 	pushq	%r12	;
 	pushq	%rbp	;
 	pushq	%rbx	;
-; src/create.c:58:     if (name == 0 || return_type == 0) {
+	subq	$24, %rsp	;,
+; src/create.c:74:     if (name == NULL || return_type == NULL) {
 	testq	%rdi, %rdi	; name
-	je	.L45	;,
-	movq	%rsi, %rbx	; tmp100, return_type
+	je	.L62	;,
+	movq	%rsi, %rbp	; tmp101, return_type
 	testq	%rsi, %rsi	; return_type
-	jne	.L42	;,
-.L45:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rsi	; stderr,
-	leaq	.LC4(%rip), %rdi	;, tmp97
-	call	*fputs@GOTPCREL(%rip)	;
-; src/create.c:60:         return 0;
-	xorl	%eax, %eax	; <retval>
-	jmp	.L41	;
-.L42:
-	movq	%rdi, %rbp	; tmp99, name
-	movq	%rdx, %r14	; tmp101, parameters
-	movq	%rcx, %r13	; tmp102, body
-	movq	%r8, %r12	; tmp103, method_scope
-; src/create.c:62:     Method* method = (Method*)alloc_memory(sizeof(Method));
+	je	.L62	;,
+	movq	%rdx, %r12	; tmp102, parameters
+	movq	%rcx, %r13	; tmp103, body
+	movq	%r8, 8(%rsp)	; method_scope, %sfp
+	movq	%rdi, %rbx	; tmp100, name
+; src/create.c:78:     Method* method = (Method*)alloc_memory(sizeof(Method));
 	movl	$40, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:64:     method_ptr->name = name;
-	movq	%rbp, (%rax)	; name, method_11->name
-; src/create.c:65:     method_ptr->return_type = return_type;
-	movq	%rbx, 8(%rax)	; return_type, method_11->return_type
-; src/create.c:66:     method_ptr->parameters = parameters;
-	movq	%r14, 16(%rax)	; parameters, method_11->parameters
-; src/create.c:67:     method_ptr->body = body;
-	movq	%r13, 24(%rax)	; body, method_11->body
-; src/create.c:68:     method_ptr->method_scope = method_scope;
-	movq	%r12, 32(%rax)	; method_scope, method_11->method_scope
-.L41:
-; src/create.c:70: }
+; src/create.c:79:     return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
+	movq	8(%rsp), %r9	; %sfp, method_scope
+	movq	%r13, %r8	; body,
+	movq	%r12, %rcx	; parameters,
+; src/create.c:80: }
+	addq	$24, %rsp	;,
+; src/create.c:79:     return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
+	movq	%rbp, %rdx	; return_type,
+	movq	%rbx, %rsi	; name,
+; src/create.c:78:     Method* method = (Method*)alloc_memory(sizeof(Method));
+	movq	%rax, %rdi	; tmp105, method
+; src/create.c:80: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
 	popq	%r13	;
-	popq	%r14	;
+; src/create.c:79:     return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
+	jmp	create_method_use_ptr	;
+.L62:
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	stderr(%rip), %rsi	; stderr,
+	leaq	.LC4(%rip), %rdi	;, tmp98
+	call	*fputs@GOTPCREL(%rip)	;
+; src/create.c:80: }
+	addq	$24, %rsp	;,
+	xorl	%eax, %eax	;
+	popq	%rbx	;
+	popq	%rbp	;
+	popq	%r12	;
+	popq	%r13	;
 	ret	
 	.size	create_method, .-create_method
 	.section	.rodata.str1.1
@@ -267,53 +345,53 @@ create_class_member:
 	pushq	%rbp	;
 	movq	%rsi, %rbp	; tmp109, method_content
 	pushq	%rbx	;
-; src/create.c:72: ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content) {
+; src/create.c:82: ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content) {
 	movl	%edi, %ebx	; tmp108, type
-; src/create.c:73:     ClassMember* class_member = (ClassMember*)alloc_memory(sizeof(ClassMember));
+; src/create.c:83:     ClassMember* class_member = (ClassMember*)alloc_memory(sizeof(ClassMember));
 	movl	$16, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:75:     class_member_ptr->type = type;
+; src/create.c:84:     class_member->type = type;
 	movl	%ebx, 8(%rax)	; type, class_member_18->type
-; src/create.c:76:     if (type == CLASS_METHOD && method_content != NULL)
+; src/create.c:85:     if (type == CLASS_METHOD && method_content != NULL)
 	testl	%ebx, %ebx	; type
-	jne	.L48	;,
+	jne	.L66	;,
 	testq	%rbp, %rbp	; method_content
-	je	.L48	;,
-; src/create.c:77:         class_member_ptr->content.method = method_content;
+	je	.L66	;,
+; src/create.c:86:         class_member->content.method = method_content;
 	movq	%rbp, (%rax)	; method_content, class_member_18->content.method
-	jmp	.L47	;
-.L48:
-; src/create.c:78:     else if (type == CLASS_VARIABLE && variable_content != NULL)
+	jmp	.L65	;
+.L66:
+; src/create.c:87:     else if (type == CLASS_VARIABLE && variable_content != NULL)
 	cmpl	$1, %ebx	;, type
-	jne	.L50	;,
+	jne	.L68	;,
 	testq	%r12, %r12	; variable_content
-	je	.L50	;,
-; src/create.c:79:         class_member_ptr->content.variable = variable_content;
+	je	.L68	;,
+; src/create.c:88:         class_member->content.variable = variable_content;
 	movq	%r12, (%rax)	; variable_content, class_member_18->content.variable
-	jmp	.L47	;
-.L50:
-; src/create.c:81:         if (method_content == 0 && variable_content == 0)
+	jmp	.L65	;
+.L68:
+; src/create.c:90:         if (method_content == NULL && variable_content == NULL)
 	orq	%r12, %rbp	; variable_content, tmp112
-; src/create.c:82:             fprintf(stderr, "Error creating class member: content is NULL\n");
+; src/create.c:91:             fprintf(stderr, "Error creating class member: content is NULL\n");
 	movq	stderr(%rip), %rdi	; stderr, pretmp_9
-; src/create.c:81:         if (method_content == 0 && variable_content == 0)
-	jne	.L52	;,
+; src/create.c:90:         if (method_content == NULL && variable_content == NULL)
+	jne	.L70	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rdi, %rsi	; pretmp_9,
 	leaq	.LC5(%rip), %rdi	;, tmp105
 	call	*fputs@GOTPCREL(%rip)	;
-	jmp	.L53	;
-.L52:
+	jmp	.L71	;
+.L70:
 	movl	%ebx, %ecx	; type,
 	leaq	.LC6(%rip), %rdx	;, tmp106
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L53:
-; src/create.c:85:         return 0;
+.L71:
+; src/create.c:94:         return NULL;
 	xorl	%eax, %eax	; <retval>
-.L47:
-; src/create.c:88: }
+.L65:
+; src/create.c:97: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
@@ -323,40 +401,78 @@ create_class_member:
 .LC7:
 	.string	"Error creating class: name is NULL\n"
 	.text
+	.globl	create_class_use_ptr
+	.type	create_class_use_ptr, @function
+create_class_use_ptr:
+	pushq	%rbx	;
+; src/create.c:99: Class* create_class_use_ptr(Class* class, Symbol* name, list(ClassMember*) members, SymbolTable* class_scope, size_t size) {
+	movq	%rsi, %rbx	; tmp93, name
+; src/create.c:100:     if (name == NULL) {
+	testq	%rsi, %rsi	; name
+	jne	.L86	;,
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	stderr(%rip), %rsi	; stderr,
+	leaq	.LC7(%rip), %rdi	;, tmp90
+	call	*fputs@GOTPCREL(%rip)	;
+	jmp	.L87	;
+.L86:
+; src/create.c:104:     class->name = name;
+	movq	%rsi, (%rdi)	; name, class_4(D)->name
+; src/create.c:108:     return class;
+	movq	%rdi, %rbx	; class, name
+; src/create.c:105:     class->members = members;
+	movq	%rdx, 8(%rdi)	; members, class_4(D)->members
+; src/create.c:106:     class->class_scope = class_scope;
+	movq	%rcx, 16(%rdi)	; class_scope, class_4(D)->class_scope
+; src/create.c:107:     class->size = size;
+	movq	%r8, 24(%rdi)	; size, class_4(D)->size
+.L87:
+; src/create.c:109: }
+	movq	%rbx, %rax	; name,
+	popq	%rbx	;
+	ret	
+	.size	create_class_use_ptr, .-create_class_use_ptr
 	.globl	create_class
 	.type	create_class, @function
 create_class:
+	pushq	%r13	;
 	pushq	%r12	;
 	pushq	%rbp	;
 	pushq	%rbx	;
-; src/create.c:91:     if (name == 0) {
+	pushq	%r8	;
+; src/create.c:111:     if (name == NULL) {
 	testq	%rdi, %rdi	; name
-	jne	.L68	;,
+	jne	.L90	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
-	leaq	.LC7(%rip), %rdi	;, tmp88
+	leaq	.LC7(%rip), %rdi	;, tmp89
 	call	*fputs@GOTPCREL(%rip)	;
-; src/create.c:93:         return 0;
+; src/create.c:113:         return NULL;
 	xorl	%eax, %eax	; <retval>
-	jmp	.L67	;
-.L68:
-	movq	%rdi, %rbx	; tmp90, name
-	movq	%rsi, %r12	; tmp91, members
-	movq	%rdx, %rbp	; tmp92, class_scope
-; src/create.c:95:     Class* class = (Class*)alloc_memory(sizeof(Class));
-	movl	$24, %edi	;,
+	jmp	.L89	;
+.L90:
+	movq	%rdi, %rbx	; tmp91, name
+	movq	%rsi, %r13	; tmp92, members
+	movq	%rdx, %r12	; tmp93, class_scope
+	movq	%rcx, %rbp	; tmp94, size
+; src/create.c:115:     Class* class = (Class*)alloc_memory(sizeof(Class));
+	movl	$32, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:97:     class_ptr->name = name;
+; src/create.c:104:     class->name = name;
 	movq	%rbx, (%rax)	; name, class_7->name
-; src/create.c:98:     class_ptr->members = members;
-	movq	%r12, 8(%rax)	; members, class_7->members
-; src/create.c:99:     class_ptr->class_scope = class_scope;
-	movq	%rbp, 16(%rax)	; class_scope, class_7->class_scope
-.L67:
-; src/create.c:101: }
+; src/create.c:105:     class->members = members;
+	movq	%r13, 8(%rax)	; members, class_7->members
+; src/create.c:106:     class->class_scope = class_scope;
+	movq	%r12, 16(%rax)	; class_scope, class_7->class_scope
+; src/create.c:107:     class->size = size;
+	movq	%rbp, 24(%rax)	; size, class_7->size
+.L89:
+; src/create.c:117: }
+	popq	%rdx	;
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
+	popq	%r13	;
 	ret	
 	.size	create_class, .-create_class
 	.section	.rodata.str1.1
@@ -369,34 +485,34 @@ create_variable:
 	pushq	%r12	;
 	pushq	%rbp	;
 	pushq	%rbx	;
-; src/create.c:104:     if (type == 0 || name == 0) {
+; src/create.c:120:     if (type == NULL || name == NULL) {
 	testq	%rdi, %rdi	; type
-	je	.L75	;,
+	je	.L97	;,
 	movq	%rsi, %rbx	; tmp98, name
 	testq	%rsi, %rsi	; name
-	jne	.L72	;,
-.L75:
+	jne	.L94	;,
+.L97:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC8(%rip), %rdi	;, tmp95
 	call	*fputs@GOTPCREL(%rip)	;
-; src/create.c:106:         return 0;
+; src/create.c:122:         return NULL;
 	xorl	%eax, %eax	; <retval>
-	jmp	.L71	;
-.L72:
+	jmp	.L93	;
+.L94:
 	movq	%rdi, %rbp	; tmp97, type
 	movq	%rdx, %r12	; tmp99, value
-; src/create.c:108:     Variable* variable = (Variable*)alloc_memory(sizeof(Variable));
+; src/create.c:124:     Variable* variable = (Variable*)alloc_memory(sizeof(Variable));
 	movl	$24, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:110:     variable_ptr->type = type;
+; src/create.c:125:     variable->type = type;
 	movq	%rbp, (%rax)	; type, variable_11->type
-; src/create.c:111:     variable_ptr->name = name;
+; src/create.c:126:     variable->name = name;
 	movq	%rbx, 8(%rax)	; name, variable_11->name
-; src/create.c:112:     variable_ptr->value = value;
+; src/create.c:127:     variable->value = value;
 	movq	%r12, 16(%rax)	; value, variable_11->value
-.L71:
-; src/create.c:114: }
+.L93:
+; src/create.c:129: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
@@ -412,116 +528,110 @@ create_variable:
 	.type	create_statement, @function
 create_statement:
 	pushq	%r15	;
-	movq	%rdx, %r15	; tmp148, while_stmt
+	movq	%rdx, %r15	; tmp145, while_stmt
 	pushq	%r14	;
-	movq	%r8, %r14	; tmp150, expr
+	movq	%r8, %r14	; tmp147, expr
 	pushq	%r13	;
-	movq	%rcx, %r13	; tmp149, for_stmt
+	movq	%rcx, %r13	; tmp146, for_stmt
 	pushq	%r12	;
-	movq	%rsi, %r12	; tmp147, if_stmt
+	movq	%rsi, %r12	; tmp144, if_stmt
 	pushq	%rbp	;
-	movq	%r9, %rbp	; tmp151, var_stmt
+	movq	%r9, %rbp	; tmp148, var_stmt
 	pushq	%rbx	;
-	movl	%edi, %ebx	; tmp146, type
-; src/create.c:117:     Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
+	movl	%edi, %ebx	; tmp143, type
+; src/create.c:132:     Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
 	movl	$16, %edi	;,
-; src/create.c:116: Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt) {
+; src/create.c:131: Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt) {
 	pushq	%r10	;
-; src/create.c:117:     Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
+; src/create.c:132:     Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:120:     if (type == EXPRESSION_STATEMENT && expr != 0)
-	testq	%r14, %r14	; expr
-; src/create.c:119:     statement_ptr->type = type;
-	movl	%ebx, 8(%rax)	; type, statement_33->type
-; src/create.c:120:     if (type == EXPRESSION_STATEMENT && expr != 0)
-	setne	%dl	;, tmp117
-; src/create.c:120:     if (type == EXPRESSION_STATEMENT && expr != 0)
+; src/create.c:133:     statement->type = type;
+	movl	%ebx, 8(%rax)	; type, statement_31->type
+; src/create.c:134:     if (type == EXPRESSION_STATEMENT && expr != NULL)
 	testl	%ebx, %ebx	; type
-	jne	.L78	;,
-	testb	%dl, %dl	; tmp117
-	jne	.L126	;,
-.L78:
-; src/create.c:122:     else if (type == VARIABLE_STATEMENT && var_stmt != 0)
+	jne	.L100	;,
+	testq	%r14, %r14	; expr
+	jne	.L142	;,
+.L100:
+; src/create.c:136:     else if (type == VARIABLE_STATEMENT && var_stmt != NULL)
 	cmpl	$1, %ebx	;, type
-	jne	.L80	;,
+	jne	.L102	;,
 	testq	%rbp, %rbp	; var_stmt
-	je	.L80	;,
-; src/create.c:123:         statement_ptr->stmt.var = var_stmt;
-	movq	%rbp, (%rax)	; var_stmt, statement_33->stmt.var
-	jmp	.L77	;
-.L80:
-; src/create.c:124:     else if (type == IF_STATEMENT && if_stmt != 0)
+	je	.L102	;,
+; src/create.c:137:         statement->stmt.var = var_stmt;
+	movq	%rbp, (%rax)	; var_stmt, statement_31->stmt.var
+	jmp	.L99	;
+.L102:
+; src/create.c:138:     else if (type == IF_STATEMENT && if_stmt != NULL)
 	cmpl	$2, %ebx	;, type
-	jne	.L82	;,
+	jne	.L104	;,
 	testq	%r12, %r12	; if_stmt
-	je	.L82	;,
-; src/create.c:125:         statement_ptr->stmt.if_stmt = if_stmt;
-	movq	%r12, (%rax)	; if_stmt, statement_33->stmt.if_stmt
-	jmp	.L77	;
-.L82:
-; src/create.c:126:     else if (type == WHILE_STATEMENT && while_stmt != 0)
+	je	.L104	;,
+; src/create.c:139:         statement->stmt.if_stmt = if_stmt;
+	movq	%r12, (%rax)	; if_stmt, statement_31->stmt.if_stmt
+	jmp	.L99	;
+.L104:
+; src/create.c:140:     else if (type == WHILE_STATEMENT && while_stmt != NULL)
 	cmpl	$3, %ebx	;, type
-	jne	.L83	;,
+	jne	.L105	;,
 	testq	%r15, %r15	; while_stmt
-	je	.L83	;,
-; src/create.c:127:         statement_ptr->stmt.while_stmt = while_stmt;
-	movq	%r15, (%rax)	; while_stmt, statement_33->stmt.while_stmt
-	jmp	.L77	;
-.L83:
-; src/create.c:128:     else if (type == FOR_STATEMENT && for_stmt != 0)
+	je	.L105	;,
+; src/create.c:141:         statement->stmt.while_stmt = while_stmt;
+	movq	%r15, (%rax)	; while_stmt, statement_31->stmt.while_stmt
+	jmp	.L99	;
+.L105:
+; src/create.c:142:     else if (type == FOR_STATEMENT && for_stmt != NULL)
 	cmpl	$4, %ebx	;, type
-	jne	.L84	;,
+	jne	.L106	;,
 	testq	%r13, %r13	; for_stmt
-	je	.L84	;,
-; src/create.c:129:         statement_ptr->stmt.for_stmt = for_stmt;
-	movq	%r13, (%rax)	; for_stmt, statement_33->stmt.for_stmt
-	jmp	.L77	;
-.L84:
-; src/create.c:130:     else if (type == RETURN_STATEMENT && expr != 0)
+	je	.L106	;,
+; src/create.c:143:         statement->stmt.for_stmt = for_stmt;
+	movq	%r13, (%rax)	; for_stmt, statement_31->stmt.for_stmt
+	jmp	.L99	;
+.L106:
+; src/create.c:144:     else if (type == RETURN_STATEMENT)
 	cmpl	$5, %ebx	;, type
-	jne	.L85	;,
-	testb	%dl, %dl	; tmp117
-	je	.L85	;,
-.L126:
-; src/create.c:131:         statement_ptr->stmt.return_expr = expr;
+	jne	.L107	;,
+.L142:
+; src/create.c:145:         statement->stmt.return_expr = expr;
 	movq	%r14, (%rax)	; expr,* <retval>
-	jmp	.L77	;
-.L85:
-; src/create.c:132:     else if (type == BREAK_STATEMENT || type == CONTINUE_STATEMENT)
-	leal	-6(%rbx), %edx	;, tmp138
-; src/create.c:132:     else if (type == BREAK_STATEMENT || type == CONTINUE_STATEMENT)
-	cmpl	$1, %edx	;, tmp138
-	ja	.L86	;,
-; src/create.c:133:         statement_ptr->stmt.expr = 0;
+	jmp	.L99	;
+.L107:
+; src/create.c:146:     else if (type == BREAK_STATEMENT || type == CONTINUE_STATEMENT)
+	leal	-6(%rbx), %edx	;, tmp135
+; src/create.c:146:     else if (type == BREAK_STATEMENT || type == CONTINUE_STATEMENT)
+	cmpl	$1, %edx	;, tmp135
+	ja	.L108	;,
+; src/create.c:147:         statement->stmt.expr = NULL;
 	xorl	%ecx, %ecx	;
-	movq	%rcx, (%rax)	;, statement_33->stmt.expr
-	jmp	.L77	;
-.L86:
-; src/create.c:135:         if (if_stmt == 0 && while_stmt == 0 && for_stmt == 0 && expr == 0 && var_stmt == 0)
-	orq	%r15, %r13	; while_stmt, tmp139
-; src/create.c:136:             fprintf(stderr, "Error creating statement: content is NULL\n");
-	movq	stderr(%rip), %rdi	; stderr, pretmp_63
-; src/create.c:135:         if (if_stmt == 0 && while_stmt == 0 && for_stmt == 0 && expr == 0 && var_stmt == 0)
-	orq	%r13, %r12	; tmp139, tmp140
-	orq	%r12, %rbp	; tmp140, tmp141
-	orq	%r14, %rbp	; expr, tmp153
-	jne	.L87	;,
+	movq	%rcx, (%rax)	;, statement_31->stmt.expr
+	jmp	.L99	;
+.L108:
+; src/create.c:149:         if (if_stmt == NULL && while_stmt == NULL && for_stmt == NULL && expr == NULL && var_stmt == NULL)
+	orq	%r15, %r13	; while_stmt, tmp136
+; src/create.c:150:             fprintf(stderr, "Error creating statement: content is NULL\n");
+	movq	stderr(%rip), %rdi	; stderr, pretmp_61
+; src/create.c:149:         if (if_stmt == NULL && while_stmt == NULL && for_stmt == NULL && expr == NULL && var_stmt == NULL)
+	orq	%r13, %r12	; tmp136, tmp137
+	orq	%r12, %rbp	; tmp137, tmp138
+	orq	%r14, %rbp	; expr, tmp150
+	jne	.L109	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rdi, %rsi	; pretmp_63,
-	leaq	.LC9(%rip), %rdi	;, tmp143
+	movq	%rdi, %rsi	; pretmp_61,
+	leaq	.LC9(%rip), %rdi	;, tmp140
 	call	*fputs@GOTPCREL(%rip)	;
-	jmp	.L88	;
-.L87:
+	jmp	.L110	;
+.L109:
 	movl	%ebx, %ecx	; type,
-	leaq	.LC10(%rip), %rdx	;, tmp144
+	leaq	.LC10(%rip), %rdx	;, tmp141
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L88:
-; src/create.c:139:         return 0;
+.L110:
+; src/create.c:153:         return NULL;
 	xorl	%eax, %eax	; <retval>
-.L77:
-; src/create.c:142: }
+.L99:
+; src/create.c:156: }
 	popq	%rdx	;
 	popq	%rbx	;
 	popq	%rbp	;
@@ -543,34 +653,34 @@ create_if:
 	pushq	%rbp	;
 	pushq	%rbx	;
 	pushq	%r8	;
-; src/create.c:145:     if (condition == 0) {
+; src/create.c:159:     if (condition == NULL) {
 	testq	%rdi, %rdi	; condition
-	jne	.L128	;,
+	jne	.L144	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC11(%rip), %rdi	;, tmp89
 	call	*fputs@GOTPCREL(%rip)	;
-; src/create.c:147:         return 0;
+; src/create.c:161:         return NULL;
 	xorl	%eax, %eax	; <retval>
-	jmp	.L127	;
-.L128:
+	jmp	.L143	;
+.L144:
 	movq	%rdi, %rbx	; tmp91, condition
 	movq	%rsi, %r13	; tmp92, body
 	movq	%rdx, %r12	; tmp93, else_if
 	movq	%rcx, %rbp	; tmp94, else_body
-; src/create.c:149:     If* if_ = (If*)alloc_memory(sizeof(If));
+; src/create.c:163:     If* if_ = (If*)alloc_memory(sizeof(If));
 	movl	$32, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:151:     if_ptr->condition = condition;
+; src/create.c:164:     if_->condition = condition;
 	movq	%rbx, (%rax)	; condition, if__7->condition
-; src/create.c:152:     if_ptr->body = body;
+; src/create.c:165:     if_->body = body;
 	movq	%r13, 8(%rax)	; body, if__7->body
-; src/create.c:153:     if_ptr->else_if = else_if;
+; src/create.c:166:     if_->else_if = else_if;
 	movq	%r12, 16(%rax)	; else_if, if__7->else_if
-; src/create.c:154:     if_ptr->else_body = else_body;
+; src/create.c:167:     if_->else_body = else_body;
 	movq	%rbp, 24(%rax)	; else_body, if__7->else_body
-.L127:
-; src/create.c:156: }
+.L143:
+; src/create.c:169: }
 	popq	%rdx	;
 	popq	%rbx	;
 	popq	%rbp	;
@@ -588,28 +698,28 @@ create_else_if:
 	pushq	%rbp	;
 	pushq	%rbx	;
 	pushq	%rcx	;
-; src/create.c:159:     if (condition == 0) {
+; src/create.c:172:     if (condition == NULL) {
 	testq	%rdi, %rdi	; condition
-	jne	.L132	;,
+	jne	.L148	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC12(%rip), %rdi	;, tmp87
 	call	*fputs@GOTPCREL(%rip)	;
-; src/create.c:161:         return 0;
+; src/create.c:174:         return NULL;
 	xorl	%eax, %eax	; <retval>
-	jmp	.L131	;
-.L132:
+	jmp	.L147	;
+.L148:
 	movq	%rdi, %rbx	; tmp89, condition
 	movq	%rsi, %rbp	; tmp90, body
-; src/create.c:163:     ElseIf* else_if = (ElseIf*)alloc_memory(sizeof(ElseIf));
+; src/create.c:176:     ElseIf* else_if = (ElseIf*)alloc_memory(sizeof(ElseIf));
 	movl	$16, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:165:     else_if_ptr->condition = condition;
+; src/create.c:177:     else_if->condition = condition;
 	movq	%rbx, (%rax)	; condition, else_if_7->condition
-; src/create.c:166:     else_if_ptr->body = body;
+; src/create.c:178:     else_if->body = body;
 	movq	%rbp, 8(%rax)	; body, else_if_7->body
-.L131:
-; src/create.c:168: }
+.L147:
+; src/create.c:180: }
 	popq	%rdx	;
 	popq	%rbx	;
 	popq	%rbp	;
@@ -620,9 +730,9 @@ create_else_if:
 create_for:
 	pushq	%r13	;
 	movq	%rdi, %r13	; tmp88, initializer
-; src/create.c:171:     For* for_ = (For*)alloc_memory(sizeof(For));
+; src/create.c:183:     For* for_ = (For*)alloc_memory(sizeof(For));
 	movl	$32, %edi	;,
-; src/create.c:170: For* create_for(Variable* initializer, Expression* condition, Expression* increment, list(Statement*) body) {
+; src/create.c:182: For* create_for(Variable* initializer, Expression* condition, Expression* increment, list(Statement*) body) {
 	pushq	%r12	;
 	movq	%rsi, %r12	; tmp89, condition
 	pushq	%rbp	;
@@ -630,17 +740,17 @@ create_for:
 	pushq	%rbx	;
 	movq	%rcx, %rbx	; tmp91, body
 	pushq	%rax	;
-; src/create.c:171:     For* for_ = (For*)alloc_memory(sizeof(For));
+; src/create.c:183:     For* for_ = (For*)alloc_memory(sizeof(For));
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:173:     for_ptr->initializer = initializer;
+; src/create.c:184:     for_->initializer = initializer;
 	movq	%r13, (%rax)	; initializer, for__3->initializer
-; src/create.c:174:     for_ptr->condition = condition;
+; src/create.c:185:     for_->condition = condition;
 	movq	%r12, 8(%rax)	; condition, for__3->condition
-; src/create.c:175:     for_ptr->increment = increment;
+; src/create.c:186:     for_->increment = increment;
 	movq	%rbp, 16(%rax)	; increment, for__3->increment
-; src/create.c:176:     for_ptr->body = body;
+; src/create.c:187:     for_->body = body;
 	movq	%rbx, 24(%rax)	; body, for__3->body
-; src/create.c:178: }
+; src/create.c:189: }
 	popq	%rdx	;
 	popq	%rbx	;
 	popq	%rbp	;
@@ -653,19 +763,19 @@ create_for:
 create_while:
 	pushq	%rbp	;
 	movq	%rdi, %rbp	; tmp86, condition
-; src/create.c:181:     While* while_ = (While*)alloc_memory(sizeof(While));
+; src/create.c:192:     While* while_ = (While*)alloc_memory(sizeof(While));
 	movl	$16, %edi	;,
-; src/create.c:180: While* create_while(Expression* condition, list(Statement*) body) {
+; src/create.c:191: While* create_while(Expression* condition, list(Statement*) body) {
 	pushq	%rbx	;
 	movq	%rsi, %rbx	; tmp87, body
 	pushq	%rax	;
-; src/create.c:181:     While* while_ = (While*)alloc_memory(sizeof(While));
+; src/create.c:192:     While* while_ = (While*)alloc_memory(sizeof(While));
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:183:     while_ptr->condition = condition;
+; src/create.c:193:     while_->condition = condition;
 	movq	%rbp, (%rax)	; condition, while__3->condition
-; src/create.c:184:     while_ptr->body = body;
+; src/create.c:194:     while_->body = body;
 	movq	%rbx, 8(%rax)	; body, while__3->body
-; src/create.c:186: }
+; src/create.c:196: }
 	popq	%rdx	;
 	popq	%rbx	;
 	popq	%rbp	;
@@ -677,122 +787,122 @@ create_while:
 .LC14:
 	.string	"false"
 .LC15:
-	.string	"Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n"
+	.string	"Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n"
 .LC16:
 	.string	"Error creating expression: both expr_left and prim_left are NULL\n"
 	.text
 	.globl	create_expression
 	.type	create_expression, @function
 create_expression:
-; src/create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
+; src/create.c:199:     if ((operator == OP_NONE) != (right == NULL) || (expr_left == NULL && prim_left == NULL)) {
 	cmpl	$19, %edi	;, operator
-; src/create.c:188: Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
+; src/create.c:198: Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
 	pushq	%r13	;
 	movl	%edi, %r13d	; tmp133, operator
 	pushq	%r12	;
 	movq	%rdx, %r12	; tmp135, prim_left
-; src/create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
+; src/create.c:199:     if ((operator == OP_NONE) != (right == NULL) || (expr_left == NULL && prim_left == NULL)) {
 	sete	%dl	;, tmp99
 	testq	%rcx, %rcx	; right
 	sete	%al	;, tmp101
-; src/create.c:188: Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
+; src/create.c:198: Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
 	pushq	%rbp	;
 	movq	%rcx, %rbp	; tmp136, right
 	pushq	%rbx	;
 	movq	%rsi, %rbx	; tmp134, expr_left
 	pushq	%r9	;
-; src/create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
+; src/create.c:199:     if ((operator == OP_NONE) != (right == NULL) || (expr_left == NULL && prim_left == NULL)) {
 	cmpb	%al, %dl	; tmp101, tmp99
-	jne	.L140	;,
-; src/create.c:189:     if ((operator == OP_NONE) != (right == 0) || (expr_left == 0 && prim_left == 0)) {
+	jne	.L156	;,
+; src/create.c:199:     if ((operator == OP_NONE) != (right == NULL) || (expr_left == NULL && prim_left == NULL)) {
 	movq	%r12, %rax	; prim_left, tmp138
 	orq	%rsi, %rax	; expr_left, tmp138
-	jne	.L157	;,
-	jmp	.L159	;
-.L140:
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
+	jne	.L173	;,
+	jmp	.L175	;
+.L156:
+; src/create.c:200:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
 	leaq	.LC14(%rip), %r9	;, tmp114
 	leaq	.LC13(%rip), %rdx	;, tmp113
 	testq	%rcx, %rcx	; right
-	movq	%r9, %rax	; tmp114, iftmp.13_9
-	cmove	%rdx, %rax	; tmp113,, iftmp.13_9
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
+	movq	%r9, %rax	; tmp114, iftmp.16_9
+	cmove	%rdx, %rax	; tmp113,, iftmp.16_9
+; src/create.c:200:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
 	testq	%r12, %r12	; prim_left
-	cmove	%rdx, %r9	; tmp114,, tmp113, iftmp.14_4
-.L144:
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
+	cmove	%rdx, %r9	; tmp114,, tmp113, iftmp.17_4
+.L160:
+; src/create.c:200:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
 	testq	%rbx, %rbx	; expr_left
 	leaq	.LC14(%rip), %r8	;, tmp119
 	leaq	.LC13(%rip), %rdx	;, tmp120
-	cmove	%rdx, %r8	; tmp119,, tmp120, iftmp.15_11
-	jmp	.L145	;
-.L159:
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
-	leaq	.LC14(%rip), %rax	;, iftmp.13_9
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
-	leaq	.LC13(%rip), %r9	;, iftmp.14_4
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
+	cmove	%rdx, %r8	; tmp119,, tmp120, iftmp.18_11
+	jmp	.L161	;
+.L175:
+; src/create.c:200:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
+	leaq	.LC14(%rip), %rax	;, iftmp.16_9
+; src/create.c:200:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
+	leaq	.LC13(%rip), %r9	;, iftmp.17_4
+; src/create.c:200:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
 	testq	%rcx, %rcx	; right
-	jne	.L144	;,
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
-	leaq	.LC13(%rip), %rax	;, iftmp.13_9
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
-	movq	%rax, %r9	; iftmp.13_9, iftmp.14_4
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
-	movq	%rax, %r8	; iftmp.13_9, iftmp.15_11
-.L145:
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
+	jne	.L160	;,
+; src/create.c:200:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
+	leaq	.LC13(%rip), %rax	;, iftmp.16_9
+; src/create.c:200:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
+	movq	%rax, %r9	; iftmp.16_9, iftmp.17_4
+; src/create.c:200:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
+	movq	%rax, %r8	; iftmp.16_9, iftmp.18_11
+.L161:
+; src/create.c:200:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
 	cmpl	$19, %r13d	;, operator
 	leaq	.LC13(%rip), %rdx	;, tmp126
 	leaq	.LC14(%rip), %rcx	;, tmp125
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rdi	; stderr,
-; src/create.c:190:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == 0: %s, prim_left == 0: %s, right == 0: %s\n",
-	cmove	%rdx, %rcx	; tmp125,, tmp126, iftmp.16_12
+; src/create.c:200:         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
+	cmove	%rdx, %rcx	; tmp125,, tmp126, iftmp.19_12
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	leaq	.LC15(%rip), %rdx	;, tmp104
 	pushq	%rsi	;
 	movl	$2, %esi	;,
-	pushq	%rax	; iftmp.13_9
+	pushq	%rax	; iftmp.16_9
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/create.c:195:         return 0;
+; src/create.c:205:         return NULL;
 	popq	%rdi	;
 	popq	%r8	;
-	jmp	.L147	;
-.L157:
-; src/create.c:197:     Expression* expression = (Expression*)alloc_memory(sizeof(Expression));
+	jmp	.L163	;
+.L173:
+; src/create.c:207:     Expression* expression = (Expression*)alloc_memory(sizeof(Expression));
 	movl	$32, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:199:     expression_ptr->operator = operator;
+; src/create.c:208:     expression->operator = operator;
 	movl	%r13d, 24(%rax)	; operator, expression_22->operator
-; src/create.c:200:     if (expr_left != 0)
+; src/create.c:209:     if (expr_left != NULL)
 	testq	%rbx, %rbx	; expr_left
-	je	.L148	;,
-; src/create.c:201:         expression_ptr->expr_left = expr_left;
+	je	.L164	;,
+; src/create.c:210:         expression->expr_left = expr_left;
 	movq	%rbx, (%rax)	; expr_left, expression_22->expr_left
-	jmp	.L149	;
-.L148:
-; src/create.c:202:     else if (prim_left != 0)
+	jmp	.L165	;
+.L164:
+; src/create.c:211:     else if (prim_left != NULL)
 	testq	%r12, %r12	; prim_left
-	je	.L150	;,
-; src/create.c:203:         expression_ptr->prim_left = prim_left;
+	je	.L166	;,
+; src/create.c:212:         expression->prim_left = prim_left;
 	movq	%r12, 8(%rax)	; prim_left, expression_22->prim_left
-	jmp	.L149	;
-.L150:
+	jmp	.L165	;
+.L166:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rsi	; stderr,
 	leaq	.LC16(%rip), %rdi	;, tmp106
 	call	*fputs@GOTPCREL(%rip)	;
-.L147:
-; src/create.c:195:         return 0;
+.L163:
+; src/create.c:205:         return NULL;
 	xorl	%eax, %eax	; <retval>
-	jmp	.L139	;
-.L149:
-; src/create.c:208:     expression_ptr->right = right;
+	jmp	.L155	;
+.L165:
+; src/create.c:217:     expression->right = right;
 	movq	%rbp, 16(%rax)	; right, expression_22->right
-.L139:
-; src/create.c:210: }
+.L155:
+; src/create.c:219: }
 	popq	%rdx	;
 	popq	%rbx	;
 	popq	%rbp	;
@@ -818,75 +928,75 @@ create_primary:
 	pushq	%rbp	;
 	movq	%rdx, %rbp	; tmp134, expr_value
 	pushq	%rbx	;
-; src/create.c:212: Primary* create_primary(PrimaryType type, string str_value, Expression* expr_value, Primary* prim_value, VariableAccess* variable_value) {
+; src/create.c:221: Primary* create_primary(PrimaryType type, string str_value, Expression* expr_value, Primary* prim_value, VariableAccess* variable_value) {
 	movl	%edi, %ebx	; tmp132, type
-; src/create.c:213:     Primary* primary = (Primary*)alloc_memory(sizeof(Primary));
+; src/create.c:222:     Primary* primary = (Primary*)alloc_memory(sizeof(Primary));
 	movl	$16, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:215:     primary_ptr->type = type;
+; src/create.c:223:     primary->type = type;
 	movl	%ebx, 8(%rax)	; type, primary_25->type
-; src/create.c:216:     if ((type == PRIM_INTEGER || type == PRIM_FLOAT || type == PRIM_STRING || type == PRIM_TRUE || type == PRIM_FALSE) && str_value != 0)
+; src/create.c:224:     if ((type == PRIM_INTEGER || type == PRIM_FLOAT || type == PRIM_STRING || type == PRIM_TRUE || type == PRIM_FALSE) && str_value != NULL)
 	cmpl	$4, %ebx	;, type
-	ja	.L161	;,
+	ja	.L177	;,
 	testq	%r13, %r13	; str_value
-	je	.L161	;,
-; src/create.c:217:         primary_ptr->value.literal_value = str_value;
+	je	.L177	;,
+; src/create.c:225:         primary->value.literal_value = str_value;
 	movq	%r13, (%rax)	; str_value, primary_25->value.literal_value
-	jmp	.L160	;
-.L161:
-; src/create.c:218:     else if (type == PRIM_EXPRESSION && expr_value != 0)
+	jmp	.L176	;
+.L177:
+; src/create.c:226:     else if (type == PRIM_EXPRESSION && expr_value != NULL)
 	cmpl	$5, %ebx	;, type
-	jne	.L163	;,
+	jne	.L179	;,
 	testq	%rbp, %rbp	; expr_value
-	je	.L163	;,
-; src/create.c:219:         primary_ptr->value.expr = expr_value;
+	je	.L179	;,
+; src/create.c:227:         primary->value.expr = expr_value;
 	movq	%rbp, (%rax)	; expr_value, primary_25->value.expr
-	jmp	.L160	;
-.L163:
-; src/create.c:220:     else if ((type == PRIM_NOT_OPERAND || type == PRIM_NEG_OPERAND) && prim_value != 0)
+	jmp	.L176	;
+.L179:
+; src/create.c:228:     else if ((type == PRIM_NOT_OPERAND || type == PRIM_NEG_OPERAND) && prim_value != NULL)
 	leal	-6(%rbx), %edx	;, tmp117
-; src/create.c:220:     else if ((type == PRIM_NOT_OPERAND || type == PRIM_NEG_OPERAND) && prim_value != 0)
+; src/create.c:228:     else if ((type == PRIM_NOT_OPERAND || type == PRIM_NEG_OPERAND) && prim_value != NULL)
 	cmpl	$1, %edx	;, tmp117
-	ja	.L165	;,
+	ja	.L181	;,
 	testq	%r14, %r14	; prim_value
-	je	.L165	;,
-; src/create.c:221:         primary_ptr->value.operand = prim_value;
+	je	.L181	;,
+; src/create.c:229:         primary->value.operand = prim_value;
 	movq	%r14, (%rax)	; prim_value, primary_25->value.operand
-	jmp	.L160	;
-.L165:
-; src/create.c:222:     else if (type == PRIM_VARIABLE_ACCESS && variable_value != 0)
+	jmp	.L176	;
+.L181:
+; src/create.c:230:     else if (type == PRIM_VARIABLE_ACCESS && variable_value != NULL)
 	cmpl	$8, %ebx	;, type
-	jne	.L166	;,
+	jne	.L182	;,
 	testq	%r12, %r12	; variable_value
-	je	.L166	;,
-; src/create.c:223:         primary_ptr->value.var = variable_value;
+	je	.L182	;,
+; src/create.c:231:         primary->value.var = variable_value;
 	movq	%r12, (%rax)	; variable_value, primary_25->value.var
-	jmp	.L160	;
-.L166:
-; src/create.c:225:         if (str_value == 0 && expr_value == 0 && prim_value == 0 && variable_value == 0)
+	jmp	.L176	;
+.L182:
+; src/create.c:233:         if (str_value == NULL && expr_value == NULL && prim_value == NULL && variable_value == NULL)
 	orq	%r14, %r12	; prim_value, tmp126
-; src/create.c:226:             fprintf(stderr, "Error creating primary: value is NULL\n");
+; src/create.c:234:             fprintf(stderr, "Error creating primary: value is NULL\n");
 	movq	stderr(%rip), %rdi	; stderr, pretmp_49
-; src/create.c:225:         if (str_value == 0 && expr_value == 0 && prim_value == 0 && variable_value == 0)
+; src/create.c:233:         if (str_value == NULL && expr_value == NULL && prim_value == NULL && variable_value == NULL)
 	orq	%r12, %rbp	; tmp126, tmp127
 	orq	%r13, %rbp	; str_value, tmp138
-	jne	.L167	;,
+	jne	.L183	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rdi, %rsi	; pretmp_49,
 	leaq	.LC17(%rip), %rdi	;, tmp129
 	call	*fputs@GOTPCREL(%rip)	;
-	jmp	.L168	;
-.L167:
+	jmp	.L184	;
+.L183:
 	movl	%ebx, %ecx	; type,
 	leaq	.LC18(%rip), %rdx	;, tmp130
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L168:
-; src/create.c:229:         return 0;
+.L184:
+; src/create.c:237:         return NULL;
 	xorl	%eax, %eax	; <retval>
-.L160:
-; src/create.c:232: }
+.L176:
+; src/create.c:240: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
@@ -896,7 +1006,7 @@ create_primary:
 	.size	create_primary, .-create_primary
 	.section	.rodata.str1.1
 .LC19:
-	.string	"Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n"
+	.string	"Error creating variable access: base and type mismatch, base == NULL: %s, type == VAR_NAME: %s\n"
 .LC20:
 	.string	"Error creating variable access: content is NULL\n"
 .LC21:
@@ -905,123 +1015,123 @@ create_primary:
 	.globl	create_variable_access
 	.type	create_variable_access, @function
 create_variable_access:
-; src/create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
+; src/create.c:243:     if ((base == NULL) != (type == VAR_NAME)) {
 	testl	%edi, %edi	; type
-; src/create.c:234: VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Name* name_content, Expression* expr_content, list(Expression*) args_content) {
+; src/create.c:242: VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Symbol* name_content, Expression* expr_content, list(Expression*) args_content) {
 	pushq	%r15	;
-; src/create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
+; src/create.c:243:     if ((base == NULL) != (type == VAR_NAME)) {
 	sete	%al	;, tmp109
 	testq	%rsi, %rsi	; base
-; src/create.c:234: VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Name* name_content, Expression* expr_content, list(Expression*) args_content) {
+; src/create.c:242: VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Symbol* name_content, Expression* expr_content, list(Expression*) args_content) {
 	pushq	%r14	;
 	movq	%rsi, %r14	; tmp143, base
-; src/create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
+; src/create.c:243:     if ((base == NULL) != (type == VAR_NAME)) {
 	sete	%r15b	;, tmp111
-; src/create.c:234: VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Name* name_content, Expression* expr_content, list(Expression*) args_content) {
+; src/create.c:242: VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Symbol* name_content, Expression* expr_content, list(Expression*) args_content) {
 	pushq	%r13	;
 	pushq	%r12	;
 	pushq	%rbp	;
 	pushq	%rbx	;
 	movl	%edi, %ebx	; tmp142, type
 	pushq	%r9	;
-; src/create.c:235:     if ((base == 0) != (type == VAR_NAME)) {
+; src/create.c:243:     if ((base == NULL) != (type == VAR_NAME)) {
 	cmpb	%al, %r15b	; tmp109, tmp111
-	je	.L195	;,
-; src/create.c:236:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
+	je	.L211	;,
+; src/create.c:244:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == NULL: %s, type == VAR_NAME: %s\n", base == NULL ? "true" : "false", type == VAR_NAME ? "true" : "false");
 	leaq	.LC13(%rip), %rax	;, tmp135
 	testl	%edi, %edi	; type
 	leaq	.LC14(%rip), %rcx	;, tmp134
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rdi	; stderr,
-; src/create.c:236:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
-	movq	%rax, %r8	; tmp135, iftmp.21_20
+; src/create.c:244:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == NULL: %s, type == VAR_NAME: %s\n", base == NULL ? "true" : "false", type == VAR_NAME ? "true" : "false");
+	movq	%rax, %r8	; tmp135, iftmp.24_20
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	leaq	.LC19(%rip), %rdx	;, tmp113
-; src/create.c:236:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
-	cmovne	%rcx, %r8	; tmp134,, iftmp.21_20
-; src/create.c:236:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
+; src/create.c:244:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == NULL: %s, type == VAR_NAME: %s\n", base == NULL ? "true" : "false", type == VAR_NAME ? "true" : "false");
+	cmovne	%rcx, %r8	; tmp134,, iftmp.24_20
+; src/create.c:244:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == NULL: %s, type == VAR_NAME: %s\n", base == NULL ? "true" : "false", type == VAR_NAME ? "true" : "false");
 	testq	%rsi, %rsi	; base
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$2, %esi	;,
-; src/create.c:236:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == 0: %s, type == VAR_NAME: %s\n", base == 0 ? "true" : "false", type == VAR_NAME ? "true" : "false");
-	cmove	%rax, %rcx	; tmp134,, tmp135, iftmp.22_21
+; src/create.c:244:         fprintf(stderr, "Error creating variable access: base and type mismatch, base == NULL: %s, type == VAR_NAME: %s\n", base == NULL ? "true" : "false", type == VAR_NAME ? "true" : "false");
+	cmove	%rax, %rcx	; tmp134,, tmp135, iftmp.25_21
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/create.c:237:         return 0;
-	jmp	.L198	;
-.L195:
+; src/create.c:245:         return NULL;
+	jmp	.L214	;
+.L211:
 	movq	%rdx, %r12	; tmp144, name_content
 	movq	%rcx, %rbp	; tmp145, expr_content
 	movq	%r8, %r13	; tmp146, args_content
-; src/create.c:239:     VariableAccess* variable_access = (VariableAccess*)alloc_memory(sizeof(VariableAccess));
+; src/create.c:247:     VariableAccess* variable_access = (VariableAccess*)alloc_memory(sizeof(VariableAccess));
 	movl	$24, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/create.c:243:     if (type == VAR_NAME && name_content != 0)
+; src/create.c:250:     if (type == VAR_NAME && name_content != NULL)
 	testq	%r12, %r12	; name_content
-; src/create.c:241:     variable_access_ptr->type = type;
+; src/create.c:248:     variable_access->type = type;
 	movl	%ebx, 16(%rax)	; type, variable_access_30->type
-; src/create.c:243:     if (type == VAR_NAME && name_content != 0)
+; src/create.c:250:     if (type == VAR_NAME && name_content != NULL)
 	setne	%dl	;, tmp114
-; src/create.c:242:     variable_access_ptr->base = base;
+; src/create.c:249:     variable_access->base = base;
 	movq	%r14, (%rax)	; base, variable_access_30->base
-; src/create.c:243:     if (type == VAR_NAME && name_content != 0)
+; src/create.c:250:     if (type == VAR_NAME && name_content != NULL)
 	testb	%r15b, %r15b	; tmp111
-	je	.L199	;,
+	je	.L215	;,
 	testb	%dl, %dl	; tmp114
-	jne	.L233	;,
-.L199:
-; src/create.c:245:     else if (type == VAR_FUNC_CALL && args_content != 0)
+	jne	.L249	;,
+.L215:
+; src/create.c:252:     else if (type == VAR_FUNC_CALL && args_content != NULL)
 	cmpl	$1, %ebx	;, type
-	jne	.L201	;,
+	jne	.L217	;,
 	testq	%r13, %r13	; args_content
-	je	.L201	;,
-; src/create.c:246:         variable_access_ptr->content.args = args_content;
+	je	.L217	;,
+; src/create.c:253:         variable_access->content.args = args_content;
 	movq	%r13, 8(%rax)	; args_content, variable_access_30->content.args
-	jmp	.L194	;
-.L201:
-; src/create.c:247:     else if (type == VAR_GET_SEQ && expr_content != 0)
+	jmp	.L210	;
+.L217:
+; src/create.c:254:     else if (type == VAR_GET_SEQ && expr_content != NULL)
 	cmpl	$3, %ebx	;, type
-	jne	.L203	;,
+	jne	.L219	;,
 	testq	%rbp, %rbp	; expr_content
-	je	.L203	;,
-; src/create.c:248:         variable_access_ptr->content.index = expr_content;
+	je	.L219	;,
+; src/create.c:255:         variable_access->content.index = expr_content;
 	movq	%rbp, 8(%rax)	; expr_content, variable_access_30->content.index
-	jmp	.L194	;
-.L203:
-; src/create.c:249:     else if (type == VAR_GET_ATTR && name_content != 0)
+	jmp	.L210	;
+.L219:
+; src/create.c:256:     else if (type == VAR_GET_ATTR && name_content != NULL)
 	cmpl	$2, %ebx	;, type
-	jne	.L204	;,
+	jne	.L220	;,
 	testb	%dl, %dl	; tmp114
-	je	.L204	;,
-.L233:
-; src/create.c:250:         variable_access_ptr->content.attr_name = name_content;
+	je	.L220	;,
+.L249:
+; src/create.c:257:         variable_access->content.attr_name = name_content;
 	movq	%r12, 8(%rax)	; name_content,
-	jmp	.L194	;
-.L204:
-; src/create.c:252:         if (name_content == 0 && expr_content == 0 && args_content == 0)
+	jmp	.L210	;
+.L220:
+; src/create.c:259:         if (name_content == NULL && expr_content == NULL && args_content == NULL)
 	orq	%r13, %rbp	; args_content, tmp125
-; src/create.c:253:             fprintf(stderr, "Error creating variable access: content is NULL\n");
+; src/create.c:260:             fprintf(stderr, "Error creating variable access: content is NULL\n");
 	movq	stderr(%rip), %rdi	; stderr, pretmp_23
-; src/create.c:252:         if (name_content == 0 && expr_content == 0 && args_content == 0)
+; src/create.c:259:         if (name_content == NULL && expr_content == NULL && args_content == NULL)
 	orq	%r12, %rbp	; name_content, tmp148
-	jne	.L205	;,
+	jne	.L221	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rdi, %rsi	; pretmp_23,
 	leaq	.LC20(%rip), %rdi	;, tmp127
 	call	*fputs@GOTPCREL(%rip)	;
-	jmp	.L198	;
-.L205:
+	jmp	.L214	;
+.L221:
 	movl	%ebx, %ecx	; type,
 	leaq	.LC21(%rip), %rdx	;, tmp128
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L198:
-; src/create.c:237:         return 0;
+.L214:
+; src/create.c:245:         return NULL;
 	xorl	%eax, %eax	; <retval>
-.L194:
-; src/create.c:259: }
+.L210:
+; src/create.c:266: }
 	popq	%rdx	;
 	popq	%rbx	;
 	popq	%rbp	;

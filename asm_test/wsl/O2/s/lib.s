@@ -89,13 +89,13 @@ alloc_memory:
 	je	.L20
 .L16:
 	movq	struct_memory(%rip), %rdx
+	addq	$7, %rbx
+	andq	$-8, %rbx
 	movq	8(%rdx), %rcx
 	leaq	(%rcx,%rbx), %rax
 	cmpq	(%rdx), %rax
 	jnb	.L21
 .L17:
-	addq	$7, %rbx
-	andq	$-8, %rbx
 	testb	$7, %cl
 	jne	.L22
 	addq	%rcx, %rbx
@@ -121,7 +121,7 @@ alloc_memory:
 	jmp	.L17
 .L22:
 	leaq	__PRETTY_FUNCTION__.0(%rip), %rcx
-	movl	$258, %edx
+	movl	$263, %edx
 	leaq	.LC2(%rip), %rsi
 	leaq	.LC3(%rip), %rdi
 	call	*__assert_fail@GOTPCREL(%rip)
@@ -264,12 +264,18 @@ create_string_check:
 	jmp	.L31
 	.size	create_string_check, .-create_string_check
 	.p2align 4
-	.globl	create_string
-	.type	create_string, @function
-create_string:
-	movl	$1, %edx
+	.globl	create_string_not_check
+	.type	create_string_not_check, @function
+create_string_not_check:
+	xorl	%edx, %edx
 	jmp	create_string_check
-	.size	create_string, .-create_string
+	.size	create_string_not_check, .-create_string_not_check
+	.section	.rodata.str1.1
+.LC5:
+	.string	"init"
+.LC6:
+	.string	"$constructor"
+	.text
 	.p2align 4
 	.type	init.part.0, @function
 init.part.0:
@@ -322,6 +328,16 @@ init.part.0:
 	movq	%rax, -8(%rbp)
 	cmpq	%r12, %rbx
 	jne	.L60
+	xorl	%edx, %edx
+	movl	$4, %esi
+	leaq	.LC5(%rip), %rdi
+	call	create_string_check
+	xorl	%edx, %edx
+	movl	$13, %esi
+	leaq	.LC6(%rip), %rdi
+	movq	%rax, DEFAULT_INIT_NAME(%rip)
+	call	create_string_check
+	movq	%rax, DEFAULT_CONSTRUCTOR_NAME(%rip)
 	movq	keywordList(%rip), %rax
 	movq	%rax, IMPORT_KEYWORD(%rip)
 	movq	8+keywordList(%rip), %rax
@@ -472,17 +488,12 @@ init.part.0:
 	call	*exit@GOTPCREL(%rip)
 	.size	init.part.0, .-init.part.0
 	.p2align 4
-	.globl	init
-	.type	init, @function
-init:
-	cmpb	$0, initialized(%rip)
-	jne	.L61
-	jmp	init.part.0
-	.p2align 4,,10
-	.p2align 3
-.L61:
-	ret
-	.size	init, .-init
+	.globl	create_string
+	.type	create_string, @function
+create_string:
+	movl	$1, %edx
+	jmp	create_string_check
+	.size	create_string, .-create_string
 	.p2align 4
 	.globl	is_keyword
 	.type	is_keyword, @function
@@ -490,34 +501,34 @@ is_keyword:
 	cmpb	$0, initialized(%rip)
 	pushq	%rbx
 	movq	%rdi, %rbx
-	je	.L70
-.L64:
+	je	.L69
+.L63:
 	leaq	keywordList(%rip), %rax
 	leaq	176(%rax), %rdx
-	jmp	.L66
+	jmp	.L65
 	.p2align 4,,10
 	.p2align 3
-.L72:
+.L71:
 	addq	$8, %rax
 	cmpq	%rax, %rdx
-	je	.L71
-.L66:
+	je	.L70
+.L65:
 	cmpq	%rbx, (%rax)
-	jne	.L72
+	jne	.L71
 	movl	$1, %eax
 	popq	%rbx
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L71:
+.L70:
 	xorl	%eax, %eax
 	popq	%rbx
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L70:
+.L69:
 	call	init.part.0
-	jmp	.L64
+	jmp	.L63
 	.size	is_keyword, .-is_keyword
 	.p2align 4
 	.globl	string_equal
@@ -528,13 +539,13 @@ string_equal:
 	ret
 	.size	string_equal, .-string_equal
 	.section	.rodata.str1.1
-.LC5:
+.LC7:
 	.string	""
-.LC6:
+.LC8:
 	.string	"%zu/%zu bytes"
 	.section	.rodata.str1.8
 	.align 8
-.LC7:
+.LC9:
 	.string	"Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu"
 	.text
 	.p2align 4
@@ -549,20 +560,20 @@ get_info:
 	pushq	%rbx
 	xorl	%ebx, %ebx
 	testq	%rax, %rax
-	je	.L75
+	je	.L74
 	.p2align 4,,10
 	.p2align 3
-.L76:
+.L75:
 	movq	16(%rax), %rax
 	addq	$1, %rbx
 	testq	%rax, %rax
-	jne	.L76
-.L75:
-	leaq	.LC5(%rip), %rbp
+	jne	.L75
+.L74:
+	leaq	.LC7(%rip), %rbp
 	xorl	%edx, %edx
 	movl	$48, %esi
 	movq	%rbp, %rdi
-	leaq	.LC6(%rip), %r14
+	leaq	.LC8(%rip), %r14
 	call	create_string_check
 	movq	%r14, %rcx
 	movq	struct_memory_count(%rip), %r9
@@ -602,7 +613,7 @@ get_info:
 	movq	%rax, %rdi
 	movl	$3, %r8d
 	pushq	%r13
-	leaq	.LC7(%rip), %rcx
+	leaq	.LC9(%rip), %rcx
 	movl	$2, %esi
 	xorl	%eax, %eax
 	movq	$-1, %rdx
@@ -981,6 +992,18 @@ FROM_KEYWORD:
 	.size	IMPORT_KEYWORD, 8
 IMPORT_KEYWORD:
 	.zero	8
+	.globl	DEFAULT_CONSTRUCTOR_NAME
+	.align 8
+	.type	DEFAULT_CONSTRUCTOR_NAME, @object
+	.size	DEFAULT_CONSTRUCTOR_NAME, 8
+DEFAULT_CONSTRUCTOR_NAME:
+	.zero	8
+	.globl	DEFAULT_INIT_NAME
+	.align 8
+	.type	DEFAULT_INIT_NAME, @object
+	.size	DEFAULT_INIT_NAME, 8
+DEFAULT_INIT_NAME:
+	.zero	8
 	.globl	all_string_list
 	.align 8
 	.type	all_string_list, @object
@@ -1011,73 +1034,71 @@ struct_memory:
 symbolList:
 	.zero	240
 	.section	.rodata.str1.1
-.LC8:
-	.string	"("
-.LC9:
-	.string	")"
 .LC10:
-	.string	"{"
+	.string	"("
 .LC11:
-	.string	"}"
+	.string	")"
 .LC12:
-	.string	","
+	.string	"{"
 .LC13:
-	.string	"!"
+	.string	"}"
 .LC14:
-	.string	"."
+	.string	","
 .LC15:
-	.string	"["
+	.string	"!"
 .LC16:
-	.string	"]"
+	.string	"."
 .LC17:
-	.string	";"
+	.string	"["
 .LC18:
-	.string	"_"
+	.string	"]"
 .LC19:
-	.string	"+"
+	.string	";"
 .LC20:
-	.string	"-"
+	.string	"_"
 .LC21:
-	.string	"*"
+	.string	"+"
 .LC22:
-	.string	"/"
+	.string	"-"
 .LC23:
-	.string	"%"
+	.string	"*"
 .LC24:
-	.string	"<"
+	.string	"/"
 .LC25:
-	.string	">"
+	.string	"%"
 .LC26:
-	.string	"="
+	.string	"<"
 .LC27:
-	.string	"=="
+	.string	">"
 .LC28:
-	.string	"!="
+	.string	"="
 .LC29:
-	.string	"<="
+	.string	"=="
 .LC30:
-	.string	">="
+	.string	"!="
 .LC31:
-	.string	"+="
+	.string	"<="
 .LC32:
-	.string	"-="
+	.string	">="
 .LC33:
-	.string	"*="
+	.string	"+="
 .LC34:
-	.string	"/="
+	.string	"-="
 .LC35:
-	.string	"%="
+	.string	"*="
 .LC36:
-	.string	"&&"
+	.string	"/="
 .LC37:
+	.string	"%="
+.LC38:
+	.string	"&&"
+.LC39:
 	.string	"||"
 	.section	.data.rel.ro.local,"aw"
 	.align 32
 	.type	symbolStrings, @object
 	.size	symbolStrings, 240
 symbolStrings:
-	.quad	.LC8
-	.quad	.LC9
 	.quad	.LC10
 	.quad	.LC11
 	.quad	.LC12
@@ -1106,6 +1127,8 @@ symbolStrings:
 	.quad	.LC35
 	.quad	.LC36
 	.quad	.LC37
+	.quad	.LC38
+	.quad	.LC39
 	.globl	keywordList
 	.bss
 	.align 32
@@ -1114,57 +1137,55 @@ symbolStrings:
 keywordList:
 	.zero	176
 	.section	.rodata.str1.1
-.LC38:
-	.string	"import"
-.LC39:
-	.string	"from"
 .LC40:
-	.string	"func"
+	.string	"import"
 .LC41:
-	.string	"class"
+	.string	"from"
 .LC42:
-	.string	"method"
+	.string	"func"
 .LC43:
-	.string	"self"
+	.string	"class"
 .LC44:
-	.string	"if"
+	.string	"method"
 .LC45:
-	.string	"elif"
+	.string	"self"
 .LC46:
-	.string	"else"
+	.string	"if"
 .LC47:
-	.string	"while"
+	.string	"elif"
 .LC48:
-	.string	"for"
+	.string	"else"
 .LC49:
-	.string	"true"
+	.string	"while"
 .LC50:
-	.string	"false"
+	.string	"for"
 .LC51:
-	.string	"return"
+	.string	"true"
 .LC52:
-	.string	"break"
+	.string	"false"
 .LC53:
-	.string	"continue"
+	.string	"return"
 .LC54:
-	.string	"int"
+	.string	"break"
 .LC55:
-	.string	"float"
+	.string	"continue"
 .LC56:
-	.string	"string"
+	.string	"int"
 .LC57:
-	.string	"bool"
+	.string	"float"
 .LC58:
-	.string	"void"
+	.string	"string"
 .LC59:
+	.string	"bool"
+.LC60:
+	.string	"void"
+.LC61:
 	.string	"var"
 	.section	.data.rel.ro.local
 	.align 32
 	.type	keywordStrings, @object
 	.size	keywordStrings, 176
 keywordStrings:
-	.quad	.LC38
-	.quad	.LC39
 	.quad	.LC40
 	.quad	.LC41
 	.quad	.LC42
@@ -1185,6 +1206,8 @@ keywordStrings:
 	.quad	.LC57
 	.quad	.LC58
 	.quad	.LC59
+	.quad	.LC60
+	.quad	.LC61
 	.section	.rodata.cst16,"aM",@progbits,16
 	.align 16
 .LC1:

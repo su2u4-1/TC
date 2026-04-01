@@ -11,71 +11,136 @@ create_list:
 	addq	$8, %rsp
 	ret
 	.size	create_list, .-create_list
-	.globl	create_node
-	.type	create_node, @function
-create_node:
-	pushq	%rbx
-	movq	%rdi, %rbx
-	movl	$16, %edi
-	call	*alloc_memory@GOTPCREL(%rip)
-	movq	$0, (%rax)
-	movq	%rbx, 8(%rax)
-	popq	%rbx
-	ret
-	.size	create_node, .-create_node
+	.section	.rodata.str1.8,"aMS",@progbits,1
+	.align 8
+.LC0:
+	.string	"Error: list_append received NULL list\n"
+	.text
 	.globl	list_append
 	.type	list_append, @function
 list_append:
+	pushq	%rbp
 	pushq	%rbx
+	subq	$8, %rsp
+	testq	%rdi, %rdi
+	je	.L8
 	movq	%rdi, %rbx
-	movq	%rsi, %rdi
-	call	create_node
+	movq	%rsi, %rbp
+	movl	$16, %edi
+	call	*alloc_memory@GOTPCREL(%rip)
+	movq	$0, (%rax)
+	movq	%rbp, 8(%rax)
 	cmpq	$0, (%rbx)
 	je	.L9
 	movq	8(%rbx), %rdx
 	movq	%rax, (%rdx)
-.L7:
 	movq	%rax, 8(%rbx)
+.L3:
+	addq	$8, %rsp
 	popq	%rbx
+	popq	%rbp
 	ret
+.L8:
+	movq	stderr(%rip), %rcx
+	movl	$38, %edx
+	movl	$1, %esi
+	leaq	.LC0(%rip), %rdi
+	call	*fwrite@GOTPCREL(%rip)
+	jmp	.L3
 .L9:
 	movq	%rax, (%rbx)
-	jmp	.L7
+	movq	%rax, 8(%rbx)
+	jmp	.L3
 	.size	list_append, .-list_append
 	.globl	list_copy
 	.type	list_copy, @function
 list_copy:
 	pushq	%rbx
 	movq	%rdi, %rbx
+	testq	%rdi, %rdi
+	je	.L12
 	call	create_list
 	movq	(%rbx), %rdx
 	movq	%rdx, (%rax)
 	movq	8(%rbx), %rdx
 	movq	%rdx, 8(%rax)
+.L10:
 	popq	%rbx
 	ret
+.L12:
+	movq	%rdi, %rax
+	jmp	.L10
 	.size	list_copy, .-list_copy
 	.globl	list_pop
 	.type	list_pop, @function
 list_pop:
+	testq	%rdi, %rdi
+	je	.L17
 	movq	(%rdi), %rax
 	testq	%rax, %rax
-	je	.L12
+	je	.L14
 	movq	(%rax), %rdx
 	movq	%rdx, (%rdi)
 	testq	%rdx, %rdx
-	je	.L15
-.L14:
+	je	.L18
+.L16:
 	movq	8(%rax), %rax
-.L12:
 	ret
-.L15:
+.L18:
 	movq	$0, 8(%rdi)
-	jmp	.L14
+	jmp	.L16
+.L17:
+	movq	%rdi, %rax
+.L14:
+	ret
 	.size	list_pop, .-list_pop
-	.globl	create_scope
-	.type	create_scope, @function
-create_scope:
+	.globl	list_pop_back
+	.type	list_pop_back, @function
+list_pop_back:
+	testq	%rdi, %rdi
+	je	.L22
+	movq	(%rdi), %rax
+	testq	%rax, %rax
+	je	.L19
+	movq	8(%rdi), %rdx
+	cmpq	%rdx, %rax
+	je	.L25
+.L21:
+	movq	%rax, %rcx
+	movq	(%rax), %rax
+	cmpq	%rax, %rdx
+	jne	.L21
+	movq	8(%rdx), %rax
+	movq	$0, (%rcx)
+	movq	%rcx, 8(%rdi)
+	ret
+.L25:
+	movq	8(%rax), %rax
+	movq	$0, (%rdi)
+	movq	$0, 8(%rdi)
+	ret
+.L22:
+	movq	%rdi, %rax
+.L19:
+	ret
+	.size	list_pop_back, .-list_pop_back
+	.globl	list_is_empty
+	.type	list_is_empty, @function
+list_is_empty:
+	movl	$1, %eax
+	testq	%rdi, %rdi
+	je	.L27
+	cmpq	$0, (%rdi)
+	je	.L27
+	cmpq	$0, 8(%rdi)
+	sete	%al
+	movzbl	%al, %eax
+.L27:
+	ret
+	.size	list_is_empty, .-list_is_empty
+	.globl	create_symbol_table
+	.type	create_symbol_table, @function
+create_symbol_table:
 	pushq	%rbp
 	pushq	%rbx
 	subq	$8, %rsp
@@ -91,10 +156,10 @@ create_scope:
 	popq	%rbx
 	popq	%rbp
 	ret
-	.size	create_scope, .-create_scope
-	.globl	search
-	.type	search, @function
-search:
+	.size	create_symbol_table, .-create_symbol_table
+	.globl	search_name_use_strcmp
+	.type	search_name_use_strcmp, @function
+search_name_use_strcmp:
 	pushq	%r13
 	pushq	%r12
 	pushq	%rbp
@@ -103,31 +168,31 @@ search:
 	movq	%rdi, %r13
 	movq	%rsi, %r12
 	testq	%rdi, %rdi
-	je	.L23
-.L22:
+	je	.L37
+.L36:
 	movq	8(%r13), %rax
 	movq	(%rax), %rbx
 	testq	%rbx, %rbx
-	je	.L20
-.L21:
+	je	.L34
+.L35:
 	movq	8(%rbx), %rbp
-	movq	0(%rbp), %rdi
+	movq	8(%rbp), %rdi
 	movq	%r12, %rsi
-	call	*string_equal@GOTPCREL(%rip)
-	testb	%al, %al
-	jne	.L18
+	call	*strcmp@GOTPCREL(%rip)
+	testl	%eax, %eax
+	je	.L32
 	movq	(%rbx), %rbx
 	testq	%rbx, %rbx
-	jne	.L21
-.L20:
+	jne	.L35
+.L34:
 	movq	0(%r13), %r13
 	testq	%r13, %r13
-	jne	.L22
+	jne	.L36
 	movq	%r13, %rbp
-	jmp	.L18
-.L23:
+	jmp	.L32
+.L37:
 	movq	%rdi, %rbp
-.L18:
+.L32:
 	movq	%rbp, %rax
 	addq	$8, %rsp
 	popq	%rbx
@@ -135,37 +200,68 @@ search:
 	popq	%r12
 	popq	%r13
 	ret
-	.size	search, .-search
-	.section	.rodata.str1.8,"aMS",@progbits,1
-	.align 8
-.LC0:
-	.string	"Warning: Name '%s' already exists in the current scope, returning existing name, kind: "
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.LC1:
-	.string	"type\n"
-.LC2:
-	.string	"variable\n"
-.LC3:
-	.string	"function\n"
-.LC4:
-	.string	"method\n"
-.LC5:
-	.string	"class\n"
-.LC6:
-	.string	"attribute\n"
-.LC7:
-	.string	"unknown\n"
+	.size	search_name_use_strcmp, .-search_name_use_strcmp
+	.globl	search_name
+	.type	search_name, @function
+search_name:
+	pushq	%r13
+	pushq	%r12
+	pushq	%rbp
+	pushq	%rbx
+	subq	$8, %rsp
+	movq	%rdi, %r13
+	movq	%rsi, %r12
+	testq	%rdi, %rdi
+	je	.L46
+.L45:
+	movq	8(%r13), %rax
+	movq	(%rax), %rbx
+	testq	%rbx, %rbx
+	je	.L43
+.L44:
+	movq	8(%rbx), %rbp
+	movq	8(%rbp), %rdi
+	movq	%r12, %rsi
+	call	*string_equal@GOTPCREL(%rip)
+	testb	%al, %al
+	jne	.L41
+	movq	(%rbx), %rbx
+	testq	%rbx, %rbx
+	jne	.L44
+.L43:
+	movq	0(%r13), %r13
+	testq	%r13, %r13
+	jne	.L45
+	movq	%r13, %rbp
+	jmp	.L41
+.L46:
+	movq	%rdi, %rbp
+.L41:
+	movq	%rbp, %rax
+	addq	$8, %rsp
+	popq	%rbx
+	popq	%rbp
+	popq	%r12
+	popq	%r13
+	ret
+	.size	search_name, .-search_name
 	.section	.rodata.str1.8
 	.align 8
-.LC8:
-	.string	"Error creating name: name_info and scope_info are both NULL for kind %u\n"
+.LC1:
+	.string	"Warning: Creating symbol with unknown SymbolType: %d\n"
 	.align 8
-.LC9:
-	.string	"Error creating name: unknown NameType %u\n"
+.LC2:
+	.string	"Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n"
+	.align 8
+.LC3:
+	.string	"Warning: Creating symbol with unknown SymbolType for ast_node assignment: %d\n"
+	.align 8
+.LC4:
+	.string	"Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\n"
 	.text
-	.globl	create_name
-	.type	create_name, @function
-create_name:
+	.globl	create_symbol
+	.type	create_symbol, @function
+create_symbol:
 	pushq	%r15
 	pushq	%r14
 	pushq	%r13
@@ -174,119 +270,90 @@ create_name:
 	pushq	%rbx
 	subq	$8, %rsp
 	movq	%rdi, %r12
-	movl	%esi, %ebp
+	movl	%esi, %ebx
 	movq	%rdx, %r14
+	movq	%rcx, %r13
+	cmpl	$2, %esi
+	je	.L51
+	ja	.L52
+	testl	%esi, %esi
+	je	.L71
+	movq	32(%rcx), %rax
+	movq	(%rax), %r15
+	jmp	.L56
+.L52:
+	leal	-3(%rsi), %eax
 	movq	%rcx, %r15
-	movq	%r8, %r13
-	movq	%rdi, %rsi
-	movq	%r8, %rdi
-	call	search
-	testq	%rax, %rax
-	je	.L28
-	movq	%rax, %rbx
-	movq	%r12, %rcx
-	leaq	.LC0(%rip), %rdx
+	cmpl	$3, %eax
+	jbe	.L56
+	movl	%esi, %ecx
+	leaq	.LC1(%rip), %rdx
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	cmpl	$5, 24(%rbx)
-	ja	.L29
-	movl	24(%rbx), %eax
-	leaq	.L31(%rip), %rdx
-	movslq	(%rdx,%rax,4), %rax
-	addq	%rdx, %rax
-	jmp	*%rax
-	.section	.rodata
-	.align 4
-	.align 4
-.L31:
-	.long	.L36-.L31
-	.long	.L35-.L31
-	.long	.L34-.L31
-	.long	.L33-.L31
-	.long	.L32-.L31
-	.long	.L30-.L31
-	.text
-.L36:
-	movq	stderr(%rip), %rcx
-	movl	$5, %edx
-	movl	$1, %esi
-	leaq	.LC1(%rip), %rdi
-	call	*fwrite@GOTPCREL(%rip)
-.L28:
-	movl	$32, %edi
+	movl	$0, %r15d
+	jmp	.L56
+.L71:
+	movq	16(%rcx), %rax
+	movq	(%rax), %r15
+.L56:
+	movq	%r12, %rsi
+	movq	%r15, %rdi
+	call	search_name
+	testq	%rax, %rax
+	je	.L57
+	movq	16(%rax), %r9
+	movl	32(%rax), %r8d
+	subq	$8, %rsp
+	movq	id_counter.0(%rip), %rax
+	addq	$1, %rax
+	pushq	%rax
+	movq	%r12, %rcx
+	leaq	.LC2(%rip), %rdx
+	movl	$2, %esi
+	movq	stderr(%rip), %rdi
+	movl	$0, %eax
+	call	*__fprintf_chk@GOTPCREL(%rip)
+	addq	$16, %rsp
+.L57:
+	movl	$40, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
-	movq	%rax, %rbx
-	movq	%r12, (%rax)
+	movq	%rax, %rbp
+	movq	%r12, 8(%rax)
 	movq	id_counter.0(%rip), %rax
 	addq	$1, %rax
 	movq	%rax, id_counter.0(%rip)
-	movq	%rax, 8(%rbx)
-	movl	%ebp, 24(%rbx)
-	leal	-1(%rbp), %eax
-	cmpl	$2, %eax
-	jbe	.L37
-	cmpl	$5, %ebp
-	je	.L37
-	cmpl	$4, %ebp
-	jne	.L40
+	movq	%rax, 16(%rbp)
+	movl	%ebx, 32(%rbp)
+	movq	%r14, 0(%rbp)
+	cmpl	$2, %ebx
+	je	.L58
+	ja	.L59
+	testl	%ebx, %ebx
+	je	.L72
+	movq	%r13, 24(%rbp)
+	jmp	.L64
+.L51:
+	movq	32(%rcx), %rax
+	movq	(%rax), %r15
+	jmp	.L56
+.L59:
+	leal	-3(%rbx), %eax
+	cmpl	$3, %eax
+	ja	.L73
+	movq	%r13, 24(%rbp)
+	jmp	.L64
+.L72:
+	movq	%r13, 24(%rbp)
+.L64:
 	testq	%r15, %r15
-	je	.L40
-	movq	%r15, 16(%rbx)
-	jmp	.L42
-.L35:
-	movq	stderr(%rip), %rcx
-	movl	$9, %edx
-	movl	$1, %esi
-	leaq	.LC2(%rip), %rdi
-	call	*fwrite@GOTPCREL(%rip)
-	jmp	.L28
-.L34:
-	movq	stderr(%rip), %rcx
-	movl	$9, %edx
-	movl	$1, %esi
-	leaq	.LC3(%rip), %rdi
-	call	*fwrite@GOTPCREL(%rip)
-	jmp	.L28
-.L33:
-	movq	stderr(%rip), %rcx
-	movl	$7, %edx
-	movl	$1, %esi
-	leaq	.LC4(%rip), %rdi
-	call	*fwrite@GOTPCREL(%rip)
-	jmp	.L28
-.L32:
-	movq	stderr(%rip), %rcx
-	movl	$6, %edx
-	movl	$1, %esi
-	leaq	.LC5(%rip), %rdi
-	call	*fwrite@GOTPCREL(%rip)
-	jmp	.L28
-.L30:
-	movq	stderr(%rip), %rcx
-	movl	$10, %edx
-	movl	$1, %esi
-	leaq	.LC6(%rip), %rdi
-	call	*fwrite@GOTPCREL(%rip)
-	jmp	.L28
-.L29:
-	movq	stderr(%rip), %rcx
-	movl	$8, %edx
-	movl	$1, %esi
-	leaq	.LC7(%rip), %rdi
-	call	*fwrite@GOTPCREL(%rip)
-	jmp	.L28
-.L37:
-	testq	%r14, %r14
-	je	.L41
-	movq	%r14, 16(%rbx)
-.L42:
-	movq	8(%r13), %rdi
-	movq	%rbx, %rsi
+	je	.L74
+	movq	8(%r15), %rdi
+	movq	%rbp, %rsi
 	call	list_append
-.L27:
-	movq	%rbx, %rax
+.L50:
+	movq	%rbp, %rax
 	addq	$8, %rsp
 	popq	%rbx
 	popq	%rbp
@@ -295,32 +362,28 @@ create_name:
 	popq	%r14
 	popq	%r15
 	ret
-.L40:
-	testl	%ebp, %ebp
-	jne	.L41
-	movq	$0, 16(%rbx)
-	jmp	.L42
-.L41:
-	orq	%r14, %r15
-	jne	.L43
-	movl	%ebp, %ecx
-	leaq	.LC8(%rip), %rdx
+.L58:
+	movq	%r13, 24(%rbp)
+	jmp	.L64
+.L73:
+	movl	%ebx, %ecx
+	leaq	.LC3(%rip), %rdx
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	movl	$0, %ebx
-	jmp	.L27
-.L43:
-	movl	%ebp, %ecx
-	leaq	.LC9(%rip), %rdx
+	jmp	.L64
+.L74:
+	movq	16(%rbp), %r9
+	movl	%ebx, %r8d
+	movq	%r12, %rcx
+	leaq	.LC4(%rip), %rdx
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	movl	$0, %ebx
-	jmp	.L27
-	.size	create_name, .-create_name
+	jmp	.L50
+	.size	create_symbol, .-create_symbol
 	.globl	is_builtin_type
 	.type	is_builtin_type, @function
 is_builtin_type:
@@ -331,77 +394,71 @@ is_builtin_type:
 	movl	%eax, %edx
 	movl	$1, %eax
 	testb	%dl, %dl
-	je	.L53
-.L47:
+	je	.L82
+.L76:
 	popq	%rbx
 	ret
-.L53:
+.L82:
 	movq	FLOAT_KEYWORD(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$1, %eax
 	testb	%dl, %dl
-	jne	.L47
+	jne	.L76
 	movq	STRING_KEYWORD(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$1, %eax
 	testb	%dl, %dl
-	jne	.L47
+	jne	.L76
 	movq	BOOL_KEYWORD(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$1, %eax
 	testb	%dl, %dl
-	jne	.L47
+	jne	.L76
 	movq	VOID_KEYWORD(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
 	setne	%al
 	movzbl	%al, %eax
-	jmp	.L47
+	jmp	.L76
 	.size	is_builtin_type, .-is_builtin_type
-	.globl	is_type
-	.type	is_type, @function
-is_type:
-	testl	$-5, 24(%rdi)
-	sete	%al
-	ret
-	.size	is_type, .-is_type
 	.section	.rodata.str1.8
 	.align 8
-.LC10:
-	.string	"Parser Error at line %zu, column %zu: %s\n"
+.LC5:
+	.string	"Parser Error at %s:%zu:%zu: %s\n"
 	.text
 	.globl	parser_error
 	.type	parser_error, @function
 parser_error:
-	subq	$8, %rsp
-	movq	%rdi, %r9
-	movq	16(%rsi), %rax
-	movq	8(%rsi), %rcx
-	addq	$1, %rcx
+	subq	$16, %rsp
+	movq	%rdx, %rcx
+	movq	16(%rsi), %rdx
+	movq	8(%rsi), %rax
+	pushq	%rdi
+	leaq	1(%rdx), %r9
 	leaq	1(%rax), %r8
-	leaq	.LC10(%rip), %rdx
+	leaq	.LC5(%rip), %rdx
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	addq	$8, %rsp
+	addq	$24, %rsp
 	ret
 	.size	parser_error, .-parser_error
-	.section	.rodata.str1.1
-.LC11:
+	.section	.rodata.str1.1,"aMS",@progbits,1
+.LC6:
 	.string	"\342\224\202   "
-.LC12:
+.LC7:
 	.string	"    "
-.LC13:
+.LC8:
 	.string	"\342\224\224\342\224\200\342\224\200 "
-.LC14:
+.LC9:
 	.string	"\342\224\234\342\224\200\342\224\200 "
 	.text
 	.globl	indention
@@ -418,26 +475,26 @@ indention:
 	movq	%rsi, %rbp
 	movl	%edx, %edi
 	movl	%edx, 12(%rsp)
-	leaq	3(%rcx), %r12
+	leaq	11(%rcx), %r12
 	movq	%rsi, %rax
 	shrq	$3, %rax
 	addq	%r12, %rax
 	movzbl	(%rax), %edx
 	testb	%dil, %dil
-	jne	.L58
+	jne	.L86
 	movl	%esi, %ecx
 	andl	$7, %ecx
 	movl	$1, %esi
 	sall	%cl, %esi
 	orl	%esi, %edx
-.L61:
+.L87:
 	movb	%dl, (%rax)
-	movl	$1, %ebx
-	leaq	.LC12(%rip), %r15
-	leaq	.LC11(%rip), %r14
 	cmpq	$1, %rbp
-	jbe	.L73
-.L59:
+	jbe	.L88
+	movl	$1, %ebx
+	leaq	.LC7(%rip), %r15
+	leaq	.LC6(%rip), %r14
+.L90:
 	movq	%rbx, %rax
 	shrq	$3, %rax
 	movsbl	(%r12,%rax), %eax
@@ -453,29 +510,29 @@ indention:
 	call	*__fprintf_chk@GOTPCREL(%rip)
 	addq	$1, %rbx
 	cmpq	%rbx, %rbp
-	jne	.L59
-.L63:
+	jne	.L90
+.L91:
 	cmpb	$0, 12(%rsp)
-	leaq	.LC14(%rip), %rdx
-	leaq	.LC13(%rip), %rax
+	leaq	.LC9(%rip), %rdx
+	leaq	.LC8(%rip), %rax
 	cmovne	%rax, %rdx
 	movl	$2, %esi
 	movq	%r13, %rdi
 	movl	$0, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	jmp	.L57
-.L58:
+	jmp	.L85
+.L86:
 	movl	%esi, %ecx
 	andl	$7, %ecx
 	movl	$1, %esi
 	sall	%cl, %esi
 	notl	%esi
 	andl	%esi, %edx
-	jmp	.L61
-.L73:
+	jmp	.L87
+.L88:
 	testq	%rbp, %rbp
-	jne	.L63
-.L57:
+	jne	.L91
+.L85:
 	addq	$24, %rsp
 	popq	%rbx
 	popq	%rbp
@@ -488,44 +545,42 @@ indention:
 	.globl	create_parser
 	.type	create_parser, @function
 create_parser:
-	subq	$8, %rsp
-	movl	$35, %edi
+	pushq	%rbx
+	movq	%rdi, %rbx
+	movl	$48, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
-	movb	$0, (%rax)
-	movb	$0, 1(%rax)
-	movb	$0, 2(%rax)
-	addq	$8, %rsp
+	movb	$0, 8(%rax)
+	movb	$0, 9(%rax)
+	movb	$0, 10(%rax)
+	movq	%rbx, (%rax)
+	popq	%rbx
 	ret
 	.size	create_parser, .-create_parser
 	.section	.rodata.str1.1
-.LC15:
-	.string	"print"
-.LC16:
-	.string	"arr"
-	.section	.rodata.str1.8
-	.align 8
-.LC17:
-	.string	"Error: Standard library file for import not found: %s\n"
-	.section	.rodata.str1.1
-.LC18:
-	.string	"/"
-.LC19:
-	.string	".tc"
-.LC20:
+.LC10:
+	.string	""
+.LC11:
+	.string	"%s.tc"
+.LC12:
+	.string	"D:/TC/std/"
+.LC13:
 	.string	"r"
 	.section	.rodata.str1.8
 	.align 8
-.LC21:
+.LC14:
 	.string	"Error opening library file for import: %s\n"
 	.align 8
-.LC22:
+.LC15:
 	.string	"Info: Starting parsing lib file for import: %s\n"
 	.align 8
-.LC23:
+.LC16:
 	.string	"Info: Finished parsing lib file for import: %s\n"
 	.align 8
-.LC24:
+.LC17:
 	.string	"Error parsing library file for import: %s\n"
+	.align 8
+.LC18:
+	.string	"Error: Imported symbol '%s' was not found in %s\n"
 	.text
 	.globl	parse_import_file
 	.type	parse_import_file, @function
@@ -536,141 +591,124 @@ parse_import_file:
 	pushq	%r12
 	pushq	%rbp
 	pushq	%rbx
-	subq	$1048, %rsp
+	subq	$24, %rsp
 	movq	%rdi, %r12
-	movq	%rsi, %rbx
-	movq	%rdx, %r13
-	movb	$0, 16(%rsp)
+	movq	%rdx, %r14
 	testq	%rsi, %rsi
-	je	.L88
-	leaq	16(%rsp), %rbp
-	movq	%rsi, %rcx
-	movq	%rbp, %rdx
-	movl	$1024, %esi
-	movq	%rbp, %rdi
-	call	*string_append@GOTPCREL(%rip)
-	leaq	.LC18(%rip), %rcx
-	movq	%rbp, %rdx
-	movl	$1024, %esi
-	movq	%rbp, %rdi
-	call	*string_append@GOTPCREL(%rip)
-	movq	%r12, %rcx
-	movq	%rbp, %rdx
-	movl	$1024, %esi
-	movq	%rbp, %rdi
-	call	*string_append@GOTPCREL(%rip)
-	leaq	.LC19(%rip), %rcx
-	movq	%rbp, %rdx
-	movl	$1024, %esi
-	movq	%rbp, %rdi
-	call	*string_append@GOTPCREL(%rip)
-.L79:
-	leaq	16(%rsp), %rdi
-	leaq	.LC20(%rip), %rsi
+	je	.L111
+	movq	%rsi, %rbx
+	movq	%rcx, %rdi
+	call	*get_file_dir@GOTPCREL(%rip)
+	movq	%rax, %rsi
+	movq	%rbx, %rdi
+	call	*absolute_path@GOTPCREL(%rip)
+	movq	%rax, %r13
+.L102:
+	leaq	.LC13(%rip), %rsi
+	movq	%r13, %rdi
 	call	*fopen@GOTPCREL(%rip)
-	movq	%rax, %rbx
+	movq	%rax, %rbp
 	testq	%rax, %rax
-	je	.L89
-	leaq	16(%rsp), %r14
-	movq	%r14, %rdx
-	leaq	.LC22(%rip), %rsi
+	je	.L112
+	movq	%r13, %rdx
+	leaq	.LC15(%rip), %rsi
 	movl	$2, %edi
 	movl	$0, %eax
 	call	*__printf_chk@GOTPCREL(%rip)
 	movq	$0, 8(%rsp)
 	leaq	8(%rsp), %rsi
-	movq	%rbx, %rdi
+	movq	%rbp, %rdi
 	call	*read_source@GOTPCREL(%rip)
-	movq	%rax, %rbp
-	movq	%rbx, %rdi
+	movq	%rax, %r15
+	movq	%rbp, %rdi
 	call	*fclose@GOTPCREL(%rip)
+	movq	%r13, %rdi
+	call	*create_file@GOTPCREL(%rip)
+	movq	%rax, %rdi
 	call	create_parser
 	movq	%rax, %rbx
-	movq	builtin_scope(%rip), %r15
+	movq	builtin_scope(%rip), %rbp
 	movq	8(%rsp), %rsi
-	movq	%rbp, %rdi
+	movq	%r15, %rdi
 	call	*create_lexer@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	movq	%rbx, %rdx
-	movq	%r15, %rsi
+	movq	%rbp, %rsi
 	call	*parse_code@GOTPCREL(%rip)
-	movq	%rax, %rbx
-	movq	%r14, %rdx
-	leaq	.LC23(%rip), %rsi
+	movq	%rax, %rbp
+	movq	%r13, %rdx
+	leaq	.LC16(%rip), %rsi
 	movl	$2, %edi
 	movl	$0, %eax
 	call	*__printf_chk@GOTPCREL(%rip)
-	testq	%rbx, %rbx
-	je	.L90
-	movq	8(%rbx), %rax
+	testq	%rbp, %rbp
+	je	.L113
+	movq	8(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	(%rax), %rbx
 	testq	%rbx, %rbx
-	je	.L76
-.L85:
+	je	.L106
+.L108:
 	movq	8(%rbx), %rbp
-	movq	0(%rbp), %rdi
+	movq	8(%rbp), %rdi
 	movq	%r12, %rsi
 	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
-	jne	.L84
+	jne	.L107
 	movq	(%rbx), %rbx
 	testq	%rbx, %rbx
-	jne	.L85
-	jmp	.L76
-.L88:
-	leaq	.LC15(%rip), %rsi
-	call	*strcmp@GOTPCREL(%rip)
-	testl	%eax, %eax
-	je	.L91
-	leaq	.LC16(%rip), %rsi
-	movq	%r12, %rdi
-	call	*strcmp@GOTPCREL(%rip)
-	testl	%eax, %eax
-	jne	.L80
-	movabsq	$8241920901561659182, %rax
-	movq	%rax, 16(%rsp)
-	movabsq	$27993765531771183, %rax
-	movq	%rax, 21(%rsp)
-	jmp	.L79
-.L91:
-	movabsq	$8246143026212319022, %rax
-	movq	%rax, 16(%rsp)
-	movabsq	$27993765565065586, %rax
-	movq	%rax, 23(%rsp)
-	jmp	.L79
-.L80:
-	leaq	16(%rsp), %rcx
+	jne	.L108
+.L106:
+	movq	%r13, %r8
+	movq	%r12, %rcx
+	leaq	.LC18(%rip), %rdx
+	movl	$2, %esi
+	movq	stderr(%rip), %rdi
+	movl	$0, %eax
+	call	*__fprintf_chk@GOTPCREL(%rip)
+	movl	$0, %ebp
+	jmp	.L100
+.L111:
+	call	*strlen@GOTPCREL(%rip)
+	leaq	4(%rax), %rsi
+	leaq	.LC10(%rip), %rdi
+	call	*create_string_not_check@GOTPCREL(%rip)
+	movq	%rax, %rbx
+	movq	%r12, %r8
+	leaq	.LC11(%rip), %rcx
+	movq	$-1, %rdx
+	movl	$2, %esi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*__sprintf_chk@GOTPCREL(%rip)
+	leaq	.LC12(%rip), %rsi
+	movq	%rbx, %rdi
+	call	*absolute_path@GOTPCREL(%rip)
+	movq	%rax, %r13
+	jmp	.L102
+.L112:
+	movq	%r13, %rcx
+	leaq	.LC14(%rip), %rdx
+	movl	$2, %esi
+	movq	stderr(%rip), %rdi
+	movl	$0, %eax
+	call	*__fprintf_chk@GOTPCREL(%rip)
+	jmp	.L100
+.L113:
+	movq	%r13, %rcx
 	leaq	.LC17(%rip), %rdx
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	jmp	.L76
-.L89:
-	leaq	16(%rsp), %rcx
-	leaq	.LC21(%rip), %rdx
-	movl	$2, %esi
-	movq	stderr(%rip), %rdi
-	movl	$0, %eax
-	call	*__fprintf_chk@GOTPCREL(%rip)
-	jmp	.L76
-.L90:
-	movq	%r14, %rcx
-	leaq	.LC24(%rip), %rdx
-	movl	$2, %esi
-	movq	stderr(%rip), %rdi
-	movl	$0, %eax
-	call	*__fprintf_chk@GOTPCREL(%rip)
-	jmp	.L76
-.L84:
-	movq	8(%r13), %rdi
+	jmp	.L100
+.L107:
+	movq	8(%r14), %rdi
 	movq	%rbp, %rsi
 	call	list_append
-	movq	%rbp, %rbx
-.L76:
-	movq	%rbx, %rax
-	addq	$1048, %rsp
+.L100:
+	movq	%rbp, %rax
+	addq	$24, %rsp
 	popq	%rbx
 	popq	%rbp
 	popq	%r12
@@ -679,6 +717,40 @@ parse_import_file:
 	popq	%r15
 	ret
 	.size	parse_import_file, .-parse_import_file
+	.section	.rodata.str1.1
+.LC19:
+	.string	"%s.%s"
+	.text
+	.globl	make_method_name
+	.type	make_method_name, @function
+make_method_name:
+	pushq	%r12
+	pushq	%rbp
+	pushq	%rbx
+	movq	%rdi, %rbp
+	movq	%rsi, %r12
+	call	*strlen@GOTPCREL(%rip)
+	movq	%rax, %rbx
+	movq	%r12, %rdi
+	call	*strlen@GOTPCREL(%rip)
+	leaq	2(%rbx,%rax), %rsi
+	leaq	.LC10(%rip), %rdi
+	call	*create_string@GOTPCREL(%rip)
+	movq	%rax, %rbx
+	movq	%r12, %r9
+	movq	%rbp, %r8
+	leaq	.LC19(%rip), %rcx
+	movq	$-1, %rdx
+	movl	$2, %esi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	*__sprintf_chk@GOTPCREL(%rip)
+	movq	%rbx, %rax
+	popq	%rbx
+	popq	%rbp
+	popq	%r12
+	ret
+	.size	make_method_name, .-make_method_name
 	.globl	string_to_operator
 	.type	string_to_operator, @function
 string_to_operator:
@@ -689,126 +761,126 @@ string_to_operator:
 	movl	%eax, %edx
 	movl	$13, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	ADD_ASSIGN_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$14, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	SUB_ASSIGN_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$15, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	MUL_ASSIGN_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$16, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	DIV_ASSIGN_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$17, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	MOD_ASSIGN_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$18, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	AND_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$11, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	OR_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$12, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	EQ_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$5, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	NE_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$6, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	LT_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$7, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	GT_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$8, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	LE_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$9, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	GE_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$10, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	ADD_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$0, %eax
 	testb	%dl, %dl
-	je	.L114
-.L92:
+	je	.L138
+.L116:
 	popq	%rbx
 	ret
-.L114:
+.L138:
 	movq	SUB_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	movl	%eax, %edx
 	movl	$1, %eax
 	testb	%dl, %dl
-	jne	.L92
+	jne	.L116
 	movq	MUL_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
-	jne	.L110
+	jne	.L134
 	movq	DIV_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
 	testb	%al, %al
-	jne	.L111
+	jne	.L135
 	movq	MOD_SYMBOL(%rip), %rsi
 	movq	%rbx, %rdi
 	call	*string_equal@GOTPCREL(%rip)
@@ -816,64 +888,64 @@ string_to_operator:
 	sbbl	%eax, %eax
 	andl	$15, %eax
 	addl	$4, %eax
-	jmp	.L92
-.L110:
+	jmp	.L116
+.L134:
 	movl	$2, %eax
-	jmp	.L92
-.L111:
+	jmp	.L116
+.L135:
 	movl	$3, %eax
-	jmp	.L92
+	jmp	.L116
 	.size	string_to_operator, .-string_to_operator
 	.globl	operator_precedence
 	.type	operator_precedence, @function
 operator_precedence:
 	cmpl	$18, %edi
-	ja	.L116
+	ja	.L140
 	movl	%edi, %edi
-	leaq	.L118(%rip), %rdx
+	leaq	.L142(%rip), %rdx
 	movslq	(%rdx,%rdi,4), %rax
 	addq	%rdx, %rax
 	jmp	*%rax
 	.section	.rodata
 	.align 4
 	.align 4
-.L118:
-	.long	.L122-.L118
-	.long	.L122-.L118
-	.long	.L121-.L118
-	.long	.L121-.L118
-	.long	.L121-.L118
-	.long	.L120-.L118
-	.long	.L120-.L118
-	.long	.L120-.L118
-	.long	.L120-.L118
-	.long	.L120-.L118
-	.long	.L120-.L118
-	.long	.L123-.L118
-	.long	.L123-.L118
-	.long	.L117-.L118
-	.long	.L117-.L118
-	.long	.L117-.L118
-	.long	.L117-.L118
-	.long	.L117-.L118
-	.long	.L117-.L118
+.L142:
+	.long	.L146-.L142
+	.long	.L146-.L142
+	.long	.L145-.L142
+	.long	.L145-.L142
+	.long	.L145-.L142
+	.long	.L144-.L142
+	.long	.L144-.L142
+	.long	.L144-.L142
+	.long	.L144-.L142
+	.long	.L144-.L142
+	.long	.L144-.L142
+	.long	.L147-.L142
+	.long	.L147-.L142
+	.long	.L141-.L142
+	.long	.L141-.L142
+	.long	.L141-.L142
+	.long	.L141-.L142
+	.long	.L141-.L142
+	.long	.L141-.L142
 	.text
-.L117:
+.L141:
 	movl	$1, %eax
 	ret
-.L120:
+.L144:
 	movl	$3, %eax
 	ret
-.L122:
+.L146:
 	movl	$4, %eax
 	ret
-.L121:
+.L145:
 	movl	$5, %eax
 	ret
-.L116:
+.L140:
 	movl	$0, %eax
 	ret
-.L123:
+.L147:
 	movl	$2, %eax
 	ret
 	.size	operator_precedence, .-operator_precedence
@@ -881,94 +953,94 @@ operator_precedence:
 	.type	operator_to_string, @function
 operator_to_string:
 	cmpl	$18, %edi
-	ja	.L146
+	ja	.L170
 	movl	%edi, %edi
-	leaq	.L127(%rip), %rdx
+	leaq	.L151(%rip), %rdx
 	movslq	(%rdx,%rdi,4), %rax
 	addq	%rdx, %rax
 	jmp	*%rax
 	.section	.rodata
 	.align 4
 	.align 4
-.L127:
-	.long	.L145-.L127
-	.long	.L144-.L127
-	.long	.L143-.L127
-	.long	.L142-.L127
-	.long	.L141-.L127
-	.long	.L140-.L127
-	.long	.L139-.L127
-	.long	.L138-.L127
-	.long	.L137-.L127
-	.long	.L136-.L127
-	.long	.L135-.L127
-	.long	.L134-.L127
-	.long	.L133-.L127
-	.long	.L132-.L127
-	.long	.L131-.L127
-	.long	.L130-.L127
-	.long	.L129-.L127
-	.long	.L128-.L127
-	.long	.L126-.L127
+.L151:
+	.long	.L169-.L151
+	.long	.L168-.L151
+	.long	.L167-.L151
+	.long	.L166-.L151
+	.long	.L165-.L151
+	.long	.L164-.L151
+	.long	.L163-.L151
+	.long	.L162-.L151
+	.long	.L161-.L151
+	.long	.L160-.L151
+	.long	.L159-.L151
+	.long	.L158-.L151
+	.long	.L157-.L151
+	.long	.L156-.L151
+	.long	.L155-.L151
+	.long	.L154-.L151
+	.long	.L153-.L151
+	.long	.L152-.L151
+	.long	.L150-.L151
 	.text
-.L132:
+.L156:
 	movq	ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L131:
+.L155:
 	movq	ADD_ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L130:
+.L154:
 	movq	SUB_ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L129:
+.L153:
 	movq	MUL_ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L128:
+.L152:
 	movq	DIV_ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L126:
+.L150:
 	movq	MOD_ASSIGN_SYMBOL(%rip), %rax
 	ret
-.L134:
+.L158:
 	movq	AND_SYMBOL(%rip), %rax
 	ret
-.L133:
+.L157:
 	movq	OR_SYMBOL(%rip), %rax
 	ret
-.L140:
+.L164:
 	movq	EQ_SYMBOL(%rip), %rax
 	ret
-.L139:
+.L163:
 	movq	NE_SYMBOL(%rip), %rax
 	ret
-.L138:
+.L162:
 	movq	LT_SYMBOL(%rip), %rax
 	ret
-.L137:
+.L161:
 	movq	GT_SYMBOL(%rip), %rax
 	ret
-.L136:
+.L160:
 	movq	LE_SYMBOL(%rip), %rax
 	ret
-.L135:
+.L159:
 	movq	GE_SYMBOL(%rip), %rax
 	ret
-.L145:
+.L169:
 	movq	ADD_SYMBOL(%rip), %rax
 	ret
-.L144:
+.L168:
 	movq	SUB_SYMBOL(%rip), %rax
 	ret
-.L143:
+.L167:
 	movq	MUL_SYMBOL(%rip), %rax
 	ret
-.L142:
+.L166:
 	movq	DIV_SYMBOL(%rip), %rax
 	ret
-.L141:
+.L165:
 	movq	MOD_SYMBOL(%rip), %rax
 	ret
-.L146:
+.L170:
 	movl	$0, %eax
 	ret
 	.size	operator_to_string, .-operator_to_string

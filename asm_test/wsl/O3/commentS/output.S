@@ -29,6 +29,8 @@
 .LC10:
 	.string	"kind: \"attribute\"\n"
 .LC11:
+	.string	"kind: \"parameter\"\n"
+.LC12:
 	.string	"kind: \"unknown_NameType\"\n"
 	.text
 	.p2align 4
@@ -36,37 +38,37 @@
 output_name:
 	pushq	%r15	;
 	pushq	%r14	;
-	movq	%rdx, %r14	; tmp118, indent
+	movq	%rdx, %r14	; tmp120, indent
 	pushq	%r13	;
 	pushq	%r12	;
 	pushq	%rbp	;
-	movq	%rcx, %rbp	; tmp119, parser
+	movq	%rcx, %rbp	; tmp121, parser
 	pushq	%rbx	;
-	movq	%rsi, %rbx	; tmp117, outfile
+	movq	%rsi, %rbx	; tmp119, outfile
 	subq	$8, %rsp	;,
-; src/output.c:395:     if (name_ptr == NULL) {
+; src/output.c:363:     if (name == NULL) {
 	testq	%rdi, %rdi	; name
 	je	.L2	;,
-	movq	%rdi, %r15	; tmp116, name
+	movq	%rdi, %r15	; tmp118, name
 	addq	$1, %r14	;, indent
-; src/output.c:401:     switch (name_ptr->kind) {
-	leaq	.L7(%rip), %r13	;, tmp115
+; src/output.c:370:     switch (name->kind) {
+	leaq	.L7(%rip), %r13	;, tmp117
 .L4:
 	leaq	-1(%r14), %r12	;, indent
-; src/output.c:399:     OUT(0, false, "name: \"%s\"\n", (name_ptr->name));
+; src/output.c:368:     ast_output(0, false, "name: \"%s\"\n", name->name);
 	xorl	%edx, %edx	;
 	movq	%rbp, %rcx	; parser,
 	movq	%rbx, %rdi	; outfile,
 	movq	%r12, %rsi	; indent,
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	(%r15), %rcx	; name_52->name, name_52->name
+	movq	8(%r15), %rcx	; name_58->name, name_58->name
 	movl	$2, %esi	;,
-	movq	%rbx, %rdi	; outfile,
-	leaq	.LC1(%rip), %rdx	;,
 	xorl	%eax, %eax	;
+	leaq	.LC1(%rip), %rdx	;,
+	movq	%rbx, %rdi	; outfile,
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/output.c:400:     OUT(0, false, "id: %zu\n", name_ptr->id);
+; src/output.c:369:     ast_output(0, false, "id: %zu\n", name->id);
 	xorl	%edx, %edx	;
 	movq	%rbp, %rcx	; parser,
 	movq	%r12, %rsi	; indent,
@@ -74,25 +76,26 @@ output_name:
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	xorl	%eax, %eax	;
-	movq	8(%r15), %rcx	; name_52->id, name_52->id
+	movq	16(%r15), %rcx	; name_58->id, name_58->id
 	movl	$2, %esi	;,
 	leaq	.LC2(%rip), %rdx	;,
 	movq	%rbx, %rdi	; outfile,
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/output.c:401:     switch (name_ptr->kind) {
-	cmpl	$5, 24(%r15)	;, name_52->kind
+; src/output.c:370:     switch (name->kind) {
+	cmpl	$6, 32(%r15)	;, name_58->kind
 	ja	.L5	;,
-	movl	24(%r15), %eax	; name_52->kind, name_52->kind
-; src/output.c:424:             OUT(0, false, "kind: \"attribute\"\n");
+	movl	32(%r15), %eax	; name_58->kind, name_58->kind
+; src/output.c:372:             ast_output(0, true, "kind: \"type\"\n");
 	movq	%rbp, %rcx	; parser,
-; src/output.c:401:     switch (name_ptr->kind) {
+; src/output.c:370:     switch (name->kind) {
 	movslq	0(%r13,%rax,4), %rax	;, tmp99
-	addq	%r13, %rax	; tmp115, tmp100
+	addq	%r13, %rax	; tmp117, tmp100
 	jmp	*%rax	; tmp100
 	.section	.rodata
 	.align 4
 	.align 4
 .L7:
+	.long	.L13-.L7
 	.long	.L12-.L7
 	.long	.L11-.L7
 	.long	.L10-.L7
@@ -103,93 +106,19 @@ output_name:
 	.p2align 4,,10
 	.p2align 3
 .L8:
-; src/output.c:421:             OUT(0, true, "kind: \"class\"\n");
-	movl	$1, %edx	;,
-	movq	%r12, %rsi	; indent,
-	movq	%rbx, %rdi	; outfile,
-	call	*indention@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbx, %rcx	; outfile,
-	movl	$14, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC9(%rip), %rdi	;, tmp109
-.L22:
-; src/output.c:432: }
-	addq	$8, %rsp	;,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	popq	%r14	;
-	popq	%r15	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	jmp	*fwrite@GOTPCREL(%rip)	;
-	.p2align 4,,10
-	.p2align 3
-.L9:
-; src/output.c:416:             OUT(0, false, "kind: \"method\"\n");
+; src/output.c:393:             ast_output(0, false, "kind: \"attribute\"\n");
 	xorl	%edx, %edx	;
 	movq	%r12, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
-	movl	$15, %edx	;,
+	movl	$18, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC8(%rip), %rdi	;, tmp107
-.L20:
-	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:417:             OUT(0, true, "return_type\n");
-	movq	%rbp, %rcx	; parser,
-	movl	$1, %edx	;,
-	movq	%r12, %rsi	; indent,
-	movq	%rbx, %rdi	; outfile,
-	call	*indention@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbx, %rcx	; outfile,
-	movl	$12, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC7(%rip), %rdi	;, tmp108
-	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:418:             output_name(name_ptr->info.type, outfile, indent + 1, parser);
-	movq	16(%r15), %r15	; name_52->info.type, name
-.L13:
-; src/output.c:395:     if (name_ptr == NULL) {
-	leaq	1(%r14), %rax	;, ivtmp.26
-	testq	%r15, %r15	; name
-	je	.L2	;,
-	movq	%rax, %r14	; ivtmp.26, indent
-	jmp	.L4	;
-	.p2align 4,,10
-	.p2align 3
-.L10:
-; src/output.c:411:             OUT(0, false, "kind: \"function\"\n");
-	xorl	%edx, %edx	;
-	movq	%r12, %rsi	; indent,
-	movq	%rbx, %rdi	; outfile,
-	call	*indention@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbx, %rcx	; outfile,
-	movl	$17, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC6(%rip), %rdi	;, tmp105
-	jmp	.L20	;
-	.p2align 4,,10
-	.p2align 3
-.L11:
-; src/output.c:406:             OUT(0, false, "kind: \"variable\"\n");
-	xorl	%edx, %edx	;
-	movq	%r12, %rsi	; indent,
-	movq	%rbx, %rdi	; outfile,
-	call	*indention@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbx, %rcx	; outfile,
-	movl	$17, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC4(%rip), %rdi	;, tmp103
+	leaq	.LC10(%rip), %rdi	;, tmp110
 .L21:
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:425:             OUT(0, true, "type\n");
+; src/output.c:394:             ast_output(0, true, "type\n");
 	movq	%rbp, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r12, %rsi	; indent,
@@ -201,14 +130,116 @@ output_name:
 	movl	$1, %esi	;,
 	leaq	.LC5(%rip), %rdi	;, tmp111
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:426:             output_name(name_ptr->info.type, outfile, indent + 1, parser);
-	movq	16(%r15), %r15	; name_52->info.type, name
-; src/output.c:427:             break;
-	jmp	.L13	;
+; src/output.c:395:             output_name(name->type, outfile, indent + 1, parser);
+	movq	(%r15), %r15	; name_58->type, name
+.L14:
+; src/output.c:363:     if (name == NULL) {
+	leaq	1(%r14), %rax	;, ivtmp.26
+	testq	%r15, %r15	; name
+	je	.L2	;,
+	movq	%rax, %r14	; ivtmp.26, indent
+	jmp	.L4	;
+	.p2align 4,,10
+	.p2align 3
+.L9:
+; src/output.c:398:             ast_output(0, false, "kind: \"parameter\"\n");
+	xorl	%edx, %edx	;
+	movq	%r12, %rsi	; indent,
+	movq	%rbx, %rdi	; outfile,
+	call	*indention@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rcx	; outfile,
+	movl	$18, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC11(%rip), %rdi	;, tmp112
+	jmp	.L21	;
+	.p2align 4,,10
+	.p2align 3
+.L10:
+; src/output.c:375:             ast_output(0, false, "kind: \"variable\"\n");
+	xorl	%edx, %edx	;
+	movq	%r12, %rsi	; indent,
+	movq	%rbx, %rdi	; outfile,
+	call	*indention@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rcx	; outfile,
+	movl	$17, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC4(%rip), %rdi	;, tmp103
+	jmp	.L21	;
+	.p2align 4,,10
+	.p2align 3
+.L11:
+; src/output.c:385:             ast_output(0, false, "kind: \"method\"\n");
+	xorl	%edx, %edx	;
+	movq	%r12, %rsi	; indent,
+	movq	%rbx, %rdi	; outfile,
+	call	*indention@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rcx	; outfile,
+	movl	$15, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC8(%rip), %rdi	;, tmp107
+.L22:
+	call	*fwrite@GOTPCREL(%rip)	;
+; src/output.c:386:             ast_output(0, true, "return_type\n");
+	movq	%rbp, %rcx	; parser,
+	movl	$1, %edx	;,
+	movq	%r12, %rsi	; indent,
+	movq	%rbx, %rdi	; outfile,
+	call	*indention@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rcx	; outfile,
+	movl	$12, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC7(%rip), %rdi	;, tmp108
+	call	*fwrite@GOTPCREL(%rip)	;
+; src/output.c:387:             output_name(name->type, outfile, indent + 1, parser);
+	movq	(%r15), %r15	; name_58->type, name
+; src/output.c:388:             break;
+	jmp	.L14	;
 	.p2align 4,,10
 	.p2align 3
 .L12:
-; src/output.c:403:             OUT(0, true, "kind: \"type\"\n");
+; src/output.c:380:             ast_output(0, false, "kind: \"function\"\n");
+	xorl	%edx, %edx	;
+	movq	%r12, %rsi	; indent,
+	movq	%rbx, %rdi	; outfile,
+	call	*indention@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rcx	; outfile,
+	movl	$17, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC6(%rip), %rdi	;, tmp105
+	jmp	.L22	;
+	.p2align 4,,10
+	.p2align 3
+.L13:
+; src/output.c:390:             ast_output(0, true, "kind: \"class\"\n");
+	movl	$1, %edx	;,
+	movq	%r12, %rsi	; indent,
+	movq	%rbx, %rdi	; outfile,
+	call	*indention@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rcx	; outfile,
+	movl	$14, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC9(%rip), %rdi	;, tmp109
+.L23:
+; src/output.c:407: }
+	addq	$8, %rsp	;,
+	popq	%rbx	;
+	popq	%rbp	;
+	popq	%r12	;
+	popq	%r13	;
+	popq	%r14	;
+	popq	%r15	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	jmp	*fwrite@GOTPCREL(%rip)	;
+	.p2align 4,,10
+	.p2align 3
+.L6:
+; src/output.c:372:             ast_output(0, true, "kind: \"type\"\n");
 	movl	$1, %edx	;,
 	movq	%r12, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
@@ -218,23 +249,9 @@ output_name:
 	movl	$13, %edx	;,
 	movl	$1, %esi	;,
 	leaq	.LC3(%rip), %rdi	;, tmp102
-	jmp	.L22	;
-	.p2align 4,,10
-	.p2align 3
-.L6:
-; src/output.c:424:             OUT(0, false, "kind: \"attribute\"\n");
-	xorl	%edx, %edx	;
-	movq	%r12, %rsi	; indent,
-	movq	%rbx, %rdi	; outfile,
-	call	*indention@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbx, %rcx	; outfile,
-	movl	$18, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC10(%rip), %rdi	;, tmp110
-	jmp	.L21	;
+	jmp	.L23	;
 .L5:
-; src/output.c:429:             OUT(0, true, "kind: \"unknown_NameType\"\n");
+; src/output.c:403:             ast_output(0, true, "kind: \"unknown_NameType\"\n");
 	movq	%rbp, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r12, %rsi	; indent,
@@ -244,12 +261,12 @@ output_name:
 	movq	%rbx, %rcx	; outfile,
 	movl	$25, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC11(%rip), %rdi	;, tmp112
-	jmp	.L22	;
+	leaq	.LC12(%rip), %rdi	;, tmp114
+	jmp	.L23	;
 	.p2align 4,,10
 	.p2align 3
 .L2:
-; src/output.c:396:         OUT(0, true, "Name pointer: \"NULL\"\n");
+; src/output.c:364:         ast_output(0, true, "Name pointer: \"NULL\"\n");
 	movq	%rbp, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r14, %rsi	; indent,
@@ -260,55 +277,55 @@ output_name:
 	movl	$21, %edx	;,
 	movl	$1, %esi	;,
 	leaq	.LC0(%rip), %rdi	;, tmp91
-	jmp	.L22	;
+	jmp	.L23	;
 	.size	output_name, .-output_name
 	.section	.rodata.str1.1
-.LC12:
-	.string	"primary\n"
 .LC13:
-	.string	"type: \"integer\"\n"
+	.string	"primary\n"
 .LC14:
-	.string	"value: %s\n"
+	.string	"type: \"integer\"\n"
 .LC15:
-	.string	"type: \"float\"\n"
+	.string	"value: %s\n"
 .LC16:
-	.string	"type: \"string\"\n"
+	.string	"type: \"float\"\n"
 .LC17:
-	.string	"value: \"%s\"\n"
+	.string	"type: \"string\"\n"
 .LC18:
-	.string	"type: \"boolean\"\n"
+	.string	"value: \"%s\"\n"
 .LC19:
-	.string	"value: \"true\"\n"
+	.string	"type: \"boolean\"\n"
 .LC20:
-	.string	"value: \"false\"\n"
+	.string	"value: \"true\"\n"
 .LC21:
-	.string	"type: \"expression\"\n"
+	.string	"value: \"false\"\n"
 .LC22:
-	.string	"value\n"
+	.string	"type: \"expression\"\n"
 .LC23:
-	.string	"type: \"!\"\n"
+	.string	"value\n"
 .LC24:
-	.string	"type: \"-\"\n"
+	.string	"type: \"!\"\n"
 .LC25:
-	.string	"type: \"variable\"\n"
+	.string	"type: \"-\"\n"
 .LC26:
-	.string	"unknown_PrimaryType: %u\n"
+	.string	"type: \"variable\"\n"
 .LC27:
-	.string	"operator: \"%s\"\n"
+	.string	"unknown_PrimaryType: %u\n"
 .LC28:
-	.string	"left\n"
+	.string	"operator: \"%s\"\n"
 .LC29:
-	.string	"right\n"
+	.string	"left\n"
 .LC30:
+	.string	"right\n"
+.LC31:
 	.string	"UNKNOWN_OPERATOR"
 	.text
 	.p2align 4
 	.type	output_expression, @function
 output_expression:
 	pushq	%r15	;
-; src/output.c:299:     switch (primary_ptr->type) {
-	leaq	.L29(%rip), %r15	;, tmp143
-; src/output.c:277: void output_expression(Expression* expression, FILE* outfile, size_t indent, Parser* parser) {
+; src/output.c:271:     switch (primary->type) {
+	leaq	.L30(%rip), %r15	;, tmp143
+; src/output.c:254: void output_expression(Expression* expression, FILE* outfile, size_t indent, Parser* parser) {
 	pushq	%r14	;
 	pushq	%r13	;
 	movq	%rdi, %r13	; tmp146, expression
@@ -319,40 +336,40 @@ output_expression:
 	pushq	%rbx	;
 	movq	%rsi, %rbx	; tmp147, outfile
 	subq	$8, %rsp	;,
-.L38:
-; src/output.c:282:     if (expression_ptr->operator == OP_NONE) {
+.L39:
+; src/output.c:256:     if (expression->operator == OP_NONE) {
 	movl	24(%r13), %edi	; expression_21->operator, _22
-; src/output.c:282:     if (expression_ptr->operator == OP_NONE) {
+; src/output.c:256:     if (expression->operator == OP_NONE) {
 	cmpl	$19, %edi	;, _22
-	je	.L58	;,
-.L25:
-; src/output.c:286:         string op_str = operator_to_string(expression_ptr->operator);
+	je	.L59	;,
+.L26:
+; src/output.c:260:         string op_str = operator_to_string(expression->operator);
 	call	*operator_to_string@GOTPCREL(%rip)	;
-; src/output.c:287:         OUT(0, false, "operator: \"%s\"\n", op_str ? (op_str) : "UNKNOWN_OPERATOR");
+; src/output.c:261:         ast_output(0, false, "operator: \"%s\"\n", op_str ? op_str : "UNKNOWN_OPERATOR");
 	movq	%r12, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%rbp, %rsi	; indent,
-; src/output.c:286:         string op_str = operator_to_string(expression_ptr->operator);
+; src/output.c:260:         string op_str = operator_to_string(expression->operator);
 	movq	%rax, %r14	; tmp150, op_str
-; src/output.c:287:         OUT(0, false, "operator: \"%s\"\n", op_str ? (op_str) : "UNKNOWN_OPERATOR");
+; src/output.c:261:         ast_output(0, false, "operator: \"%s\"\n", op_str ? op_str : "UNKNOWN_OPERATOR");
 	movq	%rbx, %rdi	; outfile,
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r14, %rcx	; op_str,
-; src/output.c:287:         OUT(0, false, "operator: \"%s\"\n", op_str ? (op_str) : "UNKNOWN_OPERATOR");
+; src/output.c:261:         ast_output(0, false, "operator: \"%s\"\n", op_str ? op_str : "UNKNOWN_OPERATOR");
 	testq	%r14, %r14	; op_str
-	je	.L59	;,
-.L53:
+	je	.L60	;,
+.L54:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC27(%rip), %rdx	;,
+	leaq	.LC28(%rip), %rdx	;,
 	movq	%rbx, %rdi	; outfile,
-; src/output.c:289:         output_expression(expression_ptr->expr_left, outfile, indent + 1, parser);
+; src/output.c:263:         output_expression(expression->expr_left, outfile, indent + 1, parser);
 	leaq	1(%rbp), %r14	;, _108
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	xorl	%eax, %eax	;
 	movl	$2, %esi	;,
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/output.c:288:         OUT(0, false, "left\n");
+; src/output.c:262:         ast_output(0, false, "left\n");
 	movq	%r12, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%rbp, %rsi	; indent,
@@ -362,48 +379,48 @@ output_expression:
 	movq	%rbx, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC28(%rip), %rdi	;,
+	leaq	.LC29(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:289:         output_expression(expression_ptr->expr_left, outfile, indent + 1, parser);
+; src/output.c:263:         output_expression(expression->expr_left, outfile, indent + 1, parser);
 	movq	0(%r13), %rdi	; expression_92->expr_left, expression_92->expr_left
 	movq	%r12, %rcx	; parser,
 	movq	%r14, %rdx	; _108,
 	movq	%rbx, %rsi	; outfile,
 	call	output_expression	;
-; src/output.c:290:         OUT(0, true, "right\n");
+; src/output.c:264:         ast_output(0, true, "right\n");
 	movq	%r12, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%rbp, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC29(%rip), %rdi	;,
+	leaq	.LC30(%rip), %rdi	;,
 	movq	%rbx, %rcx	; outfile,
 	movl	$6, %edx	;,
 	movl	$1, %esi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:291:         output_expression(expression_ptr->right, outfile, indent + 1, parser);
+; src/output.c:265:         output_expression(expression->right, outfile, indent + 1, parser);
 	movq	16(%r13), %r13	; expression_92->right, expression
-; src/output.c:282:     if (expression_ptr->operator == OP_NONE) {
+; src/output.c:256:     if (expression->operator == OP_NONE) {
 	movl	24(%r13), %edi	;, _22
-; src/output.c:282:     if (expression_ptr->operator == OP_NONE) {
+; src/output.c:256:     if (expression->operator == OP_NONE) {
 	cmpl	$19, %edi	;, _22
-	je	.L41	;,
+	je	.L42	;,
 	movq	%r14, %rbp	; _108, indent
-	jmp	.L25	;
+	jmp	.L26	;
+	.p2align 4,,10
+	.p2align 3
+.L60:
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	leaq	.LC31(%rip), %rcx	;,
+	jmp	.L54	;
 	.p2align 4,,10
 	.p2align 3
 .L59:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC30(%rip), %rcx	;,
-	jmp	.L53	;
-	.p2align 4,,10
-	.p2align 3
-.L58:
-; src/output.c:282:     if (expression_ptr->operator == OP_NONE) {
+; src/output.c:256:     if (expression->operator == OP_NONE) {
 	movq	%rbp, %r14	; indent, _108
-.L41:
-; src/output.c:283:         OUT(0, true, "primary\n");
+.L42:
+; src/output.c:257:         ast_output(0, true, "primary\n");
 	movq	%r12, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r14, %rsi	; _108,
@@ -414,53 +431,53 @@ output_expression:
 	leaq	2(%r14), %rbp	;, indent
 	movl	$8, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC12(%rip), %rdi	;,
+	leaq	.LC13(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:284:         output_primary(expression_ptr->prim_left, outfile, indent + 1, parser);
+; src/output.c:258:         output_primary(expression->prim_left, outfile, indent + 1, parser);
 	movq	8(%r13), %r13	; expression_99->prim_left, primary
-.L26:
-; src/output.c:299:     switch (primary_ptr->type) {
+.L27:
+; src/output.c:271:     switch (primary->type) {
 	cmpl	$8, 8(%r13)	;, primary_28->type
 	leaq	-1(%rbp), %r14	;, indent
-	ja	.L27	;,
+	ja	.L28	;,
 	movl	8(%r13), %eax	; primary_28->type, primary_28->type
-; src/output.c:336:             OUT(0, false, "type: \"variable\"\n");
+; src/output.c:308:             ast_output(0, false, "type: \"variable\"\n");
 	movq	%r12, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r14, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
-; src/output.c:299:     switch (primary_ptr->type) {
+; src/output.c:271:     switch (primary->type) {
 	movslq	(%r15,%rax,4), %rax	;, tmp103
 	addq	%r15, %rax	; tmp143, tmp104
 	jmp	*%rax	; tmp104
 	.section	.rodata
 	.align 4
 	.align 4
-.L29:
-	.long	.L37-.L29
-	.long	.L36-.L29
-	.long	.L35-.L29
-	.long	.L34-.L29
-	.long	.L33-.L29
-	.long	.L32-.L29
-	.long	.L31-.L29
-	.long	.L30-.L29
-	.long	.L28-.L29
+.L30:
+	.long	.L38-.L30
+	.long	.L37-.L30
+	.long	.L36-.L30
+	.long	.L35-.L30
+	.long	.L34-.L30
+	.long	.L33-.L30
+	.long	.L32-.L30
+	.long	.L31-.L30
+	.long	.L29-.L30
 	.text
 	.p2align 4,,10
 	.p2align 3
-.L30:
-; src/output.c:331:             OUT(0, false, "type: \"-\"\n");
+.L31:
+; src/output.c:303:             ast_output(0, false, "type: \"-\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$10, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC24(%rip), %rdi	;, tmp123
-.L54:
+	leaq	.LC25(%rip), %rdi	;, tmp123
+.L55:
 	call	*fwrite@GOTPCREL(%rip)	;
 	addq	$1, %rbp	;, indent
-; src/output.c:332:             OUT(0, true, "value\n");
+; src/output.c:304:             ast_output(0, true, "value\n");
 	movq	%r12, %rcx	; parser,
 	movq	%r14, %rsi	; indent,
 	movl	$1, %edx	;,
@@ -470,23 +487,23 @@ output_expression:
 	movq	%rbx, %rcx	; outfile,
 	movl	$6, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC22(%rip), %rdi	;, tmp124
+	leaq	.LC23(%rip), %rdi	;, tmp124
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:333:             output_primary(primary_ptr->value.operand, outfile, indent + 1, parser);
+; src/output.c:305:             output_primary(primary->value.operand, outfile, indent + 1, parser);
 	movq	0(%r13), %r13	; primary_28->value.operand, primary
-	jmp	.L26	;
+	jmp	.L27	;
 	.p2align 4,,10
 	.p2align 3
-.L28:
-; src/output.c:336:             OUT(0, false, "type: \"variable\"\n");
+.L29:
+; src/output.c:308:             ast_output(0, false, "type: \"variable\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$17, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC25(%rip), %rdi	;, tmp125
+	leaq	.LC26(%rip), %rdi	;, tmp125
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:337:             OUT(0, true, "value\n");
+; src/output.c:309:             ast_output(0, true, "value\n");
 	movq	%r12, %rcx	; parser,
 	movq	%r14, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
@@ -496,38 +513,38 @@ output_expression:
 	movq	%rbx, %rcx	; outfile,
 	movl	$6, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC22(%rip), %rdi	;, tmp126
+	leaq	.LC23(%rip), %rdi	;, tmp126
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:338:             output_variable_access(primary_ptr->value.var, outfile, indent + 1, parser);
+; src/output.c:310:             output_variable_access(primary->value.var, outfile, indent + 1, parser);
 	movq	0(%r13), %rdi	; primary_28->value.var, primary_28->value.var
-; src/output.c:293: }
+; src/output.c:268: }
 	addq	$8, %rsp	;,
-; src/output.c:338:             output_variable_access(primary_ptr->value.var, outfile, indent + 1, parser);
+; src/output.c:310:             output_variable_access(primary->value.var, outfile, indent + 1, parser);
 	movq	%r12, %rcx	; parser,
 	movq	%rbp, %rdx	; indent,
 	movq	%rbx, %rsi	; outfile,
-; src/output.c:293: }
+; src/output.c:268: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
 	popq	%r13	;
 	popq	%r14	;
 	popq	%r15	;
-; src/output.c:338:             output_variable_access(primary_ptr->value.var, outfile, indent + 1, parser);
+; src/output.c:310:             output_variable_access(primary->value.var, outfile, indent + 1, parser);
 	jmp	output_variable_access	;
 	.p2align 4,,10
 	.p2align 3
-.L37:
-; src/output.c:301:             OUT(0, false, "type: \"integer\"\n");
+.L38:
+; src/output.c:273:             ast_output(0, false, "type: \"integer\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$16, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC13(%rip), %rdi	;, tmp106
-.L55:
+	leaq	.LC14(%rip), %rdi	;, tmp106
+.L56:
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:306:             OUT(0, true, "value: %s\n", (primary_ptr->value.literal_value));
+; src/output.c:278:             ast_output(0, true, "value: %s\n", primary->value.literal_value);
 	movq	%r12, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r14, %rsi	; indent,
@@ -535,15 +552,15 @@ output_expression:
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	0(%r13), %rcx	; primary_28->value.literal_value, primary_28->value.literal_value
-	leaq	.LC14(%rip), %rdx	;, tmp111
-.L56:
-; src/output.c:293: }
+	leaq	.LC15(%rip), %rdx	;, tmp111
+.L57:
+; src/output.c:268: }
 	addq	$8, %rsp	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rdi	; outfile,
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
-; src/output.c:293: }
+; src/output.c:268: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
@@ -554,27 +571,27 @@ output_expression:
 	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
-.L36:
-; src/output.c:305:             OUT(0, false, "type: \"float\"\n");
+.L37:
+; src/output.c:277:             ast_output(0, false, "type: \"float\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$14, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC15(%rip), %rdi	;, tmp109
-	jmp	.L55	;
+	leaq	.LC16(%rip), %rdi	;, tmp109
+	jmp	.L56	;
 	.p2align 4,,10
 	.p2align 3
-.L35:
-; src/output.c:309:             OUT(0, false, "type: \"string\"\n");
+.L36:
+; src/output.c:281:             ast_output(0, false, "type: \"string\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$15, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC16(%rip), %rdi	;, tmp112
+	leaq	.LC17(%rip), %rdi	;, tmp112
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:310:             OUT(0, true, "value: \"%s\"\n", (primary_ptr->value.literal_value));
+; src/output.c:282:             ast_output(0, true, "value: \"%s\"\n", primary->value.literal_value);
 	movq	%r12, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r14, %rsi	; indent,
@@ -582,20 +599,20 @@ output_expression:
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	0(%r13), %rcx	; primary_28->value.literal_value, primary_28->value.literal_value
-	leaq	.LC17(%rip), %rdx	;, tmp114
-	jmp	.L56	;
+	leaq	.LC18(%rip), %rdx	;, tmp114
+	jmp	.L57	;
 	.p2align 4,,10
 	.p2align 3
-.L34:
-; src/output.c:313:             OUT(0, false, "type: \"boolean\"\n");
+.L35:
+; src/output.c:285:             ast_output(0, false, "type: \"boolean\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$16, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC18(%rip), %rdi	;, tmp115
+	leaq	.LC19(%rip), %rdi	;, tmp115
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:314:             OUT(0, true, "value: \"true\"\n");
+; src/output.c:286:             ast_output(0, true, "value: \"true\"\n");
 	movq	%r12, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r14, %rsi	; indent,
@@ -605,9 +622,9 @@ output_expression:
 	movq	%rbx, %rcx	; outfile,
 	movl	$14, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC19(%rip), %rdi	;, tmp116
-.L57:
-; src/output.c:293: }
+	leaq	.LC20(%rip), %rdi	;, tmp116
+.L58:
+; src/output.c:268: }
 	addq	$8, %rsp	;,
 	popq	%rbx	;
 	popq	%rbp	;
@@ -619,16 +636,16 @@ output_expression:
 	jmp	*fwrite@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
-.L33:
-; src/output.c:317:             OUT(0, false, "type: \"boolean\"\n");
+.L34:
+; src/output.c:289:             ast_output(0, false, "type: \"boolean\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$16, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC18(%rip), %rdi	;, tmp117
+	leaq	.LC19(%rip), %rdi	;, tmp117
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:318:             OUT(0, true, "value: \"false\"\n");
+; src/output.c:290:             ast_output(0, true, "value: \"false\"\n");
 	movq	%r12, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r14, %rsi	; indent,
@@ -638,20 +655,20 @@ output_expression:
 	movq	%rbx, %rcx	; outfile,
 	movl	$15, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC20(%rip), %rdi	;, tmp118
-	jmp	.L57	;
+	leaq	.LC21(%rip), %rdi	;, tmp118
+	jmp	.L58	;
 	.p2align 4,,10
 	.p2align 3
-.L32:
-; src/output.c:321:             OUT(0, false, "type: \"expression\"\n");
+.L33:
+; src/output.c:293:             ast_output(0, false, "type: \"expression\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$19, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC21(%rip), %rdi	;, tmp119
+	leaq	.LC22(%rip), %rdi	;, tmp119
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:322:             OUT(0, true, "value\n");
+; src/output.c:294:             ast_output(0, true, "value\n");
 	movq	%r12, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r14, %rsi	; indent,
@@ -661,25 +678,25 @@ output_expression:
 	movq	%rbx, %rcx	; outfile,
 	movl	$6, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC22(%rip), %rdi	;, tmp120
+	leaq	.LC23(%rip), %rdi	;, tmp120
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:323:             output_expression(primary_ptr->value.expr, outfile, indent + 1, parser);
+; src/output.c:295:             output_expression(primary->value.expr, outfile, indent + 1, parser);
 	movq	0(%r13), %r13	; primary_28->value.expr, expression
-; src/output.c:324:             break;
-	jmp	.L38	;
+; src/output.c:296:             break;
+	jmp	.L39	;
 	.p2align 4,,10
 	.p2align 3
-.L31:
-; src/output.c:326:             OUT(0, false, "type: \"!\"\n");
+.L32:
+; src/output.c:298:             ast_output(0, false, "type: \"!\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$10, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC23(%rip), %rdi	;, tmp121
-	jmp	.L54	;
-.L27:
-; src/output.c:341:             OUT(0, true, "unknown_PrimaryType: %u\n", primary_ptr->type);
+	leaq	.LC24(%rip), %rdi	;, tmp121
+	jmp	.L55	;
+.L28:
+; src/output.c:313:             ast_output(0, true, "unknown_PrimaryType: %u\n", primary->type);
 	movq	%r12, %rcx	; parser,
 	movq	%r14, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
@@ -687,20 +704,20 @@ output_expression:
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	8(%r13), %ecx	; primary_28->type, primary_28->type
-; src/output.c:293: }
+; src/output.c:268: }
 	addq	$8, %rsp	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rdi	; outfile,
-	leaq	.LC26(%rip), %rdx	;, tmp129
-; src/output.c:293: }
+	leaq	.LC27(%rip), %rdx	;, tmp129
+; src/output.c:268: }
 	popq	%rbx	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$2, %esi	;,
-; src/output.c:293: }
+; src/output.c:268: }
 	popq	%rbp	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	xorl	%eax, %eax	;
-; src/output.c:293: }
+; src/output.c:268: }
 	popq	%r12	;
 	popq	%r13	;
 	popq	%r14	;
@@ -709,9 +726,9 @@ output_expression:
 	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
 	.size	output_expression, .-output_expression
 	.section	.rodata.str1.1
-.LC31:
-	.string	"name\n"
 .LC32:
+	.string	"name\n"
+.LC33:
 	.string	"value: \"NULL\"\n"
 	.text
 	.p2align 4
@@ -722,18 +739,18 @@ output_variable:
 	movq	%rdi, %r13	; tmp98, variable
 	pushq	%r12	;
 	movq	%rdx, %r12	; tmp100, indent
-; src/output.c:144:     OUT(0, false, "type\n");
+; src/output.c:128:     ast_output(0, false, "type\n");
 	xorl	%edx, %edx	;
-; src/output.c:139: void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* parser) {
+; src/output.c:126: void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* parser) {
 	pushq	%rbp	;
-; src/output.c:145:     output_name(variable_ptr->type, outfile, indent + 1, parser);
+; src/output.c:129:     output_name(variable->type, outfile, indent + 1, parser);
 	leaq	1(%r12), %r14	;, _1
-; src/output.c:139: void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* parser) {
+; src/output.c:126: void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* parser) {
 	movq	%rcx, %rbp	; tmp101, parser
 	pushq	%rbx	;
-; src/output.c:139: void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* parser) {
+; src/output.c:126: void output_variable(Variable* variable, FILE* outfile, size_t indent, Parser* parser) {
 	movq	%rsi, %rbx	; tmp99, outfile
-; src/output.c:144:     OUT(0, false, "type\n");
+; src/output.c:128:     ast_output(0, false, "type\n");
 	movq	%r12, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
 	call	*indention@GOTPCREL(%rip)	;
@@ -743,13 +760,13 @@ output_variable:
 	movl	$1, %esi	;,
 	leaq	.LC5(%rip), %rdi	;, tmp91
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:145:     output_name(variable_ptr->type, outfile, indent + 1, parser);
-	movq	0(%r13), %rdi	; variable_7(D)->type, variable_7(D)->type
+; src/output.c:129:     output_name(variable->type, outfile, indent + 1, parser);
+	movq	0(%r13), %rdi	; variable_12(D)->type, variable_12(D)->type
 	movq	%rbp, %rcx	; parser,
 	movq	%r14, %rdx	; _1,
 	movq	%rbx, %rsi	; outfile,
 	call	output_name	;
-; src/output.c:146:     OUT(0, false, "name\n");
+; src/output.c:130:     ast_output(0, false, "name\n");
 	xorl	%edx, %edx	;
 	movq	%rbp, %rcx	; parser,
 	movq	%r12, %rsi	; indent,
@@ -759,95 +776,95 @@ output_variable:
 	movq	%rbx, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC31(%rip), %rdi	;, tmp93
+	leaq	.LC32(%rip), %rdi	;, tmp93
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:147:     output_name(variable_ptr->name, outfile, indent + 1, parser);
-	movq	8(%r13), %rdi	; variable_7(D)->name, variable_7(D)->name
+; src/output.c:131:     output_name(variable->name, outfile, indent + 1, parser);
+	movq	8(%r13), %rdi	; variable_12(D)->name, variable_12(D)->name
 	movq	%rbp, %rcx	; parser,
 	movq	%r14, %rdx	; _1,
 	movq	%rbx, %rsi	; outfile,
 	call	output_name	;
-; src/output.c:148:     if (variable_ptr->value != 0) {
-	cmpq	$0, 16(%r13)	;, variable_7(D)->value
-; src/output.c:149:         OUT(0, true, "value\n");
+; src/output.c:132:     if (variable->value != NULL) {
+	cmpq	$0, 16(%r13)	;, variable_12(D)->value
+; src/output.c:133:         ast_output(0, true, "value\n");
 	movq	%rbp, %rcx	; parser,
 	movq	%r12, %rsi	; indent,
 	movl	$1, %edx	;,
 	movq	%rbx, %rdi	; outfile,
-; src/output.c:148:     if (variable_ptr->value != 0) {
-	je	.L61	;,
-; src/output.c:149:         OUT(0, true, "value\n");
+; src/output.c:132:     if (variable->value != NULL) {
+	je	.L62	;,
+; src/output.c:133:         ast_output(0, true, "value\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$6, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC22(%rip), %rdi	;, tmp95
+	leaq	.LC23(%rip), %rdi	;, tmp95
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:150:         output_expression(variable_ptr->value, outfile, indent + 1, parser);
-	movq	16(%r13), %rdi	; variable_7(D)->value, variable_7(D)->value
+; src/output.c:134:         output_expression(variable->value, outfile, indent + 1, parser);
+	movq	16(%r13), %rdi	; variable_12(D)->value, variable_12(D)->value
 	movq	%rbp, %rcx	; parser,
 	movq	%r14, %rdx	; _1,
 	movq	%rbx, %rsi	; outfile,
-; src/output.c:153: }
+; src/output.c:138: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
 	popq	%r13	;
 	popq	%r14	;
-; src/output.c:150:         output_expression(variable_ptr->value, outfile, indent + 1, parser);
+; src/output.c:134:         output_expression(variable->value, outfile, indent + 1, parser);
 	jmp	output_expression	;
 	.p2align 4,,10
 	.p2align 3
-.L61:
-; src/output.c:152:         OUT(0, true, "value: \"NULL\"\n");
+.L62:
+; src/output.c:136:         ast_output(0, true, "value: \"NULL\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
-; src/output.c:153: }
+; src/output.c:138: }
 	popq	%rbx	;
 	popq	%rbp	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$14, %edx	;,
-; src/output.c:153: }
+; src/output.c:138: }
 	popq	%r12	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$1, %esi	;,
-; src/output.c:153: }
+; src/output.c:138: }
 	popq	%r13	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC32(%rip), %rdi	;, tmp97
-; src/output.c:153: }
+	leaq	.LC33(%rip), %rdi	;, tmp97
+; src/output.c:138: }
 	popq	%r14	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	jmp	*fwrite@GOTPCREL(%rip)	;
 	.size	output_variable, .-output_variable
 	.section	.rodata.str1.1
-.LC33:
-	.string	"type: \"name\"\n"
 .LC34:
-	.string	"type: \"function_call\"\n"
+	.string	"type: \"name\"\n"
 .LC35:
-	.string	"function\n"
+	.string	"type: \"function_call\"\n"
 .LC36:
-	.string	"arguments\n"
+	.string	"function\n"
 .LC37:
-	.string	"arguments[%d]\n"
+	.string	"arguments\n"
 .LC38:
-	.string	"type: \"get sequence_element\"\n"
+	.string	"arguments[%d]\n"
 .LC39:
-	.string	"sequence\n"
+	.string	"type: \"get sequence_element\"\n"
 .LC40:
-	.string	"index\n"
+	.string	"sequence\n"
 .LC41:
-	.string	"type: \"get_attribute\"\n"
+	.string	"index\n"
 .LC42:
-	.string	"object\n"
+	.string	"type: \"get_attribute\"\n"
 .LC43:
+	.string	"object\n"
+.LC44:
 	.string	"attribute_name\n"
 	.section	.rodata.str1.8,"aMS",@progbits,1
 	.align 8
-.LC44:
+.LC45:
 	.string	"unknown_VariableAccessType: %u\n"
 	.text
 	.p2align 4
@@ -864,36 +881,36 @@ output_variable_access:
 	pushq	%rbx	;
 	movq	%rsi, %rbx	; tmp128, outfile
 	subq	$24, %rsp	;,
-; src/output.c:352:     switch (var_access_ptr->type) {
-	movl	16(%rdi), %eax	; variable_access_18(D)->type, _1
-; src/output.c:352:     switch (var_access_ptr->type) {
+; src/output.c:322:     switch (variable_access->type) {
+	movl	16(%rdi), %eax	; variable_access_19(D)->type, _1
+; src/output.c:322:     switch (variable_access->type) {
 	cmpl	$2, %eax	;, _1
-	je	.L64	;,
-	ja	.L65	;,
+	je	.L65	;,
+	ja	.L66	;,
 	testl	%eax, %eax	; _1
-	je	.L78	;,
-; src/output.c:359:             args = list_copy(var_access_ptr->content.args);
-	movq	8(%rdi), %rdi	; variable_access_18(D)->content.args, variable_access_18(D)->content.args
-; src/output.c:362:             output_variable_access(var_access_ptr->base, outfile, indent + 1, parser);
+	je	.L79	;,
+; src/output.c:329:             args = list_copy(variable_access->content.args);
+	movq	8(%rdi), %rdi	; variable_access_19(D)->content.args, variable_access_19(D)->content.args
+; src/output.c:332:             output_variable_access(variable_access->base, outfile, indent + 1, parser);
 	leaq	1(%r12), %r15	;, _5
-; src/output.c:359:             args = list_copy(var_access_ptr->content.args);
+; src/output.c:329:             args = list_copy(variable_access->content.args);
 	call	*list_copy@GOTPCREL(%rip)	;
-; src/output.c:360:             OUT(0, false, "type: \"function_call\"\n");
+; src/output.c:330:             ast_output(0, false, "type: \"function_call\"\n");
 	movq	%rbp, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r12, %rsi	; indent,
-; src/output.c:359:             args = list_copy(var_access_ptr->content.args);
+; src/output.c:329:             args = list_copy(variable_access->content.args);
 	movq	%rax, 8(%rsp)	; tmp131, %sfp
-; src/output.c:360:             OUT(0, false, "type: \"function_call\"\n");
+; src/output.c:330:             ast_output(0, false, "type: \"function_call\"\n");
 	movq	%rbx, %rdi	; outfile,
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$22, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC34(%rip), %rdi	;, tmp108
+	leaq	.LC35(%rip), %rdi	;, tmp108
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:361:             OUT(0, false, "function\n");
+; src/output.c:331:             ast_output(0, false, "function\n");
 	movq	%rbp, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r12, %rsi	; indent,
@@ -903,18 +920,18 @@ output_variable_access:
 	movq	%rbx, %rcx	; outfile,
 	movl	$9, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC35(%rip), %rdi	;, tmp109
+	leaq	.LC36(%rip), %rdi	;, tmp109
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:362:             output_variable_access(var_access_ptr->base, outfile, indent + 1, parser);
-	movq	0(%r13), %rdi	; variable_access_18(D)->base, variable_access_18(D)->base
+; src/output.c:332:             output_variable_access(variable_access->base, outfile, indent + 1, parser);
+	movq	0(%r13), %rdi	; variable_access_19(D)->base, variable_access_19(D)->base
 	movq	%rbp, %rcx	; parser,
 	movq	%r15, %rdx	; _5,
 	movq	%rbx, %rsi	; outfile,
-; src/output.c:365:             index = -1;
+; src/output.c:335:             index = -1;
 	movl	$-1, %r13d	;, index
-; src/output.c:362:             output_variable_access(var_access_ptr->base, outfile, indent + 1, parser);
+; src/output.c:332:             output_variable_access(variable_access->base, outfile, indent + 1, parser);
 	call	output_variable_access	;
-; src/output.c:363:             OUT(0, true, "arguments\n");
+; src/output.c:333:             ast_output(0, true, "arguments\n");
 	movq	%rbp, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r12, %rsi	; indent,
@@ -924,16 +941,16 @@ output_variable_access:
 	movq	%rbx, %rcx	; outfile,
 	movl	$10, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC36(%rip), %rdi	;, tmp111
+	leaq	.LC37(%rip), %rdi	;, tmp111
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:366:             while ((arg = (Expression*)list_pop(args)) != 0) {
-	jmp	.L70	;
+; src/output.c:336:             while ((arg = (Expression*)list_pop(args)) != NULL) {
+	jmp	.L71	;
 	.p2align 4,,10
 	.p2align 3
-.L71:
-; src/output.c:367:                 OUT(1, false, "arguments[%d]\n", ++index);
+.L72:
+; src/output.c:337:                 ast_output(1, false, "arguments[%d]\n", ++index);
 	addl	$1, %r13d	;, index
-; src/output.c:367:                 OUT(1, false, "arguments[%d]\n", ++index);
+; src/output.c:337:                 ast_output(1, false, "arguments[%d]\n", ++index);
 	movq	%rbp, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r15, %rsi	; _5,
@@ -943,24 +960,24 @@ output_variable_access:
 	movl	%r13d, %ecx	; index,
 	movl	$2, %esi	;,
 	movq	%rbx, %rdi	; outfile,
-	leaq	.LC37(%rip), %rdx	;,
+	leaq	.LC38(%rip), %rdx	;,
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/output.c:368:                 output_expression(arg, outfile, indent + 2, parser);
+; src/output.c:338:                 output_expression(arg, outfile, indent + 2, parser);
 	leaq	2(%r12), %rdx	;, tmp113
 	movq	%rbp, %rcx	; parser,
 	movq	%rbx, %rsi	; outfile,
 	movq	%r14, %rdi	; arg,
 	call	output_expression	;
-.L70:
-; src/output.c:366:             while ((arg = (Expression*)list_pop(args)) != 0) {
+.L71:
+; src/output.c:336:             while ((arg = (Expression*)list_pop(args)) != NULL) {
 	movq	8(%rsp), %rdi	; %sfp,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %r14	; tmp132, arg
-; src/output.c:366:             while ((arg = (Expression*)list_pop(args)) != 0) {
+; src/output.c:336:             while ((arg = (Expression*)list_pop(args)) != NULL) {
 	testq	%rax, %rax	; arg
-	jne	.L71	;,
-; src/output.c:389: }
+	jne	.L72	;,
+; src/output.c:360: }
 	addq	$24, %rsp	;,
 	popq	%rbx	;
 	popq	%rbp	;
@@ -971,13 +988,13 @@ output_variable_access:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L65:
-; src/output.c:352:     switch (var_access_ptr->type) {
+.L66:
+; src/output.c:322:     switch (variable_access->type) {
 	cmpl	$3, %eax	;, _1
-	jne	.L79	;,
-; src/output.c:374:             output_variable_access(var_access_ptr->base, outfile, indent + 1, parser);
+	jne	.L80	;,
+; src/output.c:344:             output_variable_access(variable_access->base, outfile, indent + 1, parser);
 	leaq	1(%r12), %r14	;, _8
-; src/output.c:372:             OUT(0, false, "type: \"get sequence_element\"\n");
+; src/output.c:342:             ast_output(0, false, "type: \"get sequence_element\"\n");
 	movq	%r12, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
 	xorl	%edx, %edx	;
@@ -986,9 +1003,9 @@ output_variable_access:
 	movq	%rbx, %rcx	; outfile,
 	movl	$29, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC38(%rip), %rdi	;, tmp114
+	leaq	.LC39(%rip), %rdi	;, tmp114
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:373:             OUT(0, false, "sequence\n");
+; src/output.c:343:             ast_output(0, false, "sequence\n");
 	movq	%rbp, %rcx	; parser,
 	movq	%r12, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
@@ -998,15 +1015,15 @@ output_variable_access:
 	movq	%rbx, %rcx	; outfile,
 	movl	$9, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC39(%rip), %rdi	;, tmp115
+	leaq	.LC40(%rip), %rdi	;, tmp115
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:374:             output_variable_access(var_access_ptr->base, outfile, indent + 1, parser);
-	movq	0(%r13), %rdi	; variable_access_18(D)->base, variable_access_18(D)->base
+; src/output.c:344:             output_variable_access(variable_access->base, outfile, indent + 1, parser);
+	movq	0(%r13), %rdi	; variable_access_19(D)->base, variable_access_19(D)->base
 	movq	%rbp, %rcx	; parser,
 	movq	%r14, %rdx	; _8,
 	movq	%rbx, %rsi	; outfile,
 	call	output_variable_access	;
-; src/output.c:375:             OUT(0, true, "index\n");
+; src/output.c:345:             ast_output(0, true, "index\n");
 	movq	%rbp, %rcx	; parser,
 	movq	%r12, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
@@ -1016,43 +1033,43 @@ output_variable_access:
 	movq	%rbx, %rcx	; outfile,
 	movl	$6, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC40(%rip), %rdi	;, tmp117
+	leaq	.LC41(%rip), %rdi	;, tmp117
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:376:             output_expression(var_access_ptr->content.index, outfile, indent + 1, parser);
-	movq	8(%r13), %rdi	; variable_access_18(D)->content.index, variable_access_18(D)->content.index
-; src/output.c:389: }
+; src/output.c:346:             output_expression(variable_access->content.index, outfile, indent + 1, parser);
+	movq	8(%r13), %rdi	; variable_access_19(D)->content.index, variable_access_19(D)->content.index
+; src/output.c:360: }
 	addq	$24, %rsp	;,
-; src/output.c:376:             output_expression(var_access_ptr->content.index, outfile, indent + 1, parser);
+; src/output.c:346:             output_expression(variable_access->content.index, outfile, indent + 1, parser);
 	movq	%rbp, %rcx	; parser,
 	movq	%r14, %rdx	; _8,
 	movq	%rbx, %rsi	; outfile,
-; src/output.c:389: }
+; src/output.c:360: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
 	popq	%r13	;
 	popq	%r14	;
 	popq	%r15	;
-; src/output.c:376:             output_expression(var_access_ptr->content.index, outfile, indent + 1, parser);
+; src/output.c:346:             output_expression(variable_access->content.index, outfile, indent + 1, parser);
 	jmp	output_expression	;
 	.p2align 4,,10
 	.p2align 3
-.L64:
-; src/output.c:379:             OUT(0, false, "type: \"get_attribute\"\n");
+.L65:
+; src/output.c:349:             ast_output(0, false, "type: \"get_attribute\"\n");
 	xorl	%edx, %edx	;
 	movq	%r12, %rsi	; indent,
-; src/output.c:381:             output_variable_access(var_access_ptr->base, outfile, indent + 1, parser);
+; src/output.c:351:             output_variable_access(variable_access->base, outfile, indent + 1, parser);
 	leaq	1(%r12), %r14	;, _11
-; src/output.c:379:             OUT(0, false, "type: \"get_attribute\"\n");
+; src/output.c:349:             ast_output(0, false, "type: \"get_attribute\"\n");
 	movq	%rbx, %rdi	; outfile,
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$22, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC41(%rip), %rdi	;, tmp119
+	leaq	.LC42(%rip), %rdi	;, tmp119
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:380:             OUT(0, false, "object\n");
+; src/output.c:350:             ast_output(0, false, "object\n");
 	movq	%rbp, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r12, %rsi	; indent,
@@ -1062,15 +1079,15 @@ output_variable_access:
 	movq	%rbx, %rcx	; outfile,
 	movl	$7, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC42(%rip), %rdi	;, tmp120
+	leaq	.LC43(%rip), %rdi	;, tmp120
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:381:             output_variable_access(var_access_ptr->base, outfile, indent + 1, parser);
-	movq	0(%r13), %rdi	; variable_access_18(D)->base, variable_access_18(D)->base
+; src/output.c:351:             output_variable_access(variable_access->base, outfile, indent + 1, parser);
+	movq	0(%r13), %rdi	; variable_access_19(D)->base, variable_access_19(D)->base
 	movq	%rbp, %rcx	; parser,
 	movq	%r14, %rdx	; _11,
 	movq	%rbx, %rsi	; outfile,
 	call	output_variable_access	;
-; src/output.c:382:             OUT(0, true, "attribute_name\n");
+; src/output.c:352:             ast_output(0, true, "attribute_name\n");
 	movq	%rbp, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r12, %rsi	; indent,
@@ -1079,31 +1096,31 @@ output_variable_access:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$15, %edx	;,
-	leaq	.LC43(%rip), %rdi	;, tmp122
+	leaq	.LC44(%rip), %rdi	;, tmp122
 	movl	$1, %esi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:383:             output_name(var_access_ptr->content.attr_name, outfile, indent + 1, parser);
-	movq	8(%r13), %rdi	; variable_access_18(D)->content.attr_name, variable_access_18(D)->content.attr_name
+; src/output.c:353:             output_name(variable_access->content.attr_name, outfile, indent + 1, parser);
+	movq	8(%r13), %rdi	; variable_access_19(D)->content.attr_name, variable_access_19(D)->content.attr_name
 	movq	%rbp, %rcx	; parser,
 	movq	%r14, %rdx	; _11,
-.L77:
-; src/output.c:389: }
+.L78:
+; src/output.c:360: }
 	addq	$24, %rsp	;,
-; src/output.c:383:             output_name(var_access_ptr->content.attr_name, outfile, indent + 1, parser);
+; src/output.c:353:             output_name(variable_access->content.attr_name, outfile, indent + 1, parser);
 	movq	%rbx, %rsi	; outfile,
-; src/output.c:389: }
+; src/output.c:360: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
 	popq	%r13	;
 	popq	%r14	;
 	popq	%r15	;
-; src/output.c:383:             output_name(var_access_ptr->content.attr_name, outfile, indent + 1, parser);
+; src/output.c:353:             output_name(variable_access->content.attr_name, outfile, indent + 1, parser);
 	jmp	output_name	;
 	.p2align 4,,10
 	.p2align 3
-.L78:
-; src/output.c:354:             OUT(0, false, "type: \"name\"\n");
+.L79:
+; src/output.c:324:             ast_output(0, false, "type: \"name\"\n");
 	xorl	%edx, %edx	;
 	movq	%r12, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
@@ -1112,9 +1129,9 @@ output_variable_access:
 	movq	%rbx, %rcx	; outfile,
 	movl	$13, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC33(%rip), %rdi	;, tmp103
+	leaq	.LC34(%rip), %rdi	;, tmp103
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:355:             OUT(0, true, "name\n");
+; src/output.c:325:             ast_output(0, true, "name\n");
 	movq	%rbp, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r12, %rsi	; indent,
@@ -1123,38 +1140,38 @@ output_variable_access:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$5, %edx	;,
-	leaq	.LC31(%rip), %rdi	;, tmp104
+	leaq	.LC32(%rip), %rdi	;, tmp104
 	movl	$1, %esi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:356:             output_name(var_access_ptr->content.name, outfile, indent + 1, parser);
-	movq	8(%r13), %rdi	; variable_access_18(D)->content.name, variable_access_18(D)->content.name
+; src/output.c:326:             output_name(variable_access->content.name, outfile, indent + 1, parser);
+	movq	8(%r13), %rdi	; variable_access_19(D)->content.name, variable_access_19(D)->content.name
 	leaq	1(%r12), %rdx	;, tmp105
 	movq	%rbp, %rcx	; parser,
-	jmp	.L77	;
+	jmp	.L78	;
 	.p2align 4,,10
 	.p2align 3
-.L79:
-; src/output.c:386:             OUT(0, true, "unknown_VariableAccessType: %u\n", var_access_ptr->type);
+.L80:
+; src/output.c:356:             ast_output(0, true, "unknown_VariableAccessType: %u\n", variable_access->type);
 	movq	%r12, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
 	movl	$1, %edx	;,
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	16(%r13), %ecx	; variable_access_18(D)->type, variable_access_18(D)->type
-; src/output.c:389: }
+	movl	16(%r13), %ecx	; variable_access_19(D)->type, variable_access_19(D)->type
+; src/output.c:360: }
 	addq	$24, %rsp	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rdi	; outfile,
-	leaq	.LC44(%rip), %rdx	;, tmp125
-; src/output.c:389: }
+	leaq	.LC45(%rip), %rdx	;, tmp125
+; src/output.c:360: }
 	popq	%rbx	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$2, %esi	;,
-; src/output.c:389: }
+; src/output.c:360: }
 	popq	%rbp	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	xorl	%eax, %eax	;
-; src/output.c:389: }
+; src/output.c:360: }
 	popq	%r12	;
 	popq	%r13	;
 	popq	%r14	;
@@ -1163,48 +1180,48 @@ output_variable_access:
 	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
 	.size	output_variable_access, .-output_variable_access
 	.section	.rodata.str1.1
-.LC45:
-	.string	"if_statement\n"
 .LC46:
-	.string	"condition\n"
+	.string	"if_statement\n"
 .LC47:
-	.string	"body\n"
+	.string	"condition\n"
 .LC48:
-	.string	"else_if\n"
+	.string	"body\n"
 .LC49:
-	.string	"else_body\n"
+	.string	"else_if\n"
 .LC50:
-	.string	"for_statement\n"
+	.string	"else_body\n"
 .LC51:
-	.string	"initializer\n"
+	.string	"for_statement\n"
 .LC52:
-	.string	"initializer: \"NULL\"\n"
+	.string	"initializer\n"
 .LC53:
-	.string	"condition: \"NULL\"\n"
+	.string	"initializer: \"NULL\"\n"
 .LC54:
-	.string	"increment\n"
+	.string	"condition: \"NULL\"\n"
 .LC55:
-	.string	"increment: \"NULL\"\n"
+	.string	"increment\n"
 .LC56:
+	.string	"increment: \"NULL\"\n"
+.LC57:
 	.string	"while_statement\n"
 	.section	.rodata.str1.8
 	.align 8
-.LC57:
+.LC58:
 	.string	"variable_declaration_statement\n"
 	.section	.rodata.str1.1
-.LC58:
-	.string	"return_statement: \"NULL\"\n"
 .LC59:
-	.string	"return_statement\n"
+	.string	"return_statement: \"NULL\"\n"
 .LC60:
-	.string	"break_statement: \"NULL\"\n"
+	.string	"return_statement\n"
 .LC61:
-	.string	"continue_statement: \"NULL\"\n"
+	.string	"break_statement: \"NULL\"\n"
 .LC62:
-	.string	"expression_statement: \"NULL\"\n"
+	.string	"continue_statement: \"NULL\"\n"
 .LC63:
-	.string	"expression_statement\n"
+	.string	"expression_statement: \"NULL\"\n"
 .LC64:
+	.string	"expression_statement\n"
+.LC65:
 	.string	"unknown_StatementType: %u\n"
 	.text
 	.p2align 4
@@ -1221,46 +1238,46 @@ output_statement:
 	pushq	%rbx	;
 	movq	%rsi, %rbx	; tmp196, outfile
 	subq	$40, %rsp	;,
-; src/output.c:159:     switch (statement_ptr->type) {
-	cmpl	$7, 8(%rdi)	;, statement_18(D)->type
-	ja	.L81	;,
-	movl	8(%rdi), %eax	; statement_18(D)->type, statement_18(D)->type
-	leaq	.L83(%rip), %rdx	;, tmp137
-; src/output.c:188:             OUT(0, false, "continue_statement: \"NULL\"\n");
+; src/output.c:141:     switch (statement->type) {
+	cmpl	$7, 8(%rdi)	;, statement_19(D)->type
+	ja	.L82	;,
+	movl	8(%rdi), %eax	; statement_19(D)->type, statement_19(D)->type
+	leaq	.L84(%rip), %rdx	;, tmp137
+; src/output.c:171:             ast_output(0, false, "continue_statement: \"NULL\"\n");
 	movq	%r12, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
-; src/output.c:159:     switch (statement_ptr->type) {
+; src/output.c:141:     switch (statement->type) {
 	movslq	(%rdx,%rax,4), %rax	;, tmp139
 	addq	%rdx, %rax	; tmp137, tmp140
-; src/output.c:188:             OUT(0, false, "continue_statement: \"NULL\"\n");
+; src/output.c:171:             ast_output(0, false, "continue_statement: \"NULL\"\n");
 	xorl	%edx, %edx	;
-; src/output.c:159:     switch (statement_ptr->type) {
+; src/output.c:141:     switch (statement->type) {
 	jmp	*%rax	; tmp140
 	.section	.rodata
 	.align 4
 	.align 4
-.L83:
-	.long	.L90-.L83
-	.long	.L89-.L83
-	.long	.L88-.L83
-	.long	.L87-.L83
-	.long	.L86-.L83
-	.long	.L85-.L83
-	.long	.L84-.L83
-	.long	.L82-.L83
+.L84:
+	.long	.L91-.L84
+	.long	.L90-.L84
+	.long	.L89-.L84
+	.long	.L88-.L84
+	.long	.L87-.L84
+	.long	.L86-.L84
+	.long	.L85-.L84
+	.long	.L83-.L84
 	.text
 	.p2align 4,,10
 	.p2align 3
-.L84:
-; src/output.c:185:             OUT(0, false, "break_statement: \"NULL\"\n");
+.L85:
+; src/output.c:168:             ast_output(0, false, "break_statement: \"NULL\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$24, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC60(%rip), %rdi	;, tmp183
-.L114:
-; src/output.c:202: }
+	leaq	.LC61(%rip), %rdi	;, tmp183
+.L115:
+; src/output.c:187: }
 	addq	$40, %rsp	;,
 	popq	%rbx	;
 	popq	%rbp	;
@@ -1272,130 +1289,130 @@ output_statement:
 	jmp	*fwrite@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
-.L82:
-; src/output.c:188:             OUT(0, false, "continue_statement: \"NULL\"\n");
+.L83:
+; src/output.c:171:             ast_output(0, false, "continue_statement: \"NULL\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$27, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC61(%rip), %rdi	;, tmp184
-	jmp	.L114	;
+	leaq	.LC62(%rip), %rdi	;, tmp184
+	jmp	.L115	;
 	.p2align 4,,10
 	.p2align 3
-.L90:
-; src/output.c:191:             if (statement_ptr->stmt.expr == 0) {
-	cmpq	$0, 0(%r13)	;, statement_18(D)->stmt.expr
-	je	.L116	;,
-; src/output.c:195:             OUT(0, false, "expression_statement\n");
+.L91:
+; src/output.c:174:             if (statement->stmt.expr == NULL) {
+	cmpq	$0, 0(%r13)	;, statement_19(D)->stmt.expr
+	je	.L117	;,
+; src/output.c:179:             ast_output(0, false, "expression_statement\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$21, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC63(%rip), %rdi	;, tmp186
-.L115:
+	leaq	.LC64(%rip), %rdi	;, tmp186
+.L116:
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:196:             output_expression(statement_ptr->stmt.expr, outfile, indent + 1, parser);
-	movq	0(%r13), %rdi	; statement_18(D)->stmt.expr, statement_18(D)->stmt.expr
-; src/output.c:202: }
+; src/output.c:180:             output_expression(statement->stmt.expr, outfile, indent + 1, parser);
+	movq	0(%r13), %rdi	; statement_19(D)->stmt.expr, statement_19(D)->stmt.expr
+; src/output.c:187: }
 	addq	$40, %rsp	;,
-; src/output.c:196:             output_expression(statement_ptr->stmt.expr, outfile, indent + 1, parser);
+; src/output.c:180:             output_expression(statement->stmt.expr, outfile, indent + 1, parser);
 	movq	%rbp, %rcx	; parser,
 	leaq	1(%r12), %rdx	;, tmp187
 	movq	%rbx, %rsi	; outfile,
-; src/output.c:202: }
+; src/output.c:187: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
 	popq	%r13	;
 	popq	%r14	;
 	popq	%r15	;
-; src/output.c:196:             output_expression(statement_ptr->stmt.expr, outfile, indent + 1, parser);
+; src/output.c:180:             output_expression(statement->stmt.expr, outfile, indent + 1, parser);
 	jmp	output_expression	;
 	.p2align 4,,10
 	.p2align 3
-.L89:
-; src/output.c:173:             OUT(0, false, "variable_declaration_statement\n");
+.L90:
+; src/output.c:155:             ast_output(0, false, "variable_declaration_statement\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$31, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC57(%rip), %rdi	;, tmp176
+	leaq	.LC58(%rip), %rdi	;, tmp176
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:174:             output_variable(statement_ptr->stmt.var, outfile, indent + 1, parser);
-	movq	0(%r13), %rdi	; statement_18(D)->stmt.var, statement_18(D)->stmt.var
-; src/output.c:202: }
+; src/output.c:156:             output_variable(statement->stmt.var, outfile, indent + 1, parser);
+	movq	0(%r13), %rdi	; statement_19(D)->stmt.var, statement_19(D)->stmt.var
+; src/output.c:187: }
 	addq	$40, %rsp	;,
-; src/output.c:174:             output_variable(statement_ptr->stmt.var, outfile, indent + 1, parser);
+; src/output.c:156:             output_variable(statement->stmt.var, outfile, indent + 1, parser);
 	movq	%rbp, %rcx	; parser,
 	leaq	1(%r12), %rdx	;, tmp177
 	movq	%rbx, %rsi	; outfile,
-; src/output.c:202: }
+; src/output.c:187: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
 	popq	%r13	;
 	popq	%r14	;
 	popq	%r15	;
-; src/output.c:174:             output_variable(statement_ptr->stmt.var, outfile, indent + 1, parser);
+; src/output.c:156:             output_variable(statement->stmt.var, outfile, indent + 1, parser);
 	jmp	output_variable	;
 	.p2align 4,,10
 	.p2align 3
-.L88:
-; src/output.c:161:             OUT(0, false, "if_statement\n");
+.L89:
+; src/output.c:143:             ast_output(0, false, "if_statement\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$13, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC45(%rip), %rdi	;, tmp142
+	leaq	.LC46(%rip), %rdi	;, tmp142
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:162:             output_if(statement_ptr->stmt.if_stmt, outfile, indent + 1, parser);
-	movq	0(%r13), %r14	; statement_18(D)->stmt.if_stmt, _3
+; src/output.c:144:             output_if(statement->stmt.if_stmt, outfile, indent + 1, parser);
+	movq	0(%r13), %r14	; statement_19(D)->stmt.if_stmt, _3
 	leaq	1(%r12), %rax	;, _2
-; src/output.c:212:     output_expression(if_ptr->condition, outfile, indent + 1, parser);
+; src/output.c:194:     output_expression(if_->condition, outfile, indent + 1, parser);
 	leaq	2(%r12), %r13	;, _57
-; src/output.c:162:             output_if(statement_ptr->stmt.if_stmt, outfile, indent + 1, parser);
+; src/output.c:144:             output_if(statement->stmt.if_stmt, outfile, indent + 1, parser);
 	movq	%rax, 24(%rsp)	; _2, %sfp
-; src/output.c:208:     list(Statement*) body = list_copy(if_ptr->body);
+; src/output.c:190:     list(Statement*) body = list_copy(if_->body);
 	movq	8(%r14), %rdi	; _3->body, _3->body
 	call	*list_copy@GOTPCREL(%rip)	;
-; src/output.c:209:     list(ElseIf*) else_if_list = list_copy(if_ptr->else_if);
+; src/output.c:191:     list(ElseIf*) else_if_list = list_copy(if_->else_if);
 	movq	16(%r14), %rdi	; _3->else_if, _3->else_if
-; src/output.c:208:     list(Statement*) body = list_copy(if_ptr->body);
+; src/output.c:190:     list(Statement*) body = list_copy(if_->body);
 	movq	%rax, %r15	; tmp199, body
-; src/output.c:209:     list(ElseIf*) else_if_list = list_copy(if_ptr->else_if);
+; src/output.c:191:     list(ElseIf*) else_if_list = list_copy(if_->else_if);
 	call	*list_copy@GOTPCREL(%rip)	;
-; src/output.c:210:     list(Statement*) else_body = list_copy(if_ptr->else_body);
+; src/output.c:192:     list(Statement*) else_body = list_copy(if_->else_body);
 	movq	24(%r14), %rdi	; _3->else_body, _3->else_body
-; src/output.c:209:     list(ElseIf*) else_if_list = list_copy(if_ptr->else_if);
+; src/output.c:191:     list(ElseIf*) else_if_list = list_copy(if_->else_if);
 	movq	%rax, 8(%rsp)	; tmp200, %sfp
-; src/output.c:210:     list(Statement*) else_body = list_copy(if_ptr->else_body);
+; src/output.c:192:     list(Statement*) else_body = list_copy(if_->else_body);
 	call	*list_copy@GOTPCREL(%rip)	;
-; src/output.c:211:     OUT(0, false, "condition\n");
+; src/output.c:193:     ast_output(0, false, "condition\n");
 	movq	%rbp, %rcx	; parser,
 	xorl	%edx, %edx	;
 	leaq	1(%r12), %rsi	;,
-; src/output.c:210:     list(Statement*) else_body = list_copy(if_ptr->else_body);
+; src/output.c:192:     list(Statement*) else_body = list_copy(if_->else_body);
 	movq	%rax, 16(%rsp)	; tmp201, %sfp
-; src/output.c:211:     OUT(0, false, "condition\n");
+; src/output.c:193:     ast_output(0, false, "condition\n");
 	movq	%rbx, %rdi	; outfile,
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$10, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC46(%rip), %rdi	;,
+	leaq	.LC47(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:212:     output_expression(if_ptr->condition, outfile, indent + 1, parser);
+; src/output.c:194:     output_expression(if_->condition, outfile, indent + 1, parser);
 	movq	(%r14), %rdi	; _3->condition, _3->condition
 	movq	%rbp, %rcx	; parser,
 	movq	%r13, %rdx	; _57,
 	movq	%rbx, %rsi	; outfile,
 	call	output_expression	;
-; src/output.c:213:     OUT(0, false, "body\n");
+; src/output.c:195:     ast_output(0, false, "body\n");
 	movq	24(%rsp), %rsi	; %sfp,
 	movq	%rbp, %rcx	; parser,
 	xorl	%edx, %edx	;
@@ -1405,148 +1422,148 @@ output_statement:
 	movq	%rbx, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC47(%rip), %rdi	;,
+	leaq	.LC48(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L91	;
+	jmp	.L92	;
 	.p2align 4,,10
 	.p2align 3
-.L92:
-; src/output.c:216:         output_statement(statement, outfile, indent + 1, parser);
+.L93:
+; src/output.c:198:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%r13, %rdx	; _57,
 	movq	%rbx, %rsi	; outfile,
 	call	output_statement	;
-.L91:
-; src/output.c:215:     while ((statement = (Statement*)list_pop(body)) != 0)
+.L92:
+; src/output.c:197:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%r15, %rdi	; body,
 	call	*list_pop@GOTPCREL(%rip)	;
-; src/output.c:216:         output_statement(statement, outfile, indent + 1, parser);
+; src/output.c:198:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%rbp, %rcx	; parser,
-; src/output.c:215:     while ((statement = (Statement*)list_pop(body)) != 0)
+; src/output.c:197:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%rax, %rdi	; tmp202, statement
-; src/output.c:215:     while ((statement = (Statement*)list_pop(body)) != 0)
+; src/output.c:197:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	; statement
-	jne	.L92	;,
-; src/output.c:217:     OUT(0, false, "else_if\n");
+	jne	.L93	;,
+; src/output.c:199:     ast_output(0, false, "else_if\n");
 	movq	24(%rsp), %rsi	; %sfp,
 	xorl	%edx, %edx	;
 	movq	%rbx, %rdi	; outfile,
-; src/output.c:232:     output_expression(else_if_ptr->condition, outfile, indent + 1, parser);
+; src/output.c:212:     output_expression(else_if->condition, outfile, indent + 1, parser);
 	leaq	3(%r12), %r15	;, _64
-; src/output.c:217:     OUT(0, false, "else_if\n");
+; src/output.c:199:     ast_output(0, false, "else_if\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$8, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC48(%rip), %rdi	;, tmp149
+	leaq	.LC49(%rip), %rdi	;, tmp149
 	call	*fwrite@GOTPCREL(%rip)	;
-.L93:
-; src/output.c:219:     while ((else_if = (ElseIf*)list_pop(else_if_list)) != 0)
+.L94:
+; src/output.c:201:     while ((else_if = (ElseIf*)list_pop(else_if_list)) != NULL)
 	movq	8(%rsp), %rdi	; %sfp,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %r14	; tmp205, else_if
-; src/output.c:219:     while ((else_if = (ElseIf*)list_pop(else_if_list)) != 0)
+; src/output.c:201:     while ((else_if = (ElseIf*)list_pop(else_if_list)) != NULL)
 	testq	%rax, %rax	; else_if
-	je	.L117	;,
-; src/output.c:230:     list(Statement*) body = list_copy(else_if_ptr->body);
+	je	.L118	;,
+; src/output.c:210:     list(Statement*) body = list_copy(else_if->body);
 	movq	8(%r14), %rdi	; else_if_60->body, else_if_60->body
 	call	*list_copy@GOTPCREL(%rip)	;
-; src/output.c:231:     OUT(0, false, "condition\n");
+; src/output.c:211:     ast_output(0, false, "condition\n");
 	xorl	%edx, %edx	;
 	movq	%rbp, %rcx	; parser,
 	movq	%r13, %rsi	; _57,
-; src/output.c:230:     list(Statement*) body = list_copy(else_if_ptr->body);
+; src/output.c:210:     list(Statement*) body = list_copy(else_if->body);
 	movq	%rax, %r12	; tmp203, body
-; src/output.c:231:     OUT(0, false, "condition\n");
+; src/output.c:211:     ast_output(0, false, "condition\n");
 	movq	%rbx, %rdi	; outfile,
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$10, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC46(%rip), %rdi	;,
+	leaq	.LC47(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:232:     output_expression(else_if_ptr->condition, outfile, indent + 1, parser);
+; src/output.c:212:     output_expression(else_if->condition, outfile, indent + 1, parser);
 	movq	(%r14), %rdi	; else_if_60->condition, else_if_60->condition
 	movq	%rbp, %rcx	; parser,
 	movq	%r15, %rdx	; _64,
 	movq	%rbx, %rsi	; outfile,
 	call	output_expression	;
-; src/output.c:233:     OUT(0, true, "body\n");
+; src/output.c:213:     ast_output(0, true, "body\n");
 	movq	%rbp, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%r13, %rsi	; _57,
 	movq	%rbx, %rdi	; outfile,
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC47(%rip), %rdi	;,
+	leaq	.LC48(%rip), %rdi	;,
 	movq	%rbx, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:235:     while ((statement = (Statement*)list_pop(body)) != 0)
+; src/output.c:215:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%r12, %rdi	; body,
 	call	*list_pop@GOTPCREL(%rip)	;
-; src/output.c:235:     while ((statement = (Statement*)list_pop(body)) != 0)
+; src/output.c:215:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	; statement
-	je	.L93	;,
-.L95:
-; src/output.c:236:         output_statement(statement, outfile, indent + 1, parser);
+	je	.L94	;,
+.L96:
+; src/output.c:216:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%rax, %rdi	; statement,
 	movq	%rbp, %rcx	; parser,
 	movq	%r15, %rdx	; _64,
 	movq	%rbx, %rsi	; outfile,
 	call	output_statement	;
-; src/output.c:235:     while ((statement = (Statement*)list_pop(body)) != 0)
+; src/output.c:215:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%r12, %rdi	; body,
 	call	*list_pop@GOTPCREL(%rip)	;
-; src/output.c:235:     while ((statement = (Statement*)list_pop(body)) != 0)
+; src/output.c:215:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	; statement
-	jne	.L95	;,
-	jmp	.L93	;
+	jne	.L96	;,
+	jmp	.L94	;
 	.p2align 4,,10
 	.p2align 3
-.L87:
-; src/output.c:169:             OUT(0, false, "while_statement\n");
+.L88:
+; src/output.c:151:             ast_output(0, false, "while_statement\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$16, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC56(%rip), %rdi	;, tmp171
-; src/output.c:170:             output_while(statement_ptr->stmt.while_stmt, outfile, indent + 1, parser);
+	leaq	.LC57(%rip), %rdi	;, tmp171
+; src/output.c:152:             output_while(statement->stmt.while_stmt, outfile, indent + 1, parser);
 	leaq	1(%r12), %r14	;, _6
-; src/output.c:271:     output_expression(while_ptr->condition, outfile, indent + 1, parser);
+; src/output.c:247:     output_expression(while_->condition, outfile, indent + 1, parser);
 	addq	$2, %r12	;, _82
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:170:             output_while(statement_ptr->stmt.while_stmt, outfile, indent + 1, parser);
-	movq	0(%r13), %r15	; statement_18(D)->stmt.while_stmt, _7
-; src/output.c:269:     list(Statement*) body = list_copy(while_ptr->body);
+; src/output.c:152:             output_while(statement->stmt.while_stmt, outfile, indent + 1, parser);
+	movq	0(%r13), %r15	; statement_19(D)->stmt.while_stmt, _7
+; src/output.c:245:     list(Statement*) body = list_copy(while_->body);
 	movq	8(%r15), %rdi	; _7->body, _7->body
 	call	*list_copy@GOTPCREL(%rip)	;
-; src/output.c:270:     OUT(0, false, "condition\n");
+; src/output.c:246:     ast_output(0, false, "condition\n");
 	movq	%rbp, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r14, %rsi	; _6,
-; src/output.c:269:     list(Statement*) body = list_copy(while_ptr->body);
+; src/output.c:245:     list(Statement*) body = list_copy(while_->body);
 	movq	%rax, %r13	; tmp209, body
-; src/output.c:270:     OUT(0, false, "condition\n");
+; src/output.c:246:     ast_output(0, false, "condition\n");
 	movq	%rbx, %rdi	; outfile,
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$10, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC46(%rip), %rdi	;, tmp173
+	leaq	.LC47(%rip), %rdi	;, tmp173
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:271:     output_expression(while_ptr->condition, outfile, indent + 1, parser);
+; src/output.c:247:     output_expression(while_->condition, outfile, indent + 1, parser);
 	movq	(%r15), %rdi	; _7->condition, _7->condition
 	movq	%rbp, %rcx	; parser,
 	movq	%r12, %rdx	; _82,
 	movq	%rbx, %rsi	; outfile,
 	call	output_expression	;
-; src/output.c:272:     OUT(0, true, "body\n");
+; src/output.c:248:     ast_output(0, true, "body\n");
 	movq	%rbp, %rcx	; parser,
 	movq	%r14, %rsi	; _6,
 	movq	%rbx, %rdi	; outfile,
@@ -1556,26 +1573,163 @@ output_statement:
 	movq	%rbx, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC47(%rip), %rdi	;, tmp175
+	leaq	.LC48(%rip), %rdi	;, tmp175
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L109	;
+	jmp	.L110	;
 	.p2align 4,,10
 	.p2align 3
-.L110:
-; src/output.c:275:         output_statement(statement, outfile, indent + 1, parser);
+.L111:
+; src/output.c:251:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%rbp, %rcx	; parser,
 	movq	%r12, %rdx	; _82,
 	movq	%rbx, %rsi	; outfile,
 	call	output_statement	;
-.L109:
-; src/output.c:274:     while ((statement = (Statement*)list_pop(body)) != 0)
+.L110:
+; src/output.c:250:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%r13, %rdi	; body,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %rdi	; tmp210, statement
-; src/output.c:274:     while ((statement = (Statement*)list_pop(body)) != 0)
+; src/output.c:250:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	; statement
-	jne	.L110	;,
-; src/output.c:202: }
+	jne	.L111	;,
+; src/output.c:187: }
+	addq	$40, %rsp	;,
+	popq	%rbx	;
+	popq	%rbp	;
+	popq	%r12	;
+	popq	%r13	;
+	popq	%r14	;
+	popq	%r15	;
+	ret	
+	.p2align 4,,10
+	.p2align 3
+.L87:
+; src/output.c:147:             ast_output(0, false, "for_statement\n");
+	call	*indention@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rcx	; outfile,
+	movl	$14, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC51(%rip), %rdi	;, tmp155
+; src/output.c:148:             output_for(statement->stmt.for_stmt, outfile, indent + 1, parser);
+	leaq	1(%r12), %r14	;, _4
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	call	*fwrite@GOTPCREL(%rip)	;
+; src/output.c:148:             output_for(statement->stmt.for_stmt, outfile, indent + 1, parser);
+	movq	0(%r13), %r15	; statement_19(D)->stmt.for_stmt, _5
+; src/output.c:221:     list(Statement*) body = list_copy(for_->body);
+	movq	24(%r15), %rdi	; _5->body, _5->body
+	call	*list_copy@GOTPCREL(%rip)	;
+; src/output.c:223:         ast_output(0, false, "initializer\n");
+	xorl	%edx, %edx	;
+; src/output.c:222:     if (for_->initializer != NULL) {
+	cmpq	$0, (%r15)	;, _5->initializer
+; src/output.c:223:         ast_output(0, false, "initializer\n");
+	movq	%rbp, %rcx	; parser,
+; src/output.c:221:     list(Statement*) body = list_copy(for_->body);
+	movq	%rax, %r13	; tmp207, body
+; src/output.c:223:         ast_output(0, false, "initializer\n");
+	movq	%r14, %rsi	; _4,
+	movq	%rbx, %rdi	; outfile,
+; src/output.c:222:     if (for_->initializer != NULL) {
+	je	.L101	;,
+; src/output.c:223:         ast_output(0, false, "initializer\n");
+	call	*indention@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rcx	; outfile,
+	movl	$12, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC52(%rip), %rdi	;, tmp157
+	call	*fwrite@GOTPCREL(%rip)	;
+; src/output.c:224:         output_variable(for_->initializer, outfile, indent + 1, parser);
+	movq	(%r15), %rdi	; _5->initializer, _5->initializer
+	leaq	2(%r12), %rdx	;, tmp158
+	movq	%rbp, %rcx	; parser,
+	movq	%rbx, %rsi	; outfile,
+	call	output_variable	;
+.L102:
+; src/output.c:228:         ast_output(0, false, "condition\n");
+	xorl	%edx, %edx	;
+; src/output.c:227:     if (for_->condition != NULL) {
+	cmpq	$0, 8(%r15)	;, _5->condition
+; src/output.c:228:         ast_output(0, false, "condition\n");
+	movq	%rbp, %rcx	; parser,
+	movq	%r14, %rsi	; _4,
+	movq	%rbx, %rdi	; outfile,
+; src/output.c:227:     if (for_->condition != NULL) {
+	je	.L103	;,
+; src/output.c:228:         ast_output(0, false, "condition\n");
+	call	*indention@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rcx	; outfile,
+	movl	$10, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC47(%rip), %rdi	;, tmp161
+	call	*fwrite@GOTPCREL(%rip)	;
+; src/output.c:229:         output_expression(for_->condition, outfile, indent + 1, parser);
+	movq	8(%r15), %rdi	; _5->condition, _5->condition
+	movq	%rbp, %rcx	; parser,
+	movq	%rbx, %rsi	; outfile,
+	leaq	2(%r12), %rdx	;, tmp162
+	call	output_expression	;
+.L104:
+; src/output.c:233:         ast_output(0, false, "increment\n");
+	xorl	%edx, %edx	;
+; src/output.c:232:     if (for_->increment != NULL) {
+	cmpq	$0, 16(%r15)	;, _5->increment
+; src/output.c:233:         ast_output(0, false, "increment\n");
+	movq	%rbp, %rcx	; parser,
+	movq	%r14, %rsi	; _4,
+	movq	%rbx, %rdi	; outfile,
+; src/output.c:232:     if (for_->increment != NULL) {
+	je	.L105	;,
+; src/output.c:233:         ast_output(0, false, "increment\n");
+	call	*indention@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rcx	; outfile,
+	movl	$10, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC55(%rip), %rdi	;, tmp165
+	call	*fwrite@GOTPCREL(%rip)	;
+; src/output.c:234:         output_expression(for_->increment, outfile, indent + 1, parser);
+	movq	16(%r15), %rdi	; _5->increment, _5->increment
+	movq	%rbp, %rcx	; parser,
+	movq	%rbx, %rsi	; outfile,
+	leaq	2(%r12), %rdx	;, tmp166
+	call	output_expression	;
+.L106:
+; src/output.c:237:     ast_output(0, true, "body\n");
+	movq	%rbp, %rcx	; parser,
+	movl	$1, %edx	;,
+	movq	%r14, %rsi	; _4,
+	movq	%rbx, %rdi	; outfile,
+	call	*indention@GOTPCREL(%rip)	;
+; src/output.c:240:         output_statement(statement, outfile, indent + 1, parser);
+	addq	$2, %r12	;, tmp194
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rcx	; outfile,
+	movl	$5, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC48(%rip), %rdi	;, tmp169
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L107	;
+	.p2align 4,,10
+	.p2align 3
+.L108:
+; src/output.c:240:         output_statement(statement, outfile, indent + 1, parser);
+	movq	%rbp, %rcx	; parser,
+	movq	%r12, %rdx	; tmp194,
+	movq	%rbx, %rsi	; outfile,
+	call	output_statement	;
+.L107:
+; src/output.c:239:     while ((statement = (Statement*)list_pop(body)) != NULL)
+	movq	%r13, %rdi	; body,
+	call	*list_pop@GOTPCREL(%rip)	;
+	movq	%rax, %rdi	; tmp208, statement
+; src/output.c:239:     while ((statement = (Statement*)list_pop(body)) != NULL)
+	testq	%rax, %rax	; statement
+	jne	.L108	;,
+; src/output.c:187: }
 	addq	$40, %rsp	;,
 	popq	%rbx	;
 	popq	%rbp	;
@@ -1587,176 +1741,39 @@ output_statement:
 	.p2align 4,,10
 	.p2align 3
 .L86:
-; src/output.c:165:             OUT(0, false, "for_statement\n");
-	call	*indention@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbx, %rcx	; outfile,
-	movl	$14, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC50(%rip), %rdi	;, tmp155
-; src/output.c:166:             output_for(statement_ptr->stmt.for_stmt, outfile, indent + 1, parser);
-	leaq	1(%r12), %r14	;, _4
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:166:             output_for(statement_ptr->stmt.for_stmt, outfile, indent + 1, parser);
-	movq	0(%r13), %r15	; statement_18(D)->stmt.for_stmt, _5
-; src/output.c:243:     list(Statement*) body = list_copy(for_ptr->body);
-	movq	24(%r15), %rdi	; _5->body, _5->body
-	call	*list_copy@GOTPCREL(%rip)	;
-; src/output.c:245:         OUT(0, false, "initializer\n");
-	xorl	%edx, %edx	;
-; src/output.c:244:     if (for_ptr->initializer != 0) {
-	cmpq	$0, (%r15)	;, _5->initializer
-; src/output.c:245:         OUT(0, false, "initializer\n");
-	movq	%rbp, %rcx	; parser,
-; src/output.c:243:     list(Statement*) body = list_copy(for_ptr->body);
-	movq	%rax, %r13	; tmp207, body
-; src/output.c:245:         OUT(0, false, "initializer\n");
-	movq	%r14, %rsi	; _4,
-	movq	%rbx, %rdi	; outfile,
-; src/output.c:244:     if (for_ptr->initializer != 0) {
-	je	.L100	;,
-; src/output.c:245:         OUT(0, false, "initializer\n");
-	call	*indention@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbx, %rcx	; outfile,
-	movl	$12, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC51(%rip), %rdi	;, tmp157
-	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:246:         output_variable(for_ptr->initializer, outfile, indent + 1, parser);
-	movq	(%r15), %rdi	; _5->initializer, _5->initializer
-	leaq	2(%r12), %rdx	;, tmp158
-	movq	%rbp, %rcx	; parser,
-	movq	%rbx, %rsi	; outfile,
-	call	output_variable	;
-.L101:
-; src/output.c:250:         OUT(0, false, "condition\n");
-	xorl	%edx, %edx	;
-; src/output.c:249:     if (for_ptr->condition != 0) {
-	cmpq	$0, 8(%r15)	;, _5->condition
-; src/output.c:250:         OUT(0, false, "condition\n");
-	movq	%rbp, %rcx	; parser,
-	movq	%r14, %rsi	; _4,
-	movq	%rbx, %rdi	; outfile,
-; src/output.c:249:     if (for_ptr->condition != 0) {
-	je	.L102	;,
-; src/output.c:250:         OUT(0, false, "condition\n");
-	call	*indention@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbx, %rcx	; outfile,
-	movl	$10, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC46(%rip), %rdi	;, tmp161
-	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:251:         output_expression(for_ptr->condition, outfile, indent + 1, parser);
-	movq	8(%r15), %rdi	; _5->condition, _5->condition
-	movq	%rbp, %rcx	; parser,
-	movq	%rbx, %rsi	; outfile,
-	leaq	2(%r12), %rdx	;, tmp162
-	call	output_expression	;
-.L103:
-; src/output.c:255:         OUT(0, false, "increment\n");
-	xorl	%edx, %edx	;
-; src/output.c:254:     if (for_ptr->increment != 0) {
-	cmpq	$0, 16(%r15)	;, _5->increment
-; src/output.c:255:         OUT(0, false, "increment\n");
-	movq	%rbp, %rcx	; parser,
-	movq	%r14, %rsi	; _4,
-	movq	%rbx, %rdi	; outfile,
-; src/output.c:254:     if (for_ptr->increment != 0) {
-	je	.L104	;,
-; src/output.c:255:         OUT(0, false, "increment\n");
-	call	*indention@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbx, %rcx	; outfile,
-	movl	$10, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC54(%rip), %rdi	;, tmp165
-	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:256:         output_expression(for_ptr->increment, outfile, indent + 1, parser);
-	movq	16(%r15), %rdi	; _5->increment, _5->increment
-	movq	%rbp, %rcx	; parser,
-	movq	%rbx, %rsi	; outfile,
-	leaq	2(%r12), %rdx	;, tmp166
-	call	output_expression	;
-.L105:
-; src/output.c:259:     OUT(0, true, "body\n");
-	movq	%rbp, %rcx	; parser,
-	movl	$1, %edx	;,
-	movq	%r14, %rsi	; _4,
-	movq	%rbx, %rdi	; outfile,
-	call	*indention@GOTPCREL(%rip)	;
-; src/output.c:262:         output_statement(statement, outfile, indent + 1, parser);
-	addq	$2, %r12	;, tmp194
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbx, %rcx	; outfile,
-	movl	$5, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC47(%rip), %rdi	;, tmp169
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L106	;
-	.p2align 4,,10
-	.p2align 3
-.L107:
-; src/output.c:262:         output_statement(statement, outfile, indent + 1, parser);
-	movq	%rbp, %rcx	; parser,
-	movq	%r12, %rdx	; tmp194,
-	movq	%rbx, %rsi	; outfile,
-	call	output_statement	;
-.L106:
-; src/output.c:261:     while ((statement = (Statement*)list_pop(body)) != 0)
-	movq	%r13, %rdi	; body,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp208, statement
-; src/output.c:261:     while ((statement = (Statement*)list_pop(body)) != 0)
-	testq	%rax, %rax	; statement
-	jne	.L107	;,
-; src/output.c:202: }
-	addq	$40, %rsp	;,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	popq	%r14	;
-	popq	%r15	;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L85:
-; src/output.c:177:             if (statement_ptr->stmt.expr == 0) {
-	cmpq	$0, 0(%r13)	;, statement_18(D)->stmt.expr
-	je	.L118	;,
-; src/output.c:181:             OUT(0, false, "return_statement\n");
+; src/output.c:159:             if (statement->stmt.expr == NULL) {
+	cmpq	$0, 0(%r13)	;, statement_19(D)->stmt.expr
+	je	.L119	;,
+; src/output.c:164:             ast_output(0, false, "return_statement\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$17, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC59(%rip), %rdi	;, tmp180
-	jmp	.L115	;
-.L81:
-; src/output.c:199:             OUT(0, false, "unknown_StatementType: %u\n", statement_ptr->type);
+	leaq	.LC60(%rip), %rdi	;, tmp180
+	jmp	.L116	;
+.L82:
+; src/output.c:183:             ast_output(0, false, "unknown_StatementType: %u\n", statement->type);
 	movq	%r12, %rsi	; indent,
 	movq	%rbx, %rdi	; outfile,
 	xorl	%edx, %edx	;
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	8(%r13), %ecx	; statement_18(D)->type, statement_18(D)->type
-; src/output.c:202: }
+	movl	8(%r13), %ecx	; statement_19(D)->type, statement_19(D)->type
+; src/output.c:187: }
 	addq	$40, %rsp	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rdi	; outfile,
-	leaq	.LC64(%rip), %rdx	;, tmp190
-; src/output.c:202: }
+	leaq	.LC65(%rip), %rdx	;, tmp190
+; src/output.c:187: }
 	popq	%rbx	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$2, %esi	;,
-; src/output.c:202: }
+; src/output.c:187: }
 	popq	%rbp	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	xorl	%eax, %eax	;
-; src/output.c:202: }
+; src/output.c:187: }
 	popq	%r12	;
 	popq	%r13	;
 	popq	%r14	;
@@ -1765,8 +1782,8 @@ output_statement:
 	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
-.L117:
-; src/output.c:221:     OUT(0, true, "else_body\n");
+.L118:
+; src/output.c:203:     ast_output(0, true, "else_body\n");
 	movq	24(%rsp), %rsi	; %sfp,
 	movq	%rbp, %rcx	; parser,
 	movq	%rbx, %rdi	; outfile,
@@ -1776,26 +1793,26 @@ output_statement:
 	movq	%rbx, %rcx	; outfile,
 	movl	$10, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC49(%rip), %rdi	;, tmp154
+	leaq	.LC50(%rip), %rdi	;, tmp154
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L97	;
+	jmp	.L98	;
 	.p2align 4,,10
 	.p2align 3
-.L98:
-; src/output.c:223:         output_statement(statement, outfile, indent + 1, parser);
+.L99:
+; src/output.c:205:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%rbp, %rcx	; parser,
 	movq	%r13, %rdx	; _57,
 	movq	%rbx, %rsi	; outfile,
 	call	output_statement	;
-.L97:
-; src/output.c:222:     while ((statement = (Statement*)list_pop(else_body)) != 0)
+.L98:
+; src/output.c:204:     while ((statement = (Statement*)list_pop(else_body)) != NULL)
 	movq	16(%rsp), %rdi	; %sfp,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %rdi	; tmp206, statement
-; src/output.c:222:     while ((statement = (Statement*)list_pop(else_body)) != 0)
+; src/output.c:204:     while ((statement = (Statement*)list_pop(else_body)) != NULL)
 	testq	%rax, %rax	; statement
-	jne	.L98	;,
-; src/output.c:202: }
+	jne	.L99	;,
+; src/output.c:187: }
 	addq	$40, %rsp	;,
 	popq	%rbx	;
 	popq	%rbp	;
@@ -1804,77 +1821,77 @@ output_statement:
 	popq	%r14	;
 	popq	%r15	;
 	ret	
-.L100:
-; src/output.c:248:         OUT(0, false, "initializer: \"NULL\"\n");
+.L101:
+; src/output.c:226:         ast_output(0, false, "initializer: \"NULL\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$20, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC52(%rip), %rdi	;, tmp160
+	leaq	.LC53(%rip), %rdi	;, tmp160
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L101	;
-.L104:
-; src/output.c:258:         OUT(0, false, "increment: \"NULL\"\n");
+	jmp	.L102	;
+.L105:
+; src/output.c:236:         ast_output(0, false, "increment: \"NULL\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$18, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC55(%rip), %rdi	;, tmp168
+	leaq	.LC56(%rip), %rdi	;, tmp168
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L105	;
-.L102:
-; src/output.c:253:         OUT(0, false, "condition: \"NULL\"\n");
+	jmp	.L106	;
+.L103:
+; src/output.c:231:         ast_output(0, false, "condition: \"NULL\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$18, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC53(%rip), %rdi	;, tmp164
+	leaq	.LC54(%rip), %rdi	;, tmp164
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L103	;
-.L116:
-; src/output.c:192:                 OUT(0, false, "expression_statement: \"NULL\"\n");
+	jmp	.L104	;
+.L117:
+; src/output.c:175:                 ast_output(0, false, "expression_statement: \"NULL\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$29, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC62(%rip), %rdi	;, tmp185
-	jmp	.L114	;
-.L118:
-; src/output.c:178:                 OUT(0, false, "return_statement: \"NULL\"\n");
+	leaq	.LC63(%rip), %rdi	;, tmp185
+	jmp	.L115	;
+.L119:
+; src/output.c:160:                 ast_output(0, false, "return_statement: \"NULL\"\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; outfile,
 	movl	$25, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC58(%rip), %rdi	;, tmp179
-	jmp	.L114	;
+	leaq	.LC59(%rip), %rdi	;, tmp179
+	jmp	.L115	;
 	.size	output_statement, .-output_statement
 	.section	.rodata.str1.1
-.LC65:
-	.string	"NULL"
 .LC66:
-	.string	"import\n"
+	.string	"NULL"
 .LC67:
-	.string	"source: \"%s\"\n"
+	.string	"import\n"
 .LC68:
-	.string	"parameters\n"
+	.string	"source: \"%s\"\n"
 .LC69:
-	.string	"parameters[%d]\n"
+	.string	"parameters\n"
 .LC70:
-	.string	"class\n"
+	.string	"parameters[%d]\n"
 .LC71:
-	.string	"members\n"
+	.string	"class\n"
 .LC72:
-	.string	"method\n"
+	.string	"members\n"
 .LC73:
-	.string	"variable\n"
+	.string	"method\n"
 .LC74:
-	.string	"unknown_ClassMemberType: %u\n"
+	.string	"variable\n"
 .LC75:
+	.string	"unknown_ClassMemberType: %u\n"
+.LC76:
 	.string	"unknown_CodeMemberType: %u\n"
 	.text
 	.p2align 4
@@ -1891,49 +1908,49 @@ output_code:
 	pushq	%rbp	;
 	pushq	%rbx	;
 	subq	$56, %rsp	;,
-; src/output.c:47:     list(CodeMember*) members = list_copy((code)->members);
+; src/output.c:43:     list(CodeMember*) members = list_copy(code->members);
 	movq	(%rdi), %rdi	; code_5(D)->members, code_5(D)->members
 	call	*list_copy@GOTPCREL(%rip)	;
 	movq	%rax, 40(%rsp)	; tmp190, %sfp
 	.p2align 4,,10
 	.p2align 3
-.L120:
-; src/output.c:49:     while ((member = (CodeMember*)list_pop(members)) != 0)
+.L121:
+; src/output.c:45:     while ((member = (CodeMember*)list_pop(members)) != NULL)
 	movq	40(%rsp), %rdi	; %sfp,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %rbx	; tmp201, member
-; src/output.c:49:     while ((member = (CodeMember*)list_pop(members)) != 0)
+; src/output.c:45:     while ((member = (CodeMember*)list_pop(members)) != NULL)
 	testq	%rax, %rax	; member
-	je	.L144	;,
-; src/output.c:25:     switch (code_member_ptr->type) {
+	je	.L145	;,
+; src/output.c:22:     switch (code_member->type) {
 	movl	8(%rbx), %eax	; member_9->type, _14
-; src/output.c:50:         output_code_member(member, outfile, indent + 1, parser);
+; src/output.c:46:         output_code_member(member, outfile, indent + 1, parser);
 	leaq	1(%r15), %rsi	;, _2
-; src/output.c:39:             OUT(0, false, "unknown_CodeMemberType: %u\n", code_member_ptr->type);
+; src/output.c:36:             ast_output(0, false, "unknown_CodeMemberType: %u\n", code_member->type);
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r13, %rdi	; outfile,
-; src/output.c:25:     switch (code_member_ptr->type) {
+; src/output.c:22:     switch (code_member->type) {
 	cmpl	$1, %eax	;, _14
-	je	.L121	;,
-	cmpl	$2, %eax	;, _14
 	je	.L122	;,
+	cmpl	$2, %eax	;, _14
+	je	.L123	;,
 	testl	%eax, %eax	; _14
-	jne	.L123	;,
-; src/output.c:27:             OUT(0, false, "import\n");
+	jne	.L124	;,
+; src/output.c:24:             ast_output(0, false, "import\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r13, %rcx	; outfile,
-; src/output.c:28:             output_import(code_member_ptr->content.import, outfile, indent + 1, parser);
+; src/output.c:25:             output_import(code_member->content.import, outfile, indent + 1, parser);
 	leaq	2(%r15), %rbp	;, _15
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$7, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC66(%rip), %rdi	;, tmp135
+	leaq	.LC67(%rip), %rdi	;, tmp135
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:28:             output_import(code_member_ptr->content.import, outfile, indent + 1, parser);
+; src/output.c:25:             output_import(code_member->content.import, outfile, indent + 1, parser);
 	movq	(%rbx), %rbx	; member_9->content.import, _16
-; src/output.c:57:     OUT(0, false, "name\n");
+; src/output.c:51:     ast_output(0, false, "name\n");
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%rbp, %rsi	; _15,
@@ -1943,77 +1960,77 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC31(%rip), %rdi	;, tmp136
+	leaq	.LC32(%rip), %rdi	;, tmp136
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:58:     output_name(import_ptr->name, outfile, indent + 1, parser);
+; src/output.c:52:     output_name(import->name, outfile, indent + 1, parser);
 	movq	(%rbx), %rdi	; _16->name, _16->name
 	leaq	3(%r15), %rdx	;, tmp137
 	movq	%r14, %rcx	; parser,
 	movq	%r13, %rsi	; outfile,
 	call	output_name	;
-; src/output.c:59:     OUT(0, true, "source: \"%s\"\n", import_ptr->source != 0 ? import_ptr->source : "NULL");
+; src/output.c:53:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 	movq	%r14, %rcx	; parser,
 	movq	%rbp, %rsi	; _15,
 	movq	%r13, %rdi	; outfile,
 	movl	$1, %edx	;,
 	call	*indention@GOTPCREL(%rip)	;
-; src/output.c:59:     OUT(0, true, "source: \"%s\"\n", import_ptr->source != 0 ? import_ptr->source : "NULL");
+; src/output.c:53:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 	movq	8(%rbx), %rcx	; _16->source, _24
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$2, %esi	;,
 	movq	%r13, %rdi	; outfile,
-; src/output.c:59:     OUT(0, true, "source: \"%s\"\n", import_ptr->source != 0 ? import_ptr->source : "NULL");
-	leaq	.LC65(%rip), %rax	;, tmp175
+; src/output.c:53:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
+	leaq	.LC66(%rip), %rax	;, tmp175
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC67(%rip), %rdx	;, tmp139
-; src/output.c:59:     OUT(0, true, "source: \"%s\"\n", import_ptr->source != 0 ? import_ptr->source : "NULL");
+	leaq	.LC68(%rip), %rdx	;, tmp139
+; src/output.c:53:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 	testq	%rcx, %rcx	; _24
 	cmove	%rax, %rcx	; _24,, tmp175, _24
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/output.c:60: }
-	jmp	.L120	;
+; src/output.c:55: }
+	jmp	.L121	;
 	.p2align 4,,10
 	.p2align 3
-.L121:
-; src/output.c:31:             OUT(0, false, "function\n");
+.L122:
+; src/output.c:28:             ast_output(0, false, "function\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r13, %rcx	; outfile,
-; src/output.c:32:             output_function(code_member_ptr->content.function, outfile, indent + 1, parser);
+; src/output.c:29:             output_function(code_member->content.function, outfile, indent + 1, parser);
 	leaq	2(%r15), %r12	;, _17
-; src/output.c:67:     output_name(function_ptr->name, outfile, indent + 1, parser);
+; src/output.c:59:     output_name(function->name, outfile, indent + 1, parser);
 	leaq	3(%r15), %rbp	;, _26
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$9, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC35(%rip), %rdi	;,
+	leaq	.LC36(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:32:             output_function(code_member_ptr->content.function, outfile, indent + 1, parser);
+; src/output.c:29:             output_function(code_member->content.function, outfile, indent + 1, parser);
 	movq	(%rbx), %rbx	; member_9->content.function, _18
-; src/output.c:66:     OUT(0, false, "name\n");
+; src/output.c:58:     ast_output(0, false, "name\n");
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r12, %rsi	; _17,
 	movq	%r13, %rdi	; outfile,
-; src/output.c:32:             output_function(code_member_ptr->content.function, outfile, indent + 1, parser);
+; src/output.c:29:             output_function(code_member->content.function, outfile, indent + 1, parser);
 	movq	%r12, 8(%rsp)	; _17, %sfp
-; src/output.c:66:     OUT(0, false, "name\n");
+; src/output.c:58:     ast_output(0, false, "name\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r13, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC31(%rip), %rdi	;, tmp141
+	leaq	.LC32(%rip), %rdi	;, tmp141
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:67:     output_name(function_ptr->name, outfile, indent + 1, parser);
+; src/output.c:59:     output_name(function->name, outfile, indent + 1, parser);
 	movq	(%rbx), %rdi	; _18->name, _18->name
 	movq	%r14, %rcx	; parser,
 	movq	%rbp, %rdx	; _26,
 	movq	%r13, %rsi	; outfile,
 	call	output_name	;
-; src/output.c:68:     OUT(0, false, "return_type\n");
+; src/output.c:60:     ast_output(0, false, "return_type\n");
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r12, %rsi	; _17,
@@ -2025,13 +2042,13 @@ output_code:
 	movl	$1, %esi	;,
 	leaq	.LC7(%rip), %rdi	;, tmp143
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:69:     output_name(function_ptr->return_type, outfile, indent + 1, parser);
+; src/output.c:61:     output_name(function->return_type, outfile, indent + 1, parser);
 	movq	8(%rbx), %rdi	; _18->return_type, _18->return_type
 	movq	%r14, %rcx	; parser,
 	movq	%rbp, %rdx	; _26,
 	movq	%r13, %rsi	; outfile,
 	call	output_name	;
-; src/output.c:70:     OUT(0, false, "parameters\n");
+; src/output.c:62:     ast_output(0, false, "parameters\n");
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r12, %rsi	; _17,
@@ -2041,28 +2058,28 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$11, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC68(%rip), %rdi	;, tmp145
+	leaq	.LC69(%rip), %rdi	;, tmp145
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:71:     list(Variable*) parameters = list_copy(function_ptr->parameters);
+; src/output.c:63:     list(Variable*) parameters = list_copy(function->parameters);
 	movq	16(%rbx), %rdi	; _18->parameters, _18->parameters
 	call	*list_copy@GOTPCREL(%rip)	;
-; src/output.c:72:     list(Statement*) body = list_copy(function_ptr->body);
+; src/output.c:64:     list(Statement*) body = list_copy(function->body);
 	movq	24(%rbx), %rdi	; _18->body, _18->body
-; src/output.c:74:     int index = -1;
+; src/output.c:66:     int index = -1;
 	movl	$-1, %ebx	;, index
-; src/output.c:71:     list(Variable*) parameters = list_copy(function_ptr->parameters);
+; src/output.c:63:     list(Variable*) parameters = list_copy(function->parameters);
 	movq	%rax, (%rsp)	; tmp191, %sfp
-; src/output.c:72:     list(Statement*) body = list_copy(function_ptr->body);
+; src/output.c:64:     list(Statement*) body = list_copy(function->body);
 	call	*list_copy@GOTPCREL(%rip)	;
 	movq	%rax, 16(%rsp)	; body, %sfp
-; src/output.c:75:     while ((parameter = (Variable*)list_pop(parameters)) != 0) {
-	jmp	.L126	;
+; src/output.c:67:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
+	jmp	.L127	;
 	.p2align 4,,10
 	.p2align 3
-.L127:
-; src/output.c:76:         OUT(1, false, "parameters[%d]\n", ++index);
+.L128:
+; src/output.c:68:         ast_output(1, false, "parameters[%d]\n", ++index);
 	addl	$1, %ebx	;, index
-; src/output.c:76:         OUT(1, false, "parameters[%d]\n", ++index);
+; src/output.c:68:         ast_output(1, false, "parameters[%d]\n", ++index);
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%rbp, %rsi	; _26,
@@ -2070,26 +2087,26 @@ output_code:
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	%ebx, %ecx	; index,
-	leaq	.LC69(%rip), %rdx	;,
+	leaq	.LC70(%rip), %rdx	;,
 	xorl	%eax, %eax	;
 	movl	$2, %esi	;,
 	movq	%r13, %rdi	; outfile,
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/output.c:77:         output_variable(parameter, outfile, indent + 2, parser);
+; src/output.c:69:         output_variable(parameter, outfile, indent + 2, parser);
 	leaq	4(%r15), %rdx	;, tmp149
 	movq	%r14, %rcx	; parser,
 	movq	%r13, %rsi	; outfile,
 	movq	%r12, %rdi	; parameter,
 	call	output_variable	;
-.L126:
-; src/output.c:75:     while ((parameter = (Variable*)list_pop(parameters)) != 0) {
+.L127:
+; src/output.c:67:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	movq	(%rsp), %rdi	; %sfp,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %r12	; tmp193, parameter
-; src/output.c:75:     while ((parameter = (Variable*)list_pop(parameters)) != 0) {
+; src/output.c:67:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	testq	%rax, %rax	; parameter
-	jne	.L127	;,
-; src/output.c:79:     OUT(0, true, "body\n");
+	jne	.L128	;,
+; src/output.c:71:     ast_output(0, true, "body\n");
 	movq	8(%rsp), %rsi	; %sfp,
 	movq	%r14, %rcx	; parser,
 	movq	%r13, %rdi	; outfile,
@@ -2100,56 +2117,56 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC47(%rip), %rdi	;, tmp150
+	leaq	.LC48(%rip), %rdi	;, tmp150
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L128	;
+	jmp	.L129	;
 	.p2align 4,,10
 	.p2align 3
-.L129:
-; src/output.c:82:         output_statement(statement, outfile, indent + 1, parser);
+.L130:
+; src/output.c:74:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%r14, %rcx	; parser,
 	movq	%rbp, %rdx	; _26,
 	movq	%r13, %rsi	; outfile,
 	call	output_statement	;
-.L128:
-; src/output.c:81:     while ((statement = (Statement*)list_pop(body)) != 0)
+.L129:
+; src/output.c:73:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%r12, %rdi	; body,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %rdi	; tmp194, statement
-; src/output.c:81:     while ((statement = (Statement*)list_pop(body)) != 0)
+; src/output.c:73:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	; statement
-	jne	.L129	;,
-	jmp	.L120	;
+	jne	.L130	;,
+	jmp	.L121	;
 	.p2align 4,,10
 	.p2align 3
-.L123:
-; src/output.c:39:             OUT(0, false, "unknown_CodeMemberType: %u\n", code_member_ptr->type);
+.L124:
+; src/output.c:36:             ast_output(0, false, "unknown_CodeMemberType: %u\n", code_member->type);
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	8(%rbx), %ecx	; member_9->type, member_9->type
 	movl	$2, %esi	;,
 	movq	%r13, %rdi	; outfile,
-	leaq	.LC75(%rip), %rdx	;, tmp173
+	leaq	.LC76(%rip), %rdx	;, tmp173
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-	jmp	.L120	;
+	jmp	.L121	;
 	.p2align 4,,10
 	.p2align 3
-.L122:
-; src/output.c:35:             OUT(0, false, "class\n");
+.L123:
+; src/output.c:32:             ast_output(0, false, "class\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r13, %rcx	; outfile,
-; src/output.c:36:             output_class(code_member_ptr->content.class_, outfile, indent + 1, parser);
+; src/output.c:33:             output_class(code_member->content.class, outfile, indent + 1, parser);
 	leaq	2(%r15), %rbp	;, _19
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$6, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC70(%rip), %rdi	;, tmp151
+	leaq	.LC71(%rip), %rdi	;, tmp151
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:36:             output_class(code_member_ptr->content.class_, outfile, indent + 1, parser);
-	movq	(%rbx), %rbx	; member_9->content.class_, _20
-; src/output.c:131:     OUT(0, false, "name\n");
+; src/output.c:33:             output_class(code_member->content.class, outfile, indent + 1, parser);
+	movq	(%rbx), %rbx	; member_9->content.class, _20
+; src/output.c:117:     ast_output(0, false, "name\n");
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%rbp, %rsi	; _19,
@@ -2159,9 +2176,9 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC31(%rip), %rdi	;,
+	leaq	.LC32(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:132:     output_name(class_ptr->name, outfile, indent + 1, parser);
+; src/output.c:118:     output_name(class->name, outfile, indent + 1, parser);
 	leaq	3(%r15), %rax	;, _38
 	movq	(%rbx), %rdi	; _20->name, _20->name
 	movq	%r14, %rcx	; parser,
@@ -2169,7 +2186,7 @@ output_code:
 	movq	%r13, %rsi	; outfile,
 	movq	%rax, 16(%rsp)	; _38, %sfp
 	call	output_name	;
-; src/output.c:133:     OUT(0, true, "members\n");
+; src/output.c:119:     ast_output(0, true, "members\n");
 	movq	%r14, %rcx	; parser,
 	movl	$1, %edx	;,
 	movq	%rbp, %rsi	; _19,
@@ -2179,30 +2196,30 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$8, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC71(%rip), %rdi	;, tmp154
+	leaq	.LC72(%rip), %rdi	;, tmp154
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:134:     list(ClassMember*) members = list_copy(class_ptr->members);
+; src/output.c:120:     list(ClassMember*) members = list_copy(class->members);
 	movq	8(%rbx), %rdi	; _20->members, _20->members
 	call	*list_copy@GOTPCREL(%rip)	;
 	movq	%rax, 8(%rsp)	; tmp195, %sfp
 	.p2align 4,,10
 	.p2align 3
-.L130:
-; src/output.c:136:     while ((member = (ClassMember*)list_pop(members)) != 0)
+.L131:
+; src/output.c:122:     while ((member = (ClassMember*)list_pop(members)) != NULL)
 	movq	8(%rsp), %rdi	; %sfp,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %rbx	; tmp200, member
-; src/output.c:136:     while ((member = (ClassMember*)list_pop(members)) != 0)
+; src/output.c:122:     while ((member = (ClassMember*)list_pop(members)) != NULL)
 	testq	%rax, %rax	; member
-	je	.L120	;,
-; src/output.c:112:     switch (class_member_ptr->type) {
+	je	.L121	;,
+; src/output.c:100:     switch (class_member->type) {
 	movl	8(%rbx), %eax	; member_42->type, _43
-; src/output.c:112:     switch (class_member_ptr->type) {
+; src/output.c:100:     switch (class_member->type) {
 	testl	%eax, %eax	; _43
-	je	.L131	;,
-	cmpl	$1, %eax	;, _43
 	je	.L132	;,
-; src/output.c:122:             OUT(0, false, "unknown_ClassMemberType: %u\n", class_member_ptr->type);
+	cmpl	$1, %eax	;, _43
+	je	.L133	;,
+; src/output.c:110:             ast_output(0, false, "unknown_ClassMemberType: %u\n", class_member->type);
 	movq	16(%rsp), %rsi	; %sfp,
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
@@ -2212,14 +2229,14 @@ output_code:
 	movl	8(%rbx), %ecx	; member_42->type, member_42->type
 	movl	$2, %esi	;,
 	movq	%r13, %rdi	; outfile,
-	leaq	.LC74(%rip), %rdx	;, tmp171
+	leaq	.LC75(%rip), %rdx	;, tmp171
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-	jmp	.L130	;
+	jmp	.L131	;
 	.p2align 4,,10
 	.p2align 3
-.L131:
-; src/output.c:114:             OUT(0, false, "method\n");
+.L132:
+; src/output.c:102:             ast_output(0, false, "method\n");
 	movq	16(%rsp), %rsi	; %sfp,
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
@@ -2227,25 +2244,25 @@ output_code:
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r13, %rcx	; outfile,
-; src/output.c:90:     output_name(method_ptr->name, outfile, indent + 1, parser);
+; src/output.c:80:     output_name(method->name, outfile, indent + 1, parser);
 	leaq	5(%r15), %rbp	;, _49
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$7, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC72(%rip), %rdi	;,
+	leaq	.LC73(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:115:             output_method(class_member_ptr->content.method, outfile, indent + 1, parser);
+; src/output.c:103:             output_method(class_member->content.method, outfile, indent + 1, parser);
 	movq	(%rbx), %rbx	; member_42->content.method, _45
 	leaq	4(%r15), %rax	;, _44
-; src/output.c:89:     OUT(0, false, "name\n");
+; src/output.c:79:     ast_output(0, false, "name\n");
 	movq	%r14, %rcx	; parser,
-; src/output.c:115:             output_method(class_member_ptr->content.method, outfile, indent + 1, parser);
+; src/output.c:103:             output_method(class_member->content.method, outfile, indent + 1, parser);
 	movq	%rax, %r12	; _44, _44
-; src/output.c:89:     OUT(0, false, "name\n");
+; src/output.c:79:     ast_output(0, false, "name\n");
 	movq	%rax, %rsi	; _44,
-; src/output.c:115:             output_method(class_member_ptr->content.method, outfile, indent + 1, parser);
+; src/output.c:103:             output_method(class_member->content.method, outfile, indent + 1, parser);
 	movq	%rax, 24(%rsp)	; _44, %sfp
-; src/output.c:89:     OUT(0, false, "name\n");
+; src/output.c:79:     ast_output(0, false, "name\n");
 	xorl	%edx, %edx	;
 	movq	%r13, %rdi	; outfile,
 	call	*indention@GOTPCREL(%rip)	;
@@ -2253,15 +2270,15 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC31(%rip), %rdi	;,
+	leaq	.LC32(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:90:     output_name(method_ptr->name, outfile, indent + 1, parser);
+; src/output.c:80:     output_name(method->name, outfile, indent + 1, parser);
 	movq	(%rbx), %rdi	; _45->name, _45->name
 	movq	%r14, %rcx	; parser,
 	movq	%rbp, %rdx	; _49,
 	movq	%r13, %rsi	; outfile,
 	call	output_name	;
-; src/output.c:91:     OUT(0, false, "return_type\n");
+; src/output.c:81:     ast_output(0, false, "return_type\n");
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r12, %rsi	; _44,
@@ -2273,13 +2290,13 @@ output_code:
 	movl	$1, %esi	;,
 	leaq	.LC7(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:92:     output_name(method_ptr->return_type, outfile, indent + 1, parser);
+; src/output.c:82:     output_name(method->return_type, outfile, indent + 1, parser);
 	movq	8(%rbx), %rdi	; _45->return_type, _45->return_type
 	movq	%r14, %rcx	; parser,
 	movq	%rbp, %rdx	; _49,
 	movq	%r13, %rsi	; outfile,
 	call	output_name	;
-; src/output.c:93:     OUT(0, false, "parameters\n");
+; src/output.c:83:     ast_output(0, false, "parameters\n");
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%r12, %rsi	; _44,
@@ -2289,28 +2306,28 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$11, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC68(%rip), %rdi	;, tmp161
+	leaq	.LC69(%rip), %rdi	;, tmp161
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:94:     list(Variable*) parameters = list_copy(method_ptr->parameters);
+; src/output.c:84:     list(Variable*) parameters = list_copy(method->parameters);
 	movq	16(%rbx), %rdi	; _45->parameters, _45->parameters
 	call	*list_copy@GOTPCREL(%rip)	;
-; src/output.c:95:     list(Statement*) body = list_copy(method_ptr->body);
+; src/output.c:85:     list(Statement*) body = list_copy(method->body);
 	movq	24(%rbx), %rdi	; _45->body, _45->body
-; src/output.c:97:     int index = -1;
+; src/output.c:87:     int index = -1;
 	movl	$-1, %ebx	;, index
-; src/output.c:94:     list(Variable*) parameters = list_copy(method_ptr->parameters);
+; src/output.c:84:     list(Variable*) parameters = list_copy(method->parameters);
 	movq	%rax, (%rsp)	; tmp196, %sfp
-; src/output.c:95:     list(Statement*) body = list_copy(method_ptr->body);
+; src/output.c:85:     list(Statement*) body = list_copy(method->body);
 	call	*list_copy@GOTPCREL(%rip)	;
 	movq	%rax, 32(%rsp)	; body, %sfp
-; src/output.c:98:     while ((parameter = (Variable*)list_pop(parameters)) != 0) {
-	jmp	.L134	;
+; src/output.c:88:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
+	jmp	.L135	;
 	.p2align 4,,10
 	.p2align 3
-.L135:
-; src/output.c:99:         OUT(1, false, "parameters[%d]\n", ++index);
+.L136:
+; src/output.c:89:         ast_output(1, false, "parameters[%d]\n", ++index);
 	addl	$1, %ebx	;, index
-; src/output.c:99:         OUT(1, false, "parameters[%d]\n", ++index);
+; src/output.c:89:         ast_output(1, false, "parameters[%d]\n", ++index);
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
 	movq	%rbp, %rsi	; _49,
@@ -2318,26 +2335,26 @@ output_code:
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	%ebx, %ecx	; index,
-	leaq	.LC69(%rip), %rdx	;,
+	leaq	.LC70(%rip), %rdx	;,
 	xorl	%eax, %eax	;
 	movl	$2, %esi	;,
 	movq	%r13, %rdi	; outfile,
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/output.c:100:         output_variable(parameter, outfile, indent + 2, parser);
+; src/output.c:90:         output_variable(parameter, outfile, indent + 2, parser);
 	leaq	6(%r15), %rdx	;, tmp165
 	movq	%r14, %rcx	; parser,
 	movq	%r13, %rsi	; outfile,
 	movq	%r12, %rdi	; parameter,
 	call	output_variable	;
-.L134:
-; src/output.c:98:     while ((parameter = (Variable*)list_pop(parameters)) != 0) {
+.L135:
+; src/output.c:88:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	movq	(%rsp), %rdi	; %sfp,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %r12	; tmp198, parameter
-; src/output.c:98:     while ((parameter = (Variable*)list_pop(parameters)) != 0) {
+; src/output.c:88:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	testq	%rax, %rax	; parameter
-	jne	.L135	;,
-; src/output.c:102:     OUT(0, true, "body\n");
+	jne	.L136	;,
+; src/output.c:92:     ast_output(0, true, "body\n");
 	movq	24(%rsp), %rsi	; %sfp,
 	movq	%r14, %rcx	; parser,
 	movq	%r13, %rdi	; outfile,
@@ -2348,30 +2365,30 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC47(%rip), %rdi	;, tmp166
+	leaq	.LC48(%rip), %rdi	;, tmp166
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L136	;
+	jmp	.L137	;
 	.p2align 4,,10
 	.p2align 3
-.L137:
-; src/output.c:105:         output_statement(statement, outfile, indent + 1, parser);
+.L138:
+; src/output.c:95:         output_statement(statement, outfile, indent + 1, parser);
 	movq	%r14, %rcx	; parser,
 	movq	%rbp, %rdx	; _49,
 	movq	%r13, %rsi	; outfile,
 	call	output_statement	;
-.L136:
-; src/output.c:104:     while ((statement = (Statement*)list_pop(body)) != 0)
+.L137:
+; src/output.c:94:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%r12, %rdi	; body,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %rdi	; tmp199, statement
-; src/output.c:104:     while ((statement = (Statement*)list_pop(body)) != 0)
+; src/output.c:94:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	; statement
-	jne	.L137	;,
-	jmp	.L130	;
+	jne	.L138	;,
+	jmp	.L131	;
 	.p2align 4,,10
 	.p2align 3
-.L132:
-; src/output.c:118:             OUT(0, false, "variable\n");
+.L133:
+; src/output.c:106:             ast_output(0, false, "variable\n");
 	movq	16(%rsp), %rsi	; %sfp,
 	movq	%r14, %rcx	; parser,
 	xorl	%edx, %edx	;
@@ -2381,20 +2398,20 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$9, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC73(%rip), %rdi	;, tmp167
+	leaq	.LC74(%rip), %rdi	;, tmp167
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:119:             output_variable(class_member_ptr->content.variable, outfile, indent + 1, parser);
+; src/output.c:107:             output_variable(class_member->content.variable, outfile, indent + 1, parser);
 	movq	(%rbx), %rdi	; member_42->content.variable, member_42->content.variable
 	leaq	4(%r15), %rdx	;, tmp168
 	movq	%r14, %rcx	; parser,
 	movq	%r13, %rsi	; outfile,
 	call	output_variable	;
-; src/output.c:120:             break;
-	jmp	.L130	;
+; src/output.c:108:             break;
+	jmp	.L131	;
 	.p2align 4,,10
 	.p2align 3
-.L144:
-; src/output.c:51: }
+.L145:
+; src/output.c:48: }
 	addq	$56, %rsp	;,
 	popq	%rbx	;
 	popq	%rbp	;
