@@ -614,7 +614,7 @@ Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status)
     }
     if (variable_access->type == VAR_GET_ATTR) {
         if (base->type->kind == SYMBOL_CLASS || base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
-            printf(stderr, "[warning] Attempting to access attribute of non-object type: %s\n", base->type->name);
+            fprintf(stderr, "[warning] Attempting to access attribute of non-object type: %s\n", base->type->name);
             return NULL;
         }
         Symbol* attr = search_name_use_strcmp(base->type->ast_node.scope, make_method_name(base->type->name, variable_access->content.attr_name->name));
