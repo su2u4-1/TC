@@ -368,8 +368,7 @@ Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     Symbol* type = search_name(now_scope, token->lexeme);
     if (type != NULL) {
-        Symbol* type_ptr = type;
-        if (type_ptr->kind != SYMBOL_TYPE && type_ptr->kind != SYMBOL_CLASS)
+        if (type->kind != SYMBOL_TYPE && type->kind != SYMBOL_CLASS)
             parser_error("Expected a type for variable declaration", token, get_full_path(parser->source_file));
     } else
         parser_error("Unknown variable type", token, get_full_path(parser->source_file));

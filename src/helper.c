@@ -129,11 +129,10 @@ Symbol* search_name_use_strcmp(SymbolTable* scope, string name) {
         list(Symbol*) names = scope->symbols;
         Node* current = names->head;
         while (current != NULL) {
-            Node* node_ptr = current;
-            Symbol* current_name = (Symbol*)node_ptr->content;
+            Symbol* current_name = (Symbol*)current->content;
             if (strcmp(current_name->name, name) == 0)
                 return current_name;
-            current = node_ptr->next;
+            current = current->next;
         }
         scope = scope->parent;
     }
@@ -145,11 +144,10 @@ Symbol* search_name(SymbolTable* scope, string name) {
         list(Symbol*) names = scope->symbols;
         Node* current = names->head;
         while (current != NULL) {
-            Node* node_ptr = current;
-            Symbol* current_name = (Symbol*)node_ptr->content;
+            Symbol* current_name = (Symbol*)current->content;
             if (string_equal(current_name->name, name))
                 return current_name;
-            current = node_ptr->next;
+            current = current->next;
         }
         scope = scope->parent;
     }
@@ -216,17 +214,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
         return NULL;
     }
-    list(Node*) names = code->global_scope->symbols;
-    Node* current = names->head;
-    while (current != NULL) {
-        Node* node_ptr = current;
-        Symbol* current_name = (Symbol*)node_ptr->content;
-        if (string_equal(current_name->name, import_name)) {
-            name = current_name;
-            break;
-        }
-        current = node_ptr->next;
-    }
+    name = search_name_use_strcmp(code->global_scope, import_name);
     if (name != NULL)
         list_append(scope->symbols, (pointer)name);
     else
