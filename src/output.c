@@ -412,39 +412,141 @@ void output_name(Symbol* name, FILE* outfile, size_t indent, char indent_has_nex
 static void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent);
 static void output_var(Var* var, FILE* outfile, size_t indent);
 static void output_block(Block* block, FILE* outfile, size_t indent);
-static void output_arg(Arg* arg, FILE* outfile, size_t indent);
+static void output_arg(Arg* arg, FILE* outfile);
 static void output_instruction(Instruction* instruction, FILE* outfile, size_t indent);
 static void output_attribute_table(AttributeTable* attribute_table, FILE* outfile, size_t indent);
 static void output_attribute(Attribute* attribute, FILE* outfile, size_t indent);
 
-void output_TAC(TAC* code, FILE* outfile, size_t indent) {
-    if (code == NULL) {
+void output_TAC(TAC* tac, FILE* outfile, size_t indent) {
+    if (tac == NULL) {
         tac_output(indent, "TAC: \"NULL\"\n");
         return;
     }
+    tac_output(indent, "TAC {\n");
+    if (list_is_empty(tac->attribute_tables))
+        tac_output(indent + 1, "designs: []\n");
+    else {
+        tac_output(indent + 1, "designs: [\n");
+        AttributeTable* attribute_table;
+        while ((attribute_table = (AttributeTable*)list_pop(tac->attribute_tables)) == NULL)
+            output_attribute_table(attribute_table, outfile, indent + 2);
+        tac_output(indent + 1, "]\n");
+    }
+    if (tac->entry_point == NULL)
+        tac_output(indent + 1, "entry_point: \"NULL\"\n");
+    else
+        tac_output(indent + 1, "entry_point: %s\n", tac->entry_point->name);
+    if (list_is_empty(tac->global_vars))
+        tac_output(indent + 1, "global: []\n");
+    else {
+        tac_output(indent + 1, "global: [\n");
+        Var* var;
+        while ((var = (Var*)list_pop(tac->global_vars)) == NULL)
+            output_var(var, outfile, indent + 2);
+        tac_output(indent + 1, "]\n");
+    }
+    if (list_is_empty(tac->subroutines))
+        tac_output(indent + 1, "subroutines: []\n");
+    else {
+        tac_output(indent + 1, "subroutines: [\n");
+        Subroutine* subroutine;
+        while ((subroutine = (Subroutine*)list_pop(tac->subroutines)) == NULL)
+            output_subroutine(subroutine, outfile, indent + 2);
+        tac_output(indent + 1, "]\n");
+    }
+    tac_output(indent, "}\n");
 }
 void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent) {
     if (subroutine == NULL) {
         tac_output(indent, "Subroutine: \"NULL\"\n");
         return;
     }
+    if (subroutine->name == NULL)
+        tac_output(indent, "NULL {\n");
+    else
+        tac_output(indent, "%s {\n", subroutine->name->name);
+    if (subroutine->return_type == NULL)
+        tac_output(indent + 1, "return_type: \"NULL\"\n");
+    else
+        tac_output(indent + 1, "return_type: %s\n", subroutine->return_type->name);
+    if (list_is_empty(subroutine->parameters))
+        tac_output(indent + 1, "parameters: []\n");
+    else {
+        tac_output(indent + 1, "parameters: [\n");
+        Var* parameter;
+        while ((parameter = (Var*)list_pop(subroutine->parameters)) == NULL)
+            output_var(parameter, outfile, indent + 2);
+        tac_output(indent + 1, "]\n");
+    }
+    if (list_is_empty(subroutine->local_vars))
+        tac_output(indent + 1, "local: []\n");
+    else {
+        tac_output(indent + 1, "local: [\n");
+        Var* var;
+        while ((var = (Var*)list_pop(subroutine->local_vars)) == NULL)
+            output_var(var, outfile, indent + 2);
+        tac_output(indent + 1, "]\n");
+    }
+    if (list_is_empty(subroutine->blocks))
+        tac_output(indent + 1, "instructions: []\n");
+    else {
+        tac_output(indent + 1, "instructions: [\n");
+        Block* block;
+        while ((block = (Block*)list_pop(subroutine->blocks)) == NULL)
+            output_block(block, outfile, indent + 2);
+        tac_output(indent + 1, "]\n");
+    }
+    tac_output(indent, "}\n");
 }
 void output_var(Var* var, FILE* outfile, size_t indent) {
     if (var == NULL) {
         tac_output(indent, "Var: \"NULL\"\n");
         return;
     }
+    if (var->type == NULL)
+        tac_output(indent, "NULL\t%s\n", var->name);
+    else
+        tac_output(indent, "%s\t%s\n", var->type->name, var->name);
 }
 void output_block(Block* block, FILE* outfile, size_t indent) {
     if (block == NULL) {
         tac_output(indent, "Block: \"NULL\"\n");
         return;
     }
+    if (block->label == NULL)
+        tac_output(indent, "NULL ");
+    else
+        tac_output(indent, "%s ", block->label->name);
+    if (list_is_empty(block->instructions))
+        tac_output(0, "{}\n");
+    else {
+        tac_output(0, "{\n");
+        Instruction* instruction;
+        while ((instruction = (Instruction*)list_pop(block->instructions)) == NULL)
+            output_instruction(instruction, outfile, indent + 1);
+        tac_output(indent, "}\n");
+    }
 }
-void output_arg(Arg* arg, FILE* outfile, size_t indent) {
+void output_arg(Arg* arg, FILE* outfile) {
     if (arg == NULL) {
-        tac_output(indent, "Arg: \"NULL\"\n");
+        tac_output(0, "\"NULL\"");
         return;
+    }
+    if (arg->value.variable == NULL) {
+        tac_output(0, "\"NULL\"");
+        return;
+    }
+    switch (arg->kind) {
+        case ARG_VARIABLE: tac_output(0, "%s", arg->value.variable->name); break;
+        case ARG_INT: tac_output(0, "%lld", arg->value.int_value); break;
+        case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
+        case ARG_STRING: tac_output(0, "%s", arg->value.string_value); break;
+        case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
+        case ARG_VOID: tac_output(0, "void"); break;
+        case ARG_LABEL: tac_output(0, "%s", arg->value.label->name); break;
+        case ARG_SUBROUTINE: tac_output(0, "%s", arg->value.subroutine->name); break;
+        case ARG_NONE: tac_output(0, "NONE"); break;
+        default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
     }
 }
 void output_instruction(Instruction* instruction, FILE* outfile, size_t indent) {
@@ -452,11 +554,95 @@ void output_instruction(Instruction* instruction, FILE* outfile, size_t indent) 
         tac_output(indent, "Instruction: \"NULL\"\n");
         return;
     }
+    switch (instruction->type) {
+        case INST_ADD: tac_output(indent, "add\t"); break;
+        case INST_SUB: tac_output(indent, "sub\t"); break;
+        case INST_MUL: tac_output(indent, "mul\t"); break;
+        case INST_DIV: tac_output(indent, "div\t"); break;
+        case INST_MOD: tac_output(indent, "mod\t"); break;
+        case INST_EQ: tac_output(indent, "eq \t"); break;
+        case INST_NE: tac_output(indent, "ne \t"); break;
+        case INST_LT: tac_output(indent, "lt \t"); break;
+        case INST_GT: tac_output(indent, "gt \t"); break;
+        case INST_LE: tac_output(indent, "le \t"); break;
+        case INST_GE: tac_output(indent, "ge \t"); break;
+        case INST_AND: tac_output(indent, "and\t"); break;
+        case INST_OR: tac_output(indent, "or \t"); break;
+        case INST_NOT: tac_output(indent, "not\t"); break;
+        case INST_ASSIGN: tac_output(indent, "assign\t"); break;
+        case INST_GET_ATTR: tac_output(indent, "get_attr\t"); break;
+        case INST_GET_ELEM: tac_output(indent, "get_elem\t"); break;
+        case INST_PARAM: tac_output(indent, "param\t"); break;
+        case INST_ALLOC: tac_output(indent, "alloc\t"); break;
+        case INST_JMP_C: tac_output(indent, "jmp_c\t"); break;
+        case INST_JMP: tac_output(indent, "jmp\t"); break;
+        case INST_RET: tac_output(indent, "ret\t"); break;
+        case INST_CALL: tac_output(indent, "call\t"); break;
+        case INST_LOAD: tac_output(indent, "load\t"); break;
+        case INST_STORE: tac_output(indent, "store\t"); break;
+        case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
+        default: tac_output(indent, "unknown_InstructionType: %u\n", instruction->type); return;
+    }
+    output_arg(instruction->arg1, outfile);
+    switch (instruction->type) {
+        case INST_ADD:
+        case INST_SUB:
+        case INST_MUL:
+        case INST_DIV:
+        case INST_MOD:
+        case INST_EQ:
+        case INST_NE:
+        case INST_LT:
+        case INST_GT:
+        case INST_LE:
+        case INST_GE:
+        case INST_AND:
+        case INST_OR:
+        case INST_GET_ATTR:
+        case INST_GET_ELEM:
+        case INST_ALLOC:
+        case INST_JMP_C:
+        case INST_CALL:
+            tac_output(0, " ");
+            output_arg(instruction->arg2, outfile);
+            tac_output(0, " ");
+            output_arg(instruction->arg3, outfile);
+            break;
+        case INST_NOT:
+        case INST_ASSIGN:
+        case INST_PARAM:
+        case INST_LOAD:
+        case INST_STORE:
+            tac_output(0, " ");
+            output_arg(instruction->arg2, outfile);
+            break;
+        case INST_JMP:
+        case INST_RET:
+            break;
+        case INST_NONE:
+        default:
+            return;
+    }
+    tac_output(0, "\n");
 }
 void output_attribute_table(AttributeTable* attribute_table, FILE* outfile, size_t indent) {
     if (attribute_table == NULL) {
         tac_output(indent, "AttributeTable: \"NULL\"\n");
         return;
+    }
+    if (attribute_table->name == NULL)
+        tac_output(indent, "NULL ");
+    else
+        tac_output(indent, "%s ", attribute_table->name->name);
+    tac_output(0, "%zu ", attribute_table->size);
+    if (list_is_empty(attribute_table->attributes))
+        tac_output(0, "{}\n");
+    else {
+        tac_output(0, "{\n");
+        Attribute* attribute;
+        while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) == NULL)
+            output_attribute(attribute, outfile, indent + 1);
+        tac_output(indent, "}\n");
     }
 }
 void output_attribute(Attribute* attribute, FILE* outfile, size_t indent) {
@@ -464,4 +650,13 @@ void output_attribute(Attribute* attribute, FILE* outfile, size_t indent) {
         tac_output(indent, "Attribute: \"NULL\"\n");
         return;
     }
+    if (attribute->type == NULL)
+        tac_output(indent, "NULL\t");
+    else
+        tac_output(indent, "%s\t", attribute->type->name);
+    if (attribute->var_name == NULL)
+        tac_output(0, "NULL ");
+    else
+        tac_output(0, "%s ", attribute->var_name->name);
+    tac_output(0, "%zu\n", attribute->offset);
 }
