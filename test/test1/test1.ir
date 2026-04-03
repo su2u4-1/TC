@@ -1,7 +1,7 @@
 TAC {
     designs: [
         Test1 16 {
-            int	a 8
+            int	$a0 8
         }
     ]
     entry_point: main
@@ -16,16 +16,13 @@ TAC {
                 int	$p1
             ]
             local: [
-                int	$v0
-                Test1	$v1
                 int	$t0
-                Test1	$v2
             ]
             instructions: [
                 $b0 {
-                    get_attr	$t0 $v1 a
-                    store	$t0 $v0
-                    ret	$v2
+                    get_attr	$t0 $p0 $a0
+                    store	$t0 $p1
+                    ret	$p0
                 }
             ]
         }
@@ -35,12 +32,11 @@ TAC {
                 Test1	$p2
             ]
             local: [
-                Test1	$v3
                 int	$t1
             ]
             instructions: [
                 $b1 {
-                    get_attr	$t1 $v3 a
+                    get_attr	$t1 $p2 $a0
                     ret	$t1
                 }
             ]
@@ -52,14 +48,13 @@ TAC {
                 int	$p4
             ]
             local: [
-                int	$v4
-                Test1	$v5
                 int	$t2
             ]
             instructions: [
                 $b2 {
-                    get_attr	$t2 $v5 a
-                    store	$t2 $v4
+                    get_attr	$t2 $p3 $a0
+                    store	$t2 $p4
+                    ret	void
                 }
             ]
         }
@@ -71,17 +66,14 @@ TAC {
             ]
             local: [
                 Test1	$t3
-                int	$v6
-                Test1	$v7
-                int	$v8
                 Test1	$t4
             ]
             instructions: [
                 $b3 {
                     alloc	$t3 8
-                    assign	$v6 10
-                    param	8 $v7
-                    param	8 $v8
+                    assign	$a0 10
+                    param	8 $p5
+                    param	8 $p6
                     call	$t4 $f1 2
                     ret	$t4
                 }
@@ -91,28 +83,23 @@ TAC {
             return_type: int
             parameters: []
             local: [
-                Test1	$v9
-                Test1	$v10
+                Test1	$v0
                 int	$t5
                 void	$t6
-                Test1	$v11
                 void	$t7
-                Test1	$v12
                 int	$t8
                 void	$t9
-                float	$v13
-                int	$v14
             ]
             instructions: [
                 $b4 {
-                    call	$t5 $f3 0
+                    call	$t5 $f2 0
                     param	8 $t5
-                    call	$t6 $f2 1
+                    call	$t6 $f0 1
                     param	8 20
-                    call	$t7 $f4 1
-                    call	$t8 $f6 0
+                    call	$t7 $f3 1
+                    call	$t8 $f4 0
                     param	8 $t8
-                    call	$t9 $f5 1
+                    call	$t9 $f0 1
                     ret	0
                 }
             ]
@@ -121,4 +108,4 @@ TAC {
 }
 
 info by lib:
-    Platform: 2, Structure Memory Used: 23848/24576 bytes, String Memory Used: 4207/5120 bytes, stringCount: 178, Memory Block Count: 963
+    Platform: 2, Structure Memory Used: 24248/25600 bytes, String Memory Used: 3679/4096 bytes, stringCount: 162, Memory Block Count: 1000

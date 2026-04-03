@@ -168,6 +168,8 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     parser->in_function = false;
     if (!have_return && return_type != name_void)
         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
+    if (!have_return && return_type == name_void)
+        list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
     // printf("[DEBUG] 14 Finished parse_function\n");
     return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
 }
@@ -252,6 +254,8 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
     parser->in_method = false;
     if (!have_return && return_type != name_void)
         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
+    if (!have_return && return_type == name_void)
+        list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
     // printf("[DEBUG] 21 Finished parse_method\n");
     return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
 }

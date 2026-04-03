@@ -258,6 +258,7 @@
 │       │       │                       ├── name: "int"
 │       │       │                       ├── id: 2
 │       │       │                       └── kind: "type"
+│       │       ├── return_statement: "NULL"
 │       ├── method
 │       │   ├── name
 │       │   │   ├── name: "Test1.$constructor"
@@ -570,4 +571,4 @@
 │       │       └── value: 0
 
 info by lib:
-    Platform: 2, Structure Memory Used: 17264/18432 bytes, String Memory Used: 2183/3072 bytes, stringCount: 120, Memory Block Count: 664
+    Platform: 2, Structure Memory Used: 17328/18432 bytes, String Memory Used: 2183/3072 bytes, stringCount: 120, Memory Block Count: 668

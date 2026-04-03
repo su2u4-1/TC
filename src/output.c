@@ -405,7 +405,7 @@ void output_name(Symbol* name, FILE* outfile, size_t indent, char indent_has_nex
             ast_output(0, true, "kind: \"unknown_NameType\"\n");
             break;
     }
-    // printf("[DEBUG] 113 Finished output_name\n");
+    // printf("[DEBUG] 114 Finished output_name\n");
 }
 
 // output TAC
@@ -418,8 +418,10 @@ static void output_attribute_table(AttributeTable* attribute_table, FILE* outfil
 static void output_attribute(Attribute* attribute, FILE* outfile, size_t indent);
 
 void output_TAC(TAC* tac, FILE* outfile, size_t indent) {
+    // printf("[DEBUG] 115 Starting output_TAC\n");
     if (tac == NULL) {
         tac_output(indent, "TAC: \"NULL\"\n");
+        // printf("[DEBUG] 116 Finished output_TAC with NULL\n");
         return;
     }
     tac_output(indent, "TAC {\n");
@@ -455,10 +457,13 @@ void output_TAC(TAC* tac, FILE* outfile, size_t indent) {
         tac_output(indent + 1, "]\n");
     }
     tac_output(indent, "}\n");
+    // printf("[DEBUG] 117 Finished output_TAC\n");
 }
 void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent) {
+    // printf("[DEBUG] 118 Starting output_subroutine\n");
     if (subroutine == NULL) {
         tac_output(indent, "Subroutine: \"NULL\"\n");
+        // printf("[DEBUG] 119 Finished output_subroutine with NULL\n");
         return;
     }
     if (subroutine->name == NULL)
@@ -497,20 +502,26 @@ void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent) {
         tac_output(indent + 1, "]\n");
     }
     tac_output(indent, "}\n");
+    // printf("[DEBUG] 120 Finished output_subroutine\n");
 }
 void output_var(Var* var, FILE* outfile, size_t indent) {
+    // printf("[DEBUG] 121 Starting output_var\n");
     if (var == NULL) {
         tac_output(indent, "Var: \"NULL\"\n");
+        // printf("[DEBUG] 122 Finished output_var with NULL\n");
         return;
     }
     if (var->type == NULL)
         tac_output(indent, "NULL\t%s\n", var->name);
     else
         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
+    // printf("[DEBUG] 123 Finished output_var\n");
 }
 void output_block(Block* block, FILE* outfile, size_t indent) {
+    // printf("[DEBUG] 124 Starting output_block\n");
     if (block == NULL) {
         tac_output(indent, "Block: \"NULL\"\n");
+        // printf("[DEBUG] 125 Finished output_block with NULL\n");
         return;
     }
     if (block->label == NULL)
@@ -526,10 +537,13 @@ void output_block(Block* block, FILE* outfile, size_t indent) {
             output_instruction(instruction, outfile, indent + 1);
         tac_output(indent, "}\n");
     }
+    // printf("[DEBUG] 126 Finished output_block\n");
 }
 void output_arg(Arg* arg, FILE* outfile) {
+    // printf("[DEBUG] 127 Starting output_arg\n");
     if (arg == NULL) {
         tac_output(0, "\"NULL\"");
+        // printf("[DEBUG] 128 Finished output_arg with NULL\n");
         return;
     }
     switch (arg->kind) {
@@ -544,10 +558,13 @@ void output_arg(Arg* arg, FILE* outfile) {
         case ARG_NONE: tac_output(0, "NONE"); break;
         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
     }
+    // printf("[DEBUG] 129 Finished output_arg\n");
 }
 void output_instruction(Instruction* instruction, FILE* outfile, size_t indent) {
+    // printf("[DEBUG] 130 Starting output_instruction\n");
     if (instruction == NULL) {
         tac_output(indent, "Instruction: \"NULL\"\n");
+        // printf("[DEBUG] 131 Finished output_instruction with NULL\n");
         return;
     }
     switch (instruction->type) {
@@ -577,7 +594,10 @@ void output_instruction(Instruction* instruction, FILE* outfile, size_t indent) 
         case INST_LOAD: tac_output(indent, "load\t"); break;
         case INST_STORE: tac_output(indent, "store\t"); break;
         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
-        default: tac_output(indent, "unknown_InstructionType: %u\n", instruction->type); return;
+        default:
+            tac_output(indent, "unknown_InstructionType: %u\n", instruction->type);
+            // printf("[DEBUG] 132 Finished output_instruction with unknown type\n");
+            return;
     }
     output_arg(instruction->arg1, outfile);
     switch (instruction->type) {
@@ -617,13 +637,17 @@ void output_instruction(Instruction* instruction, FILE* outfile, size_t indent) 
             break;
         case INST_NONE:
         default:
+            // printf("[DEBUG] 133 Finished output_instruction with unknown type\n");
             return;
     }
     tac_output(0, "\n");
+    // printf("[DEBUG] 134 Finished output_instruction\n");
 }
 void output_attribute_table(AttributeTable* attribute_table, FILE* outfile, size_t indent) {
+    // printf("[DEBUG] 135 Starting output_attribute_table\n");
     if (attribute_table == NULL) {
         tac_output(indent, "AttributeTable: \"NULL\"\n");
+        // printf("[DEBUG] 136 Finished output_attribute_table with NULL\n");
         return;
     }
     if (attribute_table->name == NULL)
@@ -640,10 +664,13 @@ void output_attribute_table(AttributeTable* attribute_table, FILE* outfile, size
             output_attribute(attribute, outfile, indent + 1);
         tac_output(indent, "}\n");
     }
+    // printf("[DEBUG] 137 Finished output_attribute_table\n");
 }
 void output_attribute(Attribute* attribute, FILE* outfile, size_t indent) {
+    // printf("[DEBUG] 138 Starting output_attribute\n");
     if (attribute == NULL) {
         tac_output(indent, "Attribute: \"NULL\"\n");
+        // printf("[DEBUG] 139 Finished output_attribute with NULL\n");
         return;
     }
     if (attribute->type == NULL)
@@ -655,4 +682,5 @@ void output_attribute(Attribute* attribute, FILE* outfile, size_t indent) {
     else
         tac_output(0, "%s ", attribute->var->name);
     tac_output(0, "%zu\n", attribute->offset);
+    // printf("[DEBUG] 140 Finished output_attribute\n");
 }

@@ -4,23 +4,29 @@
 #include "lib.h"
 
 static AttributeTable* create_attribute_table(Symbol* name) {
+    // printf("[DEBUG] 191 Starting create_attribute_table\n");
     AttributeTable* table = (AttributeTable*)alloc_memory(sizeof(AttributeTable));
     table->attributes = create_list();
     table->name = name;
     table->size = 0;
+    // printf("[DEBUG] 192 Finished create_attribute_table\n");
     return table;
 }
 static size_t get_type_size(Symbol* type) {
+    // printf("[DEBUG] 193 Starting get_type_size\n");
+    size_t result = 8;
     if (type == NULL)
-        return 0;
-    if (type == name_int || type == name_float || type == name_string)
-        return 8;
-    if (type == name_bool || type == name_void)
-        return 1;
-    if (type->kind == SYMBOL_CLASS)
-        return type->ast_node.class->size;
-    fprintf(stderr, "[warning] Unsupported type for size lookup: %s\n", type->name);
-    return 8;
+        result = 0;
+    else if (type == name_int || type == name_float || type == name_string)
+        result = 8;
+    else if (type == name_bool || type == name_void)
+        result = 1;
+    else if (type->kind == SYMBOL_CLASS)
+        result = type->ast_node.class->size;
+    else
+        fprintf(stderr, "[warning] Unsupported type for size lookup: %s\n", type->name);
+    // printf("[DEBUG] 194 Finished get_type_size\n");
+    return result;
 }
 static inline bool is_assignment_operator(OperatorType op) {
     return op == OP_ASSIGN || op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN;
@@ -51,14 +57,17 @@ static InstructionType get_instruction_type(OperatorType op) {
     }
 }
 static TAC* create_tac(void) {
+    // printf("[DEBUG] 195 Starting create_tac\n");
     TAC* tac = (TAC*)alloc_memory(sizeof(TAC));
     tac->attribute_tables = create_list();
     tac->entry_point = NULL;
     tac->global_vars = create_list();
     tac->subroutines = create_list();
+    // printf("[DEBUG] 196 Finished create_tac\n");
     return tac;
 }
 static TACStatus* create_tac_status(TAC* tac) {
+    // printf("[DEBUG] 197 Starting create_tac_status\n");
     TACStatus* status = (TACStatus*)alloc_memory(sizeof(TACStatus));
     status->tac = tac;
     status->current_subroutine = NULL;
@@ -71,38 +80,48 @@ static TACStatus* create_tac_status(TAC* tac) {
     status->temp_count = 0;
     status->block_count = 0;
     status->subroutine_count = 0;
+    // printf("[DEBUG] 198 Finished create_tac_status\n");
     return status;
 }
 static Subroutine* create_subroutine(Symbol* name, Symbol* return_type) {
+    // printf("[DEBUG] 199 Starting create_subroutine\n");
     Subroutine* subroutine = (Subroutine*)alloc_memory(sizeof(Subroutine));
     subroutine->name = name;
     subroutine->return_type = return_type;
     subroutine->parameters = create_list();
     subroutine->local_vars = create_list();
     subroutine->blocks = create_list();
+    // printf("[DEBUG] 200 Finished create_subroutine\n");
     return subroutine;
 }
 static Block* create_block(Var* label) {
+    // printf("[DEBUG] 201 Starting create_block\n");
     Block* block = (Block*)alloc_memory(sizeof(Block));
     block->label = label;
     block->instructions = create_list();
+    // printf("[DEBUG] 202 Finished create_block\n");
     return block;
 }
 static Var* search_var(Symbol* original_name, TACStatus* status) {
-    if (!list_is_empty(status->current_subroutine->local_vars)) {
+    // printf("[DEBUG] 203 Starting search_var\n");
+    if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->local_vars)) {
         list(Var*) vars = list_copy(status->current_subroutine->local_vars);
         Var* var;
         while ((var = (Var*)list_pop(vars)) != NULL) {
-            if (var->original_name == original_name)
+            if (var->original_name == original_name) {
+                // printf("[DEBUG] 204 Finished search_var with local\n");
                 return var;
+            }
         }
     }
-    if (!list_is_empty(status->current_subroutine->parameters)) {
+    if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->parameters)) {
         list(Var*) vars = list_copy(status->current_subroutine->parameters);
         Var* var;
         while ((var = (Var*)list_pop(vars)) != NULL) {
-            if (var->original_name == original_name)
+            if (var->original_name == original_name) {
+                // printf("[DEBUG] 205 Finished search_var with parameter\n");
                 return var;
+            }
         }
     }
     if (status->current_class != NULL && !list_is_empty(status->tac->attribute_tables)) {
@@ -113,8 +132,10 @@ static Var* search_var(Symbol* original_name, TACStatus* status) {
                 list(Attribute*) attributes = list_copy(table->attributes);
                 Attribute* attr;
                 while ((attr = (Attribute*)list_pop(attributes)) != NULL)
-                    if (attr->var->original_name == original_name)
+                    if (attr->var->original_name == original_name) {
+                        // printf("[DEBUG] 206 Finished search_var with attribute\n");
                         return attr->var;
+                    }
             }
         }
     }
@@ -122,17 +143,32 @@ static Var* search_var(Symbol* original_name, TACStatus* status) {
         list(Var*) vars = list_copy(status->tac->global_vars);
         Var* var;
         while ((var = (Var*)list_pop(vars)) != NULL) {
-            if (var->original_name == original_name)
+            if (var->original_name == original_name) {
+                // printf("[DEBUG] 207 Finished search_var with global\n");
                 return var;
+            }
         }
     }
+    // printf("[DEBUG] 208 Finished search_var with not found\n");
     return NULL;
 }
 static Var* create_var(Symbol* original_name, Symbol* type, VarType kind, TACStatus* status) {
-    Var* var = search_var(original_name, status);
-    if (var != NULL)
-        return var;
-    var = (Var*)alloc_memory(sizeof(Var));
+    // printf("[DEBUG] 209 Starting create_var\n");
+    if (original_name != NULL) {
+        Class* current_class = NULL;
+        if (type->kind == SYMBOL_CLASS) {
+            current_class = status->current_class;
+            status->current_class = type->ast_node.class;
+        }
+        Var* var = search_var(original_name, status);
+        if (type->kind == SYMBOL_CLASS)
+            status->current_class = current_class;
+        if (var != NULL) {
+            // printf("[DEBUG] 210 Finished create_var with existing variable\n");
+            return var;
+        }
+    }
+    Var* var = (Var*)alloc_memory(sizeof(Var));
     var->original_name = original_name;
     size_t id;
     switch (kind) {
@@ -152,9 +188,11 @@ static Var* create_var(Symbol* original_name, Symbol* type, VarType kind, TACSta
     var->type = type;
     if (kind == VAR_TEMP || kind == VAR_VAR)
         list_append(status->current_subroutine->local_vars, (pointer)var);
+    // printf("[DEBUG] 211 Finished create_var\n");
     return var;
 }
 static Attribute* create_attribute(Symbol* var, Symbol* type, AttributeTable* table, size_t offset, TACStatus* status) {
+    // printf("[DEBUG] 212 Starting create_attribute\n");
     Attribute* attr = (Attribute*)alloc_memory(sizeof(Attribute));
     attr->var = create_var(var, type, VAR_ATTR, status);
     attr->type = type;
@@ -167,17 +205,21 @@ static Attribute* create_attribute(Symbol* var, Symbol* type, AttributeTable* ta
         fprintf(stderr, "Error: create_attribute received NULL table or attributes list\n");
     else
         list_append(table->attributes, (pointer)attr);
+    // printf("[DEBUG] 213 Finished create_attribute\n");
     return attr;
 }
 static Instruction* create_instruction(InstructionType type, Arg* arg1, Arg* arg2, Arg* arg3) {
+    // printf("[DEBUG] 214 Starting create_instruction\n");
     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
     inst->type = type;
     inst->arg1 = arg1;
     inst->arg2 = arg2;
     inst->arg3 = arg3;
+    // printf("[DEBUG] 215 Finished create_instruction\n");
     return inst;
 }
 static Arg* create_arg(ArgType kind, void* value) {
+    // printf("[DEBUG] 216 Starting create_arg\n");
     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
     arg->kind = kind;
     arg->type = NULL;
@@ -219,20 +261,27 @@ static Arg* create_arg(ArgType kind, void* value) {
             break;
     }
     arg->is_get = false;
+    // printf("[DEBUG] 217 Finished create_arg\n");
     return arg;
 }
 static Arg* load_rvalue(Arg* arg, TACStatus* status) {
-    if (arg == NULL)
+    // printf("[DEBUG] 218 Starting load_rvalue\n");
+    if (arg == NULL) {
+        // printf("[DEBUG] 219 Finished load_rvalue with NULL\n");
         return NULL;
+    }
     if (arg->is_get) {
         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, arg->type, VAR_TEMP, status));
         list_append(status->current_block->instructions, (pointer)create_instruction(INST_LOAD, temp, arg, NULL));
+        // printf("[DEBUG] 220 Finished load_rvalue with load\n");
         return temp;
     }
+    // printf("[DEBUG] 221 Finished load_rvalue without load\n");
     return arg;
 }
 
 TAC* codegen_code(Code* code) {
+    // printf("[DEBUG] 141 Starting codegen_code\n");
     TAC* tac = create_tac();
     TACStatus* status = create_tac_status(tac);
 
@@ -248,9 +297,11 @@ TAC* codegen_code(Code* code) {
         else if (code_member->type == CODE_IMPORT)
             codegen_import(code_member->content.import, tac, status);
     }
+    // printf("[DEBUG] 142 Finished codegen_code\n");
     return tac;
 }
 void codegen_import(Import* import, TAC* tac, TACStatus* status) {
+    // printf("[DEBUG] 143 Starting codegen_import\n");
     if (import->name->kind == SYMBOL_VARIABLE)
         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_VAR, status));
     else if (import->name->kind == SYMBOL_FUNCTION || import->name->kind == SYMBOL_METHOD)
@@ -259,8 +310,10 @@ void codegen_import(Import* import, TAC* tac, TACStatus* status) {
         list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name));
     else
         fprintf(stderr, "[warning] Unsupported symbol kind for import: %d\n", import->name->kind);
+    // printf("[DEBUG] 144 Finished codegen_import\n");
 }
 void codegen_function(Function* function, TACStatus* status) {
+    // printf("[DEBUG] 145 Starting codegen_function\n");
     // create subroutine
     Subroutine* subroutine = create_subroutine(function->name, function->return_type);
     status->current_subroutine = subroutine;
@@ -281,8 +334,10 @@ void codegen_function(Function* function, TACStatus* status) {
         codegen_statement(statement, status);
     // reset current subroutine
     status->current_subroutine = NULL;
+    // printf("[DEBUG] 146 Finished codegen_function\n");
 }
 void codegen_method(Method* method, TACStatus* status) {
+    // printf("[DEBUG] 147 Starting codegen_method\n");
     // create subroutine
     Subroutine* subroutine = create_subroutine(method->name, method->return_type);
     status->current_subroutine = subroutine;
@@ -307,8 +362,10 @@ void codegen_method(Method* method, TACStatus* status) {
         codegen_statement(statement, status);
     // reset current subroutine
     status->current_subroutine = NULL;
+    // printf("[DEBUG] 148 Finished codegen_method\n");
 }
 void codegen_class(Class* class, TACStatus* status) {
+    // printf("[DEBUG] 149 Starting codegen_class\n");
     status->current_class = class;
     list(ClassMember*) members = list_copy(class->members);
     ClassMember* member;
@@ -330,16 +387,20 @@ void codegen_class(Class* class, TACStatus* status) {
         }
     }
     status->current_class = NULL;
+    // printf("[DEBUG] 150 Finished codegen_class\n");
 }
 void codegen_variable(Variable* variable, TACStatus* status, VarType type) {
-    Var* var = create_var(variable->name, variable->type, type, status);
+    // printf("[DEBUG] 151 Starting codegen_variable\n");
+    Var* var = NULL;
     switch (type) {
         case VAR_PARAM:
+            var = create_var(variable->name, variable->type, type, status);
             list_append(status->current_subroutine->parameters, (pointer)var);
             break;
         case VAR_VAR: break;
         case VAR_TEMP: break;
         case VAR_SUBROUTINE:
+            var = create_var(variable->name, variable->type, type, status);
             list_append(status->tac->global_vars, (pointer)var);
             break;
         case VAR_ATTR: {
@@ -353,8 +414,10 @@ void codegen_variable(Variable* variable, TACStatus* status, VarType type) {
             fprintf(stderr, "[warning] Unsupported variable type for codegen_variable: %d\n", type);
             break;
     }
+    // printf("[DEBUG] 152 Finished codegen_variable\n");
 }
 void codegen_statement(Statement* statement, TACStatus* status) {
+    // printf("[DEBUG] 153 Starting codegen_statement\n");
     switch (statement->type) {
         case EXPRESSION_STATEMENT: codegen_expression(statement->stmt.expr, status); break;
         case VARIABLE_STATEMENT: codegen_variable(statement->stmt.var, status, VAR_VAR); break;
@@ -362,9 +425,10 @@ void codegen_statement(Statement* statement, TACStatus* status) {
         case WHILE_STATEMENT: codegen_while(statement->stmt.while_stmt, status); break;
         case FOR_STATEMENT: codegen_for(statement->stmt.for_stmt, status); break;
         case RETURN_STATEMENT: {
-            Arg* return_value = codegen_expression(statement->stmt.return_expr, status);
-            Instruction* inst = create_instruction(INST_RET, return_value, NULL, NULL);
-            list_append(status->current_block->instructions, (pointer)inst);
+            Arg* return_value = create_arg(ARG_VOID, NULL);
+            if (statement->stmt.return_expr != NULL)
+                return_value = codegen_expression(statement->stmt.return_expr, status);
+            list_append(status->current_block->instructions, (pointer)create_instruction(INST_RET, return_value, NULL, NULL));
             break;
         }
         case BREAK_STATEMENT:
@@ -393,8 +457,10 @@ void codegen_statement(Statement* statement, TACStatus* status) {
             fprintf(stderr, "[warning] Unsupported statement type for codegen_statement: %d\n", statement->type);
             break;
     }
+    // printf("[DEBUG] 154 Finished codegen_statement\n");
 }
 void codegen_if(If* if_, TACStatus* status) {
+    // printf("[DEBUG] 155 Starting codegen_if\n");
     // create labels
     Var* then_label = create_var(NULL, NULL, VAR_BLOCK, status);
     Var* else_label = create_var(NULL, NULL, VAR_BLOCK, status);
@@ -472,8 +538,10 @@ void codegen_if(If* if_, TACStatus* status) {
     Block* end_block = create_block(end_label);
     list_append(status->current_subroutine->blocks, (pointer)end_block);
     status->current_block = end_block;
+    // printf("[DEBUG] 156 Finished codegen_if\n");
 }
 void codegen_for(For* for_, TACStatus* status) {
+    // printf("[DEBUG] 157 Starting codegen_for\n");
     // execute initializer
     if (for_->initializer != NULL)
         codegen_variable(for_->initializer, status, VAR_VAR);
@@ -534,8 +602,10 @@ void codegen_for(For* for_, TACStatus* status) {
     Block* end_block = create_block(end_label);
     list_append(status->current_subroutine->blocks, (pointer)end_block);
     status->current_block = end_block;
+    // printf("[DEBUG] 158 Finished codegen_for\n");
 }
 void codegen_while(While* while_, TACStatus* status) {
+    // printf("[DEBUG] 159 Starting codegen_while\n");
     // add condition check block
     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
     Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, condition_label), NULL, NULL);
@@ -569,10 +639,15 @@ void codegen_while(While* while_, TACStatus* status) {
     Block* end_block = create_block(end_label);
     list_append(status->current_subroutine->blocks, (pointer)end_block);
     status->current_block = end_block;
+    // printf("[DEBUG] 160 Finished codegen_while\n");
 }
 Arg* codegen_expression(Expression* expression, TACStatus* status) {
-    if (expression->operator == OP_NONE)
-        return codegen_primary(expression->prim_left, status);
+    // printf("[DEBUG] 161 Starting codegen_expression\n");
+    if (expression->operator == OP_NONE) {
+        Arg* result = codegen_primary(expression->prim_left, status);
+        // printf("[DEBUG] 162 Finished codegen_expression\n");
+        return result;
+    }
     Arg* right = load_rvalue(codegen_expression(expression->right, status), status);
     InstructionType op = get_instruction_type(expression->operator);
     Arg* left = codegen_expression(expression->expr_left, status);
@@ -595,33 +670,43 @@ Arg* codegen_expression(Expression* expression, TACStatus* status) {
         right = temp;
     }
     list_append(status->current_block->instructions, (pointer)inst);
+    // printf("[DEBUG] 163 Finished codegen_expression\n");
     return right;
 }
 Arg* codegen_primary(Primary* primary, TACStatus* status) {
+    // printf("[DEBUG] 164 Starting codegen_primary\n");
     switch (primary->type) {
         case PRIM_INTEGER: {
             long long t = strtoll(primary->value.literal_value, NULL, 10);
+            // printf("[DEBUG] 165 Finished codegen_primary\n");
             return create_arg(ARG_INT, &t);
         }
         case PRIM_FLOAT: {
             double t = strtod(primary->value.literal_value, NULL);
             return create_arg(ARG_FLOAT, &t);
         }
-        case PRIM_STRING: return create_arg(ARG_STRING, primary->value.literal_value);
+        case PRIM_STRING:
+            // printf("[DEBUG] 166 Finished codegen_primary\n");
+            return create_arg(ARG_STRING, primary->value.literal_value);
         case PRIM_TRUE: {
             bool t = true;
+            // printf("[DEBUG] 167 Finished codegen_primary\n");
             return create_arg(ARG_BOOL, &t);
         }
         case PRIM_FALSE: {
             bool t = false;
+            // printf("[DEBUG] 168 Finished codegen_primary\n");
             return create_arg(ARG_BOOL, &t);
         }
-        case PRIM_EXPRESSION: return codegen_expression(primary->value.expr, status);
+        case PRIM_EXPRESSION:
+            // printf("[DEBUG] 169 Starting codegen_primary\n");
+            return codegen_expression(primary->value.expr, status);
         case PRIM_NOT_OPERAND: {
             Arg* operand = load_rvalue(codegen_primary(primary->value.operand, status), status);
             Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, name_bool, VAR_TEMP, status));
             Instruction* inst = create_instruction(INST_NOT, temp, operand, NULL);
             list_append(status->current_block->instructions, (pointer)inst);
+            // printf("[DEBUG] 170 Finished codegen_primary\n");
             return temp;
         }
         case PRIM_NEG_OPERAND: {
@@ -636,36 +721,50 @@ Arg* codegen_primary(Primary* primary, TACStatus* status) {
                 inst = create_instruction(INST_MUL, temp, create_arg(ARG_FLOAT, &neg_one_float), operand);
             else {
                 fprintf(stderr, "[warning] Unsupported type for negation: %s\n", operand->type->name);
+                // printf("[DEBUG] 171 Finished codegen_primary with error\n");
                 return NULL;
             }
             list_append(status->current_block->instructions, (pointer)inst);
+            // printf("[DEBUG] 172 Finished codegen_primary\n");
             return temp;
         }
-        case PRIM_VARIABLE_ACCESS: return codegen_variable_access(primary->value.var, status);
+        case PRIM_VARIABLE_ACCESS:
+            // printf("[DEBUG] 173 Starting codegen_primary\n");
+            return codegen_variable_access(primary->value.var, status);
         default:
             fprintf(stderr, "[warning] Unsupported primary type for codegen_primary: %d\n", primary->type);
+            // printf("[DEBUG] 174 Finished codegen_primary with error\n");
             return NULL;
     }
 }
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status) {
+    // printf("[DEBUG] 175 Starting codegen_variable_access\n");
     if (variable_access->type == VAR_NAME && variable_access->content.name != NULL) {
-        if (variable_access->content.name->kind != SYMBOL_FUNCTION && variable_access->content.name->kind != SYMBOL_METHOD)
-            return create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status));
-        else
-            return create_arg(ARG_SUBROUTINE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_SUBROUTINE, status));
+        if (variable_access->content.name->kind != SYMBOL_FUNCTION && variable_access->content.name->kind != SYMBOL_METHOD) {
+            Arg* result = create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status));
+            // printf("[DEBUG] 176 Finished codegen_variable_access\n");
+            return result;
+        } else {
+            Arg* result = create_arg(ARG_SUBROUTINE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_SUBROUTINE, status));
+            // printf("[DEBUG] 177 Finished codegen_variable_access\n");
+            return result;
+        }
     }
     if (variable_access->base == NULL) {
         fprintf(stderr, "[warning] Unsupported variable access with NULL base\n");
+        // printf("[DEBUG] 178 Finished codegen_variable_access with error\n");
         return NULL;
     }
     Arg* base = load_rvalue(codegen_variable_access(variable_access->base, status), status);
     if (base == NULL) {
         fprintf(stderr, "[warning] Failed to generate variable access for base\n");
+        // printf("[DEBUG] 179 Finished codegen_variable_access with error\n");
         return NULL;
     }
     if (variable_access->type == VAR_GET_ATTR) {
         if (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
             fprintf(stderr, "[warning] Attempting to access attribute of non-object type: %s\n", base->type->name);
+            // printf("[DEBUG] 180 Finished codegen_variable_access with error\n");
             return NULL;
         }
         SymbolTable* scope = base->type->ast_node.scope;
@@ -674,37 +773,44 @@ Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status)
         Symbol* attr = search_name_use_strcmp(scope, variable_access->content.attr_name->name);
         if (attr == NULL) {
             fprintf(stderr, "[warning] Attribute '%s' not found in type '%s'\n", variable_access->content.attr_name->name, base->type->name);
+            // printf("[DEBUG] 181 Finished codegen_variable_access with error\n");
             return NULL;
         }
         if (attr->kind == SYMBOL_METHOD || attr->kind == SYMBOL_FUNCTION)
             return create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
         if (attr->kind != SYMBOL_ATTRIBUTE) {
             fprintf(stderr, "[warning] Symbol '%s' in type '%s' is not an attribute\n", variable_access->content.attr_name->name, base->type->name);
+            // printf("[DEBUG] 182 Finished codegen_variable_access with error\n");
             return NULL;
         }
-        Arg* temp = create_arg(ARG_VARIABLE, create_var(attr, attr->type, VAR_TEMP, status));
-        Instruction* inst = create_instruction(INST_GET_ATTR, temp, base, create_arg(ARG_STRING, variable_access->content.attr_name->name));
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, attr->type, VAR_TEMP, status));
+        Instruction* inst = create_instruction(INST_GET_ATTR, temp, base, create_arg(ARG_VARIABLE, create_var(variable_access->content.attr_name, variable_access->content.attr_name->type, VAR_ATTR, status)));
         temp->is_get = true;
         list_append(status->current_block->instructions, (pointer)inst);
+        // printf("[DEBUG] 183 Finished codegen_variable_access\n");
         return temp;
     } else if (variable_access->type == VAR_GET_SEQ) {
         if (base->type->kind != SYMBOL_VARIABLE && base->type->kind != SYMBOL_PARAM && base->type->kind != SYMBOL_ATTRIBUTE) {
             fprintf(stderr, "[warning] Attempting to index non-array type: %s\n", base->type->name);
+            // printf("[DEBUG] 184 Finished codegen_variable_access with error\n");
             return NULL;
         }
         if (strcmp(base->type->name, "arr") != 0) {
             fprintf(stderr, "[warning] Attempting to index non-array type: %s\n", base->type->name);
+            // printf("[DEBUG] 185 Finished codegen_variable_access with error\n");
             return NULL;
         }
         Arg* index = load_rvalue(codegen_expression(variable_access->content.index, status), status);
         if (index == NULL) {
             fprintf(stderr, "[warning] Failed to generate variable access for index\n");
+            // printf("[DEBUG] 186 Finished codegen_variable_access with error\n");
             return NULL;
         }
         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type->type, VAR_TEMP, status));
         Instruction* inst = create_instruction(INST_GET_ELEM, temp, base, index);
         temp->is_get = true;
         list_append(status->current_block->instructions, (pointer)inst);
+        // printf("[DEBUG] 187 Finished codegen_variable_access\n");
         return temp;
     } else if (variable_access->type == VAR_FUNC_CALL) {
         if (base->kind == ARG_VARIABLE && base->type->kind == SYMBOL_CLASS) {
@@ -713,6 +819,7 @@ Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status)
         }
         if (base->kind != ARG_SUBROUTINE) {
             fprintf(stderr, "[warning] Attempting to call non-function, kind: %u, type name: %s\n", base->kind, base->type->name);
+            // printf("[DEBUG] 188 Finished codegen_variable_access with error\n");
             return NULL;
         }
         list(Expression*) args = list_copy(variable_access->content.args);
@@ -728,9 +835,11 @@ Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status)
         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type, VAR_TEMP, status));
         Instruction* inst = create_instruction(INST_CALL, temp, base, create_arg(ARG_INT, &arg_count));
         list_append(status->current_block->instructions, (pointer)inst);
+        // printf("[DEBUG] 189 Finished codegen_variable_access\n");
         return temp;
     } else {
         fprintf(stderr, "[warning] Unsupported variable access type for codegen_variable_access: %u\n", variable_access->type);
+        // printf("[DEBUG] 190 Finished codegen_variable_access with error\n");
         return NULL;
     }
 }
