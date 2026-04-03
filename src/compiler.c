@@ -1,8 +1,8 @@
 #include "compiler.h"
 
-#include "codegen.h"
 #include "helper.h"
 #include "lexer.h"
+#include "tac.h"
 
 string read_source(FILE* file, size_t* length) {
     fseek(file, 0, SEEK_END);
@@ -111,14 +111,14 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
         }
     }
     if (o_tac) {
-        change_file_extension(file, create_string(".ir", 3));
+        change_file_extension(file, create_string(".tac", 4));
         string out_tac_name = get_full_path(file);
         change_file_extension(file, create_string(".tc", 3));
         FILE* out_tac_file = fopen(out_tac_name, "w");
         if (out_tac_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_tac_name);
         else {
-            TAC* tac = codegen_code(ast);
+            TAC* tac = tac_code(ast);
             output_tac(out_tac_file, tac);
             fclose(out_tac_file);
         }
