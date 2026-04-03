@@ -428,7 +428,7 @@ void output_TAC(TAC* tac, FILE* outfile, size_t indent) {
     else {
         tac_output(indent + 1, "designs: [\n");
         AttributeTable* attribute_table;
-        while ((attribute_table = (AttributeTable*)list_pop(tac->attribute_tables)) == NULL)
+        while ((attribute_table = (AttributeTable*)list_pop(tac->attribute_tables)) != NULL)
             output_attribute_table(attribute_table, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -441,7 +441,7 @@ void output_TAC(TAC* tac, FILE* outfile, size_t indent) {
     else {
         tac_output(indent + 1, "global: [\n");
         Var* var;
-        while ((var = (Var*)list_pop(tac->global_vars)) == NULL)
+        while ((var = (Var*)list_pop(tac->global_vars)) != NULL)
             output_var(var, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -450,7 +450,7 @@ void output_TAC(TAC* tac, FILE* outfile, size_t indent) {
     else {
         tac_output(indent + 1, "subroutines: [\n");
         Subroutine* subroutine;
-        while ((subroutine = (Subroutine*)list_pop(tac->subroutines)) == NULL)
+        while ((subroutine = (Subroutine*)list_pop(tac->subroutines)) != NULL)
             output_subroutine(subroutine, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -474,7 +474,7 @@ void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent) {
     else {
         tac_output(indent + 1, "parameters: [\n");
         Var* parameter;
-        while ((parameter = (Var*)list_pop(subroutine->parameters)) == NULL)
+        while ((parameter = (Var*)list_pop(subroutine->parameters)) != NULL)
             output_var(parameter, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -483,7 +483,7 @@ void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent) {
     else {
         tac_output(indent + 1, "local: [\n");
         Var* var;
-        while ((var = (Var*)list_pop(subroutine->local_vars)) == NULL)
+        while ((var = (Var*)list_pop(subroutine->local_vars)) != NULL)
             output_var(var, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -492,7 +492,7 @@ void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent) {
     else {
         tac_output(indent + 1, "instructions: [\n");
         Block* block;
-        while ((block = (Block*)list_pop(subroutine->blocks)) == NULL)
+        while ((block = (Block*)list_pop(subroutine->blocks)) != NULL)
             output_block(block, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -522,17 +522,13 @@ void output_block(Block* block, FILE* outfile, size_t indent) {
     else {
         tac_output(0, "{\n");
         Instruction* instruction;
-        while ((instruction = (Instruction*)list_pop(block->instructions)) == NULL)
+        while ((instruction = (Instruction*)list_pop(block->instructions)) != NULL)
             output_instruction(instruction, outfile, indent + 1);
         tac_output(indent, "}\n");
     }
 }
 void output_arg(Arg* arg, FILE* outfile) {
     if (arg == NULL) {
-        tac_output(0, "\"NULL\"");
-        return;
-    }
-    if (arg->value.variable == NULL) {
         tac_output(0, "\"NULL\"");
         return;
     }
@@ -600,7 +596,6 @@ void output_instruction(Instruction* instruction, FILE* outfile, size_t indent) 
         case INST_OR:
         case INST_GET_ATTR:
         case INST_GET_ELEM:
-        case INST_ALLOC:
         case INST_JMP_C:
         case INST_CALL:
             tac_output(0, " ");
@@ -611,6 +606,7 @@ void output_instruction(Instruction* instruction, FILE* outfile, size_t indent) 
         case INST_NOT:
         case INST_ASSIGN:
         case INST_PARAM:
+        case INST_ALLOC:
         case INST_LOAD:
         case INST_STORE:
             tac_output(0, " ");
@@ -640,7 +636,7 @@ void output_attribute_table(AttributeTable* attribute_table, FILE* outfile, size
     else {
         tac_output(0, "{\n");
         Attribute* attribute;
-        while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) == NULL)
+        while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
             output_attribute(attribute, outfile, indent + 1);
         tac_output(indent, "}\n");
     }
@@ -654,9 +650,9 @@ void output_attribute(Attribute* attribute, FILE* outfile, size_t indent) {
         tac_output(indent, "NULL\t");
     else
         tac_output(indent, "%s\t", attribute->type->name);
-    if (attribute->var_name == NULL)
+    if (attribute->var == NULL)
         tac_output(0, "NULL ");
     else
-        tac_output(0, "%s ", attribute->var_name->name);
+        tac_output(0, "%s ", attribute->var->name);
     tac_output(0, "%zu\n", attribute->offset);
 }

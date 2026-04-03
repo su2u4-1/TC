@@ -90,7 +90,7 @@ typedef struct AttributeTable {
     size_t size;
 } AttributeTable;
 typedef struct Attribute {
-    Symbol* var_name;
+    Var* var;
     Symbol* type;
     size_t offset;
 } Attribute;
@@ -98,6 +98,7 @@ typedef struct TACStatus {
     TAC* tac;
     Subroutine* current_subroutine;
     Block* current_block;
+    Class* current_class;
     list(Arg*) end_labels;
     list(Arg*) start_labels;
     size_t attr_count;
@@ -133,6 +134,6 @@ Arg* codegen_expression(Expression* expression, TACStatus* status);
 Arg* codegen_primary(Primary* primary, TACStatus* status);
 Arg* codegen_variable_access(VariableAccess* variable_access, TACStatus* status);
 
-void output_TAC(TAC* code, FILE* outfile, size_t indent);
+void output_TAC(TAC* tac, FILE* outfile, size_t indent);
 
 #endif  // CODEGEN_H

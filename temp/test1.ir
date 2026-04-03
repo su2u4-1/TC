@@ -1,6 +1,6 @@
 TAC {
     designs: [
-        Test1 4 {
+        Test1 8 {
             int a0 0
         }
     ]
@@ -19,11 +19,11 @@ TAC {
             ]
             instructions: [
                 b0 {
-                    alloc    t0 Test1 4
+                    alloc    t0 8
                     get_attr t1 t0 a0
                     store    t1 10
-                    param    4 t0
-                    param    4 p0
+                    param    8 t0
+                    param    8 p0
                     call     t2 Test1.init 2
                     ret      t2
                 }
@@ -91,21 +91,21 @@ TAC {
             instructions: [
                 b4 {
                     // var Test1 t = Test1(5);
-                    param  4 5
+                    param  8 5
                     call   v0 Test1.constructor 1
                     // print(t.get_a());
-                    param  4 v0
+                    param  8 v0
                     call   t6 Test1.get_a 1
-                    param  4 t6
+                    param  8 t6
                     call   void print 1
                     // t.set_a(20);
-                    param  4 v0
-                    param  4 20
+                    param  8 v0
+                    param  8 20
                     call   void Test1.set_a 2
                     // print(t.get_a());
-                    param  4 v0
+                    param  8 v0
                     call   t7 Test1.get_a 1
-                    param  4 t7
+                    param  8 t7
                     call   void print 1
                     // var float _abc123 = 30.5;
                     assign v1 30.5

@@ -11,6 +11,7 @@ typedef struct Parser {
     File* source_file;
     bool in_function;
     bool in_method;
+    bool in_class;
     bool in_loop;
 } Parser;
 

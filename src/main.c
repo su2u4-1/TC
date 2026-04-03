@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
     }
     string filename = argv[1];
 
-    parse_file(filename, true, true);
+    parse_file(filename, true, true, true);
 
     return 0;
 }

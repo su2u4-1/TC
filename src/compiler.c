@@ -1,5 +1,6 @@
 #include "compiler.h"
 
+#include "codegen.h"
 #include "helper.h"
 #include "lexer.h"
 
@@ -60,13 +61,16 @@ void output_token(FILE* file, Lexer* lexer) {
     }
     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 }
-void output_ast(FILE* file, Lexer* lexer, Parser* parser) {
-    Code* ast_root = parse_code(lexer, builtin_scope, parser);
+void output_ast(FILE* file, Code* ast) {
     char indent_has_next[32];
-    output_code(ast_root, file, 0, indent_has_next);
+    output_code(ast, file, 0, indent_has_next);
     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 }
-void parse_file(const string name, bool o_token, bool o_ast) {
+void output_tac(FILE* file, TAC* tac) {
+    output_TAC(tac, file, 0);
+    fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+}
+void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
     File* file = create_file(name);
     string filename = get_full_path(file);
     size_t length = 0;
@@ -91,6 +95,9 @@ void parse_file(const string name, bool o_token, bool o_ast) {
     }
     reset_lexer(lexer);
     Parser* parser = create_parser(file);
+    Code* ast = NULL;
+    if (o_ast || o_tac)
+        ast = parse_code(lexer, builtin_scope, parser);
     if (o_ast) {
         change_file_extension(file, create_string(".ast", 4));
         string out_ast_name = get_full_path(file);
@@ -99,8 +106,21 @@ void parse_file(const string name, bool o_token, bool o_ast) {
         if (out_ast_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
         else {
-            output_ast(out_ast_file, lexer, parser);
+            output_ast(out_ast_file, ast);
             fclose(out_ast_file);
+        }
+    }
+    if (o_tac) {
+        change_file_extension(file, create_string(".ir", 3));
+        string out_tac_name = get_full_path(file);
+        change_file_extension(file, create_string(".tc", 3));
+        FILE* out_tac_file = fopen(out_tac_name, "w");
+        if (out_tac_file == NULL)
+            fprintf(stderr, "Error opening file: %s\n", out_tac_name);
+        else {
+            TAC* tac = codegen_code(ast);
+            output_tac(out_tac_file, tac);
+            fclose(out_tac_file);
         }
     }
 }

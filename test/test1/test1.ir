@@ -1,0 +1,124 @@
+TAC {
+    designs: [
+        Test1 16 {
+            int	a 8
+        }
+    ]
+    entry_point: main
+    global: [
+        void	$f0
+    ]
+    subroutines: [
+        Test1.init {
+            return_type: Test1
+            parameters: [
+                Test1	$p0
+                int	$p1
+            ]
+            local: [
+                int	$v0
+                Test1	$v1
+                int	$t0
+                Test1	$v2
+            ]
+            instructions: [
+                $b0 {
+                    get_attr	$t0 $v1 a
+                    store	$t0 $v0
+                    ret	$v2
+                }
+            ]
+        }
+        Test1.get_a {
+            return_type: int
+            parameters: [
+                Test1	$p2
+            ]
+            local: [
+                Test1	$v3
+                int	$t1
+            ]
+            instructions: [
+                $b1 {
+                    get_attr	$t1 $v3 a
+                    ret	$t1
+                }
+            ]
+        }
+        Test1.set_a {
+            return_type: void
+            parameters: [
+                Test1	$p3
+                int	$p4
+            ]
+            local: [
+                int	$v4
+                Test1	$v5
+                int	$t2
+            ]
+            instructions: [
+                $b2 {
+                    get_attr	$t2 $v5 a
+                    store	$t2 $v4
+                }
+            ]
+        }
+        Test1.$constructor {
+            return_type: Test1
+            parameters: [
+                Test1	$p5
+                int	$p6
+            ]
+            local: [
+                Test1	$t3
+                int	$v6
+                Test1	$v7
+                int	$v8
+                Test1	$t4
+            ]
+            instructions: [
+                $b3 {
+                    alloc	$t3 8
+                    assign	$v6 10
+                    param	8 $v7
+                    param	8 $v8
+                    call	$t4 $f1 2
+                    ret	$t4
+                }
+            ]
+        }
+        main {
+            return_type: int
+            parameters: []
+            local: [
+                Test1	$v9
+                Test1	$v10
+                int	$t5
+                void	$t6
+                Test1	$v11
+                void	$t7
+                Test1	$v12
+                int	$t8
+                void	$t9
+                float	$v13
+                int	$v14
+            ]
+            instructions: [
+                $b4 {
+                    call	$t5 $f3 0
+                    param	8 $t5
+                    call	$t6 $f2 1
+                    param	8 20
+                    call	$t7 $f4 1
+                    call	$t8 $f6 0
+                    param	8 $t8
+                    call	$t9 $f5 1
+                    ret	0
+                }
+            ]
+        }
+    ]
+}
+
+info by lib:
+    Platform: 2, Structure Memory Used: 23848/24576 bytes, String Memory Used: 4207/5120 bytes, stringCount: 178, Memory Block Count: 963

@@ -285,7 +285,9 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
             token = get_next_token(lexer, true);
+            parser->in_class = true;
             Variable* variable = parse_variable(lexer, class_scope, parser);
+            parser->in_class = false;
             if (variable == NULL)
                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
             ClassMember* member = create_class_member(CLASS_VARIABLE, NULL, variable);
@@ -375,7 +377,7 @@ Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     token = get_next_token(lexer, true);
     if (token->type != IDENTIFIER)
         parser_error("Expected variable name", token, get_full_path(parser->source_file));
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_VARIABLE, type, now_scope);
+    Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
     Expression* value = NULL;
     token = peek_next_token(lexer, true);
     if (token->type == SYMBOL && string_equal(token->lexeme, ASSIGN_SYMBOL)) {
