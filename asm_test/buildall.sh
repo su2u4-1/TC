@@ -3,16 +3,16 @@
 rm -rf asm_test/fake_std 2>/dev/null
 mkdir -p asm_test/fake_std
 mkdir -p asm_test/i
-mkdir -p asm_test/win/O0/s
-mkdir -p asm_test/win/O0/commentS
-mkdir -p asm_test/win/O1/s
-mkdir -p asm_test/win/O1/commentS
-mkdir -p asm_test/win/O2/s
-mkdir -p asm_test/win/O2/commentS
-mkdir -p asm_test/win/O3/s
-mkdir -p asm_test/win/O3/commentS
-mkdir -p asm_test/win/Os/s
-mkdir -p asm_test/win/Os/commentS
+mkdir -p asm_test/wsl/O0/s
+mkdir -p asm_test/wsl/O0/commentS
+mkdir -p asm_test/wsl/O1/s
+mkdir -p asm_test/wsl/O1/commentS
+mkdir -p asm_test/wsl/O2/s
+mkdir -p asm_test/wsl/O2/commentS
+mkdir -p asm_test/wsl/O3/s
+mkdir -p asm_test/wsl/O3/commentS
+mkdir -p asm_test/wsl/Os/s
+mkdir -p asm_test/wsl/Os/commentS
 
 HEADERS=(assert.h ctype.h stdio.h stdlib.h string.h direct.h unistd.h)
 

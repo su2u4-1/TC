@@ -577,7 +577,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
     if (source == NULL) {
         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
         sprintf(temp_import_name, "%s.tc", import_name);
-        filename = absolute_path(temp_import_name, "D:/TC/std/");
+        filename = absolute_path(temp_import_name, "/home/su2u4/code/TC/std/");
     } else
         filename = absolute_path(source, get_file_dir(source_file));
     openfile = fopen(filename, "r");
