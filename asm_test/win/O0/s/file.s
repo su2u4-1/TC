@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\file.c"
+	.file	"file.c"
 	.text
 	.globl	get_cwd
 	.def	get_cwd;	.scl	2;	.type	32;	.endef
@@ -44,7 +44,7 @@ create_file:
 absolute_path:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$64, %rsp
+	subq	$80, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	16(%rbp), %rax
@@ -169,9 +169,12 @@ absolute_path:
 	cmpb	$47, %al
 	jne	.L11
 	movq	16(%rbp), %rax
-	addq	$1, %rax
-	movzbl	(%rax), %eax
-	subl	$32, %eax
+	movzbl	1(%rax), %eax
+	movb	%al, -17(%rbp)
+	call	__locale_ctype_ptr
+	movsbl	-17(%rbp), %eax
+	movl	%eax, %ecx
+	call	toupper
 	movl	%eax, %edx
 	movq	16(%rbp), %rax
 	movb	%dl, (%rax)
@@ -224,23 +227,23 @@ absolute_path:
 	movq	-8(%rbp), %rdx
 	addq	%rdx, %rax
 	addq	$2, %rax
-	movq	%rax, -24(%rbp)
-	movq	-24(%rbp), %rax
+	movq	%rax, -32(%rbp)
+	movq	-32(%rbp), %rax
 	movq	%rax, %rdx
 	leaq	.LC0(%rip), %rax
 	movq	%rax, %rcx
 	call	create_string_not_check
-	movq	%rax, -32(%rbp)
+	movq	%rax, -40(%rbp)
 	movq	16(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-32(%rbp), %rax
+	movq	-40(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rdx, %r8
 	leaq	.LC1(%rip), %rdx
 	movq	%rax, %rcx
 	call	sprintf
-	movq	-24(%rbp), %rdx
-	movq	-32(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	-40(%rbp), %rax
 	movq	%rax, %rcx
 	call	create_string
 	movl	$0, %edx
@@ -996,6 +999,8 @@ normalize_path:
 	.def	strlen;	.scl	2;	.type	32;	.endef
 	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
 	.def	memmove;	.scl	2;	.type	32;	.endef
+	.def	__locale_ctype_ptr;	.scl	2;	.type	32;	.endef
+	.def	toupper;	.scl	2;	.type	32;	.endef
 	.def	sprintf;	.scl	2;	.type	32;	.endef
 	.def	create_string;	.scl	2;	.type	32;	.endef
 	.def	strcmp;	.scl	2;	.type	32;	.endef

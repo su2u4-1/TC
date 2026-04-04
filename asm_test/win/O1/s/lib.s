@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\lib.c"
+	.file	"lib.c"
 	.text
 	.section .rdata,"dr"
 	.align 8
@@ -71,7 +71,7 @@ increase_memory_size:
 .LC1:
 	.ascii "struct_memory->used % ALIGN_SIZE == 0\0"
 .LC2:
-	.ascii "D:\\TC\\src\\lib.c\0"
+	.ascii "D:/TC/src/lib.c\0"
 	.text
 	.globl	alloc_memory
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef

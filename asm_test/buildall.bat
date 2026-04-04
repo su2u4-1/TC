@@ -1,7 +1,18 @@
 @echo off
 
-rmdir /s /q asm_test/fake_std 2>nul
-mkdir asm_test/fake_std
+rmdir /s /q asm_test\fake_std 2>nul
+mkdir asm_test\fake_std
+mkdir asm_test\i
+mkdir asm_test\win\O0\s
+mkdir asm_test\win\O0\commentS
+mkdir asm_test\win\O1\s
+mkdir asm_test\win\O1\commentS
+mkdir asm_test\win\O2\s
+mkdir asm_test\win\O2\commentS
+mkdir asm_test\win\O3\s
+mkdir asm_test\win\O3\commentS
+mkdir asm_test\win\Os\s
+mkdir asm_test\win\Os\commentS
 
 set HEADERS=assert.h ctype.h stdio.h stdlib.h string.h direct.h unistd.h
 
@@ -11,7 +22,7 @@ for %%h in (%HEADERS%) do (
         echo #define FAKE_%%~nh
         echo static int Fake_%%~nh = 0;
         echo #endif
-    ) > asm_test/fake_std/%%h
+    ) > asm_test\fake_std\%%h
 )
 
 echo Fake headers created.
@@ -27,7 +38,7 @@ gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/output.c"
 gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/parser.c" -o "./asm_test/i/parser.i"
 gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/tac.c" -o "./asm_test/i/tac.i"
 
-for %%f in (asm_test/i/*.i) do (
+for %%f in (asm_test\i\*.i) do (
     echo Restoring %%f ...
 
     for %%h in (%HEADERS%) do (
@@ -37,7 +48,7 @@ for %%f in (asm_test/i/*.i) do (
 
 echo All .i files restored.
 
-rmdir /s /q asm_test/fake_std
+rmdir /s /q asm_test\fake_std
 
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -I"include" "D:/TC/src/compiler.c" -o "./asm_test/win/O0/s/compiler.s"
 gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protection=none -fno-plt -O0 -I"include" "D:/TC/src/create.c" -o "./asm_test/win/O0/s/create.s"
@@ -155,7 +166,7 @@ gcc -Wall -S -fno-asynchronous-unwind-tables -fno-stack-protector -fcf-protectio
 echo .S files with comments created for Os.
 
 for %%O in (O0 O1 O2 O3 Os) do (
-    for /r %%F in (%%O/commentS/*.S) do (
+    for %%F in (asm_test\win\%%O\commentS\*.S) do (
         powershell -Command "(Get-Content '%%F') -replace '#',';' | Set-Content '%%F'"
     )
 )

@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\lexer.c"
+	.file	"lexer.c"
 	.text
 	.def	get_current_char;	.scl	3;	.type	32;	.endef
 get_current_char:
@@ -70,7 +70,7 @@ lexer_error:
 .LC3:
 	.ascii "c != '\\0'\0"
 .LC4:
-	.ascii "D:\\TC\\src\\lexer.c\0"
+	.ascii "D:/TC/src/lexer.c\0"
 .LC5:
 	.ascii "Unterminated comment\0"
 .LC6:

@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\main.c"
+	.file	"main.c"
 	.text
 	.def	__main;	.scl	2;	.type	32;	.endef
 	.section .rdata,"dr"
@@ -32,6 +32,7 @@ main:
 	movq	8(%rax), %rax
 	movq	%rax, -24(%rbp)
 	movq	-24(%rbp), %rax
+	movl	$1, %r9d
 	movl	$1, %r8d
 	movl	$1, %edx
 	movq	%rax, %rcx

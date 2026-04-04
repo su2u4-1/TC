@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\main.c"
+	.file	"main.c"
 	.text
 	.def	__main;	.scl	2;	.type	32;	.endef
 	.section .rdata,"dr"
@@ -27,6 +27,7 @@ main:
 	jmp	.L1
 .L2:
 	movq	8(%rbx), %rcx
+	movl	$1, %r9d
 	movl	$1, %r8d
 	movl	$1, %edx
 	call	parse_file

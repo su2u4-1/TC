@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -308,7 +309,7 @@ struct Symbol {
 typedef struct Lexer Lexer;
 typedef struct Parser Parser;
 Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser);
+void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
 CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content);
 Code* create_code(List* members, SymbolTable* global_scope);
 Import* create_import(Symbol* name, string source);

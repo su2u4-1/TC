@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\create.c"
+	.file	"create.c"
 	.text
 	.section .rdata,"dr"
 	.align 8

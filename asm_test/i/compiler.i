@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -94,12 +95,14 @@ char string_equal(string a, string b);
 string get_info(void);
 typedef struct Token Token;
 typedef struct Lexer Lexer;
-typedef struct Parser Parser;
+typedef struct TAC TAC;
+typedef struct Code Code;
 string read_source(FILE* file, size_t* length);
 void output_one_token(FILE* file, Token* token);
 void output_token(FILE* file, Lexer* lexer);
-void output_ast(FILE* file, Lexer* lexer, Parser* parser);
-void parse_file(const string name, char o_token, char o_ast);
+void output_ast(FILE* file, Code* ast);
+void output_tac(FILE* file, TAC* tac);
+void parse_file(const string name, char o_token, char o_ast, char o_tac);
 typedef struct StrNode StrNode;
 struct StrNode {
     string dir;
@@ -336,13 +339,13 @@ struct Symbol {
 typedef struct Lexer Lexer;
 typedef struct Parser Parser;
 Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser);
+void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
 typedef struct Parser {
     File* source_file;
     char in_function;
     char in_method;
+    char in_class;
     char in_loop;
-    char indent_has_next[32];
 } Parser;
 typedef struct Token Token;
 List* create_list(void);
@@ -357,7 +360,8 @@ Symbol* search_name(SymbolTable* scope, string name);
 Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
 char is_builtin_type(string type);
 void parser_error(const string message, Token* token, string file_name);
-void indention(FILE* out, size_t indent, char is_last, Parser* parser);
+void indention(FILE* out, size_t indent, char is_last, char indent_has_next[32]);
+void indention_tac(FILE* out, size_t indent);
 Parser* create_parser(File* file);
 Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
 string make_method_name(string class_name, string method_name);
@@ -396,6 +400,135 @@ Token* get_next_token(Lexer* lexer, char skip_comment);
 Token* peek_next_token(Lexer* lexer, char skip_comment);
 void reset_lexer(Lexer* lexer);
 Token* peek_current_token(Lexer* lexer);
+typedef struct TAC {
+    List* attribute_tables;
+    Symbol* entry_point;
+    List* global_vars;
+    List* subroutines;
+} TAC;
+typedef struct Subroutine {
+    Symbol* name;
+    Symbol* return_type;
+    List* parameters;
+    List* local_vars;
+    List* blocks;
+} Subroutine;
+typedef struct Var {
+    Symbol* original_name;
+    string name;
+    Symbol* type;
+} Var;
+typedef struct Block {
+    Var* label;
+    List* instructions;
+} Block;
+typedef enum ArgType {
+    ARG_VARIABLE,
+    ARG_INT,
+    ARG_FLOAT,
+    ARG_STRING,
+    ARG_BOOL,
+    ARG_VOID,
+    ARG_LABEL,
+    ARG_SUBROUTINE,
+    ARG_NONE
+} ArgType;
+typedef struct Arg {
+    union {
+        Var* variable;
+        long long int_value;
+        double float_value;
+        string string_value;
+        char bool_value;
+        Var* label;
+        Var* subroutine;
+    } value;
+    Symbol* type;
+    ArgType kind;
+    char is_get;
+} Arg;
+typedef enum InstructionType {
+    INST_ADD,
+    INST_SUB,
+    INST_MUL,
+    INST_DIV,
+    INST_MOD,
+    INST_EQ,
+    INST_NE,
+    INST_LT,
+    INST_GT,
+    INST_LE,
+    INST_GE,
+    INST_AND,
+    INST_OR,
+    INST_NOT,
+    INST_ASSIGN,
+    INST_GET_ATTR,
+    INST_GET_ELEM,
+    INST_PARAM,
+    INST_ALLOC,
+    INST_JMP_C,
+    INST_JMP,
+    INST_RET,
+    INST_CALL,
+    INST_LOAD,
+    INST_STORE,
+    INST_NONE
+} InstructionType;
+typedef struct Instruction {
+    Arg* arg1;
+    Arg* arg2;
+    Arg* arg3;
+    InstructionType type;
+} Instruction;
+typedef struct AttributeTable {
+    List* attributes;
+    Symbol* name;
+    size_t size;
+} AttributeTable;
+typedef struct Attribute {
+    Var* var;
+    Symbol* type;
+    size_t offset;
+} Attribute;
+typedef struct TACStatus {
+    TAC* tac;
+    Subroutine* current_subroutine;
+    Block* current_block;
+    Class* current_class;
+    List* end_labels;
+    List* start_labels;
+    size_t attr_count;
+    size_t param_count;
+    size_t var_count;
+    size_t temp_count;
+    size_t block_count;
+    size_t subroutine_count;
+} TACStatus;
+typedef enum VarType {
+    VAR_ATTR = 'a',
+    VAR_PARAM = 'p',
+    VAR_VAR = 'v',
+    VAR_TEMP = 't',
+    VAR_BLOCK = 'b',
+    VAR_SUBROUTINE = 'f'
+} VarType;
+TAC* tac_code(Code* code);
+void tac_import(Import* import, TAC* tac, TACStatus* status);
+void tac_function(Function* function, TACStatus* status);
+void tac_method(Method* method, TACStatus* status);
+void tac_class_member(ClassMember* class_member, TACStatus* status);
+void tac_class(Class* class, TACStatus* status);
+void tac_variable(Variable* variable, TACStatus* status, VarType type);
+void tac_statement(Statement* statement, TACStatus* status);
+void tac_if(If* if_, TACStatus* status);
+void tac_else_if(ElseIf* else_if, TACStatus* status);
+void tac_for(For* for_, TACStatus* status);
+void tac_while(While* while_, TACStatus* status);
+Arg* tac_expression(Expression* expression, TACStatus* status);
+Arg* tac_primary(Primary* primary, TACStatus* status);
+Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status);
+void output_TAC(TAC* tac, FILE* outfile, size_t indent);
 string read_source(FILE* file, size_t* length) {
     fseek(file, 0, SEEK_END);
     *length = (size_t)ftell(file);
@@ -451,12 +584,16 @@ void output_token(FILE* file, Lexer* lexer) {
     }
     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 }
-void output_ast(FILE* file, Lexer* lexer, Parser* parser) {
-    Code* ast_root = parse_code(lexer, builtin_scope, parser);
-    output_code(ast_root, file, 0, parser);
+void output_ast(FILE* file, Code* ast) {
+    char indent_has_next[32];
+    output_code(ast, file, 0, indent_has_next);
     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 }
-void parse_file(const string name, char o_token, char o_ast) {
+void output_tac(FILE* file, TAC* tac) {
+    output_TAC(tac, file, 0);
+    fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+}
+void parse_file(const string name, char o_token, char o_ast, char o_tac) {
     File* file = create_file(name);
     string filename = get_full_path(file);
     size_t length = 0;
@@ -481,6 +618,9 @@ void parse_file(const string name, char o_token, char o_ast) {
     }
     reset_lexer(lexer);
     Parser* parser = create_parser(file);
+    Code* ast = NULL;
+    if (o_ast || o_tac)
+        ast = parse_code(lexer, builtin_scope, parser);
     if (o_ast) {
         change_file_extension(file, create_string(".ast", 4));
         string out_ast_name = get_full_path(file);
@@ -489,8 +629,21 @@ void parse_file(const string name, char o_token, char o_ast) {
         if (out_ast_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
         else {
-            output_ast(out_ast_file, lexer, parser);
+            output_ast(out_ast_file, ast);
             fclose(out_ast_file);
+        }
+    }
+    if (o_tac) {
+        change_file_extension(file, create_string(".tac", 4));
+        string out_tac_name = get_full_path(file);
+        change_file_extension(file, create_string(".tc", 3));
+        FILE* out_tac_file = fopen(out_tac_name, "w");
+        if (out_tac_file == NULL)
+            fprintf(stderr, "Error opening file: %s\n", out_tac_name);
+        else {
+            TAC* tac = tac_code(ast);
+            output_tac(out_tac_file, tac);
+            fclose(out_tac_file);
         }
     }
 }

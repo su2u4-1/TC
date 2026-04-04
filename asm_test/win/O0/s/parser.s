@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\parser.c"
+	.file	"parser.c"
 	.text
 	.section .rdata,"dr"
 	.align 8
@@ -858,6 +858,24 @@ parse_function:
 	movq	%rax, %rcx
 	call	parser_error
 .L46:
+	cmpb	$0, -9(%rbp)
+	jne	.L47
+	movq	.refptr.name_void(%rip), %rax
+	movq	(%rax), %rax
+	cmpq	%rax, -32(%rbp)
+	jne	.L47
+	movq	$0, 40(%rsp)
+	movq	$0, 32(%rsp)
+	movl	$0, %r9d
+	movl	$0, %r8d
+	movl	$0, %edx
+	movl	$5, %ecx
+	call	create_statement
+	movq	%rax, %rdx
+	movq	-64(%rbp), %rax
+	movq	%rax, %rcx
+	call	list_append
+.L47:
 	movq	-56(%rbp), %r9
 	movq	-32(%rbp), %r8
 	movq	-48(%rbp), %rdx
@@ -938,18 +956,18 @@ parse_method:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$1, %eax
-	je	.L48
+	je	.L49
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L49
+	jne	.L50
 	movq	-8(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
 	call	is_builtin_type
 	testb	%al, %al
-	jne	.L48
-.L49:
+	jne	.L49
+.L50:
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -962,8 +980,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L50
-.L48:
+	jmp	.L51
+.L49:
 	movq	-8(%rbp), %rax
 	movq	(%rax), %rdx
 	movq	24(%rbp), %rax
@@ -971,7 +989,7 @@ parse_method:
 	call	search_name
 	movq	%rax, -40(%rbp)
 	cmpq	$0, -40(%rbp)
-	jne	.L51
+	jne	.L52
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -984,8 +1002,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L50
-.L51:
+	jmp	.L51
+.L52:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -994,7 +1012,7 @@ parse_method:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$1, %eax
-	je	.L52
+	je	.L53
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1007,8 +1025,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L50
-.L52:
+	jmp	.L51
+.L53:
 	movl	$40, %ecx
 	call	alloc_memory
 	movq	%rax, -48(%rbp)
@@ -1037,7 +1055,7 @@ parse_method:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L53
+	jne	.L54
 	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -1045,8 +1063,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L54
-.L53:
+	jne	.L55
+.L54:
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1059,8 +1077,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L50
-.L54:
+	jmp	.L51
+.L55:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -1069,7 +1087,7 @@ parse_method:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L55
+	jne	.L56
 	movq	.refptr.SELF_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -1077,8 +1095,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L56
-.L55:
+	jne	.L57
+.L56:
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1090,7 +1108,7 @@ parse_method:
 	leaq	.LC23(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L56:
+.L57:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -1107,12 +1125,12 @@ parse_method:
 	movq	-64(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_append
-	jmp	.L57
-.L65:
+	jmp	.L58
+.L66:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L58
+	jne	.L59
 	movq	.refptr.COMMA_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -1120,7 +1138,7 @@ parse_method:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L58
+	je	.L59
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -1135,13 +1153,13 @@ parse_method:
 	call	parse_variable
 	movq	%rax, -72(%rbp)
 	cmpq	$0, -72(%rbp)
-	jne	.L62
-	jmp	.L74
-.L58:
+	jne	.L63
+	jmp	.L76
+.L59:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L60
+	jne	.L61
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -1149,8 +1167,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L61
-.L60:
+	jne	.L62
+.L61:
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1163,8 +1181,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L50
-.L74:
+	jmp	.L51
+.L76:
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1176,12 +1194,12 @@ parse_method:
 	leaq	.LC25(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-	jmp	.L63
-.L62:
+	jmp	.L64
+.L63:
 	movq	-72(%rbp), %rax
 	movq	16(%rax), %rax
 	testq	%rax, %rax
-	je	.L64
+	je	.L65
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1193,23 +1211,23 @@ parse_method:
 	leaq	.LC26(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-	jmp	.L63
-.L64:
+	jmp	.L64
+.L65:
 	movq	-72(%rbp), %rdx
 	movq	-64(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_append
-.L63:
+.L64:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-.L57:
+.L58:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L65
+	jne	.L66
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -1217,8 +1235,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L65
-.L61:
+	je	.L66
+.L62:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -1227,7 +1245,7 @@ parse_method:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L66
+	jne	.L67
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -1235,8 +1253,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L67
-.L66:
+	jne	.L68
+.L67:
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1249,8 +1267,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L50
-.L67:
+	jmp	.L51
+.L68:
 	call	create_list
 	movq	%rax, -80(%rbp)
 	movq	40(%rbp), %rax
@@ -1263,8 +1281,8 @@ parse_method:
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-	jmp	.L68
-.L72:
+	jmp	.L69
+.L73:
 	movq	40(%rbp), %rcx
 	movq	-24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -1273,7 +1291,7 @@ parse_method:
 	call	parse_statement
 	movq	%rax, -88(%rbp)
 	cmpq	$0, -88(%rbp)
-	jne	.L69
+	jne	.L70
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1285,10 +1303,10 @@ parse_method:
 	leaq	.LC28(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-	jmp	.L70
-.L69:
+	jmp	.L71
+.L70:
 	cmpb	$0, -9(%rbp)
-	je	.L70
+	je	.L71
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1300,15 +1318,15 @@ parse_method:
 	leaq	.LC17(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L70:
+.L71:
 	cmpq	$0, -88(%rbp)
-	je	.L71
+	je	.L72
 	movq	-88(%rbp), %rax
 	movl	8(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L71
+	jne	.L72
 	movb	$1, -9(%rbp)
-.L71:
+.L72:
 	movq	-88(%rbp), %rdx
 	movq	-80(%rbp), %rax
 	movq	%rax, %rcx
@@ -1318,11 +1336,11 @@ parse_method:
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-.L68:
+.L69:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L72
+	jne	.L73
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -1330,17 +1348,17 @@ parse_method:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L72
+	je	.L73
 	movq	40(%rbp), %rax
 	movb	$0, 8(%rax)
 	movq	40(%rbp), %rax
 	movb	$0, 9(%rax)
 	cmpb	$0, -9(%rbp)
-	jne	.L73
+	jne	.L74
 	movq	.refptr.name_void(%rip), %rax
 	movq	(%rax), %rax
 	cmpq	%rax, -40(%rbp)
-	je	.L73
+	je	.L74
 	movq	40(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1352,7 +1370,25 @@ parse_method:
 	leaq	.LC29(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L73:
+.L74:
+	cmpb	$0, -9(%rbp)
+	jne	.L75
+	movq	.refptr.name_void(%rip), %rax
+	movq	(%rax), %rax
+	cmpq	%rax, -40(%rbp)
+	jne	.L75
+	movq	$0, 40(%rsp)
+	movq	$0, 32(%rsp)
+	movl	$0, %r9d
+	movl	$0, %r8d
+	movl	$0, %edx
+	movl	$5, %ecx
+	call	create_statement
+	movq	%rax, %rdx
+	movq	-80(%rbp), %rax
+	movq	%rax, %rcx
+	call	list_append
+.L75:
 	movq	-64(%rbp), %r9
 	movq	-40(%rbp), %r8
 	movq	-56(%rbp), %rdx
@@ -1363,7 +1399,7 @@ parse_method:
 	movq	%rcx, 32(%rsp)
 	movq	%rax, %rcx
 	call	create_method_use_ptr
-.L50:
+.L51:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -1416,7 +1452,7 @@ parse_class:
 	movq	-24(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$1, %eax
-	je	.L76
+	je	.L78
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1429,8 +1465,8 @@ parse_class:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L77
-.L76:
+	jmp	.L79
+.L78:
 	movl	$32, %ecx
 	call	alloc_memory
 	movq	%rax, -56(%rbp)
@@ -1454,7 +1490,7 @@ parse_class:
 	movq	-24(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L78
+	jne	.L80
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-24(%rbp), %rax
@@ -1462,8 +1498,8 @@ parse_class:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L79
-.L78:
+	jne	.L81
+.L80:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1476,8 +1512,8 @@ parse_class:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L77
-.L79:
+	jmp	.L79
+.L81:
 	call	create_list
 	movq	%rax, -72(%rbp)
 	movq	16(%rbp), %rax
@@ -1486,12 +1522,12 @@ parse_class:
 	call	get_next_token
 	movq	%rax, -24(%rbp)
 	movq	$0, -32(%rbp)
-	jmp	.L80
-.L94:
+	jmp	.L82
+.L96:
 	movq	-24(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L81
+	jne	.L83
 	movq	.refptr.METHOD_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-24(%rbp), %rax
@@ -1499,7 +1535,7 @@ parse_class:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L81
+	je	.L83
 	movq	32(%rbp), %r8
 	movq	-64(%rbp), %rcx
 	movq	-48(%rbp), %rdx
@@ -1510,7 +1546,7 @@ parse_class:
 	call	parse_method
 	movq	%rax, -232(%rbp)
 	cmpq	$0, -232(%rbp)
-	jne	.L82
+	jne	.L84
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1522,7 +1558,7 @@ parse_class:
 	leaq	.LC32(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L82:
+.L84:
 	movq	-232(%rbp), %rax
 	movl	$0, %r8d
 	movq	%rax, %rdx
@@ -1532,12 +1568,12 @@ parse_class:
 	movq	-72(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_append
-	jmp	.L83
-.L81:
+	jmp	.L85
+.L83:
 	movq	-24(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L84
+	jne	.L86
 	movq	.refptr.VAR_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-24(%rbp), %rax
@@ -1545,12 +1581,14 @@ parse_class:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L84
+	je	.L86
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -24(%rbp)
+	movq	32(%rbp), %rax
+	movb	$1, 10(%rax)
 	movq	32(%rbp), %rcx
 	movq	-48(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -1558,8 +1596,10 @@ parse_class:
 	movq	%rax, %rcx
 	call	parse_variable
 	movq	%rax, -240(%rbp)
+	movq	32(%rbp), %rax
+	movb	$0, 10(%rax)
 	cmpq	$0, -240(%rbp)
-	jne	.L85
+	jne	.L87
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1571,7 +1611,7 @@ parse_class:
 	leaq	.LC33(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L85:
+.L87:
 	movq	-240(%rbp), %rax
 	movq	%rax, %r8
 	movl	$0, %edx
@@ -1585,7 +1625,7 @@ parse_class:
 	movq	-248(%rbp), %rax
 	movl	8(%rax), %eax
 	cmpl	$1, %eax
-	jne	.L86
+	jne	.L88
 	movq	-248(%rbp), %rax
 	movq	(%rax), %rax
 	movq	(%rax), %rax
@@ -1593,38 +1633,38 @@ parse_class:
 	movq	.refptr.name_int(%rip), %rax
 	movq	(%rax), %rax
 	cmpq	%rax, -256(%rbp)
-	je	.L87
+	je	.L89
 	movq	.refptr.name_float(%rip), %rax
 	movq	(%rax), %rax
 	cmpq	%rax, -256(%rbp)
-	je	.L87
-	movq	.refptr.name_string(%rip), %rax
-	movq	(%rax), %rax
-	cmpq	%rax, -256(%rbp)
-	jne	.L88
-.L87:
-	addq	$8, -32(%rbp)
-	jmp	.L86
-.L88:
-	movq	.refptr.name_bool(%rip), %rax
-	movq	(%rax), %rax
-	cmpq	%rax, -256(%rbp)
 	je	.L89
-	movq	.refptr.name_void(%rip), %rax
+	movq	.refptr.name_string(%rip), %rax
 	movq	(%rax), %rax
 	cmpq	%rax, -256(%rbp)
 	jne	.L90
 .L89:
-	addq	$1, -32(%rbp)
-	jmp	.L86
+	addq	$8, -32(%rbp)
+	jmp	.L88
 .L90:
+	movq	.refptr.name_bool(%rip), %rax
+	movq	(%rax), %rax
+	cmpq	%rax, -256(%rbp)
+	je	.L91
+	movq	.refptr.name_void(%rip), %rax
+	movq	(%rax), %rax
+	cmpq	%rax, -256(%rbp)
+	jne	.L92
+.L91:
+	addq	$1, -32(%rbp)
+	jmp	.L88
+.L92:
 	movq	-256(%rbp), %rax
 	movl	32(%rax), %eax
 	testl	%eax, %eax
-	jne	.L91
+	jne	.L93
 	addq	$8, -32(%rbp)
-	jmp	.L86
-.L91:
+	jmp	.L88
+.L93:
 	movq	-256(%rbp), %rax
 	movq	8(%rax), %rsi
 	movq	-248(%rbp), %rax
@@ -1638,7 +1678,7 @@ parse_class:
 	leaq	.LC34(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
-.L86:
+.L88:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -1647,7 +1687,7 @@ parse_class:
 	movq	-24(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L92
+	jne	.L94
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-24(%rbp), %rax
@@ -1655,8 +1695,8 @@ parse_class:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L108
-.L92:
+	jne	.L110
+.L94:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1668,8 +1708,8 @@ parse_class:
 	leaq	.LC35(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-	jmp	.L108
-.L84:
+	jmp	.L110
+.L86:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1681,20 +1721,20 @@ parse_class:
 	leaq	.LC36(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-	jmp	.L83
-.L108:
+	jmp	.L85
+.L110:
 	nop
-.L83:
+.L85:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -24(%rbp)
-.L80:
+.L82:
 	movq	-24(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L94
+	jne	.L96
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-24(%rbp), %rax
@@ -1702,7 +1742,7 @@ parse_class:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L94
+	je	.L96
 	movq	.refptr.DEFAULT_INIT_NAME(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-64(%rbp), %rax
@@ -1716,7 +1756,7 @@ parse_class:
 	call	search_name_use_strcmp
 	movq	%rax, -40(%rbp)
 	cmpq	$0, -40(%rbp)
-	jne	.L95
+	jne	.L97
 	movl	$40, %ecx
 	call	alloc_memory
 	movq	%rax, -88(%rbp)
@@ -1807,11 +1847,11 @@ parse_class:
 	movq	-72(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_append
-.L95:
+.L97:
 	movq	-40(%rbp), %rax
 	movl	32(%rax), %eax
 	cmpl	$2, %eax
-	je	.L96
+	je	.L98
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -1823,7 +1863,7 @@ parse_class:
 	leaq	.LC37(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L96:
+.L98:
 	movq	.refptr.DEFAULT_CONSTRUCTOR_NAME(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-64(%rbp), %rax
@@ -1876,8 +1916,8 @@ parse_class:
 	movq	%rax, %rcx
 	call	list_copy
 	movq	%rax, -160(%rbp)
-	jmp	.L97
-.L100:
+	jmp	.L99
+.L102:
 	movq	.refptr.SELF_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-168(%rbp), %rax
@@ -1886,7 +1926,7 @@ parse_class:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L109
+	jne	.L111
 	movq	-168(%rbp), %rax
 	movq	8(%rax), %rdx
 	movq	-168(%rbp), %rax
@@ -1898,28 +1938,28 @@ parse_class:
 	movq	-144(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_append
-	jmp	.L97
-.L109:
+	jmp	.L99
+.L111:
 	nop
-.L97:
+.L99:
 	movq	-160(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
 	movq	%rax, -168(%rbp)
 	cmpq	$0, -168(%rbp)
-	jne	.L100
+	jne	.L102
 	call	create_list
 	movq	%rax, -176(%rbp)
 	movq	-72(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_copy
 	movq	%rax, -184(%rbp)
-	jmp	.L102
-.L105:
+	jmp	.L104
+.L107:
 	movq	-192(%rbp), %rax
 	movl	8(%rax), %eax
 	cmpl	$1, %eax
-	jne	.L102
+	jne	.L104
 	movq	-192(%rbp), %rax
 	movq	(%rax), %rax
 	movq	8(%rax), %rax
@@ -1945,12 +1985,12 @@ parse_class:
 	movq	(%rax), %rax
 	movq	16(%rax), %rax
 	testq	%rax, %rax
-	je	.L103
+	je	.L105
 	movq	-192(%rbp), %rax
 	movq	(%rax), %rax
 	movq	16(%rax), %rax
-	jmp	.L104
-.L103:
+	jmp	.L106
+.L105:
 	movl	$2, %edx
 	leaq	.LC38(%rip), %rax
 	movq	%rax, %rcx
@@ -1966,7 +2006,7 @@ parse_class:
 	movl	$0, %edx
 	movl	$19, %ecx
 	call	create_expression
-.L104:
+.L106:
 	movq	%rax, -224(%rbp)
 	movq	-224(%rbp), %rdx
 	movq	-216(%rbp), %rax
@@ -1986,21 +2026,21 @@ parse_class:
 	movq	-176(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_append
-.L102:
+.L104:
 	movq	-184(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
 	movq	%rax, -192(%rbp)
 	cmpq	$0, -192(%rbp)
-	jne	.L105
+	jne	.L107
 	call	create_list
 	movq	%rax, -200(%rbp)
 	movq	-144(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_copy
 	movq	%rax, -208(%rbp)
-	jmp	.L106
-.L107:
+	jmp	.L108
+.L109:
 	movq	-168(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	$0, 32(%rsp)
@@ -2024,13 +2064,13 @@ parse_class:
 	movq	-200(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_append
-.L106:
+.L108:
 	movq	-208(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_pop
 	movq	%rax, -168(%rbp)
 	cmpq	$0, -168(%rbp)
-	jne	.L107
+	jne	.L109
 	movq	-40(%rbp), %rax
 	movq	$0, 32(%rsp)
 	movl	$0, %r9d
@@ -2095,7 +2135,7 @@ parse_class:
 	movq	%rcx, 32(%rsp)
 	movq	%rax, %rcx
 	call	create_class_use_ptr
-.L77:
+.L79:
 	addq	$288, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -2119,7 +2159,7 @@ parse_class:
 parse_variable:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$80, %rsp
+	subq	$64, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -2131,18 +2171,18 @@ parse_variable:
 	movq	-16(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$1, %eax
-	je	.L111
+	je	.L113
 	movq	-16(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L112
+	jne	.L114
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
 	call	is_builtin_type
 	testb	%al, %al
-	jne	.L111
-.L112:
+	jne	.L113
+.L114:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2155,8 +2195,8 @@ parse_variable:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L113
-.L111:
+	jmp	.L115
+.L113:
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rdx
 	movq	24(%rbp), %rax
@@ -2164,17 +2204,15 @@ parse_variable:
 	call	search_name
 	movq	%rax, -24(%rbp)
 	cmpq	$0, -24(%rbp)
-	je	.L114
+	je	.L116
 	movq	-24(%rbp), %rax
-	movq	%rax, -32(%rbp)
-	movq	-32(%rbp), %rax
 	movl	32(%rax), %eax
 	cmpl	$6, %eax
-	je	.L115
-	movq	-32(%rbp), %rax
+	je	.L117
+	movq	-24(%rbp), %rax
 	movl	32(%rax), %eax
 	testl	%eax, %eax
-	je	.L115
+	je	.L117
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2186,8 +2224,8 @@ parse_variable:
 	leaq	.LC40(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-	jmp	.L115
-.L114:
+	jmp	.L117
+.L116:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2199,7 +2237,7 @@ parse_variable:
 	leaq	.LC41(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L115:
+.L117:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -2208,7 +2246,7 @@ parse_variable:
 	movq	-16(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$1, %eax
-	je	.L116
+	je	.L118
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2220,17 +2258,30 @@ parse_variable:
 	leaq	.LC42(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L116:
+.L118:
+	movq	32(%rbp), %rax
+	movzbl	10(%rax), %eax
+	testb	%al, %al
+	je	.L119
+	movq	32(%rbp), %rax
+	movzbl	9(%rax), %eax
+	testb	%al, %al
+	jne	.L119
+	movl	$5, %r10d
+	jmp	.L120
+.L119:
+	movl	$3, %r10d
+.L120:
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	24(%rbp), %rcx
 	movq	-24(%rbp), %rdx
 	movq	%rcx, %r9
 	movq	%rdx, %r8
-	movl	$3, %edx
+	movl	%r10d, %edx
 	movq	%rax, %rcx
 	call	create_symbol
-	movq	%rax, -40(%rbp)
+	movq	%rax, -32(%rbp)
 	movq	$0, -8(%rbp)
 	movq	16(%rbp), %rax
 	movl	$1, %edx
@@ -2240,7 +2291,7 @@ parse_variable:
 	movq	-16(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L117
+	jne	.L121
 	movq	.refptr.ASSIGN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-16(%rbp), %rax
@@ -2248,7 +2299,7 @@ parse_variable:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L117
+	je	.L121
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -2267,7 +2318,7 @@ parse_variable:
 	call	parse_expression
 	movq	%rax, -8(%rbp)
 	cmpq	$0, -8(%rbp)
-	jne	.L117
+	jne	.L121
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2279,14 +2330,14 @@ parse_variable:
 	leaq	.LC43(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L117:
+.L121:
 	movq	-8(%rbp), %rcx
-	movq	-40(%rbp), %rdx
+	movq	-32(%rbp), %rdx
 	movq	-24(%rbp), %rax
 	movq	%rcx, %r8
 	movq	%rax, %rcx
 	call	create_variable
-.L113:
+.L115:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -2318,7 +2369,7 @@ parse_statement:
 	movq	-16(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L119
+	jne	.L123
 	movq	.refptr.IF_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-16(%rbp), %rax
@@ -2326,7 +2377,7 @@ parse_statement:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L120
+	je	.L124
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -2340,8 +2391,8 @@ parse_statement:
 	movq	%rax, %rdx
 	movl	$2, %ecx
 	call	create_statement
-	jmp	.L121
-.L120:
+	jmp	.L125
+.L124:
 	movq	.refptr.FOR_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-16(%rbp), %rax
@@ -2349,7 +2400,7 @@ parse_statement:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L122
+	je	.L126
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -2363,8 +2414,8 @@ parse_statement:
 	movl	$0, %edx
 	movl	$4, %ecx
 	call	create_statement
-	jmp	.L121
-.L122:
+	jmp	.L125
+.L126:
 	movq	.refptr.WHILE_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-16(%rbp), %rax
@@ -2372,7 +2423,7 @@ parse_statement:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L123
+	je	.L127
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -2386,8 +2437,8 @@ parse_statement:
 	movl	$0, %edx
 	movl	$3, %ecx
 	call	create_statement
-	jmp	.L121
-.L123:
+	jmp	.L125
+.L127:
 	movq	.refptr.VAR_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-16(%rbp), %rax
@@ -2395,7 +2446,7 @@ parse_statement:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L124
+	je	.L128
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -2414,8 +2465,8 @@ parse_statement:
 	movl	$1, %ecx
 	call	create_statement
 	movq	%rax, -8(%rbp)
-	jmp	.L125
-.L124:
+	jmp	.L129
+.L128:
 	movq	.refptr.RETURN_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-16(%rbp), %rax
@@ -2423,7 +2474,7 @@ parse_statement:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L126
+	je	.L130
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -2432,7 +2483,7 @@ parse_statement:
 	movq	-16(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L127
+	jne	.L131
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-16(%rbp), %rax
@@ -2440,7 +2491,7 @@ parse_statement:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L127
+	je	.L131
 	movq	$0, 40(%rsp)
 	movq	$0, 32(%rsp)
 	movl	$0, %r9d
@@ -2448,8 +2499,8 @@ parse_statement:
 	movl	$0, %edx
 	movl	$5, %ecx
 	call	create_statement
-	jmp	.L121
-.L127:
+	jmp	.L125
+.L131:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -2464,8 +2515,8 @@ parse_statement:
 	movl	$5, %ecx
 	call	create_statement
 	movq	%rax, -8(%rbp)
-	jmp	.L125
-.L126:
+	jmp	.L129
+.L130:
 	movq	.refptr.BREAK_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-16(%rbp), %rax
@@ -2473,11 +2524,11 @@ parse_statement:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L128
+	je	.L132
 	movq	32(%rbp), %rax
-	movzbl	10(%rax), %eax
+	movzbl	11(%rax), %eax
 	testb	%al, %al
-	jne	.L129
+	jne	.L133
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2490,8 +2541,8 @@ parse_statement:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L121
-.L129:
+	jmp	.L125
+.L133:
 	movq	$0, 40(%rsp)
 	movq	$0, 32(%rsp)
 	movl	$0, %r9d
@@ -2500,8 +2551,8 @@ parse_statement:
 	movl	$6, %ecx
 	call	create_statement
 	movq	%rax, -8(%rbp)
-	jmp	.L125
-.L128:
+	jmp	.L129
+.L132:
 	movq	.refptr.CONTINUE_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-16(%rbp), %rax
@@ -2509,11 +2560,11 @@ parse_statement:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L130
+	je	.L134
 	movq	32(%rbp), %rax
-	movzbl	10(%rax), %eax
+	movzbl	11(%rax), %eax
 	testb	%al, %al
-	jne	.L131
+	jne	.L135
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2526,8 +2577,8 @@ parse_statement:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L121
-.L131:
+	jmp	.L125
+.L135:
 	movq	$0, 40(%rsp)
 	movq	$0, 32(%rsp)
 	movl	$0, %r9d
@@ -2536,8 +2587,8 @@ parse_statement:
 	movl	$7, %ecx
 	call	create_statement
 	movq	%rax, -8(%rbp)
-	jmp	.L125
-.L130:
+	jmp	.L129
+.L134:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -2552,8 +2603,8 @@ parse_statement:
 	movl	$0, %ecx
 	call	create_statement
 	movq	%rax, -8(%rbp)
-	jmp	.L125
-.L119:
+	jmp	.L129
+.L123:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -2568,13 +2619,13 @@ parse_statement:
 	movl	$0, %ecx
 	call	create_statement
 	movq	%rax, -8(%rbp)
-.L125:
+.L129:
 	movq	16(%rbp), %rax
 	movq	%rax, %rcx
 	call	peek_current_token
 	movq	%rax, -16(%rbp)
 	cmpq	$0, -8(%rbp)
-	jne	.L132
+	jne	.L136
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2586,7 +2637,7 @@ parse_statement:
 	leaq	.LC46(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L132:
+.L136:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -2595,7 +2646,7 @@ parse_statement:
 	movq	-16(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L133
+	jne	.L137
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-16(%rbp), %rax
@@ -2603,8 +2654,8 @@ parse_statement:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L134
-.L133:
+	jne	.L138
+.L137:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2616,9 +2667,9 @@ parse_statement:
 	leaq	.LC47(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L134:
+.L138:
 	movq	-8(%rbp), %rax
-.L121:
+.L125:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -2672,66 +2723,8 @@ parse_if:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L136
-	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax
-	movq	(%rax), %rdx
-	movq	-8(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, %rcx
-	call	string_equal
-	testb	%al, %al
-	jne	.L137
-.L136:
-	movq	32(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, %rcx
-	call	get_full_path
-	movq	%rax, %rdx
-	movq	-8(%rbp), %rax
-	movq	%rdx, %r8
-	movq	%rax, %rdx
-	leaq	.LC48(%rip), %rax
-	movq	%rax, %rcx
-	call	parser_error
-	movl	$0, %eax
-	jmp	.L138
-.L137:
-	movq	16(%rbp), %rax
-	movl	$1, %edx
-	movq	%rax, %rcx
-	call	get_next_token
-	movq	%rax, -8(%rbp)
-	movq	32(%rbp), %rcx
-	movq	24(%rbp), %rdx
-	movq	16(%rbp), %rax
-	movq	%rcx, %r8
-	movq	%rax, %rcx
-	call	parse_expression
-	movq	%rax, -16(%rbp)
-	cmpq	$0, -16(%rbp)
-	jne	.L139
-	movq	32(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, %rcx
-	call	get_full_path
-	movq	%rax, %rdx
-	movq	-8(%rbp), %rax
-	movq	%rdx, %r8
-	movq	%rax, %rdx
-	leaq	.LC49(%rip), %rax
-	movq	%rax, %rcx
-	call	parser_error
-.L139:
-	movq	16(%rbp), %rax
-	movl	$1, %edx
-	movq	%rax, %rcx
-	call	get_next_token
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
 	jne	.L140
-	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
+	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
 	movq	(%rax), %rax
@@ -2748,12 +2741,38 @@ parse_if:
 	movq	-8(%rbp), %rax
 	movq	%rdx, %r8
 	movq	%rax, %rdx
-	leaq	.LC50(%rip), %rax
+	leaq	.LC48(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L138
+	jmp	.L142
 .L141:
+	movq	16(%rbp), %rax
+	movl	$1, %edx
+	movq	%rax, %rcx
+	call	get_next_token
+	movq	%rax, -8(%rbp)
+	movq	32(%rbp), %rcx
+	movq	24(%rbp), %rdx
+	movq	16(%rbp), %rax
+	movq	%rcx, %r8
+	movq	%rax, %rcx
+	call	parse_expression
+	movq	%rax, -16(%rbp)
+	cmpq	$0, -16(%rbp)
+	jne	.L143
+	movq	32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rcx
+	call	get_full_path
+	movq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, %r8
+	movq	%rax, %rdx
+	leaq	.LC49(%rip), %rax
+	movq	%rax, %rcx
+	call	parser_error
+.L143:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -2762,7 +2781,39 @@ parse_if:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L142
+	jne	.L144
+	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
+	movq	(%rax), %rdx
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rcx
+	call	string_equal
+	testb	%al, %al
+	jne	.L145
+.L144:
+	movq	32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rcx
+	call	get_full_path
+	movq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, %r8
+	movq	%rax, %rdx
+	leaq	.LC50(%rip), %rax
+	movq	%rax, %rcx
+	call	parser_error
+	movl	$0, %eax
+	jmp	.L142
+.L145:
+	movq	16(%rbp), %rax
+	movl	$1, %edx
+	movq	%rax, %rcx
+	call	get_next_token
+	movq	%rax, -8(%rbp)
+	movq	-8(%rbp), %rax
+	movl	24(%rax), %eax
+	cmpl	$5, %eax
+	jne	.L146
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -2770,8 +2821,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L143
-.L142:
+	jne	.L147
+.L146:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2784,8 +2835,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L138
-.L143:
+	jmp	.L142
+.L147:
 	call	create_list
 	movq	%rax, -24(%rbp)
 	movq	16(%rbp), %rax
@@ -2793,8 +2844,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-	jmp	.L144
-.L146:
+	jmp	.L148
+.L150:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -2803,7 +2854,7 @@ parse_if:
 	call	parse_statement
 	movq	%rax, -80(%rbp)
 	cmpq	$0, -80(%rbp)
-	jne	.L145
+	jne	.L149
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2815,7 +2866,7 @@ parse_if:
 	leaq	.LC52(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L145:
+.L149:
 	movq	-80(%rbp), %rdx
 	movq	-24(%rbp), %rax
 	movq	%rax, %rcx
@@ -2825,11 +2876,11 @@ parse_if:
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-.L144:
+.L148:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L146
+	jne	.L150
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -2837,7 +2888,7 @@ parse_if:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L146
+	je	.L150
 	call	create_list
 	movq	%rax, -32(%rbp)
 	call	create_list
@@ -2847,8 +2898,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	peek_next_token
 	movq	%rax, -8(%rbp)
-	jmp	.L147
-.L159:
+	jmp	.L151
+.L163:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -2862,7 +2913,7 @@ parse_if:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L148
+	jne	.L152
 	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -2870,8 +2921,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L149
-.L148:
+	jne	.L153
+.L152:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2884,8 +2935,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L138
-.L149:
+	jmp	.L142
+.L153:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -2899,7 +2950,7 @@ parse_if:
 	call	parse_expression
 	movq	%rax, -48(%rbp)
 	cmpq	$0, -48(%rbp)
-	jne	.L150
+	jne	.L154
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2911,7 +2962,7 @@ parse_if:
 	leaq	.LC54(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L150:
+.L154:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -2920,7 +2971,7 @@ parse_if:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L151
+	jne	.L155
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -2928,8 +2979,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L152
-.L151:
+	jne	.L156
+.L155:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2942,8 +2993,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L138
-.L152:
+	jmp	.L142
+.L156:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -2952,7 +3003,7 @@ parse_if:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L153
+	jne	.L157
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -2960,8 +3011,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L154
-.L153:
+	jne	.L158
+.L157:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -2974,8 +3025,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L138
-.L154:
+	jmp	.L142
+.L158:
 	call	create_list
 	movq	%rax, -56(%rbp)
 	movq	16(%rbp), %rax
@@ -2983,8 +3034,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-	jmp	.L155
-.L157:
+	jmp	.L159
+.L161:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -2993,7 +3044,7 @@ parse_if:
 	call	parse_statement
 	movq	%rax, -64(%rbp)
 	cmpq	$0, -64(%rbp)
-	jne	.L156
+	jne	.L160
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3005,7 +3056,7 @@ parse_if:
 	leaq	.LC57(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L156:
+.L160:
 	movq	-64(%rbp), %rdx
 	movq	-56(%rbp), %rax
 	movq	%rax, %rcx
@@ -3015,11 +3066,11 @@ parse_if:
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-.L155:
+.L159:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L157
+	jne	.L161
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3027,7 +3078,7 @@ parse_if:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L157
+	je	.L161
 	movq	-56(%rbp), %rdx
 	movq	-48(%rbp), %rax
 	movq	%rax, %rcx
@@ -3041,11 +3092,11 @@ parse_if:
 	movq	%rax, %rcx
 	call	peek_next_token
 	movq	%rax, -8(%rbp)
-.L147:
+.L151:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L158
+	jne	.L162
 	movq	.refptr.ELIF_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3053,12 +3104,12 @@ parse_if:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L159
-.L158:
+	jne	.L163
+.L162:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L160
+	jne	.L164
 	movq	.refptr.ELSE_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3066,7 +3117,7 @@ parse_if:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L160
+	je	.L164
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -3080,7 +3131,7 @@ parse_if:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L161
+	jne	.L165
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3088,8 +3139,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L162
-.L161:
+	jne	.L166
+.L165:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3102,15 +3153,15 @@ parse_if:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L138
-.L162:
+	jmp	.L142
+.L166:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-	jmp	.L163
-.L165:
+	jmp	.L167
+.L169:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -3119,7 +3170,7 @@ parse_if:
 	call	parse_statement
 	movq	%rax, -72(%rbp)
 	cmpq	$0, -72(%rbp)
-	jne	.L164
+	jne	.L168
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3131,7 +3182,7 @@ parse_if:
 	leaq	.LC59(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L164:
+.L168:
 	movq	-72(%rbp), %rdx
 	movq	-40(%rbp), %rax
 	movq	%rax, %rcx
@@ -3141,11 +3192,11 @@ parse_if:
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-.L163:
+.L167:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L165
+	jne	.L169
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3153,8 +3204,8 @@ parse_if:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L165
-.L160:
+	je	.L169
+.L164:
 	movq	16(%rbp), %rax
 	movq	%rax, %rcx
 	call	peek_current_token
@@ -3167,7 +3218,7 @@ parse_if:
 	movq	%rcx, %r8
 	movq	%rax, %rcx
 	call	create_if
-.L138:
+.L142:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -3215,7 +3266,7 @@ parse_for:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L167
+	jne	.L171
 	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3223,8 +3274,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L168
-.L167:
+	jne	.L172
+.L171:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3237,8 +3288,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L169
-.L168:
+	jmp	.L173
+.L172:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -3248,7 +3299,7 @@ parse_for:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L170
+	jne	.L174
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3256,8 +3307,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L171
-.L170:
+	jne	.L175
+.L174:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -3266,7 +3317,7 @@ parse_for:
 	call	parse_variable
 	movq	%rax, -16(%rbp)
 	cmpq	$0, -16(%rbp)
-	jne	.L172
+	jne	.L176
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3278,17 +3329,17 @@ parse_for:
 	leaq	.LC61(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L172:
+.L176:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-.L171:
+.L175:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L173
+	jne	.L177
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3296,8 +3347,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L174
-.L173:
+	jne	.L178
+.L177:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3310,8 +3361,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L169
-.L174:
+	jmp	.L173
+.L178:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -3321,7 +3372,7 @@ parse_for:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L175
+	jne	.L179
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3329,8 +3380,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L176
-.L175:
+	jne	.L180
+.L179:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -3339,7 +3390,7 @@ parse_for:
 	call	parse_expression
 	movq	%rax, -24(%rbp)
 	cmpq	$0, -24(%rbp)
-	jne	.L177
+	jne	.L181
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3351,17 +3402,17 @@ parse_for:
 	leaq	.LC63(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L177:
+.L181:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-.L176:
+.L180:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L178
+	jne	.L182
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3369,8 +3420,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L179
-.L178:
+	jne	.L183
+.L182:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3383,8 +3434,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L169
-.L179:
+	jmp	.L173
+.L183:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -3394,7 +3445,7 @@ parse_for:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L180
+	jne	.L184
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3402,8 +3453,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L181
-.L180:
+	jne	.L185
+.L184:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -3412,7 +3463,7 @@ parse_for:
 	call	parse_expression
 	movq	%rax, -32(%rbp)
 	cmpq	$0, -32(%rbp)
-	jne	.L182
+	jne	.L186
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3424,17 +3475,17 @@ parse_for:
 	leaq	.LC65(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L182:
+.L186:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-.L181:
+.L185:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L183
+	jne	.L187
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3442,8 +3493,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L184
-.L183:
+	jne	.L188
+.L187:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3456,8 +3507,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L169
-.L184:
+	jmp	.L173
+.L188:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -3466,7 +3517,7 @@ parse_for:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L185
+	jne	.L189
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3474,8 +3525,8 @@ parse_for:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L186
-.L185:
+	jne	.L190
+.L189:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3488,19 +3539,19 @@ parse_for:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L169
-.L186:
+	jmp	.L173
+.L190:
 	call	create_list
 	movq	%rax, -40(%rbp)
 	movq	32(%rbp), %rax
-	movb	$1, 10(%rax)
+	movb	$1, 11(%rax)
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-	jmp	.L187
-.L189:
+	jmp	.L191
+.L193:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -3509,7 +3560,7 @@ parse_for:
 	call	parse_statement
 	movq	%rax, -48(%rbp)
 	cmpq	$0, -48(%rbp)
-	jne	.L188
+	jne	.L192
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3521,7 +3572,7 @@ parse_for:
 	leaq	.LC68(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L188:
+.L192:
 	movq	-48(%rbp), %rdx
 	movq	-40(%rbp), %rax
 	movq	%rax, %rcx
@@ -3531,11 +3582,11 @@ parse_for:
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-.L187:
+.L191:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L189
+	jne	.L193
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3543,9 +3594,9 @@ parse_for:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L189
+	je	.L193
 	movq	32(%rbp), %rax
-	movb	$0, 10(%rax)
+	movb	$0, 11(%rax)
 	movq	-40(%rbp), %r8
 	movq	-32(%rbp), %rcx
 	movq	-24(%rbp), %rdx
@@ -3554,7 +3605,7 @@ parse_for:
 	movq	%rcx, %r8
 	movq	%rax, %rcx
 	call	create_for
-.L169:
+.L173:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -3590,66 +3641,8 @@ parse_while:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L191
-	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax
-	movq	(%rax), %rdx
-	movq	-8(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, %rcx
-	call	string_equal
-	testb	%al, %al
-	jne	.L192
-.L191:
-	movq	32(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, %rcx
-	call	get_full_path
-	movq	%rax, %rdx
-	movq	-8(%rbp), %rax
-	movq	%rdx, %r8
-	movq	%rax, %rdx
-	leaq	.LC69(%rip), %rax
-	movq	%rax, %rcx
-	call	parser_error
-	movl	$0, %eax
-	jmp	.L193
-.L192:
-	movq	16(%rbp), %rax
-	movl	$1, %edx
-	movq	%rax, %rcx
-	call	get_next_token
-	movq	%rax, -8(%rbp)
-	movq	32(%rbp), %rcx
-	movq	24(%rbp), %rdx
-	movq	16(%rbp), %rax
-	movq	%rcx, %r8
-	movq	%rax, %rcx
-	call	parse_expression
-	movq	%rax, -16(%rbp)
-	cmpq	$0, -16(%rbp)
-	jne	.L194
-	movq	32(%rbp), %rax
-	movq	(%rax), %rax
-	movq	%rax, %rcx
-	call	get_full_path
-	movq	%rax, %rdx
-	movq	-8(%rbp), %rax
-	movq	%rdx, %r8
-	movq	%rax, %rdx
-	leaq	.LC70(%rip), %rax
-	movq	%rax, %rcx
-	call	parser_error
-.L194:
-	movq	16(%rbp), %rax
-	movl	$1, %edx
-	movq	%rax, %rcx
-	call	get_next_token
-	movq	%rax, -8(%rbp)
-	movq	-8(%rbp), %rax
-	movl	24(%rax), %eax
-	cmpl	$5, %eax
 	jne	.L195
-	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
+	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
 	movq	(%rax), %rax
@@ -3666,12 +3659,38 @@ parse_while:
 	movq	-8(%rbp), %rax
 	movq	%rdx, %r8
 	movq	%rax, %rdx
-	leaq	.LC71(%rip), %rax
+	leaq	.LC69(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L193
+	jmp	.L197
 .L196:
+	movq	16(%rbp), %rax
+	movl	$1, %edx
+	movq	%rax, %rcx
+	call	get_next_token
+	movq	%rax, -8(%rbp)
+	movq	32(%rbp), %rcx
+	movq	24(%rbp), %rdx
+	movq	16(%rbp), %rax
+	movq	%rcx, %r8
+	movq	%rax, %rcx
+	call	parse_expression
+	movq	%rax, -16(%rbp)
+	cmpq	$0, -16(%rbp)
+	jne	.L198
+	movq	32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rcx
+	call	get_full_path
+	movq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, %r8
+	movq	%rax, %rdx
+	leaq	.LC70(%rip), %rax
+	movq	%rax, %rcx
+	call	parser_error
+.L198:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -3680,7 +3699,39 @@ parse_while:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L197
+	jne	.L199
+	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
+	movq	(%rax), %rdx
+	movq	-8(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rcx
+	call	string_equal
+	testb	%al, %al
+	jne	.L200
+.L199:
+	movq	32(%rbp), %rax
+	movq	(%rax), %rax
+	movq	%rax, %rcx
+	call	get_full_path
+	movq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, %r8
+	movq	%rax, %rdx
+	leaq	.LC71(%rip), %rax
+	movq	%rax, %rcx
+	call	parser_error
+	movl	$0, %eax
+	jmp	.L197
+.L200:
+	movq	16(%rbp), %rax
+	movl	$1, %edx
+	movq	%rax, %rcx
+	call	get_next_token
+	movq	%rax, -8(%rbp)
+	movq	-8(%rbp), %rax
+	movl	24(%rax), %eax
+	cmpl	$5, %eax
+	jne	.L201
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3688,8 +3739,8 @@ parse_while:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L198
-.L197:
+	jne	.L202
+.L201:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3702,19 +3753,19 @@ parse_while:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L193
-.L198:
+	jmp	.L197
+.L202:
 	call	create_list
 	movq	%rax, -24(%rbp)
 	movq	32(%rbp), %rax
-	movb	$1, 10(%rax)
+	movb	$1, 11(%rax)
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-	jmp	.L199
-.L201:
+	jmp	.L203
+.L205:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -3723,7 +3774,7 @@ parse_while:
 	call	parse_statement
 	movq	%rax, -32(%rbp)
 	cmpq	$0, -32(%rbp)
-	jne	.L200
+	jne	.L204
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3735,7 +3786,7 @@ parse_while:
 	leaq	.LC73(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L200:
+.L204:
 	movq	-32(%rbp), %rdx
 	movq	-24(%rbp), %rax
 	movq	%rax, %rcx
@@ -3745,11 +3796,11 @@ parse_while:
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-.L199:
+.L203:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L201
+	jne	.L205
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -3757,14 +3808,14 @@ parse_while:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L201
+	je	.L205
 	movq	32(%rbp), %rax
-	movb	$0, 10(%rax)
+	movb	$0, 11(%rax)
 	movq	-24(%rbp), %rdx
 	movq	-16(%rbp), %rax
 	movq	%rax, %rcx
 	call	create_while
-.L193:
+.L197:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -3786,8 +3837,8 @@ parse_expr_prec:
 	movq	%rax, %rcx
 	call	peek_next_token
 	movq	%rax, -8(%rbp)
-	jmp	.L203
-.L211:
+	jmp	.L207
+.L215:
 	movq	-8(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3798,10 +3849,10 @@ parse_expr_prec:
 	call	operator_precedence
 	movl	%eax, -24(%rbp)
 	cmpl	$19, -20(%rbp)
-	je	.L204
+	je	.L208
 	movl	-24(%rbp), %eax
 	cmpl	32(%rbp), %eax
-	jl	.L204
+	jl	.L208
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -3820,7 +3871,7 @@ parse_expr_prec:
 	call	parse_primary
 	movq	%rax, -32(%rbp)
 	cmpq	$0, -32(%rbp)
-	jne	.L205
+	jne	.L209
 	movq	48(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3833,8 +3884,8 @@ parse_expr_prec:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L206
-.L205:
+	jmp	.L210
+.L209:
 	movq	-32(%rbp), %rax
 	movl	$0, %r9d
 	movq	%rax, %r8
@@ -3847,8 +3898,8 @@ parse_expr_prec:
 	movq	%rax, %rcx
 	call	peek_next_token
 	movq	%rax, -8(%rbp)
-	jmp	.L207
-.L210:
+	jmp	.L211
+.L214:
 	movq	-8(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3859,10 +3910,10 @@ parse_expr_prec:
 	call	operator_precedence
 	movl	%eax, -40(%rbp)
 	cmpl	$19, -36(%rbp)
-	je	.L208
+	je	.L212
 	movl	-40(%rbp), %eax
 	cmpl	-24(%rbp), %eax
-	jle	.L208
+	jle	.L212
 	movq	40(%rbp), %r9
 	movl	-40(%rbp), %r8d
 	movq	-16(%rbp), %rdx
@@ -3873,21 +3924,21 @@ parse_expr_prec:
 	call	parse_expr_prec
 	movq	%rax, -16(%rbp)
 	cmpq	$0, -16(%rbp)
-	jne	.L209
+	jne	.L213
 	movl	$0, %eax
-	jmp	.L206
-.L209:
+	jmp	.L210
+.L213:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	peek_next_token
 	movq	%rax, -8(%rbp)
-.L207:
+.L211:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	je	.L210
-.L208:
+	je	.L214
+.L212:
 	movq	-16(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movl	-20(%rbp), %eax
@@ -3901,18 +3952,18 @@ parse_expr_prec:
 	movq	%rax, %rcx
 	call	peek_next_token
 	movq	%rax, -8(%rbp)
-.L203:
+.L207:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	je	.L211
-.L204:
+	je	.L215
+.L208:
 	movq	16(%rbp), %rax
 	movq	%rax, %rcx
 	call	peek_current_token
 	movq	%rax, -8(%rbp)
 	movq	24(%rbp), %rax
-.L206:
+.L210:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -3937,7 +3988,7 @@ parse_expression:
 	call	parse_primary
 	movq	%rax, -24(%rbp)
 	cmpq	$0, -24(%rbp)
-	jne	.L213
+	jne	.L217
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -3952,8 +4003,8 @@ parse_expression:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L214
-.L213:
+	jmp	.L218
+.L217:
 	movq	-24(%rbp), %rax
 	movl	$0, %r9d
 	movq	%rax, %r8
@@ -3970,7 +4021,7 @@ parse_expression:
 	movq	%rcx, %rdx
 	movq	%rax, %rcx
 	call	parse_expr_prec
-.L214:
+.L218:
 	movq	-8(%rbp), %rbx
 	leave
 	ret
@@ -4013,37 +4064,37 @@ parse_primary:
 	movq	-48(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$2, %eax
-	jne	.L216
+	jne	.L220
 	movl	$0, -4(%rbp)
 	movq	-48(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, -16(%rbp)
-	jmp	.L217
-.L216:
+	jmp	.L221
+.L220:
 	movq	-48(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$3, %eax
-	jne	.L218
+	jne	.L222
 	movl	$1, -4(%rbp)
 	movq	-48(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, -16(%rbp)
-	jmp	.L217
-.L218:
+	jmp	.L221
+.L222:
 	movq	-48(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$4, %eax
-	jne	.L219
+	jne	.L223
 	movl	$2, -4(%rbp)
 	movq	-48(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, -16(%rbp)
-	jmp	.L217
-.L219:
+	jmp	.L221
+.L223:
 	movq	-48(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L220
+	jne	.L224
 	movq	.refptr.TRUE_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-48(%rbp), %rax
@@ -4051,17 +4102,17 @@ parse_primary:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L220
+	je	.L224
 	movl	$3, -4(%rbp)
 	movq	-48(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, -16(%rbp)
-	jmp	.L217
-.L220:
+	jmp	.L221
+.L224:
 	movq	-48(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L221
+	jne	.L225
 	movq	.refptr.FALSE_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-48(%rbp), %rax
@@ -4069,17 +4120,17 @@ parse_primary:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L221
+	je	.L225
 	movl	$4, -4(%rbp)
 	movq	-48(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, -16(%rbp)
-	jmp	.L217
-.L221:
+	jmp	.L221
+.L225:
 	movq	-48(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L222
+	jne	.L226
 	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-48(%rbp), %rax
@@ -4087,7 +4138,7 @@ parse_primary:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L222
+	je	.L226
 	movl	$5, -4(%rbp)
 	movq	16(%rbp), %rax
 	movl	$1, %edx
@@ -4102,7 +4153,7 @@ parse_primary:
 	call	parse_expression
 	movq	%rax, -24(%rbp)
 	cmpq	$0, -24(%rbp)
-	jne	.L223
+	jne	.L227
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4115,8 +4166,8 @@ parse_primary:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L224
-.L223:
+	jmp	.L228
+.L227:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -4125,7 +4176,7 @@ parse_primary:
 	movq	-48(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L225
+	jne	.L229
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-48(%rbp), %rax
@@ -4133,8 +4184,8 @@ parse_primary:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L234
-.L225:
+	jne	.L238
+.L229:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4147,12 +4198,12 @@ parse_primary:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L224
-.L222:
+	jmp	.L228
+.L226:
 	movq	-48(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L227
+	jne	.L231
 	movq	.refptr.NOT_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-48(%rbp), %rax
@@ -4160,7 +4211,7 @@ parse_primary:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L227
+	je	.L231
 	movl	$6, -4(%rbp)
 	movq	16(%rbp), %rax
 	movl	$1, %edx
@@ -4175,7 +4226,7 @@ parse_primary:
 	call	parse_primary
 	movq	%rax, -32(%rbp)
 	cmpq	$0, -32(%rbp)
-	jne	.L217
+	jne	.L221
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4188,12 +4239,12 @@ parse_primary:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L224
-.L227:
+	jmp	.L228
+.L231:
 	movq	-48(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L229
+	jne	.L233
 	movq	.refptr.SUB_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-48(%rbp), %rax
@@ -4201,7 +4252,7 @@ parse_primary:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L229
+	je	.L233
 	movl	$7, -4(%rbp)
 	movq	16(%rbp), %rax
 	movl	$1, %edx
@@ -4216,7 +4267,7 @@ parse_primary:
 	call	parse_primary
 	movq	%rax, -32(%rbp)
 	cmpq	$0, -32(%rbp)
-	jne	.L217
+	jne	.L221
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4229,16 +4280,16 @@ parse_primary:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L224
-.L229:
+	jmp	.L228
+.L233:
 	movq	-48(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$1, %eax
-	je	.L231
+	je	.L235
 	movq	-48(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L232
+	jne	.L236
 	movq	.refptr.SELF_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-48(%rbp), %rax
@@ -4246,12 +4297,12 @@ parse_primary:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L232
+	je	.L236
 	movq	32(%rbp), %rax
 	movzbl	9(%rax), %eax
 	testb	%al, %al
-	je	.L232
-.L231:
+	je	.L236
+.L235:
 	movl	$8, -4(%rbp)
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
@@ -4261,7 +4312,7 @@ parse_primary:
 	call	parse_variable_access
 	movq	%rax, -40(%rbp)
 	cmpq	$0, -40(%rbp)
-	jne	.L217
+	jne	.L221
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4274,8 +4325,8 @@ parse_primary:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L224
-.L232:
+	jmp	.L228
+.L236:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4288,10 +4339,10 @@ parse_primary:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L224
-.L234:
+	jmp	.L228
+.L238:
 	nop
-.L217:
+.L221:
 	movq	-32(%rbp), %r9
 	movq	-24(%rbp), %r8
 	movq	-16(%rbp), %rdx
@@ -4300,7 +4351,7 @@ parse_primary:
 	movq	%rcx, 32(%rsp)
 	movl	%eax, %ecx
 	call	create_primary
-.L224:
+.L228:
 	leave
 	ret
 	.section .rdata,"dr"
@@ -4349,11 +4400,11 @@ parse_variable_access:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$1, %eax
-	je	.L236
+	je	.L240
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$6, %eax
-	jne	.L237
+	jne	.L241
 	movq	.refptr.SELF_KEYWORD(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -4361,8 +4412,8 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L236
-.L237:
+	jne	.L240
+.L241:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4375,8 +4426,8 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L238
-.L236:
+	jmp	.L242
+.L240:
 	movq	$0, -16(%rbp)
 	movq	$0, -24(%rbp)
 	movq	$0, -32(%rbp)
@@ -4399,33 +4450,33 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	peek_next_token
 	movq	%rax, -8(%rbp)
-	jmp	.L239
-.L265:
+	jmp	.L243
+.L269:
 	cmpq	$0, -24(%rbp)
-	je	.L240
+	je	.L244
 	movq	-24(%rbp), %rax
 	movq	%rax, -16(%rbp)
 	movq	-24(%rbp), %rax
 	movq	(%rax), %rax
 	testq	%rax, %rax
-	je	.L240
+	je	.L244
 	movq	-24(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, -16(%rbp)
-.L240:
+.L244:
 	cmpq	$0, -32(%rbp)
-	jne	.L241
+	jne	.L245
 	cmpq	$0, -16(%rbp)
-	je	.L241
+	je	.L245
 	movq	-16(%rbp), %rax
 	movl	32(%rax), %eax
 	testl	%eax, %eax
-	jne	.L241
+	jne	.L245
 	movq	-16(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	16(%rax), %rax
 	movq	%rax, -32(%rbp)
-.L241:
+.L245:
 	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -4433,14 +4484,14 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L242
+	je	.L246
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
 	cmpq	$0, -24(%rbp)
-	jne	.L243
+	jne	.L247
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4452,12 +4503,12 @@ parse_variable_access:
 	leaq	.LC83(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-	jmp	.L244
-.L243:
+	jmp	.L248
+.L247:
 	movq	-24(%rbp), %rax
 	movl	32(%rax), %eax
 	testl	%eax, %eax
-	jne	.L244
+	jne	.L248
 	movq	.refptr.DEFAULT_CONSTRUCTOR_NAME(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-24(%rbp), %rax
@@ -4481,17 +4532,17 @@ parse_variable_access:
 	movl	$2, %ecx
 	call	create_variable_access
 	movq	%rax, -40(%rbp)
-.L244:
+.L248:
 	cmpq	$0, -24(%rbp)
-	je	.L245
+	je	.L249
 	movq	-24(%rbp), %rax
 	movl	32(%rax), %eax
 	cmpl	$1, %eax
-	je	.L245
+	je	.L249
 	movq	-24(%rbp), %rax
 	movl	32(%rax), %eax
 	cmpl	$2, %eax
-	je	.L245
+	je	.L249
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4503,7 +4554,7 @@ parse_variable_access:
 	leaq	.LC84(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L245:
+.L249:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -4511,8 +4562,8 @@ parse_variable_access:
 	movq	%rax, -8(%rbp)
 	call	create_list
 	movq	%rax, -80(%rbp)
-	jmp	.L246
-.L251:
+	jmp	.L250
+.L255:
 	movq	32(%rbp), %rcx
 	movq	24(%rbp), %rdx
 	movq	16(%rbp), %rax
@@ -4521,7 +4572,7 @@ parse_variable_access:
 	call	parse_expression
 	movq	%rax, -88(%rbp)
 	cmpq	$0, -88(%rbp)
-	jne	.L247
+	jne	.L251
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4533,7 +4584,7 @@ parse_variable_access:
 	leaq	.LC85(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L247:
+.L251:
 	movq	-88(%rbp), %rdx
 	movq	-80(%rbp), %rax
 	movq	%rax, %rcx
@@ -4546,7 +4597,7 @@ parse_variable_access:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L248
+	jne	.L252
 	movq	.refptr.COMMA_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -4554,18 +4605,18 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L248
+	je	.L252
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	get_next_token
 	movq	%rax, -8(%rbp)
-	jmp	.L246
-.L248:
+	jmp	.L250
+.L252:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L250
+	jne	.L254
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -4573,8 +4624,8 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L246
-.L250:
+	jne	.L250
+.L254:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4587,12 +4638,12 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L238
-.L246:
+	jmp	.L242
+.L250:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L251
+	jne	.L255
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -4600,7 +4651,7 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L251
+	je	.L255
 	movq	-40(%rbp), %rax
 	movq	-80(%rbp), %rdx
 	movq	%rdx, 32(%rsp)
@@ -4618,13 +4669,13 @@ parse_variable_access:
 	movq	-24(%rbp), %rax
 	movl	32(%rax), %eax
 	testl	%eax, %eax
-	jne	.L252
+	jne	.L256
 	movq	-24(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	16(%rax), %rax
 	movq	%rax, -32(%rbp)
-	jmp	.L252
-.L242:
+	jmp	.L256
+.L246:
 	movq	.refptr.L_BRACKET_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -4632,7 +4683,7 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L253
+	je	.L257
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -4651,7 +4702,7 @@ parse_variable_access:
 	call	parse_expression
 	movq	%rax, -64(%rbp)
 	cmpq	$0, -64(%rbp)
-	jne	.L254
+	jne	.L258
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4663,7 +4714,7 @@ parse_variable_access:
 	leaq	.LC87(%rip), %rax
 	movq	%rax, %rcx
 	call	parser_error
-.L254:
+.L258:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -4672,7 +4723,7 @@ parse_variable_access:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	jne	.L255
+	jne	.L259
 	movq	.refptr.R_BRACKET_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -4680,8 +4731,8 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	jne	.L256
-.L255:
+	jne	.L260
+.L259:
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4694,8 +4745,8 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L238
-.L256:
+	jmp	.L242
+.L260:
 	movq	-64(%rbp), %rdx
 	movq	-40(%rbp), %rax
 	movq	$0, 32(%rsp)
@@ -4705,8 +4756,8 @@ parse_variable_access:
 	movl	$3, %ecx
 	call	create_variable_access
 	movq	%rax, -40(%rbp)
-	jmp	.L252
-.L253:
+	jmp	.L256
+.L257:
 	movq	.refptr.DOT_SYMBOL(%rip), %rax
 	movq	(%rax), %rdx
 	movq	-8(%rbp), %rax
@@ -4714,7 +4765,7 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	string_equal
 	testb	%al, %al
-	je	.L266
+	je	.L270
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
@@ -4726,7 +4777,7 @@ parse_variable_access:
 	call	get_next_token
 	movq	%rax, -8(%rbp)
 	cmpq	$0, -32(%rbp)
-	jne	.L258
+	jne	.L262
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4739,12 +4790,12 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L238
-.L258:
+	jmp	.L242
+.L262:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$1, %eax
-	je	.L259
+	je	.L263
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4757,8 +4808,8 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L238
-.L259:
+	jmp	.L242
+.L263:
 	movq	-8(%rbp), %rax
 	movq	(%rax), %rdx
 	movq	-32(%rbp), %rax
@@ -4766,33 +4817,33 @@ parse_variable_access:
 	call	search_name
 	movq	%rax, -24(%rbp)
 	cmpq	$0, -24(%rbp)
-	jne	.L260
+	jne	.L264
 	movq	$0, -48(%rbp)
 	cmpq	$0, -16(%rbp)
-	je	.L261
+	je	.L265
 	movq	-16(%rbp), %rax
 	movl	32(%rax), %eax
 	testl	%eax, %eax
-	jne	.L262
+	jne	.L266
 	movq	-16(%rbp), %rax
 	movq	8(%rax), %rax
 	movq	%rax, -48(%rbp)
-	jmp	.L261
-.L262:
+	jmp	.L265
+.L266:
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
 	testq	%rax, %rax
-	je	.L261
+	je	.L265
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
 	movl	32(%rax), %eax
 	testl	%eax, %eax
-	jne	.L261
+	jne	.L265
 	movq	-16(%rbp), %rax
 	movq	(%rax), %rax
 	movq	8(%rax), %rax
 	movq	%rax, -48(%rbp)
-.L261:
+.L265:
 	movq	-8(%rbp), %rax
 	movq	(%rax), %rdx
 	movq	-48(%rbp), %rax
@@ -4804,9 +4855,9 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	search_name_use_strcmp
 	movq	%rax, -24(%rbp)
-.L260:
+.L264:
 	cmpq	$0, -24(%rbp)
-	jne	.L263
+	jne	.L267
 	movq	32(%rbp), %rax
 	movq	(%rax), %rax
 	movq	%rax, %rcx
@@ -4819,8 +4870,8 @@ parse_variable_access:
 	movq	%rax, %rcx
 	call	parser_error
 	movl	$0, %eax
-	jmp	.L238
-.L263:
+	jmp	.L242
+.L267:
 	movq	-24(%rbp), %rdx
 	movq	-40(%rbp), %rax
 	movq	$0, 32(%rsp)
@@ -4832,23 +4883,23 @@ parse_variable_access:
 	movq	%rax, -40(%rbp)
 	movq	$0, -16(%rbp)
 	movq	$0, -32(%rbp)
-.L252:
+.L256:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
 	movq	%rax, %rcx
 	call	peek_next_token
 	movq	%rax, -8(%rbp)
-.L239:
+.L243:
 	movq	-8(%rbp), %rax
 	movl	24(%rax), %eax
 	cmpl	$5, %eax
-	je	.L265
-	jmp	.L264
-.L266:
+	je	.L269
+	jmp	.L268
+.L270:
 	nop
-.L264:
+.L268:
 	movq	-40(%rbp), %rax
-.L238:
+.L242:
 	leave
 	ret
 	.ident	"GCC: (GNU) 13.2.0"
@@ -4869,6 +4920,7 @@ parse_variable_access:
 	.def	is_builtin_type;	.scl	2;	.type	32;	.endef
 	.def	search_name;	.scl	2;	.type	32;	.endef
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
+	.def	create_statement;	.scl	2;	.type	32;	.endef
 	.def	create_function_use_ptr;	.scl	2;	.type	32;	.endef
 	.def	make_method_name;	.scl	2;	.type	32;	.endef
 	.def	create_variable;	.scl	2;	.type	32;	.endef
@@ -4878,7 +4930,6 @@ parse_variable_access:
 	.def	create_variable_access;	.scl	2;	.type	32;	.endef
 	.def	create_primary;	.scl	2;	.type	32;	.endef
 	.def	create_expression;	.scl	2;	.type	32;	.endef
-	.def	create_statement;	.scl	2;	.type	32;	.endef
 	.def	list_copy;	.scl	2;	.type	32;	.endef
 	.def	list_pop;	.scl	2;	.type	32;	.endef
 	.def	create_string;	.scl	2;	.type	32;	.endef

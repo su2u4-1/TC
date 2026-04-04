@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -328,13 +329,13 @@ struct Symbol {
 typedef struct Lexer Lexer;
 typedef struct Parser Parser;
 Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser);
+void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
 typedef struct Parser {
     File* source_file;
     char in_function;
     char in_method;
+    char in_class;
     char in_loop;
-    char indent_has_next[32];
 } Parser;
 typedef struct Token Token;
 List* create_list(void);
@@ -349,7 +350,8 @@ Symbol* search_name(SymbolTable* scope, string name);
 Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
 char is_builtin_type(string type);
 void parser_error(const string message, Token* token, string file_name);
-void indention(FILE* out, size_t indent, char is_last, Parser* parser);
+void indention(FILE* out, size_t indent, char is_last, char indent_has_next[32]);
+void indention_tac(FILE* out, size_t indent);
 Parser* create_parser(File* file);
 Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
 string make_method_name(string class_name, string method_name);
@@ -358,12 +360,14 @@ int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);
 typedef struct Token Token;
 typedef struct Lexer Lexer;
-typedef struct Parser Parser;
+typedef struct TAC TAC;
+typedef struct Code Code;
 string read_source(FILE* file, size_t* length);
 void output_one_token(FILE* file, Token* token);
 void output_token(FILE* file, Lexer* lexer);
-void output_ast(FILE* file, Lexer* lexer, Parser* parser);
-void parse_file(const string name, char o_token, char o_ast);
+void output_ast(FILE* file, Code* ast);
+void output_tac(FILE* file, TAC* tac);
+void parse_file(const string name, char o_token, char o_ast, char o_tac);
 typedef enum TokenType {
     EOF_TOKEN,
     IDENTIFIER,
@@ -471,12 +475,12 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_ATTRIBUTE:
         case SYMBOL_TYPE: scope = (SymbolTable*)ast_node; break;
         default:
-            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %d\n", kind);
+            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %u\n", kind);
             break;
     }
     Symbol* result = search_name(scope, name);
     if (result != NULL)
-        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %d, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
     new_name->name = name;
     new_name->id = ++id_counter;
@@ -491,11 +495,11 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_ATTRIBUTE:
         case SYMBOL_TYPE: new_name->ast_node.scope = (SymbolTable*)ast_node; break;
         default:
-            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %d\n", kind);
+            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
             break;
     }
     if (scope == NULL)
-        fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %d, id: %zu\n", name, kind, new_name->id);
+        fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
     else
         list_append(scope->symbols, (pointer)new_name);
     return new_name;
@@ -511,11 +515,10 @@ Symbol* search_name_use_strcmp(SymbolTable* scope, string name) {
         List* names = scope->symbols;
         Node* current = names->head;
         while (current != NULL) {
-            Node* node_ptr = current;
-            Symbol* current_name = (Symbol*)node_ptr->content;
+            Symbol* current_name = (Symbol*)current->content;
             if (strcmp(current_name->name, name) == 0)
                 return current_name;
-            current = node_ptr->next;
+            current = current->next;
         }
         scope = scope->parent;
     }
@@ -526,11 +529,10 @@ Symbol* search_name(SymbolTable* scope, string name) {
         List* names = scope->symbols;
         Node* current = names->head;
         while (current != NULL) {
-            Node* node_ptr = current;
-            Symbol* current_name = (Symbol*)node_ptr->content;
+            Symbol* current_name = (Symbol*)current->content;
             if (string_equal(current_name->name, name))
                 return current_name;
-            current = node_ptr->next;
+            current = current->next;
         }
         scope = scope->parent;
     }
@@ -549,13 +551,16 @@ static void set_bool_list(char bool_list[32], size_t index, char value) {
 static inline char get_bool_list(char bool_list[32], size_t index) {
     return (bool_list[index / 8] & (1 << (index % 8))) != 0;
 }
-void indention(FILE* out, size_t indent, char is_last, Parser* parser) {
-    Parser* parser_ptr = parser;
-    set_bool_list(parser_ptr->indent_has_next, indent, !is_last);
+void indention(FILE* out, size_t indent, char is_last, char indent_has_next[32]) {
+    set_bool_list(indent_has_next, indent, !is_last);
     for (size_t i = 1; i < indent; ++i)
-        fprintf(out, get_bool_list(parser_ptr->indent_has_next, i) ? "│   " : "    ");
+        fprintf(out, get_bool_list(indent_has_next, i) ? "│   " : "    ");
     if (indent > 0)
         fprintf(out, is_last ? "└── " : "├── ");
+}
+void indention_tac(FILE* out, size_t indent) {
+    for (size_t i = 0; i < indent * 4; ++i)
+        putc(' ', out);
 }
 Parser* create_parser(File* file) {
     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
@@ -590,17 +595,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
         return NULL;
     }
-    List* names = code->global_scope->symbols;
-    Node* current = names->head;
-    while (current != NULL) {
-        Node* node_ptr = current;
-        Symbol* current_name = (Symbol*)node_ptr->content;
-        if (string_equal(current_name->name, import_name)) {
-            name = current_name;
-            break;
-        }
-        current = node_ptr->next;
-    }
+    name = search_name_use_strcmp(code->global_scope, import_name);
     if (name != NULL)
         list_append(scope->symbols, (pointer)name);
     else

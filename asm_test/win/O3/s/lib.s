@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\lib.c"
+	.file	"lib.c"
 	.text
 	.section .rdata,"dr"
 	.align 8
@@ -384,7 +384,7 @@ init:
 .LC5:
 	.ascii "struct_memory->used % ALIGN_SIZE == 0\0"
 .LC6:
-	.ascii "D:\\TC\\src\\lib.c\0"
+	.ascii "D:/TC/src/lib.c\0"
 	.text
 	.p2align 4
 	.def	create_string_check.part.0;	.scl	3;	.type	32;	.endef

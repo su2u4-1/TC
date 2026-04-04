@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -139,7 +140,7 @@ string absolute_path(string path, string base_path) {
         }
     }
     if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
-        path[0] = path[1] - ('a' - 'A');
+        path[0] = (char)toupper(path[1]);
         path[1] = ':';
         return path;
     }

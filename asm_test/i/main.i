@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -94,18 +95,20 @@ char string_equal(string a, string b);
 string get_info(void);
 typedef struct Token Token;
 typedef struct Lexer Lexer;
-typedef struct Parser Parser;
+typedef struct TAC TAC;
+typedef struct Code Code;
 string read_source(FILE* file, size_t* length);
 void output_one_token(FILE* file, Token* token);
 void output_token(FILE* file, Lexer* lexer);
-void output_ast(FILE* file, Lexer* lexer, Parser* parser);
-void parse_file(const string name, char o_token, char o_ast);
+void output_ast(FILE* file, Code* ast);
+void output_tac(FILE* file, TAC* tac);
+void parse_file(const string name, char o_token, char o_ast, char o_tac);
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
         return 1;
     }
     string filename = argv[1];
-    parse_file(filename, 1, 1);
+    parse_file(filename, 1, 1, 1);
     return 0;
 }

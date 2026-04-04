@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\main.c"
+	.file	"main.c"
 	.text
 	.def	__main;	.scl	2;	.type	32;	.endef
 	.section .rdata,"dr"
@@ -18,6 +18,7 @@ main:
 	cmpl	$1, %ebx
 	jle	.L6
 	movq	8(%rsi), %rcx
+	movl	$1, %r9d
 	movl	$1, %r8d
 	movl	$1, %edx
 	call	parse_file

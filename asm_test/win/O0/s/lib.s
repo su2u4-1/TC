@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\lib.c"
+	.file	"lib.c"
 	.text
 	.section .rdata,"dr"
 .LC0:
@@ -986,7 +986,7 @@ init:
 .LC56:
 	.ascii "struct_memory->used % ALIGN_SIZE == 0\0"
 .LC57:
-	.ascii "D:\\TC\\src\\lib.c\0"
+	.ascii "D:/TC/src/lib.c\0"
 	.text
 	.globl	alloc_memory
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef

@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\compiler.c"
+	.file	"compiler.c"
 	.text
 	.section .rdata,"dr"
 .LC0:
@@ -246,19 +246,32 @@ output_token:
 output_ast:
 	pushq	%rbx
 	movq	%rcx, %rbx
-	movq	%rdx, %rcx
-	subq	$48, %rsp
-	movq	.refptr.builtin_scope(%rip), %rax
-	movq	%r8, 40(%rsp)
-	movq	(%rax), %rdx
-	call	parse_code
-	movq	40(%rsp), %r9
-	movq	%rbx, %rdx
 	xorl	%r8d, %r8d
-	movq	%rax, %rcx
+	movq	%rdx, %rcx
+	movq	%rbx, %rdx
+	subq	$64, %rsp
+	leaq	32(%rsp), %r9
 	call	output_code
 	call	get_info
-	addq	$48, %rsp
+	movq	%rbx, %rcx
+	leaq	.LC14(%rip), %rdx
+	movq	%rax, %r8
+	call	fprintf
+	addq	$64, %rsp
+	popq	%rbx
+	ret
+	.globl	output_tac
+	.def	output_tac;	.scl	2;	.type	32;	.endef
+output_tac:
+	pushq	%rbx
+	movq	%rcx, %rbx
+	xorl	%r8d, %r8d
+	movq	%rdx, %rcx
+	movq	%rbx, %rdx
+	subq	$32, %rsp
+	call	output_TAC
+	call	get_info
+	addq	$32, %rsp
 	movq	%rbx, %rcx
 	leaq	.LC14(%rip), %rdx
 	movq	%rax, %r8
@@ -279,49 +292,53 @@ output_ast:
 	.ascii ".ast\0"
 .LC21:
 	.ascii ".tc\0"
+.LC22:
+	.ascii ".tac\0"
 	.text
 	.globl	parse_file
 	.def	parse_file;	.scl	2;	.type	32;	.endef
 parse_file:
+	pushq	%r13
+	movl	%edx, %r13d
 	pushq	%r12
 	movl	%r8d, %r12d
 	pushq	%rbp
-	movl	%edx, %ebp
+	movl	%r9d, %ebp
 	pushq	%rdi
 	pushq	%rsi
 	pushq	%rbx
-	subq	$64, %rsp
+	subq	$56, %rsp
 	call	create_file
 	movq	%rax, %rcx
 	movq	%rax, %rbx
 	call	get_full_path
 	xorl	%edx, %edx
-	movq	%rdx, 56(%rsp)
+	movq	%rdx, 40(%rsp)
 	movq	%rax, %rcx
 	leaq	.LC15(%rip), %rdx
 	movq	%rax, %rdi
 	call	fopen
 	testq	%rax, %rax
-	jne	.L39
+	jne	.L41
 	call	__getreent
 	movq	%rdi, %r8
 	leaq	.LC16(%rip), %rdx
 	movq	24(%rax), %rcx
-	jmp	.L45
-.L39:
+	jmp	.L51
+.L41:
 	movq	%rax, %rsi
-	leaq	56(%rsp), %rdx
+	leaq	40(%rsp), %rdx
 	movq	%rax, %rcx
 	call	read_source
 	movq	%rsi, %rcx
 	movq	%rax, %rdi
 	call	fclose
-	movq	56(%rsp), %rdx
+	movq	40(%rsp), %rdx
 	movq	%rdi, %rcx
 	call	create_lexer
 	movq	%rax, %rsi
-	testb	%bpl, %bpl
-	je	.L40
+	testb	%r13b, %r13b
+	je	.L42
 	movl	$6, %edx
 	leaq	.LC17(%rip), %rcx
 	call	create_string
@@ -332,33 +349,41 @@ parse_file:
 	call	get_full_path
 	leaq	.LC18(%rip), %rdx
 	movq	%rax, %rcx
-	movq	%rax, %rbp
+	movq	%rax, %r13
 	call	fopen
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	jne	.L41
+	jne	.L43
 	call	__getreent
-	movq	%rbp, %r8
+	movq	%r13, %r8
 	leaq	.LC19(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
-	jmp	.L40
-.L41:
+	jmp	.L42
+.L43:
 	movq	%rax, %rcx
 	movq	%rsi, %rdx
 	call	output_token
 	movq	%rdi, %rcx
 	call	fclose
-.L40:
+.L42:
 	movq	%rsi, %rcx
 	call	reset_lexer
 	movq	%rbx, %rcx
 	call	create_parser
+	movq	%rax, %r8
+	movl	%ebp, %eax
+	orb	%r12b, %al
+	je	.L40
+	movq	.refptr.builtin_scope(%rip), %rax
+	movq	%rsi, %rcx
+	movq	(%rax), %rdx
+	call	parse_code
+	movq	%rax, %rdi
 	testb	%r12b, %r12b
-	je	.L38
+	je	.L46
 	movl	$4, %edx
 	leaq	.LC20(%rip), %rcx
-	movq	%rax, 40(%rsp)
 	call	create_string
 	movq	%rbx, %rcx
 	movq	%rax, %rdx
@@ -367,49 +392,89 @@ parse_file:
 	call	get_full_path
 	movl	$3, %edx
 	leaq	.LC21(%rip), %rcx
-	movq	%rax, %rdi
+	movq	%rax, %r12
 	call	create_string
 	movq	%rbx, %rcx
 	movq	%rax, %rdx
 	call	change_file_extension
 	leaq	.LC18(%rip), %rdx
-	movq	%rdi, %rcx
+	movq	%r12, %rcx
 	call	fopen
-	movq	40(%rsp), %r8
+	movq	%rax, %rsi
 	testq	%rax, %rax
-	movq	%rax, %rbx
-	jne	.L43
+	jne	.L47
 	call	__getreent
-	movq	%rdi, %r8
+	movq	%r12, %r8
 	leaq	.LC19(%rip), %rdx
 	movq	24(%rax), %rcx
-.L45:
-	addq	$64, %rsp
+	call	fprintf
+	jmp	.L46
+.L47:
+	movq	%rax, %rcx
+	movq	%rdi, %rdx
+	call	output_ast
+	movq	%rsi, %rcx
+	call	fclose
+.L46:
+	testb	%bpl, %bpl
+	je	.L40
+	movl	$4, %edx
+	leaq	.LC22(%rip), %rcx
+	call	create_string
+	movq	%rbx, %rcx
+	movq	%rax, %rdx
+	call	change_file_extension
+	movq	%rbx, %rcx
+	call	get_full_path
+	movl	$3, %edx
+	leaq	.LC21(%rip), %rcx
+	movq	%rax, %rsi
+	call	create_string
+	movq	%rbx, %rcx
+	movq	%rax, %rdx
+	call	change_file_extension
+	leaq	.LC18(%rip), %rdx
+	movq	%rsi, %rcx
+	call	fopen
+	movq	%rax, %rbx
+	testq	%rax, %rax
+	jne	.L49
+	call	__getreent
+	movq	%rsi, %r8
+	leaq	.LC19(%rip), %rdx
+	movq	24(%rax), %rcx
+.L51:
+	addq	$56, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	popq	%r12
+	popq	%r13
 	jmp	fprintf
-.L43:
-	movq	%rsi, %rdx
-	movq	%rax, %rcx
-	call	output_ast
-	addq	$64, %rsp
+.L49:
+	movq	%rdi, %rcx
+	call	tac_code
+	movq	%rbx, %rcx
+	movq	%rax, %rdx
+	call	output_tac
+	addq	$56, %rsp
 	movq	%rbx, %rcx
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	popq	%r12
+	popq	%r13
 	jmp	fclose
-.L38:
-	addq	$64, %rsp
+.L40:
+	addq	$56, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	popq	%r12
+	popq	%r13
 	ret
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	fseek;	.scl	2;	.type	32;	.endef
@@ -423,8 +488,8 @@ parse_file:
 	.def	fputs;	.scl	2;	.type	32;	.endef
 	.def	get_next_token;	.scl	2;	.type	32;	.endef
 	.def	get_info;	.scl	2;	.type	32;	.endef
-	.def	parse_code;	.scl	2;	.type	32;	.endef
 	.def	output_code;	.scl	2;	.type	32;	.endef
+	.def	output_TAC;	.scl	2;	.type	32;	.endef
 	.def	create_file;	.scl	2;	.type	32;	.endef
 	.def	get_full_path;	.scl	2;	.type	32;	.endef
 	.def	fopen;	.scl	2;	.type	32;	.endef
@@ -435,6 +500,8 @@ parse_file:
 	.def	change_file_extension;	.scl	2;	.type	32;	.endef
 	.def	reset_lexer;	.scl	2;	.type	32;	.endef
 	.def	create_parser;	.scl	2;	.type	32;	.endef
+	.def	parse_code;	.scl	2;	.type	32;	.endef
+	.def	tac_code;	.scl	2;	.type	32;	.endef
 	.section	.rdata$.refptr.builtin_scope, "dr"
 	.globl	.refptr.builtin_scope
 	.linkonce	discard

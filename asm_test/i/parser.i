@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -308,7 +309,7 @@ struct Symbol {
 typedef struct Lexer Lexer;
 typedef struct Parser Parser;
 Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-void output_code(Code* code, FILE* outfile, size_t indent, Parser* parser);
+void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
 CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content);
 Code* create_code(List* members, SymbolTable* global_scope);
 Import* create_import(Symbol* name, string source);
@@ -352,8 +353,8 @@ typedef struct Parser {
     File* source_file;
     char in_function;
     char in_method;
+    char in_class;
     char in_loop;
-    char indent_has_next[32];
 } Parser;
 typedef struct Token Token;
 List* create_list(void);
@@ -368,7 +369,8 @@ Symbol* search_name(SymbolTable* scope, string name);
 Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
 char is_builtin_type(string type);
 void parser_error(const string message, Token* token, string file_name);
-void indention(FILE* out, size_t indent, char is_last, Parser* parser);
+void indention(FILE* out, size_t indent, char is_last, char indent_has_next[32]);
+void indention_tac(FILE* out, size_t indent);
 Parser* create_parser(File* file);
 Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
 string make_method_name(string class_name, string method_name);
@@ -554,6 +556,8 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     parser->in_function = 0;
     if (!have_return && return_type != name_void)
         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
+    if (!have_return && return_type == name_void)
+        list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
     return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
 }
 Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, Parser* parser) {
@@ -631,6 +635,8 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
     parser->in_method = 0;
     if (!have_return && return_type != name_void)
         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
+    if (!have_return && return_type == name_void)
+        list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
     return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
 }
 Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
@@ -660,7 +666,9 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
             token = get_next_token(lexer, 1);
+            parser->in_class = 1;
             Variable* variable = parse_variable(lexer, class_scope, parser);
+            parser->in_class = 0;
             if (variable == NULL)
                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
             ClassMember* member = create_class_member(CLASS_VARIABLE, NULL, variable);
@@ -740,15 +748,14 @@ Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     }
     Symbol* type = search_name(now_scope, token->lexeme);
     if (type != NULL) {
-        Symbol* type_ptr = type;
-        if (type_ptr->kind != SYMBOL_TYPE && type_ptr->kind != SYMBOL_CLASS)
+        if (type->kind != SYMBOL_TYPE && type->kind != SYMBOL_CLASS)
             parser_error("Expected a type for variable declaration", token, get_full_path(parser->source_file));
     } else
         parser_error("Unknown variable type", token, get_full_path(parser->source_file));
     token = get_next_token(lexer, 1);
     if (token->type != IDENTIFIER)
         parser_error("Expected variable name", token, get_full_path(parser->source_file));
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_VARIABLE, type, now_scope);
+    Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
     Expression* value = NULL;
     token = peek_next_token(lexer, 1);
     if (token->type == SYMBOL && string_equal(token->lexeme, ASSIGN_SYMBOL)) {

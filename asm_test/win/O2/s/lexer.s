@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\lexer.c"
+	.file	"lexer.c"
 	.text
 	.p2align 4
 	.def	get_current_char.isra.0;	.scl	3;	.type	32;	.endef
@@ -22,7 +22,7 @@ get_current_char.isra.0:
 .LC3:
 	.ascii "c != '\\0'\0"
 .LC4:
-	.ascii "D:\\TC\\src\\lexer.c\0"
+	.ascii "D:/TC/src/lexer.c\0"
 .LC5:
 	.ascii "Unterminated comment\0"
 .LC6:

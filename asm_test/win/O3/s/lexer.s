@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\lexer.c"
+	.file	"lexer.c"
 	.text
 	.section .rdata,"dr"
 	.align 8
@@ -11,7 +11,7 @@
 .LC3:
 	.ascii "c != '\\0'\0"
 .LC4:
-	.ascii "D:\\TC\\src\\lexer.c\0"
+	.ascii "D:/TC/src/lexer.c\0"
 .LC5:
 	.ascii "Unterminated comment\0"
 .LC6:

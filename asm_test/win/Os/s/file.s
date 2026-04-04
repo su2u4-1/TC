@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\file.c"
+	.file	"file.c"
 	.text
 	.globl	get_cwd
 	.def	get_cwd;	.scl	2;	.type	32;	.endef
@@ -91,13 +91,15 @@ absolute_path:
 	jbe	.L14
 	cmpb	$47, (%rbx)
 	jne	.L15
-	movb	1(%rbx), %al
-	leal	-97(%rax), %edx
-	cmpb	$25, %dl
+	movb	1(%rbx), %sil
+	leal	-97(%rsi), %eax
+	cmpb	$25, %al
 	ja	.L2
 	cmpb	$47, 2(%rbx)
 	jne	.L2
-	subl	$32, %eax
+	call	__locale_ctype_ptr
+	movsbl	%sil, %ecx
+	call	toupper
 	movb	$58, 1(%rbx)
 	movb	%al, (%rbx)
 	jmp	.L2
@@ -678,6 +680,8 @@ change_file_name:
 	.def	strlen;	.scl	2;	.type	32;	.endef
 	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
 	.def	memmove;	.scl	2;	.type	32;	.endef
+	.def	__locale_ctype_ptr;	.scl	2;	.type	32;	.endef
+	.def	toupper;	.scl	2;	.type	32;	.endef
 	.def	sprintf;	.scl	2;	.type	32;	.endef
 	.def	create_string;	.scl	2;	.type	32;	.endef
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef

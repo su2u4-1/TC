@@ -1,4 +1,4 @@
-	.file	"D:\\TC\\src\\file.c"
+	.file	"file.c"
 	.text
 	.p2align 4
 	.globl	get_cwd
@@ -175,13 +175,15 @@ absolute_path:
 	.p2align 4,,10
 	.p2align 3
 .L46:
-	movzbl	1(%rdi), %eax
-	leal	-97(%rax), %edx
-	cmpb	$25, %dl
+	movzbl	1(%rdi), %ebx
+	leal	-97(%rbx), %eax
+	cmpb	$25, %al
 	ja	.L3
 	cmpb	$47, 2(%rdi)
 	jne	.L3
-	subl	$32, %eax
+	call	__locale_ctype_ptr
+	movsbl	%bl, %ecx
+	call	toupper
 	movb	$58, 1(%rdi)
 	movb	%al, (%rdi)
 	jmp	.L3
@@ -817,6 +819,8 @@ change_file_name:
 	.def	memmove;	.scl	2;	.type	32;	.endef
 	.def	sprintf;	.scl	2;	.type	32;	.endef
 	.def	create_string;	.scl	2;	.type	32;	.endef
+	.def	__locale_ctype_ptr;	.scl	2;	.type	32;	.endef
+	.def	toupper;	.scl	2;	.type	32;	.endef
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
 	.def	strcpy;	.scl	2;	.type	32;	.endef
 	.def	strncpy;	.scl	2;	.type	32;	.endef
