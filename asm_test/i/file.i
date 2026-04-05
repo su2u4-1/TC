@@ -139,9 +139,11 @@ string absolute_path(string path, string base_path) {
             i--;
         }
     }
-    if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
-        path[0] = (char)toupper(path[1]);
-        path[1] = ':';
+    if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':') {
+        path[0] = (char)tolower(path[0]);
+        memmove(path, path + 1, path_len);
+        path[0] = '/';
+        path[2] = '/';
         return path;
     }
     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':')

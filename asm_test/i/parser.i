@@ -310,25 +310,135 @@ typedef struct Lexer Lexer;
 typedef struct Parser Parser;
 Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
 void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
-CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content);
-Code* create_code(List* members, SymbolTable* global_scope);
-Import* create_import(Symbol* name, string source);
-Function* create_function_use_ptr(Function* function, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* function_scope);
-Function* create_function(Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* function_scope);
-Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* method_scope);
-Method* create_method(Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* method_scope);
-ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content);
-Class* create_class_use_ptr(Class* class, Symbol* name, List* members, SymbolTable* class_scope, size_t size);
-Class* create_class(Symbol* name, List* members, SymbolTable* class_scope, size_t size);
-Variable* create_variable(Symbol* type, Symbol* name, Expression* value);
-Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt);
-If* create_if(Expression* condition, List* body, List* else_if, List* else_body);
-ElseIf* create_else_if(Expression* condition, List* body);
-For* create_for(Variable* initializer, Expression* condition, Expression* increment, List* body);
-While* create_while(Expression* condition, List* body);
-Expression* create_expression(OperatorType operator, Expression * expr_left, Primary* prim_left, Expression* right);
-Primary* create_primary(PrimaryType type, string str_value, Expression* expr_value, Primary* prim_value, VariableAccess* variable_value);
-VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Symbol* name_content, Expression* expr_content, List* args_content);
+typedef struct TAC {
+    List* attribute_tables;
+    Symbol* entry_point;
+    List* global_vars;
+    List* subroutines;
+} TAC;
+typedef struct Subroutine {
+    Symbol* name;
+    Symbol* return_type;
+    List* parameters;
+    List* local_vars;
+    List* blocks;
+} Subroutine;
+typedef struct Var {
+    Symbol* original_name;
+    string name;
+    Symbol* type;
+} Var;
+typedef struct Block {
+    Var* label;
+    List* instructions;
+} Block;
+typedef enum ArgType {
+    ARG_VARIABLE,
+    ARG_INT,
+    ARG_FLOAT,
+    ARG_STRING,
+    ARG_BOOL,
+    ARG_VOID,
+    ARG_LABEL,
+    ARG_SUBROUTINE,
+    ARG_NONE
+} ArgType;
+typedef struct Arg {
+    union {
+        Var* variable;
+        long long int_value;
+        double float_value;
+        string string_value;
+        char bool_value;
+        Var* label;
+        Var* subroutine;
+    } value;
+    Symbol* type;
+    ArgType kind;
+    char is_get;
+} Arg;
+typedef enum InstructionType {
+    INST_ADD,
+    INST_SUB,
+    INST_MUL,
+    INST_DIV,
+    INST_MOD,
+    INST_EQ,
+    INST_NE,
+    INST_LT,
+    INST_GT,
+    INST_LE,
+    INST_GE,
+    INST_AND,
+    INST_OR,
+    INST_NOT,
+    INST_ASSIGN,
+    INST_GET_ATTR,
+    INST_GET_ELEM,
+    INST_PARAM,
+    INST_ALLOC,
+    INST_JMP_C,
+    INST_JMP,
+    INST_RET,
+    INST_CALL,
+    INST_LOAD,
+    INST_STORE,
+    INST_NONE
+} InstructionType;
+typedef struct Instruction {
+    Arg* arg1;
+    Arg* arg2;
+    Arg* arg3;
+    InstructionType type;
+} Instruction;
+typedef struct AttributeTable {
+    List* attributes;
+    Symbol* name;
+    size_t size;
+} AttributeTable;
+typedef struct Attribute {
+    Var* var;
+    Symbol* type;
+    size_t offset;
+} Attribute;
+typedef struct TACStatus {
+    TAC* tac;
+    Subroutine* current_subroutine;
+    Block* current_block;
+    Class* current_class;
+    List* end_labels;
+    List* start_labels;
+    size_t attr_count;
+    size_t param_count;
+    size_t var_count;
+    size_t temp_count;
+    size_t block_count;
+    size_t subroutine_count;
+} TACStatus;
+typedef enum VarType {
+    VAR_ATTR = 'a',
+    VAR_PARAM = 'p',
+    VAR_VAR = 'v',
+    VAR_TEMP = 't',
+    VAR_BLOCK = 'b',
+    VAR_SUBROUTINE = 'f'
+} VarType;
+TAC* tac_code(Code* code);
+void tac_import(Import* import, TAC* tac, TACStatus* status);
+void tac_function(Function* function, TACStatus* status);
+void tac_method(Method* method, TACStatus* status);
+void tac_class_member(ClassMember* class_member, TACStatus* status);
+void tac_class(Class* class, TACStatus* status);
+void tac_variable(Variable* variable, TACStatus* status, VarType type);
+void tac_statement(Statement* statement, TACStatus* status);
+void tac_if(If* if_, TACStatus* status);
+void tac_else_if(ElseIf* else_if, TACStatus* status);
+void tac_for(For* for_, TACStatus* status);
+void tac_while(While* while_, TACStatus* status);
+Arg* tac_expression(Expression* expression, TACStatus* status);
+Arg* tac_primary(Primary* primary, TACStatus* status);
+Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status);
+void output_TAC(TAC* tac, FILE* outfile, size_t indent);
 typedef struct StrNode StrNode;
 struct StrNode {
     string dir;
@@ -377,824 +487,715 @@ string make_method_name(string class_name, string method_name);
 OperatorType string_to_operator(string str);
 int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);
-typedef enum TokenType {
-    EOF_TOKEN,
-    IDENTIFIER,
-    INTEGER,
-    FLOAT,
-    STRING,
-    SYMBOL,
-    KEYWORD,
-    COMMENT
-} TokenType;
-typedef struct Token {
-    string lexeme;
-    size_t line, column;
-    TokenType type;
-} Token;
-typedef struct Lexer {
-    string source;
-    size_t position;
-    size_t length;
-    size_t line;
-    size_t column;
-    Token* peeked_token;
-    size_t peeked_position;
-    size_t peeked_line;
-    size_t peeked_column;
-    Token* current_token;
-} Lexer;
-Lexer* create_lexer(string source, size_t length);
-Token* get_next_token(Lexer* lexer, char skip_comment);
-Token* peek_next_token(Lexer* lexer, char skip_comment);
-void reset_lexer(Lexer* lexer);
-Token* peek_current_token(Lexer* lexer);
-static Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-static Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-static Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, Parser* parser);
-static Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-static Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-static Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-static If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-static For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-static While* parse_while(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-static Expression* parse_expression(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-static Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-static VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    if (builtin_scope == NULL) {
-        builtin_scope = create_symbol_table(NULL);
-        name_void = create_symbol(VOID_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
-        name_int = create_symbol(INT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
-        name_float = create_symbol(FLOAT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
-        name_string = create_symbol(STRING_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
-        name_bool = create_symbol(BOOL_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
-    }
-    if (now_scope == NULL)
-        now_scope = builtin_scope;
-    Token* token = NULL;
-    List* members = create_list();
-    SymbolTable* global_scope = create_symbol_table(now_scope);
-    token = get_next_token(lexer, 1);
-    while (token != NULL && token->type != EOF_TOKEN) {
-        if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
-            Import* import = parse_import(lexer, global_scope, parser);
-            if (import == NULL)
-                parser_error("Failed to parse import statement", token, get_full_path(parser->source_file));
-            list_append(members, (pointer)create_code_member(CODE_IMPORT, import, NULL, NULL));
-        } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
-            Function* function = parse_function(lexer, global_scope, parser);
-            if (function == NULL)
-                parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
-            list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
-        } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
-            Class* class = parse_class(lexer, global_scope, parser);
-            if (class == NULL)
-                parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
-            list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
-        } else
-            parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
-        token = get_next_token(lexer, 1);
-    }
-    return create_code(members, global_scope);
+static AttributeTable* create_attribute_table(Symbol* name) {
+    AttributeTable* table = (AttributeTable*)alloc_memory(sizeof(AttributeTable));
+    table->attributes = create_list();
+    table->name = name;
+    table->size = 0;
+    return table;
 }
-Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    Token* token = NULL;
-    token = get_next_token(lexer, 1);
-    if (token->type != IDENTIFIER) {
-        parser_error("Expected identifier after 'import'", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    string import_name = token->lexeme;
-    string source = NULL;
-    token = get_next_token(lexer, 1);
-    if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
-        token = get_next_token(lexer, 1);
-        if (token->type != STRING) {
-            parser_error("Expected string literal after 'from'", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-        source = token->lexeme;
-        token = get_next_token(lexer, 1);
-    }
-    if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
-        parser_error("Expected ';' at end of import statement", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    Symbol* name;
-    name = parse_import_file(import_name, source, now_scope, parser->source_file);
-    if (name == NULL) {
-        fprintf(stderr, "Failed to import module '%s' from source '%s'\n", import_name, source);
-        name = create_symbol(import_name, SYMBOL_VARIABLE, name_void, now_scope);
-    }
-    return create_import(name, source);
+static size_t get_type_size(Symbol* type) {
+    size_t result = 8;
+    if (type == NULL)
+        result = 0;
+    else if (type == name_int || type == name_float || type == name_string)
+        result = 8;
+    else if (type == name_bool || type == name_void)
+        result = 1;
+    else if (type->kind == SYMBOL_CLASS)
+        result = type->ast_node.class->size;
+    else
+        fprintf(stderr, "[warning] Unsupported type for size lookup: %s\n", type->name);
+    return result;
 }
-Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    Token* token = NULL;
-    SymbolTable* function_scope = create_symbol_table(now_scope);
-    token = get_next_token(lexer, 1);
-    if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
-        parser_error("Expected function return type after 'func'", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    Symbol* return_type = search_name(now_scope, token->lexeme);
-    if (return_type == NULL) {
-        parser_error("Unknown function return type", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    token = get_next_token(lexer, 1);
-    if (token->type != IDENTIFIER) {
-        parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    Function* function = (Function*)alloc_memory(sizeof(Function));
-    function->function_scope = function_scope;
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_FUNCTION, return_type, function);
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
-        parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    token = get_next_token(lexer, 1);
-    List* parameters = create_list();
-    while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
-        Variable* parameter = parse_variable(lexer, function_scope, parser);
-        if (parameter == NULL)
-            parser_error("Failed to parse function parameter", token, get_full_path(parser->source_file));
-        else if (parameter->value != NULL)
-            parser_error("Function parameters cannot have default values", token, get_full_path(parser->source_file));
-        else
-            list_append(parameters, (pointer)parameter);
-        token = get_next_token(lexer, 1);
-        if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
-            token = get_next_token(lexer, 1);
-        } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
-            parser_error("Expected ',' or ')' after function parameter", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-    }
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
-        parser_error("Expected '{' to start function body", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    List* body = create_list();
-    parser->in_function = 1;
-    char have_return = 0;
-    token = get_next_token(lexer, 1);
-    while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-        Statement* statement = parse_statement(lexer, function_scope, parser);
-        if (statement == NULL)
-            parser_error("Failed to parse function body statement", token, get_full_path(parser->source_file));
-        else if (have_return)
-            parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
-        if (statement != NULL && statement->type == RETURN_STATEMENT)
-            have_return = 1;
-        list_append(body, (pointer)statement);
-        token = get_next_token(lexer, 1);
-    }
-    parser->in_function = 0;
-    if (!have_return && return_type != name_void)
-        parser_error("Function missing return statement", token, get_full_path(parser->source_file));
-    if (!have_return && return_type == name_void)
-        list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
-    return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
+static inline char is_assignment_operator(OperatorType op) {
+    return op == OP_ASSIGN || op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN;
 }
-Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, Parser* parser) {
-    Token* token = NULL;
-    SymbolTable* method_scope = create_symbol_table(now_scope);
-    Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, class_name, method_scope);
-    token = get_next_token(lexer, 1);
-    if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
-        parser_error("Expected method return type after 'method'", token, get_full_path(parser->source_file));
-        return NULL;
+static InstructionType get_instruction_type(OperatorType op) {
+    switch (op) {
+        case OP_ADD:
+        case OP_ADD_ASSIGN: return INST_ADD;
+        case OP_SUB:
+        case OP_SUB_ASSIGN: return INST_SUB;
+        case OP_MUL:
+        case OP_MUL_ASSIGN: return INST_MUL;
+        case OP_DIV:
+        case OP_DIV_ASSIGN: return INST_DIV;
+        case OP_MOD:
+        case OP_MOD_ASSIGN: return INST_MOD;
+        case OP_ASSIGN: return INST_ASSIGN;
+        case OP_EQ: return INST_EQ;
+        case OP_NE: return INST_NE;
+        case OP_LT: return INST_LT;
+        case OP_GT: return INST_GT;
+        case OP_LE: return INST_LE;
+        case OP_GE: return INST_GE;
+        case OP_AND: return INST_AND;
+        case OP_OR: return INST_OR;
+        case OP_NONE:
+        default: return INST_NONE;
     }
-    Symbol* return_type = search_name(now_scope, token->lexeme);
-    if (return_type == NULL) {
-        parser_error("Unknown return type for method", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    token = get_next_token(lexer, 1);
-    if (token->type != IDENTIFIER) {
-        parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    Method* method = (Method*)alloc_memory(sizeof(Method));
-    method->method_scope = method_scope;
-    Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
-        parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    token = get_next_token(lexer, 1);
-    if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
-        parser_error("Expected 'self' as first parameter of method", token, get_full_path(parser->source_file));
-    token = get_next_token(lexer, 1);
-    List* parameters = create_list();
-    list_append(parameters, (pointer)create_variable(class_name, self, NULL));
-    while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
-        if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
-            token = get_next_token(lexer, 1);
-        } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
-        else {
-            parser_error("Expected ',' or ')' after method parameter", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-        Variable* parameter = parse_variable(lexer, method_scope, parser);
-        if (parameter == NULL)
-            parser_error("Failed to parse method parameter", token, get_full_path(parser->source_file));
-        else if (parameter->value != NULL)
-            parser_error("Method parameters cannot have default values", token, get_full_path(parser->source_file));
-        else
-            list_append(parameters, (pointer)parameter);
-        token = get_next_token(lexer, 1);
-    }
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
-        parser_error("Expected '{' to start method body", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    List* body = create_list();
-    parser->in_function = 1;
-    parser->in_method = 1;
-    char have_return = 0;
-    token = get_next_token(lexer, 1);
-    while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-        Statement* statement = parse_statement(lexer, method_scope, parser);
-        if (statement == NULL)
-            parser_error("Failed to parse method body statement", token, get_full_path(parser->source_file));
-        else if (have_return)
-            parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
-        if (statement != NULL && statement->type == RETURN_STATEMENT)
-            have_return = 1;
-        list_append(body, (pointer)statement);
-        token = get_next_token(lexer, 1);
-    }
-    parser->in_function = 0;
-    parser->in_method = 0;
-    if (!have_return && return_type != name_void)
-        parser_error("Method missing return statement", token, get_full_path(parser->source_file));
-    if (!have_return && return_type == name_void)
-        list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
-    return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
 }
-Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    Token* token = NULL;
-    SymbolTable* class_scope = create_symbol_table(now_scope);
-    token = get_next_token(lexer, 1);
-    if (token->type != IDENTIFIER) {
-        parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    Class* class = (Class*)alloc_memory(sizeof(Class));
-    class->class_scope = class_scope;
-    Symbol* name = create_symbol(token->lexeme, SYMBOL_CLASS, NULL, class);
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
-        parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    List* members = create_list();
-    token = get_next_token(lexer, 1);
-    size_t size = 0;
-    while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-        if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
-            Method* method = parse_method(lexer, class_scope, name, parser);
-            if (method == NULL)
-                parser_error("Failed to parse class method", token, get_full_path(parser->source_file));
-            list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
-        } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
-            token = get_next_token(lexer, 1);
-            parser->in_class = 1;
-            Variable* variable = parse_variable(lexer, class_scope, parser);
-            parser->in_class = 0;
-            if (variable == NULL)
-                parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
-            ClassMember* member = create_class_member(CLASS_VARIABLE, NULL, variable);
-            list_append(members, (pointer)member);
-            if (member->type == CLASS_VARIABLE) {
-                Symbol* type = member->content.variable->type;
-                if (type == name_int || type == name_float || type == name_string)
-                    size += 8;
-                else if (type == name_bool || type == name_void)
-                    size += 1;
-                else if (type->kind == SYMBOL_CLASS)
-                    size += 8;
-                else
-                    fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->name, type->name);
+static TAC* create_tac(void) {
+    TAC* tac = (TAC*)alloc_memory(sizeof(TAC));
+    tac->attribute_tables = create_list();
+    tac->entry_point = NULL;
+    tac->global_vars = create_list();
+    tac->subroutines = create_list();
+    return tac;
+}
+static TACStatus* create_tac_status(TAC* tac) {
+    TACStatus* status = (TACStatus*)alloc_memory(sizeof(TACStatus));
+    status->tac = tac;
+    status->current_subroutine = NULL;
+    status->current_block = NULL;
+    status->end_labels = create_list();
+    status->start_labels = create_list();
+    status->attr_count = 0;
+    status->param_count = 0;
+    status->var_count = 0;
+    status->temp_count = 0;
+    status->block_count = 0;
+    status->subroutine_count = 0;
+    return status;
+}
+static Subroutine* create_subroutine(Symbol* name, Symbol* return_type) {
+    Subroutine* subroutine = (Subroutine*)alloc_memory(sizeof(Subroutine));
+    subroutine->name = name;
+    subroutine->return_type = return_type;
+    subroutine->parameters = create_list();
+    subroutine->local_vars = create_list();
+    subroutine->blocks = create_list();
+    return subroutine;
+}
+static Block* create_block(Var* label) {
+    Block* block = (Block*)alloc_memory(sizeof(Block));
+    block->label = label;
+    block->instructions = create_list();
+    return block;
+}
+static Var* search_var(Symbol* original_name, TACStatus* status) {
+    if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->local_vars)) {
+        List* vars = list_copy(status->current_subroutine->local_vars);
+        Var* var;
+        while ((var = (Var*)list_pop(vars)) != NULL) {
+            if (var->original_name == original_name) {
+                return var;
             }
-            token = get_next_token(lexer, 1);
-            if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
-                parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
-        } else
-            parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
-        token = get_next_token(lexer, 1);
-    }
-    string init_name = make_method_name(name->name, DEFAULT_INIT_NAME);
-    Symbol* init = search_name_use_strcmp(class_scope, init_name);
-    if (init == NULL) {
-        Method* method = (Method*)alloc_memory(sizeof(Method));
-        method->method_scope = create_symbol_table(class_scope);
-        init = create_symbol(init_name, SYMBOL_METHOD, name, method);
-        List* parameters = create_list();
-        Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
-        list_append(parameters, (pointer)create_variable(name, self, NULL));
-        List* body = create_list();
-        list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
-        create_method_use_ptr(method, init, name, parameters, body, method->method_scope);
-        list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
-    }
-    if (init->kind != SYMBOL_METHOD)
-        parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
-    string constructor_name = make_method_name(name->name, DEFAULT_CONSTRUCTOR_NAME);
-    Method* method = (Method*)alloc_memory(sizeof(Method));
-    method->method_scope = create_symbol_table(class_scope);
-    Symbol* constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, method);
-    List* parameters = create_list();
-    Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
-    list_append(parameters, (pointer)create_variable(name, self, NULL));
-    List* init_params = list_copy(init->ast_node.method->parameters);
-    Variable* param;
-    while ((param = (Variable*)list_pop(init_params)) != NULL) {
-        if (string_equal(param->name->name, SELF_KEYWORD)) continue;
-        list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
-    }
-    List* body = create_list();
-    List* ms = list_copy(members);
-    ClassMember* mb;
-    while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
-        if (mb->type == CLASS_VARIABLE) {
-            Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, mb->content.variable->name, NULL, NULL)), NULL);
-            Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
-            list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
         }
     }
-    List* args = create_list();
-    List* params = list_copy(parameters);
-    while ((param = (Variable*)list_pop(params)) != NULL)
-        list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
-    list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
-    create_method_use_ptr(method, constructor, name, parameters, body, method->method_scope);
-    list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
-    return create_class_use_ptr(class, name, members, class_scope, size);
-}
-Variable* parse_variable(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    Token* token = NULL;
-    token = peek_current_token(lexer);
-    if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
-        parser_error("Expected variable type", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    Symbol* type = search_name(now_scope, token->lexeme);
-    if (type != NULL) {
-        if (type->kind != SYMBOL_TYPE && type->kind != SYMBOL_CLASS)
-            parser_error("Expected a type for variable declaration", token, get_full_path(parser->source_file));
-    } else
-        parser_error("Unknown variable type", token, get_full_path(parser->source_file));
-    token = get_next_token(lexer, 1);
-    if (token->type != IDENTIFIER)
-        parser_error("Expected variable name", token, get_full_path(parser->source_file));
-    Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
-    Expression* value = NULL;
-    token = peek_next_token(lexer, 1);
-    if (token->type == SYMBOL && string_equal(token->lexeme, ASSIGN_SYMBOL)) {
-        token = get_next_token(lexer, 1);
-        token = get_next_token(lexer, 1);
-        value = parse_expression(lexer, now_scope, parser);
-        if (value == NULL)
-            parser_error("Failed to parse variable initializer", token, get_full_path(parser->source_file));
-    }
-    return create_variable(type, name, value);
-}
-Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    Token* token = NULL;
-    token = peek_current_token(lexer);
-    Statement* statement = NULL;
-    if (token->type == KEYWORD) {
-        if (string_equal(token->lexeme, IF_KEYWORD))
-            return create_statement(IF_STATEMENT, parse_if(lexer, now_scope, parser), NULL, NULL, NULL, NULL);
-        else if (string_equal(token->lexeme, FOR_KEYWORD))
-            return create_statement(FOR_STATEMENT, NULL, NULL, parse_for(lexer, now_scope, parser), NULL, NULL);
-        else if (string_equal(token->lexeme, WHILE_KEYWORD))
-            return create_statement(WHILE_STATEMENT, NULL, parse_while(lexer, now_scope, parser), NULL, NULL, NULL);
-        else if (string_equal(token->lexeme, VAR_KEYWORD)) {
-            get_next_token(lexer, 1);
-            statement = create_statement(VARIABLE_STATEMENT, NULL, NULL, NULL, NULL, parse_variable(lexer, now_scope, parser));
-        } else if (string_equal(token->lexeme, RETURN_KEYWORD)) {
-            token = get_next_token(lexer, 1);
-            if (token->type == SYMBOL && string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
-                return create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL);
+    if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->parameters)) {
+        List* vars = list_copy(status->current_subroutine->parameters);
+        Var* var;
+        while ((var = (Var*)list_pop(vars)) != NULL) {
+            if (var->original_name == original_name) {
+                return var;
             }
-            statement = create_statement(RETURN_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
-        } else if (string_equal(token->lexeme, BREAK_KEYWORD)) {
-            if (!parser->in_loop) {
-                parser_error("Cannot use 'break' outside of a loop", token, get_full_path(parser->source_file));
-                return NULL;
+        }
+    }
+    if (status->current_class != NULL && !list_is_empty(status->tac->attribute_tables)) {
+        List* tables = list_copy(status->tac->attribute_tables);
+        AttributeTable* table;
+        while ((table = (AttributeTable*)list_pop(tables)) != NULL) {
+            if (table->name == status->current_class->name && !list_is_empty(table->attributes)) {
+                List* attributes = list_copy(table->attributes);
+                Attribute* attr;
+                while ((attr = (Attribute*)list_pop(attributes)) != NULL)
+                    if (attr->var->original_name == original_name) {
+                        return attr->var;
+                    }
             }
-            statement = create_statement(BREAK_STATEMENT, NULL, NULL, NULL, NULL, NULL);
-        } else if (string_equal(token->lexeme, CONTINUE_KEYWORD)) {
-            if (!parser->in_loop) {
-                parser_error("Cannot use 'continue' outside of a loop", token, get_full_path(parser->source_file));
-                return NULL;
+        }
+    }
+    if (!list_is_empty(status->tac->global_vars)) {
+        List* vars = list_copy(status->tac->global_vars);
+        Var* var;
+        while ((var = (Var*)list_pop(vars)) != NULL) {
+            if (var->original_name == original_name) {
+                return var;
             }
-            statement = create_statement(CONTINUE_STATEMENT, NULL, NULL, NULL, NULL, NULL);
-        } else
-            statement = create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
-    } else
-        statement = create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
-    token = peek_current_token(lexer);
-    if (statement == NULL)
-        parser_error("Failed to parse statement", token, get_full_path(parser->source_file));
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
-        parser_error("Expected ';' after statement", token, get_full_path(parser->source_file));
-    return statement;
+        }
+    }
+    return NULL;
 }
-If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    Token* token = NULL;
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
-        parser_error("Expected '(' after 'if'", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    token = get_next_token(lexer, 1);
-    Expression* condition = parse_expression(lexer, now_scope, parser);
-    if (condition == NULL)
-        parser_error("Failed to parse if condition", token, get_full_path(parser->source_file));
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
-        parser_error("Expected ')' after if condition", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
-        parser_error("Expected '{' to start if body", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    List* body = create_list();
-    token = get_next_token(lexer, 1);
-    while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-        Statement* statement = parse_statement(lexer, now_scope, parser);
-        if (statement == NULL)
-            parser_error("Failed to parse if body statement", token, get_full_path(parser->source_file));
-        list_append(body, (pointer)statement);
-        token = get_next_token(lexer, 1);
-    }
-    List* else_if = create_list();
-    List* else_body = create_list();
-    token = peek_next_token(lexer, 1);
-    while (token->type == KEYWORD && string_equal(token->lexeme, ELIF_KEYWORD)) {
-        token = get_next_token(lexer, 1);
-        token = get_next_token(lexer, 1);
-        if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
-            parser_error("Expected '(' after 'elif'", token, get_full_path(parser->source_file));
-            return NULL;
+static Var* create_var(Symbol* original_name, Symbol* type, VarType kind, TACStatus* status) {
+    if (original_name != NULL) {
+        Class* current_class = NULL;
+        if (type->kind == SYMBOL_CLASS) {
+            current_class = status->current_class;
+            status->current_class = type->ast_node.class;
         }
-        token = get_next_token(lexer, 1);
-        Expression* elif_condition = parse_expression(lexer, now_scope, parser);
-        if (elif_condition == NULL)
-            parser_error("Failed to parse else-if condition", token, get_full_path(parser->source_file));
-        token = get_next_token(lexer, 1);
-        if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
-            parser_error("Expected ')' after else-if condition", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-        token = get_next_token(lexer, 1);
-        if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
-            parser_error("Expected '{' to start else-if body", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-        List* elif_body = create_list();
-        token = get_next_token(lexer, 1);
-        while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-            Statement* statement = parse_statement(lexer, now_scope, parser);
-            if (statement == NULL)
-                parser_error("Failed to parse else-if body statement", token, get_full_path(parser->source_file));
-            list_append(elif_body, (pointer)statement);
-            token = get_next_token(lexer, 1);
-        }
-        list_append(else_if, (pointer)create_else_if(elif_condition, elif_body));
-        token = peek_next_token(lexer, 1);
-    }
-    if (token->type == KEYWORD && string_equal(token->lexeme, ELSE_KEYWORD)) {
-        token = get_next_token(lexer, 1);
-        token = get_next_token(lexer, 1);
-        if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
-            parser_error("Expected '{' to start else body", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-        token = get_next_token(lexer, 1);
-        while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-            Statement* statement = parse_statement(lexer, now_scope, parser);
-            if (statement == NULL)
-                parser_error("Failed to parse else body statement", token, get_full_path(parser->source_file));
-            list_append(else_body, (pointer)statement);
-            token = get_next_token(lexer, 1);
+        Var* var = search_var(original_name, status);
+        if (type->kind == SYMBOL_CLASS)
+            status->current_class = current_class;
+        if (var != NULL) {
+            return var;
         }
     }
-    token = peek_current_token(lexer);
-    return create_if(condition, body, else_if, else_body);
+    Var* var = (Var*)alloc_memory(sizeof(Var));
+    var->original_name = original_name;
+    size_t id;
+    switch (kind) {
+        case VAR_ATTR: id = status->attr_count++; break;
+        case VAR_PARAM: id = status->param_count++; break;
+        case VAR_VAR: id = status->var_count++; break;
+        case VAR_TEMP: id = status->temp_count++; break;
+        case VAR_BLOCK: id = status->block_count++; break;
+        case VAR_SUBROUTINE: id = status->subroutine_count++; break;
+        default: id = (size_t)-1; break;
+    }
+    var->name = create_string("", 32);
+    if (id == (size_t)-1)
+        sprintf(var->name, "$%d-error", kind);
+    else
+        sprintf(var->name, "$%c%zu", kind, id);
+    var->type = type;
+    if (kind == VAR_TEMP || kind == VAR_VAR)
+        list_append(status->current_subroutine->local_vars, (pointer)var);
+    return var;
 }
-For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    Token* token = NULL;
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
-        parser_error("Expected '(' after 'for'", token, get_full_path(parser->source_file));
-        return NULL;
+static Attribute* create_attribute(Symbol* var, Symbol* type, AttributeTable* table, size_t offset, TACStatus* status) {
+    Attribute* attr = (Attribute*)alloc_memory(sizeof(Attribute));
+    attr->var = create_var(var, type, VAR_ATTR, status);
+    attr->type = type;
+    attr->offset = offset;
+    if (offset == 0) {
+        attr->offset = table->size;
+        table->size += get_type_size(type);
     }
-    token = get_next_token(lexer, 1);
-    Variable* initializer = NULL;
-    if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
-        initializer = parse_variable(lexer, now_scope, parser);
-        if (initializer == NULL)
-            parser_error("Failed to parse for loop initializer", token, get_full_path(parser->source_file));
-        token = get_next_token(lexer, 1);
-    }
-    if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
-        parser_error("Expected ';' after for loop initializer", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    token = get_next_token(lexer, 1);
-    Expression* condition = NULL;
-    if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
-        condition = parse_expression(lexer, now_scope, parser);
-        if (condition == NULL)
-            parser_error("Failed to parse for loop condition", token, get_full_path(parser->source_file));
-        token = get_next_token(lexer, 1);
-    }
-    if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
-        parser_error("Expected ';' after for loop condition", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    token = get_next_token(lexer, 1);
-    Expression* increment = NULL;
-    if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
-        increment = parse_expression(lexer, now_scope, parser);
-        if (increment == NULL)
-            parser_error("Failed to parse for loop increment", token, get_full_path(parser->source_file));
-        token = get_next_token(lexer, 1);
-    }
-    if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
-        parser_error("Expected ')' after for loop increment", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
-        parser_error("Expected '{' to start for loop body", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    List* body = create_list();
-    parser->in_loop = 1;
-    token = get_next_token(lexer, 1);
-    while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-        Statement* statement = parse_statement(lexer, now_scope, parser);
-        if (statement == NULL)
-            parser_error("Failed to parse for loop body statement", token, get_full_path(parser->source_file));
-        list_append(body, (pointer)statement);
-        token = get_next_token(lexer, 1);
-    }
-    parser->in_loop = 0;
-    return create_for(initializer, condition, increment, body);
+    if (table == NULL || table->attributes == NULL)
+        fprintf(stderr, "Error: create_attribute received NULL table or attributes list\n");
+    else
+        list_append(table->attributes, (pointer)attr);
+    return attr;
 }
-While* parse_while(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    Token* token = NULL;
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
-        parser_error("Expected '(' after 'while'", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    token = get_next_token(lexer, 1);
-    Expression* condition = parse_expression(lexer, now_scope, parser);
-    if (condition == NULL)
-        parser_error("Failed to parse while condition", token, get_full_path(parser->source_file));
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
-        parser_error("Expected ')' after while condition", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    token = get_next_token(lexer, 1);
-    if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
-        parser_error("Expected '{' to start while body", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    List* body = create_list();
-    parser->in_loop = 1;
-    token = get_next_token(lexer, 1);
-    while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-        Statement* statement = parse_statement(lexer, now_scope, parser);
-        if (statement == NULL)
-            parser_error("Failed to parse while body statement", token, get_full_path(parser->source_file));
-        list_append(body, (pointer)statement);
-        token = get_next_token(lexer, 1);
-    }
-    parser->in_loop = 0;
-    return create_while(condition, body);
+static Instruction* create_instruction(InstructionType type, Arg* arg1, Arg* arg2, Arg* arg3) {
+    Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
+    inst->type = type;
+    inst->arg1 = arg1;
+    inst->arg2 = arg2;
+    inst->arg3 = arg3;
+    return inst;
 }
-static Expression* parse_expr_prec(Lexer* lexer, Expression* expr_left, int min_prec, SymbolTable* now_scope, Parser* parser) {
-    Token* token = NULL;
-    token = peek_next_token(lexer, 1);
-    while (token->type == SYMBOL) {
-        OperatorType op = string_to_operator(token->lexeme);
-        int op_prec = operator_precedence(op);
-        if (op == OP_NONE || op_prec < min_prec)
+static Arg* create_arg(ArgType kind, void* value) {
+    Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
+    arg->kind = kind;
+    arg->type = NULL;
+    switch (kind) {
+        case ARG_VARIABLE:
+            arg->value.variable = (Var*)value;
+            arg->type = arg->value.variable->type;
             break;
-        token = get_next_token(lexer, 1);
-        token = get_next_token(lexer, 1);
-        Primary* right_primary = parse_primary(lexer, now_scope, parser);
-        if (right_primary == NULL) {
-            parser_error("Failed to parse right operand", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-        Expression* right = create_expression(OP_NONE, NULL, right_primary, NULL);
-        token = peek_next_token(lexer, 1);
-        while (token->type == SYMBOL) {
-            OperatorType next_op = string_to_operator(token->lexeme);
-            int next_prec = operator_precedence(next_op);
-            if (next_op == OP_NONE || next_prec <= op_prec)
+        case ARG_INT:
+            arg->value.int_value = *(long long*)value;
+            arg->type = name_int;
+            break;
+        case ARG_FLOAT:
+            arg->value.float_value = *(double*)value;
+            arg->type = name_float;
+            break;
+        case ARG_STRING:
+            arg->value.string_value = (string)value;
+            arg->type = name_string;
+            break;
+        case ARG_BOOL:
+            arg->value.bool_value = *(char*)value;
+            arg->type = name_bool;
+            break;
+        case ARG_VOID:
+            arg->value.string_value = NULL;
+            arg->type = name_void;
+            break;
+        case ARG_LABEL:
+            arg->value.label = (Var*)value;
+            break;
+        case ARG_SUBROUTINE:
+            arg->value.subroutine = (Var*)value;
+            arg->type = arg->value.subroutine->type;
+            break;
+        case ARG_NONE:
+        default:
+            fprintf(stderr, "[warning] Unsupported argument type for create_arg: %d\n", kind);
+            break;
+    }
+    arg->is_get = 0;
+    return arg;
+}
+static Arg* load_rvalue(Arg* arg, TACStatus* status) {
+    if (arg == NULL) {
+        return NULL;
+    }
+    if (arg->is_get) {
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, arg->type, VAR_TEMP, status));
+        list_append(status->current_block->instructions, (pointer)create_instruction(INST_LOAD, temp, arg, NULL));
+        return temp;
+    }
+    return arg;
+}
+TAC* tac_code(Code* code) {
+    TAC* tac = create_tac();
+    TACStatus* status = create_tac_status(tac);
+    List* members = list_copy(code->members);
+    CodeMember* code_member;
+    while ((code_member = (CodeMember*)list_pop(members)) != NULL) {
+        if (code_member->type == CODE_FUNCTION) {
+            tac_function(code_member->content.function, status);
+            if (strcmp(code_member->content.function->name->name, "main") == 0)
+                tac->entry_point = code_member->content.function->name;
+        } else if (code_member->type == CODE_CLASS)
+            tac_class(code_member->content.class, status);
+        else if (code_member->type == CODE_IMPORT)
+            tac_import(code_member->content.import, tac, status);
+    }
+    return tac;
+}
+void tac_import(Import* import, TAC* tac, TACStatus* status) {
+    if (import->name->kind == SYMBOL_VARIABLE)
+        list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_VAR, status));
+    else if (import->name->kind == SYMBOL_FUNCTION || import->name->kind == SYMBOL_METHOD)
+        list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_SUBROUTINE, status));
+    else if (import->name->kind == SYMBOL_CLASS)
+        list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name));
+    else
+        fprintf(stderr, "[warning] Unsupported symbol kind for import: %d\n", import->name->kind);
+}
+void tac_function(Function* function, TACStatus* status) {
+    Subroutine* subroutine = create_subroutine(function->name, function->return_type);
+    status->current_subroutine = subroutine;
+    list_append(status->tac->subroutines, (pointer)subroutine);
+    List* parameters = list_copy(function->parameters);
+    Variable* parameter;
+    while ((parameter = (Variable*)list_pop(parameters)) != NULL)
+        list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
+    Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
+    list_append(subroutine->blocks, (pointer)block);
+    status->current_block = block;
+    List* statements = list_copy(function->body);
+    Statement* statement;
+    while ((statement = (Statement*)list_pop(statements)) != NULL)
+        tac_statement(statement, status);
+    status->current_subroutine = NULL;
+}
+void tac_method(Method* method, TACStatus* status) {
+    Subroutine* subroutine = create_subroutine(method->name, method->return_type);
+    status->current_subroutine = subroutine;
+    list_append(status->tac->subroutines, (pointer)subroutine);
+    List* parameters = list_copy(method->parameters);
+    Variable* parameter;
+    while ((parameter = (Variable*)list_pop(parameters)) != NULL)
+        list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
+    Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
+    list_append(subroutine->blocks, (pointer)block);
+    status->current_block = block;
+    if (strcmp(method->name->name, make_method_name(status->current_class->name->name, DEFAULT_CONSTRUCTOR_NAME)) == 0) {
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, status->current_class->name, VAR_TEMP, status));
+        list_append(block->instructions, (pointer)create_instruction(INST_ALLOC, temp, create_arg(ARG_INT, &status->current_class->size), NULL));
+    }
+    List* statements = list_copy(method->body);
+    Statement* statement;
+    while ((statement = (Statement*)list_pop(statements)) != NULL)
+        tac_statement(statement, status);
+    status->current_subroutine = NULL;
+}
+void tac_class(Class* class, TACStatus* status) {
+    status->current_class = class;
+    List* members = list_copy(class->members);
+    ClassMember* member;
+    AttributeTable* attr_table = create_attribute_table(class->name);
+    attr_table->size = class->size;
+    list_append(status->tac->attribute_tables, (pointer)attr_table);
+    while ((member = (ClassMember*)list_pop(members)) != NULL) {
+        switch (member->type) {
+            case CLASS_METHOD:
+                tac_method(member->content.method, status);
                 break;
-            right = parse_expr_prec(lexer, right, next_prec, now_scope, parser);
-            if (right == NULL) {
-                return NULL;
-            }
-            token = peek_next_token(lexer, 1);
+            case CLASS_VARIABLE:
+                tac_variable(member->content.variable, status, VAR_ATTR);
+                break;
+            default:
+                fprintf(stderr, "[warning] Unsupported class member type for tac_class: %d\n", member->type);
+                break;
         }
-        expr_left = create_expression(op, expr_left, NULL, right);
-        token = peek_next_token(lexer, 1);
     }
-    token = peek_current_token(lexer);
-    return expr_left;
+    status->current_class = NULL;
 }
-Expression* parse_expression(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    Primary* left_primary = parse_primary(lexer, now_scope, parser);
-    if (left_primary == NULL) {
-        parser_error("Failed to parse expression primary", peek_current_token(lexer), get_full_path(parser->source_file));
-        return NULL;
-    }
-    return parse_expr_prec(lexer, create_expression(OP_NONE, NULL, left_primary, NULL), 0, now_scope, parser);
-}
-Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    Token* token = NULL;
-    token = peek_current_token(lexer);
-    PrimaryType type;
-    string str_value = NULL;
-    Expression* expr_value = NULL;
-    Primary* prim_value = NULL;
-    VariableAccess* variable_value = NULL;
-    if (token->type == INTEGER) {
-        type = PRIM_INTEGER;
-        str_value = token->lexeme;
-    } else if (token->type == FLOAT) {
-        type = PRIM_FLOAT;
-        str_value = token->lexeme;
-    } else if (token->type == STRING) {
-        type = PRIM_STRING;
-        str_value = token->lexeme;
-    } else if (token->type == KEYWORD && string_equal(token->lexeme, TRUE_KEYWORD)) {
-        type = PRIM_TRUE;
-        str_value = token->lexeme;
-    } else if (token->type == KEYWORD && string_equal(token->lexeme, FALSE_KEYWORD)) {
-        type = PRIM_FALSE;
-        str_value = token->lexeme;
-    } else if (token->type == SYMBOL && string_equal(token->lexeme, L_PAREN_SYMBOL)) {
-        type = PRIM_EXPRESSION;
-        token = get_next_token(lexer, 1);
-        expr_value = parse_expression(lexer, now_scope, parser);
-        if (expr_value == NULL) {
-            parser_error("Failed to parse parenthesized expression", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-        token = get_next_token(lexer, 1);
-        if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
-            parser_error("Expected ')' after expression", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-    } else if (token->type == SYMBOL && string_equal(token->lexeme, NOT_SYMBOL)) {
-        type = PRIM_NOT_OPERAND;
-        token = get_next_token(lexer, 1);
-        prim_value = parse_primary(lexer, now_scope, parser);
-        if (prim_value == NULL) {
-            parser_error("Failed to parse operand of unary '!'", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-    } else if (token->type == SYMBOL && string_equal(token->lexeme, SUB_SYMBOL)) {
-        type = PRIM_NEG_OPERAND;
-        token = get_next_token(lexer, 1);
-        prim_value = parse_primary(lexer, now_scope, parser);
-        if (prim_value == NULL) {
-            parser_error("Failed to parse operand of unary '-'", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-    } else if (token->type == IDENTIFIER || (token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD) && parser->in_method)) {
-        type = PRIM_VARIABLE_ACCESS;
-        variable_value = parse_variable_access(lexer, now_scope, parser);
-        if (variable_value == NULL) {
-            parser_error("Failed to parse variable access", token, get_full_path(parser->source_file));
-            return NULL;
-        }
-    } else {
-        parser_error("Unexpected token in primary expression", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    return create_primary(type, str_value, expr_value, prim_value, variable_value);
-}
-VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
-    Token* token = peek_current_token(lexer);
-    if (token->type != IDENTIFIER && !(token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD))) {
-        parser_error("Expected variable name in variable access", token, get_full_path(parser->source_file));
-        return NULL;
-    }
-    Symbol* current_type = NULL;
-    Symbol* base_name = NULL;
-    SymbolTable* var_scope = NULL;
-    base_name = search_name(now_scope, token->lexeme);
-    VariableAccess* base = create_variable_access(VAR_NAME, NULL, base_name, NULL, NULL);
-    token = peek_next_token(lexer, 1);
-    while (token->type == SYMBOL) {
-        if (base_name != NULL) {
-            current_type = base_name;
-            if (base_name->type != NULL)
-                current_type = base_name->type;
-        }
-        if (var_scope == NULL && current_type != NULL && current_type->kind == SYMBOL_CLASS)
-            var_scope = current_type->ast_node.class->class_scope;
-        if (string_equal(token->lexeme, L_PAREN_SYMBOL)) {
-            token = get_next_token(lexer, 1);
-            if (base_name == NULL)
-                parser_error("Cannot call undefined variable", token, get_full_path(parser->source_file));
-            else if (base_name->kind == SYMBOL_CLASS) {
-                string name = make_method_name(base_name->name, DEFAULT_CONSTRUCTOR_NAME);
-                base_name = search_name_use_strcmp(base_name->ast_node.class->class_scope, name);
-                base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
-            }
-            if (base_name != NULL && base_name->kind != SYMBOL_FUNCTION && base_name->kind != SYMBOL_METHOD)
-                parser_error("Cannot call non-function variable", token, get_full_path(parser->source_file));
-            token = get_next_token(lexer, 1);
-            List* args = create_list();
-            while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
-                Expression* arg = parse_expression(lexer, now_scope, parser);
-                if (arg == NULL)
-                    parser_error("Failed to parse function call argument", token, get_full_path(parser->source_file));
-                list_append(args, (pointer)arg);
-                token = get_next_token(lexer, 1);
-                if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL))
-                    token = get_next_token(lexer, 1);
-                else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
-                    parser_error("Expected ',' or ')' after function call argument", token, get_full_path(parser->source_file));
-                    return NULL;
-                }
-            }
-            base = create_variable_access(VAR_FUNC_CALL, base, NULL, NULL, args);
-            base_name = base_name->type;
-            current_type = NULL;
-            var_scope = NULL;
-            if (base_name->kind == SYMBOL_CLASS)
-                var_scope = base_name->ast_node.class->class_scope;
-        } else if (string_equal(token->lexeme, L_BRACKET_SYMBOL)) {
-            token = get_next_token(lexer, 1);
-            token = get_next_token(lexer, 1);
-            Expression* index = parse_expression(lexer, now_scope, parser);
-            if (index == NULL)
-                parser_error("Failed to parse sequence index", token, get_full_path(parser->source_file));
-            token = get_next_token(lexer, 1);
-            if (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACKET_SYMBOL)) {
-                parser_error("Expected ']' after sequence index", token, get_full_path(parser->source_file));
-                return NULL;
-            }
-            base = create_variable_access(VAR_GET_SEQ, base, NULL, index, NULL);
-        } else if (string_equal(token->lexeme, DOT_SYMBOL)) {
-            token = get_next_token(lexer, 1);
-            token = get_next_token(lexer, 1);
-            if (var_scope == NULL) {
-                parser_error("Cannot access attribute without a valid scope", token, get_full_path(parser->source_file));
-                return NULL;
-            }
-            if (token->type != IDENTIFIER) {
-                parser_error("Expected attribute name after '.'", token, get_full_path(parser->source_file));
-                return NULL;
-            }
-            base_name = search_name(var_scope, token->lexeme);
-            if (base_name == NULL) {
-                string class_name = NULL;
-                if (current_type != NULL) {
-                    if (current_type->kind == SYMBOL_CLASS)
-                        class_name = current_type->name;
-                    else if (current_type->type != NULL && current_type->type->kind == SYMBOL_CLASS)
-                        class_name = current_type->type->name;
-                }
-                string name = make_method_name(class_name, token->lexeme);
-                base_name = search_name_use_strcmp(var_scope, name);
-            }
-            if (base_name == NULL) {
-                parser_error("Unknown attribute name", token, get_full_path(parser->source_file));
-                return NULL;
-            }
-            base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
-            current_type = NULL;
-            var_scope = NULL;
-        } else
+void tac_variable(Variable* variable, TACStatus* status, VarType type) {
+    Var* var = NULL;
+    switch (type) {
+        case VAR_PARAM:
+            var = create_var(variable->name, variable->type, type, status);
+            list_append(status->current_subroutine->parameters, (pointer)var);
             break;
-        token = peek_next_token(lexer, 1);
+        case VAR_VAR: break;
+        case VAR_TEMP: break;
+        case VAR_SUBROUTINE:
+            var = create_var(variable->name, variable->type, type, status);
+            list_append(status->tac->global_vars, (pointer)var);
+            break;
+        case VAR_ATTR: {
+            AttributeTable* attr_table = (AttributeTable*)list_pop_back(status->tac->attribute_tables);
+            list_append(status->tac->attribute_tables, (pointer)attr_table);
+            create_attribute(variable->name, variable->type, attr_table, 0, status);
+            break;
+        }
+        case VAR_BLOCK:
+        default:
+            fprintf(stderr, "[warning] Unsupported variable type for tac_variable: %d\n", type);
+            break;
     }
-    return base;
+}
+void tac_statement(Statement* statement, TACStatus* status) {
+    switch (statement->type) {
+        case EXPRESSION_STATEMENT: tac_expression(statement->stmt.expr, status); break;
+        case VARIABLE_STATEMENT: tac_variable(statement->stmt.var, status, VAR_VAR); break;
+        case IF_STATEMENT: tac_if(statement->stmt.if_stmt, status); break;
+        case WHILE_STATEMENT: tac_while(statement->stmt.while_stmt, status); break;
+        case FOR_STATEMENT: tac_for(statement->stmt.for_stmt, status); break;
+        case RETURN_STATEMENT: {
+            Arg* return_value = create_arg(ARG_VOID, NULL);
+            if (statement->stmt.return_expr != NULL)
+                return_value = tac_expression(statement->stmt.return_expr, status);
+            list_append(status->current_block->instructions, (pointer)create_instruction(INST_RET, return_value, NULL, NULL));
+            break;
+        }
+        case BREAK_STATEMENT:
+            if (!list_is_empty(status->end_labels)) {
+                Arg* label = (Arg*)status->end_labels->tail->content;
+                if (label != NULL) {
+                    Instruction* inst = create_instruction(INST_JMP, label, NULL, NULL);
+                    list_append(status->current_block->instructions, (pointer)inst);
+                    break;
+                }
+            }
+            fprintf(stderr, "[warning] 'break' statement used outside of loop\n");
+            break;
+        case CONTINUE_STATEMENT:
+            if (!list_is_empty(status->start_labels)) {
+                Arg* label = (Arg*)status->start_labels->tail->content;
+                if (label != NULL) {
+                    Instruction* inst = create_instruction(INST_JMP, label, NULL, NULL);
+                    list_append(status->current_block->instructions, (pointer)inst);
+                    break;
+                }
+            }
+            fprintf(stderr, "[warning] 'continue' statement used outside of loop\n");
+            break;
+        default:
+            fprintf(stderr, "[warning] Unsupported statement type for tac_statement: %d\n", statement->type);
+            break;
+    }
+}
+void tac_if(If* if_, TACStatus* status) {
+    Var* then_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Var* else_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Var* end_label = NULL;
+    if (list_is_empty(if_->else_if) && list_is_empty(if_->else_body))
+        end_label = else_label;
+    else
+        end_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Arg* end_block_arg = create_arg(ARG_LABEL, end_label);
+    Arg* condition = tac_expression(if_->condition, status);
+    Instruction* inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, then_label), create_arg(ARG_LABEL, else_label));
+    list_append(status->current_block->instructions, (pointer)inst);
+    Block* then_block = create_block(then_label);
+    list_append(status->current_subroutine->blocks, (pointer)then_block);
+    status->current_block = then_block;
+    List* then_statements = list_copy(if_->body);
+    Statement* statement;
+    while ((statement = (Statement*)list_pop(then_statements)) != NULL)
+        tac_statement(statement, status);
+    Instruction* jump_to_end = create_instruction(INST_JMP, end_block_arg, NULL, NULL);
+    list_append(status->current_block->instructions, (pointer)jump_to_end);
+    if (!list_is_empty(if_->else_if)) {
+        List* elif_list = list_copy(if_->else_if);
+        ElseIf* elif;
+        while ((elif = (ElseIf*)list_pop(elif_list)) != NULL) {
+            Block* else_if_block = create_block(else_label);
+            list_append(status->current_subroutine->blocks, (pointer)else_if_block);
+            status->current_block = else_if_block;
+            then_label = create_var(NULL, NULL, VAR_BLOCK, status);
+            else_label = create_var(NULL, NULL, VAR_BLOCK, status);
+            condition = tac_expression(elif->condition, status);
+            if (list_is_empty(elif_list) && list_is_empty(if_->else_body))
+                else_label = end_label;
+            inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, then_label), create_arg(ARG_LABEL, else_label));
+            list_append(status->current_block->instructions, (pointer)inst);
+            then_block = create_block(then_label);
+            list_append(status->current_subroutine->blocks, (pointer)then_block);
+            status->current_block = then_block;
+            List* elif_statements = list_copy(elif->body);
+            Statement* elif_statement;
+            while ((elif_statement = (Statement*)list_pop(elif_statements)) != NULL)
+                tac_statement(elif_statement, status);
+            jump_to_end = create_instruction(INST_JMP, end_block_arg, NULL, NULL);
+            list_append(status->current_block->instructions, (pointer)jump_to_end);
+        }
+    }
+    if (!list_is_empty(if_->else_body)) {
+        Block* else_block = create_block(else_label);
+        list_append(status->current_subroutine->blocks, (pointer)else_block);
+        status->current_block = else_block;
+        List* else_statements = list_copy(if_->else_body);
+        Statement* else_statement;
+        while ((else_statement = (Statement*)list_pop(else_statements)) != NULL)
+            tac_statement(else_statement, status);
+        jump_to_end = create_instruction(INST_JMP, end_block_arg, NULL, NULL);
+        list_append(status->current_block->instructions, (pointer)jump_to_end);
+    }
+    Block* end_block = create_block(end_label);
+    list_append(status->current_subroutine->blocks, (pointer)end_block);
+    status->current_block = end_block;
+}
+void tac_for(For* for_, TACStatus* status) {
+    if (for_->initializer != NULL)
+        tac_variable(for_->initializer, status, VAR_VAR);
+    Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    if (for_->condition != NULL) {
+        Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, condition_label), NULL, NULL);
+        list_append(status->current_block->instructions, (pointer)inst);
+        Block* condition_block = create_block(condition_label);
+        list_append(status->current_subroutine->blocks, (pointer)condition_block);
+        status->current_block = condition_block;
+        Arg* condition = tac_expression(for_->condition, status);
+        inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, body_label), create_arg(ARG_LABEL, end_label));
+        list_append(status->current_block->instructions, (pointer)inst);
+    } else {
+        Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, body_label), NULL, NULL);
+        list_append(status->current_block->instructions, (pointer)inst);
+    }
+    Block* body_block = create_block(body_label);
+    list_append(status->current_subroutine->blocks, (pointer)body_block);
+    status->current_block = body_block;
+    Var* increment_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    if (for_->increment != NULL)
+        list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, increment_label));
+    else if (for_->condition != NULL)
+        list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, condition_label));
+    else
+        list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, body_label));
+    list_append(status->end_labels, (pointer)create_arg(ARG_LABEL, end_label));
+    List* body_statements = list_copy(for_->body);
+    Statement* statement;
+    while ((statement = (Statement*)list_pop(body_statements)) != NULL)
+        tac_statement(statement, status);
+    list_pop_back(status->start_labels);
+    list_pop_back(status->end_labels);
+    if (for_->increment != NULL) {
+        Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, increment_label), NULL, NULL);
+        list_append(status->current_block->instructions, (pointer)inst);
+        Block* increment_block = create_block(increment_label);
+        list_append(status->current_subroutine->blocks, (pointer)increment_block);
+        status->current_block = increment_block;
+        tac_expression(for_->increment, status);
+    }
+    Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, condition_label), NULL, NULL);
+    if (for_->condition == NULL)
+        inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, body_label), NULL, NULL);
+    list_append(status->current_block->instructions, (pointer)inst);
+    Block* end_block = create_block(end_label);
+    list_append(status->current_subroutine->blocks, (pointer)end_block);
+    status->current_block = end_block;
+}
+void tac_while(While* while_, TACStatus* status) {
+    Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, condition_label), NULL, NULL);
+    list_append(status->current_block->instructions, (pointer)inst);
+    Block* condition_block = create_block(condition_label);
+    list_append(status->current_subroutine->blocks, (pointer)condition_block);
+    status->current_block = condition_block;
+    Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
+    Arg* condition = tac_expression(while_->condition, status);
+    inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, body_label), create_arg(ARG_LABEL, end_label));
+    list_append(status->current_block->instructions, (pointer)inst);
+    Block* body_block = create_block(body_label);
+    list_append(status->current_subroutine->blocks, (pointer)body_block);
+    status->current_block = body_block;
+    list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, condition_label));
+    list_append(status->end_labels, (pointer)create_arg(ARG_LABEL, end_label));
+    List* body_statements = list_copy(while_->body);
+    Statement* statement;
+    while ((statement = (Statement*)list_pop(body_statements)) != NULL)
+        tac_statement(statement, status);
+    list_pop_back(status->start_labels);
+    list_pop_back(status->end_labels);
+    inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, condition_label), NULL, NULL);
+    list_append(status->current_block->instructions, (pointer)inst);
+    Block* end_block = create_block(end_label);
+    list_append(status->current_subroutine->blocks, (pointer)end_block);
+    status->current_block = end_block;
+}
+Arg* tac_expression(Expression* expression, TACStatus* status) {
+    if (expression->operator == OP_NONE) {
+        Arg* result = tac_primary(expression->prim_left, status);
+        return result;
+    }
+    Arg* right = load_rvalue(tac_expression(expression->right, status), status);
+    InstructionType op = get_instruction_type(expression->operator);
+    Arg* left = tac_expression(expression->expr_left, status);
+    Instruction* inst;
+    if (is_assignment_operator(expression->operator)) {
+        if (op != INST_ASSIGN) {
+            Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, left->type, VAR_TEMP, status));
+            inst = create_instruction(op, temp, load_rvalue(left, status), right);
+            list_append(status->current_block->instructions, (pointer)inst);
+            right = temp;
+        }
+        if (left->kind != ARG_VARIABLE)
+            fprintf(stderr, "[warning] Left-hand side of assignment is not a variable\n");
+        inst = create_instruction(INST_ASSIGN, left, right, NULL);
+        if (left->is_get)
+            inst = create_instruction(INST_STORE, left, right, NULL);
+    } else {
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, left->type, VAR_TEMP, status));
+        inst = create_instruction(op, temp, load_rvalue(left, status), right);
+        right = temp;
+    }
+    list_append(status->current_block->instructions, (pointer)inst);
+    return right;
+}
+Arg* tac_primary(Primary* primary, TACStatus* status) {
+    switch (primary->type) {
+        case PRIM_INTEGER: {
+            long long t = strtoll(primary->value.literal_value, NULL, 10);
+            return create_arg(ARG_INT, &t);
+        }
+        case PRIM_FLOAT: {
+            double t = strtod(primary->value.literal_value, NULL);
+            return create_arg(ARG_FLOAT, &t);
+        }
+        case PRIM_STRING:
+            return create_arg(ARG_STRING, primary->value.literal_value);
+        case PRIM_TRUE: {
+            char t = 1;
+            return create_arg(ARG_BOOL, &t);
+        }
+        case PRIM_FALSE: {
+            char t = 0;
+            return create_arg(ARG_BOOL, &t);
+        }
+        case PRIM_EXPRESSION:
+            return tac_expression(primary->value.expr, status);
+        case PRIM_NOT_OPERAND: {
+            Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
+            Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, name_bool, VAR_TEMP, status));
+            Instruction* inst = create_instruction(INST_NOT, temp, operand, NULL);
+            list_append(status->current_block->instructions, (pointer)inst);
+            return temp;
+        }
+        case PRIM_NEG_OPERAND: {
+            Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
+            Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, operand->type, VAR_TEMP, status));
+            Instruction* inst = NULL;
+            long long zero_int = 0;
+            double neg_one_float = -1.0;
+            if (operand->type == name_int)
+                inst = create_instruction(INST_SUB, temp, create_arg(ARG_INT, &zero_int), operand);
+            else if (operand->type == name_float)
+                inst = create_instruction(INST_MUL, temp, create_arg(ARG_FLOAT, &neg_one_float), operand);
+            else {
+                fprintf(stderr, "[warning] Unsupported type for negation: %s\n", operand->type->name);
+                return NULL;
+            }
+            list_append(status->current_block->instructions, (pointer)inst);
+            return temp;
+        }
+        case PRIM_VARIABLE_ACCESS:
+            return tac_variable_access(primary->value.var, status);
+        default:
+            fprintf(stderr, "[warning] Unsupported primary type for tac_primary: %d\n", primary->type);
+            return NULL;
+    }
+}
+Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
+    if (variable_access->type == VAR_NAME && variable_access->content.name != NULL) {
+        if (variable_access->content.name->kind != SYMBOL_FUNCTION && variable_access->content.name->kind != SYMBOL_METHOD) {
+            Arg* result = create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status));
+            return result;
+        } else {
+            Arg* result = create_arg(ARG_SUBROUTINE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_SUBROUTINE, status));
+            return result;
+        }
+    }
+    if (variable_access->base == NULL) {
+        fprintf(stderr, "[warning] Unsupported variable access with NULL base\n");
+        return NULL;
+    }
+    Arg* base = load_rvalue(tac_variable_access(variable_access->base, status), status);
+    if (base == NULL) {
+        fprintf(stderr, "[warning] Failed to generate variable access for base\n");
+        return NULL;
+    }
+    if (variable_access->type == VAR_GET_ATTR) {
+        if (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
+            fprintf(stderr, "[warning] Attempting to access attribute of non-object type: %s\n", base->type->name);
+            return NULL;
+        }
+        SymbolTable* scope = base->type->ast_node.scope;
+        if (base->type->kind == SYMBOL_CLASS)
+            scope = base->type->ast_node.class->class_scope;
+        Symbol* attr = search_name_use_strcmp(scope, variable_access->content.attr_name->name);
+        if (attr == NULL) {
+            fprintf(stderr, "[warning] Attribute '%s' not found in type '%s'\n", variable_access->content.attr_name->name, base->type->name);
+            return NULL;
+        }
+        if (attr->kind == SYMBOL_METHOD || attr->kind == SYMBOL_FUNCTION)
+            return create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
+        if (attr->kind != SYMBOL_ATTRIBUTE) {
+            fprintf(stderr, "[warning] Symbol '%s' in type '%s' is not an attribute\n", variable_access->content.attr_name->name, base->type->name);
+            return NULL;
+        }
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, attr->type, VAR_TEMP, status));
+        Instruction* inst = create_instruction(INST_GET_ATTR, temp, base, create_arg(ARG_VARIABLE, create_var(variable_access->content.attr_name, variable_access->content.attr_name->type, VAR_ATTR, status)));
+        temp->is_get = 1;
+        list_append(status->current_block->instructions, (pointer)inst);
+        return temp;
+    } else if (variable_access->type == VAR_GET_SEQ) {
+        if (base->type->kind != SYMBOL_VARIABLE && base->type->kind != SYMBOL_PARAM && base->type->kind != SYMBOL_ATTRIBUTE) {
+            fprintf(stderr, "[warning] Attempting to index non-array type: %s\n", base->type->name);
+            return NULL;
+        }
+        if (strcmp(base->type->name, "arr") != 0) {
+            fprintf(stderr, "[warning] Attempting to index non-array type: %s\n", base->type->name);
+            return NULL;
+        }
+        Arg* index = load_rvalue(tac_expression(variable_access->content.index, status), status);
+        if (index == NULL) {
+            fprintf(stderr, "[warning] Failed to generate variable access for index\n");
+            return NULL;
+        }
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type->type, VAR_TEMP, status));
+        Instruction* inst = create_instruction(INST_GET_ELEM, temp, base, index);
+        temp->is_get = 1;
+        list_append(status->current_block->instructions, (pointer)inst);
+        return temp;
+    } else if (variable_access->type == VAR_FUNC_CALL) {
+        if (base->kind == ARG_VARIABLE && base->type->kind == SYMBOL_CLASS) {
+            Symbol* attr = search_name_use_strcmp(base->type->ast_node.class->class_scope, make_method_name(base->type->name, DEFAULT_CONSTRUCTOR_NAME));
+            base = create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
+        }
+        if (base->kind != ARG_SUBROUTINE) {
+            fprintf(stderr, "[warning] Attempting to call non-function, kind: %u, type name: %s\n", base->kind, base->type->name);
+            return NULL;
+        }
+        List* args = list_copy(variable_access->content.args);
+        Expression* arg_expr;
+        long long arg_count = 0;
+        while ((arg_expr = (Expression*)list_pop(args)) != NULL) {
+            Arg* arg = tac_expression(arg_expr, status);
+            long long size = (long long)get_type_size(arg->type);
+            Instruction* inst = create_instruction(INST_PARAM, create_arg(ARG_INT, &size), arg, NULL);
+            list_append(status->current_block->instructions, (pointer)inst);
+            arg_count++;
+        }
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type, VAR_TEMP, status));
+        Instruction* inst = create_instruction(INST_CALL, temp, base, create_arg(ARG_INT, &arg_count));
+        list_append(status->current_block->instructions, (pointer)inst);
+        return temp;
+    } else {
+        fprintf(stderr, "[warning] Unsupported variable access type for tac_variable_access: %u\n", variable_access->type);
+        return NULL;
+    }
 }
