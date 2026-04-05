@@ -61,19 +61,20 @@ TAC {
         Test1.$constructor {
             return_type: Test1
             parameters: [
-                Test1	$p5
-                int	$p6
+                int	$p5
             ]
             local: [
-                Test1	$t3
+                Test1	$v0
+                int	$t3
                 Test1	$t4
             ]
             instructions: [
                 $b3 {
-                    alloc	$t3 8
-                    assign	$a0 10
+                    alloc	$v0 8
+                    get_attr	$t3 $v0 $a0
+                    store	$t3 10
+                    param	8 $v0
                     param	8 $p5
-                    param	8 $p6
                     call	$t4 $f1 2
                     ret	$t4
                 }
@@ -83,7 +84,7 @@ TAC {
             return_type: int
             parameters: []
             local: [
-                Test1	$v0
+                Test1	$v1
                 int	$t5
                 void	$t6
                 void	$t7
@@ -108,4 +109,4 @@ TAC {
 }
 
 info by lib:
-    Platform: 2, Structure Memory Used: 24248/25600 bytes, String Memory Used: 3682/4096 bytes, stringCount: 162, Memory Block Count: 1000
+    Platform: 2, Structure Memory Used: 24464/25600 bytes, String Memory Used: 3682/4096 bytes, stringCount: 162, Memory Block Count: 1009

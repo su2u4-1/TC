@@ -351,12 +351,18 @@ void tac_method(Method* method, TACStatus* status) {
     Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
     list_append(subroutine->blocks, (pointer)block);
     status->current_block = block;
+    // constructor initialization
+    list(Statement*) statements = list_copy(method->body);
     if (strcmp(method->name->name, make_method_name(status->current_class->name->name, DEFAULT_CONSTRUCTOR_NAME)) == 0) {
-        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, status->current_class->name, VAR_TEMP, status));
-        list_append(block->instructions, (pointer)create_instruction(INST_ALLOC, temp, create_arg(ARG_INT, &status->current_class->size), NULL));
+        Statement* stmt = (Statement*)list_pop(statements);
+        if (stmt->type != EXPRESSION_STATEMENT || stmt->stmt.expr->operator != OP_NONE || stmt->stmt.expr->prim_left->type != PRIM_VARIABLE_ACCESS || stmt->stmt.expr->prim_left->value.var->type != VAR_NAME) {
+            printf("[warning] Constructor '%s' does not start with 'self' initialization\n", method->name->name);
+            return;
+        }
+        Symbol* self = stmt->stmt.expr->prim_left->value.var->content.name;
+        list_append(block->instructions, (pointer)create_instruction(INST_ALLOC, create_arg(ARG_VARIABLE, create_var(self, self->type, VAR_VAR, status)), create_arg(ARG_INT, &status->current_class->size), NULL));
     }
     // execute statements
-    list(Statement*) statements = list_copy(method->body);
     Statement* statement;
     while ((statement = (Statement*)list_pop(statements)) != NULL)
         tac_statement(statement, status);

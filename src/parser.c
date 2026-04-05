@@ -3,7 +3,6 @@
 #include "create.h"
 #include "helper.h"
 #include "lexer.h"
-#include "lib.h"
 
 // parser functions
 static Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
@@ -336,7 +335,6 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     Symbol* constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, method);
     list(Variable*) parameters = create_list();
     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
-    list_append(parameters, (pointer)create_variable(name, self, NULL));
     list(Variable*) init_params = list_copy(init->ast_node.method->parameters);
     Variable* param;
     while ((param = (Variable*)list_pop(init_params)) != NULL) {
@@ -346,14 +344,16 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     list(statement*) body = create_list();
     list(ClassMember*) ms = list_copy(members);
     ClassMember* mb;
+    list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
     while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
         if (mb->type == CLASS_VARIABLE) {
-            Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, mb->content.variable->name, NULL, NULL)), NULL);
+            Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
         }
     }
     list(Expression*) args = create_list();
+    list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
     list(Variable*) params = list_copy(parameters);
     while ((param = (Variable*)list_pop(params)) != NULL)
         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
