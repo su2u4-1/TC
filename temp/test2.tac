@@ -1,6 +1,6 @@
 TAC {
     designs: [
-        Test2 4 {
+        Test2 8 {
             int a0 0
         }
     ]
@@ -20,7 +20,7 @@ TAC {
                     alloc t0 Test2 4
                     get_attr t1 t0 a0
                     store    t1 5
-                    param    4 t0
+                    param    8 t0
                     call     t2 Test2.init 1
                     ret      t2
                 }
@@ -37,7 +37,7 @@ TAC {
             instructions: [
                 b1 {
                     get_attr t3 p0 a0
-                    param 4 t3
+                    param 8 t3
                     call  void print 1
                     ret   p0
                 }
@@ -98,36 +98,36 @@ TAC {
                     call  v0 Test2.constructor 0
                     // var arr nums = arr("int", 10);
                     param 1 "int"
-                    param 4 10
+                    param 8 10
                     call  v1 arr 2
                     // nums[0] = 42;
                     get_elem t6 v1 0 
                     assign   t6 42
                     // t.set_x(2 + t.get_x() * 10);
-                    param 4 v0
-                    param 4 v0
+                    param 8 v0
+                    param 8 v0
                     call  t7 Test2.get_x 1
                     mul   t8 t7 10
                     add   t9 2 t8
-                    param 4 t9
+                    param 8 t9
                     call  void Test2.set_x 2
                     // print(t.get_x());
-                    param 4 v0
+                    param 8 v0
                     call  t10 Test2.get_x 1
-                    param 4 t10
+                    param 8 t10
                     call  void print 1
                     // t.set_x(nums[0] + 10 - 2 * 5);
-                    param 4 v0
+                    param 8 v0
                     mul   t11 2 5
                     get_elem t12 v1 0
                     add   t13 t12 10
                     sub   t14 t13 t11
-                    param 4 t14
+                    param 8 t14
                     call  void Test2.set_x 2
                     // print(t.get_x());
-                    param 4 v0
+                    param 8 v0
                     call  t15 Test2.get_x 1
-                    param 4 t15
+                    param 8 t15
                     call  void print 1
                     // return 0;
                     ret   0

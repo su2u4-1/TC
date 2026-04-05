@@ -1,5 +1,5 @@
-#include "tac.h"
 #include "helper.h"
+#include "tac.h"
 
 // output AST
 static void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, char indent_has_next[32]);
@@ -513,6 +513,8 @@ void output_var(Var* var, FILE* outfile, size_t indent) {
     }
     if (var->type == NULL)
         tac_output(indent, "NULL\t%s\n", var->name);
+    else if (var->original_name)
+        tac_output(indent, "%s\t%s(%s)\n", var->type->name, var->name, var->original_name->name);
     else
         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
     // printf("[DEBUG] 123 Finished output_var\n");
@@ -547,14 +549,25 @@ void output_arg(Arg* arg, FILE* outfile) {
         return;
     }
     switch (arg->kind) {
-        case ARG_VARIABLE: tac_output(0, "%s", arg->value.variable->name); break;
+        case ARG_VARIABLE:
+            if (arg->value.variable->original_name)
+                tac_output(0, "%s(%s)", arg->value.variable->name, arg->value.variable->original_name->name);
+            else
+                tac_output(0, "%s", arg->value.variable->name);
+            break;
         case ARG_INT: tac_output(0, "%lld", arg->value.int_value); break;
         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
-        case ARG_STRING: tac_output(0, "%s", arg->value.string_value); break;
+        case ARG_STRING: tac_output(0, "\"%s\"", arg->value.string_value); break;
         case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
         case ARG_VOID: tac_output(0, "void"); break;
         case ARG_LABEL: tac_output(0, "%s", arg->value.label->name); break;
-        case ARG_SUBROUTINE: tac_output(0, "%s", arg->value.subroutine->name); break;
+        case ARG_FUNCTION:
+        case ARG_METHOD:
+            if (arg->value.subroutine->original_name)
+                tac_output(0, "%s(%s)", arg->value.subroutine->name, arg->value.subroutine->original_name->name);
+            else
+                tac_output(0, "%s", arg->value.subroutine->name);
+            break;
         case ARG_NONE: tac_output(0, "NONE"); break;
         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
     }
@@ -679,6 +692,8 @@ void output_attribute(Attribute* attribute, FILE* outfile, size_t indent) {
         tac_output(indent, "%s\t", attribute->type->name);
     if (attribute->var == NULL)
         tac_output(0, "NULL ");
+    else if (attribute->var->original_name)
+        tac_output(0, "%s(%s) ", attribute->var->name, attribute->var->original_name->name);
     else
         tac_output(0, "%s ", attribute->var->name);
     tac_output(0, "%zu\n", attribute->offset);

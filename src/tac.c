@@ -1,7 +1,7 @@
 #include "tac.h"
 
+#include "create.h"
 #include "helper.h"
-#include "lib.h"
 
 static AttributeTable* create_attribute_table(Symbol* name) {
     // printf("[DEBUG] 191 Starting create_attribute_table\n");
@@ -251,7 +251,8 @@ static Arg* create_arg(ArgType kind, void* value) {
         case ARG_LABEL:
             arg->value.label = (Var*)value;
             break;
-        case ARG_SUBROUTINE:
+        case ARG_FUNCTION:
+        case ARG_METHOD:
             arg->value.subroutine = (Var*)value;
             arg->type = arg->value.subroutine->type;
             break;
@@ -307,7 +308,8 @@ void tac_import(Import* import, TAC* tac, TACStatus* status) {
     else if (import->name->kind == SYMBOL_FUNCTION || import->name->kind == SYMBOL_METHOD)
         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_SUBROUTINE, status));
     else if (import->name->kind == SYMBOL_CLASS)
-        list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name));
+        // list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name, import->name->ast_node.class->size));
+        tac_class(import->name->ast_node.class, status);
     else
         fprintf(stderr, "[warning] Unsupported symbol kind for import: %d\n", import->name->kind);
     // printf("[DEBUG] 144 Finished tac_import\n");
@@ -377,7 +379,6 @@ void tac_class(Class* class, TACStatus* status) {
     ClassMember* member;
     AttributeTable* attr_table = create_attribute_table(class->name);
     // parser already computes class object size; keep it for later type-size lookup in tac.
-    attr_table->size = class->size;
     list_append(status->tac->attribute_tables, (pointer)attr_table);
     while ((member = (ClassMember*)list_pop(members)) != NULL) {
         switch (member->type) {
@@ -385,7 +386,7 @@ void tac_class(Class* class, TACStatus* status) {
                 tac_method(member->content.method, status);
                 break;
             case CLASS_VARIABLE:
-                tac_variable(member->content.variable, status, VAR_ATTR);
+                tac_variable(member->content.variable, status, true);
                 break;
             default:
                 fprintf(stderr, "[warning] Unsupported class member type for tac_class: %d\n", member->type);
@@ -395,45 +396,40 @@ void tac_class(Class* class, TACStatus* status) {
     status->current_class = NULL;
     // printf("[DEBUG] 150 Finished tac_class\n");
 }
-void tac_variable(Variable* variable, TACStatus* status, VarType type) {
+void tac_variable(Variable* variable, TACStatus* status, bool is_attr) {
     // printf("[DEBUG] 151 Starting tac_variable\n");
     Var* var = NULL;
-    switch (type) {
-        case VAR_PARAM:
-            var = create_var(variable->name, variable->type, type, status);
-            list_append(status->current_subroutine->parameters, (pointer)var);
-            break;
-        case VAR_VAR: break;
-        case VAR_TEMP: break;
-        case VAR_SUBROUTINE:
-            var = create_var(variable->name, variable->type, type, status);
-            list_append(status->tac->global_vars, (pointer)var);
-            break;
-        case VAR_ATTR: {
-            AttributeTable* attr_table = (AttributeTable*)list_pop_back(status->tac->attribute_tables);
-            list_append(status->tac->attribute_tables, (pointer)attr_table);
-            create_attribute(variable->name, variable->type, attr_table, 0, status);
-            break;
-        }
-        case VAR_BLOCK:
-        default:
-            fprintf(stderr, "[warning] Unsupported variable type for tac_variable: %d\n", type);
-            break;
+    if (is_attr) {
+        AttributeTable* attr_table = (AttributeTable*)list_pop_back(status->tac->attribute_tables);
+        list_append(status->tac->attribute_tables, (pointer)attr_table);
+        create_attribute(variable->name, variable->type, attr_table, 0, status);
+    } else {
+        var = create_var(variable->name, variable->type, VAR_VAR, status);
+        // if (status->current_subroutine)
+        //     list_append(status->current_subroutine->local_vars, (pointer)var);
+        // else
+        //     list_append(status->tac->global_vars, (pointer)var);
+        Arg* value;
+        if (variable->value != NULL)
+            value = load_rvalue(tac_expression(variable->value, status), status);
+        else
+            value = create_arg(ARG_INT, &(long long){0});
+        list_append(status->current_block->instructions, (pointer)create_instruction(INST_ASSIGN, create_arg(ARG_VARIABLE, var), value, NULL));
     }
     // printf("[DEBUG] 152 Finished tac_variable\n");
 }
 void tac_statement(Statement* statement, TACStatus* status) {
     // printf("[DEBUG] 153 Starting tac_statement\n");
     switch (statement->type) {
-        case EXPRESSION_STATEMENT: tac_expression(statement->stmt.expr, status); break;
-        case VARIABLE_STATEMENT: tac_variable(statement->stmt.var, status, VAR_VAR); break;
+        case EXPRESSION_STATEMENT: load_rvalue(tac_expression(statement->stmt.expr, status), status); break;
+        case VARIABLE_STATEMENT: tac_variable(statement->stmt.var, status, false); break;
         case IF_STATEMENT: tac_if(statement->stmt.if_stmt, status); break;
         case WHILE_STATEMENT: tac_while(statement->stmt.while_stmt, status); break;
         case FOR_STATEMENT: tac_for(statement->stmt.for_stmt, status); break;
         case RETURN_STATEMENT: {
             Arg* return_value = create_arg(ARG_VOID, NULL);
             if (statement->stmt.return_expr != NULL)
-                return_value = tac_expression(statement->stmt.return_expr, status);
+                return_value = load_rvalue(tac_expression(statement->stmt.return_expr, status), status);
             list_append(status->current_block->instructions, (pointer)create_instruction(INST_RET, return_value, NULL, NULL));
             break;
         }
@@ -477,7 +473,7 @@ void tac_if(If* if_, TACStatus* status) {
         end_label = create_var(NULL, NULL, VAR_BLOCK, status);
     Arg* end_block_arg = create_arg(ARG_LABEL, end_label);
     // execute condition
-    Arg* condition = tac_expression(if_->condition, status);
+    Arg* condition = load_rvalue(tac_expression(if_->condition, status), status);
     Instruction* inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, then_label), create_arg(ARG_LABEL, else_label));
     list_append(status->current_block->instructions, (pointer)inst);
     // add then block
@@ -506,7 +502,7 @@ void tac_if(If* if_, TACStatus* status) {
             then_label = create_var(NULL, NULL, VAR_BLOCK, status);
             else_label = create_var(NULL, NULL, VAR_BLOCK, status);
             // execute condition
-            condition = tac_expression(elif->condition, status);
+            condition = load_rvalue(tac_expression(elif->condition, status), status);
             if (list_is_empty(elif_list) && list_is_empty(if_->else_body))
                 else_label = end_label;
             inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, then_label), create_arg(ARG_LABEL, else_label));
@@ -550,7 +546,7 @@ void tac_for(For* for_, TACStatus* status) {
     // printf("[DEBUG] 157 Starting tac_for\n");
     // execute initializer
     if (for_->initializer != NULL)
-        tac_variable(for_->initializer, status, VAR_VAR);
+        tac_variable(for_->initializer, status, false);
     // create labels
     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
     Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
@@ -563,7 +559,7 @@ void tac_for(For* for_, TACStatus* status) {
         list_append(status->current_subroutine->blocks, (pointer)condition_block);
         status->current_block = condition_block;
         // execute condition
-        Arg* condition = tac_expression(for_->condition, status);
+        Arg* condition = load_rvalue(tac_expression(for_->condition, status), status);
         inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, body_label), create_arg(ARG_LABEL, end_label));
         list_append(status->current_block->instructions, (pointer)inst);
     } else {
@@ -597,7 +593,7 @@ void tac_for(For* for_, TACStatus* status) {
         Block* increment_block = create_block(increment_label);
         list_append(status->current_subroutine->blocks, (pointer)increment_block);
         status->current_block = increment_block;
-        tac_expression(for_->increment, status);
+        load_rvalue(tac_expression(for_->increment, status), status);
     }
     // jump to condition check
     Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, condition_label), NULL, NULL);
@@ -622,7 +618,7 @@ void tac_while(While* while_, TACStatus* status) {
     // execute condition
     Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
     Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
-    Arg* condition = tac_expression(while_->condition, status);
+    Arg* condition = load_rvalue(tac_expression(while_->condition, status), status);
     inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, body_label), create_arg(ARG_LABEL, end_label));
     list_append(status->current_block->instructions, (pointer)inst);
     // add body block
@@ -746,13 +742,17 @@ Arg* tac_primary(Primary* primary, TACStatus* status) {
 Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
     // printf("[DEBUG] 175 Starting tac_variable_access\n");
     if (variable_access->type == VAR_NAME && variable_access->content.name != NULL) {
-        if (variable_access->content.name->kind != SYMBOL_FUNCTION && variable_access->content.name->kind != SYMBOL_METHOD) {
-            Arg* result = create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status));
+        if (variable_access->content.name->kind == SYMBOL_FUNCTION || variable_access->content.name->kind == SYMBOL_METHOD) {
+            Arg* result = create_arg(ARG_FUNCTION, create_var(variable_access->content.name, variable_access->content.name->type, VAR_SUBROUTINE, status));
             // printf("[DEBUG] 176 Finished tac_variable_access\n");
             return result;
-        } else {
-            Arg* result = create_arg(ARG_SUBROUTINE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_SUBROUTINE, status));
+        } else if (variable_access->content.name->kind == SYMBOL_CLASS) {
+            Arg* result = create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name, VAR_VAR, status));
             // printf("[DEBUG] 177 Finished tac_variable_access\n");
+            return result;
+        } else {
+            Arg* result = create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status));
+            // printf("[DEBUG] 177-1 Finished tac_variable_access\n");
             return result;
         }
     }
@@ -782,8 +782,12 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
             // printf("[DEBUG] 181 Finished tac_variable_access with error\n");
             return NULL;
         }
-        if (attr->kind == SYMBOL_METHOD || attr->kind == SYMBOL_FUNCTION)
-            return create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
+        if (attr->kind == SYMBOL_FUNCTION) {
+            fprintf(stderr, "[warning] Attempting to access function '%s' as attribute of type '%s'\n", variable_access->content.attr_name->name, base->type->name);
+            return create_arg(ARG_FUNCTION, create_var(attr, attr->type, VAR_SUBROUTINE, status));
+        }
+        if (attr->kind == SYMBOL_METHOD)
+            return create_arg(ARG_METHOD, create_var(attr, attr->type, VAR_SUBROUTINE, status));
         if (attr->kind != SYMBOL_ATTRIBUTE) {
             fprintf(stderr, "[warning] Symbol '%s' in type '%s' is not an attribute\n", variable_access->content.attr_name->name, base->type->name);
             // printf("[DEBUG] 182 Finished tac_variable_access with error\n");
@@ -796,13 +800,9 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
         // printf("[DEBUG] 183 Finished tac_variable_access\n");
         return temp;
     } else if (variable_access->type == VAR_GET_SEQ) {
-        if (base->type->kind != SYMBOL_VARIABLE && base->type->kind != SYMBOL_PARAM && base->type->kind != SYMBOL_ATTRIBUTE) {
-            fprintf(stderr, "[warning] Attempting to index non-array type: %s\n", base->type->name);
-            // printf("[DEBUG] 184 Finished tac_variable_access with error\n");
-            return NULL;
-        }
+        // TODO: arr[index] -> arr.get(index) for user-defined types with getitem method
         if (strcmp(base->type->name, "arr") != 0) {
-            fprintf(stderr, "[warning] Attempting to index non-array type: %s\n", base->type->name);
+            fprintf(stderr, "[warning] Attempting to index non-array type: %s\n", base->value.variable->original_name->name);
             // printf("[DEBUG] 185 Finished tac_variable_access with error\n");
             return NULL;
         }
@@ -812,7 +812,9 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
             // printf("[DEBUG] 186 Finished tac_variable_access with error\n");
             return NULL;
         }
-        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type->type, VAR_TEMP, status));
+        // just a special case to get the array element type
+        // TODO: design some grammar to set user-defined array-like class getitem method return type and use that instead of this hack.
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, name_int, VAR_TEMP, status));
         Instruction* inst = create_instruction(INST_GET_ELEM, temp, base, index);
         temp->is_get = true;
         list_append(status->current_block->instructions, (pointer)inst);
@@ -821,26 +823,34 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
     } else if (variable_access->type == VAR_FUNC_CALL) {
         if (base->kind == ARG_VARIABLE && base->type->kind == SYMBOL_CLASS) {
             Symbol* attr = search_name_use_strcmp(base->type->ast_node.class->class_scope, make_method_name(base->type->name, DEFAULT_CONSTRUCTOR_NAME));
-            base = create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
+            base = create_arg(ARG_METHOD, create_var(attr, attr->type, VAR_SUBROUTINE, status));
         }
-        if (base->kind != ARG_SUBROUTINE) {
+        if (base->kind != ARG_METHOD && base->kind != ARG_FUNCTION) {
             fprintf(stderr, "[warning] Attempting to call non-function, kind: %u, type name: %s\n", base->kind, base->type->name);
             // printf("[DEBUG] 188 Finished tac_variable_access with error\n");
             return NULL;
         }
-        list(Expression*) args = list_copy(variable_access->content.args);
-        Expression* arg_expr;
         long long arg_count = 0;
-        while ((arg_expr = (Expression*)list_pop(args)) != NULL) {
-            Arg* arg = tac_expression(arg_expr, status);
-            long long size = (long long)get_type_size(arg->type);
-            Instruction* inst = create_instruction(INST_PARAM, create_arg(ARG_INT, &size), arg, NULL);
-            list_append(status->current_block->instructions, (pointer)inst);
+        list(Instruction*) arguments = create_list();
+        if (base->kind == ARG_METHOD && strcmp(base->value.subroutine->original_name->name, make_method_name(base->type->name, DEFAULT_CONSTRUCTOR_NAME)) != 0) {
+            Arg* self = load_rvalue(tac_expression(create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, variable_access->base->base), NULL), status), status);
+            long long size = (long long)get_type_size(self->type);
+            list_append(arguments, (pointer)create_instruction(INST_PARAM, create_arg(ARG_INT, &size), self, NULL));
             arg_count++;
         }
+        list(Expression*) args = list_copy(variable_access->content.args);
+        Expression* arg_expr;
+        while ((arg_expr = (Expression*)list_pop(args)) != NULL) {
+            Arg* arg = load_rvalue(tac_expression(arg_expr, status), status);
+            long long size = (long long)get_type_size(arg->type);
+            list_append(arguments, (pointer)create_instruction(INST_PARAM, create_arg(ARG_INT, &size), arg, NULL));
+            arg_count++;
+        }
+        Instruction* arg;
+        while ((arg = (Instruction*)list_pop(arguments)) != NULL)
+            list_append(status->current_block->instructions, (pointer)arg);
         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type, VAR_TEMP, status));
-        Instruction* inst = create_instruction(INST_CALL, temp, base, create_arg(ARG_INT, &arg_count));
-        list_append(status->current_block->instructions, (pointer)inst);
+        list_append(status->current_block->instructions, (pointer)create_instruction(INST_CALL, temp, base, create_arg(ARG_INT, &arg_count)));
         // printf("[DEBUG] 189 Finished tac_variable_access\n");
         return temp;
     } else {

@@ -33,7 +33,8 @@ typedef enum ArgType {
     ARG_BOOL,
     ARG_VOID,
     ARG_LABEL,
-    ARG_SUBROUTINE,
+    ARG_FUNCTION,
+    ARG_METHOD,
     ARG_NONE
 } ArgType;
 typedef struct Arg {
@@ -124,7 +125,7 @@ void tac_function(Function* function, TACStatus* status);
 void tac_method(Method* method, TACStatus* status);
 void tac_class_member(ClassMember* class_member, TACStatus* status);
 void tac_class(Class* class, TACStatus* status);
-void tac_variable(Variable* variable, TACStatus* status, VarType type);
+void tac_variable(Variable* variable, TACStatus* status, bool is_attr);
 void tac_statement(Statement* statement, TACStatus* status);
 void tac_if(If* if_, TACStatus* status);
 void tac_else_if(ElseIf* else_if, TACStatus* status);
