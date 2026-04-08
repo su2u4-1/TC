@@ -87,7 +87,7 @@ Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
     Symbol* name;
     name = parse_import_file(import_name, source, now_scope, parser->source_file);
     if (name == NULL) {
-        fprintf(stderr, "Failed to import module '%s' from source '%s'\n", import_name, source);
+        parser_error("Failed to import module", token, get_full_path(parser->source_file));
         name = create_symbol(import_name, SYMBOL_VARIABLE, name_void, now_scope);
     }
     // printf("[DEBUG] 6 Finished parse_import\n");
@@ -304,7 +304,7 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
                 else if (type->kind == SYMBOL_CLASS)
                     size += 8;  // pointer to object
                 else
-                    fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->name, type->name);
+                    parser_error("Unsupported type for class variable", token, get_full_path(parser->source_file));
             }
             token = get_next_token(lexer, true);
             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
@@ -341,7 +341,7 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
         list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
     }
-    list(statement*) body = create_list();
+    list(Statement*) body = create_list();
     list(ClassMember*) ms = list_copy(members);
     ClassMember* mb;
     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));

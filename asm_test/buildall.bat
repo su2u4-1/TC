@@ -14,7 +14,7 @@ mkdir asm_test\win\O3\commentS
 mkdir asm_test\win\Os\s
 mkdir asm_test\win\Os\commentS
 
-set HEADERS=assert.h ctype.h stdio.h stdlib.h string.h direct.h unistd.h
+set HEADERS=assert.h stdio.h stdlib.h string.h direct.h unistd.h
 
 for %%h in (%HEADERS%) do (
     (

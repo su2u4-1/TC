@@ -87,12 +87,12 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_ATTRIBUTE:
         case SYMBOL_TYPE: scope = (SymbolTable*)ast_node; break;
         default:
-            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %u\n", kind);
+            fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType: %u\n", kind);
             break;
     }
     Symbol* result = search_name(scope, name);
     if (result != NULL)
-        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+        fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
     new_name->name = name;
     new_name->id = ++id_counter;
@@ -107,11 +107,11 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_ATTRIBUTE:
         case SYMBOL_TYPE: new_name->ast_node.scope = (SymbolTable*)ast_node; break;
         default:
-            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
+            fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
             break;
     }
     if (scope == NULL)
-        fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
+        fprintf(stderr, "[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
     else
         list_append(scope->symbols, (pointer)new_name);
     return new_name;
@@ -159,7 +159,7 @@ inline bool is_builtin_type(string type) {
 }
 
 inline void parser_error(const string message, Token* token, string file_name) {
-    fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+    fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 }
 
 static void set_bool_list(char bool_list[32], size_t index, bool value) {
@@ -209,12 +209,12 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
         fprintf(stderr, "Error opening library file for import: %s\n", filename);
         return NULL;
     }
-    printf("Info: Starting parsing lib file for import: %s\n", filename);
+    fprintf(stderr, "Info: Starting parsing lib file for import: %s\n", filename);
     size_t length = 0;
     string source_code = read_source(openfile, &length);
     fclose(openfile);
-    Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-    printf("Info: Finished parsing lib file for import: %s\n", filename);
+    Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+    fprintf(stderr, "Info: Finished parsing lib file for import: %s\n", filename);
     if (code == NULL) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
         return NULL;

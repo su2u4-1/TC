@@ -76,12 +76,12 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
     size_t length = 0;
     FILE* source_file = fopen(filename, "r");
     if (source_file == NULL) {
-        fprintf(stderr, "Error opening file: %s", filename);
+        fprintf(stderr, "Error opening file: %s\n", filename);
         return;
     }
     string source = read_source(source_file, &length);
     fclose(source_file);
-    Lexer* lexer = create_lexer(source, length);
+    Lexer* lexer = create_lexer(source, length, filename);
     if (o_token) {
         change_file_extension(file, create_string(".token", 6));
         string out_token_name = get_full_path(file);

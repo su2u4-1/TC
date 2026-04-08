@@ -21,6 +21,7 @@ typedef struct Token {
 } Token;
 
 typedef struct Lexer {
+    string filename;
     string source;
     size_t position;
     size_t length;
@@ -33,7 +34,7 @@ typedef struct Lexer {
     Token* current_token;
 } Lexer;
 
-Lexer* create_lexer(string source, size_t length);
+Lexer* create_lexer(string source, size_t length, string filename);
 Token* get_next_token(Lexer* lexer, bool skip_comment);
 Token* peek_next_token(Lexer* lexer, bool skip_comment);
 void reset_lexer(Lexer* lexer);

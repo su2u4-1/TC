@@ -9,13 +9,10 @@ CodeMember* create_code_member(CodeMemberType type, Import* import_content, Func
         code_member->content.function = function_content;
     else if (type == CODE_CLASS && class_content != NULL)
         code_member->content.class = class_content;
-    else {
-        if (import_content == NULL && function_content == NULL && class_content == NULL)
-            fprintf(stderr, "Error creating code member: content is NULL\n");
-        else
-            fprintf(stderr, "Error creating code member: unknown type %u\n", type);
-        return NULL;
-    }
+    else if (import_content == NULL && function_content == NULL && class_content == NULL)
+        fprintf(stderr, "Error creating code member: content is NULL\n");
+    else
+        fprintf(stderr, "Error creating code member: unknown type %u\n", type);
     return code_member;
 }
 
@@ -49,14 +46,6 @@ Function* create_function_use_ptr(Function* function, Symbol* name, Symbol* retu
     function->function_scope = function_scope;
     return function;
 }
-Function* create_function(Symbol* name, Symbol* return_type, list(Variable*) parameters, list(Statement*) body, SymbolTable* function_scope) {
-    if (name == NULL || return_type == NULL) {
-        fprintf(stderr, "Error creating function: name or return_type is NULL\n");
-        return NULL;
-    }
-    Function* function = (Function*)alloc_memory(sizeof(Function));
-    return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
-}
 
 Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type, list(Variable*) parameters, list(Statement*) body, SymbolTable* method_scope) {
     if (name == NULL || return_type == NULL) {
@@ -69,14 +58,6 @@ Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type,
     method->body = body;
     method->method_scope = method_scope;
     return method;
-}
-Method* create_method(Symbol* name, Symbol* return_type, list(Variable*) parameters, list(Statement*) body, SymbolTable* method_scope) {
-    if (name == NULL || return_type == NULL) {
-        fprintf(stderr, "Error creating method: name or return_type is NULL\n");
-        return NULL;
-    }
-    Method* method = (Method*)alloc_memory(sizeof(Method));
-    return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
 }
 
 ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content) {
@@ -106,14 +87,6 @@ Class* create_class_use_ptr(Class* class, Symbol* name, list(ClassMember*) membe
     class->class_scope = class_scope;
     class->size = size;
     return class;
-}
-Class* create_class(Symbol* name, list(ClassMember*) members, SymbolTable* class_scope, size_t size) {
-    if (name == NULL) {
-        fprintf(stderr, "Error creating class: name is NULL\n");
-        return NULL;
-    }
-    Class* class = (Class*)alloc_memory(sizeof(Class));
-    return create_class_use_ptr(class, name, members, class_scope, size);
 }
 
 Variable* create_variable(Symbol* type, Symbol* name, Expression* value) {

@@ -212,8 +212,8 @@ void normalize_path(File* file) {
             if (i > start) {
                 size_t comp_len = i - start;
                 if (comp_len >= componentMaxSize) {
-                    comp_len = componentMaxSize - 1;
                     fprintf(stderr, "Warning: Path component too long, truncating to %zu characters\n", comp_len);
+                    comp_len = componentMaxSize - 1;
                 }
                 char component[componentMaxSize];
                 strncpy(component, path_copy + start, comp_len);

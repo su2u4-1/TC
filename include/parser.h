@@ -86,7 +86,7 @@ typedef struct VariableAccess VariableAccess;
 typedef struct List List;
 typedef struct Node Node;
 
-typedef enum SymbolTableType {
+typedef enum SymbolType {
     SYMBOL_CLASS,
     SYMBOL_FUNCTION,
     SYMBOL_METHOD,
@@ -219,8 +219,8 @@ struct Symbol {
     // for SYMBOL_CLASS and SYMBOL_TYPE, type is NULL
     // but if name == arr, type points to the array element type
     /// TODO: ^this
-    // for SYMBOL_SUBROUTINE, type points to the return type symbol
-    // for SYMBOL_LOCAL_VAR and SYMBOL_PARAM, type points to the variable type symbol
+    // for SYMBOL_FUNCTION and SYMBOL_METHOD, type points to the return type symbol
+    // for SYMBOL_VARIABLE and SYMBOL_PARAM, type points to the variable type symbol
     // for SYMBOL_ATTRIBUTE, type points to the attribute type symbol
     Symbol* type;
     string name;
