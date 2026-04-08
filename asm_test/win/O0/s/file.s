@@ -44,7 +44,7 @@ create_file:
 absolute_path:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	subq	$80, %rsp
+	subq	$64, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	16(%rbp), %rax
@@ -169,15 +169,13 @@ absolute_path:
 	cmpb	$47, %al
 	jne	.L11
 	movq	16(%rbp), %rax
-	movzbl	1(%rax), %eax
-	movb	%al, -17(%rbp)
-	call	__locale_ctype_ptr
-	movsbl	-17(%rbp), %eax
+	addq	$1, %rax
+	movzbl	(%rax), %eax
+	movsbl	%al, %eax
 	movl	%eax, %ecx
-	call	toupper
-	movl	%eax, %edx
-	movq	16(%rbp), %rax
-	movb	%dl, (%rax)
+	call	to_upper
+	movq	16(%rbp), %rdx
+	movb	%al, (%rdx)
 	movq	16(%rbp), %rax
 	addq	$1, %rax
 	movb	$58, (%rax)
@@ -227,23 +225,23 @@ absolute_path:
 	movq	-8(%rbp), %rdx
 	addq	%rdx, %rax
 	addq	$2, %rax
-	movq	%rax, -32(%rbp)
-	movq	-32(%rbp), %rax
+	movq	%rax, -24(%rbp)
+	movq	-24(%rbp), %rax
 	movq	%rax, %rdx
 	leaq	.LC0(%rip), %rax
 	movq	%rax, %rcx
 	call	create_string_not_check
-	movq	%rax, -40(%rbp)
+	movq	%rax, -32(%rbp)
 	movq	16(%rbp), %rcx
 	movq	24(%rbp), %rdx
-	movq	-40(%rbp), %rax
+	movq	-32(%rbp), %rax
 	movq	%rcx, %r9
 	movq	%rdx, %r8
 	leaq	.LC1(%rip), %rdx
 	movq	%rax, %rcx
 	call	sprintf
-	movq	-32(%rbp), %rdx
-	movq	-40(%rbp), %rax
+	movq	-24(%rbp), %rdx
+	movq	-32(%rbp), %rax
 	movq	%rax, %rcx
 	call	create_string
 	movl	$0, %edx
@@ -701,7 +699,6 @@ normalize_path:
 	movq	%rax, 408(%rsp)
 	cmpq	$255, 408(%rsp)
 	jbe	.L58
-	movq	$255, 408(%rsp)
 	call	__getreent
 	movq	24(%rax), %rax
 	movq	408(%rsp), %rdx
@@ -709,6 +706,7 @@ normalize_path:
 	leaq	.LC5(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
+	movq	$255, 408(%rsp)
 .L58:
 	movq	352(%rsp), %rdx
 	movq	424(%rsp), %rax
@@ -999,8 +997,7 @@ normalize_path:
 	.def	strlen;	.scl	2;	.type	32;	.endef
 	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
 	.def	memmove;	.scl	2;	.type	32;	.endef
-	.def	__locale_ctype_ptr;	.scl	2;	.type	32;	.endef
-	.def	toupper;	.scl	2;	.type	32;	.endef
+	.def	to_upper;	.scl	2;	.type	32;	.endef
 	.def	sprintf;	.scl	2;	.type	32;	.endef
 	.def	create_string;	.scl	2;	.type	32;	.endef
 	.def	strcmp;	.scl	2;	.type	32;	.endef

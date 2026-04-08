@@ -57,41 +57,41 @@ create_file:
 absolute_path:
 	pushq	%rbp	 ;
 	movq	%rsp, %rbp	 ;,
-	subq	$80, %rsp	 ;,
+	subq	$64, %rsp	 ;,
 	movq	%rcx, 16(%rbp)	 ; path, path
 	movq	%rdx, 24(%rbp)	 ; base_path, base_path
  ; D:/TC/src/file.c:23:     path = create_string_not_check(path, strlen(path));
-	movq	16(%rbp), %rax	 ; path, tmp132
-	movq	%rax, %rcx	 ; tmp132,
+	movq	16(%rbp), %rax	 ; path, tmp130
+	movq	%rax, %rcx	 ; tmp130,
 	call	strlen	 ;
 	movq	%rax, %rdx	 ;, _1
  ; D:/TC/src/file.c:23:     path = create_string_not_check(path, strlen(path));
+	movq	16(%rbp), %rax	 ; path, tmp131
+	movq	%rax, %rcx	 ; tmp131,
+	call	create_string_not_check	 ;
+	movq	%rax, 16(%rbp)	 ; tmp132, path
+ ; D:/TC/src/file.c:24:     size_t path_len = strlen(path);
 	movq	16(%rbp), %rax	 ; path, tmp133
 	movq	%rax, %rcx	 ; tmp133,
-	call	create_string_not_check	 ;
-	movq	%rax, 16(%rbp)	 ; tmp134, path
- ; D:/TC/src/file.c:24:     size_t path_len = strlen(path);
-	movq	16(%rbp), %rax	 ; path, tmp135
-	movq	%rax, %rcx	 ; tmp135,
 	call	strlen	 ;
-	movq	%rax, -8(%rbp)	 ; tmp136, path_len
+	movq	%rax, -8(%rbp)	 ; tmp134, path_len
  ; D:/TC/src/file.c:25:     for (size_t i = 0; i < path_len; i++) {
 	movq	$0, -16(%rbp)	 ;, i
  ; D:/TC/src/file.c:25:     for (size_t i = 0; i < path_len; i++) {
 	jmp	.L6	 ;
 .L10:
  ; D:/TC/src/file.c:26:         if (path[i] == '\\') path[i] = '/';
-	movq	16(%rbp), %rdx	 ; path, tmp137
-	movq	-16(%rbp), %rax	 ; i, tmp138
-	addq	%rdx, %rax	 ; tmp137, _2
+	movq	16(%rbp), %rdx	 ; path, tmp135
+	movq	-16(%rbp), %rax	 ; i, tmp136
+	addq	%rdx, %rax	 ; tmp135, _2
 	movzbl	(%rax), %eax	 ; *_2, _3
  ; D:/TC/src/file.c:26:         if (path[i] == '\\') path[i] = '/';
 	cmpb	$92, %al	 ;, _3
 	jne	.L7	 ;,
  ; D:/TC/src/file.c:26:         if (path[i] == '\\') path[i] = '/';
-	movq	16(%rbp), %rdx	 ; path, tmp139
-	movq	-16(%rbp), %rax	 ; i, tmp140
-	addq	%rdx, %rax	 ; tmp139, _4
+	movq	16(%rbp), %rdx	 ; path, tmp137
+	movq	-16(%rbp), %rax	 ; i, tmp138
+	addq	%rdx, %rax	 ; tmp137, _4
  ; D:/TC/src/file.c:26:         if (path[i] == '\\') path[i] = '/';
 	movb	$47, (%rax)	 ;, *_4
 .L7:
@@ -99,44 +99,44 @@ absolute_path:
 	cmpq	$1, -16(%rbp)	 ;, i
 	jbe	.L8	 ;,
  ; D:/TC/src/file.c:27:         if (i > 1 && path[i] == '/' && path[i - 1] == '.' && path[i - 2] == '/') {
-	movq	16(%rbp), %rdx	 ; path, tmp141
-	movq	-16(%rbp), %rax	 ; i, tmp142
-	addq	%rdx, %rax	 ; tmp141, _5
+	movq	16(%rbp), %rdx	 ; path, tmp139
+	movq	-16(%rbp), %rax	 ; i, tmp140
+	addq	%rdx, %rax	 ; tmp139, _5
 	movzbl	(%rax), %eax	 ; *_5, _6
  ; D:/TC/src/file.c:27:         if (i > 1 && path[i] == '/' && path[i - 1] == '.' && path[i - 2] == '/') {
 	cmpb	$47, %al	 ;, _6
 	jne	.L8	 ;,
  ; D:/TC/src/file.c:27:         if (i > 1 && path[i] == '/' && path[i - 1] == '.' && path[i - 2] == '/') {
-	movq	-16(%rbp), %rax	 ; i, tmp143
+	movq	-16(%rbp), %rax	 ; i, tmp141
 	leaq	-1(%rax), %rdx	 ;, _7
-	movq	16(%rbp), %rax	 ; path, tmp144
+	movq	16(%rbp), %rax	 ; path, tmp142
 	addq	%rdx, %rax	 ; _7, _8
 	movzbl	(%rax), %eax	 ; *_8, _9
  ; D:/TC/src/file.c:27:         if (i > 1 && path[i] == '/' && path[i - 1] == '.' && path[i - 2] == '/') {
 	cmpb	$46, %al	 ;, _9
 	jne	.L8	 ;,
  ; D:/TC/src/file.c:27:         if (i > 1 && path[i] == '/' && path[i - 1] == '.' && path[i - 2] == '/') {
-	movq	-16(%rbp), %rax	 ; i, tmp145
+	movq	-16(%rbp), %rax	 ; i, tmp143
 	leaq	-2(%rax), %rdx	 ;, _10
-	movq	16(%rbp), %rax	 ; path, tmp146
+	movq	16(%rbp), %rax	 ; path, tmp144
 	addq	%rdx, %rax	 ; _10, _11
 	movzbl	(%rax), %eax	 ; *_11, _12
  ; D:/TC/src/file.c:27:         if (i > 1 && path[i] == '/' && path[i - 1] == '.' && path[i - 2] == '/') {
 	cmpb	$47, %al	 ;, _12
 	jne	.L8	 ;,
  ; D:/TC/src/file.c:28:             memmove(path + i - 1, path + i + 1, path_len - i);
-	movq	-8(%rbp), %rax	 ; path_len, tmp147
-	subq	-16(%rbp), %rax	 ; i, tmp147
-	movq	%rax, %rcx	 ; tmp147, _13
+	movq	-8(%rbp), %rax	 ; path_len, tmp145
+	subq	-16(%rbp), %rax	 ; i, tmp145
+	movq	%rax, %rcx	 ; tmp145, _13
+ ; D:/TC/src/file.c:28:             memmove(path + i - 1, path + i + 1, path_len - i);
+	movq	-16(%rbp), %rax	 ; i, tmp146
+	leaq	1(%rax), %rdx	 ;, _14
+	movq	16(%rbp), %rax	 ; path, tmp147
+	addq	%rax, %rdx	 ; tmp147, _15
  ; D:/TC/src/file.c:28:             memmove(path + i - 1, path + i + 1, path_len - i);
 	movq	-16(%rbp), %rax	 ; i, tmp148
-	leaq	1(%rax), %rdx	 ;, _14
-	movq	16(%rbp), %rax	 ; path, tmp149
-	addq	%rax, %rdx	 ; tmp149, _15
- ; D:/TC/src/file.c:28:             memmove(path + i - 1, path + i + 1, path_len - i);
-	movq	-16(%rbp), %rax	 ; i, tmp150
 	leaq	-1(%rax), %r8	 ;, _16
-	movq	16(%rbp), %rax	 ; path, tmp151
+	movq	16(%rbp), %rax	 ; path, tmp149
 	addq	%r8, %rax	 ; _16, _17
  ; D:/TC/src/file.c:28:             memmove(path + i - 1, path + i + 1, path_len - i);
 	movq	%rcx, %r8	 ; _13,
@@ -151,35 +151,35 @@ absolute_path:
 	cmpq	$0, -16(%rbp)	 ;, i
 	je	.L9	 ;,
  ; D:/TC/src/file.c:32:         if (i > 0 && path[i] == '/' && path[i - 1] == '/') {
-	movq	16(%rbp), %rdx	 ; path, tmp152
-	movq	-16(%rbp), %rax	 ; i, tmp153
-	addq	%rdx, %rax	 ; tmp152, _18
+	movq	16(%rbp), %rdx	 ; path, tmp150
+	movq	-16(%rbp), %rax	 ; i, tmp151
+	addq	%rdx, %rax	 ; tmp150, _18
 	movzbl	(%rax), %eax	 ; *_18, _19
  ; D:/TC/src/file.c:32:         if (i > 0 && path[i] == '/' && path[i - 1] == '/') {
 	cmpb	$47, %al	 ;, _19
 	jne	.L9	 ;,
  ; D:/TC/src/file.c:32:         if (i > 0 && path[i] == '/' && path[i - 1] == '/') {
-	movq	-16(%rbp), %rax	 ; i, tmp154
+	movq	-16(%rbp), %rax	 ; i, tmp152
 	leaq	-1(%rax), %rdx	 ;, _20
-	movq	16(%rbp), %rax	 ; path, tmp155
+	movq	16(%rbp), %rax	 ; path, tmp153
 	addq	%rdx, %rax	 ; _20, _21
 	movzbl	(%rax), %eax	 ; *_21, _22
  ; D:/TC/src/file.c:32:         if (i > 0 && path[i] == '/' && path[i - 1] == '/') {
 	cmpb	$47, %al	 ;, _22
 	jne	.L9	 ;,
  ; D:/TC/src/file.c:33:             memmove(path + i, path + i + 1, path_len - i);
-	movq	-8(%rbp), %rax	 ; path_len, tmp156
-	subq	-16(%rbp), %rax	 ; i, tmp156
-	movq	%rax, %r8	 ; tmp156, _23
+	movq	-8(%rbp), %rax	 ; path_len, tmp154
+	subq	-16(%rbp), %rax	 ; i, tmp154
+	movq	%rax, %r8	 ; tmp154, _23
  ; D:/TC/src/file.c:33:             memmove(path + i, path + i + 1, path_len - i);
-	movq	-16(%rbp), %rax	 ; i, tmp157
+	movq	-16(%rbp), %rax	 ; i, tmp155
 	leaq	1(%rax), %rdx	 ;, _24
-	movq	16(%rbp), %rax	 ; path, tmp158
-	addq	%rax, %rdx	 ; tmp158, _25
+	movq	16(%rbp), %rax	 ; path, tmp156
+	addq	%rax, %rdx	 ; tmp156, _25
  ; D:/TC/src/file.c:33:             memmove(path + i, path + i + 1, path_len - i);
-	movq	16(%rbp), %rcx	 ; path, tmp159
-	movq	-16(%rbp), %rax	 ; i, tmp160
-	addq	%rcx, %rax	 ; tmp159, _26
+	movq	16(%rbp), %rcx	 ; path, tmp157
+	movq	-16(%rbp), %rax	 ; i, tmp158
+	addq	%rcx, %rax	 ; tmp157, _26
  ; D:/TC/src/file.c:33:             memmove(path + i, path + i + 1, path_len - i);
 	movq	%rax, %rcx	 ; _26,
 	call	memmove	 ;
@@ -192,99 +192,96 @@ absolute_path:
 	addq	$1, -16(%rbp)	 ;, i
 .L6:
  ; D:/TC/src/file.c:25:     for (size_t i = 0; i < path_len; i++) {
-	movq	-16(%rbp), %rax	 ; i, tmp161
-	cmpq	-8(%rbp), %rax	 ; path_len, tmp161
+	movq	-16(%rbp), %rax	 ; i, tmp159
+	cmpq	-8(%rbp), %rax	 ; path_len, tmp159
 	jb	.L10	 ;,
  ; D:/TC/src/file.c:39:     if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
 	cmpq	$2, -8(%rbp)	 ;, path_len
 	jbe	.L11	 ;,
  ; D:/TC/src/file.c:39:     if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
-	movq	16(%rbp), %rax	 ; path, tmp162
-	movzbl	(%rax), %eax	 ; *path_65, _27
+	movq	16(%rbp), %rax	 ; path, tmp160
+	movzbl	(%rax), %eax	 ; *path_64, _27
  ; D:/TC/src/file.c:39:     if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
 	cmpb	$47, %al	 ;, _27
 	jne	.L11	 ;,
  ; D:/TC/src/file.c:39:     if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
-	movq	16(%rbp), %rax	 ; path, tmp163
+	movq	16(%rbp), %rax	 ; path, tmp161
 	addq	$1, %rax	 ;, _28
 	movzbl	(%rax), %eax	 ; *_28, _29
  ; D:/TC/src/file.c:39:     if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
 	cmpb	$96, %al	 ;, _29
 	jle	.L11	 ;,
  ; D:/TC/src/file.c:39:     if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
-	movq	16(%rbp), %rax	 ; path, tmp164
+	movq	16(%rbp), %rax	 ; path, tmp162
 	addq	$1, %rax	 ;, _30
 	movzbl	(%rax), %eax	 ; *_30, _31
  ; D:/TC/src/file.c:39:     if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
 	cmpb	$122, %al	 ;, _31
 	jg	.L11	 ;,
  ; D:/TC/src/file.c:39:     if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
-	movq	16(%rbp), %rax	 ; path, tmp165
+	movq	16(%rbp), %rax	 ; path, tmp163
 	addq	$2, %rax	 ;, _32
 	movzbl	(%rax), %eax	 ; *_32, _33
  ; D:/TC/src/file.c:39:     if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
 	cmpb	$47, %al	 ;, _33
 	jne	.L11	 ;,
- ; D:/TC/src/file.c:40:         path[0] = (char)toupper(path[1]);
+ ; D:/TC/src/file.c:40:         path[0] = to_upper(path[1]);
+	movq	16(%rbp), %rax	 ; path, tmp164
+	addq	$1, %rax	 ;, _34
+	movzbl	(%rax), %eax	 ; *_34, _35
+ ; D:/TC/src/file.c:40:         path[0] = to_upper(path[1]);
+	movsbl	%al, %eax	 ; _35, _36
+	movl	%eax, %ecx	 ; _36,
+	call	to_upper	 ;
+ ; D:/TC/src/file.c:40:         path[0] = to_upper(path[1]);
+	movq	16(%rbp), %rdx	 ; path, tmp165
+	movb	%al, (%rdx)	 ; _37, *path_64
+ ; D:/TC/src/file.c:41:         path[1] = ':';
 	movq	16(%rbp), %rax	 ; path, tmp166
-	movzbl	1(%rax), %eax	 ; MEM[(char *)path_65 + 1B], tmp167
-	movb	%al, -17(%rbp)	 ; tmp167, __x
-	call	__locale_ctype_ptr	 ;
- ; D:/TC/src/file.c:40:         path[0] = (char)toupper(path[1]);
-	movsbl	-17(%rbp), %eax	 ; __x, _37
-	movl	%eax, %ecx	 ; _37,
-	call	toupper	 ;
- ; D:/TC/src/file.c:40:         path[0] = (char)toupper(path[1]);
-	movl	%eax, %edx	 ; _70, _38
- ; D:/TC/src/file.c:40:         path[0] = (char)toupper(path[1]);
-	movq	16(%rbp), %rax	 ; path, tmp168
-	movb	%dl, (%rax)	 ; _38, *path_65
+	addq	$1, %rax	 ;, _38
  ; D:/TC/src/file.c:41:         path[1] = ':';
-	movq	16(%rbp), %rax	 ; path, tmp169
-	addq	$1, %rax	 ;, _39
- ; D:/TC/src/file.c:41:         path[1] = ':';
-	movb	$58, (%rax)	 ;, *_39
+	movb	$58, (%rax)	 ;, *_38
  ; D:/TC/src/file.c:42:         return path;
-	movq	16(%rbp), %rax	 ; path, _55
+	movq	16(%rbp), %rax	 ; path, _54
 	jmp	.L12	 ;
 .L11:
  ; D:/TC/src/file.c:53:     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':')
 	cmpq	$1, -8(%rbp)	 ;, path_len
 	jbe	.L13	 ;,
  ; D:/TC/src/file.c:53:     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':')
-	movq	16(%rbp), %rax	 ; path, tmp170
-	movzbl	(%rax), %eax	 ; *path_65, _40
+	movq	16(%rbp), %rax	 ; path, tmp167
+	movzbl	(%rax), %eax	 ; *path_64, _39
  ; D:/TC/src/file.c:53:     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':')
-	cmpb	$64, %al	 ;, _40
+	cmpb	$64, %al	 ;, _39
 	jle	.L13	 ;,
  ; D:/TC/src/file.c:53:     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':')
-	movq	16(%rbp), %rax	 ; path, tmp171
-	movzbl	(%rax), %eax	 ; *path_65, _41
+	movq	16(%rbp), %rax	 ; path, tmp168
+	movzbl	(%rax), %eax	 ; *path_64, _40
  ; D:/TC/src/file.c:53:     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':')
-	cmpb	$90, %al	 ;, _41
+	cmpb	$90, %al	 ;, _40
 	jg	.L13	 ;,
  ; D:/TC/src/file.c:53:     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':')
-	movq	16(%rbp), %rax	 ; path, tmp172
-	addq	$1, %rax	 ;, _42
-	movzbl	(%rax), %eax	 ; *_42, _43
+	movq	16(%rbp), %rax	 ; path, tmp169
+	addq	$1, %rax	 ;, _41
+	movzbl	(%rax), %eax	 ; *_41, _42
  ; D:/TC/src/file.c:53:     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':')
-	cmpb	$58, %al	 ;, _43
+	cmpb	$58, %al	 ;, _42
 	jne	.L13	 ;,
  ; D:/TC/src/file.c:54:         return path;
-	movq	16(%rbp), %rax	 ; path, _55
+	movq	16(%rbp), %rax	 ; path, _54
 	jmp	.L12	 ;
 .L13:
  ; D:/TC/src/file.c:55:     if (path_len > 0 && path[0] == '/')
 	cmpq	$0, -8(%rbp)	 ;, path_len
 	je	.L14	 ;,
  ; D:/TC/src/file.c:55:     if (path_len > 0 && path[0] == '/')
-	movq	16(%rbp), %rax	 ; path, tmp173
-	movzbl	(%rax), %eax	 ; *path_65, _44
+	movq	16(%rbp), %rax	 ; path, tmp170
+	movzbl	(%rax), %eax	 ; *path_64, _43
  ; D:/TC/src/file.c:55:     if (path_len > 0 && path[0] == '/')
-	cmpb	$47, %al	 ;, _44
+	cmpb	$47, %al	 ;, _43
 	jne	.L14	 ;,
  ; D:/TC/src/file.c:56:         return path;
-	movq	16(%rbp), %rax	 ; path, _55
+	movq	16(%rbp), %rax	 ; path, _54
 	jmp	.L12	 ;
 .L14:
  ; D:/TC/src/file.c:57:     if (base_path == NULL)
@@ -292,49 +289,49 @@ absolute_path:
 	jne	.L15	 ;,
  ; D:/TC/src/file.c:58:         base_path = get_cwd();
 	call	get_cwd	 ;
-	movq	%rax, 24(%rbp)	 ; tmp174, base_path
+	movq	%rax, 24(%rbp)	 ; tmp171, base_path
 .L15:
  ; D:/TC/src/file.c:59:     if (base_path == NULL)
 	cmpq	$0, 24(%rbp)	 ;, base_path
 	jne	.L16	 ;,
  ; D:/TC/src/file.c:60:         return path;
-	movq	16(%rbp), %rax	 ; path, _55
+	movq	16(%rbp), %rax	 ; path, _54
 	jmp	.L12	 ;
 .L16:
  ; D:/TC/src/file.c:61:     size_t total_len = strlen(base_path) + 1 + path_len + 1;
-	movq	24(%rbp), %rax	 ; base_path, tmp175
-	movq	%rax, %rcx	 ; tmp175,
+	movq	24(%rbp), %rax	 ; base_path, tmp172
+	movq	%rax, %rcx	 ; tmp172,
 	call	strlen	 ;
  ; D:/TC/src/file.c:61:     size_t total_len = strlen(base_path) + 1 + path_len + 1;
-	movq	-8(%rbp), %rdx	 ; path_len, tmp176
-	addq	%rdx, %rax	 ; tmp176, _46
+	movq	-8(%rbp), %rdx	 ; path_len, tmp173
+	addq	%rdx, %rax	 ; tmp173, _45
  ; D:/TC/src/file.c:61:     size_t total_len = strlen(base_path) + 1 + path_len + 1;
-	addq	$2, %rax	 ;, tmp177
-	movq	%rax, -32(%rbp)	 ; tmp177, total_len
+	addq	$2, %rax	 ;, tmp174
+	movq	%rax, -24(%rbp)	 ; tmp174, total_len
  ; D:/TC/src/file.c:62:     string abs_path = create_string_not_check("", total_len);
-	movq	-32(%rbp), %rax	 ; total_len, tmp178
-	movq	%rax, %rdx	 ; tmp178,
-	leaq	.LC0(%rip), %rax	 ;, tmp179
-	movq	%rax, %rcx	 ; tmp179,
+	movq	-24(%rbp), %rax	 ; total_len, tmp175
+	movq	%rax, %rdx	 ; tmp175,
+	leaq	.LC0(%rip), %rax	 ;, tmp176
+	movq	%rax, %rcx	 ; tmp176,
 	call	create_string_not_check	 ;
-	movq	%rax, -40(%rbp)	 ; tmp180, abs_path
+	movq	%rax, -32(%rbp)	 ; tmp177, abs_path
  ; D:/TC/src/file.c:63:     sprintf(abs_path, "%s/%s", base_path, path);
-	movq	16(%rbp), %rcx	 ; path, tmp181
-	movq	24(%rbp), %rdx	 ; base_path, tmp182
-	movq	-40(%rbp), %rax	 ; abs_path, tmp183
-	movq	%rcx, %r9	 ; tmp181,
-	movq	%rdx, %r8	 ; tmp182,
-	leaq	.LC1(%rip), %rdx	 ;, tmp184
-	movq	%rax, %rcx	 ; tmp183,
+	movq	16(%rbp), %rcx	 ; path, tmp178
+	movq	24(%rbp), %rdx	 ; base_path, tmp179
+	movq	-32(%rbp), %rax	 ; abs_path, tmp180
+	movq	%rcx, %r9	 ; tmp178,
+	movq	%rdx, %r8	 ; tmp179,
+	leaq	.LC1(%rip), %rdx	 ;, tmp181
+	movq	%rax, %rcx	 ; tmp180,
 	call	sprintf	 ;
  ; D:/TC/src/file.c:64:     return absolute_path(create_string(abs_path, total_len), NULL);
-	movq	-32(%rbp), %rdx	 ; total_len, tmp185
-	movq	-40(%rbp), %rax	 ; abs_path, tmp186
-	movq	%rax, %rcx	 ; tmp186,
+	movq	-24(%rbp), %rdx	 ; total_len, tmp182
+	movq	-32(%rbp), %rax	 ; abs_path, tmp183
+	movq	%rax, %rcx	 ; tmp183,
 	call	create_string	 ;
  ; D:/TC/src/file.c:64:     return absolute_path(create_string(abs_path, total_len), NULL);
 	movl	$0, %edx	 ;,
-	movq	%rax, %rcx	 ; _47,
+	movq	%rax, %rcx	 ; _46,
 	call	absolute_path	 ;
 .L12:
  ; D:/TC/src/file.c:65: }
@@ -927,18 +924,18 @@ normalize_path:
  ; D:/TC/src/file.c:214:                 if (comp_len >= componentMaxSize) {
 	cmpq	$255, 408(%rsp)	 ;, comp_len
 	jbe	.L58	 ;,
- ; D:/TC/src/file.c:215:                     comp_len = componentMaxSize - 1;
-	movq	$255, 408(%rsp)	 ;, comp_len
- ; D:/TC/src/file.c:216:                     fprintf(stderr, "Warning: Path component too long, truncating to %zu characters\n", comp_len);
+ ; D:/TC/src/file.c:215:                     fprintf(stderr, "Warning: Path component too long, truncating to %zu characters\n", comp_len);
 	call	__getreent	 ;
- ; D:/TC/src/file.c:216:                     fprintf(stderr, "Warning: Path component too long, truncating to %zu characters\n", comp_len);
+ ; D:/TC/src/file.c:215:                     fprintf(stderr, "Warning: Path component too long, truncating to %zu characters\n", comp_len);
 	movq	24(%rax), %rax	 ; _8->_stderr, _9
- ; D:/TC/src/file.c:216:                     fprintf(stderr, "Warning: Path component too long, truncating to %zu characters\n", comp_len);
+ ; D:/TC/src/file.c:215:                     fprintf(stderr, "Warning: Path component too long, truncating to %zu characters\n", comp_len);
 	movq	408(%rsp), %rdx	 ; comp_len, tmp150
 	movq	%rdx, %r8	 ; tmp150,
 	leaq	.LC5(%rip), %rdx	 ;, tmp151
 	movq	%rax, %rcx	 ; _9,
 	call	fprintf	 ;
+ ; D:/TC/src/file.c:216:                     comp_len = componentMaxSize - 1;
+	movq	$255, 408(%rsp)	 ;, comp_len
 .L58:
  ; D:/TC/src/file.c:219:                 strncpy(component, path_copy + start, comp_len);
 	movq	352(%rsp), %rdx	 ; path_copy, tmp152
@@ -1340,8 +1337,7 @@ normalize_path:
 	.def	strlen;	.scl	2;	.type	32;	.endef
 	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
 	.def	memmove;	.scl	2;	.type	32;	.endef
-	.def	__locale_ctype_ptr;	.scl	2;	.type	32;	.endef
-	.def	toupper;	.scl	2;	.type	32;	.endef
+	.def	to_upper;	.scl	2;	.type	32;	.endef
 	.def	sprintf;	.scl	2;	.type	32;	.endef
 	.def	create_string;	.scl	2;	.type	32;	.endef
 	.def	strcmp;	.scl	2;	.type	32;	.endef

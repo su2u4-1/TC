@@ -68,7 +68,7 @@ create_block:
 	.section .rdata,"dr"
 	.align 8
 .LC0:
-	.ascii "[warning] Unsupported argument type for create_arg: %d\12\0"
+	.ascii "[Warning] Unsupported argument type for create_arg: %d\12\0"
 	.text
 	.def	create_arg;	.scl	3;	.type	32;	.endef
 create_arg:
@@ -83,7 +83,7 @@ create_arg:
 	movq	%rax, %rbx
 	movl	%esi, 16(%rax)
 	movq	$0, 8(%rax)
-	cmpl	$7, %esi
+	cmpl	$8, %esi
 	ja	.L8
 	movl	%esi, %esi
 	leaq	.L10(%rip), %rdx
@@ -100,6 +100,7 @@ create_arg:
 	.long	.L13-.L10
 	.long	.L12-.L10
 	.long	.L11-.L10
+	.long	.L9-.L10
 	.long	.L9-.L10
 	.text
 .L17:
@@ -165,7 +166,7 @@ create_arg:
 	.section .rdata,"dr"
 	.align 8
 .LC1:
-	.ascii "[warning] Unsupported type for size lookup: %s\12\0"
+	.ascii "[Warning] Unsupported type for size lookup: %s\12\0"
 	.text
 	.def	get_type_size;	.scl	3;	.type	32;	.endef
 get_type_size:
@@ -520,268 +521,79 @@ load_rvalue:
 	.section .rdata,"dr"
 	.align 8
 .LC5:
-	.ascii "[warning] Unsupported symbol kind for import: %d\12\0"
-	.text
-	.globl	tac_import
-	.def	tac_import;	.scl	2;	.type	32;	.endef
-tac_import:
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rbx
-	subq	$32, %rsp
-	movq	%rdx, %rdi
-	movq	(%rcx), %rsi
-	movl	32(%rsi), %ebx
-	cmpl	$3, %ebx
-	je	.L85
-	leal	-1(%rbx), %eax
-	cmpl	$1, %eax
-	jbe	.L86
-	testl	%ebx, %ebx
-	jne	.L83
-	movl	$24, %ecx
-	call	alloc_memory
-	movq	%rax, %rbx
-	call	create_list
-	movq	%rax, (%rbx)
-	movq	%rsi, 8(%rbx)
-	movq	$0, 16(%rbx)
-	movq	(%rdi), %rcx
-	movq	%rbx, %rdx
-	call	list_append
-.L79:
-	addq	$32, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	ret
-.L85:
-	movq	(%rsi), %rdx
-	movq	%r8, %r9
-	movl	$118, %r8d
-	movq	%rsi, %rcx
-	call	create_var
-	movq	%rax, %rdx
-	movq	16(%rdi), %rcx
-	call	list_append
-	jmp	.L79
-.L86:
-	movq	(%rsi), %rdx
-	movq	%r8, %r9
-	movl	$102, %r8d
-	movq	%rsi, %rcx
-	call	create_var
-	movq	%rax, %rdx
-	movq	16(%rdi), %rcx
-	call	list_append
-	jmp	.L79
-.L83:
-	call	__getreent
-	movq	24(%rax), %rcx
-	movl	%ebx, %r8d
-	leaq	.LC5(%rip), %rdx
-	call	fprintf
-	jmp	.L79
-	.section .rdata,"dr"
+	.ascii "[Warning] Unsupported variable access with NULL base\12\0"
 	.align 8
 .LC6:
-	.ascii "Error: create_attribute received NULL table or attributes list\12\0"
+	.ascii "[Warning] Failed to generate variable access for base\12\0"
 	.align 8
 .LC7:
-	.ascii "[warning] Unsupported variable type for tac_variable: %d\12\0"
-	.text
-	.globl	tac_variable
-	.def	tac_variable;	.scl	2;	.type	32;	.endef
-tac_variable:
-	pushq	%r12
-	pushq	%rbp
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rbx
-	subq	$32, %rsp
-	movl	%r8d, %esi
-	leal	-97(%r8), %eax
-	cmpl	$21, %eax
-	ja	.L88
-	movq	%rcx, %rdi
-	movq	%rdx, %rbx
-	movl	%eax, %eax
-	leaq	.L90(%rip), %rdx
-	movslq	(%rdx,%rax,4), %rax
-	addq	%rdx, %rax
-	jmp	*%rax
-	.section .rdata,"dr"
-	.align 4
-.L90:
-	.long	.L93-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L92-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L91-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L87-.L90
-	.long	.L88-.L90
-	.long	.L87-.L90
-	.text
-.L91:
-	movq	(%rcx), %rdx
-	movq	8(%rcx), %rcx
-	movq	%rbx, %r9
-	movl	$112, %r8d
-	call	create_var
-	movq	%rax, %rdx
-	movq	8(%rbx), %rax
-	movq	16(%rax), %rcx
-	call	list_append
-.L87:
-	addq	$32, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbp
-	popq	%r12
-	ret
-.L92:
-	movq	(%rcx), %rdx
-	movq	8(%rcx), %rcx
-	movq	%rbx, %r9
-	movl	$102, %r8d
-	call	create_var
-	movq	%rax, %rdx
-	movq	(%rbx), %rax
-	movq	16(%rax), %rcx
-	call	list_append
-	jmp	.L87
-.L93:
-	movq	(%rbx), %rax
-	movq	(%rax), %rcx
-	call	list_pop_back
-	movq	%rax, %rsi
-	movq	(%rbx), %rax
-	movq	(%rax), %rcx
-	movq	%rsi, %rdx
-	call	list_append
-	movq	(%rdi), %rbp
-	movq	8(%rdi), %r12
-	movl	$24, %ecx
-	call	alloc_memory
-	movq	%rax, %rdi
-	movq	%rbx, %r9
-	movl	$97, %r8d
-	movq	%rbp, %rdx
-	movq	%r12, %rcx
-	call	create_var
-	movq	%rax, (%rdi)
-	movq	%rbp, 8(%rdi)
-	movq	$0, 16(%rdi)
-	movq	16(%rsi), %rax
-	movq	%rax, 16(%rdi)
-	movq	%rbp, %rcx
-	call	get_type_size
-	addq	%rax, 16(%rsi)
-	movq	(%rsi), %rcx
-	testq	%rcx, %rcx
-	je	.L96
-	movq	%rdi, %rdx
-	call	list_append
-	jmp	.L87
-.L96:
-	call	__getreent
-	movq	24(%rax), %r9
-	movl	$63, %r8d
-	movl	$1, %edx
-	leaq	.LC6(%rip), %rcx
-	call	fwrite
-	jmp	.L87
-.L88:
-	call	__getreent
-	movq	24(%rax), %rcx
-	movl	%esi, %r8d
-	leaq	.LC7(%rip), %rdx
-	call	fprintf
-	jmp	.L87
-	.section .rdata,"dr"
+	.ascii "[Warning] Attempting to access attribute of non-object type: %s\12\0"
 	.align 8
 .LC8:
-	.ascii "[warning] Unsupported variable access with NULL base\12\0"
+	.ascii "[Warning] Attribute '%s' not found in type '%s'\12\0"
 	.align 8
 .LC9:
-	.ascii "[warning] Failed to generate variable access for base\12\0"
+	.ascii "[Warning] Attempting to access function '%s' as attribute of type '%s'\12\0"
 	.align 8
 .LC10:
-	.ascii "[warning] Attempting to access attribute of non-object type: %s\12\0"
-	.align 8
+	.ascii "[Warning] Symbol '%s' in type '%s' is not an attribute\12\0"
 .LC11:
-	.ascii "[warning] Attribute '%s' not found in type '%s'\12\0"
-	.align 8
-.LC12:
-	.ascii "[warning] Symbol '%s' in type '%s' is not an attribute\12\0"
-	.align 8
-.LC13:
-	.ascii "[warning] Attempting to index non-array type: %s\12\0"
-.LC14:
 	.ascii "arr\0"
 	.align 8
+.LC12:
+	.ascii "[Warning] Attempting to index non-array type: %s\12\0"
+	.align 8
+.LC13:
+	.ascii "[Warning] Failed to generate variable access for index\12\0"
+	.align 8
+.LC14:
+	.ascii "[Warning] Attempting to call non-function, kind: %u, type name: %s\12\0"
+	.align 8
 .LC15:
-	.ascii "[warning] Failed to generate variable access for index\12\0"
-	.align 8
-.LC16:
-	.ascii "[warning] Attempting to call non-function, kind: %u, type name: %s\12\0"
-	.align 8
-.LC17:
-	.ascii "[warning] Unsupported variable access type for tac_variable_access: %u\12\0"
+	.ascii "[Warning] Unsupported variable access type for tac_variable_access: %u\12\0"
 	.text
 	.globl	tac_variable_access
 	.def	tac_variable_access;	.scl	2;	.type	32;	.endef
 tac_variable_access:
+	pushq	%r13
 	pushq	%r12
 	pushq	%rbp
 	pushq	%rdi
 	pushq	%rsi
 	pushq	%rbx
-	subq	$48, %rsp
+	subq	$72, %rsp
 	movq	%rcx, %rdi
 	movq	%rdx, %rbx
 	cmpl	$0, 16(%rcx)
-	jne	.L98
+	jne	.L80
 	movq	8(%rcx), %rcx
 	testq	%rcx, %rcx
-	je	.L98
+	je	.L80
 	movl	32(%rcx), %eax
-	subl	$1, %eax
-	cmpl	$1, %eax
-	jbe	.L99
-	movq	(%rcx), %rdx
+	leal	-1(%rax), %edx
+	cmpl	$1, %edx
+	jbe	.L107
+	testl	%eax, %eax
+	jne	.L83
 	movq	%rbx, %r9
 	movl	$118, %r8d
+	movq	%rcx, %rdx
 	call	create_var
 	movq	%rax, %rdx
 	movl	$0, %ecx
 	call	create_arg
 	movq	%rax, %rsi
-.L97:
+.L79:
 	movq	%rsi, %rax
-	addq	$48, %rsp
+	addq	$72, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	popq	%r12
+	popq	%r13
 	ret
-.L99:
+.L107:
 	movq	(%rcx), %rdx
 	movq	%rbx, %r9
 	movl	$102, %r8d
@@ -790,11 +602,21 @@ tac_variable_access:
 	movl	$7, %ecx
 	call	create_arg
 	movq	%rax, %rsi
-	jmp	.L97
-.L98:
+	jmp	.L79
+.L83:
+	movq	(%rcx), %rdx
+	movq	%rbx, %r9
+	movl	$118, %r8d
+	call	create_var
+	movq	%rax, %rdx
+	movl	$0, %ecx
+	call	create_arg
+	movq	%rax, %rsi
+	jmp	.L79
+.L80:
 	movq	(%rdi), %rsi
 	testq	%rsi, %rsi
-	je	.L121
+	je	.L108
 	movq	%rbx, %rdx
 	movq	%rsi, %rcx
 	call	tac_variable_access
@@ -803,71 +625,72 @@ tac_variable_access:
 	call	load_rvalue
 	movq	%rax, %rbp
 	testq	%rax, %rax
-	je	.L122
+	je	.L109
 	movl	16(%rdi), %esi
 	cmpl	$2, %esi
-	je	.L123
+	je	.L110
 	cmpl	$3, %esi
-	je	.L124
+	je	.L111
 	cmpl	$1, %esi
-	jne	.L113
+	jne	.L96
 	movl	16(%rax), %esi
 	testl	%esi, %esi
-	jne	.L114
+	jne	.L97
 	movq	8(%rax), %rax
 	cmpl	$0, 32(%rax)
-	je	.L125
-.L115:
+	je	.L112
+.L98:
 	movq	8(%rbp), %rax
 	movq	8(%rax), %rbx
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%rbx, %r9
 	movl	%esi, %r8d
-	leaq	.LC16(%rip), %rdx
+	leaq	.LC14(%rip), %rdx
 	call	fprintf
 	movl	$0, %esi
-	jmp	.L97
-.L121:
+	jmp	.L79
+.L108:
 	call	__getreent
 	movq	24(%rax), %r9
 	movl	$53, %r8d
 	movl	$1, %edx
-	leaq	.LC8(%rip), %rcx
+	leaq	.LC5(%rip), %rcx
 	call	fwrite
-	jmp	.L97
-.L122:
+	jmp	.L79
+.L109:
 	call	__getreent
 	movq	24(%rax), %r9
 	movl	$54, %r8d
 	movl	$1, %edx
-	leaq	.LC9(%rip), %rcx
+	leaq	.LC6(%rip), %rcx
 	call	fwrite
 	movq	%rbp, %rsi
-	jmp	.L97
-.L123:
+	jmp	.L79
+.L110:
 	movq	8(%rax), %rax
 	movl	32(%rax), %edx
 	leal	-1(%rdx), %ecx
 	cmpl	$1, %ecx
-	jbe	.L126
+	jbe	.L113
 	movq	24(%rax), %rcx
 	testl	%edx, %edx
-	jne	.L105
+	jne	.L88
 	movq	16(%rcx), %rcx
-.L105:
+.L88:
 	movq	8(%rdi), %rax
 	movq	8(%rax), %rdx
 	call	search_name_use_strcmp
 	movq	%rax, %rsi
 	testq	%rax, %rax
-	je	.L127
+	je	.L114
 	movl	32(%rax), %eax
-	leal	-1(%rax), %edx
-	cmpl	$1, %edx
-	jbe	.L128
+	cmpl	$1, %eax
+	je	.L115
+	cmpl	$2, %eax
+	je	.L116
 	cmpl	$5, %eax
-	jne	.L129
+	jne	.L117
 	movq	(%rsi), %rdx
 	movq	%rbx, %r9
 	movl	$116, %r8d
@@ -895,17 +718,17 @@ tac_variable_access:
 	movq	16(%rbx), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-	jmp	.L97
-.L126:
+	jmp	.L79
+.L113:
 	movq	8(%rax), %rbx
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%rbx, %r8
-	leaq	.LC10(%rip), %rdx
+	leaq	.LC7(%rip), %rdx
 	call	fprintf
 	movl	$0, %esi
-	jmp	.L97
-.L127:
+	jmp	.L79
+.L114:
 	movq	8(%rbp), %rax
 	movq	8(%rax), %rbp
 	movq	8(%rdi), %rax
@@ -914,10 +737,20 @@ tac_variable_access:
 	movq	24(%rax), %rcx
 	movq	%rbp, %r9
 	movq	%rbx, %r8
-	leaq	.LC11(%rip), %rdx
+	leaq	.LC8(%rip), %rdx
 	call	fprintf
-	jmp	.L97
-.L128:
+	jmp	.L79
+.L115:
+	movq	8(%rbp), %rax
+	movq	8(%rax), %rbp
+	movq	8(%rdi), %rax
+	movq	8(%rax), %rdi
+	call	__getreent
+	movq	24(%rax), %rcx
+	movq	%rbp, %r9
+	movq	%rdi, %r8
+	leaq	.LC9(%rip), %rdx
+	call	fprintf
 	movq	(%rsi), %rdx
 	movq	%rbx, %r9
 	movl	$102, %r8d
@@ -927,8 +760,19 @@ tac_variable_access:
 	movl	$7, %ecx
 	call	create_arg
 	movq	%rax, %rsi
-	jmp	.L97
-.L129:
+	jmp	.L79
+.L116:
+	movq	(%rsi), %rdx
+	movq	%rbx, %r9
+	movl	$102, %r8d
+	movq	%rsi, %rcx
+	call	create_var
+	movq	%rax, %rdx
+	movl	$8, %ecx
+	call	create_arg
+	movq	%rax, %rsi
+	jmp	.L79
+.L117:
 	movq	8(%rbp), %rax
 	movq	8(%rax), %rsi
 	movq	8(%rdi), %rax
@@ -937,22 +781,17 @@ tac_variable_access:
 	movq	24(%rax), %rcx
 	movq	%rsi, %r9
 	movq	%rbx, %r8
-	leaq	.LC12(%rip), %rdx
+	leaq	.LC10(%rip), %rdx
 	call	fprintf
 	movl	$0, %esi
-	jmp	.L97
-.L124:
-	movq	8(%rax), %rdx
-	movl	32(%rdx), %eax
-	subl	$3, %eax
-	cmpl	$2, %eax
-	ja	.L130
-	movq	8(%rdx), %rsi
-	leaq	.LC14(%rip), %rdx
-	movq	%rsi, %rcx
+	jmp	.L79
+.L111:
+	movq	8(%rax), %rax
+	movq	8(%rax), %rcx
+	leaq	.LC11(%rip), %rdx
 	call	strcmp
 	testl	%eax, %eax
-	jne	.L131
+	jne	.L118
 	movq	8(%rdi), %rcx
 	movq	%rbx, %rdx
 	call	tac_expression
@@ -961,8 +800,8 @@ tac_variable_access:
 	call	load_rvalue
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	je	.L132
-	movq	8(%rbp), %rax
+	je	.L119
+	movq	.refptr.name_int(%rip), %rax
 	movq	(%rax), %rdx
 	movq	%rbx, %r9
 	movl	$116, %r8d
@@ -982,34 +821,28 @@ tac_variable_access:
 	movq	16(%rbx), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-	jmp	.L97
-.L130:
-	movq	8(%rdx), %rbx
+	jmp	.L79
+.L118:
+	movq	0(%rbp), %rax
+	movq	(%rax), %rax
+	movq	8(%rax), %rbx
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%rbx, %r8
-	leaq	.LC13(%rip), %rdx
+	leaq	.LC12(%rip), %rdx
 	call	fprintf
 	movl	$0, %esi
-	jmp	.L97
-.L131:
-	call	__getreent
-	movq	24(%rax), %rcx
-	movq	%rsi, %r8
-	leaq	.LC13(%rip), %rdx
-	call	fprintf
-	movl	$0, %esi
-	jmp	.L97
-.L132:
+	jmp	.L79
+.L119:
 	call	__getreent
 	movq	24(%rax), %r9
 	movl	$55, %r8d
 	movl	$1, %edx
-	leaq	.LC15(%rip), %rcx
+	leaq	.LC13(%rip), %rcx
 	call	fwrite
 	movq	%rdi, %rsi
-	jmp	.L97
-.L125:
+	jmp	.L79
+.L112:
 	movq	.refptr.DEFAULT_CONSTRUCTOR_NAME(%rip), %rdx
 	movq	(%rdx), %rdx
 	movq	8(%rax), %rcx
@@ -1025,54 +858,123 @@ tac_variable_access:
 	movl	$102, %r8d
 	call	create_var
 	movq	%rax, %rdx
-	movl	$7, %ecx
+	movl	$8, %ecx
 	call	create_arg
 	movq	%rax, %rbp
-.L114:
+.L97:
 	movl	16(%rbp), %esi
-	cmpl	$7, %esi
-	jne	.L115
+	leal	-7(%rsi), %eax
+	cmpl	$1, %eax
+	ja	.L98
+	movq	$0, 48(%rsp)
+	call	create_list
+	movq	%rax, %rsi
+	cmpl	$8, 16(%rbp)
+	je	.L120
+.L101:
 	movq	8(%rdi), %rcx
 	call	list_copy
-	movq	%rax, %rdi
-	movq	$0, 32(%rsp)
-	leaq	40(%rsp), %r12
-	jmp	.L118
-.L119:
+	movq	%rax, %r12
+	leaq	56(%rsp), %r13
+	jmp	.L102
+.L120:
+	movq	.refptr.DEFAULT_CONSTRUCTOR_NAME(%rip), %rax
+	movq	(%rax), %rdx
+	movq	8(%rbp), %rax
+	movq	8(%rax), %rcx
+	call	make_method_name
+	movq	%rax, %rdx
+	movq	0(%rbp), %rax
+	movq	(%rax), %rax
+	movq	8(%rax), %rcx
+	call	strcmp
+	testl	%eax, %eax
+	je	.L101
+	movq	(%rdi), %rax
+	movq	(%rax), %rax
+	movq	%rax, 32(%rsp)
+	movl	$0, %r9d
+	movl	$0, %r8d
+	movl	$0, %edx
+	movl	$8, %ecx
+	call	create_primary
+	movq	%rax, %r8
+	movl	$0, %r9d
+	movl	$0, %edx
+	movl	$19, %ecx
+	call	create_expression
+	movq	%rax, %rcx
 	movq	%rbx, %rdx
 	call	tac_expression
-	movq	%rax, %rsi
+	movq	%rax, %rcx
+	movq	%rbx, %rdx
+	call	load_rvalue
+	movq	%rax, %r12
 	movq	8(%rax), %rcx
 	call	get_type_size
-	movq	%rax, 40(%rsp)
-	movq	%r12, %rdx
+	movq	%rax, 56(%rsp)
+	leaq	56(%rsp), %rdx
 	movl	$1, %ecx
 	call	create_arg
 	movq	%rax, %rdx
 	movl	$0, %r9d
-	movq	%rsi, %r8
+	movq	%r12, %r8
 	movl	$17, %ecx
 	call	create_instruction
 	movq	%rax, %rdx
-	movq	16(%rbx), %rax
-	movq	8(%rax), %rcx
+	movq	%rsi, %rcx
 	call	list_append
-	addq	$1, 32(%rsp)
-.L118:
-	movq	%rdi, %rcx
+	addq	$1, 48(%rsp)
+	jmp	.L101
+.L103:
+	movq	%rbx, %rdx
+	call	tac_expression
+	movq	%rax, %rcx
+	movq	%rbx, %rdx
+	call	load_rvalue
+	movq	%rax, %rdi
+	movq	8(%rax), %rcx
+	call	get_type_size
+	movq	%rax, 56(%rsp)
+	movq	%r13, %rdx
+	movl	$1, %ecx
+	call	create_arg
+	movq	%rax, %rdx
+	movl	$0, %r9d
+	movq	%rdi, %r8
+	movl	$17, %ecx
+	call	create_instruction
+	movq	%rax, %rdx
+	movq	%rsi, %rcx
+	call	list_append
+	addq	$1, 48(%rsp)
+.L102:
+	movq	%r12, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	jne	.L119
+	jne	.L103
+	jmp	.L104
+.L105:
+	movq	16(%rbx), %rax
+	movq	8(%rax), %rcx
+	call	list_append
+.L104:
+	movq	%rsi, %rcx
+	call	list_pop
+	movq	%rax, %rdx
+	testq	%rax, %rax
+	jne	.L105
 	movq	8(%rbp), %rdx
 	movq	%rbx, %r9
 	movl	$116, %r8d
+	movl	$0, %ecx
 	call	create_var
 	movq	%rax, %rdx
 	movl	$0, %ecx
 	call	create_arg
 	movq	%rax, %rsi
-	leaq	32(%rsp), %rdx
+	leaq	48(%rsp), %rdx
 	movl	$1, %ecx
 	call	create_arg
 	movq	%rax, %r9
@@ -1084,22 +986,22 @@ tac_variable_access:
 	movq	16(%rbx), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-	jmp	.L97
-.L113:
+	jmp	.L79
+.L96:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movl	%esi, %r8d
-	leaq	.LC17(%rip), %rdx
+	leaq	.LC15(%rip), %rdx
 	call	fprintf
 	movl	$0, %esi
-	jmp	.L97
+	jmp	.L79
 	.section .rdata,"dr"
 	.align 8
-.LC19:
-	.ascii "[warning] Unsupported type for negation: %s\12\0"
+.LC17:
+	.ascii "[Warning] Unsupported type for negation: %s\12\0"
 	.align 8
-.LC20:
-	.ascii "[warning] Unsupported primary type for tac_primary: %d\12\0"
+.LC18:
+	.ascii "[Warning] Unsupported primary type for tac_primary: %d\12\0"
 	.text
 	.globl	tac_primary
 	.def	tac_primary;	.scl	2;	.type	32;	.endef
@@ -1110,27 +1012,27 @@ tac_primary:
 	subq	$48, %rsp
 	movl	8(%rcx), %ebx
 	cmpl	$8, %ebx
-	ja	.L134
+	ja	.L122
 	movq	%rdx, %rsi
 	movl	%ebx, %ebx
-	leaq	.L136(%rip), %r8
+	leaq	.L124(%rip), %r8
 	movslq	(%r8,%rbx,4), %rax
 	addq	%r8, %rax
 	jmp	*%rax
 	.section .rdata,"dr"
 	.align 4
-.L136:
-	.long	.L144-.L136
-	.long	.L143-.L136
-	.long	.L142-.L136
-	.long	.L141-.L136
-	.long	.L140-.L136
-	.long	.L139-.L136
-	.long	.L138-.L136
-	.long	.L137-.L136
-	.long	.L135-.L136
+.L124:
+	.long	.L132-.L124
+	.long	.L131-.L124
+	.long	.L130-.L124
+	.long	.L129-.L124
+	.long	.L128-.L124
+	.long	.L127-.L124
+	.long	.L126-.L124
+	.long	.L125-.L124
+	.long	.L123-.L124
 	.text
-.L144:
+.L132:
 	movq	(%rcx), %rcx
 	movl	$10, %r8d
 	movl	$0, %edx
@@ -1140,14 +1042,14 @@ tac_primary:
 	movl	$1, %ecx
 	call	create_arg
 	movq	%rax, %rbx
-.L133:
+.L121:
 	movq	%rbx, %rax
 	addq	$48, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	ret
-.L143:
+.L131:
 	movq	(%rcx), %rcx
 	movl	$0, %edx
 	call	strtod
@@ -1156,33 +1058,33 @@ tac_primary:
 	movl	$2, %ecx
 	call	create_arg
 	movq	%rax, %rbx
-	jmp	.L133
-.L142:
+	jmp	.L121
+.L130:
 	movq	(%rcx), %rdx
 	movl	$3, %ecx
 	call	create_arg
 	movq	%rax, %rbx
-	jmp	.L133
-.L141:
+	jmp	.L121
+.L129:
 	movb	$1, 40(%rsp)
 	leaq	40(%rsp), %rdx
 	movl	$4, %ecx
 	call	create_arg
 	movq	%rax, %rbx
-	jmp	.L133
-.L140:
+	jmp	.L121
+.L128:
 	movb	$0, 40(%rsp)
 	leaq	40(%rsp), %rdx
 	movl	$4, %ecx
 	call	create_arg
 	movq	%rax, %rbx
-	jmp	.L133
-.L139:
+	jmp	.L121
+.L127:
 	movq	(%rcx), %rcx
 	call	tac_expression
 	movq	%rax, %rbx
-	jmp	.L133
-.L138:
+	jmp	.L121
+.L126:
 	movq	(%rcx), %rcx
 	call	tac_primary
 	movq	%rax, %rcx
@@ -1208,8 +1110,8 @@ tac_primary:
 	movq	16(%rsi), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-	jmp	.L133
-.L137:
+	jmp	.L121
+.L125:
 	movq	(%rcx), %rcx
 	call	tac_primary
 	movq	%rax, %rcx
@@ -1226,24 +1128,24 @@ tac_primary:
 	call	create_arg
 	movq	%rax, %rbx
 	movq	$0, 32(%rsp)
-	movq	.LC18(%rip), %rax
+	movq	.LC16(%rip), %rax
 	movq	%rax, 40(%rsp)
 	movq	8(%rdi), %rax
 	movq	.refptr.name_int(%rip), %rdx
 	cmpq	(%rdx), %rax
-	je	.L151
+	je	.L139
 	movq	.refptr.name_float(%rip), %rdx
 	cmpq	(%rdx), %rax
-	je	.L152
+	je	.L140
 	movq	8(%rax), %rbx
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%rbx, %r8
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC17(%rip), %rdx
 	call	fprintf
 	movl	$0, %ebx
-	jmp	.L133
-.L151:
+	jmp	.L121
+.L139:
 	leaq	32(%rsp), %rdx
 	movl	$1, %ecx
 	call	create_arg
@@ -1253,8 +1155,8 @@ tac_primary:
 	movl	$1, %ecx
 	call	create_instruction
 	movq	%rax, %rdx
-	jmp	.L147
-.L152:
+	jmp	.L135
+.L140:
 	leaq	40(%rsp), %rdx
 	movl	$2, %ecx
 	call	create_arg
@@ -1264,28 +1166,28 @@ tac_primary:
 	movl	$2, %ecx
 	call	create_instruction
 	movq	%rax, %rdx
-.L147:
+.L135:
 	movq	16(%rsi), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-	jmp	.L133
-.L135:
+	jmp	.L121
+.L123:
 	movq	(%rcx), %rcx
 	call	tac_variable_access
 	movq	%rax, %rbx
-	jmp	.L133
-.L134:
+	jmp	.L121
+.L122:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movl	%ebx, %r8d
-	leaq	.LC20(%rip), %rdx
+	leaq	.LC18(%rip), %rdx
 	call	fprintf
 	movl	$0, %ebx
-	jmp	.L133
+	jmp	.L121
 	.section .rdata,"dr"
 	.align 8
-.LC21:
-	.ascii "[warning] Left-hand side of assignment is not a variable\12\0"
+.LC19:
+	.ascii "[Warning] Left-hand side of assignment is not a variable\12\0"
 	.text
 	.globl	tac_expression
 	.def	tac_expression;	.scl	2;	.type	32;	.endef
@@ -1299,7 +1201,7 @@ tac_expression:
 	movq	%rcx, %rsi
 	movq	%rdx, %rbx
 	cmpl	$19, 24(%rcx)
-	je	.L181
+	je	.L169
 	movq	16(%rcx), %rcx
 	call	tac_expression
 	movq	%rax, %rcx
@@ -1308,43 +1210,43 @@ tac_expression:
 	movq	%rax, %r12
 	movl	24(%rsi), %ebp
 	cmpl	$18, %ebp
-	ja	.L156
+	ja	.L144
 	movl	%ebp, %eax
-	leaq	.L158(%rip), %rdx
+	leaq	.L146(%rip), %rdx
 	movslq	(%rdx,%rax,4), %rax
 	addq	%rdx, %rax
 	jmp	*%rax
 	.section .rdata,"dr"
 	.align 4
-.L158:
-	.long	.L162-.L158
-	.long	.L161-.L158
-	.long	.L177-.L158
-	.long	.L159-.L158
-	.long	.L157-.L158
-	.long	.L160-.L158
-	.long	.L160-.L158
-	.long	.L160-.L158
-	.long	.L160-.L158
-	.long	.L160-.L158
-	.long	.L160-.L158
-	.long	.L160-.L158
-	.long	.L160-.L158
-	.long	.L163-.L158
-	.long	.L162-.L158
-	.long	.L161-.L158
-	.long	.L177-.L158
-	.long	.L159-.L158
-	.long	.L157-.L158
+.L146:
+	.long	.L150-.L146
+	.long	.L149-.L146
+	.long	.L165-.L146
+	.long	.L147-.L146
+	.long	.L145-.L146
+	.long	.L148-.L146
+	.long	.L148-.L146
+	.long	.L148-.L146
+	.long	.L148-.L146
+	.long	.L148-.L146
+	.long	.L148-.L146
+	.long	.L148-.L146
+	.long	.L148-.L146
+	.long	.L151-.L146
+	.long	.L150-.L146
+	.long	.L149-.L146
+	.long	.L165-.L146
+	.long	.L147-.L146
+	.long	.L145-.L146
 	.text
-.L181:
+.L169:
 	movq	8(%rcx), %rcx
 	call	tac_primary
 	movq	%rax, %rsi
-	jmp	.L153
-.L159:
+	jmp	.L141
+.L147:
 	movl	$3, %ebp
-.L160:
+.L148:
 	movq	(%rsi), %rcx
 	movq	%rbx, %rdx
 	call	tac_expression
@@ -1352,8 +1254,8 @@ tac_expression:
 	movl	24(%rsi), %eax
 	subl	$13, %eax
 	cmpl	$5, %eax
-	jbe	.L175
-.L172:
+	jbe	.L163
+.L160:
 	movq	8(%rdi), %rdx
 	movq	%rbx, %r9
 	movl	$116, %r8d
@@ -1372,14 +1274,14 @@ tac_expression:
 	movl	%ebp, %ecx
 	call	create_instruction
 	movq	%rax, %rdx
-	jmp	.L174
-.L157:
+	jmp	.L162
+.L145:
 	movl	$4, %ebp
-	jmp	.L160
-.L156:
+	jmp	.L148
+.L144:
 	movl	$25, %ebp
-	jmp	.L160
-.L162:
+	jmp	.L148
+.L150:
 	movq	(%rsi), %rcx
 	movq	%rbx, %rdx
 	call	tac_expression
@@ -1387,9 +1289,9 @@ tac_expression:
 	movl	24(%rsi), %eax
 	subl	$13, %eax
 	cmpl	$5, %eax
-	ja	.L178
+	ja	.L166
 	movl	$0, %ebp
-.L175:
+.L163:
 	movq	8(%rdi), %rdx
 	movq	%rbx, %r9
 	movl	$116, %r8d
@@ -1411,10 +1313,10 @@ tac_expression:
 	movq	16(%rbx), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-.L176:
+.L164:
 	cmpl	$0, 16(%rdi)
-	jne	.L182
-.L173:
+	jne	.L170
+.L161:
 	movl	$0, %r9d
 	movq	%rsi, %r8
 	movq	%rdi, %rdx
@@ -1422,12 +1324,12 @@ tac_expression:
 	call	create_instruction
 	movq	%rax, %rdx
 	cmpb	$0, 20(%rdi)
-	jne	.L183
-.L174:
+	jne	.L171
+.L162:
 	movq	16(%rbx), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-.L153:
+.L141:
 	movq	%rsi, %rax
 	addq	$32, %rsp
 	popq	%rbx
@@ -1436,32 +1338,32 @@ tac_expression:
 	popq	%rbp
 	popq	%r12
 	ret
-.L182:
+.L170:
 	call	__getreent
 	movq	24(%rax), %r9
 	movl	$57, %r8d
 	movl	$1, %edx
-	leaq	.LC21(%rip), %rcx
+	leaq	.LC19(%rip), %rcx
 	call	fwrite
-	jmp	.L173
-.L183:
+	jmp	.L161
+.L171:
 	movl	$0, %r9d
 	movq	%rsi, %r8
 	movq	%rdi, %rdx
 	movl	$24, %ecx
 	call	create_instruction
 	movq	%rax, %rdx
-	jmp	.L174
-.L178:
+	jmp	.L162
+.L166:
 	movl	$0, %ebp
-	jmp	.L172
-.L161:
+	jmp	.L160
+.L149:
 	movl	$1, %ebp
-	jmp	.L160
-.L177:
+	jmp	.L148
+.L165:
 	movl	$2, %ebp
-	jmp	.L160
-.L163:
+	jmp	.L148
+.L151:
 	movq	(%rsi), %rcx
 	movq	%rbx, %rdx
 	call	tac_expression
@@ -1469,12 +1371,126 @@ tac_expression:
 	movl	24(%rsi), %eax
 	subl	$13, %eax
 	cmpl	$5, %eax
-	ja	.L184
+	ja	.L172
 	movq	%r12, %rsi
-	jmp	.L176
-.L184:
+	jmp	.L164
+.L172:
 	movl	$14, %ebp
-	jmp	.L172
+	jmp	.L160
+	.section .rdata,"dr"
+	.align 8
+.LC20:
+	.ascii "Error: create_attribute received NULL table\12\0"
+	.align 8
+.LC21:
+	.ascii "Error: create_attribute received NULL table or attributes list\12\0"
+	.text
+	.globl	tac_variable
+	.def	tac_variable;	.scl	2;	.type	32;	.endef
+tac_variable:
+	pushq	%r12
+	pushq	%rbp
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rbx
+	subq	$48, %rsp
+	movq	%rcx, %rsi
+	movq	%rdx, %rbx
+	testb	%r8b, %r8b
+	je	.L174
+	movq	(%rdx), %rax
+	movq	(%rax), %rcx
+	call	list_pop_back
+	movq	%rax, %rdi
+	movq	(%rbx), %rax
+	movq	(%rax), %rcx
+	movq	%rdi, %rdx
+	call	list_append
+	movq	(%rsi), %r12
+	movq	8(%rsi), %rbp
+	movl	$24, %ecx
+	call	alloc_memory
+	movq	%rax, %rsi
+	movq	%rbx, %r9
+	movl	$97, %r8d
+	movq	%r12, %rdx
+	movq	%rbp, %rcx
+	call	create_var
+	movq	%rax, (%rsi)
+	movq	%r12, 8(%rsi)
+	movq	$0, 16(%rsi)
+	testq	%rdi, %rdi
+	jne	.L183
+	call	__getreent
+	movq	24(%rax), %r9
+	movl	$44, %r8d
+	movl	$1, %edx
+	leaq	.LC20(%rip), %rcx
+	call	fwrite
+.L176:
+	call	__getreent
+	movq	24(%rax), %r9
+	movl	$63, %r8d
+	movl	$1, %edx
+	leaq	.LC21(%rip), %rcx
+	call	fwrite
+	jmp	.L173
+.L183:
+	movq	16(%rdi), %rax
+	movq	%rax, 16(%rsi)
+	movq	%r12, %rcx
+	call	get_type_size
+	addq	%rax, 16(%rdi)
+	movq	(%rdi), %rcx
+	testq	%rcx, %rcx
+	je	.L176
+	movq	%rsi, %rdx
+	call	list_append
+	jmp	.L173
+.L174:
+	movq	(%rcx), %rdx
+	movq	8(%rcx), %rcx
+	movq	%rbx, %r9
+	movl	$118, %r8d
+	call	create_var
+	movq	%rax, %rdi
+	movq	16(%rsi), %rcx
+	testq	%rcx, %rcx
+	je	.L179
+	movq	%rbx, %rdx
+	call	tac_expression
+	movq	%rax, %rcx
+	movq	%rbx, %rdx
+	call	load_rvalue
+	movq	%rax, %rsi
+.L180:
+	movq	%rdi, %rdx
+	movl	$0, %ecx
+	call	create_arg
+	movq	%rax, %rdx
+	movl	$0, %r9d
+	movq	%rsi, %r8
+	movl	$14, %ecx
+	call	create_instruction
+	movq	%rax, %rdx
+	movq	16(%rbx), %rax
+	movq	8(%rax), %rcx
+	call	list_append
+.L173:
+	addq	$48, %rsp
+	popq	%rbx
+	popq	%rsi
+	popq	%rdi
+	popq	%rbp
+	popq	%r12
+	ret
+.L179:
+	movq	$0, 40(%rsp)
+	leaq	40(%rsp), %rdx
+	movl	$1, %ecx
+	call	create_arg
+	movq	%rax, %rsi
+	jmp	.L180
 	.globl	tac_if
 	.def	tac_if;	.scl	2;	.type	32;	.endef
 tac_if:
@@ -1504,20 +1520,20 @@ tac_if:
 	movq	16(%r12), %rcx
 	call	list_is_empty
 	testb	%al, %al
-	je	.L186
+	je	.L185
 	movq	24(%r12), %rcx
 	call	list_is_empty
 	movq	%rsi, %r15
 	testb	%al, %al
-	jne	.L187
-.L186:
+	jne	.L186
+.L185:
 	movq	%rbx, %r9
 	movl	$98, %r8d
 	movl	$0, %edx
 	movl	$0, %ecx
 	call	create_var
 	movq	%rax, %r15
-.L187:
+.L186:
 	movq	%r15, %rdx
 	movl	$6, %ecx
 	call	create_arg
@@ -1525,6 +1541,9 @@ tac_if:
 	movq	(%r12), %rcx
 	movq	%rbx, %rdx
 	call	tac_expression
+	movq	%rax, %rcx
+	movq	%rbx, %rdx
+	call	load_rvalue
 	movq	%rax, %rbp
 	movq	%rsi, %rdx
 	movl	$6, %ecx
@@ -1553,16 +1572,16 @@ tac_if:
 	movq	8(%r12), %rcx
 	call	list_copy
 	movq	%rax, %rdi
-	jmp	.L188
-.L189:
+	jmp	.L187
+.L188:
 	movq	%rbx, %rdx
 	call	tac_statement
-.L188:
+.L187:
 	movq	%rdi, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	jne	.L189
+	jne	.L188
 	movl	$0, %r9d
 	movl	$0, %r8d
 	movq	%r13, %rdx
@@ -1575,13 +1594,13 @@ tac_if:
 	movq	16(%r12), %rcx
 	call	list_is_empty
 	testb	%al, %al
-	je	.L202
-.L190:
+	je	.L201
+.L189:
 	movq	24(%r12), %rcx
 	call	list_is_empty
 	testb	%al, %al
-	je	.L203
-.L196:
+	je	.L202
+.L195:
 	movq	%r15, %rcx
 	call	create_block
 	movq	%rax, %rsi
@@ -1600,26 +1619,26 @@ tac_if:
 	popq	%r14
 	popq	%r15
 	ret
-.L202:
+.L201:
 	movq	16(%r12), %rcx
 	call	list_copy
 	movq	%rax, %r14
-	jmp	.L191
-.L204:
+	jmp	.L190
+.L203:
 	movq	24(%r12), %rcx
 	call	list_is_empty
 	testb	%al, %al
 	cmovne	%r15, %rsi
-	jmp	.L192
-.L194:
+	jmp	.L191
+.L193:
 	movq	%rbx, %rdx
 	call	tac_statement
-.L193:
+.L192:
 	movq	%rdi, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	jne	.L194
+	jne	.L193
 	movl	$0, %r9d
 	movl	$0, %r8d
 	movq	%r13, %rdx
@@ -1629,12 +1648,12 @@ tac_if:
 	movq	16(%rbx), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-.L191:
+.L190:
 	movq	%r14, %rcx
 	call	list_pop
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	je	.L190
+	je	.L189
 	movq	%rsi, %rcx
 	call	create_block
 	movq	%rax, %rsi
@@ -1658,12 +1677,15 @@ tac_if:
 	movq	(%rdi), %rcx
 	movq	%rbx, %rdx
 	call	tac_expression
+	movq	%rax, %rcx
+	movq	%rbx, %rdx
+	call	load_rvalue
 	movq	%rax, 40(%rsp)
 	movq	%r14, %rcx
 	call	list_is_empty
 	testb	%al, %al
-	jne	.L204
-.L192:
+	jne	.L203
+.L191:
 	movq	%rsi, %rdx
 	movl	$6, %ecx
 	call	create_arg
@@ -1691,8 +1713,8 @@ tac_if:
 	movq	8(%rdi), %rcx
 	call	list_copy
 	movq	%rax, %rdi
-	jmp	.L193
-.L203:
+	jmp	.L192
+.L202:
 	movq	%rsi, %rcx
 	call	create_block
 	movq	%rax, %rsi
@@ -1704,16 +1726,16 @@ tac_if:
 	movq	24(%r12), %rcx
 	call	list_copy
 	movq	%rax, %rsi
-	jmp	.L197
-.L198:
+	jmp	.L196
+.L197:
 	movq	%rbx, %rdx
 	call	tac_statement
-.L197:
+.L196:
 	movq	%rsi, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	jne	.L198
+	jne	.L197
 	movl	$0, %r9d
 	movl	$0, %r8d
 	movq	%r13, %rdx
@@ -1723,17 +1745,17 @@ tac_if:
 	movq	16(%rbx), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-	jmp	.L196
+	jmp	.L195
 	.section .rdata,"dr"
 	.align 8
 .LC22:
-	.ascii "[warning] 'break' statement used outside of loop\12\0"
+	.ascii "[Warning] 'break' statement used outside of loop\12\0"
 	.align 8
 .LC23:
-	.ascii "[warning] 'continue' statement used outside of loop\12\0"
+	.ascii "[Warning] 'continue' statement used outside of loop\12\0"
 	.align 8
 .LC24:
-	.ascii "[warning] Unsupported statement type for tac_statement: %d\12\0"
+	.ascii "[Warning] Unsupported statement type for tac_statement: %d\12\0"
 	.text
 	.globl	tac_statement
 	.def	tac_statement;	.scl	2;	.type	32;	.endef
@@ -1744,67 +1766,73 @@ tac_statement:
 	subq	$32, %rsp
 	movl	8(%rcx), %ebx
 	cmpl	$7, %ebx
-	ja	.L206
+	ja	.L205
 	movq	%rcx, %rsi
 	movq	%rdx, %rdi
 	movl	%ebx, %ebx
-	leaq	.L208(%rip), %rdx
+	leaq	.L207(%rip), %rdx
 	movslq	(%rdx,%rbx,4), %rax
 	addq	%rdx, %rax
 	jmp	*%rax
 	.section .rdata,"dr"
 	.align 4
-.L208:
-	.long	.L215-.L208
-	.long	.L214-.L208
-	.long	.L213-.L208
-	.long	.L212-.L208
-	.long	.L211-.L208
-	.long	.L210-.L208
-	.long	.L209-.L208
-	.long	.L207-.L208
+.L207:
+	.long	.L214-.L207
+	.long	.L213-.L207
+	.long	.L212-.L207
+	.long	.L211-.L207
+	.long	.L210-.L207
+	.long	.L209-.L207
+	.long	.L208-.L207
+	.long	.L206-.L207
 	.text
-.L215:
+.L214:
 	movq	(%rcx), %rcx
 	movq	%rdi, %rdx
 	call	tac_expression
-.L205:
+	movq	%rax, %rcx
+	movq	%rdi, %rdx
+	call	load_rvalue
+.L204:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	ret
-.L214:
-	movq	(%rcx), %rcx
-	movl	$118, %r8d
-	movq	%rdi, %rdx
-	call	tac_variable
-	jmp	.L205
 .L213:
 	movq	(%rcx), %rcx
+	movl	$0, %r8d
 	movq	%rdi, %rdx
-	call	tac_if
-	jmp	.L205
+	call	tac_variable
+	jmp	.L204
 .L212:
 	movq	(%rcx), %rcx
 	movq	%rdi, %rdx
-	call	tac_while
-	jmp	.L205
+	call	tac_if
+	jmp	.L204
 .L211:
 	movq	(%rcx), %rcx
 	movq	%rdi, %rdx
-	call	tac_for
-	jmp	.L205
+	call	tac_while
+	jmp	.L204
 .L210:
+	movq	(%rcx), %rcx
+	movq	%rdi, %rdx
+	call	tac_for
+	jmp	.L204
+.L209:
 	movl	$0, %edx
 	movl	$5, %ecx
 	call	create_arg
 	movq	(%rsi), %rcx
 	testq	%rcx, %rcx
-	je	.L217
+	je	.L216
 	movq	%rdi, %rdx
 	call	tac_expression
-.L217:
+	movq	%rax, %rcx
+	movq	%rdi, %rdx
+	call	load_rvalue
+.L216:
 	movl	$0, %r9d
 	movl	$0, %r8d
 	movq	%rax, %rdx
@@ -1814,13 +1842,40 @@ tac_statement:
 	movq	16(%rdi), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-	jmp	.L205
-.L209:
+	jmp	.L204
+.L208:
 	movq	32(%rdi), %rcx
 	call	list_is_empty
 	testb	%al, %al
-	jne	.L218
+	jne	.L217
 	movq	32(%rdi), %rax
+	movq	8(%rax), %rax
+	movq	8(%rax), %rdx
+	testq	%rdx, %rdx
+	je	.L217
+	movl	$0, %r9d
+	movl	$0, %r8d
+	movl	$20, %ecx
+	call	create_instruction
+	movq	%rax, %rdx
+	movq	16(%rdi), %rax
+	movq	8(%rax), %rcx
+	call	list_append
+	jmp	.L204
+.L217:
+	call	__getreent
+	movq	24(%rax), %r9
+	movl	$49, %r8d
+	movl	$1, %edx
+	leaq	.LC22(%rip), %rcx
+	call	fwrite
+	jmp	.L204
+.L206:
+	movq	40(%rdi), %rcx
+	call	list_is_empty
+	testb	%al, %al
+	jne	.L218
+	movq	40(%rdi), %rax
 	movq	8(%rax), %rax
 	movq	8(%rax), %rdx
 	testq	%rdx, %rdx
@@ -1833,49 +1888,22 @@ tac_statement:
 	movq	16(%rdi), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-	jmp	.L205
+	jmp	.L204
 .L218:
-	call	__getreent
-	movq	24(%rax), %r9
-	movl	$49, %r8d
-	movl	$1, %edx
-	leaq	.LC22(%rip), %rcx
-	call	fwrite
-	jmp	.L205
-.L207:
-	movq	40(%rdi), %rcx
-	call	list_is_empty
-	testb	%al, %al
-	jne	.L219
-	movq	40(%rdi), %rax
-	movq	8(%rax), %rax
-	movq	8(%rax), %rdx
-	testq	%rdx, %rdx
-	je	.L219
-	movl	$0, %r9d
-	movl	$0, %r8d
-	movl	$20, %ecx
-	call	create_instruction
-	movq	%rax, %rdx
-	movq	16(%rdi), %rax
-	movq	8(%rax), %rcx
-	call	list_append
-	jmp	.L205
-.L219:
 	call	__getreent
 	movq	24(%rax), %r9
 	movl	$52, %r8d
 	movl	$1, %edx
 	leaq	.LC23(%rip), %rcx
 	call	fwrite
-	jmp	.L205
-.L206:
+	jmp	.L204
+.L205:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movl	%ebx, %r8d
 	leaq	.LC24(%rip), %rdx
 	call	fprintf
-	jmp	.L205
+	jmp	.L204
 	.globl	tac_for
 	.def	tac_for;	.scl	2;	.type	32;	.endef
 tac_for:
@@ -1891,10 +1919,10 @@ tac_for:
 	movq	%rdx, %rbx
 	movq	(%rcx), %rcx
 	testq	%rcx, %rcx
-	je	.L222
-	movl	$118, %r8d
+	je	.L221
+	movl	$0, %r8d
 	call	tac_variable
-.L222:
+.L221:
 	movq	%rbx, %r9
 	movl	$98, %r8d
 	movl	$0, %edx
@@ -1914,7 +1942,7 @@ tac_for:
 	call	create_var
 	movq	%rax, %r12
 	cmpq	$0, 8(%rdi)
-	je	.L223
+	je	.L222
 	movq	%rbp, %rdx
 	movl	$6, %ecx
 	call	create_arg
@@ -1938,6 +1966,9 @@ tac_for:
 	movq	8(%rdi), %rcx
 	movq	%rbx, %rdx
 	call	tac_expression
+	movq	%rax, %rcx
+	movq	%rbx, %rdx
+	call	load_rvalue
 	movq	%rax, %rsi
 	movq	%r12, %rdx
 	movl	$6, %ecx
@@ -1955,7 +1986,7 @@ tac_for:
 	movq	16(%rbx), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-.L224:
+.L223:
 	movq	%r13, %rcx
 	call	create_block
 	movq	%rax, %rsi
@@ -1971,14 +2002,14 @@ tac_for:
 	call	create_var
 	movq	%rax, %r14
 	cmpq	$0, 16(%rdi)
-	je	.L225
+	je	.L224
 	movq	%rax, %rdx
 	movl	$6, %ecx
 	call	create_arg
 	movq	%rax, %rdx
 	movq	40(%rbx), %rcx
 	call	list_append
-.L226:
+.L225:
 	movq	%r12, %rdx
 	movl	$6, %ecx
 	call	create_arg
@@ -1988,8 +2019,8 @@ tac_for:
 	movq	24(%rdi), %rcx
 	call	list_copy
 	movq	%rax, %rsi
-	jmp	.L228
-.L223:
+	jmp	.L227
+.L222:
 	movq	%r13, %rdx
 	movl	$6, %ecx
 	call	create_arg
@@ -2002,40 +2033,40 @@ tac_for:
 	movq	16(%rbx), %rax
 	movq	8(%rax), %rcx
 	call	list_append
-	jmp	.L224
-.L225:
+	jmp	.L223
+.L224:
 	cmpq	$0, 8(%rdi)
-	je	.L227
+	je	.L226
 	movq	%rbp, %rdx
 	movl	$6, %ecx
 	call	create_arg
 	movq	%rax, %rdx
 	movq	40(%rbx), %rcx
 	call	list_append
-	jmp	.L226
-.L227:
+	jmp	.L225
+.L226:
 	movq	%r13, %rdx
 	movl	$6, %ecx
 	call	create_arg
 	movq	%rax, %rdx
 	movq	40(%rbx), %rcx
 	call	list_append
-	jmp	.L226
-.L229:
+	jmp	.L225
+.L228:
 	movq	%rbx, %rdx
 	call	tac_statement
-.L228:
+.L227:
 	movq	%rsi, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	jne	.L229
+	jne	.L228
 	movq	40(%rbx), %rcx
 	call	list_pop_back
 	movq	32(%rbx), %rcx
 	call	list_pop_back
 	cmpq	$0, 16(%rdi)
-	je	.L230
+	je	.L229
 	movq	%r14, %rdx
 	movl	$6, %ecx
 	call	create_arg
@@ -2059,7 +2090,10 @@ tac_for:
 	movq	16(%rdi), %rcx
 	movq	%rbx, %rdx
 	call	tac_expression
-.L230:
+	movq	%rax, %rcx
+	movq	%rbx, %rdx
+	call	load_rvalue
+.L229:
 	movq	%rbp, %rdx
 	movl	$6, %ecx
 	call	create_arg
@@ -2070,8 +2104,8 @@ tac_for:
 	call	create_instruction
 	movq	%rax, %rdx
 	cmpq	$0, 8(%rdi)
-	je	.L233
-.L231:
+	je	.L232
+.L230:
 	movq	16(%rbx), %rax
 	movq	8(%rax), %rcx
 	call	list_append
@@ -2092,7 +2126,7 @@ tac_for:
 	popq	%r13
 	popq	%r14
 	ret
-.L233:
+.L232:
 	movq	%r13, %rdx
 	movl	$6, %ecx
 	call	create_arg
@@ -2102,7 +2136,7 @@ tac_for:
 	movl	$20, %ecx
 	call	create_instruction
 	movq	%rax, %rdx
-	jmp	.L231
+	jmp	.L230
 	.globl	tac_while
 	.def	tac_while;	.scl	2;	.type	32;	.endef
 tac_while:
@@ -2157,6 +2191,9 @@ tac_while:
 	movq	(%rsi), %rcx
 	movq	%rbx, %rdx
 	call	tac_expression
+	movq	%rax, %rcx
+	movq	%rbx, %rdx
+	call	load_rvalue
 	movq	%rax, %r13
 	movq	%rbp, %rdx
 	movl	$6, %ecx
@@ -2197,16 +2234,16 @@ tac_while:
 	movq	8(%rsi), %rcx
 	call	list_copy
 	movq	%rax, %rsi
-	jmp	.L235
-.L236:
+	jmp	.L234
+.L235:
 	movq	%rbx, %rdx
 	call	tac_statement
-.L235:
+.L234:
 	movq	%rsi, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	jne	.L236
+	jne	.L235
 	movq	40(%rbx), %rcx
 	call	list_pop_back
 	movq	32(%rbx), %rcx
@@ -2262,8 +2299,8 @@ tac_function:
 	movq	16(%rbp), %rcx
 	call	list_copy
 	movq	%rax, %rdi
-	jmp	.L239
-.L240:
+	jmp	.L238
+.L239:
 	movq	(%rax), %rdx
 	movq	8(%rax), %rcx
 	movq	%rbx, %r9
@@ -2272,11 +2309,11 @@ tac_function:
 	movq	%rax, %rdx
 	movq	16(%rsi), %rcx
 	call	list_append
-.L239:
+.L238:
 	movq	%rdi, %rcx
 	call	list_pop
 	testq	%rax, %rax
-	jne	.L240
+	jne	.L239
 	movq	%rbx, %r9
 	movl	$98, %r8d
 	movl	$0, %edx
@@ -2292,16 +2329,16 @@ tac_function:
 	movq	24(%rbp), %rcx
 	call	list_copy
 	movq	%rax, %rsi
-	jmp	.L241
-.L242:
+	jmp	.L240
+.L241:
 	movq	%rbx, %rdx
 	call	tac_statement
-.L241:
+.L240:
 	movq	%rsi, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	jne	.L242
+	jne	.L241
 	movq	$0, 8(%rbx)
 	addq	$40, %rsp
 	popq	%rbx
@@ -2309,14 +2346,20 @@ tac_function:
 	popq	%rdi
 	popq	%rbp
 	ret
+	.section .rdata,"dr"
+	.align 8
+.LC25:
+	.ascii "[Warning] Constructor '%s' does not start with 'self' initialization\12\0"
+	.text
 	.globl	tac_method
 	.def	tac_method;	.scl	2;	.type	32;	.endef
 tac_method:
+	pushq	%r12
 	pushq	%rbp
 	pushq	%rdi
 	pushq	%rsi
 	pushq	%rbx
-	subq	$40, %rsp
+	subq	$32, %rsp
 	movq	%rcx, %rbp
 	movq	%rdx, %rbx
 	movq	8(%rcx), %rdx
@@ -2331,8 +2374,8 @@ tac_method:
 	movq	16(%rbp), %rcx
 	call	list_copy
 	movq	%rax, %rdi
-	jmp	.L245
-.L246:
+	jmp	.L244
+.L245:
 	movq	(%rax), %rdx
 	movq	8(%rax), %rcx
 	movq	%rbx, %r9
@@ -2341,11 +2384,11 @@ tac_method:
 	movq	%rax, %rdx
 	movq	16(%rsi), %rcx
 	call	list_append
-.L245:
+.L244:
 	movq	%rdi, %rcx
 	call	list_pop
 	testq	%rax, %rax
-	jne	.L246
+	jne	.L245
 	movq	%rbx, %r9
 	movl	$98, %r8d
 	movl	$0, %edx
@@ -2358,6 +2401,9 @@ tac_method:
 	movq	%rax, %rdx
 	call	list_append
 	movq	%rdi, 16(%rbx)
+	movq	24(%rbp), %rcx
+	call	list_copy
+	movq	%rax, %rsi
 	movq	.refptr.DEFAULT_CONSTRUCTOR_NAME(%rip), %rax
 	movq	(%rax), %rdx
 	movq	24(%rbx), %rax
@@ -2369,116 +2415,64 @@ tac_method:
 	movq	8(%rax), %rcx
 	call	strcmp
 	testl	%eax, %eax
-	je	.L251
+	jne	.L250
+	movq	%rsi, %rcx
+	call	list_pop
+	cmpl	$0, 8(%rax)
+	jne	.L247
+	movq	(%rax), %rax
+	cmpl	$19, 24(%rax)
+	jne	.L247
+	movq	8(%rax), %rax
+	cmpl	$8, 8(%rax)
+	jne	.L247
+	movq	(%rax), %rax
+	cmpl	$0, 16(%rax)
+	je	.L248
 .L247:
-	movq	24(%rbp), %rcx
-	call	list_copy
-	movq	%rax, %rsi
-	jmp	.L248
-.L251:
-	movq	24(%rbx), %rax
-	movq	(%rax), %rdx
-	movq	%rbx, %r9
-	movl	$116, %r8d
-	movl	$0, %ecx
-	call	create_var
-	movq	%rax, %rdx
-	movl	$0, %ecx
-	call	create_arg
-	movq	%rax, %rsi
+	movq	0(%rbp), %rax
+	movq	8(%rax), %rbx
+	call	__getreent
+	movq	24(%rax), %rcx
+	movq	%rbx, %r8
+	leaq	.LC25(%rip), %rdx
+	call	fprintf
+	jmp	.L243
+.L248:
+	movq	8(%rax), %r12
 	movq	24(%rbx), %rax
 	leaq	24(%rax), %rdx
 	movl	$1, %ecx
 	call	create_arg
-	movq	%rax, %r8
+	movq	%rax, %rbp
+	movq	(%r12), %rdx
+	movq	%rbx, %r9
+	movl	$118, %r8d
+	movq	%r12, %rcx
+	call	create_var
+	movq	%rax, %rdx
+	movl	$0, %ecx
+	call	create_arg
+	movq	%rax, %rdx
 	movl	$0, %r9d
-	movq	%rsi, %rdx
+	movq	%rbp, %r8
 	movl	$18, %ecx
 	call	create_instruction
 	movq	%rax, %rdx
 	movq	8(%rdi), %rcx
 	call	list_append
-	jmp	.L247
-.L249:
+	jmp	.L250
+.L251:
 	movq	%rbx, %rdx
 	call	tac_statement
-.L248:
+.L250:
 	movq	%rsi, %rcx
 	call	list_pop
 	movq	%rax, %rcx
 	testq	%rax, %rax
-	jne	.L249
+	jne	.L251
 	movq	$0, 8(%rbx)
-	addq	$40, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbp
-	ret
-	.section .rdata,"dr"
-	.align 8
-.LC25:
-	.ascii "[warning] Unsupported class member type for tac_class: %d\12\0"
-	.text
-	.globl	tac_class
-	.def	tac_class;	.scl	2;	.type	32;	.endef
-tac_class:
-	pushq	%r12
-	pushq	%rbp
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rbx
-	subq	$32, %rsp
-	movq	%rcx, %rbp
-	movq	%rdx, %rdi
-	movq	%rcx, 24(%rdx)
-	movq	8(%rcx), %rcx
-	call	list_copy
-	movq	%rax, %rsi
-	movq	0(%rbp), %r12
-	movl	$24, %ecx
-	call	alloc_memory
-	movq	%rax, %rbx
-	call	create_list
-	movq	%rax, (%rbx)
-	movq	%r12, 8(%rbx)
-	movq	$0, 16(%rbx)
-	movq	24(%rbp), %rax
-	movq	%rax, 16(%rbx)
-	movq	(%rdi), %rax
-	movq	(%rax), %rcx
-	movq	%rbx, %rdx
-	call	list_append
-	leaq	.LC25(%rip), %rbp
-	jmp	.L253
-.L254:
-	movq	(%rax), %rcx
-	movq	%rdi, %rdx
-	call	tac_method
-.L253:
-	movq	%rsi, %rcx
-	call	list_pop
-	testq	%rax, %rax
-	je	.L261
-	movl	8(%rax), %ebx
-	testl	%ebx, %ebx
-	je	.L254
-	cmpl	$1, %ebx
-	je	.L255
-	call	__getreent
-	movq	24(%rax), %rcx
-	movl	%ebx, %r8d
-	movq	%rbp, %rdx
-	call	fprintf
-	jmp	.L253
-.L255:
-	movq	(%rax), %rcx
-	movl	$97, %r8d
-	movq	%rdi, %rdx
-	call	tac_variable
-	jmp	.L253
-.L261:
-	movq	$0, 24(%rdi)
+.L243:
 	addq	$32, %rsp
 	popq	%rbx
 	popq	%rsi
@@ -2487,7 +2481,128 @@ tac_class:
 	popq	%r12
 	ret
 	.section .rdata,"dr"
+	.align 8
 .LC26:
+	.ascii "[Warning] Unsupported class member type for tac_class: %d\12\0"
+	.text
+	.globl	tac_class
+	.def	tac_class;	.scl	2;	.type	32;	.endef
+tac_class:
+	pushq	%rbp
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rbx
+	subq	$40, %rsp
+	movq	%rcx, %rbx
+	movq	%rdx, %rdi
+	movq	%rcx, 24(%rdx)
+	movq	8(%rcx), %rcx
+	call	list_copy
+	movq	%rax, %rsi
+	movq	(%rbx), %rbp
+	movl	$24, %ecx
+	call	alloc_memory
+	movq	%rax, %rbx
+	call	create_list
+	movq	%rax, (%rbx)
+	movq	%rbp, 8(%rbx)
+	movq	$0, 16(%rbx)
+	movq	(%rdi), %rax
+	movq	(%rax), %rcx
+	movq	%rbx, %rdx
+	call	list_append
+	leaq	.LC26(%rip), %rbp
+	jmp	.L254
+.L255:
+	movq	(%rax), %rcx
+	movq	%rdi, %rdx
+	call	tac_method
+.L254:
+	movq	%rsi, %rcx
+	call	list_pop
+	testq	%rax, %rax
+	je	.L262
+	movl	8(%rax), %ebx
+	testl	%ebx, %ebx
+	je	.L255
+	cmpl	$1, %ebx
+	je	.L256
+	call	__getreent
+	movq	24(%rax), %rcx
+	movl	%ebx, %r8d
+	movq	%rbp, %rdx
+	call	fprintf
+	jmp	.L254
+.L256:
+	movq	(%rax), %rcx
+	movl	$1, %r8d
+	movq	%rdi, %rdx
+	call	tac_variable
+	jmp	.L254
+.L262:
+	movq	$0, 24(%rdi)
+	addq	$40, %rsp
+	popq	%rbx
+	popq	%rsi
+	popq	%rdi
+	popq	%rbp
+	ret
+	.section .rdata,"dr"
+	.align 8
+.LC27:
+	.ascii "[Warning] Unsupported symbol kind for import: %d\12\0"
+	.text
+	.globl	tac_import
+	.def	tac_import;	.scl	2;	.type	32;	.endef
+tac_import:
+	pushq	%rsi
+	pushq	%rbx
+	subq	$40, %rsp
+	movq	%rdx, %rsi
+	movq	(%rcx), %rcx
+	movl	32(%rcx), %ebx
+	cmpl	$3, %ebx
+	je	.L269
+	leal	-1(%rbx), %eax
+	cmpl	$1, %eax
+	jbe	.L270
+	testl	%ebx, %ebx
+	jne	.L267
+	movq	24(%rcx), %rcx
+	movq	%r8, %rdx
+	call	tac_class
+.L263:
+	addq	$40, %rsp
+	popq	%rbx
+	popq	%rsi
+	ret
+.L269:
+	movq	(%rcx), %rdx
+	movq	%r8, %r9
+	movl	$118, %r8d
+	call	create_var
+	movq	%rax, %rdx
+	movq	16(%rsi), %rcx
+	call	list_append
+	jmp	.L263
+.L270:
+	movq	(%rcx), %rdx
+	movq	%r8, %r9
+	movl	$102, %r8d
+	call	create_var
+	movq	%rax, %rdx
+	movq	16(%rsi), %rcx
+	call	list_append
+	jmp	.L263
+.L267:
+	call	__getreent
+	movq	24(%rax), %rcx
+	movl	%ebx, %r8d
+	leaq	.LC27(%rip), %rdx
+	call	fprintf
+	jmp	.L263
+	.section .rdata,"dr"
+.LC28:
 	.ascii "main\0"
 	.text
 	.globl	tac_code
@@ -2529,9 +2644,9 @@ tac_code:
 	movq	(%rbx), %rcx
 	call	list_copy
 	movq	%rax, %rdi
-	leaq	.LC26(%rip), %r12
-	jmp	.L263
-.L270:
+	leaq	.LC28(%rip), %r12
+	jmp	.L272
+.L279:
 	movq	(%rbx), %rcx
 	movq	%rsi, %rdx
 	call	tac_function
@@ -2541,32 +2656,32 @@ tac_code:
 	movq	%r12, %rdx
 	call	strcmp
 	testl	%eax, %eax
-	jne	.L263
+	jne	.L272
 	movq	%rbx, 8(%rbp)
-	jmp	.L263
-.L271:
+	jmp	.L272
+.L280:
 	movq	(%rbx), %rcx
 	movq	%rsi, %rdx
 	call	tac_class
-.L263:
+.L272:
 	movq	%rdi, %rcx
 	call	list_pop
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L269
+	je	.L278
 	movl	8(%rbx), %eax
 	cmpl	$1, %eax
-	je	.L270
+	je	.L279
 	cmpl	$2, %eax
-	je	.L271
+	je	.L280
 	testl	%eax, %eax
-	jne	.L263
+	jne	.L272
 	movq	(%rbx), %rcx
 	movq	%rsi, %r8
 	movq	%rbp, %rdx
 	call	tac_import
-	jmp	.L263
-.L269:
+	jmp	.L272
+.L278:
 	movq	%rbp, %rax
 	addq	$32, %rsp
 	popq	%rbx
@@ -2577,7 +2692,7 @@ tac_code:
 	ret
 	.section .rdata,"dr"
 	.align 8
-.LC18:
+.LC16:
 	.long	0
 	.long	-1074790400
 	.ident	"GCC: (GNU) 13.2.0"
@@ -2591,13 +2706,15 @@ tac_code:
 	.def	create_string;	.scl	2;	.type	32;	.endef
 	.def	sprintf;	.scl	2;	.type	32;	.endef
 	.def	list_append;	.scl	2;	.type	32;	.endef
-	.def	list_pop_back;	.scl	2;	.type	32;	.endef
 	.def	fwrite;	.scl	2;	.type	32;	.endef
 	.def	search_name_use_strcmp;	.scl	2;	.type	32;	.endef
 	.def	strcmp;	.scl	2;	.type	32;	.endef
 	.def	make_method_name;	.scl	2;	.type	32;	.endef
+	.def	create_primary;	.scl	2;	.type	32;	.endef
+	.def	create_expression;	.scl	2;	.type	32;	.endef
 	.def	strtoll;	.scl	2;	.type	32;	.endef
 	.def	strtod;	.scl	2;	.type	32;	.endef
+	.def	list_pop_back;	.scl	2;	.type	32;	.endef
 	.section	.rdata$.refptr.DEFAULT_CONSTRUCTOR_NAME, "dr"
 	.globl	.refptr.DEFAULT_CONSTRUCTOR_NAME
 	.linkonce	discard

@@ -1500,6 +1500,56 @@ get_info:
  ; D:/TC/src/lib.c:299: }
 	leave	
 	ret	
+	.globl	to_lower
+	.def	to_lower;	.scl	2;	.type	32;	.endef
+to_lower:
+	pushq	%rbp	 ;
+	movq	%rsp, %rbp	 ;,
+	movl	%ecx, %eax	 ; c, tmp86
+	movb	%al, 16(%rbp)	 ; tmp87, c
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	cmpb	$64, 16(%rbp)	 ;, c
+	jle	.L57	 ;,
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	cmpb	$90, 16(%rbp)	 ;, c
+	jg	.L57	 ;,
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	movzbl	16(%rbp), %eax	 ; c, c.49_1
+	addl	$32, %eax	 ;, _2
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	jmp	.L59	 ;
+.L57:
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	movzbl	16(%rbp), %eax	 ; c, iftmp.48_3
+.L59:
+ ; D:/TC/src/lib.c:303: }
+	popq	%rbp	 ;
+	ret	
+	.globl	to_upper
+	.def	to_upper;	.scl	2;	.type	32;	.endef
+to_upper:
+	pushq	%rbp	 ;
+	movq	%rsp, %rbp	 ;,
+	movl	%ecx, %eax	 ; c, tmp86
+	movb	%al, 16(%rbp)	 ; tmp87, c
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	cmpb	$96, 16(%rbp)	 ;, c
+	jle	.L61	 ;,
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	cmpb	$122, 16(%rbp)	 ;, c
+	jg	.L61	 ;,
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	movzbl	16(%rbp), %eax	 ; c, c.51_1
+	subl	$32, %eax	 ;, _2
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	jmp	.L63	 ;
+.L61:
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	movzbl	16(%rbp), %eax	 ; c, iftmp.50_3
+.L63:
+ ; D:/TC/src/lib.c:307: }
+	popq	%rbp	 ;
+	ret	
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

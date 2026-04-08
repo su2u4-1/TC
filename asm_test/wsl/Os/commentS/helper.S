@@ -325,13 +325,13 @@ search_name:
 	.size	search_name, .-search_name
 	.section	.rodata.str1.1
 .LC1:
-	.string	"Warning: Creating symbol with unknown SymbolType: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType: %u\n"
 .LC2:
-	.string	"Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n"
+	.string	"[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n"
 .LC3:
-	.string	"Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
 .LC4:
-	.string	"Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
+	.string	"[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
 	.text
 	.globl	create_symbol
 	.type	create_symbol, @function
@@ -391,13 +391,13 @@ create_symbol:
 	movl	32(%rax), %r8d	; result_29->kind, result_29->kind
 	movl	$2, %esi	;,
 	pushq	%rcx	;
-; src/helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+; src/helper.c:95:         fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
 	movq	id_counter.0(%rip), %rax	; id_counter, tmp134
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	stderr(%rip), %rdi	; stderr,
 	movq	%r14, %rcx	; name,
 	leaq	.LC2(%rip), %rdx	;, tmp117
-; src/helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+; src/helper.c:95:         fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
 	incq	%rax	; tmp115
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	pushq	%rax	; tmp115
@@ -529,7 +529,7 @@ is_builtin_type:
 	.size	is_builtin_type, .-is_builtin_type
 	.section	.rodata.str1.1
 .LC5:
-	.string	"Parser Error at %s:%zu:%zu: %s\n"
+	.string	"[Parser Error] at %s:%zu:%zu: %s\n"
 	.text
 	.globl	parser_error
 	.type	parser_error, @function
@@ -537,7 +537,7 @@ parser_error:
 	subq	$16, %rsp	;,
 ; src/helper.c:161: inline void parser_error(const string message, Token* token, string file_name) {
 	movq	%rdx, %rcx	; tmp98, file_name
-; src/helper.c:162:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+; src/helper.c:162:     fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 	movq	8(%rsi), %rax	; token_7(D)->line, token_7(D)->line
 	movq	16(%rsi), %rdx	; token_7(D)->column, token_7(D)->column
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
@@ -751,9 +751,9 @@ parse_import_file:
 	pushq	%r15	;
 	pushq	%r14	;
 	pushq	%r13	;
-	movq	%rdx, %r13	; tmp129, scope
+	movq	%rdx, %r13	; tmp134, scope
 	pushq	%r12	;
-	movq	%rdi, %r12	; tmp127, import_name
+	movq	%rdi, %r12	; tmp132, import_name
 	pushq	%rbp	;
 	pushq	%rbx	;
 	subq	$40, %rsp	;,
@@ -763,8 +763,8 @@ parse_import_file:
 ; src/helper.c:202:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
 	call	*strlen@GOTPCREL(%rip)	;
 ; src/helper.c:202:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
-	leaq	.LC10(%rip), %rdi	;, tmp109
-	leaq	4(%rax), %rsi	;, tmp108
+	leaq	.LC10(%rip), %rdi	;, tmp111
+	leaq	4(%rax), %rsi	;, tmp110
 	call	*create_string_not_check@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:30:   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
 	movl	$2, %esi	;,
@@ -772,99 +772,104 @@ parse_import_file:
 	orq	$-1, %rdx	;,
 	movq	%rax, %rdi	; temp_import_name,
 ; src/helper.c:202:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
-	movq	%rax, %rbx	; tmp132, temp_import_name
+	movq	%rax, %rbx	; tmp137, temp_import_name
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:30:   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
-	leaq	.LC11(%rip), %rcx	;, tmp110
+	leaq	.LC11(%rip), %rcx	;, tmp112
 	xorl	%eax, %eax	;
 	call	*__sprintf_chk@GOTPCREL(%rip)	;
 ; src/helper.c:204:         filename = absolute_path(temp_import_name, std_path);
-	leaq	.LC12(%rip), %rsi	;, tmp111
+	leaq	.LC12(%rip), %rsi	;, tmp113
 	jmp	.L121	;
 .L113:
-	movq	%rsi, %rbx	; tmp128, source
-	movq	%rcx, %rdi	; tmp130, source_file
+	movq	%rsi, %rbx	; tmp133, source
+	movq	%rcx, %rdi	; tmp135, source_file
 ; src/helper.c:206:         filename = absolute_path(source, get_file_dir(source_file));
 	call	*get_file_dir@GOTPCREL(%rip)	;
-	movq	%rax, %rsi	; tmp134, _3
+	movq	%rax, %rsi	; tmp139, _3
 .L121:
 ; src/helper.c:206:         filename = absolute_path(source, get_file_dir(source_file));
 	movq	%rbx, %rdi	; source,
 	call	*absolute_path@GOTPCREL(%rip)	;
 ; src/helper.c:207:     openfile = fopen(filename, "r");
-	leaq	.LC13(%rip), %rsi	;, tmp112
+	leaq	.LC13(%rip), %rsi	;, tmp114
 ; src/helper.c:206:         filename = absolute_path(source, get_file_dir(source_file));
-	movq	%rax, %rbx	; tmp135, filename
+	movq	%rax, %rbx	; tmp140, filename
 ; src/helper.c:207:     openfile = fopen(filename, "r");
 	movq	%rax, %rdi	; filename,
 	call	*fopen@GOTPCREL(%rip)	;
+	movq	stderr(%rip), %rdi	; stderr, stderr
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbx, %rcx	; filename,
-	leaq	.LC14(%rip), %rdx	;, tmp115
-; src/helper.c:207:     openfile = fopen(filename, "r");
-	movq	%rax, %rbp	; tmp136, tmp113
+	leaq	.LC14(%rip), %rdx	;, tmp117
 ; src/helper.c:208:     if (openfile == NULL) {
-	testq	%rax, %rax	; tmp113
+	testq	%rax, %rax	; tmp115
+; src/helper.c:207:     openfile = fopen(filename, "r");
+	movq	%rax, %rbp	; tmp141, tmp115
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movl	$2, %esi	;,
+; src/helper.c:208:     if (openfile == NULL) {
 	je	.L122	;,
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:86:   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
-	movq	%rbx, %rdx	; filename,
-	leaq	.LC15(%rip), %rsi	;, tmp116
-	movl	$2, %edi	;,
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	leaq	.LC15(%rip), %rdx	;, tmp119
+	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
-	call	*__printf_chk@GOTPCREL(%rip)	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 ; src/helper.c:213:     size_t length = 0;
 	xorl	%eax, %eax	;
 ; src/helper.c:214:     string source_code = read_source(openfile, &length);
-	leaq	24(%rsp), %rsi	;, tmp117
-	movq	%rbp, %rdi	; tmp113,
+	leaq	24(%rsp), %rsi	;, tmp120
+	movq	%rbp, %rdi	; tmp115,
 ; src/helper.c:213:     size_t length = 0;
 	movq	%rax, 24(%rsp)	;, length
 ; src/helper.c:214:     string source_code = read_source(openfile, &length);
 	call	*read_source@GOTPCREL(%rip)	;
 ; src/helper.c:215:     fclose(openfile);
-	movq	%rbp, %rdi	; tmp113,
+	movq	%rbp, %rdi	; tmp115,
 ; src/helper.c:214:     string source_code = read_source(openfile, &length);
-	movq	%rax, %r14	; tmp137, source_code
+	movq	%rax, %r14	; tmp142, source_code
 ; src/helper.c:215:     fclose(openfile);
 	call	*fclose@GOTPCREL(%rip)	;
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
 	movq	%rbx, %rdi	; filename,
 	call	*create_file@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp138, _5
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+	movq	%rax, %rdi	; tmp143, _6
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
 	call	create_parser	;
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	builtin_scope(%rip), %rbp	; builtin_scope, builtin_scope.20_7
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
 	movq	24(%rsp), %rsi	; length,
-	movq	%r14, %rdi	; source_code,
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	%rax, %r15	; tmp139, _6
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	call	*create_lexer@GOTPCREL(%rip)	;
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	%rbp, %rsi	; builtin_scope.20_7,
-	movq	%r15, %rdx	; _6,
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	%rax, %rdi	; tmp140, _9
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	call	*parse_code@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:86:   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
 	movq	%rbx, %rdx	; filename,
-	movl	$2, %edi	;,
-	leaq	.LC16(%rip), %rsi	;, tmp119
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	%rax, %rbp	; tmp141, code
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:86:   return __printf_chk (__USE_FORTIFY_LEVEL - 1, __fmt, __va_arg_pack ());
+	movq	%r14, %rdi	; source_code,
+	movq	builtin_scope(%rip), %r15	; builtin_scope, builtin_scope.21_8
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	%rax, %rbp	; tmp144, _7
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	call	*create_lexer@GOTPCREL(%rip)	;
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	%rbp, %rdx	; _7,
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	%rax, %rdi	; tmp145, _10
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	%r15, %rsi	; builtin_scope.21_8,
+	call	*parse_code@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	stderr(%rip), %rdi	; stderr,
+	movq	%rbx, %rcx	; filename,
+	leaq	.LC16(%rip), %rdx	;, tmp123
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	%rax, %rbp	; tmp146, code
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
-	call	*__printf_chk@GOTPCREL(%rip)	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
 ; src/helper.c:218:     if (code == NULL) {
 	testq	%rbp, %rbp	; code
 	jne	.L117	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbx, %rcx	; filename,
-	leaq	.LC17(%rip), %rdx	;, tmp121
-.L122:
 	movq	stderr(%rip), %rdi	; stderr,
+	movq	%rbx, %rcx	; filename,
 	movl	$2, %esi	;,
+	leaq	.LC17(%rip), %rdx	;, tmp125
+.L122:
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
 .L116:
@@ -873,14 +878,14 @@ parse_import_file:
 	jmp	.L112	;
 .L117:
 ; src/helper.c:222:     name = search_name_use_strcmp(code->global_scope, import_name);
-	movq	8(%rbp), %rdi	; code_41->global_scope, code_41->global_scope
+	movq	8(%rbp), %rdi	; code_43->global_scope, code_43->global_scope
 	movq	%r12, %rsi	; import_name,
 	call	search_name_use_strcmp	;
 ; src/helper.c:223:     if (name != NULL)
 	testq	%rax, %rax	; <retval>
 	je	.L119	;,
 ; src/helper.c:224:         list_append(scope->symbols, (pointer)name);
-	movq	8(%r13), %rdi	; scope_44(D)->symbols, scope_44(D)->symbols
+	movq	8(%r13), %rdi	; scope_46(D)->symbols, scope_46(D)->symbols
 	movq	%rax, %rsi	; <retval>,
 	movq	%rax, 8(%rsp)	; <retval>, %sfp
 	call	list_append	;
@@ -892,7 +897,7 @@ parse_import_file:
 	movq	%rbx, %r8	; filename,
 	movq	%r12, %rcx	; import_name,
 	xorl	%eax, %eax	;
-	leaq	.LC18(%rip), %rdx	;, tmp125
+	leaq	.LC18(%rip), %rdx	;, tmp129
 	movl	$2, %esi	;,
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
 	jmp	.L116	;
@@ -1158,8 +1163,8 @@ operator_precedence:
 	cmpl	$18, %edi	;, op
 	ja	.L147	;,
 	movl	%edi, %edi	; op, op
-	leaq	CSWTCH.68(%rip), %rax	;, tmp85
-	movsbl	(%rax,%rdi), %eax	; CSWTCH.68[op_2(D)], <retval>
+	leaq	CSWTCH.69(%rip), %rax	;, tmp85
+	movsbl	(%rax,%rdi), %eax	; CSWTCH.69[op_2(D)], <retval>
 .L147:
 ; src/helper.c:290: }
 	ret	
@@ -1281,9 +1286,9 @@ operator_to_string:
 	.size	operator_to_string, .-operator_to_string
 	.section	.rodata
 	.align 16
-	.type	CSWTCH.68, @object
-	.size	CSWTCH.68, 19
-CSWTCH.68:
+	.type	CSWTCH.69, @object
+	.size	CSWTCH.69, 19
+CSWTCH.69:
 	.byte	4
 	.byte	4
 	.byte	5

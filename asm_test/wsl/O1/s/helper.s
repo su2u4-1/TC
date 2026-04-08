@@ -248,16 +248,16 @@ search_name:
 	.section	.rodata.str1.8
 	.align 8
 .LC1:
-	.string	"Warning: Creating symbol with unknown SymbolType: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType: %u\n"
 	.align 8
 .LC2:
-	.string	"Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n"
+	.string	"[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n"
 	.align 8
 .LC3:
-	.string	"Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
 	.align 8
 .LC4:
-	.string	"Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
+	.string	"[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
 	.text
 	.globl	create_symbol
 	.type	create_symbol, @function
@@ -431,7 +431,7 @@ is_builtin_type:
 	.section	.rodata.str1.8
 	.align 8
 .LC5:
-	.string	"Parser Error at %s:%zu:%zu: %s\n"
+	.string	"[Parser Error] at %s:%zu:%zu: %s\n"
 	.text
 	.globl	parser_error
 	.type	parser_error, @function
@@ -635,11 +635,12 @@ parse_import_file:
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	je	.L117
-	movq	%rbp, %rdx
-	leaq	.LC15(%rip), %rsi
-	movl	$2, %edi
+	movq	%rbp, %rcx
+	leaq	.LC15(%rip), %rdx
+	movl	$2, %esi
+	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	*__printf_chk@GOTPCREL(%rip)
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	movq	$0, 8(%rsp)
 	leaq	8(%rsp), %rsi
 	movq	%rbx, %rdi
@@ -653,6 +654,7 @@ parse_import_file:
 	call	create_parser
 	movq	%rax, %rbx
 	movq	builtin_scope(%rip), %r15
+	movq	%rbp, %rdx
 	movq	8(%rsp), %rsi
 	movq	%r14, %rdi
 	call	*create_lexer@GOTPCREL(%rip)
@@ -661,11 +663,12 @@ parse_import_file:
 	movq	%r15, %rsi
 	call	*parse_code@GOTPCREL(%rip)
 	movq	%rax, %rbx
-	movq	%rbp, %rdx
-	leaq	.LC16(%rip), %rsi
-	movl	$2, %edi
+	movq	%rbp, %rcx
+	leaq	.LC16(%rip), %rdx
+	movl	$2, %esi
+	movq	stderr(%rip), %rdi
 	movl	$0, %eax
-	call	*__printf_chk@GOTPCREL(%rip)
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	testq	%rbx, %rbx
 	je	.L118
 	movq	8(%rbx), %rdi

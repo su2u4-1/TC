@@ -2,7 +2,8 @@
 
 rmdir /s /q asm_test\fake_std 2>nul
 mkdir asm_test\fake_std
-mkdir asm_test\i
+mkdir asm_test\win
+mkdir asm_test\win\i
 mkdir asm_test\win\O0\s
 mkdir asm_test\win\O0\commentS
 mkdir asm_test\win\O1\s
@@ -13,6 +14,17 @@ mkdir asm_test\win\O3\s
 mkdir asm_test\win\O3\commentS
 mkdir asm_test\win\Os\s
 mkdir asm_test\win\Os\commentS
+mkdir asm_test\win\s
+type nul > asm_test\win\s\compiler.s
+type nul > asm_test\win\s\create.s
+type nul > asm_test\win\s\file.s
+type nul > asm_test\win\s\helper.s
+type nul > asm_test\win\s\lexer.s
+type nul > asm_test\win\s\lib.s
+type nul > asm_test\win\s\main.s
+type nul > asm_test\win\s\output.s
+type nul > asm_test\win\s\parser.s
+type nul > asm_test\win\s\tac.s
 
 set HEADERS=assert.h stdio.h stdlib.h string.h direct.h unistd.h
 
@@ -27,18 +39,18 @@ for %%h in (%HEADERS%) do (
 
 echo Fake headers created.
 
-gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/compiler.c" -o "./asm_test/i/compiler.i"
-gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/create.c" -o "./asm_test/i/create.i"
-gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/file.c" -o "./asm_test/i/file.i"
-gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/helper.c" -o "./asm_test/i/helper.i"
-gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/lexer.c" -o "./asm_test/i/lexer.i"
-gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/lib.c" -o "./asm_test/i/lib.i"
-gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/main.c" -o "./asm_test/i/main.i"
-gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/output.c" -o "./asm_test/i/output.i"
-gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/parser.c" -o "./asm_test/i/parser.i"
-gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/tac.c" -o "./asm_test/i/tac.i"
+gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/compiler.c" -o "./asm_test/win/i/compiler.i"
+gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/create.c" -o "./asm_test/win/i/create.i"
+gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/file.c" -o "./asm_test/win/i/file.i"
+gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/helper.c" -o "./asm_test/win/i/helper.i"
+gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/lexer.c" -o "./asm_test/win/i/lexer.i"
+gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/lib.c" -o "./asm_test/win/i/lib.i"
+gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/main.c" -o "./asm_test/win/i/main.i"
+gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/output.c" -o "./asm_test/win/i/output.i"
+gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/parser.c" -o "./asm_test/win/i/parser.i"
+gcc -Wall -E -P -nostdinc -I"include" -I"asm_test/fake_std" "D:/TC/src/tac.c" -o "./asm_test/win/i/tac.i"
 
-for %%f in (asm_test\i\*.i) do (
+for %%f in (asm_test\win\i\*.i) do (
     echo Restoring %%f ...
 
     for %%h in (%HEADERS%) do (

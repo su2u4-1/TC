@@ -251,16 +251,16 @@ list_is_empty:
 	.section .rdata,"dr"
 	.align 8
 .LC1:
-	.ascii "Warning: Creating symbol with unknown SymbolType: %u\12\0"
+	.ascii "[Warning] Creating symbol with unknown SymbolType: %u\12\0"
 	.align 8
 .LC2:
-	.ascii "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\12\0"
+	.ascii "[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\12\0"
 	.align 8
 .LC3:
-	.ascii "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\12\0"
+	.ascii "[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\12\0"
 	.align 8
 .LC4:
-	.ascii "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\12\0"
+	.ascii "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\12\0"
 	.text
 	.p2align 4
 	.globl	create_symbol
@@ -320,16 +320,16 @@ create_symbol:
  ; D:/TC/src/helper.c:148:             if (string_equal(current_name->name, name))
 	testb	%al, %al	 ; tmp142
 	je	.L76	 ;,
- ; D:/TC/src/helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+ ; D:/TC/src/helper.c:95:         fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
 	movq	id_counter.0(%rip), %rax	 ; id_counter, tmp149
 	movq	16(%rsi), %r12	 ; current_name_59->id, _8
- ; D:/TC/src/helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+ ; D:/TC/src/helper.c:95:         fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
 	movl	32(%rsi), %esi	 ; current_name_59->kind, _9
- ; D:/TC/src/helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+ ; D:/TC/src/helper.c:95:         fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
 	leaq	1(%rax), %rbx	 ;, _7
- ; D:/TC/src/helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+ ; D:/TC/src/helper.c:95:         fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
 	call	__getreent	 ;
- ; D:/TC/src/helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+ ; D:/TC/src/helper.c:95:         fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
 	movl	%esi, %r9d	 ; _9,
 	movq	%rdi, %r8	 ; name,
 	leaq	.LC4(%rip), %rdx	 ;, tmp134
@@ -386,9 +386,9 @@ create_symbol:
 	movq	%r9, %r15	 ; ast_node, scope
 	cmpl	$3, %eax	 ;, tmp116
 	jbe	.L48	 ;,
- ; D:/TC/src/helper.c:90:             fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %u\n", kind);
+ ; D:/TC/src/helper.c:90:             fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType: %u\n", kind);
 	call	__getreent	 ;
- ; D:/TC/src/helper.c:90:             fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %u\n", kind);
+ ; D:/TC/src/helper.c:90:             fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType: %u\n", kind);
 	movl	%ebp, %r8d	 ; kind,
 	leaq	.LC1(%rip), %rdx	 ;, tmp121
 	movq	24(%rax), %rcx	 ; _4->_stderr, _4->_stderr
@@ -411,19 +411,19 @@ create_symbol:
  ; D:/TC/src/helper.c:98:     new_name->id = ++id_counter;
 	movq	%rax, 16(%rbx)	 ; _82, new_name_79->id
 	movq	%rax, id_counter.0(%rip)	 ; _82, id_counter
- ; D:/TC/src/helper.c:110:             fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
+ ; D:/TC/src/helper.c:110:             fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
 	call	__getreent	 ;
- ; D:/TC/src/helper.c:110:             fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
+ ; D:/TC/src/helper.c:110:             fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
 	movl	%ebp, %r8d	 ; kind,
 	leaq	.LC2(%rip), %rdx	 ;, tmp124
 	movq	24(%rax), %rcx	 ; _14->_stderr, _14->_stderr
 	call	fprintf	 ;
 .L72:
- ; D:/TC/src/helper.c:114:         fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
+ ; D:/TC/src/helper.c:114:         fprintf(stderr, "[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
 	movq	16(%rbx), %rsi	 ; new_name_91->id, _16
- ; D:/TC/src/helper.c:114:         fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
+ ; D:/TC/src/helper.c:114:         fprintf(stderr, "[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
 	call	__getreent	 ;
- ; D:/TC/src/helper.c:114:         fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
+ ; D:/TC/src/helper.c:114:         fprintf(stderr, "[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
 	movl	%ebp, %r9d	 ; kind,
 	movq	%rdi, %r8	 ; name,
 	leaq	.LC3(%rip), %rdx	 ;, tmp129
@@ -682,7 +682,7 @@ is_builtin_type:
 	.section .rdata,"dr"
 	.align 8
 .LC5:
-	.ascii "Parser Error at %s:%zu:%zu: %s\12\0"
+	.ascii "[Parser Error] at %s:%zu:%zu: %s\12\0"
 	.text
 	.p2align 4
 	.globl	parser_error
@@ -695,14 +695,14 @@ parser_error:
 	pushq	%rbx	 ;
 	movq	%r8, %rbx	 ; tmp97, file_name
 	subq	$56, %rsp	 ;,
- ; D:/TC/src/helper.c:162:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+ ; D:/TC/src/helper.c:162:     fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 	movq	16(%rdx), %rax	 ; token_8(D)->column, tmp100
 	movq	8(%rdx), %rsi	 ; token_8(D)->line, token_8(D)->line
 	leaq	1(%rax), %rdi	 ;, _2
 	addq	$1, %rsi	 ;, _4
- ; D:/TC/src/helper.c:162:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+ ; D:/TC/src/helper.c:162:     fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 	call	__getreent	 ;
- ; D:/TC/src/helper.c:162:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+ ; D:/TC/src/helper.c:162:     fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 	movq	%rsi, %r9	 ; _4,
 	movq	%rbx, %r8	 ; file_name,
 	leaq	.LC5(%rip), %rdx	 ;, tmp94
@@ -951,42 +951,45 @@ create_parser:
 parse_import_file:
 	pushq	%r13	 ;
 	pushq	%r12	 ;
-	movq	%r8, %r12	 ; tmp139, scope
+	movq	%r8, %r12	 ; tmp145, scope
 	pushq	%rbp	 ;
 	pushq	%rdi	 ;
-	movq	%rcx, %rdi	 ; tmp137, import_name
+	movq	%rcx, %rdi	 ; tmp143, import_name
 	pushq	%rsi	 ;
 	pushq	%rbx	 ;
 	subq	$56, %rsp	 ;,
  ; D:/TC/src/helper.c:200:     if (source == NULL) {
 	testq	%rdx, %rdx	 ; source
 	je	.L162	 ;,
-	movq	%r9, %rcx	 ; tmp140, source_file
-	movq	%rdx, %rbx	 ; tmp138, source
+	movq	%r9, %rcx	 ; tmp146, source_file
+	movq	%rdx, %rbx	 ; tmp144, source
  ; D:/TC/src/helper.c:206:         filename = absolute_path(source, get_file_dir(source_file));
 	call	get_file_dir	 ;
  ; D:/TC/src/helper.c:206:         filename = absolute_path(source, get_file_dir(source_file));
 	movq	%rbx, %rcx	 ; source,
  ; D:/TC/src/helper.c:206:         filename = absolute_path(source, get_file_dir(source_file));
-	movq	%rax, %rdx	 ; tmp144, _3
+	movq	%rax, %rdx	 ; tmp150, _3
  ; D:/TC/src/helper.c:206:         filename = absolute_path(source, get_file_dir(source_file));
 	call	absolute_path	 ;
-	movq	%rax, %rbp	 ; tmp145, filename
+	movq	%rax, %rbp	 ; tmp151, filename
 .L143:
  ; D:/TC/src/helper.c:207:     openfile = fopen(filename, "r");
-	leaq	.LC13(%rip), %rdx	 ;, tmp119
+	leaq	.LC13(%rip), %rdx	 ;, tmp123
 	movq	%rbp, %rcx	 ; filename,
 	call	fopen	 ;
-	movq	%rax, %rbx	 ; tmp146, openfile
+	movq	%rax, %rbx	 ; tmp152, openfile
  ; D:/TC/src/helper.c:208:     if (openfile == NULL) {
 	testq	%rax, %rax	 ; openfile
 	je	.L163	 ;,
- ; D:/TC/src/helper.c:212:     printf("Info: Starting parsing lib file for import: %s\n", filename);
-	movq	%rbp, %rdx	 ; filename,
-	leaq	.LC15(%rip), %rcx	 ;, tmp122
-	call	printf	 ;
+ ; D:/TC/src/helper.c:212:     fprintf(stderr, "Info: Starting parsing lib file for import: %s\n", filename);
+	call	__getreent	 ;
+ ; D:/TC/src/helper.c:212:     fprintf(stderr, "Info: Starting parsing lib file for import: %s\n", filename);
+	movq	%rbp, %r8	 ; filename,
+	leaq	.LC15(%rip), %rdx	 ;, tmp127
+	movq	24(%rax), %rcx	 ;, _6->_stderr
+	call	fprintf	 ;
  ; D:/TC/src/helper.c:214:     string source_code = read_source(openfile, &length);
-	leaq	40(%rsp), %rdx	 ;, tmp123
+	leaq	40(%rsp), %rdx	 ;, tmp128
 	movq	%rbx, %rcx	 ; openfile,
  ; D:/TC/src/helper.c:213:     size_t length = 0;
 	movq	$0, 40(%rsp)	 ;, length
@@ -995,61 +998,63 @@ parse_import_file:
  ; D:/TC/src/helper.c:215:     fclose(openfile);
 	movq	%rbx, %rcx	 ; openfile,
  ; D:/TC/src/helper.c:214:     string source_code = read_source(openfile, &length);
-	movq	%rax, %rsi	 ; tmp148, source_code
+	movq	%rax, %rsi	 ; tmp155, source_code
  ; D:/TC/src/helper.c:215:     fclose(openfile);
 	call	fclose	 ;
- ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+ ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
 	movq	%rbp, %rcx	 ; filename,
 	call	create_file	 ;
  ; D:/TC/src/helper.c:188:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
 	movl	$16, %ecx	 ;,
- ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	%rax, %r13	 ; tmp149, _6
+ ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	%rax, %r13	 ; tmp156, _8
  ; D:/TC/src/helper.c:188:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
 	call	alloc_memory	 ;
- ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+ ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
 	movq	40(%rsp), %rdx	 ; length,
+	movq	%rbp, %r8	 ; filename,
 	movq	%rsi, %rcx	 ; source_code,
  ; D:/TC/src/helper.c:188:     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
-	movq	%rax, %rbx	 ; tmp150, new_parser
+	movq	%rax, %rbx	 ; tmp157, new_parser
  ; D:/TC/src/helper.c:189:     new_parser->in_function = false;
 	xorl	%eax, %eax	 ;
-	movw	%ax, 8(%rbx)	 ;, MEM <vector(2) char> [(char *)new_parser_58 + 8B]
- ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp125
+	movw	%ax, 8(%rbx)	 ;, MEM <vector(2) char> [(char *)new_parser_64 + 8B]
+ ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp130
  ; D:/TC/src/helper.c:192:     new_parser->source_file = file;
-	movq	%r13, (%rbx)	 ; _6, new_parser_58->source_file
+	movq	%r13, (%rbx)	 ; _8, new_parser_64->source_file
  ; D:/TC/src/helper.c:191:     new_parser->in_loop = false;
-	movb	$0, 11(%rbx)	 ;, new_parser_58->in_loop
- ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	(%rax), %r13	 ; builtin_scope, builtin_scope.13_8
+	movb	$0, 11(%rbx)	 ;, new_parser_64->in_loop
+ ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	(%rax), %r13	 ; builtin_scope, builtin_scope.13_10
 	call	create_lexer	 ;
- ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+ ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
 	movq	%rbx, %r8	 ; new_parser,
-	movq	%r13, %rdx	 ; builtin_scope.13_8,
- ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	%rax, %rcx	 ; tmp151, _10
- ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
+	movq	%r13, %rdx	 ; builtin_scope.13_10,
+ ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	%rax, %rcx	 ; tmp158, _12
+ ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
 	call	parse_code	 ;
- ; D:/TC/src/helper.c:217:     printf("Info: Finished parsing lib file for import: %s\n", filename);
-	movq	%rbp, %rdx	 ; filename,
-	leaq	.LC16(%rip), %rcx	 ;, tmp127
- ; D:/TC/src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	%rax, %rbx	 ; tmp152, code
- ; D:/TC/src/helper.c:217:     printf("Info: Finished parsing lib file for import: %s\n", filename);
-	call	printf	 ;
+	movq	%rax, %rbx	 ; tmp159, code
+ ; D:/TC/src/helper.c:217:     fprintf(stderr, "Info: Finished parsing lib file for import: %s\n", filename);
+	call	__getreent	 ;
+ ; D:/TC/src/helper.c:217:     fprintf(stderr, "Info: Finished parsing lib file for import: %s\n", filename);
+	movq	%rbp, %r8	 ; filename,
+	leaq	.LC16(%rip), %rdx	 ;, tmp133
+	movq	24(%rax), %rcx	 ; _13->_stderr, _13->_stderr
+	call	fprintf	 ;
  ; D:/TC/src/helper.c:218:     if (code == NULL) {
 	testq	%rbx, %rbx	 ; code
 	je	.L164	 ;,
  ; D:/TC/src/helper.c:222:     name = search_name_use_strcmp(code->global_scope, import_name);
-	movq	8(%rbx), %r13	 ; code_46->global_scope, scope
+	movq	8(%rbx), %r13	 ; code_51->global_scope, scope
  ; D:/TC/src/helper.c:128:     while (scope != NULL) {
 	testq	%r13, %r13	 ; scope
 	je	.L148	 ;,
 .L152:
  ; D:/TC/src/helper.c:130:         Node* current = names->head;
-	movq	8(%r13), %rax	 ; scope_75->symbols, scope_75->symbols
-	movq	(%rax), %rbx	 ; names_60->head, current
+	movq	8(%r13), %rax	 ; scope_81->symbols, scope_81->symbols
+	movq	(%rax), %rbx	 ; names_66->head, current
  ; D:/TC/src/helper.c:131:         while (current != NULL) {
 	testq	%rbx, %rbx	 ; current
 	jne	.L151	 ;,
@@ -1058,22 +1063,22 @@ parse_import_file:
 	.p2align 3
 .L165:
  ; D:/TC/src/helper.c:135:             current = current->next;
-	movq	(%rbx), %rbx	 ; current_7->next, current
+	movq	(%rbx), %rbx	 ; current_9->next, current
  ; D:/TC/src/helper.c:131:         while (current != NULL) {
 	testq	%rbx, %rbx	 ; current
 	je	.L149	 ;,
 .L151:
  ; D:/TC/src/helper.c:132:             Symbol* current_name = (Symbol*)current->content;
-	movq	8(%rbx), %rsi	 ; current_7->content, <retval>
+	movq	8(%rbx), %rsi	 ; current_9->content, <retval>
  ; D:/TC/src/helper.c:133:             if (strcmp(current_name->name, name) == 0)
 	movq	%rdi, %rdx	 ; import_name,
-	movq	8(%rsi), %rcx	 ; current_name_63->name, current_name_63->name
+	movq	8(%rsi), %rcx	 ; current_name_69->name, current_name_69->name
 	call	strcmp	 ;
  ; D:/TC/src/helper.c:133:             if (strcmp(current_name->name, name) == 0)
-	testl	%eax, %eax	 ; tmp154
+	testl	%eax, %eax	 ; tmp162
 	jne	.L165	 ;,
  ; D:/TC/src/helper.c:224:         list_append(scope->symbols, (pointer)name);
-	movq	8(%r12), %rcx	 ; scope_51(D)->symbols, scope_51(D)->symbols
+	movq	8(%r12), %rcx	 ; scope_57(D)->symbols, scope_57(D)->symbols
 	movq	%rsi, %rdx	 ; <retval>,
 	call	list_append	 ;
 .L141:
@@ -1091,7 +1096,7 @@ parse_import_file:
 	.p2align 3
 .L149:
  ; D:/TC/src/helper.c:137:         scope = scope->parent;
-	movq	0(%r13), %r13	 ; scope_75->parent, scope
+	movq	0(%r13), %r13	 ; scope_81->parent, scope
  ; D:/TC/src/helper.c:128:     while (scope != NULL) {
 	testq	%r13, %r13	 ; scope
 	jne	.L152	 ;,
@@ -1104,8 +1109,8 @@ parse_import_file:
  ; D:/TC/src/helper.c:210:         return NULL;
 	xorl	%esi, %esi	 ; <retval>
  ; D:/TC/src/helper.c:226:         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
-	movq	24(%rax), %rcx	 ; _15->_stderr, _15->_stderr
-	leaq	.LC18(%rip), %rdx	 ;, tmp134
+	movq	24(%rax), %rcx	 ; _19->_stderr, _19->_stderr
+	leaq	.LC18(%rip), %rdx	 ;, tmp140
 	call	fprintf	 ;
 	jmp	.L141	 ;
 	.p2align 4,,10
@@ -1114,33 +1119,33 @@ parse_import_file:
  ; D:/TC/src/helper.c:202:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
 	call	strlen	 ;
  ; D:/TC/src/helper.c:202:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
-	leaq	.LC10(%rip), %rcx	 ;, tmp116
-	leaq	4(%rax), %rdx	 ;, tmp115
+	leaq	.LC10(%rip), %rcx	 ;, tmp120
+	leaq	4(%rax), %rdx	 ;, tmp119
 	call	create_string_not_check	 ;
  ; D:/TC/src/helper.c:203:         sprintf(temp_import_name, "%s.tc", import_name);
 	movq	%rdi, %r8	 ; import_name,
-	leaq	.LC11(%rip), %rdx	 ;, tmp117
+	leaq	.LC11(%rip), %rdx	 ;, tmp121
  ; D:/TC/src/helper.c:202:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
-	movq	%rax, %rbx	 ; tmp142, temp_import_name
+	movq	%rax, %rbx	 ; tmp148, temp_import_name
  ; D:/TC/src/helper.c:203:         sprintf(temp_import_name, "%s.tc", import_name);
 	movq	%rax, %rcx	 ; temp_import_name,
 	call	sprintf	 ;
  ; D:/TC/src/helper.c:204:         filename = absolute_path(temp_import_name, std_path);
-	leaq	.LC12(%rip), %rdx	 ;, tmp118
+	leaq	.LC12(%rip), %rdx	 ;, tmp122
 	movq	%rbx, %rcx	 ; temp_import_name,
 	call	absolute_path	 ;
-	movq	%rax, %rbp	 ; tmp143, filename
+	movq	%rax, %rbp	 ; tmp149, filename
 	jmp	.L143	 ;
 .L163:
  ; D:/TC/src/helper.c:209:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
 	call	__getreent	 ;
  ; D:/TC/src/helper.c:209:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
 	movq	%rbp, %r8	 ; filename,
-	leaq	.LC14(%rip), %rdx	 ;, tmp121
+	leaq	.LC14(%rip), %rdx	 ;, tmp125
  ; D:/TC/src/helper.c:210:         return NULL;
 	xorl	%esi, %esi	 ; <retval>
  ; D:/TC/src/helper.c:209:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
-	movq	24(%rax), %rcx	 ; _4->_stderr, _4->_stderr
+	movq	24(%rax), %rcx	 ;, _4->_stderr
 	call	fprintf	 ;
 	jmp	.L141	 ;
 .L164:
@@ -1148,11 +1153,11 @@ parse_import_file:
 	call	__getreent	 ;
  ; D:/TC/src/helper.c:219:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
 	movq	%rbp, %r8	 ; filename,
-	leaq	.LC17(%rip), %rdx	 ;, tmp129
+	leaq	.LC17(%rip), %rdx	 ;, tmp135
  ; D:/TC/src/helper.c:210:         return NULL;
 	xorl	%esi, %esi	 ; <retval>
  ; D:/TC/src/helper.c:219:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
-	movq	24(%rax), %rcx	 ; _11->_stderr, _11->_stderr
+	movq	24(%rax), %rcx	 ; _15->_stderr, _15->_stderr
 	call	fprintf	 ;
 	jmp	.L141	 ;
 	.section .rdata,"dr"
@@ -1650,7 +1655,6 @@ CSWTCH.56:
 	.def	get_file_dir;	.scl	2;	.type	32;	.endef
 	.def	absolute_path;	.scl	2;	.type	32;	.endef
 	.def	fopen;	.scl	2;	.type	32;	.endef
-	.def	printf;	.scl	2;	.type	32;	.endef
 	.def	read_source;	.scl	2;	.type	32;	.endef
 	.def	fclose;	.scl	2;	.type	32;	.endef
 	.def	create_file;	.scl	2;	.type	32;	.endef

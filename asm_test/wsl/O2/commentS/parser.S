@@ -1,4 +1,4 @@
-	.file	"tac.c"
+	.file	"parser.c"
 ; GNU C17 (Ubuntu 13.3.0-6ubuntu2~24.04.1) version 13.3.0 (x86_64-linux-gnu)
 ;	compiled by GNU C version 13.3.0, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version isl-0.26-GMP
 
@@ -7,193 +7,135 @@
 	.text
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC0:
-	.string	""
-.LC1:
-	.string	"$%d-error"
-.LC2:
-	.string	"$%c%zu"
+	.string	"Failed to parse right operand"
 	.text
 	.p2align 4
-	.type	create_var, @function
-create_var:
+	.type	parse_expr_prec, @function
+parse_expr_prec:
 	pushq	%r15	;
+	movq	%r8, %r15	; tmp128, parser
 	pushq	%r14	;
 	pushq	%r13	;
-	movq	%rsi, %r13	; tmp189, type
 	pushq	%r12	;
-	movl	%edx, %r12d	; tmp190, kind
 	pushq	%rbp	;
-	movq	%rdi, %rbp	; tmp188, original_name
 	pushq	%rbx	;
-	movq	%rcx, %rbx	; tmp191, status
-	subq	$24, %rsp	;,
-; src/tac.c:157:     if (original_name != NULL) {
-	testq	%rdi, %rdi	; original_name
-	je	.L3	;,
-; src/tac.c:159:         if (type->kind == SYMBOL_CLASS) {
-	movl	32(%rsi), %ecx	; type_34(D)->kind,
-; src/tac.c:158:         Class* current_class = NULL;
-	movq	$0, (%rsp)	;, %sfp
-; src/tac.c:159:         if (type->kind == SYMBOL_CLASS) {
-	testl	%ecx, %ecx	;
-	jne	.L4	;,
-; src/tac.c:160:             current_class = status->current_class;
-	movq	24(%rbx), %rax	; status_35(D)->current_class, current_class
-	movq	%rax, (%rsp)	; current_class, %sfp
-; src/tac.c:161:             status->current_class = type->ast_node.class;
-	movq	24(%rsi), %rax	; type_34(D)->ast_node.class, type_34(D)->ast_node.class
-	movq	%rax, 24(%rbx)	; type_34(D)->ast_node.class, status_35(D)->current_class
-.L4:
-; src/tac.c:107:     if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->local_vars)) {
-	movq	8(%rbx), %rax	; status_35(D)->current_subroutine, _59
-; src/tac.c:107:     if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->local_vars)) {
-	testq	%rax, %rax	; _59
-	je	.L10	;,
-; src/tac.c:107:     if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->local_vars)) {
-	movq	24(%rax), %rdi	; _59->local_vars, _59->local_vars
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:107:     if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->local_vars)) {
-	testb	%al, %al	; tmp192
-	je	.L8	;,
-.L14:
-; src/tac.c:117:     if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->parameters)) {
-	movq	8(%rbx), %rax	; status_35(D)->current_subroutine, _67
-; src/tac.c:117:     if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->parameters)) {
-	testq	%rax, %rax	; _67
-	je	.L10	;,
-; src/tac.c:117:     if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->parameters)) {
-	movq	16(%rax), %rdi	; _67->parameters, _67->parameters
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:117:     if (status->current_subroutine != NULL && !list_is_empty(status->current_subroutine->parameters)) {
-	testb	%al, %al	; tmp195
-	je	.L58	;,
-.L10:
-; src/tac.c:127:     if (status->current_class != NULL && !list_is_empty(status->tac->attribute_tables)) {
-	cmpq	$0, 24(%rbx)	;, status_35(D)->current_class
-; src/tac.c:127:     if (status->current_class != NULL && !list_is_empty(status->tac->attribute_tables)) {
-	movq	(%rbx), %rax	; status_35(D)->tac, status_35(D)->tac
-; src/tac.c:127:     if (status->current_class != NULL && !list_is_empty(status->tac->attribute_tables)) {
-	je	.L7	;,
-; src/tac.c:127:     if (status->current_class != NULL && !list_is_empty(status->tac->attribute_tables)) {
-	movq	(%rax), %rdi	; pretmp_17->attribute_tables, pretmp_17->attribute_tables
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:127:     if (status->current_class != NULL && !list_is_empty(status->tac->attribute_tables)) {
-	testb	%al, %al	; tmp199
-	je	.L52	;,
-.L55:
-	movq	(%rbx), %rax	; status_35(D)->tac, status_35(D)->tac
-.L7:
-; src/tac.c:142:     if (!list_is_empty(status->tac->global_vars)) {
-	movq	16(%rax), %rdi	; _95->global_vars, _95->global_vars
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:142:     if (!list_is_empty(status->tac->global_vars)) {
-	testb	%al, %al	; tmp198
-	jne	.L53	;,
-; src/tac.c:143:         list(Var*) vars = list_copy(status->tac->global_vars);
-	movq	(%rbx), %rax	; status_35(D)->tac, status_35(D)->tac
-	movq	16(%rax), %rdi	; _98->global_vars, _98->global_vars
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %r14	; tmp205, vars
-; src/tac.c:145:         while ((var = (Var*)list_pop(vars)) != NULL) {
-	jmp	.L26	;
-	.p2align 4,,10
-	.p2align 3
-.L27:
-; src/tac.c:146:             if (var->original_name == original_name) {
-	cmpq	(%r15), %rbp	; var_101->original_name, original_name
-	je	.L12	;,
-.L26:
-; src/tac.c:145:         while ((var = (Var*)list_pop(vars)) != NULL) {
-	movq	%r14, %rdi	; vars,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %r15	; tmp206, <retval>
-; src/tac.c:145:         while ((var = (Var*)list_pop(vars)) != NULL) {
-	testq	%rax, %rax	; <retval>
-	jne	.L27	;,
-.L53:
-; src/tac.c:164:         if (type->kind == SYMBOL_CLASS)
-	movl	32(%r13), %eax	; type_34(D)->kind,
-	testl	%eax, %eax	;
-	jne	.L3	;,
-; src/tac.c:165:             status->current_class = current_class;
-	movq	(%rsp), %rax	; %sfp, current_class
-	movq	%rax, 24(%rbx)	; current_class, status_35(D)->current_class
-.L3:
-; src/tac.c:171:     Var* var = (Var*)alloc_memory(sizeof(Var));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:172:     var->original_name = original_name;
-	movq	%rbp, (%rax)	; original_name, var_42->original_name
-; src/tac.c:171:     Var* var = (Var*)alloc_memory(sizeof(Var));
-	movq	%rax, %r15	; tmp207, <retval>
-; src/tac.c:174:     switch (kind) {
-	leal	-97(%r12), %eax	;,
-	cmpl	$21, %eax	;, tmp160
-	ja	.L30	;,
-	leaq	.L32(%rip), %rdx	;, tmp162
-	movslq	(%rdx,%rax,4), %rax	;, tmp164
-	addq	%rdx, %rax	; tmp162, tmp165
-	jmp	*%rax	; tmp165
-	.section	.rodata
-	.align 4
-	.align 4
-.L32:
-	.long	.L37-.L32
-	.long	.L36-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L35-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L34-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L30-.L32
-	.long	.L33-.L32
-	.long	.L30-.L32
-	.long	.L31-.L32
-	.text
-	.p2align 4,,10
-	.p2align 3
-.L8:
-; src/tac.c:108:         list(Var*) vars = list_copy(status->current_subroutine->local_vars);
-	movq	8(%rbx), %rax	; status_35(D)->current_subroutine, status_35(D)->current_subroutine
-	movq	24(%rax), %rdi	; _62->local_vars, _62->local_vars
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %r14	; tmp193, vars
-	.p2align 4,,10
-	.p2align 3
-.L11:
-; src/tac.c:110:         while ((var = (Var*)list_pop(vars)) != NULL) {
-	movq	%r14, %rdi	; vars,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %r15	; tmp194, <retval>
-; src/tac.c:110:         while ((var = (Var*)list_pop(vars)) != NULL) {
-	testq	%rax, %rax	; <retval>
-	je	.L14	;,
-; src/tac.c:111:             if (var->original_name == original_name) {
-	cmpq	(%r15), %rbp	; var_65->original_name, original_name
+	movq	%rdi, %rbx	; tmp124, lexer
+	subq	$40, %rsp	;,
+; src/parser.c:647: static Expression* parse_expr_prec(Lexer* lexer, Expression* expr_left, int min_prec, SymbolTable* now_scope, Parser* parser) {
+	movq	%rsi, 8(%rsp)	; tmp125, %sfp
+; src/parser.c:650:     token = peek_next_token(lexer, true);
+	movl	$1, %esi	;,
+; src/parser.c:647: static Expression* parse_expr_prec(Lexer* lexer, Expression* expr_left, int min_prec, SymbolTable* now_scope, Parser* parser) {
+	movl	%edx, 28(%rsp)	; tmp126, %sfp
+	movq	%rcx, 16(%rsp)	; tmp127, %sfp
+; src/parser.c:650:     token = peek_next_token(lexer, true);
+	call	*peek_next_token@GOTPCREL(%rip)	;
+; src/parser.c:651:     while (token->type == SYMBOL) {
+	cmpl	$5, 24(%rax)	;,
 	jne	.L11	;,
-.L12:
-; src/tac.c:164:         if (type->kind == SYMBOL_CLASS)
-	movl	32(%r13), %edx	; type_34(D)->kind,
-	testl	%edx, %edx	;
-	jne	.L1	;,
-; src/tac.c:165:             status->current_class = current_class;
-	movq	(%rsp), %rax	; %sfp, current_class
-	movq	%rax, 24(%rbx)	; current_class, status_35(D)->current_class
+.L9:
+; src/parser.c:652:         OperatorType op = string_to_operator(token->lexeme);
+	movq	(%rax), %rdi	; token_70->lexeme, token_70->lexeme
+	call	*string_to_operator@GOTPCREL(%rip)	;
+	movl	%eax, %r12d	; tmp130, op
+; src/parser.c:653:         int op_prec = operator_precedence(op);
+	movl	%eax, %edi	; op,
+	call	*operator_precedence@GOTPCREL(%rip)	;
+	movl	%eax, %ebp	; tmp131, op_prec
+; src/parser.c:654:         if (op == OP_NONE || op_prec < min_prec)
+	cmpl	$19, %r12d	;, op
+	je	.L11	;,
+	movl	28(%rsp), %eax	; %sfp, min_prec
+	cmpl	%eax, %ebp	; min_prec, op_prec
+	jl	.L11	;,
+; src/parser.c:656:         token = get_next_token(lexer, true);  // consume operator
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:657:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:658:         Primary* right_primary = parse_primary(lexer, now_scope, parser);
+	movq	16(%rsp), %rsi	; %sfp,
+	movq	%r15, %rdx	; parser,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:657:         token = get_next_token(lexer, true);
+	movq	%rax, %r13	; tmp132, token
+; src/parser.c:658:         Primary* right_primary = parse_primary(lexer, now_scope, parser);
+	call	parse_primary	;
+	movq	%rax, %rdx	; tmp133, right_primary
+; src/parser.c:659:         if (right_primary == NULL) {
+	testq	%rax, %rax	; right_primary
+	je	.L17	;,
+; src/parser.c:664:         Expression* right = create_expression(OP_NONE, NULL, right_primary, NULL);
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	movl	$19, %edi	;,
+	call	*create_expression@GOTPCREL(%rip)	;
+	movq	%rax, %r13	; tmp135, right
+.L15:
+; src/parser.c:665:         token = peek_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*peek_next_token@GOTPCREL(%rip)	;
+; src/parser.c:666:         while (token->type == SYMBOL) {
+	cmpl	$5, 24(%rax)	;,
+	jne	.L5	;,
+; src/parser.c:667:             OperatorType next_op = string_to_operator(token->lexeme);
+	movq	(%rax), %rdi	; token_69->lexeme, token_69->lexeme
+	call	*string_to_operator@GOTPCREL(%rip)	;
+	movl	%eax, %r14d	; tmp137, next_op
+; src/parser.c:668:             int next_prec = operator_precedence(next_op);
+	movl	%eax, %edi	; next_op,
+	call	*operator_precedence@GOTPCREL(%rip)	;
+; src/parser.c:669:             if (next_op == OP_NONE || next_prec <= op_prec)
+	cmpl	$19, %r14d	;, next_op
+	je	.L5	;,
+	cmpl	%eax, %ebp	; next_prec, op_prec
+	jge	.L5	;,
+; src/parser.c:671:             right = parse_expr_prec(lexer, right, next_prec, now_scope, parser);
+	movq	16(%rsp), %rcx	; %sfp,
+	movq	%r13, %rsi	; right,
+	movq	%r15, %r8	; parser,
+	movl	%eax, %edx	; next_prec,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_expr_prec	;
+	movq	%rax, %r13	; tmp139, right
+; src/parser.c:672:             if (right == NULL) {
+	testq	%rax, %rax	; right
+	jne	.L15	;,
+; src/parser.c:662:             return NULL;
+	xorl	%r14d, %r14d	; <retval>
+	jmp	.L1	;
+	.p2align 4,,10
+	.p2align 3
+.L5:
+; src/parser.c:678:         expr_left = create_expression(op, expr_left, NULL, right);
+	xorl	%edx, %edx	;
+	movq	8(%rsp), %rsi	; %sfp,
+	movq	%r13, %rcx	; right,
+	movl	%r12d, %edi	; op,
+	call	*create_expression@GOTPCREL(%rip)	;
+; src/parser.c:679:         token = peek_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:678:         expr_left = create_expression(op, expr_left, NULL, right);
+	movq	%rax, 8(%rsp)	; tmp141, %sfp
+; src/parser.c:679:         token = peek_next_token(lexer, true);
+	call	*peek_next_token@GOTPCREL(%rip)	;
+; src/parser.c:651:     while (token->type == SYMBOL) {
+	cmpl	$5, 24(%rax)	;,
+	je	.L9	;,
+.L11:
+	movq	8(%rsp), %r14	; %sfp, <retval>
+; src/parser.c:681:     token = peek_current_token(lexer);
+	movq	%rbx, %rdi	; lexer,
+	call	*peek_current_token@GOTPCREL(%rip)	;
 .L1:
-; src/tac.c:193: }
-	addq	$24, %rsp	;,
-	movq	%r15, %rax	; <retval>,
+; src/parser.c:684: }
+	addq	$40, %rsp	;,
+	movq	%r14, %rax	; <retval>,
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
@@ -203,718 +145,1499 @@ create_var:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L30:
-; src/tac.c:183:     var->name = create_string("", 32);
-	leaq	.LC0(%rip), %rdi	;, tmp167
-	movl	$32, %esi	;,
-	call	*create_string@GOTPCREL(%rip)	;
-; src/tac.c:183:     var->name = create_string("", 32);
-	movq	%rax, 8(%r15)	; _16, var_42->name
-; src/tac.c:183:     var->name = create_string("", 32);
-	movq	%rax, %rdi	; tmp208, _16
-.L38:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:30:   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
-	movl	%r12d, %r8d	; kind,
-	leaq	.LC1(%rip), %rcx	;, tmp175
-	movq	$-1, %rdx	;,
-	xorl	%eax, %eax	;
-	movl	$2, %esi	;,
-	call	*__sprintf_chk@GOTPCREL(%rip)	;
-.L41:
-; src/tac.c:189:     if (kind == VAR_TEMP || kind == VAR_VAR)
-	andl	$-3, %r12d	;, tmp177
-; src/tac.c:188:     var->type = type;
-	movq	%r13, 16(%r15)	; type, var_42->type
-; src/tac.c:189:     if (kind == VAR_TEMP || kind == VAR_VAR)
-	cmpl	$116, %r12d	;, tmp177
-	jne	.L1	;,
-; src/tac.c:190:         list_append(status->current_subroutine->local_vars, (pointer)var);
-	movq	8(%rbx), %rax	; status_35(D)->current_subroutine, status_35(D)->current_subroutine
-	movq	%r15, %rsi	; <retval>,
-	movq	24(%rax), %rdi	; _20->local_vars, _20->local_vars
-	call	*list_append@GOTPCREL(%rip)	;
+.L17:
+; src/parser.c:660:             parser_error("Failed to parse right operand", token, get_full_path(parser->source_file));
+	movq	(%r15), %rdi	; parser_38(D)->source_file, parser_38(D)->source_file
+; src/parser.c:662:             return NULL;
+	xorl	%r14d, %r14d	; <retval>
+; src/parser.c:660:             parser_error("Failed to parse right operand", token, get_full_path(parser->source_file));
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:660:             parser_error("Failed to parse right operand", token, get_full_path(parser->source_file));
+	movq	%r13, %rsi	; token,
+	leaq	.LC0(%rip), %rdi	;, tmp117
+; src/parser.c:660:             parser_error("Failed to parse right operand", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp134, _6
+; src/parser.c:660:             parser_error("Failed to parse right operand", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
 	jmp	.L1	;
-	.p2align 4,,10
-	.p2align 3
-.L52:
-; src/tac.c:128:         list(AttributeTable*) tables = list_copy(status->tac->attribute_tables);
-	movq	(%rbx), %rax	; status_35(D)->tac, status_35(D)->tac
-	movq	(%rax), %rdi	; _79->attribute_tables, _79->attribute_tables
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %r14	; tmp200, tables
-; src/tac.c:130:         while ((table = (AttributeTable*)list_pop(tables)) != NULL) {
-	jmp	.L20	;
-	.p2align 4,,10
-	.p2align 3
-.L24:
-; src/tac.c:131:             if (table->name == status->current_class->name && !list_is_empty(table->attributes)) {
-	movq	24(%rbx), %rax	; status_35(D)->current_class, status_35(D)->current_class
-; src/tac.c:131:             if (table->name == status->current_class->name && !list_is_empty(table->attributes)) {
-	movq	(%rax), %rax	; _84->name, tmp215
-	cmpq	%rax, 8(%r15)	; tmp215, table_82->name
-	je	.L59	;,
-.L20:
-; src/tac.c:130:         while ((table = (AttributeTable*)list_pop(tables)) != NULL) {
-	movq	%r14, %rdi	; tables,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %r15	; tmp204, table
-; src/tac.c:130:         while ((table = (AttributeTable*)list_pop(tables)) != NULL) {
-	testq	%rax, %rax	; table
-	jne	.L24	;,
-	jmp	.L55	;
-	.p2align 4,,10
-	.p2align 3
-.L58:
-; src/tac.c:118:         list(Var*) vars = list_copy(status->current_subroutine->parameters);
-	movq	8(%rbx), %rax	; status_35(D)->current_subroutine, status_35(D)->current_subroutine
-	movq	16(%rax), %rdi	; _70->parameters, _70->parameters
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %r14	; tmp196, vars
-; src/tac.c:120:         while ((var = (Var*)list_pop(vars)) != NULL) {
-	jmp	.L15	;
-	.p2align 4,,10
-	.p2align 3
-.L16:
-; src/tac.c:121:             if (var->original_name == original_name) {
-	cmpq	(%r15), %rbp	; var_73->original_name, original_name
-	je	.L12	;,
-.L15:
-; src/tac.c:120:         while ((var = (Var*)list_pop(vars)) != NULL) {
-	movq	%r14, %rdi	; vars,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %r15	; tmp197, <retval>
-; src/tac.c:120:         while ((var = (Var*)list_pop(vars)) != NULL) {
+	.size	parse_expr_prec, .-parse_expr_prec
+	.section	.rodata.str1.8,"aMS",@progbits,1
+	.align 8
+.LC1:
+	.string	"Failed to parse expression primary"
+	.text
+	.p2align 4
+	.type	parse_expression, @function
+parse_expression:
+	pushq	%r12	;
+	movq	%rsi, %r12	; tmp94, now_scope
+	pushq	%rbp	;
+	movq	%rdx, %rbp	; tmp95, parser
+	pushq	%rbx	;
+; src/parser.c:685: Expression* parse_expression(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
+	movq	%rdi, %rbx	; tmp93, lexer
+; src/parser.c:687:     Primary* left_primary = parse_primary(lexer, now_scope, parser);
+	call	parse_primary	;
+; src/parser.c:688:     if (left_primary == NULL) {
 	testq	%rax, %rax	; <retval>
-	jne	.L16	;,
-	jmp	.L10	;
-.L31:
-; src/tac.c:177:         case VAR_VAR: id = status->var_count++; break;
-	movq	64(%rbx), %rbp	; status_35(D)->var_count, id
-; src/tac.c:177:         case VAR_VAR: id = status->var_count++; break;
-	leaq	1(%rbp), %rax	;, tmp170
-	movq	%rax, 64(%rbx)	; tmp170, status_35(D)->var_count
-	.p2align 4,,10
-	.p2align 3
-.L39:
-; src/tac.c:183:     var->name = create_string("", 32);
-	leaq	.LC0(%rip), %rdi	;, tmp174
-	movl	$32, %esi	;,
-	call	*create_string@GOTPCREL(%rip)	;
-; src/tac.c:183:     var->name = create_string("", 32);
-	movq	%rax, 8(%r15)	; _16, var_42->name
-; src/tac.c:183:     var->name = create_string("", 32);
-	movq	%rax, %rdi	; tmp209, _16
-; src/tac.c:184:     if (id == (size_t)-1)
-	cmpq	$-1, %rbp	;, id
-	je	.L38	;,
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:30:   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
-	movq	%rbp, %r9	; id,
-	movl	%r12d, %r8d	; kind,
-	leaq	.LC2(%rip), %rcx	;, tmp176
-	xorl	%eax, %eax	;
-	movq	$-1, %rdx	;,
-	movl	$2, %esi	;,
-	call	*__sprintf_chk@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:30:   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
-	jmp	.L41	;
-.L33:
-; src/tac.c:178:         case VAR_TEMP: id = status->temp_count++; break;
-	movq	72(%rbx), %rbp	; status_35(D)->temp_count, id
-; src/tac.c:178:         case VAR_TEMP: id = status->temp_count++; break;
-	leaq	1(%rbp), %rax	;, tmp171
-	movq	%rax, 72(%rbx)	; tmp171, status_35(D)->temp_count
-; src/tac.c:178:         case VAR_TEMP: id = status->temp_count++; break;
-	jmp	.L39	;
-.L34:
-; src/tac.c:176:         case VAR_PARAM: id = status->param_count++; break;
-	movq	56(%rbx), %rbp	; status_35(D)->param_count, id
-; src/tac.c:176:         case VAR_PARAM: id = status->param_count++; break;
-	leaq	1(%rbp), %rax	;, tmp169
-	movq	%rax, 56(%rbx)	; tmp169, status_35(D)->param_count
-; src/tac.c:176:         case VAR_PARAM: id = status->param_count++; break;
-	jmp	.L39	;
-.L35:
-; src/tac.c:180:         case VAR_SUBROUTINE: id = status->subroutine_count++; break;
-	movq	88(%rbx), %rbp	; status_35(D)->subroutine_count, id
-; src/tac.c:180:         case VAR_SUBROUTINE: id = status->subroutine_count++; break;
-	leaq	1(%rbp), %rax	;, tmp173
-	movq	%rax, 88(%rbx)	; tmp173, status_35(D)->subroutine_count
-; src/tac.c:180:         case VAR_SUBROUTINE: id = status->subroutine_count++; break;
-	jmp	.L39	;
-.L36:
-; src/tac.c:179:         case VAR_BLOCK: id = status->block_count++; break;
-	movq	80(%rbx), %rbp	; status_35(D)->block_count, id
-; src/tac.c:179:         case VAR_BLOCK: id = status->block_count++; break;
-	leaq	1(%rbp), %rax	;, tmp172
-	movq	%rax, 80(%rbx)	; tmp172, status_35(D)->block_count
-; src/tac.c:179:         case VAR_BLOCK: id = status->block_count++; break;
-	jmp	.L39	;
-.L37:
-; src/tac.c:175:         case VAR_ATTR: id = status->attr_count++; break;
-	movq	48(%rbx), %rbp	; status_35(D)->attr_count, id
-; src/tac.c:175:         case VAR_ATTR: id = status->attr_count++; break;
-	leaq	1(%rbp), %rax	;, tmp168
-	movq	%rax, 48(%rbx)	; tmp168, status_35(D)->attr_count
-; src/tac.c:175:         case VAR_ATTR: id = status->attr_count++; break;
-	jmp	.L39	;
-	.p2align 4,,10
-	.p2align 3
-.L59:
-; src/tac.c:131:             if (table->name == status->current_class->name && !list_is_empty(table->attributes)) {
-	movq	(%r15), %rdi	; table_82->attributes, table_82->attributes
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:131:             if (table->name == status->current_class->name && !list_is_empty(table->attributes)) {
-	testb	%al, %al	; tmp201
-	jne	.L20	;,
-; src/tac.c:132:                 list(Attribute*) attributes = list_copy(table->attributes);
-	movq	(%r15), %rdi	; table_82->attributes, table_82->attributes
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, 8(%rsp)	; tmp202, %sfp
+	je	.L22	;,
+	movq	%rax, %rdx	; tmp96, <retval>
+; src/parser.c:694:     return parse_expr_prec(lexer, create_expression(OP_NONE, NULL, left_primary, NULL), 0, now_scope, parser);
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	movl	$19, %edi	;,
+	call	*create_expression@GOTPCREL(%rip)	;
+; src/parser.c:694:     return parse_expr_prec(lexer, create_expression(OP_NONE, NULL, left_primary, NULL), 0, now_scope, parser);
+	movq	%rbp, %r8	; parser,
+	movq	%r12, %rcx	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:694:     return parse_expr_prec(lexer, create_expression(OP_NONE, NULL, left_primary, NULL), 0, now_scope, parser);
+	movq	%rax, %rsi	; tmp99, _4
+; src/parser.c:695: }
+	popq	%rbx	;
+; src/parser.c:694:     return parse_expr_prec(lexer, create_expression(OP_NONE, NULL, left_primary, NULL), 0, now_scope, parser);
+	xorl	%edx, %edx	;
+; src/parser.c:695: }
+	popq	%rbp	;
+	popq	%r12	;
+; src/parser.c:694:     return parse_expr_prec(lexer, create_expression(OP_NONE, NULL, left_primary, NULL), 0, now_scope, parser);
+	jmp	parse_expr_prec	;
 	.p2align 4,,10
 	.p2align 3
 .L22:
-; src/tac.c:134:                 while ((attr = (Attribute*)list_pop(attributes)) != NULL)
-	movq	8(%rsp), %rdi	; %sfp,
-	call	*list_pop@GOTPCREL(%rip)	;
-; src/tac.c:134:                 while ((attr = (Attribute*)list_pop(attributes)) != NULL)
-	testq	%rax, %rax	; attr
-	je	.L20	;,
-; src/tac.c:135:                     if (attr->var->original_name == original_name) {
-	movq	(%rax), %r15	; attr_92->var, <retval>
-; src/tac.c:135:                     if (attr->var->original_name == original_name) {
-	cmpq	(%r15), %rbp	; _93->original_name, original_name
-	jne	.L22	;,
-	jmp	.L12	;
-	.size	create_var, .-create_var
-	.section	.rodata.str1.8,"aMS",@progbits,1
+; src/parser.c:689:         parser_error("Failed to parse expression primary", peek_current_token(lexer), get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_10(D)->source_file, parser_10(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:689:         parser_error("Failed to parse expression primary", peek_current_token(lexer), get_full_path(parser->source_file));
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:689:         parser_error("Failed to parse expression primary", peek_current_token(lexer), get_full_path(parser->source_file));
+	movq	%rax, %rbp	; tmp97, _2
+; src/parser.c:689:         parser_error("Failed to parse expression primary", peek_current_token(lexer), get_full_path(parser->source_file));
+	call	*peek_current_token@GOTPCREL(%rip)	;
+; src/parser.c:689:         parser_error("Failed to parse expression primary", peek_current_token(lexer), get_full_path(parser->source_file));
+	movq	%rbp, %rdx	; _2,
+	leaq	.LC1(%rip), %rdi	;, tmp91
+; src/parser.c:689:         parser_error("Failed to parse expression primary", peek_current_token(lexer), get_full_path(parser->source_file));
+	movq	%rax, %rsi	; tmp98, _3
+; src/parser.c:689:         parser_error("Failed to parse expression primary", peek_current_token(lexer), get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:695: }
+	popq	%rbx	;
+	xorl	%eax, %eax	;
+	popq	%rbp	;
+	popq	%r12	;
+	ret	
+	.size	parse_expression, .-parse_expression
+	.section	.rodata.str1.1
+.LC2:
+	.string	"Expected variable type"
+	.section	.rodata.str1.8
 	.align 8
 .LC3:
-	.string	"[warning] Unsupported type for size lookup: %s\n"
-	.text
-	.p2align 4
-	.type	get_type_size, @function
-get_type_size:
-; src/tac.c:19:         result = 0;
-	xorl	%eax, %eax	; <retval>
-; src/tac.c:18:     if (type == NULL)
-	testq	%rdi, %rdi	; type
-	je	.L69	;,
-; src/tac.c:20:     else if (type == name_int || type == name_float || type == name_string)
-	cmpq	%rdi, name_int(%rip)	; type, name_int
-	je	.L70	;,
-; src/tac.c:20:     else if (type == name_int || type == name_float || type == name_string)
-	cmpq	%rdi, name_float(%rip)	; type, name_float
-	je	.L70	;,
-; src/tac.c:20:     else if (type == name_int || type == name_float || type == name_string)
-	cmpq	%rdi, name_string(%rip)	; type, name_string
-	je	.L70	;,
-; src/tac.c:22:     else if (type == name_bool || type == name_void)
-	cmpq	%rdi, name_bool(%rip)	; type, name_bool
-; src/tac.c:23:         result = 1;
-	movl	$1, %eax	;, <retval>
-; src/tac.c:22:     else if (type == name_bool || type == name_void)
-	je	.L69	;,
-; src/tac.c:22:     else if (type == name_bool || type == name_void)
-	cmpq	%rdi, name_void(%rip)	; type, name_void
-	je	.L69	;,
-; src/tac.c:24:     else if (type->kind == SYMBOL_CLASS)
-	movl	32(%rdi), %eax	; type_13(D)->kind,
-	testl	%eax, %eax	;
-	jne	.L63	;,
-; src/tac.c:25:         result = type->ast_node.class->size;
-	movq	24(%rdi), %rax	; type_13(D)->ast_node.class, type_13(D)->ast_node.class
-	movq	24(%rax), %rax	; _7->size, <retval>
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L69:
-; src/tac.c:30: }
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L70:
-; src/tac.c:21:         result = 8;
-	movl	$8, %eax	;, <retval>
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L63:
-; src/tac.c:15: static size_t get_type_size(Symbol* type) {
-	subq	$8, %rsp	;,
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC3(%rip), %rdx	;, tmp96
-	movq	8(%rdi), %rcx	; type_13(D)->name, type_13(D)->name
-	xorl	%eax, %eax	;
-	movq	stderr(%rip), %rdi	; stderr,
-	movl	$2, %esi	;,
-	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/tac.c:21:         result = 8;
-	movl	$8, %eax	;, <retval>
-; src/tac.c:30: }
-	addq	$8, %rsp	;,
-	ret	
-	.size	get_type_size, .-get_type_size
-	.p2align 4
-	.type	load_rvalue, @function
-load_rvalue:
-	pushq	%r13	;
-	pushq	%r12	;
-	pushq	%rbp	;
-	pushq	%rbx	;
-	movq	%rdi, %rbx	; tmp102, arg
-	subq	$8, %rsp	;,
-; src/tac.c:269:     if (arg == NULL) {
-	testq	%rdi, %rdi	; arg
-	je	.L73	;,
-; src/tac.c:273:     if (arg->is_get) {
-	cmpb	$0, 20(%rdi)	;, arg_4(D)->is_get
-	jne	.L78	;,
-.L73:
-; src/tac.c:281: }
-	addq	$8, %rsp	;,
-	movq	%rbx, %rax	; arg,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L78:
-	movq	%rsi, %rbp	; tmp103, status
-; src/tac.c:274:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, arg->type, VAR_TEMP, status));
-	movq	8(%rdi), %rsi	; arg_4(D)->type, arg_4(D)->type
-	movl	$116, %edx	;,
-	xorl	%edi, %edi	;
-	movq	%rbp, %rcx	; status,
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:274:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, arg->type, VAR_TEMP, status));
-	movq	%rax, %r13	; tmp104, _10
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movq	%r13, %xmm0	; _10, tmp97
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movhps	16(%r13), %xmm0	; _10->type, tmp97
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r12	; tmp105, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$0, 16(%rax)	;, arg_16->kind
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp97, MEM <vector(2) long unsigned int> [(void *)arg_16]
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_16->is_get
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%rbx, 8(%rax)	; arg, inst_12->arg2
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp106, inst
-; src/tac.c:275:         list_append(status->current_block->instructions, (pointer)create_instruction(INST_LOAD, temp, arg, NULL));
-	movq	%r12, %rbx	; arg, arg
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r12, (%rax)	; arg, inst_12->arg1
-; src/tac.c:214:     inst->type = type;
-	movl	$23, 24(%rax)	;, inst_12->type
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_12->arg3
-; src/tac.c:275:         list_append(status->current_block->instructions, (pointer)create_instruction(INST_LOAD, temp, arg, NULL));
-	movq	16(%rbp), %rax	; status_7(D)->current_block, status_7(D)->current_block
-	movq	8(%rax), %rdi	; _13->instructions, _13->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:281: }
-	addq	$8, %rsp	;,
-	movq	%rbx, %rax	; arg,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	ret	
-	.size	load_rvalue, .-load_rvalue
-	.section	.rodata.str1.8
-	.align 8
+	.string	"Expected a type for variable declaration"
+	.section	.rodata.str1.1
 .LC4:
-	.string	"[warning] Unsupported symbol kind for import: %d\n"
-	.text
-	.p2align 4
-	.globl	tac_import
-	.type	tac_import, @function
-tac_import:
-	pushq	%r12	;
-	pushq	%rbp	;
-	movq	%rsi, %rbp	; tmp111, tac
-	pushq	%rbx	;
-; src/tac.c:305:     if (import->name->kind == SYMBOL_VARIABLE)
-	movq	(%rdi), %rbx	; import_15(D)->name, _1
-; src/tac.c:305:     if (import->name->kind == SYMBOL_VARIABLE)
-	movl	32(%rbx), %ecx	; _1->kind, _2
-; src/tac.c:305:     if (import->name->kind == SYMBOL_VARIABLE)
-	cmpl	$3, %ecx	;, _2
-	je	.L85	;,
-; src/tac.c:307:     else if (import->name->kind == SYMBOL_FUNCTION || import->name->kind == SYMBOL_METHOD)
-	leal	-1(%rcx), %eax	;, tmp103
-; src/tac.c:307:     else if (import->name->kind == SYMBOL_FUNCTION || import->name->kind == SYMBOL_METHOD)
-	cmpl	$1, %eax	;, tmp103
-	jbe	.L86	;,
-; src/tac.c:309:     else if (import->name->kind == SYMBOL_CLASS)
-	testl	%ecx, %ecx	; _2
-	jne	.L82	;,
-; src/tac.c:8:     AttributeTable* table = (AttributeTable*)alloc_memory(sizeof(AttributeTable));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp115, table
-; src/tac.c:9:     table->attributes = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:9:     table->attributes = create_list();
-	movq	%rbx, %xmm1	; _1, _1
-; src/tac.c:310:         list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name));
-	movq	%r12, %rsi	; table,
-; src/tac.c:11:     table->size = 0;
-	movq	$0, 16(%r12)	;, table_25->size
-; src/tac.c:9:     table->attributes = create_list();
-	movq	%rax, %xmm0	; tmp116, tmp106
-	punpcklqdq	%xmm1, %xmm0	; _1, tmp106
-	movups	%xmm0, (%r12)	; tmp106, MEM <vector(2) long unsigned int> [(void *)table_25]
-; src/tac.c:314: }
-	popq	%rbx	;
-; src/tac.c:310:         list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name));
-	movq	0(%rbp), %rdi	; tac_17(D)->attribute_tables, tac_17(D)->attribute_tables
-; src/tac.c:314: }
-	popq	%rbp	;
-	popq	%r12	;
-; src/tac.c:310:         list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name));
-	jmp	*list_append@GOTPCREL(%rip)	;
-	.p2align 4,,10
-	.p2align 3
-.L82:
-; src/tac.c:314: }
-	popq	%rbx	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rdi	; stderr,
-	movl	$2, %esi	;,
-	xorl	%eax, %eax	;
-; src/tac.c:314: }
-	popq	%rbp	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC4(%rip), %rdx	;, tmp109
-; src/tac.c:314: }
-	popq	%r12	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
-	.p2align 4,,10
-	.p2align 3
-.L86:
-; src/tac.c:308:         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_SUBROUTINE, status));
-	movq	(%rbx), %rsi	; _1->type, _1->type
-	movq	%rdx, %rcx	; status,
-	movl	$102, %edx	;,
-.L84:
-	movq	%rbx, %rdi	; _1,
-	call	create_var	;
-; src/tac.c:314: }
-	popq	%rbx	;
-; src/tac.c:308:         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_SUBROUTINE, status));
-	movq	16(%rbp), %rdi	; tac_17(D)->global_vars, tac_17(D)->global_vars
-; src/tac.c:308:         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_SUBROUTINE, status));
-	movq	%rax, %rsi	; tmp114, _8
-; src/tac.c:314: }
-	popq	%rbp	;
-	popq	%r12	;
-; src/tac.c:308:         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_SUBROUTINE, status));
-	jmp	*list_append@GOTPCREL(%rip)	;
-	.p2align 4,,10
-	.p2align 3
-.L85:
-; src/tac.c:306:         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_VAR, status));
-	movq	%rdx, %rcx	; status,
-	movq	(%rbx), %rsi	; _1->type, _1->type
-	movl	$118, %edx	;,
-	jmp	.L84	;
-	.size	tac_import, .-tac_import
-	.section	.rodata.str1.8
-	.align 8
+	.string	"Unknown variable type"
 .LC5:
-	.string	"Error: create_attribute received NULL table or attributes list\n"
+	.string	"Expected variable name"
+	.section	.rodata.str1.8
 	.align 8
 .LC6:
-	.string	"[warning] Unsupported variable type for tac_variable: %d\n"
+	.string	"Failed to parse variable initializer"
 	.text
 	.p2align 4
-	.globl	tac_variable
-	.type	tac_variable, @function
-tac_variable:
-; src/tac.c:395:     switch (type) {
-	leal	-97(%rdx), %eax	;,
-; src/tac.c:392: void tac_variable(Variable* variable, TACStatus* status, VarType type) {
+	.type	parse_variable, @function
+parse_variable:
+	pushq	%r15	;
 	pushq	%r14	;
-	movl	%edx, %ecx	; tmp141, type
+	movq	%rsi, %r14	; tmp143, now_scope
 	pushq	%r13	;
 	pushq	%r12	;
+	movq	%rdx, %r12	; tmp144, parser
 	pushq	%rbp	;
+	movq	%rdi, %rbp	; tmp142, lexer
 	pushq	%rbx	;
-; src/tac.c:395:     switch (type) {
-	cmpl	$21, %eax	;, tmp114
-	ja	.L88	;,
-	leaq	.L90(%rip), %rdx	;, tmp116
-	movq	%rdi, %rbp	; tmp139, variable
-	movq	%rsi, %rbx	; tmp140, status
-	movslq	(%rdx,%rax,4), %rax	;, tmp118
-	addq	%rdx, %rax	; tmp116, tmp119
-	jmp	*%rax	; tmp119
-	.section	.rodata
-	.align 4
-	.align 4
-.L90:
-	.long	.L93-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L92-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L91-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L88-.L90
-	.long	.L87-.L90
-	.long	.L88-.L90
-	.long	.L87-.L90
-	.text
+	subq	$8, %rsp	;,
+; src/parser.c:369:     token = peek_current_token(lexer);
+	call	*peek_current_token@GOTPCREL(%rip)	;
+	movq	%rax, %rbx	; tmp145, token
+; src/parser.c:370:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	movl	24(%rax), %eax	; token_39->type, _1
+; src/parser.c:370:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	cmpl	$1, %eax	;, _1
+	je	.L25	;,
+; src/parser.c:370:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	cmpl	$6, %eax	;, _1
+	jne	.L28	;,
+; src/parser.c:370:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	movq	(%rbx), %rdi	; token_39->lexeme, token_39->lexeme
+	call	*is_builtin_type@GOTPCREL(%rip)	;
+; src/parser.c:370:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	testb	%al, %al	; tmp147
+	je	.L28	;,
+.L25:
+; src/parser.c:375:     Symbol* type = search_name(now_scope, token->lexeme);
+	movq	(%rbx), %rsi	; token_39->lexeme, token_39->lexeme
+	movq	%r14, %rdi	; now_scope,
+	call	*search_name@GOTPCREL(%rip)	;
+	movq	%rax, %r13	; tmp148, type
+; src/parser.c:376:     if (type != NULL) {
+	testq	%rax, %rax	; type
+	je	.L29	;,
+; src/parser.c:377:         if (type->kind != SYMBOL_TYPE && type->kind != SYMBOL_CLASS)
+	movl	32(%rax), %eax	; type_46->kind, _49
+; src/parser.c:377:         if (type->kind != SYMBOL_TYPE && type->kind != SYMBOL_CLASS)
+	cmpl	$6, %eax	;, _49
+	je	.L30	;,
+	testl	%eax, %eax	; _49
+	jne	.L56	;,
+.L30:
+; src/parser.c:381:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbp, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:382:     if (token->type != IDENTIFIER)
+	cmpl	$1, 24(%rax)	;, token_53->type
+; src/parser.c:381:     token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp151, token
+; src/parser.c:382:     if (token->type != IDENTIFIER)
+	jne	.L57	;,
+; src/parser.c:384:     Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
+	cmpb	$0, 10(%r12)	;, parser_41(D)->in_class
+; src/parser.c:384:     Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
+	movl	$3, %esi	;, iftmp.25_29
+; src/parser.c:384:     Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
+	je	.L32	;,
+.L58:
+; src/parser.c:384:     Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
+	cmpb	$1, 9(%r12)	;, parser_41(D)->in_method
+	sbbl	%esi, %esi	; iftmp.25_29
+	andl	$2, %esi	;, iftmp.25_29
+	addl	$3, %esi	;, iftmp.25_29
+.L32:
+; src/parser.c:384:     Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
+	movq	(%rbx), %rdi	; token_53->lexeme, token_53->lexeme
+	movq	%r14, %rcx	; now_scope,
+	movq	%r13, %rdx	; type,
+	call	*create_symbol@GOTPCREL(%rip)	;
+; src/parser.c:386:     token = peek_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbp, %rdi	; lexer,
+; src/parser.c:384:     Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
+	movq	%rax, %rbx	; tmp153, name
+; src/parser.c:386:     token = peek_next_token(lexer, true);
+	call	*peek_next_token@GOTPCREL(%rip)	;
+; src/parser.c:387:     if (token->type == SYMBOL && string_equal(token->lexeme, ASSIGN_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_59->type
+	je	.L33	;,
+.L35:
+; src/parser.c:385:     Expression* value = NULL;
+	xorl	%ebp, %ebp	; value
+.L34:
+; src/parser.c:396: }
+	addq	$8, %rsp	;,
+; src/parser.c:395:     return create_variable(type, name, value);
+	movq	%rbp, %rdx	; value,
+	movq	%rbx, %rsi	; name,
+	movq	%r13, %rdi	; type,
+; src/parser.c:396: }
+	popq	%rbx	;
+	popq	%rbp	;
+	popq	%r12	;
+	popq	%r13	;
+	popq	%r14	;
+	popq	%r15	;
+; src/parser.c:395:     return create_variable(type, name, value);
+	jmp	*create_variable@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
-.L88:
-; src/tac.c:418: }
-	popq	%rbx	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rdi	; stderr,
-	movl	$2, %esi	;,
+.L57:
+; src/parser.c:383:         parser_error("Expected variable name", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_41(D)->source_file, parser_41(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:383:         parser_error("Expected variable name", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC5(%rip), %rdi	;, tmp133
+; src/parser.c:383:         parser_error("Expected variable name", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp152, _17
+; src/parser.c:383:         parser_error("Expected variable name", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:384:     Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
+	cmpb	$0, 10(%r12)	;, parser_41(D)->in_class
+; src/parser.c:384:     Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
+	movl	$3, %esi	;, iftmp.25_29
+; src/parser.c:384:     Symbol* name = create_symbol(token->lexeme, (parser->in_class && !parser->in_method) ? SYMBOL_ATTRIBUTE : SYMBOL_VARIABLE, type, now_scope);
+	je	.L32	;,
+	jmp	.L58	;
+	.p2align 4,,10
+	.p2align 3
+.L28:
+; src/parser.c:371:         parser_error("Expected variable type", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_41(D)->source_file, parser_41(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:371:         parser_error("Expected variable type", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC2(%rip), %rdi	;, tmp121
+; src/parser.c:371:         parser_error("Expected variable type", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp146, _6
+; src/parser.c:371:         parser_error("Expected variable type", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:396: }
+	addq	$8, %rsp	;,
 	xorl	%eax, %eax	;
-; src/tac.c:418: }
-	popq	%rbp	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC6(%rip), %rdx	;, tmp138
-; src/tac.c:418: }
-	popq	%r12	;
-	popq	%r13	;
-	popq	%r14	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
-	.p2align 4,,10
-	.p2align 3
-.L87:
-; src/tac.c:418: }
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
 	popq	%r13	;
 	popq	%r14	;
+	popq	%r15	;
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L91:
-; src/tac.c:397:             var = create_var(variable->name, variable->type, type, status);
-	movq	(%rdi), %rsi	; variable_19(D)->type, variable_19(D)->type
-	movq	8(%rdi), %rdi	; variable_19(D)->name, variable_19(D)->name
-	movq	%rbx, %rcx	; status,
-	movl	$112, %edx	;,
-	call	create_var	;
-	movq	%rax, %rsi	; tmp142, var
-; src/tac.c:398:             list_append(status->current_subroutine->parameters, (pointer)var);
-	movq	8(%rbx), %rax	; status_20(D)->current_subroutine, status_20(D)->current_subroutine
-.L96:
-; src/tac.c:404:             list_append(status->tac->global_vars, (pointer)var);
-	movq	16(%rax), %rdi	;, _7->global_vars
-.L97:
-; src/tac.c:418: }
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	popq	%r14	;
-; src/tac.c:404:             list_append(status->tac->global_vars, (pointer)var);
-	jmp	*list_append@GOTPCREL(%rip)	;
+.L56:
+; src/parser.c:378:             parser_error("Expected a type for variable declaration", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_41(D)->source_file, parser_41(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:378:             parser_error("Expected a type for variable declaration", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC3(%rip), %rdi	;, tmp129
+; src/parser.c:378:             parser_error("Expected a type for variable declaration", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp149, _12
+; src/parser.c:378:             parser_error("Expected a type for variable declaration", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L30	;
 	.p2align 4,,10
 	.p2align 3
-.L92:
-; src/tac.c:403:             var = create_var(variable->name, variable->type, type, status);
-	movq	(%rdi), %rsi	; variable_19(D)->type, variable_19(D)->type
-	movq	8(%rdi), %rdi	; variable_19(D)->name, variable_19(D)->name
-	movq	%rbx, %rcx	; status,
-	movl	$102, %edx	;,
-	call	create_var	;
-	movq	%rax, %rsi	; tmp143, var
-; src/tac.c:404:             list_append(status->tac->global_vars, (pointer)var);
-	movq	(%rbx), %rax	; status_20(D)->tac, status_20(D)->tac
-	jmp	.L96	;
-	.p2align 4,,10
-	.p2align 3
-.L93:
-; src/tac.c:407:             AttributeTable* attr_table = (AttributeTable*)list_pop_back(status->tac->attribute_tables);
-	movq	(%rsi), %rax	; status_20(D)->tac, status_20(D)->tac
-	movq	(%rax), %rdi	; _9->attribute_tables, _9->attribute_tables
-	call	*list_pop_back@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp144, attr_table
-; src/tac.c:408:             list_append(status->tac->attribute_tables, (pointer)attr_table);
-	movq	(%rbx), %rax	; status_20(D)->tac, status_20(D)->tac
-	movq	%r12, %rsi	; attr_table,
-	movq	(%rax), %rdi	; _11->attribute_tables, _11->attribute_tables
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:409:             create_attribute(variable->name, variable->type, attr_table, 0, status);
-	movq	0(%rbp), %r13	; variable_19(D)->type, _13
-	movq	8(%rbp), %r14	; variable_19(D)->name, _14
-; src/tac.c:196:     Attribute* attr = (Attribute*)alloc_memory(sizeof(Attribute));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:197:     attr->var = create_var(var, type, VAR_ATTR, status);
-	movq	%rbx, %rcx	; status,
-	movl	$97, %edx	;,
-	movq	%r13, %rsi	; _13,
-	movq	%r14, %rdi	; _14,
-; src/tac.c:196:     Attribute* attr = (Attribute*)alloc_memory(sizeof(Attribute));
-	movq	%rax, %rbp	; tmp145, attr
-; src/tac.c:197:     attr->var = create_var(var, type, VAR_ATTR, status);
-	call	create_var	;
-; src/tac.c:197:     attr->var = create_var(var, type, VAR_ATTR, status);
-	movq	%r13, %xmm1	; _13, _13
-; src/tac.c:202:         table->size += get_type_size(type);
-	movq	%r13, %rdi	; _13,
-; src/tac.c:197:     attr->var = create_var(var, type, VAR_ATTR, status);
-	movq	%rax, %xmm0	; tmp146, tmp133
-	punpcklqdq	%xmm1, %xmm0	; _13, tmp133
-	movups	%xmm0, 0(%rbp)	; tmp133, MEM <vector(2) long unsigned int> [(void *)attr_32]
-; src/tac.c:201:         attr->offset = table->size;
-	movq	16(%r12), %rax	; attr_table_28->size, attr_table_28->size
-	movq	%rax, 16(%rbp)	; attr_table_28->size, attr_32->offset
-; src/tac.c:202:         table->size += get_type_size(type);
-	call	get_type_size	;
-; src/tac.c:204:     if (table == NULL || table->attributes == NULL)
-	movq	(%r12), %rdi	; attr_table_28->attributes, _38
-; src/tac.c:202:         table->size += get_type_size(type);
-	addq	%rax, 16(%r12)	; tmp147, attr_table_28->size
-; src/tac.c:207:         list_append(table->attributes, (pointer)attr);
-	movq	%rbp, %rsi	; attr,
-; src/tac.c:204:     if (table == NULL || table->attributes == NULL)
-	testq	%rdi, %rdi	; _38
-	jne	.L97	;,
-; src/tac.c:418: }
-	popq	%rbx	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	$63, %edx	;,
-; src/tac.c:418: }
-	popq	%rbp	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+.L33:
+; src/parser.c:387:     if (token->type == SYMBOL && string_equal(token->lexeme, ASSIGN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_59->lexeme, token_59->lexeme
+	movq	ASSIGN_SYMBOL(%rip), %rsi	; ASSIGN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:387:     if (token->type == SYMBOL && string_equal(token->lexeme, ASSIGN_SYMBOL)) {
+	testb	%al, %al	; tmp155
+	je	.L35	;,
+; src/parser.c:388:         token = get_next_token(lexer, true);  // consume '='
+	movq	%rbp, %rdi	; lexer,
 	movl	$1, %esi	;,
-; src/tac.c:418: }
-	popq	%r12	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rcx	; stderr,
-	leaq	.LC5(%rip), %rdi	;, tmp136
-; src/tac.c:418: }
-	popq	%r13	;
-	popq	%r14	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	jmp	*fwrite@GOTPCREL(%rip)	;
-	.size	tac_variable, .-tac_variable
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:389:         token = get_next_token(lexer, true);
+	movq	%rbp, %rdi	; lexer,
+	movl	$1, %esi	;,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:390:         value = parse_expression(lexer, now_scope, parser);
+	movq	%rbp, %rdi	; lexer,
+	movq	%r12, %rdx	; parser,
+	movq	%r14, %rsi	; now_scope,
+; src/parser.c:389:         token = get_next_token(lexer, true);
+	movq	%rax, %r15	; tmp156, token
+; src/parser.c:390:         value = parse_expression(lexer, now_scope, parser);
+	call	parse_expression	;
+	movq	%rax, %rbp	; tmp157, value
+; src/parser.c:391:         if (value == NULL)
+	testq	%rax, %rax	; value
+	jne	.L34	;,
+; src/parser.c:392:             parser_error("Failed to parse variable initializer", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_41(D)->source_file, parser_41(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:392:             parser_error("Failed to parse variable initializer", token, get_full_path(parser->source_file));
+	movq	%r15, %rsi	; token,
+	leaq	.LC6(%rip), %rdi	;, tmp138
+; src/parser.c:392:             parser_error("Failed to parse variable initializer", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp158, _26
+; src/parser.c:392:             parser_error("Failed to parse variable initializer", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L34	;
+	.p2align 4,,10
+	.p2align 3
+.L29:
+; src/parser.c:380:         parser_error("Unknown variable type", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_41(D)->source_file, parser_41(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:380:         parser_error("Unknown variable type", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC4(%rip), %rdi	;, tmp131
+; src/parser.c:380:         parser_error("Unknown variable type", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp150, _14
+; src/parser.c:380:         parser_error("Unknown variable type", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L30	;
+	.size	parse_variable, .-parse_variable
 	.section	.rodata.str1.8
 	.align 8
 .LC7:
-	.string	"[warning] Unsupported variable access with NULL base\n"
-	.align 8
-.LC8:
-	.string	"[warning] Failed to generate variable access for base\n"
-	.align 8
-.LC9:
-	.string	"[warning] Attempting to access attribute of non-object type: %s\n"
-	.align 8
-.LC10:
-	.string	"[warning] Attribute '%s' not found in type '%s'\n"
-	.align 8
-.LC11:
-	.string	"[warning] Symbol '%s' in type '%s' is not an attribute\n"
-	.align 8
-.LC12:
-	.string	"[warning] Attempting to index non-array type: %s\n"
+	.string	"Failed to parse parenthesized expression"
 	.section	.rodata.str1.1
-.LC13:
-	.string	"arr"
+.LC8:
+	.string	"Expected ')' after expression"
 	.section	.rodata.str1.8
 	.align 8
+.LC9:
+	.string	"Failed to parse operand of unary '!'"
+	.align 8
+.LC10:
+	.string	"Failed to parse operand of unary '-'"
+	.align 8
+.LC11:
+	.string	"Expected variable name in variable access"
+	.align 8
+.LC12:
+	.string	"Cannot call undefined variable"
+	.align 8
+.LC13:
+	.string	"Cannot call non-function variable"
+	.align 8
 .LC14:
-	.string	"[warning] Failed to generate variable access for index\n"
+	.string	"Failed to parse function call argument"
 	.align 8
 .LC15:
-	.string	"[warning] Attempting to call non-function, kind: %u, type name: %s\n"
+	.string	"Expected ',' or ')' after function call argument"
 	.align 8
 .LC16:
-	.string	"[warning] Unsupported variable access type for tac_variable_access: %u\n"
+	.string	"Failed to parse sequence index"
+	.align 8
+.LC17:
+	.string	"Expected ']' after sequence index"
+	.align 8
+.LC18:
+	.string	"Cannot access attribute without a valid scope"
+	.align 8
+.LC19:
+	.string	"Expected attribute name after '.'"
+	.section	.rodata.str1.1
+.LC20:
+	.string	"Unknown attribute name"
+	.section	.rodata.str1.8
+	.align 8
+.LC21:
+	.string	"Failed to parse variable access"
+	.align 8
+.LC22:
+	.string	"Unexpected token in primary expression"
 	.text
 	.p2align 4
-	.globl	tac_variable_access
-	.type	tac_variable_access, @function
-tac_variable_access:
+	.type	parse_primary, @function
+parse_primary:
 	pushq	%r15	;
 	pushq	%r14	;
 	pushq	%r13	;
+	movq	%rsi, %r13	; tmp294, now_scope
+	pushq	%r12	;
+	movq	%rdx, %r12	; tmp295, parser
+	pushq	%rbp	;
+	pushq	%rbx	;
+	movq	%rdi, %rbx	; tmp293, lexer
+	subq	$40, %rsp	;,
+; src/parser.c:699:     token = peek_current_token(lexer);
+	call	*peek_current_token@GOTPCREL(%rip)	;
+	movq	%rax, %rbp	; tmp296, token
+; src/parser.c:705:     if (token->type == INTEGER) {
+	movl	24(%rax), %eax	; token_62->type, _1
+; src/parser.c:705:     if (token->type == INTEGER) {
+	cmpl	$2, %eax	;, _1
+	je	.L180	;,
+; src/parser.c:708:     } else if (token->type == FLOAT) {
+	cmpl	$3, %eax	;, _1
+	je	.L181	;,
+; src/parser.c:711:     } else if (token->type == STRING) {
+	cmpl	$4, %eax	;, _1
+	je	.L182	;,
+; src/parser.c:714:     } else if (token->type == KEYWORD && string_equal(token->lexeme, TRUE_KEYWORD)) {
+	cmpl	$6, %eax	;, _1
+	je	.L183	;,
+.L64:
+; src/parser.c:720:     } else if (token->type == SYMBOL && string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	cmpl	$5, %eax	;, _1
+	je	.L68	;,
+; src/parser.c:753:     } else if (token->type == IDENTIFIER || (token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD) && parser->in_method)) {
+	cmpl	$1, %eax	;, _1
+	je	.L70	;,
+.L71:
+; src/parser.c:762:         parser_error("Unexpected token in primary expression", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:762:         parser_error("Unexpected token in primary expression", token, get_full_path(parser->source_file));
+	movq	%rbp, %rsi	; token,
+	leaq	.LC22(%rip), %rdi	;, tmp289
+; src/parser.c:762:         parser_error("Unexpected token in primary expression", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp358, _42
+; src/parser.c:762:         parser_error("Unexpected token in primary expression", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L76:
+; src/parser.c:768: }
+	addq	$40, %rsp	;,
+	xorl	%eax, %eax	;
+	popq	%rbx	;
+	popq	%rbp	;
+	popq	%r12	;
+	popq	%r13	;
+	popq	%r14	;
+	popq	%r15	;
+	ret	
+	.p2align 4,,10
+	.p2align 3
+.L181:
+; src/parser.c:710:         str_value = token->lexeme;
+	movq	0(%rbp), %rsi	; token_62->lexeme, str_value
+; src/parser.c:704:     VariableAccess* variable_value = NULL;
+	xorl	%r14d, %r14d	; variable_value
+; src/parser.c:703:     Primary* prim_value = NULL;
+	xorl	%ecx, %ecx	; prim_value
+; src/parser.c:702:     Expression* expr_value = NULL;
+	xorl	%edx, %edx	; expr_value
+; src/parser.c:709:         type = PRIM_FLOAT;
+	movl	$1, %ebx	;, type
+.L61:
+; src/parser.c:768: }
+	addq	$40, %rsp	;,
+; src/parser.c:767:     return create_primary(type, str_value, expr_value, prim_value, variable_value);
+	movq	%r14, %r8	; variable_value,
+	movl	%ebx, %edi	; type,
+; src/parser.c:768: }
+	popq	%rbx	;
+	popq	%rbp	;
+	popq	%r12	;
+	popq	%r13	;
+	popq	%r14	;
+	popq	%r15	;
+; src/parser.c:767:     return create_primary(type, str_value, expr_value, prim_value, variable_value);
+	jmp	*create_primary@GOTPCREL(%rip)	;
+	.p2align 4,,10
+	.p2align 3
+.L180:
+; src/parser.c:707:         str_value = token->lexeme;
+	movq	0(%rbp), %rsi	; token_62->lexeme, str_value
+; src/parser.c:704:     VariableAccess* variable_value = NULL;
+	xorl	%r14d, %r14d	; variable_value
+; src/parser.c:703:     Primary* prim_value = NULL;
+	xorl	%ecx, %ecx	; prim_value
+; src/parser.c:702:     Expression* expr_value = NULL;
+	xorl	%edx, %edx	; expr_value
+; src/parser.c:706:         type = PRIM_INTEGER;
+	xorl	%ebx, %ebx	; type
+	jmp	.L61	;
+	.p2align 4,,10
+	.p2align 3
+.L182:
+; src/parser.c:713:         str_value = token->lexeme;
+	movq	0(%rbp), %rsi	; token_62->lexeme, str_value
+; src/parser.c:704:     VariableAccess* variable_value = NULL;
+	xorl	%r14d, %r14d	; variable_value
+; src/parser.c:703:     Primary* prim_value = NULL;
+	xorl	%ecx, %ecx	; prim_value
+; src/parser.c:702:     Expression* expr_value = NULL;
+	xorl	%edx, %edx	; expr_value
+; src/parser.c:712:         type = PRIM_STRING;
+	movl	$2, %ebx	;, type
+	jmp	.L61	;
+	.p2align 4,,10
+	.p2align 3
+.L183:
+; src/parser.c:714:     } else if (token->type == KEYWORD && string_equal(token->lexeme, TRUE_KEYWORD)) {
+	movq	0(%rbp), %rdi	; token_62->lexeme, token_62->lexeme
+	movq	TRUE_KEYWORD(%rip), %rsi	; TRUE_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:714:     } else if (token->type == KEYWORD && string_equal(token->lexeme, TRUE_KEYWORD)) {
+	testb	%al, %al	; tmp297
+	jne	.L184	;,
+; src/parser.c:717:     } else if (token->type == KEYWORD && string_equal(token->lexeme, FALSE_KEYWORD)) {
+	movl	24(%rbp), %eax	; token_62->type, _6
+; src/parser.c:717:     } else if (token->type == KEYWORD && string_equal(token->lexeme, FALSE_KEYWORD)) {
+	cmpl	$6, %eax	;, _6
+	jne	.L64	;,
+; src/parser.c:717:     } else if (token->type == KEYWORD && string_equal(token->lexeme, FALSE_KEYWORD)) {
+	movq	0(%rbp), %rdi	; token_62->lexeme, token_62->lexeme
+	movq	FALSE_KEYWORD(%rip), %rsi	; FALSE_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:717:     } else if (token->type == KEYWORD && string_equal(token->lexeme, FALSE_KEYWORD)) {
+	testb	%al, %al	; tmp298
+	jne	.L67	;,
+; src/parser.c:720:     } else if (token->type == SYMBOL && string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movl	24(%rbp), %eax	; token_62->type, pretmp_53
+; src/parser.c:720:     } else if (token->type == SYMBOL && string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	cmpl	$5, %eax	;, pretmp_53
+	jne	.L79	;,
+	.p2align 4,,10
+	.p2align 3
+.L68:
+; src/parser.c:720:     } else if (token->type == SYMBOL && string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movq	0(%rbp), %rdi	; token_62->lexeme, token_62->lexeme
+	movq	L_PAREN_SYMBOL(%rip), %rsi	; L_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:720:     } else if (token->type == SYMBOL && string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp299
+	jne	.L185	;,
+; src/parser.c:735:     } else if (token->type == SYMBOL && string_equal(token->lexeme, NOT_SYMBOL)) {
+	movl	24(%rbp), %eax	; token_62->type, pretmp_53
+; src/parser.c:735:     } else if (token->type == SYMBOL && string_equal(token->lexeme, NOT_SYMBOL)) {
+	cmpl	$5, %eax	;, pretmp_53
+	jne	.L79	;,
+; src/parser.c:735:     } else if (token->type == SYMBOL && string_equal(token->lexeme, NOT_SYMBOL)) {
+	movq	0(%rbp), %rdi	; token_62->lexeme, token_62->lexeme
+	movq	NOT_SYMBOL(%rip), %rsi	; NOT_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:735:     } else if (token->type == SYMBOL && string_equal(token->lexeme, NOT_SYMBOL)) {
+	testb	%al, %al	; tmp306
+	jne	.L186	;,
+; src/parser.c:744:     } else if (token->type == SYMBOL && string_equal(token->lexeme, SUB_SYMBOL)) {
+	movl	24(%rbp), %eax	; token_62->type, pretmp_53
+; src/parser.c:744:     } else if (token->type == SYMBOL && string_equal(token->lexeme, SUB_SYMBOL)) {
+	cmpl	$5, %eax	;, pretmp_53
+	jne	.L79	;,
+; src/parser.c:744:     } else if (token->type == SYMBOL && string_equal(token->lexeme, SUB_SYMBOL)) {
+	movq	0(%rbp), %rdi	; token_62->lexeme, token_62->lexeme
+	movq	SUB_SYMBOL(%rip), %rsi	; SUB_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:744:     } else if (token->type == SYMBOL && string_equal(token->lexeme, SUB_SYMBOL)) {
+	testb	%al, %al	; tmp310
+	jne	.L80	;,
+; src/parser.c:753:     } else if (token->type == IDENTIFIER || (token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD) && parser->in_method)) {
+	movl	24(%rbp), %eax	; token_62->type, pretmp_53
+.L79:
+; src/parser.c:753:     } else if (token->type == IDENTIFIER || (token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD) && parser->in_method)) {
+	cmpl	$1, %eax	;, pretmp_53
+	je	.L70	;,
+; src/parser.c:753:     } else if (token->type == IDENTIFIER || (token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD) && parser->in_method)) {
+	cmpl	$6, %eax	;, pretmp_53
+	jne	.L71	;,
+; src/parser.c:753:     } else if (token->type == IDENTIFIER || (token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD) && parser->in_method)) {
+	movq	0(%rbp), %rdi	; token_62->lexeme, token_62->lexeme
+	movq	SELF_KEYWORD(%rip), %rsi	; SELF_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:753:     } else if (token->type == IDENTIFIER || (token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD) && parser->in_method)) {
+	testb	%al, %al	; tmp315
+	je	.L71	;,
+; src/parser.c:753:     } else if (token->type == IDENTIFIER || (token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD) && parser->in_method)) {
+	cmpb	$0, 9(%r12)	;, parser_71(D)->in_method
+	je	.L71	;,
+.L70:
+; src/parser.c:771:     Token* token = peek_current_token(lexer);
+	movq	%rbx, %rdi	; lexer,
+	call	*peek_current_token@GOTPCREL(%rip)	;
+	movq	%rax, %r14	; tmp314, token
+; src/parser.c:772:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD))) {
+	movl	24(%rax), %eax	; token_107->type, _108
+; src/parser.c:772:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD))) {
+	cmpl	$1, %eax	;, _108
+	je	.L83	;,
+; src/parser.c:772:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD))) {
+	cmpl	$6, %eax	;, _108
+	jne	.L86	;,
+; src/parser.c:772:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD))) {
+	movq	(%r14), %rdi	; token_107->lexeme, token_107->lexeme
+	movq	SELF_KEYWORD(%rip), %rsi	; SELF_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:772:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && string_equal(token->lexeme, SELF_KEYWORD))) {
+	testb	%al, %al	; tmp317
+	je	.L86	;,
+.L83:
+; src/parser.c:780:     base_name = search_name(now_scope, token->lexeme);
+	movq	(%r14), %rsi	; token_107->lexeme, token_107->lexeme
+	movq	%r13, %rdi	; now_scope,
+	call	*search_name@GOTPCREL(%rip)	;
+; src/parser.c:781:     VariableAccess* base = create_variable_access(VAR_NAME, NULL, base_name, NULL, NULL);
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	movq	%rax, %rdx	; base_name,
+	xorl	%edi, %edi	;
+; src/parser.c:780:     base_name = search_name(now_scope, token->lexeme);
+	movq	%rax, 8(%rsp)	; base_name, %sfp
+; src/parser.c:781:     VariableAccess* base = create_variable_access(VAR_NAME, NULL, base_name, NULL, NULL);
+	call	*create_variable_access@GOTPCREL(%rip)	;
+; src/parser.c:782:     token = peek_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:781:     VariableAccess* base = create_variable_access(VAR_NAME, NULL, base_name, NULL, NULL);
+	movq	%rax, %r14	; tmp319, variable_value
+; src/parser.c:782:     token = peek_next_token(lexer, true);
+	call	*peek_next_token@GOTPCREL(%rip)	;
+; src/parser.c:783:     while (token->type == SYMBOL) {
+	cmpl	$5, 24(%rax)	;, token_117->type
+; src/parser.c:782:     token = peek_next_token(lexer, true);
+	movq	%rax, %rdx	; tmp320, token
+; src/parser.c:783:     while (token->type == SYMBOL) {
+	jne	.L87	;,
+; src/parser.c:779:     SymbolTable* var_scope = NULL;
+	movq	$0, (%rsp)	;, %sfp
+; src/parser.c:777:     Symbol* current_type = NULL;
+	xorl	%r15d, %r15d	; class_name
+.L113:
+; src/parser.c:784:         if (base_name != NULL) {
+	movq	8(%rsp), %rax	; %sfp, base_name
+	testq	%rax, %rax	; base_name
+	je	.L88	;,
+; src/parser.c:786:             if (base_name->type != NULL)  // subroutine or variable or attribute or parameter
+	movq	(%rax), %r15	; base_name_220->type, class_name
+; src/parser.c:785:             current_type = base_name;     // class or type
+	testq	%r15, %r15	; class_name
+	cmove	%rax, %r15	; class_name,, base_name, class_name
+.L88:
+; src/parser.c:789:         if (var_scope == NULL && current_type != NULL && current_type->kind == SYMBOL_CLASS)
+	cmpq	$0, (%rsp)	;, %sfp
+	jne	.L89	;,
+	testq	%r15, %r15	; class_name
+	je	.L89	;,
+; src/parser.c:789:         if (var_scope == NULL && current_type != NULL && current_type->kind == SYMBOL_CLASS)
+	movl	32(%r15), %esi	; current_type_122->kind,
+	movq	$0, (%rsp)	;, %sfp
+	testl	%esi, %esi	;
+	jne	.L89	;,
+; src/parser.c:790:             var_scope = current_type->ast_node.class->class_scope;
+	movq	24(%r15), %rax	; current_type_122->ast_node.class, current_type_122->ast_node.class
+	movq	16(%rax), %rax	; _126->class_scope, var_scope
+	movq	%rax, (%rsp)	; var_scope, %sfp
+.L89:
+; src/parser.c:791:         if (string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movq	(%rdx), %rdi	; token_237->lexeme, token_237->lexeme
+	movq	L_PAREN_SYMBOL(%rip), %rsi	; L_PAREN_SYMBOL,
+	movq	%rdx, 16(%rsp)	; token, %sfp
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:791:         if (string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movq	16(%rsp), %rdx	; %sfp, token
+	testb	%al, %al	; tmp321
+	jne	.L187	;,
+; src/parser.c:824:         } else if (string_equal(token->lexeme, L_BRACKET_SYMBOL)) {
+	movq	(%rdx), %rdi	; token_237->lexeme, token_237->lexeme
+	movq	L_BRACKET_SYMBOL(%rip), %rsi	; L_BRACKET_SYMBOL,
+	movq	%rdx, 16(%rsp)	; token, %sfp
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:824:         } else if (string_equal(token->lexeme, L_BRACKET_SYMBOL)) {
+	movq	16(%rsp), %rdx	; %sfp, token
+	testb	%al, %al	; tmp339
+	je	.L104	;,
+; src/parser.c:825:             token = get_next_token(lexer, true);  // consume '['
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:826:             token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:827:             Expression* index = parse_expression(lexer, now_scope, parser);
+	movq	%r12, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:826:             token = get_next_token(lexer, true);
+	movq	%rax, 24(%rsp)	; tmp340, %sfp
+; src/parser.c:827:             Expression* index = parse_expression(lexer, now_scope, parser);
+	call	parse_expression	;
+	movq	%rax, 16(%rsp)	; index, %sfp
+; src/parser.c:828:             if (index == NULL)
+	testq	%rax, %rax	; index
+	je	.L188	;,
+.L105:
+; src/parser.c:830:             token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:831:             if (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACKET_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_186->type
+; src/parser.c:830:             token = get_next_token(lexer, true);
+	movq	%rax, %rcx	; tmp343, token
+; src/parser.c:831:             if (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACKET_SYMBOL)) {
+	jne	.L107	;,
+; src/parser.c:831:             if (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACKET_SYMBOL)) {
+	movq	(%rax), %rdi	; token_186->lexeme, token_186->lexeme
+	movq	R_BRACKET_SYMBOL(%rip), %rsi	; R_BRACKET_SYMBOL,
+	movq	%rax, 24(%rsp)	; token, %sfp
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:831:             if (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACKET_SYMBOL)) {
+	movq	24(%rsp), %rcx	; %sfp, token
+	testb	%al, %al	; tmp345
+	je	.L107	;,
+; src/parser.c:836:             base = create_variable_access(VAR_GET_SEQ, base, NULL, index, NULL);
+	movq	%r14, %rsi	; variable_value,
+	movq	16(%rsp), %rcx	; %sfp,
+	xorl	%r8d, %r8d	;
+	xorl	%edx, %edx	;
+	movl	$3, %edi	;,
+	call	*create_variable_access@GOTPCREL(%rip)	;
+	movq	%rax, %r14	; tmp346, variable_value
+.L103:
+; src/parser.c:872:         token = peek_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*peek_next_token@GOTPCREL(%rip)	;
+; src/parser.c:783:     while (token->type == SYMBOL) {
+	cmpl	$5, 24(%rax)	;, token_223->type
+; src/parser.c:872:         token = peek_next_token(lexer, true);
+	movq	%rax, %rdx	; tmp356, token
+; src/parser.c:783:     while (token->type == SYMBOL) {
+	je	.L113	;,
+.L87:
+; src/parser.c:756:         if (variable_value == NULL) {
+	testq	%r14, %r14	; variable_value
+	je	.L85	;,
+; src/parser.c:703:     Primary* prim_value = NULL;
+	xorl	%ecx, %ecx	; prim_value
+; src/parser.c:702:     Expression* expr_value = NULL;
+	xorl	%edx, %edx	; expr_value
+; src/parser.c:701:     string str_value = NULL;
+	xorl	%esi, %esi	; str_value
+; src/parser.c:754:         type = PRIM_VARIABLE_ACCESS;
+	movl	$8, %ebx	;, type
+	jmp	.L61	;
+	.p2align 4,,10
+	.p2align 3
+.L104:
+; src/parser.c:837:         } else if (string_equal(token->lexeme, DOT_SYMBOL)) {
+	movq	(%rdx), %rdi	; token_237->lexeme, token_237->lexeme
+	movq	DOT_SYMBOL(%rip), %rsi	; DOT_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:837:         } else if (string_equal(token->lexeme, DOT_SYMBOL)) {
+	testb	%al, %al	; tmp347
+	je	.L87	;,
+; src/parser.c:838:             token = get_next_token(lexer, true);  // consume '.'
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:839:             token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:840:             if (var_scope == NULL) {
+	cmpq	$0, (%rsp)	;, %sfp
+	je	.L189	;,
+; src/parser.c:845:             if (token->type != IDENTIFIER) {
+	cmpl	$1, 24(%rax)	;, token_198->type
+	jne	.L190	;,
+; src/parser.c:850:             base_name = search_name(var_scope, token->lexeme);
+	movq	(%rax), %rsi	; token_198->lexeme, token_198->lexeme
+	movq	(%rsp), %rdi	; %sfp,
+	movq	%rax, 16(%rsp)	; token, %sfp
+	call	*search_name@GOTPCREL(%rip)	;
+	movq	%rax, 8(%rsp)	; base_name, %sfp
+; src/parser.c:851:             if (base_name == NULL) {
+	testq	%rax, %rax	; base_name
+	je	.L191	;,
+.L110:
+; src/parser.c:867:             base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
+	movq	%r14, %rsi	; variable_value,
+	movq	8(%rsp), %rdx	; %sfp,
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	movl	$2, %edi	;,
+; src/parser.c:868:             current_type = NULL;
+	xorl	%r15d, %r15d	; class_name
+; src/parser.c:867:             base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
+	call	*create_variable_access@GOTPCREL(%rip)	;
+; src/parser.c:869:             var_scope = NULL;
+	movq	$0, (%rsp)	;, %sfp
+; src/parser.c:867:             base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
+	movq	%rax, %r14	; tmp355, variable_value
+	jmp	.L103	;
+	.p2align 4,,10
+	.p2align 3
+.L187:
+; src/parser.c:792:             token = get_next_token(lexer, true);  // consume '('
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:793:             if (base_name == NULL)
+	cmpq	$0, 8(%rsp)	;, %sfp
+; src/parser.c:792:             token = get_next_token(lexer, true);  // consume '('
+	movq	%rax, %r15	; tmp322, token
+; src/parser.c:793:             if (base_name == NULL)
+	je	.L192	;,
+; src/parser.c:795:             else if (base_name->kind == SYMBOL_CLASS) {
+	movq	8(%rsp), %rax	; %sfp, base_name
+	movl	32(%rax), %eax	; base_name_220->kind, _135
+; src/parser.c:795:             else if (base_name->kind == SYMBOL_CLASS) {
+	testl	%eax, %eax	; _135
+	je	.L193	;,
+.L93:
+; src/parser.c:800:             if (base_name != NULL && base_name->kind != SYMBOL_FUNCTION && base_name->kind != SYMBOL_METHOD)
+	subl	$1, %eax	;, tmp255
+	cmpl	$1, %eax	;, tmp255
+	ja	.L194	;,
+.L92:
+; src/parser.c:802:             token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r15	; tmp328, token
+; src/parser.c:803:             list(Expression*) args = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+	movq	%rax, (%rsp)	; tmp329, %sfp
+	.p2align 4,,10
+	.p2align 3
+.L96:
+; src/parser.c:804:             while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%r15)	;, token_154->type
+	je	.L195	;,
+.L102:
+; src/parser.c:805:                 Expression* arg = parse_expression(lexer, now_scope, parser);
+	movq	%r12, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_expression	;
+	movq	%rax, %r8	; tmp330, arg
+; src/parser.c:806:                 if (arg == NULL)
+	testq	%rax, %rax	; arg
+	je	.L196	;,
+.L97:
+; src/parser.c:808:                 list_append(args, (pointer)arg);
+	movq	%r8, %rsi	; arg,
+	movq	(%rsp), %rdi	; %sfp,
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:809:                 token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:810:                 if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL))
+	cmpl	$5, 24(%rax)	;, token_155->type
+; src/parser.c:809:                 token = get_next_token(lexer, true);
+	movq	%rax, %r15	; tmp332, token
+; src/parser.c:810:                 if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL))
+	je	.L98	;,
+.L101:
+; src/parser.c:813:                     parser_error("Expected ',' or ')' after function call argument", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:813:                     parser_error("Expected ',' or ')' after function call argument", token, get_full_path(parser->source_file));
+	movq	%r15, %rsi	; token,
+	leaq	.LC15(%rip), %rdi	;, tmp261
+; src/parser.c:813:                     parser_error("Expected ',' or ')' after function call argument", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp333, _166
+; src/parser.c:813:                     parser_error("Expected ',' or ')' after function call argument", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L85:
+; src/parser.c:757:             parser_error("Failed to parse variable access", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:757:             parser_error("Failed to parse variable access", token, get_full_path(parser->source_file));
+	movq	%rbp, %rsi	; token,
+	leaq	.LC21(%rip), %rdi	;, tmp287
+; src/parser.c:757:             parser_error("Failed to parse variable access", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp357, _40
+; src/parser.c:757:             parser_error("Failed to parse variable access", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:759:             return NULL;
+	jmp	.L76	;
+	.p2align 4,,10
+	.p2align 3
+.L195:
+; src/parser.c:804:             while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%r15), %rdi	; token_154->lexeme, token_154->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:804:             while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp337
+	je	.L102	;,
+; src/parser.c:818:             base = create_variable_access(VAR_FUNC_CALL, base, NULL, NULL, args);
+	xorl	%ecx, %ecx	;
+	movq	%r14, %rsi	; variable_value,
+	movq	(%rsp), %r8	; %sfp,
+	xorl	%edx, %edx	;
+	movl	$1, %edi	;,
+	call	*create_variable_access@GOTPCREL(%rip)	;
+	movq	%rax, %r14	; tmp338, variable_value
+; src/parser.c:819:             base_name = base_name->type;
+	movq	8(%rsp), %rax	; %sfp, base_name
+	movq	(%rax), %rax	; base_name_174->type, base_name
+; src/parser.c:822:             if (base_name->kind == SYMBOL_CLASS)
+	movl	32(%rax), %ecx	; base_name_175->kind,
+; src/parser.c:819:             base_name = base_name->type;
+	movq	%rax, 8(%rsp)	; base_name, %sfp
+; src/parser.c:822:             if (base_name->kind == SYMBOL_CLASS)
+	testl	%ecx, %ecx	;
+	jne	.L117	;,
+; src/parser.c:823:                 var_scope = base_name->ast_node.class->class_scope;
+	movq	24(%rax), %rax	; base_name_175->ast_node.class, base_name_175->ast_node.class
+; src/parser.c:820:             current_type = NULL;
+	xorl	%r15d, %r15d	; class_name
+; src/parser.c:823:                 var_scope = base_name->ast_node.class->class_scope;
+	movq	16(%rax), %rax	; _177->class_scope, var_scope
+	movq	%rax, (%rsp)	; var_scope, %sfp
+	jmp	.L103	;
+	.p2align 4,,10
+	.p2align 3
+.L98:
+; src/parser.c:810:                 if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL))
+	movq	(%rax), %rdi	; token_155->lexeme, token_155->lexeme
+	movq	COMMA_SYMBOL(%rip), %rsi	; COMMA_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:810:                 if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL))
+	testb	%al, %al	; tmp334
+	jne	.L197	;,
+; src/parser.c:812:                 else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%r15)	;, token_155->type
+	jne	.L101	;,
+; src/parser.c:812:                 else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%r15), %rdi	; token_155->lexeme, token_155->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:812:                 else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp336
+	jne	.L96	;,
+	jmp	.L101	;
+	.p2align 4,,10
+	.p2align 3
+.L196:
+; src/parser.c:807:                     parser_error("Failed to parse function call argument", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	movq	%rax, 16(%rsp)	; arg, %sfp
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:807:                     parser_error("Failed to parse function call argument", token, get_full_path(parser->source_file));
+	movq	%r15, %rsi	; token,
+	leaq	.LC14(%rip), %rdi	;,
+; src/parser.c:807:                     parser_error("Failed to parse function call argument", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp331, _153
+; src/parser.c:807:                     parser_error("Failed to parse function call argument", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	movq	16(%rsp), %r8	; %sfp, arg
+	jmp	.L97	;
+	.p2align 4,,10
+	.p2align 3
+.L197:
+; src/parser.c:811:                     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r15	; tmp335, token
+; src/parser.c:811:                     token = get_next_token(lexer, true);
+	jmp	.L96	;
+	.p2align 4,,10
+	.p2align 3
+.L191:
+; src/parser.c:853:                 if (current_type != NULL) {
+	testq	%r15, %r15	; class_name
+	movq	16(%rsp), %rcx	; %sfp, token
+	je	.L111	;,
+; src/parser.c:854:                     if (current_type->kind == SYMBOL_CLASS)
+	movl	32(%r15), %edx	; current_type_122->kind,
+	testl	%edx, %edx	;
+	je	.L178	;,
+; src/parser.c:856:                     else if (current_type->type != NULL && current_type->type->kind == SYMBOL_CLASS)
+	movq	(%r15), %r15	; current_type_122->type, class_name
+; src/parser.c:856:                     else if (current_type->type != NULL && current_type->type->kind == SYMBOL_CLASS)
+	testq	%r15, %r15	; class_name
+	je	.L111	;,
+; src/parser.c:856:                     else if (current_type->type != NULL && current_type->type->kind == SYMBOL_CLASS)
+	movl	32(%r15), %eax	; _211->kind,
+	testl	%eax, %eax	;
+	je	.L178	;,
+; src/parser.c:852:                 string class_name = NULL;
+	xorl	%r15d, %r15d	; class_name
+	.p2align 4,,10
+	.p2align 3
+.L111:
+; src/parser.c:859:                 string name = make_method_name(class_name, token->lexeme);
+	movq	(%rcx), %rsi	; token_198->lexeme, token_198->lexeme
+	movq	%rcx, 16(%rsp)	; token, %sfp
+	movq	%r15, %rdi	; class_name,
+	call	*make_method_name@GOTPCREL(%rip)	;
+; src/parser.c:860:                 base_name = search_name_use_strcmp(var_scope, name);
+	movq	(%rsp), %rdi	; %sfp,
+; src/parser.c:859:                 string name = make_method_name(class_name, token->lexeme);
+	movq	%rax, %rsi	; tmp352, name
+; src/parser.c:860:                 base_name = search_name_use_strcmp(var_scope, name);
+	call	*search_name_use_strcmp@GOTPCREL(%rip)	;
+; src/parser.c:862:             if (base_name == NULL) {
+	movq	16(%rsp), %rcx	; %sfp, token
+	testq	%rax, %rax	; base_name
+; src/parser.c:860:                 base_name = search_name_use_strcmp(var_scope, name);
+	movq	%rax, 8(%rsp)	; base_name, %sfp
+; src/parser.c:862:             if (base_name == NULL) {
+	jne	.L110	;,
+; src/parser.c:863:                 parser_error("Unknown attribute name", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file,
+	movq	%rcx, (%rsp)	; token, %sfp
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:863:                 parser_error("Unknown attribute name", token, get_full_path(parser->source_file));
+	movq	(%rsp), %rsi	; %sfp,
+	leaq	.LC20(%rip), %rdi	;, tmp285
+; src/parser.c:863:                 parser_error("Unknown attribute name", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp354, _219
+; src/parser.c:863:                 parser_error("Unknown attribute name", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L85	;
+	.p2align 4,,10
+	.p2align 3
+.L184:
+; src/parser.c:716:         str_value = token->lexeme;
+	movq	0(%rbp), %rsi	; token_62->lexeme, str_value
+; src/parser.c:704:     VariableAccess* variable_value = NULL;
+	xorl	%r14d, %r14d	; variable_value
+; src/parser.c:703:     Primary* prim_value = NULL;
+	xorl	%ecx, %ecx	; prim_value
+; src/parser.c:702:     Expression* expr_value = NULL;
+	xorl	%edx, %edx	; expr_value
+; src/parser.c:715:         type = PRIM_TRUE;
+	movl	$3, %ebx	;, type
+; src/parser.c:716:         str_value = token->lexeme;
+	jmp	.L61	;
+	.p2align 4,,10
+	.p2align 3
+.L67:
+; src/parser.c:719:         str_value = token->lexeme;
+	movq	0(%rbp), %rsi	; token_62->lexeme, str_value
+; src/parser.c:704:     VariableAccess* variable_value = NULL;
+	xorl	%r14d, %r14d	; variable_value
+; src/parser.c:703:     Primary* prim_value = NULL;
+	xorl	%ecx, %ecx	; prim_value
+; src/parser.c:702:     Expression* expr_value = NULL;
+	xorl	%edx, %edx	; expr_value
+; src/parser.c:718:         type = PRIM_FALSE;
+	movl	$4, %ebx	;, type
+; src/parser.c:719:         str_value = token->lexeme;
+	jmp	.L61	;
+	.p2align 4,,10
+	.p2align 3
+.L194:
+; src/parser.c:801:                 parser_error("Cannot call non-function variable", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:801:                 parser_error("Cannot call non-function variable", token, get_full_path(parser->source_file));
+	movq	%r15, %rsi	; token,
+	leaq	.LC13(%rip), %rdi	;, tmp257
+; src/parser.c:801:                 parser_error("Cannot call non-function variable", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp327, _148
+; src/parser.c:801:                 parser_error("Cannot call non-function variable", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L92	;
+	.p2align 4,,10
+	.p2align 3
+.L193:
+; src/parser.c:796:                 string name = make_method_name(base_name->name, DEFAULT_CONSTRUCTOR_NAME);
+	movq	8(%rsp), %rax	; %sfp, base_name
+	movq	DEFAULT_CONSTRUCTOR_NAME(%rip), %rsi	; DEFAULT_CONSTRUCTOR_NAME,
+	movq	8(%rax), %rdi	; base_name_220->name, base_name_220->name
+	call	*make_method_name@GOTPCREL(%rip)	;
+	movq	%rax, %rsi	; tmp324, name
+; src/parser.c:797:                 base_name = search_name_use_strcmp(base_name->ast_node.class->class_scope, name);
+	movq	8(%rsp), %rax	; %sfp, base_name
+	movq	24(%rax), %rax	; base_name_220->ast_node.class, base_name_220->ast_node.class
+	movq	16(%rax), %rdi	; _139->class_scope, _140
+	call	*search_name_use_strcmp@GOTPCREL(%rip)	;
+; src/parser.c:798:                 base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
+	movq	%r14, %rsi	; variable_value,
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	movq	%rax, 8(%rsp)	; base_name, %sfp
+	movq	%rax, %rdx	; base_name,
+	movl	$2, %edi	;,
+	call	*create_variable_access@GOTPCREL(%rip)	;
+	movq	%rax, %r14	; tmp326, variable_value
+; src/parser.c:800:             if (base_name != NULL && base_name->kind != SYMBOL_FUNCTION && base_name->kind != SYMBOL_METHOD)
+	movq	8(%rsp), %rax	; %sfp, base_name
+	testq	%rax, %rax	; base_name
+	je	.L92	;,
+; src/parser.c:800:             if (base_name != NULL && base_name->kind != SYMBOL_FUNCTION && base_name->kind != SYMBOL_METHOD)
+	movl	32(%rax), %eax	; base_name_141->kind, _135
+	jmp	.L93	;
+	.p2align 4,,10
+	.p2align 3
+.L86:
+; src/parser.c:773:         parser_error("Expected variable name in variable access", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:773:         parser_error("Expected variable name in variable access", token, get_full_path(parser->source_file));
+	movq	%r14, %rsi	; token,
+	leaq	.LC11(%rip), %rdi	;, tmp239
+; src/parser.c:773:         parser_error("Expected variable name in variable access", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp316, _113
+; src/parser.c:773:         parser_error("Expected variable name in variable access", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L85	;
+	.p2align 4,,10
+	.p2align 3
+.L178:
+; src/parser.c:857:                         class_name = current_type->type->name;
+	movq	8(%r15), %r15	;, class_name
+	jmp	.L111	;
+	.p2align 4,,10
+	.p2align 3
+.L188:
+; src/parser.c:829:                 parser_error("Failed to parse sequence index", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:829:                 parser_error("Failed to parse sequence index", token, get_full_path(parser->source_file));
+	movq	24(%rsp), %rsi	; %sfp,
+	leaq	.LC16(%rip), %rdi	;, tmp272
+; src/parser.c:829:                 parser_error("Failed to parse sequence index", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp342, _185
+; src/parser.c:829:                 parser_error("Failed to parse sequence index", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L105	;
+	.p2align 4,,10
+	.p2align 3
+.L185:
+; src/parser.c:722:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:723:         expr_value = parse_expression(lexer, now_scope, parser);
+	movq	%r12, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:722:         token = get_next_token(lexer, true);
+	movq	%rax, %rbp	; tmp300, token
+; src/parser.c:723:         expr_value = parse_expression(lexer, now_scope, parser);
+	call	parse_expression	;
+; src/parser.c:724:         if (expr_value == NULL) {
+	testq	%rax, %rax	; expr_value
+	je	.L198	;,
+; src/parser.c:729:         token = get_next_token(lexer, true);
+	movq	%rbx, %rdi	; lexer,
+	movq	%rax, (%rsp)	; expr_value, %sfp
+	movl	$1, %esi	;,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:730:         if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%rsp), %rdx	; %sfp, expr_value
+; src/parser.c:730:         if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movl	24(%rax), %ebx	; token_75->type, type
+; src/parser.c:729:         token = get_next_token(lexer, true);
+	movq	%rax, %rbp	; tmp303, token
+; src/parser.c:730:         if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	cmpl	$5, %ebx	;, type
+	jne	.L77	;,
+; src/parser.c:730:         if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_75->lexeme, token_75->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	movq	%rdx, (%rsp)	; expr_value, %sfp
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:730:         if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp305
+	je	.L77	;,
+	movq	(%rsp), %rdx	; %sfp, expr_value
+; src/parser.c:704:     VariableAccess* variable_value = NULL;
+	xorl	%r14d, %r14d	; variable_value
+; src/parser.c:703:     Primary* prim_value = NULL;
+	xorl	%ecx, %ecx	; prim_value
+; src/parser.c:701:     string str_value = NULL;
+	xorl	%esi, %esi	; str_value
+	jmp	.L61	;
+	.p2align 4,,10
+	.p2align 3
+.L186:
+; src/parser.c:737:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:738:         prim_value = parse_primary(lexer, now_scope, parser);
+	movq	%r12, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:737:         token = get_next_token(lexer, true);
+	movq	%rax, %rbp	; tmp307, token
+; src/parser.c:738:         prim_value = parse_primary(lexer, now_scope, parser);
+	call	parse_primary	;
+	movq	%rax, %rcx	; tmp308, prim_value
+; src/parser.c:739:         if (prim_value == NULL) {
+	testq	%rax, %rax	; prim_value
+	je	.L199	;,
+; src/parser.c:704:     VariableAccess* variable_value = NULL;
+	xorl	%r14d, %r14d	; variable_value
+; src/parser.c:702:     Expression* expr_value = NULL;
+	xorl	%edx, %edx	; expr_value
+; src/parser.c:701:     string str_value = NULL;
+	xorl	%esi, %esi	; str_value
+; src/parser.c:736:         type = PRIM_NOT_OPERAND;
+	movl	$6, %ebx	;, type
+	jmp	.L61	;
+	.p2align 4,,10
+	.p2align 3
+.L80:
+; src/parser.c:746:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:747:         prim_value = parse_primary(lexer, now_scope, parser);
+	movq	%r12, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:746:         token = get_next_token(lexer, true);
+	movq	%rax, %rbp	; tmp311, token
+; src/parser.c:747:         prim_value = parse_primary(lexer, now_scope, parser);
+	call	parse_primary	;
+	movq	%rax, %rcx	; tmp312, prim_value
+; src/parser.c:748:         if (prim_value == NULL) {
+	testq	%rax, %rax	; prim_value
+	je	.L200	;,
+; src/parser.c:704:     VariableAccess* variable_value = NULL;
+	xorl	%r14d, %r14d	; variable_value
+; src/parser.c:702:     Expression* expr_value = NULL;
+	xorl	%edx, %edx	; expr_value
+; src/parser.c:701:     string str_value = NULL;
+	xorl	%esi, %esi	; str_value
+; src/parser.c:745:         type = PRIM_NEG_OPERAND;
+	movl	$7, %ebx	;, type
+	jmp	.L61	;
+	.p2align 4,,10
+	.p2align 3
+.L192:
+; src/parser.c:794:                 parser_error("Cannot call undefined variable", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:794:                 parser_error("Cannot call undefined variable", token, get_full_path(parser->source_file));
+	movq	%r15, %rsi	; token,
+	leaq	.LC12(%rip), %rdi	;, tmp251
+; src/parser.c:794:                 parser_error("Cannot call undefined variable", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp323, _134
+; src/parser.c:794:                 parser_error("Cannot call undefined variable", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L92	;
+.L77:
+; src/parser.c:731:             parser_error("Expected ')' after expression", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:731:             parser_error("Expected ')' after expression", token, get_full_path(parser->source_file));
+	movq	%rbp, %rsi	; token,
+	leaq	.LC8(%rip), %rdi	;, tmp227
+; src/parser.c:731:             parser_error("Expected ')' after expression", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp304, _21
+; src/parser.c:731:             parser_error("Expected ')' after expression", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:733:             return NULL;
+	jmp	.L76	;
+.L117:
+; src/parser.c:821:             var_scope = NULL;
+	movq	$0, (%rsp)	;, %sfp
+; src/parser.c:820:             current_type = NULL;
+	xorl	%r15d, %r15d	; class_name
+	jmp	.L103	;
+.L107:
+; src/parser.c:832:                 parser_error("Expected ']' after sequence index", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	movq	%rcx, (%rsp)	; token, %sfp
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:832:                 parser_error("Expected ']' after sequence index", token, get_full_path(parser->source_file));
+	movq	(%rsp), %rsi	; %sfp,
+	leaq	.LC17(%rip), %rdi	;, tmp274
+; src/parser.c:832:                 parser_error("Expected ']' after sequence index", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp344, _192
+; src/parser.c:832:                 parser_error("Expected ']' after sequence index", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L85	;
+.L189:
+; src/parser.c:841:                 parser_error("Cannot access attribute without a valid scope", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	movq	%rax, (%rsp)	; token, %sfp
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:841:                 parser_error("Cannot access attribute without a valid scope", token, get_full_path(parser->source_file));
+	movq	(%rsp), %rsi	; %sfp,
+	leaq	.LC18(%rip), %rdi	;, tmp280
+; src/parser.c:841:                 parser_error("Cannot access attribute without a valid scope", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp349, _201
+; src/parser.c:841:                 parser_error("Cannot access attribute without a valid scope", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L85	;
+.L190:
+; src/parser.c:846:                 parser_error("Expected attribute name after '.'", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	movq	%rax, (%rsp)	; token, %sfp
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:846:                 parser_error("Expected attribute name after '.'", token, get_full_path(parser->source_file));
+	movq	(%rsp), %rsi	; %sfp,
+	leaq	.LC19(%rip), %rdi	;, tmp282
+; src/parser.c:846:                 parser_error("Expected attribute name after '.'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp350, _205
+; src/parser.c:846:                 parser_error("Expected attribute name after '.'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L85	;
+.L198:
+; src/parser.c:725:             parser_error("Failed to parse parenthesized expression", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file, parser_71(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:725:             parser_error("Failed to parse parenthesized expression", token, get_full_path(parser->source_file));
+	movq	%rbp, %rsi	; token,
+	leaq	.LC7(%rip), %rdi	;, tmp225
+; src/parser.c:725:             parser_error("Failed to parse parenthesized expression", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp302, _15
+; src/parser.c:725:             parser_error("Failed to parse parenthesized expression", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:727:             return NULL;
+	jmp	.L76	;
+.L199:
+; src/parser.c:740:             parser_error("Failed to parse operand of unary '!'", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file,
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:740:             parser_error("Failed to parse operand of unary '!'", token, get_full_path(parser->source_file));
+	movq	%rbp, %rsi	; token,
+	leaq	.LC9(%rip), %rdi	;, tmp232
+; src/parser.c:740:             parser_error("Failed to parse operand of unary '!'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp309, _27
+; src/parser.c:740:             parser_error("Failed to parse operand of unary '!'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:742:             return NULL;
+	jmp	.L76	;
+.L200:
+; src/parser.c:749:             parser_error("Failed to parse operand of unary '-'", token, get_full_path(parser->source_file));
+	movq	(%r12), %rdi	; parser_71(D)->source_file,
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:749:             parser_error("Failed to parse operand of unary '-'", token, get_full_path(parser->source_file));
+	movq	%rbp, %rsi	; token,
+	leaq	.LC10(%rip), %rdi	;, tmp235
+; src/parser.c:749:             parser_error("Failed to parse operand of unary '-'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp313, _33
+; src/parser.c:749:             parser_error("Failed to parse operand of unary '-'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:751:             return NULL;
+	jmp	.L76	;
+	.size	parse_primary, .-parse_primary
+	.section	.rodata.str1.1
+.LC23:
+	.string	"Expected '(' after 'if'"
+.LC24:
+	.string	"Failed to parse if condition"
+	.section	.rodata.str1.8
+	.align 8
+.LC25:
+	.string	"Expected ')' after if condition"
+	.section	.rodata.str1.1
+.LC26:
+	.string	"Expected '{' to start if body"
+	.section	.rodata.str1.8
+	.align 8
+.LC27:
+	.string	"Failed to parse if body statement"
+	.section	.rodata.str1.1
+.LC28:
+	.string	"Expected '(' after 'elif'"
+	.section	.rodata.str1.8
+	.align 8
+.LC29:
+	.string	"Failed to parse else-if condition"
+	.align 8
+.LC30:
+	.string	"Expected ')' after else-if condition"
+	.align 8
+.LC31:
+	.string	"Expected '{' to start else-if body"
+	.align 8
+.LC32:
+	.string	"Failed to parse else-if body statement"
+	.align 8
+.LC33:
+	.string	"Expected '{' to start else body"
+	.align 8
+.LC34:
+	.string	"Failed to parse else body statement"
+	.section	.rodata.str1.1
+.LC35:
+	.string	"Expected '(' after 'for'"
+	.section	.rodata.str1.8
+	.align 8
+.LC36:
+	.string	"Failed to parse for loop initializer"
+	.align 8
+.LC37:
+	.string	"Expected ';' after for loop initializer"
+	.align 8
+.LC38:
+	.string	"Failed to parse for loop condition"
+	.align 8
+.LC39:
+	.string	"Expected ';' after for loop condition"
+	.align 8
+.LC40:
+	.string	"Failed to parse for loop increment"
+	.align 8
+.LC41:
+	.string	"Expected ')' after for loop increment"
+	.align 8
+.LC42:
+	.string	"Expected '{' to start for loop body"
+	.align 8
+.LC43:
+	.string	"Failed to parse for loop body statement"
+	.section	.rodata.str1.1
+.LC44:
+	.string	"Expected '(' after 'while'"
+	.section	.rodata.str1.8
+	.align 8
+.LC45:
+	.string	"Failed to parse while condition"
+	.align 8
+.LC46:
+	.string	"Expected ')' after while condition"
+	.align 8
+.LC47:
+	.string	"Expected '{' to start while body"
+	.align 8
+.LC48:
+	.string	"Failed to parse while body statement"
+	.align 8
+.LC49:
+	.string	"Cannot use 'break' outside of a loop"
+	.align 8
+.LC50:
+	.string	"Cannot use 'continue' outside of a loop"
+	.section	.rodata.str1.1
+.LC51:
+	.string	"Failed to parse statement"
+.LC52:
+	.string	"Expected ';' after statement"
+	.text
+	.p2align 4
+	.type	parse_statement, @function
+parse_statement:
+	pushq	%r15	;
+	pushq	%r14	;
+	pushq	%r13	;
+	movq	%rsi, %r13	; tmp466, now_scope
 	pushq	%r12	;
 	pushq	%rbp	;
-	movq	%rdi, %rbp	; tmp296, variable_access
+	movq	%rdx, %rbp	; tmp467, parser
 	pushq	%rbx	;
-	movq	%rsi, %rbx	; tmp297, status
-	subq	$24, %rsp	;,
-; src/tac.c:742:     if (variable_access->type == VAR_NAME && variable_access->content.name != NULL) {
-	movl	16(%rdi), %ecx	; variable_access_99(D)->type,
-	testl	%ecx, %ecx	;
-	jne	.L99	;,
-; src/tac.c:742:     if (variable_access->type == VAR_NAME && variable_access->content.name != NULL) {
-	movq	8(%rdi), %rdi	; variable_access_99(D)->content.name, _2
-; src/tac.c:742:     if (variable_access->type == VAR_NAME && variable_access->content.name != NULL) {
-	testq	%rdi, %rdi	; _2
-	je	.L99	;,
-; src/tac.c:743:         if (variable_access->content.name->kind != SYMBOL_FUNCTION && variable_access->content.name->kind != SYMBOL_METHOD) {
-	movl	32(%rdi), %eax	; _2->kind, tmp333
-; src/tac.c:744:             Arg* result = create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status));
-	movq	(%rdi), %rsi	; _2->type, pretmp_385
-	movq	%rbx, %rcx	; status,
-; src/tac.c:743:         if (variable_access->content.name->kind != SYMBOL_FUNCTION && variable_access->content.name->kind != SYMBOL_METHOD) {
-	subl	$1, %eax	;, tmp214
-; src/tac.c:743:         if (variable_access->content.name->kind != SYMBOL_FUNCTION && variable_access->content.name->kind != SYMBOL_METHOD) {
-	cmpl	$1, %eax	;, tmp214
-	jbe	.L100	;,
-; src/tac.c:744:             Arg* result = create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status));
-	movl	$118, %edx	;,
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:744:             Arg* result = create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status));
-	movq	%rax, %rbx	; tmp298, _6
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movq	%rbx, %xmm0	; _6, tmp216
-	movhps	16(%rbx), %xmm0	;, tmp216
-; src/tac.c:224:     arg->kind = kind;
-	movl	$0, 16(%rax)	;, arg_191->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r12	; tmp299, <retval>
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;,
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp216,* <retval>
-.L98:
-; src/tac.c:845: }
-	addq	$24, %rsp	;,
+	movq	%rdi, %rbx	; tmp465, lexer
+	subq	$56, %rsp	;,
+; src/parser.c:400:     token = peek_current_token(lexer);
+	call	*peek_current_token@GOTPCREL(%rip)	;
+; src/parser.c:402:     if (token->type == KEYWORD) {
+	cmpl	$6, 24(%rax)	;, token_60->type
+	je	.L374	;,
+.L202:
+; src/parser.c:436:         statement = create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_expression	;
+; src/parser.c:436:         statement = create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
+	xorl	%r9d, %r9d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+; src/parser.c:436:         statement = create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
+	movq	%rax, %r8	;, tmp593
+; src/parser.c:436:         statement = create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
+	xorl	%esi, %esi	;
+	xorl	%edi, %edi	;
+	call	*create_statement@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp594, <retval>
+.L279:
+; src/parser.c:437:     token = peek_current_token(lexer);
+	movq	%rbx, %rdi	; lexer,
+	call	*peek_current_token@GOTPCREL(%rip)	;
+	movq	%rax, %r13	; tmp595, token
+; src/parser.c:438:     if (statement == NULL)
+	testq	%r12, %r12	; <retval>
+	je	.L375	;,
+.L288:
+; src/parser.c:440:     token = get_next_token(lexer, true);
+	movq	%rbx, %rdi	; lexer,
+	movl	$1, %esi	;,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:441:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	cmpl	$5, 24(%rax)	;, token_110->type
+; src/parser.c:440:     token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp597, token
+; src/parser.c:441:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	je	.L289	;,
+.L291:
+; src/parser.c:442:         parser_error("Expected ';' after statement", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:442:         parser_error("Expected ';' after statement", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC52(%rip), %rdi	;, tmp453
+; src/parser.c:442:         parser_error("Expected ';' after statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp598, _47
+; src/parser.c:442:         parser_error("Expected ';' after statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L201:
+; src/parser.c:445: }
+	addq	$56, %rsp	;,
 	movq	%r12, %rax	; <retval>,
 	popq	%rbx	;
 	popq	%rbp	;
@@ -925,1462 +1648,455 @@ tac_variable_access:
 	ret	
 	.p2align 4,,10
 	.p2align 3
-.L99:
-; src/tac.c:753:     if (variable_access->base == NULL) {
-	movq	0(%rbp), %rdi	; variable_access_99(D)->base, _10
-; src/tac.c:753:     if (variable_access->base == NULL) {
-	testq	%rdi, %rdi	; _10
-	je	.L130	;,
-; src/tac.c:758:     Arg* base = load_rvalue(tac_variable_access(variable_access->base, status), status);
-	movq	%rbx, %rsi	; status,
-	call	tac_variable_access	;
-; src/tac.c:758:     Arg* base = load_rvalue(tac_variable_access(variable_access->base, status), status);
-	movq	%rbx, %rsi	; status,
-; src/tac.c:758:     Arg* base = load_rvalue(tac_variable_access(variable_access->base, status), status);
-	movq	%rax, %rdi	; tmp302, _12
-; src/tac.c:758:     Arg* base = load_rvalue(tac_variable_access(variable_access->base, status), status);
-	call	load_rvalue	;
-	movq	%rax, %r13	; tmp303, arg
-; src/tac.c:759:     if (base == NULL) {
-	testq	%rax, %rax	; arg
-	je	.L131	;,
-; src/tac.c:764:     if (variable_access->type == VAR_GET_ATTR) {
-	movl	16(%rbp), %ecx	; variable_access_99(D)->type, _14
-; src/tac.c:764:     if (variable_access->type == VAR_GET_ATTR) {
-	cmpl	$2, %ecx	;, _14
-	je	.L132	;,
-; src/tac.c:792:     } else if (variable_access->type == VAR_GET_SEQ) {
-	cmpl	$3, %ecx	;, _14
-	je	.L133	;,
-; src/tac.c:815:     } else if (variable_access->type == VAR_FUNC_CALL) {
-	cmpl	$1, %ecx	;, _14
-	jne	.L115	;,
-; src/tac.c:816:         if (base->kind == ARG_VARIABLE && base->type->kind == SYMBOL_CLASS) {
-	movl	16(%rax), %ecx	; base_109->kind, _60
-; src/tac.c:816:         if (base->kind == ARG_VARIABLE && base->type->kind == SYMBOL_CLASS) {
-	testl	%ecx, %ecx	; _60
-	je	.L134	;,
-; src/tac.c:820:         if (base->kind != ARG_SUBROUTINE) {
-	cmpl	$7, %ecx	;, _60
-	je	.L118	;,
-; src/tac.c:765:         if (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
-	movq	8(%rax), %rax	; base_109->type, _61
-.L117:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	8(%rax), %r8	; prephitmp_94->name,
-	movq	stderr(%rip), %rdi	; stderr,
-	leaq	.LC15(%rip), %rdx	;, tmp281
-	xorl	%eax, %eax	;
-	movl	$2, %esi	;,
-	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L103:
-; src/tac.c:756:         return NULL;
-	xorl	%r12d, %r12d	; <retval>
-	jmp	.L98	;
+.L289:
+; src/parser.c:441:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	movq	(%rax), %rdi	; token_110->lexeme, token_110->lexeme
+	movq	SEMICOLON_SYMBOL(%rip), %rsi	; SEMICOLON_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:441:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	testb	%al, %al	; tmp599
+	je	.L291	;,
+	jmp	.L201	;
 	.p2align 4,,10
 	.p2align 3
-.L132:
-; src/tac.c:765:         if (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
-	movq	8(%rax), %rax	; base_109->type, _15
-; src/tac.c:765:         if (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
-	movl	32(%rax), %edx	; _15->kind, _16
-; src/tac.c:765:         if (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
-	leal	-1(%rdx), %ecx	;, tmp224
-; src/tac.c:765:         if (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
-	cmpl	$1, %ecx	;, tmp224
-	jbe	.L135	;,
-; src/tac.c:770:         SymbolTable* scope = base->type->ast_node.scope;
-	movq	24(%rax), %rdi	; _15->ast_node.scope, scope
-; src/tac.c:771:         if (base->type->kind == SYMBOL_CLASS)
-	testl	%edx, %edx	; _16
-	jne	.L107	;,
-; src/tac.c:772:             scope = base->type->ast_node.class->class_scope;
-	movq	16(%rdi), %rdi	; MEM[(struct Class *)scope_143].class_scope, scope
-.L107:
-; src/tac.c:773:         Symbol* attr = search_name_use_strcmp(scope, variable_access->content.attr_name->name);
-	movq	8(%rbp), %rax	; variable_access_99(D)->content.attr_name, variable_access_99(D)->content.attr_name
-	movq	8(%rax), %rsi	; _20->name, _20->name
-	call	*search_name_use_strcmp@GOTPCREL(%rip)	;
-; src/tac.c:774:         if (attr == NULL) {
-	testq	%rax, %rax	; attr
-	je	.L136	;,
-; src/tac.c:779:         if (attr->kind == SYMBOL_METHOD || attr->kind == SYMBOL_FUNCTION)
-	movl	32(%rax), %edx	; attr_146->kind, _27
-; src/tac.c:779:         if (attr->kind == SYMBOL_METHOD || attr->kind == SYMBOL_FUNCTION)
-	leal	-1(%rdx), %ecx	;, tmp236
-; src/tac.c:779:         if (attr->kind == SYMBOL_METHOD || attr->kind == SYMBOL_FUNCTION)
-	cmpl	$1, %ecx	;, tmp236
-	jbe	.L137	;,
-; src/tac.c:781:         if (attr->kind != SYMBOL_ATTRIBUTE) {
-	cmpl	$5, %edx	;, _27
-	jne	.L138	;,
-; src/tac.c:786:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, attr->type, VAR_TEMP, status));
-	movq	(%rax), %rsi	; attr_146->type, attr_146->type
-	movq	%rbx, %rcx	; status,
-	movl	$116, %edx	;,
-	xorl	%edi, %edi	;
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:786:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, attr->type, VAR_TEMP, status));
-	movq	%rax, %r14	; tmp307, _37
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movq	%r14, %xmm0	; _37, tmp247
-; src/tac.c:787:         Instruction* inst = create_instruction(INST_GET_ATTR, temp, base, create_arg(ARG_VARIABLE, create_var(variable_access->content.attr_name, variable_access->content.attr_name->type, VAR_ATTR, status)));
-	movq	%rbx, %rcx	; status,
-	movl	$97, %edx	;,
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movhps	16(%r14), %xmm0	; _37->type, tmp247
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_239->is_get
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r12	; tmp308, <retval>
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp247, MEM <vector(2) long unsigned int> [(void *)arg_239]
-; src/tac.c:787:         Instruction* inst = create_instruction(INST_GET_ATTR, temp, base, create_arg(ARG_VARIABLE, create_var(variable_access->content.attr_name, variable_access->content.attr_name->type, VAR_ATTR, status)));
-	movq	8(%rbp), %rdi	; variable_access_99(D)->content.attr_name, _38
-; src/tac.c:224:     arg->kind = kind;
-	movl	$0, 16(%rax)	;, arg_239->kind
-; src/tac.c:787:         Instruction* inst = create_instruction(INST_GET_ATTR, temp, base, create_arg(ARG_VARIABLE, create_var(variable_access->content.attr_name, variable_access->content.attr_name->type, VAR_ATTR, status)));
-	movq	(%rdi), %rsi	; _38->type, _38->type
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:787:         Instruction* inst = create_instruction(INST_GET_ATTR, temp, base, create_arg(ARG_VARIABLE, create_var(variable_access->content.attr_name, variable_access->content.attr_name->type, VAR_ATTR, status)));
-	movq	%rax, %r14	; tmp309, _40
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movq	%r14, %xmm0	; _40, tmp250
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movhps	16(%r14), %xmm0	; _40->type, tmp250
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbp	; tmp310, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$0, 16(%rax)	;, arg_227->kind
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp250, MEM <vector(2) long unsigned int> [(void *)arg_227]
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_227->is_get
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%r13, 8(%rax)	; arg, inst_157->arg2
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp311, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r12, (%rax)	; <retval>, inst_157->arg1
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	%rbp, 16(%rax)	; arg, inst_157->arg3
-; src/tac.c:214:     inst->type = type;
-	movl	$15, 24(%rax)	;, inst_157->type
-; src/tac.c:788:         temp->is_get = true;
-	movb	$1, 20(%r12)	;,
-; src/tac.c:789:         list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_100(D)->current_block, status_100(D)->current_block
-	movq	8(%rax), %rdi	;, _42->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:791:         return temp;
-	jmp	.L98	;
-	.p2align 4,,10
-	.p2align 3
-.L134:
-; src/tac.c:816:         if (base->kind == ARG_VARIABLE && base->type->kind == SYMBOL_CLASS) {
-	movq	8(%rax), %rax	; base_109->type, _61
-; src/tac.c:816:         if (base->kind == ARG_VARIABLE && base->type->kind == SYMBOL_CLASS) {
-	movl	32(%rax), %edx	; _61->kind,
-	testl	%edx, %edx	;
-	jne	.L117	;,
-; src/tac.c:817:             Symbol* attr = search_name_use_strcmp(base->type->ast_node.class->class_scope, make_method_name(base->type->name, DEFAULT_CONSTRUCTOR_NAME));
-	movq	8(%rax), %rdi	; _61->name, _61->name
-	movq	DEFAULT_CONSTRUCTOR_NAME(%rip), %rsi	; DEFAULT_CONSTRUCTOR_NAME,
-	call	*make_method_name@GOTPCREL(%rip)	;
-	movq	%rax, %rsi	; tmp318, _65
-; src/tac.c:817:             Symbol* attr = search_name_use_strcmp(base->type->ast_node.class->class_scope, make_method_name(base->type->name, DEFAULT_CONSTRUCTOR_NAME));
-	movq	8(%r13), %rax	; base_109->type, base_109->type
-; src/tac.c:817:             Symbol* attr = search_name_use_strcmp(base->type->ast_node.class->class_scope, make_method_name(base->type->name, DEFAULT_CONSTRUCTOR_NAME));
-	movq	24(%rax), %rax	; _66->ast_node.class, _66->ast_node.class
-	movq	16(%rax), %rdi	; _67->class_scope, _67->class_scope
-	call	*search_name_use_strcmp@GOTPCREL(%rip)	;
-; src/tac.c:818:             base = create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
-	movq	%rbx, %rcx	; status,
-	movl	$102, %edx	;,
-	movq	(%rax), %rsi	; attr_112->type, attr_112->type
-; src/tac.c:817:             Symbol* attr = search_name_use_strcmp(base->type->ast_node.class->class_scope, make_method_name(base->type->name, DEFAULT_CONSTRUCTOR_NAME));
-	movq	%rax, %rdi	; tmp319, attr
-; src/tac.c:818:             base = create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:818:             base = create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
-	movq	%rax, %r12	; tmp320, _70
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:255:             arg->value.subroutine = (Var*)value;
-	movq	%r12, %xmm0	; _70, tmp277
-	movhps	16(%r12), %xmm0	; _70->type, tmp277
-; src/tac.c:224:     arg->kind = kind;
-	movl	$7, 16(%rax)	;, arg_263->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r13	; tmp321, arg
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_263->is_get
-; src/tac.c:255:             arg->value.subroutine = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp277, MEM <vector(2) long unsigned int> [(void *)arg_263]
-.L118:
-; src/tac.c:825:         list(Expression*) args = list_copy(variable_access->content.args);
-	movq	8(%rbp), %rdi	; variable_access_99(D)->content.args, variable_access_99(D)->content.args
-; src/tac.c:827:         long long arg_count = 0;
-	xorl	%ebp, %ebp	; arg_count
-; src/tac.c:825:         list(Expression*) args = list_copy(variable_access->content.args);
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, 8(%rsp)	; tmp322, %sfp
-; src/tac.c:828:         while ((arg_expr = (Expression*)list_pop(args)) != NULL) {
-	jmp	.L119	;
-	.p2align 4,,10
-	.p2align 3
-.L120:
-; src/tac.c:829:             Arg* arg = tac_expression(arg_expr, status);
-	movq	%rbx, %rsi	; status,
-; src/tac.c:833:             arg_count++;
-	addq	$1, %rbp	;, arg_count
-; src/tac.c:829:             Arg* arg = tac_expression(arg_expr, status);
-	call	tac_expression	;
-; src/tac.c:830:             long long size = (long long)get_type_size(arg->type);
-	movq	8(%rax), %rdi	; arg_127->type, arg_127->type
-; src/tac.c:829:             Arg* arg = tac_expression(arg_expr, status);
-	movq	%rax, %r15	; tmp323, arg
-; src/tac.c:830:             long long size = (long long)get_type_size(arg->type);
-	call	get_type_size	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:830:             long long size = (long long)get_type_size(arg->type);
-	movq	%rax, %r12	; tmp324, _77
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:224:     arg->kind = kind;
-	movl	$1, 16(%rax)	;, arg_275->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r14	; tmp325, arg
-; src/tac.c:232:             arg->value.int_value = *(long long*)value;
-	movq	%r12, (%rax)	; _77, arg_275->value.int_value
-; src/tac.c:233:             arg->type = name_int;
-	movq	name_int(%rip), %rax	; name_int, name_int
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%r14)	;, arg_275->is_get
-; src/tac.c:233:             arg->type = name_int;
-	movq	%rax, 8(%r14)	; name_int, arg_275->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%r15, 8(%rax)	; arg, inst_159->arg2
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp326, inst
-; src/tac.c:214:     inst->type = type;
-	movl	$17, 24(%rax)	;, inst_159->type
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r14, (%rax)	; arg, inst_159->arg1
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_159->arg3
-; src/tac.c:832:             list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_100(D)->current_block, status_100(D)->current_block
-	movq	8(%rax), %rdi	; _80->instructions, _80->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-.L119:
-; src/tac.c:828:         while ((arg_expr = (Expression*)list_pop(args)) != NULL) {
-	movq	8(%rsp), %rdi	; %sfp,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp327, arg_expr
-; src/tac.c:828:         while ((arg_expr = (Expression*)list_pop(args)) != NULL) {
-	testq	%rax, %rax	; arg_expr
-	jne	.L120	;,
-; src/tac.c:835:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type, VAR_TEMP, status));
-	movq	8(%r13), %rsi	; base_334->type, base_334->type
-	movq	%rbx, %rcx	; status,
-	movl	$116, %edx	;,
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:835:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type, VAR_TEMP, status));
-	movq	%rax, %r14	; tmp328, _85
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movq	%r14, %xmm0	; _85, tmp288
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movhps	16(%r14), %xmm0	; _85->type, tmp288
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r12	; tmp329, <retval>
-; src/tac.c:224:     arg->kind = kind;
-	movl	$0, 16(%rax)	;, arg_299->kind
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp288, MEM <vector(2) long unsigned int> [(void *)arg_299]
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_299->is_get
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:232:             arg->value.int_value = *(long long*)value;
-	movq	%rbp, (%rax)	; arg_count, arg_287->value.int_value
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r14	; tmp330, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$1, 16(%rax)	;, arg_287->kind
-; src/tac.c:233:             arg->type = name_int;
-	movq	name_int(%rip), %rax	; name_int, name_int
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%r14)	;, arg_287->is_get
-; src/tac.c:233:             arg->type = name_int;
-	movq	%rax, 8(%r14)	; name_int, arg_287->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%r13, 8(%rax)	; arg, inst_160->arg2
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp331, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r12, (%rax)	; <retval>, inst_160->arg1
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	%r14, 16(%rax)	; arg, inst_160->arg3
-; src/tac.c:214:     inst->type = type;
-	movl	$22, 24(%rax)	;, inst_160->type
-; src/tac.c:837:         list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_100(D)->current_block, status_100(D)->current_block
-	movq	8(%rax), %rdi	;, _87->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:839:         return temp;
-	jmp	.L98	;
-	.p2align 4,,10
-	.p2align 3
-.L100:
-; src/tac.c:748:             Arg* result = create_arg(ARG_SUBROUTINE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_SUBROUTINE, status));
-	movl	$102, %edx	;,
-.L129:
-; src/tac.c:780:             return create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:780:             return create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
-	movq	%rax, %rbx	; tmp305, _30
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:255:             arg->value.subroutine = (Var*)value;
-	movq	%rbx, %xmm0	; _30, tmp238
-	movhps	16(%rbx), %xmm0	;, tmp238
-; src/tac.c:224:     arg->kind = kind;
-	movl	$7, 16(%rax)	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r12	; tmp306, <retval>
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;,
-; src/tac.c:255:             arg->value.subroutine = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp238,* <retval>
-; src/tac.c:780:             return create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
-	jmp	.L98	;
-	.p2align 4,,10
-	.p2align 3
-.L133:
-; src/tac.c:793:         if (base->type->kind != SYMBOL_VARIABLE && base->type->kind != SYMBOL_PARAM && base->type->kind != SYMBOL_ATTRIBUTE) {
-	movq	8(%rax), %rax	; base_109->type, _44
-; src/tac.c:766:             fprintf(stderr, "[warning] Attempting to access attribute of non-object type: %s\n", base->type->name);
-	movq	8(%rax), %r12	; _44->name, pretmp_376
-; src/tac.c:793:         if (base->type->kind != SYMBOL_VARIABLE && base->type->kind != SYMBOL_PARAM && base->type->kind != SYMBOL_ATTRIBUTE) {
-	movl	32(%rax), %eax	; _44->kind, _44->kind
-	subl	$3, %eax	;, tmp254
-; src/tac.c:793:         if (base->type->kind != SYMBOL_VARIABLE && base->type->kind != SYMBOL_PARAM && base->type->kind != SYMBOL_ATTRIBUTE) {
-	cmpl	$2, %eax	;, tmp254
-	ja	.L128	;,
-; src/tac.c:798:         if (strcmp(base->type->name, "arr") != 0) {
-	leaq	.LC13(%rip), %rsi	;, tmp259
-	movq	%r12, %rdi	; pretmp_376,
-	call	*strcmp@GOTPCREL(%rip)	;
-; src/tac.c:798:         if (strcmp(base->type->name, "arr") != 0) {
-	testl	%eax, %eax	; tmp312
-	jne	.L128	;,
-; src/tac.c:803:         Arg* index = load_rvalue(tac_expression(variable_access->content.index, status), status);
-	movq	8(%rbp), %rdi	; variable_access_99(D)->content.index, variable_access_99(D)->content.index
-	movq	%rbx, %rsi	; status,
-	call	tac_expression	;
-; src/tac.c:803:         Arg* index = load_rvalue(tac_expression(variable_access->content.index, status), status);
-	movq	%rbx, %rsi	; status,
-; src/tac.c:803:         Arg* index = load_rvalue(tac_expression(variable_access->content.index, status), status);
-	movq	%rax, %rdi	; tmp313, _53
-; src/tac.c:803:         Arg* index = load_rvalue(tac_expression(variable_access->content.index, status), status);
-	call	load_rvalue	;
-	movq	%rax, %r14	; tmp314, index
-; src/tac.c:804:         if (index == NULL) {
-	testq	%rax, %rax	; index
-	je	.L139	;,
-; src/tac.c:809:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type->type, VAR_TEMP, status));
-	movq	8(%r13), %rax	; base_109->type, base_109->type
-	movq	%rbx, %rcx	; status,
-	movl	$116, %edx	;,
-	xorl	%edi, %edi	;
-	movq	(%rax), %rsi	; _55->type, _55->type
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:809:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type->type, VAR_TEMP, status));
-	movq	%rax, %rbp	; tmp315, _57
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movq	%rbp, %xmm0	; _57, tmp267
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movhps	16(%rbp), %xmm0	; _57->type, tmp267
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r12	; tmp316, <retval>
-; src/tac.c:224:     arg->kind = kind;
-	movl	$0, 16(%rax)	;, arg_251->kind
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp267, MEM <vector(2) long unsigned int> [(void *)arg_251]
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_251->is_get
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%r13, 8(%rax)	; arg, inst_158->arg2
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp317, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r12, (%rax)	; <retval>, inst_158->arg1
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	%r14, 16(%rax)	; index, inst_158->arg3
-; src/tac.c:214:     inst->type = type;
-	movl	$16, 24(%rax)	;, inst_158->type
-; src/tac.c:811:         temp->is_get = true;
-	movb	$1, 20(%r12)	;,
-; src/tac.c:812:         list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_100(D)->current_block, status_100(D)->current_block
-	movq	8(%rax), %rdi	;, _58->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:814:         return temp;
-	jmp	.L98	;
-	.p2align 4,,10
-	.p2align 3
-.L138:
-; src/tac.c:782:             fprintf(stderr, "[warning] Symbol '%s' in type '%s' is not an attribute\n", variable_access->content.attr_name->name, base->type->name);
-	movq	8(%r13), %rax	; base_109->type, base_109->type
-	movq	8(%rbp), %rdx	; variable_access_99(D)->content.attr_name, variable_access_99(D)->content.attr_name
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	$2, %esi	;,
-	movq	stderr(%rip), %rdi	; stderr,
-	movq	8(%rdx), %rcx	; _33->name, _33->name
-	movq	8(%rax), %r8	; _31->name,
-	leaq	.LC11(%rip), %rdx	;, tmp245
-	xorl	%eax, %eax	;
-	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/tac.c:784:             return NULL;
-	jmp	.L103	;
-	.p2align 4,,10
-	.p2align 3
-.L130:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rcx	; stderr,
-	movl	$53, %edx	;,
+.L374:
+; src/parser.c:403:         if (string_equal(token->lexeme, IF_KEYWORD))
+	movq	(%rax), %rdi	; token_60->lexeme, token_60->lexeme
+	movq	IF_KEYWORD(%rip), %rsi	; IF_KEYWORD,
+	movq	%rax, %r12	; tmp468, token
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:403:         if (string_equal(token->lexeme, IF_KEYWORD))
+	testb	%al, %al	; tmp469
+	jne	.L376	;,
+; src/parser.c:405:         else if (string_equal(token->lexeme, FOR_KEYWORD))
+	movq	(%r12), %rdi	; token_60->lexeme, token_60->lexeme
+	movq	FOR_KEYWORD(%rip), %rsi	; FOR_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:405:         else if (string_equal(token->lexeme, FOR_KEYWORD))
+	testb	%al, %al	; tmp522
+	jne	.L377	;,
+; src/parser.c:407:         else if (string_equal(token->lexeme, WHILE_KEYWORD))
+	movq	(%r12), %rdi	; token_60->lexeme, token_60->lexeme
+	movq	WHILE_KEYWORD(%rip), %rsi	; WHILE_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:407:         else if (string_equal(token->lexeme, WHILE_KEYWORD))
+	testb	%al, %al	; tmp557
+	jne	.L378	;,
+; src/parser.c:409:         else if (string_equal(token->lexeme, VAR_KEYWORD)) {
+	movq	(%r12), %rdi	; token_60->lexeme, token_60->lexeme
+	movq	VAR_KEYWORD(%rip), %rsi	; VAR_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:409:         else if (string_equal(token->lexeme, VAR_KEYWORD)) {
+	testb	%al, %al	; tmp577
+	jne	.L379	;,
+; src/parser.c:412:         } else if (string_equal(token->lexeme, RETURN_KEYWORD)) {
+	movq	(%r12), %rdi	; token_60->lexeme, token_60->lexeme
+	movq	RETURN_KEYWORD(%rip), %rsi	; RETURN_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:412:         } else if (string_equal(token->lexeme, RETURN_KEYWORD)) {
+	testb	%al, %al	; tmp580
+	je	.L280	;,
+; src/parser.c:413:             token = get_next_token(lexer, true);
 	movl	$1, %esi	;,
-	leaq	.LC7(%rip), %rdi	;, tmp221
-	call	*fwrite@GOTPCREL(%rip)	;
-; src/tac.c:756:         return NULL;
-	jmp	.L103	;
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:414:             if (token->type == SYMBOL && string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_85->type
+	je	.L380	;,
+.L281:
+; src/parser.c:418:             statement = create_statement(RETURN_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_expression	;
+; src/parser.c:418:             statement = create_statement(RETURN_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
+	xorl	%r9d, %r9d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+; src/parser.c:418:             statement = create_statement(RETURN_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
+	movq	%rax, %r8	;, tmp583
+; src/parser.c:418:             statement = create_statement(RETURN_STATEMENT, NULL, NULL, NULL, parse_expression(lexer, now_scope, parser), NULL);
+	xorl	%esi, %esi	;
+	movl	$5, %edi	;,
+	call	*create_statement@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp584, <retval>
+	jmp	.L279	;
 	.p2align 4,,10
 	.p2align 3
-.L115:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rdi	; stderr,
-	leaq	.LC16(%rip), %rdx	;, tmp294
-	movl	$2, %esi	;,
-	xorl	%eax, %eax	;
-	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/tac.c:843:         return NULL;
-	jmp	.L103	;
-	.p2align 4,,10
-	.p2align 3
-.L128:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rdi	; stderr,
-	movq	%r12, %rcx	; pretmp_376,
-	movl	$2, %esi	;,
-	xorl	%eax, %eax	;
-	leaq	.LC12(%rip), %rdx	;, tmp261
-	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/tac.c:801:             return NULL;
-	jmp	.L103	;
-	.p2align 4,,10
-	.p2align 3
-.L137:
-; src/tac.c:780:             return create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
-	movq	(%rax), %rsi	; attr_146->type, attr_146->type
-	movq	%rbx, %rcx	; status,
-	movl	$102, %edx	;,
-	movq	%rax, %rdi	; attr,
-	jmp	.L129	;
-	.p2align 4,,10
-	.p2align 3
-.L131:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rcx	; stderr,
-	movl	$54, %edx	;,
+.L377:
+; src/parser.c:543:     token = get_next_token(lexer, true);
 	movl	$1, %esi	;,
-	leaq	.LC8(%rip), %rdi	;, tmp223
-	call	*fwrite@GOTPCREL(%rip)	;
-; src/tac.c:762:         return NULL;
-	jmp	.L103	;
-	.p2align 4,,10
-	.p2align 3
-.L139:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rcx	; stderr,
-	movl	$55, %edx	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:544:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_223->type
+; src/parser.c:543:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp523, token
+; src/parser.c:544:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	jne	.L237	;,
+; src/parser.c:544:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_223->lexeme, token_223->lexeme
+	movq	L_PAREN_SYMBOL(%rip), %rsi	; L_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:544:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp525
+	je	.L237	;,
+; src/parser.c:549:     token = get_next_token(lexer, true);
 	movl	$1, %esi	;,
-	leaq	.LC14(%rip), %rdi	;, tmp264
-	call	*fwrite@GOTPCREL(%rip)	;
-; src/tac.c:807:             return NULL;
-	jmp	.L103	;
-	.p2align 4,,10
-	.p2align 3
-.L135:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	8(%rax), %rcx	; _15->name, _15->name
-	movq	stderr(%rip), %rdi	; stderr,
-	leaq	.LC9(%rip), %rdx	;, tmp227
-	xorl	%eax, %eax	;
-	movl	$2, %esi	;,
-	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/tac.c:768:             return NULL;
-	jmp	.L103	;
-.L136:
-; src/tac.c:775:             fprintf(stderr, "[warning] Attribute '%s' not found in type '%s'\n", variable_access->content.attr_name->name, base->type->name);
-	movq	8(%r13), %rax	; base_109->type, base_109->type
-	movq	8(%rbp), %rdx	; variable_access_99(D)->content.attr_name, variable_access_99(D)->content.attr_name
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	$2, %esi	;,
-	movq	stderr(%rip), %rdi	; stderr,
-	movq	8(%rdx), %rcx	; _24->name, _24->name
-	movq	8(%rax), %r8	; _22->name,
-	leaq	.LC10(%rip), %rdx	;, tmp235
-	xorl	%eax, %eax	;
-	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/tac.c:777:             return NULL;
-	jmp	.L103	;
-	.size	tac_variable_access, .-tac_variable_access
-	.section	.rodata.str1.8
-	.align 8
-.LC18:
-	.string	"[warning] Unsupported type for negation: %s\n"
-	.align 8
-.LC19:
-	.string	"[warning] Unsupported primary type for tac_primary: %d\n"
-	.text
-	.p2align 4
-	.globl	tac_primary
-	.type	tac_primary, @function
-tac_primary:
-	pushq	%r13	;
-	pushq	%r12	;
-	pushq	%rbp	;
-	pushq	%rbx	;
-	subq	$24, %rsp	;,
-; src/tac.c:678:     switch (primary->type) {
-	movl	8(%rdi), %ecx	; primary_36(D)->type,
-; src/tac.c:678:     switch (primary->type) {
-	cmpl	$8, %ecx	;, _1
-	ja	.L141	;,
-	leaq	.L143(%rip), %rdx	;, tmp136
-	movq	%rsi, %rbp	; tmp173, status
-	movslq	(%rdx,%rcx,4), %rax	;, tmp138
-	addq	%rdx, %rax	; tmp136, tmp139
-	jmp	*%rax	; tmp139
-	.section	.rodata
-	.align 4
-	.align 4
-.L143:
-	.long	.L151-.L143
-	.long	.L150-.L143
-	.long	.L149-.L143
-	.long	.L148-.L143
-	.long	.L147-.L143
-	.long	.L146-.L143
-	.long	.L145-.L143
-	.long	.L144-.L143
-	.long	.L142-.L143
-	.text
-	.p2align 4,,10
-	.p2align 3
-.L144:
-; src/tac.c:713:             Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
-	movq	(%rdi), %rdi	; primary_36(D)->value.operand, primary_36(D)->value.operand
-	call	tac_primary	;
-; src/tac.c:713:             Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
-	movq	%rbp, %rsi	; status,
-; src/tac.c:713:             Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
-	movq	%rax, %rdi	; tmp186, _15
-; src/tac.c:713:             Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
-	call	load_rvalue	;
-; src/tac.c:714:             Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, operand->type, VAR_TEMP, status));
-	xorl	%edi, %edi	;
-	movq	%rbp, %rcx	; status,
-	movl	$116, %edx	;,
-	movq	8(%rax), %rsi	; operand_42->type, operand_42->type
-; src/tac.c:713:             Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
-	movq	%rax, %r13	; tmp187, operand
-; src/tac.c:714:             Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, operand->type, VAR_TEMP, status));
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:714:             Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, operand->type, VAR_TEMP, status));
-	movq	%rax, %r12	; tmp188, _17
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movq	%r12, %xmm0	; _17, tmp158
-	movhps	16(%r12), %xmm0	; _17->type, tmp158
-; src/tac.c:224:     arg->kind = kind;
-	movl	$0, 16(%rax)	;, arg_174->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbx	; tmp189, <retval>
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_174->is_get
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp158, MEM <vector(2) long unsigned int> [(void *)arg_174]
-; src/tac.c:718:             if (operand->type == name_int)
-	movq	8(%r13), %rax	; operand_42->type, _18
-; src/tac.c:718:             if (operand->type == name_int)
-	cmpq	name_int(%rip), %rax	; name_int, _18
-	je	.L158	;,
-; src/tac.c:720:             else if (operand->type == name_float)
-	cmpq	name_float(%rip), %rax	; name_float, _18
-	je	.L159	;,
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	8(%rax), %rcx	; _18->name, _18->name
-	movq	stderr(%rip), %rdi	; stderr,
-	xorl	%eax, %eax	;
-; src/tac.c:737:             return NULL;
-	xorl	%ebx, %ebx	; <retval>
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC18(%rip), %rdx	;, tmp165
-	movl	$2, %esi	;,
-	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L160:
-; src/tac.c:739: }
-	addq	$24, %rsp	;,
-	movq	%rbx, %rax	; <retval>,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L142:
-; src/tac.c:733:             return tac_variable_access(primary->value.var, status);
-	movq	(%rdi), %rdi	;* primary, primary_36(D)->value.var
-; src/tac.c:739: }
-	addq	$24, %rsp	;,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-; src/tac.c:733:             return tac_variable_access(primary->value.var, status);
-	jmp	tac_variable_access	;
-	.p2align 4,,10
-	.p2align 3
-.L151:
-; src/tac.c:680:             long long t = strtoll(primary->value.literal_value, NULL, 10);
-	movq	(%rdi), %rdi	;* primary, primary_36(D)->value.literal_value
-	movl	$10, %edx	;,
-	xorl	%esi, %esi	;
-	call	*strtoll@GOTPCREL(%rip)	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:680:             long long t = strtoll(primary->value.literal_value, NULL, 10);
-	movq	%rax, %rbp	; tmp174, _3
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:224:     arg->kind = kind;
-	movl	$1, 16(%rax)	;, arg_102->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbx	; tmp175, <retval>
-; src/tac.c:232:             arg->value.int_value = *(long long*)value;
-	movq	%rbp, (%rax)	; _3, arg_102->value.int_value
-; src/tac.c:233:             arg->type = name_int;
-	movq	name_int(%rip), %rax	; name_int, name_int
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rbx)	;,
-; src/tac.c:233:             arg->type = name_int;
-	movq	%rax, 8(%rbx)	; name_int,
-.L140:
-; src/tac.c:739: }
-	addq	$24, %rsp	;,
-	movq	%rbx, %rax	; <retval>,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L150:
-; src/tac.c:685:             double t = strtod(primary->value.literal_value, NULL);
-	movq	(%rdi), %rdi	;* primary, primary_36(D)->value.literal_value
-	xorl	%esi, %esi	;
-	call	*strtod@GOTPCREL(%rip)	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:685:             double t = strtod(primary->value.literal_value, NULL);
-	movsd	%xmm0, 8(%rsp)	; _5, %sfp
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:236:             arg->value.float_value = *(double*)value;
-	movsd	8(%rsp), %xmm0	; %sfp, _5
-; src/tac.c:224:     arg->kind = kind;
-	movl	$2, 16(%rax)	;, arg_114->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbx	; tmp177, <retval>
-; src/tac.c:236:             arg->value.float_value = *(double*)value;
-	movsd	%xmm0, (%rax)	; _5, arg_114->value.float_value
-; src/tac.c:237:             arg->type = name_float;
-	movq	name_float(%rip), %rax	; name_float, name_float
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rbx)	;,
-; src/tac.c:237:             arg->type = name_float;
-	movq	%rax, 8(%rbx)	; name_float,
-; src/tac.c:739: }
-	addq	$24, %rsp	;,
-	movq	%rbx, %rax	; <retval>,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L149:
-; src/tac.c:690:             return create_arg(ARG_STRING, primary->value.literal_value);
-	movq	(%rdi), %xmm0	; primary_36(D)->value.literal_value, _6
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:690:             return create_arg(ARG_STRING, primary->value.literal_value);
-	movq	%xmm0, 8(%rsp)	; _6, %sfp
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:240:             arg->value.string_value = (string)value;
-	movq	8(%rsp), %xmm0	; %sfp, _6
-; src/tac.c:224:     arg->kind = kind;
-	movl	$3, 16(%rax)	;, arg_126->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbx	; tmp178, <retval>
-; src/tac.c:240:             arg->value.string_value = (string)value;
-	movhps	name_string(%rip), %xmm0	; name_string, tmp145
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;,
-; src/tac.c:240:             arg->value.string_value = (string)value;
-	movups	%xmm0, (%rax)	; tmp145, MEM <vector(2) long unsigned int> [(void *)arg_126]
-; src/tac.c:739: }
-	addq	$24, %rsp	;,
-	movq	%rbx, %rax	; <retval>,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L148:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:224:     arg->kind = kind;
-	movl	$4, 16(%rax)	;, arg_138->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbx	; tmp179, <retval>
-; src/tac.c:244:             arg->value.bool_value = *(bool*)value;
-	movb	$1, (%rax)	;, arg_138->value.bool_value
-; src/tac.c:245:             arg->type = name_bool;
-	movq	name_bool(%rip), %rax	; name_bool, name_bool
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rbx)	;,
-; src/tac.c:245:             arg->type = name_bool;
-	movq	%rax, 8(%rbx)	; name_bool,
-; src/tac.c:739: }
-	addq	$24, %rsp	;,
-	movq	%rbx, %rax	; <retval>,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L147:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:224:     arg->kind = kind;
-	movl	$4, 16(%rax)	;, arg_150->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbx	; tmp180, <retval>
-; src/tac.c:244:             arg->value.bool_value = *(bool*)value;
-	movb	$0, (%rax)	;, arg_150->value.bool_value
-; src/tac.c:245:             arg->type = name_bool;
-	movq	name_bool(%rip), %rax	; name_bool, name_bool
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rbx)	;,
-; src/tac.c:245:             arg->type = name_bool;
-	movq	%rax, 8(%rbx)	; name_bool,
-; src/tac.c:739: }
-	addq	$24, %rsp	;,
-	movq	%rbx, %rax	; <retval>,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L146:
-; src/tac.c:703:             return tac_expression(primary->value.expr, status);
-	movq	(%rdi), %rdi	; primary_36(D)->value.expr, primary_36(D)->value.expr
-; src/tac.c:739: }
-	addq	$24, %rsp	;,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-; src/tac.c:703:             return tac_expression(primary->value.expr, status);
-	jmp	tac_expression	;
-	.p2align 4,,10
-	.p2align 3
-.L145:
-; src/tac.c:705:             Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
-	movq	(%rdi), %rdi	; primary_36(D)->value.operand, primary_36(D)->value.operand
-	call	tac_primary	;
-; src/tac.c:705:             Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
-	movq	%rbp, %rsi	; status,
-; src/tac.c:705:             Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
-	movq	%rax, %rdi	; tmp181, _9
-; src/tac.c:705:             Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
-	call	load_rvalue	;
-; src/tac.c:706:             Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, name_bool, VAR_TEMP, status));
-	movq	%rbp, %rcx	; status,
-	movl	$116, %edx	;,
-	xorl	%edi, %edi	;
-	movq	name_bool(%rip), %rsi	; name_bool,
-; src/tac.c:705:             Arg* operand = load_rvalue(tac_primary(primary->value.operand, status), status);
-	movq	%rax, %r13	; tmp182, operand
-; src/tac.c:706:             Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, name_bool, VAR_TEMP, status));
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:706:             Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, name_bool, VAR_TEMP, status));
-	movq	%rax, %r12	; tmp183, _11
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movq	%r12, %xmm0	; _11, tmp152
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movhps	16(%r12), %xmm0	; _11->type, tmp152
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbx	; tmp184, <retval>
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_162->is_get
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp152, MEM <vector(2) long unsigned int> [(void *)arg_162]
-; src/tac.c:224:     arg->kind = kind;
-	movl	$0, 16(%rax)	;, arg_162->kind
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%r13, 8(%rax)	; operand, inst_82->arg2
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp185, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rbx, (%rax)	; <retval>, inst_82->arg1
-; src/tac.c:214:     inst->type = type;
-	movl	$13, 24(%rax)	;, inst_82->type
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_82->arg3
-; src/tac.c:708:             list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbp), %rax	; status_37(D)->current_block, status_37(D)->current_block
-	movq	8(%rax), %rdi	;, _12->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:739: }
-	addq	$24, %rsp	;,
-	movq	%rbx, %rax	; <retval>,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	ret	
-.L141:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rdi	; stderr,
-	movl	$2, %esi	;,
-	xorl	%eax, %eax	;
-; src/tac.c:737:             return NULL;
-	xorl	%ebx, %ebx	; <retval>
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC19(%rip), %rdx	;, tmp170
-	call	*__fprintf_chk@GOTPCREL(%rip)	;
-	jmp	.L160	;
-	.p2align 4,,10
-	.p2align 3
-.L159:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:224:     arg->kind = kind;
-	movl	$2, 16(%rax)	;, arg_198->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r12	; tmp192, arg
-; src/tac.c:236:             arg->value.float_value = *(double*)value;
-	movq	.LC17(%rip), %rax	;, tmp197
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%r12)	;, arg_198->is_get
-; src/tac.c:236:             arg->value.float_value = *(double*)value;
-	movq	%rax, (%r12)	; tmp197, arg_198->value.float_value
-; src/tac.c:237:             arg->type = name_float;
-	movq	name_float(%rip), %rax	; name_float, name_float
-	movq	%rax, 8(%r12)	; name_float, arg_198->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:214:     inst->type = type;
-	movl	$2, 24(%rax)	;, inst_84->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp193, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rbx, (%rax)	; <retval>,* inst
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%r12, 8(%rax)	; arg,
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	%r13, 16(%rax)	; operand,
-.L154:
-; src/tac.c:727:             list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbp), %rax	; status_37(D)->current_block, status_37(D)->current_block
-	movq	8(%rax), %rdi	;, _25->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:729:             return temp;
-	jmp	.L140	;
-	.p2align 4,,10
-	.p2align 3
-.L158:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:224:     arg->kind = kind;
-	movl	$1, 16(%rax)	;, arg_186->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r12	; tmp190, arg
-; src/tac.c:232:             arg->value.int_value = *(long long*)value;
-	movq	$0, (%rax)	;, arg_186->value.int_value
-; src/tac.c:233:             arg->type = name_int;
-	movq	name_int(%rip), %rax	; name_int, name_int
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%r12)	;, arg_186->is_get
-; src/tac.c:233:             arg->type = name_int;
-	movq	%rax, 8(%r12)	; name_int, arg_186->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:214:     inst->type = type;
-	movl	$1, 24(%rax)	;, inst_83->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp191, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rbx, (%rax)	; <retval>,* inst
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%r12, 8(%rax)	; arg,
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	%r13, 16(%rax)	; operand,
-	jmp	.L154	;
-	.size	tac_primary, .-tac_primary
-	.section	.rodata.str1.8
-	.align 8
-.LC20:
-	.string	"[warning] Left-hand side of assignment is not a variable\n"
-	.text
-	.p2align 4
-	.globl	tac_expression
-	.type	tac_expression, @function
-tac_expression:
-	pushq	%r15	;
-	pushq	%r14	;
-	pushq	%r13	;
-	pushq	%r12	;
-	movq	%rdi, %r12	; tmp146, expression
-	pushq	%rbp	;
-	pushq	%rbx	;
-	movq	%rsi, %rbx	; tmp147, status
-	subq	$8, %rsp	;,
-; src/tac.c:646:     if (expression->operator == OP_NONE) {
-	cmpl	$19, 24(%rdi)	;, expression_30(D)->operator
-	je	.L175	;,
-; src/tac.c:651:     Arg* right = load_rvalue(tac_expression(expression->right, status), status);
-	movq	16(%rdi), %rdi	; expression_30(D)->right, expression_30(D)->right
-	call	tac_expression	;
-; src/tac.c:651:     Arg* right = load_rvalue(tac_expression(expression->right, status), status);
-	movq	%rbx, %rsi	; status,
-; src/tac.c:651:     Arg* right = load_rvalue(tac_expression(expression->right, status), status);
-	movq	%rax, %rdi	; tmp148, _4
-; src/tac.c:651:     Arg* right = load_rvalue(tac_expression(expression->right, status), status);
-	call	load_rvalue	;
-	movq	%rax, %rbp	; tmp149, <retval>
-; src/tac.c:652:     InstructionType op = get_instruction_type(expression->operator);
-	movl	24(%r12), %eax	; expression_30(D)->operator,
-	cmpl	$18, %eax	;, _5
-	ja	.L163	;,
-; src/tac.c:653:     Arg* left = tac_expression(expression->expr_left, status);
-	movq	(%r12), %rdi	; expression_30(D)->expr_left, expression_30(D)->expr_left
-	leaq	CSWTCH.43(%rip), %rdx	;, tmp125
-	movq	%rbx, %rsi	; status,
-	movl	(%rdx,%rax,4), %r13d	; CSWTCH.43[_5], _50
-	call	tac_expression	;
-	movq	%rax, %r14	; tmp150, left
-; src/tac.c:32:     return op == OP_ASSIGN || op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN;
-	movl	24(%r12), %eax	; expression_30(D)->operator, expression_30(D)->operator
-	subl	$13, %eax	;, tmp128
-; src/tac.c:655:     if (is_assignment_operator(expression->operator)) {
-	cmpl	$5, %eax	;, tmp128
-	ja	.L164	;,
-; src/tac.c:656:         if (op != INST_ASSIGN) {
-	cmpl	$14, %r13d	;, _50
-	jne	.L168	;,
-; src/tac.c:662:         if (left->kind != ARG_VARIABLE)
-	movl	16(%r14), %eax	; left_96->kind,
-	testl	%eax, %eax	;
-	jne	.L176	;,
-.L166:
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:214:     inst->type = type;
-	movl	$14, 24(%rax)	;, inst_53->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp155, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r14, (%rax)	; left, inst_53->arg1
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%rbp, 8(%rax)	; <retval>, inst_53->arg2
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_53->arg3
-; src/tac.c:665:         if (left->is_get)
-	cmpb	$0, 20(%r14)	;, left_96->is_get
-	jne	.L177	;,
-.L167:
-; src/tac.c:672:     list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_31(D)->current_block, status_31(D)->current_block
-	movq	8(%rax), %rdi	; _19->instructions, _19->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:675: }
-	addq	$8, %rsp	;,
-	movq	%rbp, %rax	; <retval>,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	popq	%r14	;
-	popq	%r15	;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L163:
-; src/tac.c:653:     Arg* left = tac_expression(expression->expr_left, status);
-	movq	(%r12), %rdi	; expression_30(D)->expr_left, expression_30(D)->expr_left
-	movq	%rbx, %rsi	; status,
-; src/tac.c:655:     if (is_assignment_operator(expression->operator)) {
-	movl	$25, %r13d	;, _50
-; src/tac.c:653:     Arg* left = tac_expression(expression->expr_left, status);
-	call	tac_expression	;
-	movq	%rax, %r14	; tmp161, left
-; src/tac.c:32:     return op == OP_ASSIGN || op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN;
-	movl	24(%r12), %eax	; expression_30(D)->operator, expression_30(D)->operator
-	subl	$13, %eax	;, tmp144
-; src/tac.c:655:     if (is_assignment_operator(expression->operator)) {
-	cmpl	$5, %eax	;, tmp144
-	ja	.L164	;,
-.L168:
-; src/tac.c:657:             Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, left->type, VAR_TEMP, status));
-	movq	8(%r14), %rsi	; left_98->type, left_98->type
-	movq	%rbx, %rcx	; status,
-	movl	$116, %edx	;,
-	xorl	%edi, %edi	;
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:657:             Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, left->type, VAR_TEMP, status));
-	movq	%rax, %r15	; tmp151, _9
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movq	%r15, %xmm0	; _9, tmp131
-; src/tac.c:658:             inst = create_instruction(op, temp, load_rvalue(left, status), right);
-	movq	%rbx, %rsi	; status,
-	movq	%r14, %rdi	; left,
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movhps	16(%r15), %xmm0	; _9->type, tmp131
-; src/tac.c:224:     arg->kind = kind;
-	movl	$0, 16(%rax)	;, arg_77->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r12	; tmp152, arg
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_77->is_get
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp131, MEM <vector(2) long unsigned int> [(void *)arg_77]
-; src/tac.c:658:             inst = create_instruction(op, temp, load_rvalue(left, status), right);
-	call	load_rvalue	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:658:             inst = create_instruction(op, temp, load_rvalue(left, status), right);
-	movq	%rax, %r15	; tmp153, _10
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%r15, 8(%rax)	; _10, inst_52->arg2
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp154, inst
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	%rbp, 16(%rax)	; <retval>, inst_52->arg3
-; src/tac.c:660:             right = temp;
-	movq	%r12, %rbp	; arg, <retval>
-; src/tac.c:214:     inst->type = type;
-	movl	%r13d, 24(%rax)	; _50, inst_52->type
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r12, (%rax)	; arg, inst_52->arg1
-; src/tac.c:659:             list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_31(D)->current_block, status_31(D)->current_block
-	movq	8(%rax), %rdi	; _11->instructions, _11->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:662:         if (left->kind != ARG_VARIABLE)
-	movl	16(%r14), %eax	; left_96->kind,
-	testl	%eax, %eax	;
-	je	.L166	;,
-.L176:
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rcx	; stderr,
-	movl	$57, %edx	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:551:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_230->type
+; src/parser.c:549:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp526, token
+; src/parser.c:551:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	je	.L238	;,
+.L241:
+; src/parser.c:552:         initializer = parse_variable(lexer, now_scope, parser);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_variable	;
+	movq	%rax, %r14	; tmp527, initializer
+; src/parser.c:553:         if (initializer == NULL)
+	testq	%rax, %rax	; initializer
+	je	.L381	;,
+.L240:
+; src/parser.c:555:         token = get_next_token(lexer, true);
 	movl	$1, %esi	;,
-	leaq	.LC20(%rip), %rdi	;, tmp136
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L166	;
-	.p2align 4,,10
-	.p2align 3
-.L164:
-; src/tac.c:668:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, left->type, VAR_TEMP, status));
-	movq	8(%r14), %rsi	; left_97->type, left_97->type
-	movq	%rbx, %rcx	; status,
-	movl	$116, %edx	;,
-	xorl	%edi, %edi	;
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:668:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, left->type, VAR_TEMP, status));
-	movq	%rax, %r15	; tmp157, _17
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movq	%r15, %xmm0	; _17, tmp138
-; src/tac.c:669:         inst = create_instruction(op, temp, load_rvalue(left, status), right);
-	movq	%rbx, %rsi	; status,
-	movq	%r14, %rdi	; left,
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movhps	16(%r15), %xmm0	; _17->type, tmp138
-; src/tac.c:224:     arg->kind = kind;
-	movl	$0, 16(%rax)	;, arg_89->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r12	; tmp158, arg
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_89->is_get
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp138, MEM <vector(2) long unsigned int> [(void *)arg_89]
-; src/tac.c:669:         inst = create_instruction(op, temp, load_rvalue(left, status), right);
-	call	load_rvalue	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:669:         inst = create_instruction(op, temp, load_rvalue(left, status), right);
-	movq	%rax, %r14	; tmp159, _18
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	%rbp, 16(%rax)	; <retval>, inst_55->arg3
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp160, inst
-; src/tac.c:670:         right = temp;
-	movq	%r12, %rbp	; arg, <retval>
-; src/tac.c:214:     inst->type = type;
-	movl	%r13d, 24(%rax)	; _50, inst_55->type
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r12, (%rax)	; arg, inst_55->arg1
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%r14, 8(%rax)	; _18, inst_55->arg2
-	jmp	.L167	;
-	.p2align 4,,10
-	.p2align 3
-.L175:
-; src/tac.c:647:         Arg* result = tac_primary(expression->prim_left, status);
-	movq	8(%rdi), %rdi	; expression_30(D)->prim_left, expression_30(D)->prim_left
-; src/tac.c:675: }
-	addq	$8, %rsp	;,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	popq	%r14	;
-	popq	%r15	;
-; src/tac.c:647:         Arg* result = tac_primary(expression->prim_left, status);
-	jmp	tac_primary	;
-	.p2align 4,,10
-	.p2align 3
-.L177:
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:214:     inst->type = type;
-	movl	$24, 24(%rax)	;, inst_54->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp156, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r14, (%rax)	; left, inst_54->arg1
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%rbp, 8(%rax)	; <retval>, inst_54->arg2
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_54->arg3
-	jmp	.L167	;
-	.size	tac_expression, .-tac_expression
-	.p2align 4
-	.globl	tac_if
-	.type	tac_if, @function
-tac_if:
-	pushq	%r15	;
-; src/tac.c:465:     Var* then_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rsi, %rcx	; status,
-; src/tac.c:462: void tac_if(If* if_, TACStatus* status) {
-	movq	%rdi, %r15	; tmp186, if_
-; src/tac.c:465:     Var* then_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movl	$98, %edx	;,
-; src/tac.c:462: void tac_if(If* if_, TACStatus* status) {
-	pushq	%r14	;
-; src/tac.c:465:     Var* then_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%edi, %edi	;
-; src/tac.c:462: void tac_if(If* if_, TACStatus* status) {
-	pushq	%r13	;
-	pushq	%r12	;
-	pushq	%rbp	;
-	pushq	%rbx	;
-	movq	%rsi, %rbx	; tmp187, status
-; src/tac.c:465:     Var* then_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%esi, %esi	;
-; src/tac.c:462: void tac_if(If* if_, TACStatus* status) {
-	subq	$56, %rsp	;,
-; src/tac.c:465:     Var* then_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	call	create_var	;
-; src/tac.c:466:     Var* else_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%edi, %edi	;
-	xorl	%esi, %esi	;
-	movq	%rbx, %rcx	; status,
-	movl	$98, %edx	;,
-; src/tac.c:465:     Var* then_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rax, %r12	; tmp188, then_label
-; src/tac.c:466:     Var* else_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	call	create_var	;
-; src/tac.c:468:     if (list_is_empty(if_->else_if) && list_is_empty(if_->else_body))
-	movq	16(%r15), %rdi	; if__61(D)->else_if, if__61(D)->else_if
-; src/tac.c:466:     Var* else_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rax, %rbp	; tmp189, else_label
-; src/tac.c:468:     if (list_is_empty(if_->else_if) && list_is_empty(if_->else_body))
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:468:     if (list_is_empty(if_->else_if) && list_is_empty(if_->else_body))
-	testb	%al, %al	; tmp190
-	je	.L181	;,
-; src/tac.c:468:     if (list_is_empty(if_->else_if) && list_is_empty(if_->else_body))
-	movq	24(%r15), %rdi	; if__61(D)->else_body, if__61(D)->else_body
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:468:     if (list_is_empty(if_->else_if) && list_is_empty(if_->else_body))
-	testb	%al, %al	; tmp192
-	jne	.L202	;,
-.L181:
-; src/tac.c:471:         end_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rbx, %rcx	; status,
-	movl	$98, %edx	;,
-	xorl	%esi, %esi	;
-	xorl	%edi, %edi	;
-	call	create_var	;
-	movq	%rax, 40(%rsp)	; tmp191, %sfp
-.L180:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:474:     Arg* condition = tac_expression(if_->condition, status);
-	movq	%rbx, %rsi	; status,
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_185->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r14	; tmp193, arg
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_185->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	40(%rsp), %rax	; %sfp, end_label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%r14)	;, arg_185->is_get
-; src/tac.c:474:     Arg* condition = tac_expression(if_->condition, status);
-	movq	(%r15), %rdi	; if__61(D)->condition, if__61(D)->condition
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%rax, (%r14)	; end_label, arg_185->value.label
-; src/tac.c:474:     Arg* condition = tac_expression(if_->condition, status);
-	call	tac_expression	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:474:     Arg* condition = tac_expression(if_->condition, status);
-	movq	%rax, 16(%rsp)	; condition, %sfp
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movl	$24, %edi	;,
-	movq	%rax, %r13	; tmp195, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_173->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_173->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%rbp, (%rax)	; else_label, arg_173->value.label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_173->is_get
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r12, (%rax)	; then_label, arg_161->value.label
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_161->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_161->type
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_161->is_get
-	movq	%rax, 8(%rsp)	; arg, %sfp
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	16(%rsp), %rcx	; %sfp, condition
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	8(%rsp), %rdx	; %sfp, arg
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp197, inst
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	%r13, 16(%rax)	; arg, inst_129->arg3
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%rdx, 8(%rax)	; arg, inst_129->arg2
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rcx, (%rax)	; condition, inst_129->arg1
-; src/tac.c:214:     inst->type = type;
-	movl	$19, 24(%rax)	;, inst_129->type
-; src/tac.c:476:     list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_56(D)->current_block, status_56(D)->current_block
-	movq	8(%rax), %rdi	; _8->instructions, _8->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r13	; tmp198, block
-; src/tac.c:100:     block->label = label;
-	movq	%r12, (%rax)	; then_label, block_159->label
-; src/tac.c:101:     block->instructions = create_list();
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp530, token
+.L242:
+; src/parser.c:557:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	cmpl	$5, 24(%r12)	;, token_239->type
+	jne	.L245	;,
+; src/parser.c:557:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	movq	(%r12), %rdi	; token_239->lexeme, token_239->lexeme
+	movq	SEMICOLON_SYMBOL(%rip), %rsi	; SEMICOLON_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:557:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	testb	%al, %al	; tmp532
+	je	.L245	;,
+; src/parser.c:562:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:564:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_246->type
+; src/parser.c:562:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp533, token
+; src/parser.c:564:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	je	.L246	;,
+.L249:
+; src/parser.c:565:         condition = parse_expression(lexer, now_scope, parser);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_expression	;
+	movq	%rax, 8(%rsp)	; condition, %sfp
+; src/parser.c:566:         if (condition == NULL)
+	testq	%rax, %rax	; condition
+	je	.L382	;,
+.L248:
+; src/parser.c:568:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp537, token
+.L250:
+; src/parser.c:570:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	cmpl	$5, 24(%r12)	;, token_255->type
+	jne	.L252	;,
+; src/parser.c:570:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	movq	(%r12), %rdi	; token_255->lexeme, token_255->lexeme
+	movq	SEMICOLON_SYMBOL(%rip), %rsi	; SEMICOLON_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:570:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	testb	%al, %al	; tmp539
+	je	.L252	;,
+; src/parser.c:575:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:577:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_262->type
+; src/parser.c:575:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp540, token
+; src/parser.c:577:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	je	.L253	;,
+.L256:
+; src/parser.c:578:         increment = parse_expression(lexer, now_scope, parser);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_expression	;
+	movq	%rax, 24(%rsp)	; increment, %sfp
+; src/parser.c:579:         if (increment == NULL)
+	testq	%rax, %rax	; increment
+	je	.L383	;,
+.L255:
+; src/parser.c:581:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp544, token
+.L257:
+; src/parser.c:583:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%r12)	;, token_271->type
+	jne	.L259	;,
+; src/parser.c:583:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%r12), %rdi	; token_271->lexeme, token_271->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:583:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp546
+	je	.L259	;,
+; src/parser.c:588:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:589:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_278->type
+; src/parser.c:588:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp547, token
+; src/parser.c:589:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	jne	.L261	;,
+; src/parser.c:589:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	(%rax), %rdi	; token_278->lexeme, token_278->lexeme
+	movq	L_BRACE_SYMBOL(%rip), %rsi	; L_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:589:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp549
+	je	.L261	;,
+; src/parser.c:594:     list(Statement*) body = create_list();
 	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:479:     list_append(status->current_subroutine->blocks, (pointer)then_block);
-	movq	%r13, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%r13)	; tmp199, block_159->instructions
-; src/tac.c:479:     list_append(status->current_subroutine->blocks, (pointer)then_block);
-	movq	8(%rbx), %rax	; status_56(D)->current_subroutine, status_56(D)->current_subroutine
-	movq	32(%rax), %rdi	; _10->blocks, _10->blocks
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:480:     status->current_block = then_block;
-	movq	%r13, 16(%rbx)	; block, status_56(D)->current_block
-; src/tac.c:482:     list(Statement*) then_statements = list_copy(if_->body);
-	movq	8(%r15), %rdi	; if__61(D)->body, if__61(D)->body
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp200, then_statements
-; src/tac.c:484:     while ((statement = (Statement*)list_pop(then_statements)) != NULL)
-	jmp	.L182	;
+; src/parser.c:595:     parser->in_loop = true;
+	movb	$1, 11(%rbp)	;, parser_62(D)->in_loop
+; src/parser.c:596:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:594:     list(Statement*) body = create_list();
+	movq	%rax, %r15	; tmp550, body
+; src/parser.c:596:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp551, token
+; src/parser.c:597:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	jmp	.L262	;
 	.p2align 4,,10
 	.p2align 3
-.L183:
-; src/tac.c:485:         tac_statement(statement, status);
-	movq	%rbx, %rsi	; status,
-	call	tac_statement	;
-.L182:
-; src/tac.c:484:     while ((statement = (Statement*)list_pop(then_statements)) != NULL)
-	movq	%r12, %rdi	; then_statements,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp201, statement
-; src/tac.c:484:     while ((statement = (Statement*)list_pop(then_statements)) != NULL)
+.L263:
+; src/parser.c:601:         list_append(body, (pointer)statement);
+	movq	%rcx, %rsi	; statement,
+	movq	%r15, %rdi	; body,
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:602:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp554, token
+.L262:
+; src/parser.c:597:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%r12)	;, token_290->type
+	jne	.L264	;,
+; src/parser.c:597:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movq	(%r12), %rdi	; token_290->lexeme, token_290->lexeme
+	movq	R_BRACE_SYMBOL(%rip), %rsi	; R_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:597:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp555
+	jne	.L384	;,
+.L264:
+; src/parser.c:598:         Statement* statement = parse_statement(lexer, now_scope, parser);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_statement	;
+	movq	%rax, %rcx	; tmp552, statement
+; src/parser.c:599:         if (statement == NULL)
 	testq	%rax, %rax	; statement
-	jne	.L183	;,
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	$0, 8(%rax)	;, inst_130->arg2
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp202, inst
-; src/tac.c:214:     inst->type = type;
-	movl	$20, 24(%rax)	;, inst_130->type
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r14, (%rax)	; arg, inst_130->arg1
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_130->arg3
-; src/tac.c:488:     list_append(status->current_block->instructions, (pointer)jump_to_end);
-	movq	16(%rbx), %rax	; status_56(D)->current_block, status_56(D)->current_block
-	movq	8(%rax), %rdi	; _13->instructions, _13->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:490:     if (!list_is_empty(if_->else_if)) {
-	movq	16(%r15), %rdi	; if__61(D)->else_if, if__61(D)->else_if
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:490:     if (!list_is_empty(if_->else_if)) {
-	testb	%al, %al	; tmp203
-	je	.L203	;,
-.L184:
-; src/tac.c:523:     if (!list_is_empty(if_->else_body)) {
-	movq	24(%r15), %rdi	; if__61(D)->else_body, if__61(D)->else_body
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:523:     if (!list_is_empty(if_->else_body)) {
-	testb	%al, %al	; tmp221
-	je	.L204	;,
-.L191:
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp227, block
-; src/tac.c:100:     block->label = label;
-	movq	40(%rsp), %rax	; %sfp, end_label
-	movq	%rax, 0(%rbp)	; end_label, block_227->label
-; src/tac.c:101:     block->instructions = create_list();
+	jne	.L263	;,
+; src/parser.c:600:             parser_error("Failed to parse for loop body statement", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	movq	%rax, 16(%rsp)	; statement, %sfp
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:600:             parser_error("Failed to parse for loop body statement", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC43(%rip), %rdi	;,
+; src/parser.c:600:             parser_error("Failed to parse for loop body statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp553, _289
+; src/parser.c:600:             parser_error("Failed to parse for loop body statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	movq	16(%rsp), %rcx	; %sfp, statement
+	jmp	.L263	;
+	.p2align 4,,10
+	.p2align 3
+.L375:
+; src/parser.c:439:         parser_error("Failed to parse statement", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:439:         parser_error("Failed to parse statement", token, get_full_path(parser->source_file));
+	movq	%r13, %rsi	; token,
+	leaq	.LC51(%rip), %rdi	;, tmp451
+; src/parser.c:439:         parser_error("Failed to parse statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp596, _41
+; src/parser.c:439:         parser_error("Failed to parse statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L288	;
+	.p2align 4,,10
+	.p2align 3
+.L376:
+; src/parser.c:449:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:450:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_114->type
+; src/parser.c:449:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp470, token
+; src/parser.c:450:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	jne	.L206	;,
+; src/parser.c:450:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_114->lexeme, token_114->lexeme
+	movq	L_PAREN_SYMBOL(%rip), %rsi	; L_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:450:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp472
+	je	.L206	;,
+; src/parser.c:455:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:456:     Expression* condition = parse_expression(lexer, now_scope, parser);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:455:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp473, token
+; src/parser.c:456:     Expression* condition = parse_expression(lexer, now_scope, parser);
+	call	parse_expression	;
+	movq	%rax, 32(%rsp)	; condition, %sfp
+; src/parser.c:457:     if (condition == NULL)
+	testq	%rax, %rax	; condition
+	je	.L385	;,
+.L207:
+; src/parser.c:459:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:460:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_125->type
+; src/parser.c:459:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp476, token
+; src/parser.c:460:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	jne	.L209	;,
+; src/parser.c:460:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_125->lexeme, token_125->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:460:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp478
+	je	.L209	;,
+; src/parser.c:465:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:466:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_132->type
+; src/parser.c:465:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp479, token
+; src/parser.c:466:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	jne	.L211	;,
+; src/parser.c:466:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	(%rax), %rdi	; token_132->lexeme, token_132->lexeme
+	movq	L_BRACE_SYMBOL(%rip), %rsi	; L_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:466:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp481
+	je	.L211	;,
+; src/parser.c:471:     list(Statement*) body = create_list();
 	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:539:     list_append(status->current_subroutine->blocks, (pointer)end_block);
-	movq	%rbp, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%rbp)	; tmp228, block_227->instructions
-; src/tac.c:539:     list_append(status->current_subroutine->blocks, (pointer)end_block);
-	movq	8(%rbx), %rax	; status_56(D)->current_subroutine, status_56(D)->current_subroutine
-	movq	32(%rax), %rdi	; _40->blocks, _40->blocks
+; src/parser.c:472:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:476:             parser_error("Failed to parse if body statement", token, get_full_path(parser->source_file));
+	leaq	.LC27(%rip), %r14	;, tmp462
+; src/parser.c:471:     list(Statement*) body = create_list();
+	movq	%rax, 8(%rsp)	; tmp482, %sfp
+; src/parser.c:472:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp483, token
+; src/parser.c:473:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	jmp	.L212	;
+	.p2align 4,,10
+	.p2align 3
+.L213:
+; src/parser.c:477:         list_append(body, (pointer)statement);
+	movq	8(%rsp), %rdi	; %sfp,
+	movq	%r15, %rsi	; statement,
 	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:540:     status->current_block = end_block;
-	movq	%rbp, 16(%rbx)	; block, status_56(D)->current_block
-; src/tac.c:542: }
+; src/parser.c:478:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp486, token
+.L212:
+; src/parser.c:473:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%r12)	;, token_144->type
+	jne	.L214	;,
+; src/parser.c:473:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movq	(%r12), %rdi	; token_144->lexeme, token_144->lexeme
+	movq	R_BRACE_SYMBOL(%rip), %rsi	; R_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:473:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp487
+	jne	.L386	;,
+.L214:
+; src/parser.c:474:         Statement* statement = parse_statement(lexer, now_scope, parser);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_statement	;
+	movq	%rax, %r15	; tmp484, statement
+; src/parser.c:475:         if (statement == NULL)
+	testq	%rax, %rax	; statement
+	jne	.L213	;,
+; src/parser.c:476:             parser_error("Failed to parse if body statement", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:476:             parser_error("Failed to parse if body statement", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	movq	%r14, %rdi	; tmp462,
+; src/parser.c:476:             parser_error("Failed to parse if body statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp485, _143
+; src/parser.c:476:             parser_error("Failed to parse if body statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L213	;
+	.p2align 4,,10
+	.p2align 3
+.L206:
+; src/parser.c:451:         parser_error("Expected '(' after 'if'", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:451:         parser_error("Expected '(' after 'if'", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC23(%rip), %rdi	;, tmp335
+; src/parser.c:451:         parser_error("Expected '(' after 'if'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp471, _120
+; src/parser.c:451:         parser_error("Expected '(' after 'if'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L205:
+; src/parser.c:453:         return NULL;
+	xorl	%esi, %esi	; _221
+.L216:
+; src/parser.c:404:             return create_statement(IF_STATEMENT, parse_if(lexer, now_scope, parser), NULL, NULL, NULL, NULL);
+	xorl	%r9d, %r9d	;
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	movl	$2, %edi	;,
+.L373:
+; src/parser.c:445: }
 	addq	$56, %rsp	;,
 	popq	%rbx	;
 	popq	%rbp	;
@@ -2388,1875 +2104,3205 @@ tac_if:
 	popq	%r13	;
 	popq	%r14	;
 	popq	%r15	;
-	ret	
+; src/parser.c:416:                 return create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL);
+	jmp	*create_statement@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
-.L202:
-; src/tac.c:469:         end_label = else_label;
-	movq	%rbp, 40(%rsp)	; else_label, %sfp
-	jmp	.L180	;
-	.p2align 4,,10
-	.p2align 3
-.L204:
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp222, block
-; src/tac.c:100:     block->label = label;
-	movq	%rbp, (%rax)	; else_label, block_225->label
-; src/tac.c:101:     block->instructions = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:526:         list_append(status->current_subroutine->blocks, (pointer)else_block);
-	movq	%r12, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%r12)	; tmp223, block_225->instructions
-; src/tac.c:526:         list_append(status->current_subroutine->blocks, (pointer)else_block);
-	movq	8(%rbx), %rax	; status_56(D)->current_subroutine, status_56(D)->current_subroutine
-	movq	32(%rax), %rdi	; _35->blocks, _35->blocks
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:527:         status->current_block = else_block;
-	movq	%r12, 16(%rbx)	; block, status_56(D)->current_block
-; src/tac.c:529:         list(Statement*) else_statements = list_copy(if_->else_body);
-	movq	24(%r15), %rdi	; if__61(D)->else_body, if__61(D)->else_body
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp224, else_statements
-; src/tac.c:531:         while ((else_statement = (Statement*)list_pop(else_statements)) != NULL)
-	jmp	.L192	;
-	.p2align 4,,10
-	.p2align 3
-.L193:
-; src/tac.c:532:             tac_statement(else_statement, status);
-	movq	%rbx, %rsi	; status,
-	call	tac_statement	;
-.L192:
-; src/tac.c:531:         while ((else_statement = (Statement*)list_pop(else_statements)) != NULL)
-	movq	%rbp, %rdi	; else_statements,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp225, else_statement
-; src/tac.c:531:         while ((else_statement = (Statement*)list_pop(else_statements)) != NULL)
-	testq	%rax, %rax	; else_statement
-	jne	.L193	;,
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r14, (%rax)	; arg, inst_133->arg1
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp226, inst
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	$0, 8(%rax)	;, inst_133->arg2
-; src/tac.c:214:     inst->type = type;
-	movl	$20, 24(%rax)	;, inst_133->type
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_133->arg3
-; src/tac.c:535:         list_append(status->current_block->instructions, (pointer)jump_to_end);
-	movq	16(%rbx), %rax	; status_56(D)->current_block, status_56(D)->current_block
-	movq	8(%rax), %rdi	; _38->instructions, _38->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-	jmp	.L191	;
-	.p2align 4,,10
-	.p2align 3
-.L203:
-; src/tac.c:492:         list(ElseIf*) elif_list = list_copy(if_->else_if);
-	movq	16(%r15), %rdi	; if__61(D)->else_if, if__61(D)->else_if
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, 16(%rsp)	; tmp204, %sfp
-	.p2align 4,,10
-	.p2align 3
-.L185:
-; src/tac.c:494:         while ((elif = (ElseIf*)list_pop(elif_list)) != NULL) {
-	movq	16(%rsp), %rdi	; %sfp,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp220, elif
-; src/tac.c:494:         while ((elif = (ElseIf*)list_pop(elif_list)) != NULL) {
-	testq	%rax, %rax	; elif
-	je	.L184	;,
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r13	; tmp205, block
-; src/tac.c:100:     block->label = label;
-	movq	%rbp, (%rax)	; else_label, block_197->label
-; src/tac.c:101:     block->instructions = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:497:             list_append(status->current_subroutine->blocks, (pointer)else_if_block);
-	movq	%r13, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%r13)	; tmp206, block_197->instructions
-; src/tac.c:497:             list_append(status->current_subroutine->blocks, (pointer)else_if_block);
-	movq	8(%rbx), %rax	; status_56(D)->current_subroutine, status_56(D)->current_subroutine
-	movq	32(%rax), %rdi	; _18->blocks, _18->blocks
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:498:             status->current_block = else_if_block;
-	movq	%r13, 16(%rbx)	; block, status_56(D)->current_block
-; src/tac.c:500:             then_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%esi, %esi	;
-	xorl	%edi, %edi	;
-	movq	%rbx, %rcx	; status,
-	movl	$98, %edx	;,
-	call	create_var	;
-; src/tac.c:501:             else_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%esi, %esi	;
-	xorl	%edi, %edi	;
-	movq	%rbx, %rcx	; status,
-	movl	$98, %edx	;,
-; src/tac.c:500:             then_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rax, 8(%rsp)	; tmp207, %sfp
-; src/tac.c:501:             else_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	call	create_var	;
-; src/tac.c:503:             condition = tac_expression(elif->condition, status);
-	movq	(%r12), %rdi	; elif_87->condition, elif_87->condition
-	movq	%rbx, %rsi	; status,
-; src/tac.c:501:             else_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rax, %rbp	; tmp208, else_label
-; src/tac.c:503:             condition = tac_expression(elif->condition, status);
-	call	tac_expression	;
-; src/tac.c:504:             if (list_is_empty(elif_list) && list_is_empty(if_->else_body))
-	movq	16(%rsp), %rdi	; %sfp,
-; src/tac.c:503:             condition = tac_expression(elif->condition, status);
-	movq	%rax, 24(%rsp)	; tmp209, %sfp
-; src/tac.c:504:             if (list_is_empty(elif_list) && list_is_empty(if_->else_body))
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:504:             if (list_is_empty(elif_list) && list_is_empty(if_->else_body))
-	testb	%al, %al	; tmp210
-	jne	.L205	;,
-.L187:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movl	$24, %edi	;,
-	movq	%rax, %r13	; tmp212, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_213->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_213->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%rbp, (%rax)	; else_label, arg_213->value.label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_213->is_get
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rcx	; tmp213, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_201->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_201->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	8(%rsp), %rax	; %sfp, then_label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rcx)	;, arg_201->is_get
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%rax, (%rcx)	; then_label, arg_201->value.label
-; src/tac.c:263:     arg->is_get = false;
-	movq	%rcx, 32(%rsp)	; arg, %sfp
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	24(%rsp), %rdx	; %sfp, condition
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	32(%rsp), %rcx	; %sfp, arg
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp214, inst
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	%r13, 16(%rax)	; arg, inst_131->arg3
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%rcx, 8(%rax)	; arg, inst_131->arg2
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rdx, (%rax)	; condition, inst_131->arg1
-; src/tac.c:214:     inst->type = type;
-	movl	$19, 24(%rax)	;, inst_131->type
-; src/tac.c:507:             list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_56(D)->current_block, status_56(D)->current_block
-	movq	8(%rax), %rdi	; _26->instructions, _26->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r13	; tmp215, block
-; src/tac.c:100:     block->label = label;
-	movq	8(%rsp), %rax	; %sfp, then_label
-	movq	%rax, 0(%r13)	; then_label, block_199->label
-; src/tac.c:101:     block->instructions = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:510:             list_append(status->current_subroutine->blocks, (pointer)then_block);
-	movq	%r13, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%r13)	; tmp216, block_199->instructions
-; src/tac.c:510:             list_append(status->current_subroutine->blocks, (pointer)then_block);
-	movq	8(%rbx), %rax	; status_56(D)->current_subroutine, status_56(D)->current_subroutine
-	movq	32(%rax), %rdi	; _28->blocks, _28->blocks
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:513:             list(Statement*) elif_statements = list_copy(elif->body);
-	movq	8(%r12), %rdi	; elif_87->body, elif_87->body
-; src/tac.c:511:             status->current_block = then_block;
-	movq	%r13, 16(%rbx)	; block, status_56(D)->current_block
-; src/tac.c:513:             list(Statement*) elif_statements = list_copy(elif->body);
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp217, elif_statements
-; src/tac.c:515:             while ((elif_statement = (Statement*)list_pop(elif_statements)) != NULL)
-	jmp	.L188	;
-	.p2align 4,,10
-	.p2align 3
-.L189:
-; src/tac.c:516:                 tac_statement(elif_statement, status);
-	movq	%rbx, %rsi	; status,
-	call	tac_statement	;
-.L188:
-; src/tac.c:515:             while ((elif_statement = (Statement*)list_pop(elif_statements)) != NULL)
-	movq	%r12, %rdi	; elif_statements,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp218, elif_statement
-; src/tac.c:515:             while ((elif_statement = (Statement*)list_pop(elif_statements)) != NULL)
-	testq	%rax, %rax	; elif_statement
-	jne	.L189	;,
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r14, (%rax)	; arg, inst_132->arg1
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp219, inst
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	$0, 8(%rax)	;, inst_132->arg2
-; src/tac.c:214:     inst->type = type;
-	movl	$20, 24(%rax)	;, inst_132->type
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_132->arg3
-; src/tac.c:519:             list_append(status->current_block->instructions, (pointer)jump_to_end);
-	movq	16(%rbx), %rax	; status_56(D)->current_block, status_56(D)->current_block
-	movq	8(%rax), %rdi	; _31->instructions, _31->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-	jmp	.L185	;
-	.p2align 4,,10
-	.p2align 3
-.L205:
-; src/tac.c:504:             if (list_is_empty(elif_list) && list_is_empty(if_->else_body))
-	movq	24(%r15), %rdi	; if__61(D)->else_body, if__61(D)->else_body
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:505:                 else_label = end_label;
-	testb	%al, %al	; tmp211
-	cmovne	40(%rsp), %rbp	; else_label,, %sfp, else_label
-	jmp	.L187	;
-	.size	tac_if, .-tac_if
-	.section	.rodata.str1.8
-	.align 8
-.LC21:
-	.string	"[warning] 'break' statement used outside of loop\n"
-	.align 8
-.LC22:
-	.string	"[warning] 'continue' statement used outside of loop\n"
-	.align 8
-.LC23:
-	.string	"[warning] Unsupported statement type for tac_statement: %d\n"
-	.text
-	.p2align 4
-	.globl	tac_statement
-	.type	tac_statement, @function
-tac_statement:
-; src/tac.c:421:     switch (statement->type) {
-	movl	8(%rdi), %ecx	; statement_28(D)->type,
-; src/tac.c:421:     switch (statement->type) {
-	cmpl	$7, %ecx	;, _1
-	ja	.L207	;,
-	leaq	.L209(%rip), %rdx	;, tmp115
-; src/tac.c:419: void tac_statement(Statement* statement, TACStatus* status) {
-	pushq	%r12	;
-; src/tac.c:421:     switch (statement->type) {
-	movslq	(%rdx,%rcx,4), %rax	;, tmp117
-; src/tac.c:419: void tac_statement(Statement* statement, TACStatus* status) {
-	pushq	%rbp	;
-	movq	%rsi, %rbp	; tmp144, status
-	pushq	%rbx	;
-	movq	%rdi, %rbx	; tmp143, statement
-; src/tac.c:421:     switch (statement->type) {
-	addq	%rdx, %rax	; tmp115, tmp118
-	jmp	*%rax	; tmp118
-	.section	.rodata
-	.align 4
-	.align 4
-.L209:
-	.long	.L216-.L209
-	.long	.L206-.L209
-	.long	.L214-.L209
-	.long	.L213-.L209
-	.long	.L212-.L209
-	.long	.L211-.L209
-	.long	.L210-.L209
-	.long	.L208-.L209
-	.text
-	.p2align 4,,10
-	.p2align 3
-.L210:
-; src/tac.c:435:             if (!list_is_empty(status->end_labels)) {
-	movq	32(%rsi), %rdi	; status_29(D)->end_labels, status_29(D)->end_labels
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:435:             if (!list_is_empty(status->end_labels)) {
-	testb	%al, %al	; tmp148
-	jne	.L218	;,
-; src/tac.c:436:                 Arg* label = (Arg*)status->end_labels->tail->content;
-	movq	32(%rbp), %rax	; status_29(D)->end_labels, status_29(D)->end_labels
-; src/tac.c:436:                 Arg* label = (Arg*)status->end_labels->tail->content;
-	movq	8(%rax), %rax	; _11->tail, _11->tail
-	movq	8(%rax), %rbx	; _12->content, label
-; src/tac.c:437:                 if (label != NULL) {
-	testq	%rbx, %rbx	; label
-	je	.L218	;,
-.L233:
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:214:     inst->type = type;
-	movl	$20, 24(%rax)	;,
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp149, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rbx, (%rax)	; label,* inst
-	jmp	.L232	;
-	.p2align 4,,10
-	.p2align 3
-.L208:
-; src/tac.c:446:             if (!list_is_empty(status->start_labels)) {
-	movq	40(%rsi), %rdi	; status_29(D)->start_labels, status_29(D)->start_labels
-	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/tac.c:446:             if (!list_is_empty(status->start_labels)) {
-	testb	%al, %al	; tmp150
-	jne	.L219	;,
-; src/tac.c:447:                 Arg* label = (Arg*)status->start_labels->tail->content;
-	movq	40(%rbp), %rax	; status_29(D)->start_labels, status_29(D)->start_labels
-; src/tac.c:447:                 Arg* label = (Arg*)status->start_labels->tail->content;
-	movq	8(%rax), %rax	; _18->tail, _18->tail
-	movq	8(%rax), %rbx	; _19->content, label
-; src/tac.c:448:                 if (label != NULL) {
-	testq	%rbx, %rbx	; label
-	jne	.L233	;,
-.L219:
-; src/tac.c:461: }
-	popq	%rbx	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	$52, %edx	;,
-; src/tac.c:461: }
-	popq	%rbp	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+.L378:
+; src/parser.c:611:     token = get_next_token(lexer, true);
 	movl	$1, %esi	;,
-	movq	stderr(%rip), %rcx	; stderr,
-	leaq	.LC22(%rip), %rdi	;, tmp140
-; src/tac.c:461: }
-	popq	%r12	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	jmp	*fwrite@GOTPCREL(%rip)	;
-	.p2align 4,,10
-	.p2align 3
-.L214:
-; src/tac.c:424:         case IF_STATEMENT: tac_if(statement->stmt.if_stmt, status); break;
-	movq	(%rdi), %rdi	; statement_28(D)->stmt.if_stmt, statement_28(D)->stmt.if_stmt
-; src/tac.c:461: }
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-; src/tac.c:424:         case IF_STATEMENT: tac_if(statement->stmt.if_stmt, status); break;
-	jmp	tac_if	;
-	.p2align 4,,10
-	.p2align 3
-.L216:
-; src/tac.c:422:         case EXPRESSION_STATEMENT: tac_expression(statement->stmt.expr, status); break;
-	movq	(%rdi), %rdi	; statement_28(D)->stmt.expr, statement_28(D)->stmt.expr
-; src/tac.c:461: }
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-; src/tac.c:422:         case EXPRESSION_STATEMENT: tac_expression(statement->stmt.expr, status); break;
-	jmp	tac_expression	;
-	.p2align 4,,10
-	.p2align 3
-.L206:
-; src/tac.c:461: }
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L212:
-; src/tac.c:426:         case FOR_STATEMENT: tac_for(statement->stmt.for_stmt, status); break;
-	movq	(%rdi), %rdi	; statement_28(D)->stmt.for_stmt, statement_28(D)->stmt.for_stmt
-; src/tac.c:461: }
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-; src/tac.c:426:         case FOR_STATEMENT: tac_for(statement->stmt.for_stmt, status); break;
-	jmp	tac_for	;
-	.p2align 4,,10
-	.p2align 3
-.L211:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp145, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$5, 16(%rax)	;, arg_66->kind
-; src/tac.c:248:             arg->value.string_value = NULL;
-	movq	$0, (%rax)	;, arg_66->value.string_value
-; src/tac.c:249:             arg->type = name_void;
-	movq	name_void(%rip), %rax	; name_void, name_void
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%r12)	;, arg_66->is_get
-; src/tac.c:429:             if (statement->stmt.return_expr != NULL)
-	movq	(%rbx), %rdi	; statement_28(D)->stmt.return_expr, _6
-; src/tac.c:249:             arg->type = name_void;
-	movq	%rax, 8(%r12)	; name_void, arg_66->type
-; src/tac.c:429:             if (statement->stmt.return_expr != NULL)
-	testq	%rdi, %rdi	; _6
-	je	.L217	;,
-; src/tac.c:430:                 return_value = tac_expression(statement->stmt.return_expr, status);
-	movq	%rbp, %rsi	; status,
-	call	tac_expression	;
-	movq	%rax, %r12	; tmp146, arg
-.L217:
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:214:     inst->type = type;
-	movl	$21, 24(%rax)	;, inst_45->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp147, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r12, (%rax)	; arg, inst_45->arg1
-.L232:
-; src/tac.c:439:                     list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbp), %rax	; status_29(D)->current_block, status_29(D)->current_block
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	$0, 8(%rsi)	;,
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rsi)	;,
-; src/tac.c:461: }
-	popq	%rbx	;
-; src/tac.c:439:                     list_append(status->current_block->instructions, (pointer)inst);
-	movq	8(%rax), %rdi	;, _13->instructions
-; src/tac.c:461: }
-	popq	%rbp	;
-	popq	%r12	;
-; src/tac.c:439:                     list_append(status->current_block->instructions, (pointer)inst);
-	jmp	*list_append@GOTPCREL(%rip)	;
-	.p2align 4,,10
-	.p2align 3
-.L213:
-; src/tac.c:425:         case WHILE_STATEMENT: tac_while(statement->stmt.while_stmt, status); break;
-	movq	(%rdi), %rdi	; statement_28(D)->stmt.while_stmt, statement_28(D)->stmt.while_stmt
-; src/tac.c:461: }
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-; src/tac.c:425:         case WHILE_STATEMENT: tac_while(statement->stmt.while_stmt, status); break;
-	jmp	tac_while	;
-	.p2align 4,,10
-	.p2align 3
-.L218:
-; src/tac.c:461: }
-	popq	%rbx	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	$49, %edx	;,
-; src/tac.c:461: }
-	popq	%rbp	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:612:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_301->type
+; src/parser.c:611:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp558, token
+; src/parser.c:612:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	jne	.L268	;,
+; src/parser.c:612:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_301->lexeme, token_301->lexeme
+	movq	L_PAREN_SYMBOL(%rip), %rsi	; L_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:612:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp560
+	je	.L268	;,
+; src/parser.c:617:     token = get_next_token(lexer, true);
 	movl	$1, %esi	;,
-	movq	stderr(%rip), %rcx	; stderr,
-	leaq	.LC21(%rip), %rdi	;, tmp133
-; src/tac.c:461: }
-	popq	%r12	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	jmp	*fwrite@GOTPCREL(%rip)	;
-.L207:
-	movq	stderr(%rip), %rdi	; stderr,
-	leaq	.LC23(%rip), %rdx	;, tmp142
-	movl	$2, %esi	;,
-	xorl	%eax, %eax	;
-	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
-	.size	tac_statement, .-tac_statement
-	.p2align 4
-	.globl	tac_for
-	.type	tac_for, @function
-tac_for:
-	pushq	%r15	;
-; src/tac.c:549:     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rsi, %rcx	; status,
-	movl	$98, %edx	;,
-; src/tac.c:543: void tac_for(For* for_, TACStatus* status) {
-	pushq	%r14	;
-	pushq	%r13	;
-	pushq	%r12	;
-	movq	%rdi, %r12	; tmp174, for_
-; src/tac.c:549:     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%edi, %edi	;
-; src/tac.c:543: void tac_for(For* for_, TACStatus* status) {
-	pushq	%rbp	;
-	pushq	%rbx	;
-	movq	%rsi, %rbx	; tmp175, status
-; src/tac.c:549:     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%esi, %esi	;
-; src/tac.c:543: void tac_for(For* for_, TACStatus* status) {
-	subq	$24, %rsp	;,
-; src/tac.c:549:     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	call	create_var	;
-; src/tac.c:550:     Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%esi, %esi	;
-	xorl	%edi, %edi	;
-	movq	%rbx, %rcx	; status,
-	movl	$98, %edx	;,
-; src/tac.c:549:     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rax, %r13	; tmp176, condition_label
-; src/tac.c:550:     Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	call	create_var	;
-; src/tac.c:551:     Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%edi, %edi	;
-	xorl	%esi, %esi	;
-	movq	%rbx, %rcx	; status,
-	movl	$98, %edx	;,
-; src/tac.c:550:     Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rax, %r15	; tmp177, body_label
-; src/tac.c:551:     Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	call	create_var	;
-; src/tac.c:552:     if (for_->condition != NULL) {
-	cmpq	$0, 8(%r12)	;, for__51(D)->condition
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:551:     Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rax, %r14	; tmp178, end_label
-; src/tac.c:552:     if (for_->condition != NULL) {
-	je	.L235	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbp	; tmp179, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;,
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;,
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r13, (%rax)	; condition_label, arg_169->value.label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_169->is_get
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %rsi	; tmp180, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rbp, (%rax)	; arg, inst_108->arg1
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	$0, 8(%rax)	;, inst_108->arg2
-; src/tac.c:214:     inst->type = type;
-	movl	$20, 24(%rax)	;, inst_108->type
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_108->arg3
-; src/tac.c:555:         list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_52(D)->current_block, status_52(D)->current_block
-	movq	8(%rax), %rdi	; _3->instructions, _3->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp181, block
-; src/tac.c:100:     block->label = label;
-	movq	%r13, (%rax)	; condition_label, block_167->label
-; src/tac.c:101:     block->instructions = create_list();
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:618:     Expression* condition = parse_expression(lexer, now_scope, parser);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:617:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp561, token
+; src/parser.c:618:     Expression* condition = parse_expression(lexer, now_scope, parser);
+	call	parse_expression	;
+	movq	%rax, %r15	; tmp562, condition
+; src/parser.c:619:     if (condition == NULL)
+	testq	%rax, %rax	; condition
+	je	.L387	;,
+.L269:
+; src/parser.c:621:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:622:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_312->type
+; src/parser.c:621:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp564, token
+; src/parser.c:622:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	jne	.L272	;,
+; src/parser.c:622:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_312->lexeme, token_312->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:622:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp566
+	je	.L272	;,
+; src/parser.c:627:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:628:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_319->type
+; src/parser.c:627:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp567, token
+; src/parser.c:628:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	jne	.L274	;,
+; src/parser.c:628:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	(%rax), %rdi	; token_319->lexeme, token_319->lexeme
+	movq	L_BRACE_SYMBOL(%rip), %rsi	; L_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:628:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp569
+	je	.L274	;,
+; src/parser.c:633:     list(Statement*) body = create_list();
 	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:557:         list_append(status->current_subroutine->blocks, (pointer)condition_block);
-	movq	%rbp, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%rbp)	; tmp182, block_167->instructions
-; src/tac.c:557:         list_append(status->current_subroutine->blocks, (pointer)condition_block);
-	movq	8(%rbx), %rax	; status_52(D)->current_subroutine, status_52(D)->current_subroutine
-	movq	32(%rax), %rdi	; _5->blocks, _5->blocks
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:558:         status->current_block = condition_block;
-	movq	%rbp, 16(%rbx)	; block, status_52(D)->current_block
-; src/tac.c:560:         Arg* condition = tac_expression(for_->condition, status);
-	movq	8(%r12), %rdi	; for__51(D)->condition, for__51(D)->condition
-	movq	%rbx, %rsi	; status,
-	call	tac_expression	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:560:         Arg* condition = tac_expression(for_->condition, status);
-	movq	%rax, 8(%rsp)	; condition, %sfp
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movl	$24, %edi	;,
-	movq	%rax, %rbp	; tmp184, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_155->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_155->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r14, (%rax)	; end_label, arg_155->value.label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_155->is_get
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_143->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_143->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r15, (%rax)	; body_label, arg_143->value.label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_143->is_get
-	movq	%rax, (%rsp)	; arg, %sfp
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	8(%rsp), %rcx	; %sfp, condition
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	(%rsp), %rdx	; %sfp, arg
-; src/tac.c:214:     inst->type = type;
-	movl	$19, 24(%rax)	;, inst_107->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp186, inst
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%rdx, 8(%rax)	; arg, inst_107->arg2
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rcx, (%rax)	; condition, inst_107->arg1
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	%rbp, 16(%rax)	; arg, inst_107->arg3
-; src/tac.c:562:         list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_52(D)->current_block, status_52(D)->current_block
-	movq	8(%rax), %rdi	;, _10->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-.L236:
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp189, block
-; src/tac.c:100:     block->label = label;
-	movq	%r15, (%rax)	; body_label, block_193->label
-; src/tac.c:101:     block->instructions = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:570:     list_append(status->current_subroutine->blocks, (pointer)body_block);
-	movq	%rbp, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%rbp)	; tmp190, block_193->instructions
-; src/tac.c:570:     list_append(status->current_subroutine->blocks, (pointer)body_block);
-	movq	8(%rbx), %rax	; status_52(D)->current_subroutine, status_52(D)->current_subroutine
-	movq	32(%rax), %rdi	; _15->blocks, _15->blocks
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:571:     status->current_block = body_block;
-	movq	%rbp, 16(%rbx)	; block, status_52(D)->current_block
-; src/tac.c:573:     Var* increment_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%edi, %edi	;
-	xorl	%esi, %esi	;
-	movq	%rbx, %rcx	; status,
-	movl	$98, %edx	;,
-	call	create_var	;
-; src/tac.c:574:     if (for_->increment != NULL)
-	cmpq	$0, 16(%r12)	;, for__51(D)->increment
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:573:     Var* increment_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rax, (%rsp)	; increment_label, %sfp
-	movq	%rax, %rbp	; tmp191, increment_label
-; src/tac.c:574:     if (for_->increment != NULL)
-	je	.L237	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rsi	; tmp192, arg
-; src/tac.c:575:         list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, increment_label));
-	movq	40(%rbx), %rdi	; status_52(D)->start_labels, status_52(D)->start_labels
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_195->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_195->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%rbp, (%rax)	; increment_label, arg_195->value.label
-; src/tac.c:575:         list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, increment_label));
-	call	*list_append@GOTPCREL(%rip)	;
-.L238:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_231->is_get
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rsi	; tmp195, arg
-; src/tac.c:580:     list_append(status->end_labels, (pointer)create_arg(ARG_LABEL, end_label));
-	movq	32(%rbx), %rdi	; status_52(D)->end_labels, status_52(D)->end_labels
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_231->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_231->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r14, (%rax)	; end_label, arg_231->value.label
-; src/tac.c:580:     list_append(status->end_labels, (pointer)create_arg(ARG_LABEL, end_label));
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:581:     list(Statement*) body_statements = list_copy(for_->body);
-	movq	24(%r12), %rdi	; for__51(D)->body, for__51(D)->body
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp196, body_statements
-; src/tac.c:583:     while ((statement = (Statement*)list_pop(body_statements)) != NULL)
-	jmp	.L240	;
+; src/parser.c:634:     parser->in_loop = true;
+	movb	$1, 11(%rbp)	;, parser_62(D)->in_loop
+; src/parser.c:635:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:633:     list(Statement*) body = create_list();
+	movq	%rax, %r14	; tmp570, body
+; src/parser.c:635:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp571, token
+; src/parser.c:636:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	jmp	.L275	;
 	.p2align 4,,10
 	.p2align 3
-.L241:
-; src/tac.c:584:         tac_statement(statement, status);
-	movq	%rbx, %rsi	; status,
-	call	tac_statement	;
-.L240:
-; src/tac.c:583:     while ((statement = (Statement*)list_pop(body_statements)) != NULL)
-	movq	%rbp, %rdi	; body_statements,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp197, statement
-; src/tac.c:583:     while ((statement = (Statement*)list_pop(body_statements)) != NULL)
+.L276:
+; src/parser.c:640:         list_append(body, (pointer)statement);
+	movq	%rcx, %rsi	; statement,
+	movq	%r14, %rdi	; body,
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:641:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp574, token
+.L275:
+; src/parser.c:636:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%r12)	;, token_331->type
+	jne	.L277	;,
+; src/parser.c:636:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movq	(%r12), %rdi	; token_331->lexeme, token_331->lexeme
+	movq	R_BRACE_SYMBOL(%rip), %rsi	; R_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:636:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp575
+	jne	.L388	;,
+.L277:
+; src/parser.c:637:         Statement* statement = parse_statement(lexer, now_scope, parser);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_statement	;
+	movq	%rax, %rcx	; tmp572, statement
+; src/parser.c:638:         if (statement == NULL)
 	testq	%rax, %rax	; statement
-	jne	.L241	;,
-; src/tac.c:585:     list_pop_back(status->start_labels);
-	movq	40(%rbx), %rdi	; status_52(D)->start_labels, status_52(D)->start_labels
-	call	*list_pop_back@GOTPCREL(%rip)	;
-; src/tac.c:586:     list_pop_back(status->end_labels);
-	movq	32(%rbx), %rdi	; status_52(D)->end_labels, status_52(D)->end_labels
-	call	*list_pop_back@GOTPCREL(%rip)	;
-; src/tac.c:587:     if (for_->increment != NULL) {
-	cmpq	$0, 16(%r12)	;, for__51(D)->increment
-	je	.L242	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbp	; tmp198, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_245->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_245->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	(%rsp), %rax	; %sfp, increment_label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rbp)	;, arg_245->is_get
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%rax, 0(%rbp)	; increment_label, arg_245->value.label
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %rsi	; tmp199, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rbp, (%rax)	; arg, inst_110->arg1
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	$0, 8(%rax)	;, inst_110->arg2
-; src/tac.c:214:     inst->type = type;
-	movl	$20, 24(%rax)	;, inst_110->type
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_110->arg3
-; src/tac.c:590:         list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_52(D)->current_block, status_52(D)->current_block
-	movq	8(%rax), %rdi	; _32->instructions, _32->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp200, block
-; src/tac.c:100:     block->label = label;
-	movq	(%rsp), %rax	; %sfp, increment_label
-	movq	%rax, 0(%rbp)	; increment_label, block_243->label
-; src/tac.c:101:     block->instructions = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:592:         list_append(status->current_subroutine->blocks, (pointer)increment_block);
-	movq	%rbp, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%rbp)	; tmp201, block_243->instructions
-; src/tac.c:592:         list_append(status->current_subroutine->blocks, (pointer)increment_block);
-	movq	8(%rbx), %rax	; status_52(D)->current_subroutine, status_52(D)->current_subroutine
-	movq	32(%rax), %rdi	; _34->blocks, _34->blocks
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:593:         status->current_block = increment_block;
-	movq	%rbp, 16(%rbx)	; block, status_52(D)->current_block
-; src/tac.c:594:         tac_expression(for_->increment, status);
-	movq	16(%r12), %rdi	; for__51(D)->increment, for__51(D)->increment
-	movq	%rbx, %rsi	; status,
-	call	tac_expression	;
-.L242:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbp	; tmp202, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_257->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_257->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r13, (%rax)	; condition_label, arg_257->value.label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_257->is_get
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:598:     if (for_->condition == NULL)
-	cmpq	$0, 8(%r12)	;, for__51(D)->condition
-; src/tac.c:214:     inst->type = type;
-	movl	$20, 24(%rax)	;, inst_111->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp203, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rbp, (%rax)	; arg, inst_111->arg1
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	$0, 8(%rax)	;, inst_111->arg2
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_111->arg3
-; src/tac.c:598:     if (for_->condition == NULL)
-	je	.L245	;,
-.L243:
-; src/tac.c:600:     list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_52(D)->current_block, status_52(D)->current_block
-	movq	8(%rax), %rdi	; _40->instructions, _40->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp206, block
-; src/tac.c:100:     block->label = label;
-	movq	%r14, (%rax)	; end_label, block_281->label
-; src/tac.c:101:     block->instructions = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:603:     list_append(status->current_subroutine->blocks, (pointer)end_block);
-	movq	%rbp, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%rbp)	; tmp207, block_281->instructions
-; src/tac.c:603:     list_append(status->current_subroutine->blocks, (pointer)end_block);
-	movq	8(%rbx), %rax	; status_52(D)->current_subroutine, status_52(D)->current_subroutine
-	movq	32(%rax), %rdi	; _42->blocks, _42->blocks
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:604:     status->current_block = end_block;
-	movq	%rbp, 16(%rbx)	; block, status_52(D)->current_block
-; src/tac.c:606: }
-	addq	$24, %rsp	;,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	popq	%r14	;
-	popq	%r15	;
-	ret	
+	jne	.L276	;,
+; src/parser.c:639:             parser_error("Failed to parse while body statement", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	movq	%rax, 8(%rsp)	; statement, %sfp
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:639:             parser_error("Failed to parse while body statement", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC48(%rip), %rdi	;,
+; src/parser.c:639:             parser_error("Failed to parse while body statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp573, _330
+; src/parser.c:639:             parser_error("Failed to parse while body statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	movq	8(%rsp), %rcx	; %sfp, statement
+	jmp	.L276	;
+	.p2align 4,,10
+	.p2align 3
+.L379:
+; src/parser.c:410:             get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:411:             statement = create_statement(VARIABLE_STATEMENT, NULL, NULL, NULL, NULL, parse_variable(lexer, now_scope, parser));
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_variable	;
+; src/parser.c:411:             statement = create_statement(VARIABLE_STATEMENT, NULL, NULL, NULL, NULL, parse_variable(lexer, now_scope, parser));
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+; src/parser.c:411:             statement = create_statement(VARIABLE_STATEMENT, NULL, NULL, NULL, NULL, parse_variable(lexer, now_scope, parser));
+	movq	%rax, %r9	;, tmp578
+; src/parser.c:411:             statement = create_statement(VARIABLE_STATEMENT, NULL, NULL, NULL, NULL, parse_variable(lexer, now_scope, parser));
+	xorl	%esi, %esi	;
+	movl	$1, %edi	;,
+	call	*create_statement@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp579, <retval>
+	jmp	.L279	;
+	.p2align 4,,10
+	.p2align 3
+.L209:
+; src/parser.c:461:         parser_error("Expected ')' after if condition", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:461:         parser_error("Expected ')' after if condition", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC25(%rip), %rdi	;, tmp341
+; src/parser.c:461:         parser_error("Expected ')' after if condition", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp477, _131
+; src/parser.c:461:         parser_error("Expected ')' after if condition", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:463:         return NULL;
+	jmp	.L205	;
 	.p2align 4,,10
 	.p2align 3
 .L237:
-; src/tac.c:576:     else if (for_->condition != NULL)
-	cmpq	$0, 8(%r12)	;, for__51(D)->condition
-	je	.L239	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rsi	; tmp193, arg
-; src/tac.c:577:         list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, condition_label));
-	movq	40(%rbx), %rdi	; status_52(D)->start_labels, status_52(D)->start_labels
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;,
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;,
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r13, (%rax)	; condition_label, arg_207->value.label
-; src/tac.c:577:         list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, condition_label));
-	call	*list_append@GOTPCREL(%rip)	;
-	jmp	.L238	;
+; src/parser.c:545:         parser_error("Expected '(' after 'for'", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:545:         parser_error("Expected '(' after 'for'", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC35(%rip), %rdi	;, tmp382
+; src/parser.c:545:         parser_error("Expected '(' after 'for'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp524, _229
+; src/parser.c:545:         parser_error("Expected '(' after 'for'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L236:
+; src/parser.c:547:         return NULL;
+	xorl	%ecx, %ecx	; _299
+.L244:
+; src/parser.c:406:             return create_statement(FOR_STATEMENT, NULL, NULL, parse_for(lexer, now_scope, parser), NULL, NULL);
+	xorl	%r9d, %r9d	;
+	xorl	%r8d, %r8d	;
+	xorl	%edx, %edx	;
+	xorl	%esi, %esi	;
+	movl	$4, %edi	;,
+	jmp	.L373	;
 	.p2align 4,,10
 	.p2align 3
-.L235:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbp	; tmp187, arg
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r15, (%rax)	; body_label, arg_181->value.label
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;,
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;,
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_181->is_get
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rbp, (%rax)	; arg, inst_109->arg1
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp188, inst
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	$0, 8(%rax)	;, inst_109->arg2
-; src/tac.c:214:     inst->type = type;
-	movl	$20, 24(%rax)	;, inst_109->type
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_109->arg3
-; src/tac.c:566:         list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_52(D)->current_block, status_52(D)->current_block
-	movq	8(%rax), %rdi	;, _13->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-	jmp	.L236	;
+.L268:
+; src/parser.c:613:         parser_error("Expected '(' after 'while'", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:613:         parser_error("Expected '(' after 'while'", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC44(%rip), %rdi	;, tmp420
+; src/parser.c:613:         parser_error("Expected '(' after 'while'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp559, _307
+; src/parser.c:613:         parser_error("Expected '(' after 'while'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L267:
+; src/parser.c:615:         return NULL;
+	xorl	%edx, %edx	; _337
+.L271:
+; src/parser.c:408:             return create_statement(WHILE_STATEMENT, NULL, parse_while(lexer, now_scope, parser), NULL, NULL, NULL);
+	xorl	%r9d, %r9d	;
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	movl	$3, %edi	;,
+	jmp	.L373	;
+.L385:
+; src/parser.c:458:         parser_error("Failed to parse if condition", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:458:         parser_error("Failed to parse if condition", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC24(%rip), %rdi	;, tmp339
+; src/parser.c:458:         parser_error("Failed to parse if condition", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp475, _124
+; src/parser.c:458:         parser_error("Failed to parse if condition", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L207	;
+	.p2align 4,,10
+	.p2align 3
+.L280:
+; src/parser.c:419:         } else if (string_equal(token->lexeme, BREAK_KEYWORD)) {
+	movq	(%r12), %rdi	; token_60->lexeme, token_60->lexeme
+	movq	BREAK_KEYWORD(%rip), %rsi	; BREAK_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:419:         } else if (string_equal(token->lexeme, BREAK_KEYWORD)) {
+	testb	%al, %al	; tmp585
+	je	.L282	;,
+; src/parser.c:420:             if (!parser->in_loop) {
+	cmpb	$0, 11(%rbp)	;, parser_62(D)->in_loop
+	je	.L389	;,
+; src/parser.c:425:             statement = create_statement(BREAK_STATEMENT, NULL, NULL, NULL, NULL, NULL);
+	xorl	%r9d, %r9d	;
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	xorl	%esi, %esi	;
+	movl	$6, %edi	;,
+	call	*create_statement@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp587, <retval>
+	jmp	.L279	;
 	.p2align 4,,10
 	.p2align 3
 .L245:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbp	; tmp204, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_269->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_269->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r15, (%rax)	; body_label, arg_269->value.label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_269->is_get
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:214:     inst->type = type;
-	movl	$20, 24(%rax)	;, inst_112->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp205, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rbp, (%rax)	; arg, inst_112->arg1
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	$0, 8(%rax)	;, inst_112->arg2
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_112->arg3
-	jmp	.L243	;
+; src/parser.c:558:         parser_error("Expected ';' after for loop initializer", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:558:         parser_error("Expected ';' after for loop initializer", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC37(%rip), %rdi	;, tmp390
+; src/parser.c:558:         parser_error("Expected ';' after for loop initializer", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp531, _245
+; src/parser.c:558:         parser_error("Expected ';' after for loop initializer", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:560:         return NULL;
+	jmp	.L236	;
+.L211:
+; src/parser.c:467:         parser_error("Expected '{' to start if body", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:467:         parser_error("Expected '{' to start if body", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC26(%rip), %rdi	;, tmp345
+; src/parser.c:467:         parser_error("Expected '{' to start if body", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp480, _138
+; src/parser.c:467:         parser_error("Expected '{' to start if body", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:469:         return NULL;
+	jmp	.L205	;
+.L386:
+; src/parser.c:480:     list(ElseIf*) else_if = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+	movq	%rax, 24(%rsp)	; tmp488, %sfp
+; src/parser.c:481:     list(Statement*) else_body = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+	movq	%rax, 40(%rsp)	; tmp489, %sfp
 	.p2align 4,,10
 	.p2align 3
-.L239:
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rsi	; tmp194, arg
-; src/tac.c:579:         list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, body_label));
-	movq	40(%rbx), %rdi	; status_52(D)->start_labels, status_52(D)->start_labels
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;,
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;,
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r15, (%rax)	; body_label, arg_219->value.label
-; src/tac.c:579:         list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, body_label));
-	call	*list_append@GOTPCREL(%rip)	;
-	jmp	.L238	;
-	.size	tac_for, .-tac_for
-	.p2align 4
-	.globl	tac_while
-	.type	tac_while, @function
-tac_while:
-	pushq	%r15	;
-; src/tac.c:610:     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rsi, %rcx	; status,
-	movl	$98, %edx	;,
-; src/tac.c:607: void tac_while(While* while_, TACStatus* status) {
-	pushq	%r14	;
-	pushq	%r13	;
-	pushq	%r12	;
-	pushq	%rbp	;
-	movq	%rdi, %rbp	; tmp141, while_
-; src/tac.c:610:     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%edi, %edi	;
-; src/tac.c:607: void tac_while(While* while_, TACStatus* status) {
-	pushq	%rbx	;
-	movq	%rsi, %rbx	; tmp142, status
-; src/tac.c:610:     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	xorl	%esi, %esi	;
-; src/tac.c:607: void tac_while(While* while_, TACStatus* status) {
-	subq	$24, %rsp	;,
-; src/tac.c:610:     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:610:     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rax, %r12	; tmp143, condition_label
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r13	; tmp144, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_137->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_137->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r12, (%rax)	; condition_label, arg_137->value.label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_137->is_get
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %rsi	; tmp145, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r13, (%rax)	; arg, inst_68->arg1
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	$0, 8(%rax)	;, inst_68->arg2
-; src/tac.c:214:     inst->type = type;
-	movl	$20, 24(%rax)	;, inst_68->type
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_68->arg3
-; src/tac.c:612:     list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_27(D)->current_block, status_27(D)->current_block
-	movq	8(%rax), %rdi	; _2->instructions, _2->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r13	; tmp146, block
-; src/tac.c:100:     block->label = label;
-	movq	%r12, (%rax)	; condition_label, block_135->label
-; src/tac.c:101:     block->instructions = create_list();
+.L372:
+; src/parser.c:482:     token = peek_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*peek_next_token@GOTPCREL(%rip)	;
+; src/parser.c:483:     while (token->type == KEYWORD && string_equal(token->lexeme, ELIF_KEYWORD)) {
+	cmpl	$6, 24(%rax)	;,
+; src/parser.c:482:     token = peek_next_token(lexer, true);
+	movq	%rax, %r12	; tmp490, token
+; src/parser.c:483:     while (token->type == KEYWORD && string_equal(token->lexeme, ELIF_KEYWORD)) {
+	jne	.L227	;,
+; src/parser.c:483:     while (token->type == KEYWORD && string_equal(token->lexeme, ELIF_KEYWORD)) {
+	movq	(%rax), %rdi	; token_54->lexeme, token_54->lexeme
+	movq	ELIF_KEYWORD(%rip), %rsi	; ELIF_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:483:     while (token->type == KEYWORD && string_equal(token->lexeme, ELIF_KEYWORD)) {
+	testb	%al, %al	; tmp512
+	je	.L390	;,
+; src/parser.c:484:         token = get_next_token(lexer, true);  // consume 'elif'
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:485:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:486:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_153->type
+; src/parser.c:485:         token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp492, token
+; src/parser.c:486:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	jne	.L218	;,
+; src/parser.c:486:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_153->lexeme, token_153->lexeme
+	movq	L_PAREN_SYMBOL(%rip), %rsi	; L_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:486:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp494
+	je	.L218	;,
+; src/parser.c:491:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:492:         Expression* elif_condition = parse_expression(lexer, now_scope, parser);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:491:         token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp495, token
+; src/parser.c:492:         Expression* elif_condition = parse_expression(lexer, now_scope, parser);
+	call	parse_expression	;
+	movq	%rax, 16(%rsp)	; elif_condition, %sfp
+; src/parser.c:493:         if (elif_condition == NULL)
+	testq	%rax, %rax	; elif_condition
+	je	.L391	;,
+.L219:
+; src/parser.c:495:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:496:         if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_165->type
+; src/parser.c:495:         token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp498, token
+; src/parser.c:496:         if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	jne	.L221	;,
+; src/parser.c:496:         if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_165->lexeme, token_165->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:496:         if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp500
+	je	.L221	;,
+; src/parser.c:501:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:502:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_173->type
+; src/parser.c:501:         token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp501, token
+; src/parser.c:502:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	jne	.L223	;,
+; src/parser.c:502:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	(%rax), %rdi	; token_173->lexeme, token_173->lexeme
+	movq	L_BRACE_SYMBOL(%rip), %rsi	; L_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:502:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp503
+	je	.L223	;,
+; src/parser.c:507:         list(Statement*) elif_body = create_list();
 	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:614:     list_append(status->current_subroutine->blocks, (pointer)condition_block);
-	movq	%r13, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%r13)	; tmp147, block_135->instructions
-; src/tac.c:614:     list_append(status->current_subroutine->blocks, (pointer)condition_block);
-	movq	8(%rbx), %rax	; status_27(D)->current_subroutine, status_27(D)->current_subroutine
-	movq	32(%rax), %rdi	; _4->blocks, _4->blocks
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:615:     status->current_block = condition_block;
-	movq	%r13, 16(%rbx)	; block, status_27(D)->current_block
-; src/tac.c:617:     Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rbx, %rcx	; status,
-	xorl	%esi, %esi	;
-	movl	$98, %edx	;,
-	xorl	%edi, %edi	;
-	call	create_var	;
-; src/tac.c:618:     Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rbx, %rcx	; status,
-	movl	$98, %edx	;,
-	xorl	%esi, %esi	;
-	xorl	%edi, %edi	;
-; src/tac.c:617:     Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rax, %r14	; tmp148, body_label
-; src/tac.c:618:     Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	call	create_var	;
-; src/tac.c:619:     Arg* condition = tac_expression(while_->condition, status);
-	movq	0(%rbp), %rdi	; while__40(D)->condition, while__40(D)->condition
-	movq	%rbx, %rsi	; status,
-; src/tac.c:618:     Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
-	movq	%rax, %r13	; tmp149, end_label
-; src/tac.c:619:     Arg* condition = tac_expression(while_->condition, status);
-	call	tac_expression	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:619:     Arg* condition = tac_expression(while_->condition, status);
-	movq	%rax, 8(%rsp)	; condition, %sfp
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movl	$24, %edi	;,
-	movq	%rax, %r15	; tmp151, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_123->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_123->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r13, (%rax)	; end_label, arg_123->value.label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_123->is_get
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_111->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_111->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r14, (%rax)	; body_label, arg_111->value.label
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_111->is_get
-	movq	%rax, (%rsp)	; arg, %sfp
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	8(%rsp), %rcx	; %sfp, condition
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	(%rsp), %rdx	; %sfp, arg
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp153, inst
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	%r15, 16(%rax)	; arg, inst_67->arg3
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%rdx, 8(%rax)	; arg, inst_67->arg2
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rcx, (%rax)	; condition, inst_67->arg1
-; src/tac.c:214:     inst->type = type;
-	movl	$19, 24(%rax)	;, inst_67->type
-; src/tac.c:621:     list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_27(D)->current_block, status_27(D)->current_block
-	movq	8(%rax), %rdi	; _9->instructions, _9->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r15	; tmp154, block
-; src/tac.c:100:     block->label = label;
-	movq	%r14, (%rax)	; body_label, block_109->label
-; src/tac.c:101:     block->instructions = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:624:     list_append(status->current_subroutine->blocks, (pointer)body_block);
-	movq	%r15, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%r15)	; tmp155, block_109->instructions
-; src/tac.c:624:     list_append(status->current_subroutine->blocks, (pointer)body_block);
-	movq	8(%rbx), %rax	; status_27(D)->current_subroutine, status_27(D)->current_subroutine
-	movq	32(%rax), %rdi	; _11->blocks, _11->blocks
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:625:     status->current_block = body_block;
-	movq	%r15, 16(%rbx)	; block, status_27(D)->current_block
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_97->is_get
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rsi	; tmp156, arg
-; src/tac.c:627:     list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, condition_label));
-	movq	40(%rbx), %rdi	; status_27(D)->start_labels, status_27(D)->start_labels
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_97->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_97->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r12, (%rax)	; condition_label, arg_97->value.label
-; src/tac.c:627:     list_append(status->start_labels, (pointer)create_arg(ARG_LABEL, condition_label));
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_85->is_get
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rsi	; tmp157, arg
-; src/tac.c:628:     list_append(status->end_labels, (pointer)create_arg(ARG_LABEL, end_label));
-	movq	32(%rbx), %rdi	; status_27(D)->end_labels, status_27(D)->end_labels
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_85->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_85->type
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r13, (%rax)	; end_label, arg_85->value.label
-; src/tac.c:628:     list_append(status->end_labels, (pointer)create_arg(ARG_LABEL, end_label));
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:629:     list(Statement*) body_statements = list_copy(while_->body);
-	movq	8(%rbp), %rdi	; while__40(D)->body, while__40(D)->body
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp158, body_statements
-; src/tac.c:631:     while ((statement = (Statement*)list_pop(body_statements)) != NULL)
-	jmp	.L247	;
+; src/parser.c:508:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:507:         list(Statement*) elif_body = create_list();
+	movq	%rax, %r14	; tmp504, elif_body
+; src/parser.c:508:         token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp505, token
+; src/parser.c:509:         while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	jmp	.L224	;
 	.p2align 4,,10
 	.p2align 3
-.L248:
-; src/tac.c:632:         tac_statement(statement, status);
-	movq	%rbx, %rsi	; status,
-	call	tac_statement	;
-.L247:
-; src/tac.c:631:     while ((statement = (Statement*)list_pop(body_statements)) != NULL)
-	movq	%rbp, %rdi	; body_statements,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp159, statement
-; src/tac.c:631:     while ((statement = (Statement*)list_pop(body_statements)) != NULL)
+.L225:
+; src/parser.c:513:             list_append(elif_body, (pointer)statement);
+	movq	%r15, %rsi	; statement,
+	movq	%r14, %rdi	; elif_body,
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:514:             token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp508, token
+.L224:
+; src/parser.c:509:         while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%r12)	;, token_186->type
+	jne	.L226	;,
+; src/parser.c:509:         while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movq	(%r12), %rdi	; token_186->lexeme, token_186->lexeme
+	movq	R_BRACE_SYMBOL(%rip), %rsi	; R_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:509:         while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp509
+	jne	.L392	;,
+.L226:
+; src/parser.c:510:             Statement* statement = parse_statement(lexer, now_scope, parser);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_statement	;
+	movq	%rax, %r15	; tmp506, statement
+; src/parser.c:511:             if (statement == NULL)
 	testq	%rax, %rax	; statement
-	jne	.L248	;,
-; src/tac.c:633:     list_pop_back(status->start_labels);
-	movq	40(%rbx), %rdi	; status_27(D)->start_labels, status_27(D)->start_labels
-	call	*list_pop_back@GOTPCREL(%rip)	;
-; src/tac.c:634:     list_pop_back(status->end_labels);
-	movq	32(%rbx), %rdi	; status_27(D)->end_labels, status_27(D)->end_labels
-	call	*list_pop_back@GOTPCREL(%rip)	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbp	; tmp160, arg
-; src/tac.c:252:             arg->value.label = (Var*)value;
-	movq	%r12, (%rax)	; condition_label, arg_151->value.label
-; src/tac.c:224:     arg->kind = kind;
-	movl	$6, 16(%rax)	;, arg_151->kind
-; src/tac.c:225:     arg->type = NULL;
-	movq	$0, 8(%rax)	;, arg_151->type
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_151->is_get
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %rsi	; tmp161, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%rbp, (%rax)	; arg, inst_69->arg1
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	$0, 8(%rax)	;, inst_69->arg2
-; src/tac.c:214:     inst->type = type;
-	movl	$20, 24(%rax)	;, inst_69->type
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_69->arg3
-; src/tac.c:637:     list_append(status->current_block->instructions, (pointer)inst);
-	movq	16(%rbx), %rax	; status_27(D)->current_block, status_27(D)->current_block
-	movq	8(%rax), %rdi	; _21->instructions, _21->instructions
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp162, block
-; src/tac.c:100:     block->label = label;
-	movq	%r13, (%rax)	; end_label, block_149->label
-; src/tac.c:101:     block->instructions = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:640:     list_append(status->current_subroutine->blocks, (pointer)end_block);
-	movq	%rbp, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%rbp)	; tmp163, block_149->instructions
-; src/tac.c:640:     list_append(status->current_subroutine->blocks, (pointer)end_block);
-	movq	8(%rbx), %rax	; status_27(D)->current_subroutine, status_27(D)->current_subroutine
-	movq	32(%rax), %rdi	; _23->blocks, _23->blocks
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:641:     status->current_block = end_block;
-	movq	%rbp, 16(%rbx)	; block, status_27(D)->current_block
-; src/tac.c:643: }
-	addq	$24, %rsp	;,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	popq	%r14	;
-	popq	%r15	;
-	ret	
-	.size	tac_while, .-tac_while
-	.p2align 4
-	.globl	tac_function
-	.type	tac_function, @function
-tac_function:
-	pushq	%r14	;
-	pushq	%r13	;
-	movq	%rdi, %r13	; tmp114, function
-	pushq	%r12	;
-	pushq	%rbp	;
-	pushq	%rbx	;
-	movq	%rsi, %rbx	; tmp115, status
-	subq	$16, %rsp	;,
-; src/tac.c:318:     Subroutine* subroutine = create_subroutine(function->name, function->return_type);
-	movdqu	(%rdi), %xmm0	; MEM <vector(2) long unsigned int> [(struct Symbol * *)function_16(D)], MEM <vector(2) long unsigned int> [(struct Symbol * *)function_16(D)]
-; src/tac.c:88:     Subroutine* subroutine = (Subroutine*)alloc_memory(sizeof(Subroutine));
-	movl	$40, %edi	;,
-; src/tac.c:318:     Subroutine* subroutine = create_subroutine(function->name, function->return_type);
-	movaps	%xmm0, (%rsp)	; MEM <vector(2) long unsigned int> [(struct Symbol * *)function_16(D)], %sfp
-; src/tac.c:88:     Subroutine* subroutine = (Subroutine*)alloc_memory(sizeof(Subroutine));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:89:     subroutine->name = name;
-	movdqa	(%rsp), %xmm0	; %sfp, MEM <vector(2) long unsigned int> [(struct Symbol * *)function_16(D)]
-; src/tac.c:88:     Subroutine* subroutine = (Subroutine*)alloc_memory(sizeof(Subroutine));
-	movq	%rax, %rbp	; tmp116, subroutine
-; src/tac.c:89:     subroutine->name = name;
-	movups	%xmm0, (%rax)	; MEM <vector(2) long unsigned int> [(struct Symbol * *)function_16(D)], MEM <vector(2) long unsigned int> [(struct Symbol * *)subroutine_39]
-; src/tac.c:91:     subroutine->parameters = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:91:     subroutine->parameters = create_list();
-	movq	%rax, 16(%rbp)	; tmp117, subroutine_39->parameters
-; src/tac.c:92:     subroutine->local_vars = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:92:     subroutine->local_vars = create_list();
-	movq	%rax, 24(%rbp)	; tmp118, subroutine_39->local_vars
-; src/tac.c:93:     subroutine->blocks = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:320:     list_append(status->tac->subroutines, (pointer)subroutine);
-	movq	%rbp, %rsi	; subroutine,
-; src/tac.c:93:     subroutine->blocks = create_list();
-	movq	%rax, 32(%rbp)	; tmp119, subroutine_39->blocks
-; src/tac.c:320:     list_append(status->tac->subroutines, (pointer)subroutine);
-	movq	(%rbx), %rax	; status_19(D)->tac, status_19(D)->tac
-; src/tac.c:319:     status->current_subroutine = subroutine;
-	movq	%rbp, 8(%rbx)	; subroutine, status_19(D)->current_subroutine
-; src/tac.c:320:     list_append(status->tac->subroutines, (pointer)subroutine);
-	movq	24(%rax), %rdi	; _3->subroutines, _3->subroutines
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:322:     list(Variable*) parameters = list_copy(function->parameters);
-	movq	16(%r13), %rdi	; function_16(D)->parameters, function_16(D)->parameters
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp120, parameters
-; src/tac.c:324:     while ((parameter = (Variable*)list_pop(parameters)) != NULL)
-	jmp	.L251	;
+	jne	.L225	;,
+; src/parser.c:512:                 parser_error("Failed to parse else-if body statement", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:512:                 parser_error("Failed to parse else-if body statement", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC32(%rip), %rdi	;,
+; src/parser.c:512:                 parser_error("Failed to parse else-if body statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp507, _185
+; src/parser.c:512:                 parser_error("Failed to parse else-if body statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L225	;
 	.p2align 4,,10
 	.p2align 3
+.L392:
+; src/parser.c:516:         list_append(else_if, (pointer)create_else_if(elif_condition, elif_body));
+	movq	16(%rsp), %rdi	; %sfp,
+	movq	%r14, %rsi	; elif_body,
+	call	*create_else_if@GOTPCREL(%rip)	;
+; src/parser.c:516:         list_append(else_if, (pointer)create_else_if(elif_condition, elif_body));
+	movq	24(%rsp), %rdi	; %sfp,
+; src/parser.c:516:         list_append(else_if, (pointer)create_else_if(elif_condition, elif_body));
+	movq	%rax, %rsi	; tmp510, _192
+; src/parser.c:516:         list_append(else_if, (pointer)create_else_if(elif_condition, elif_body));
+	call	*list_append@GOTPCREL(%rip)	;
+	jmp	.L372	;
+	.p2align 4,,10
+	.p2align 3
+.L391:
+; src/parser.c:494:             parser_error("Failed to parse else-if condition", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:494:             parser_error("Failed to parse else-if condition", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC29(%rip), %rdi	;,
+; src/parser.c:494:             parser_error("Failed to parse else-if condition", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp497, _164
+; src/parser.c:494:             parser_error("Failed to parse else-if condition", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L219	;
+.L238:
+; src/parser.c:551:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	movq	(%rax), %rdi	; token_230->lexeme, token_230->lexeme
+	movq	SEMICOLON_SYMBOL(%rip), %rsi	; SEMICOLON_SYMBOL,
+; src/parser.c:550:     Variable* initializer = NULL;
+	xorl	%r14d, %r14d	; initializer
+; src/parser.c:551:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:551:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	testb	%al, %al	; tmp528
+	jne	.L242	;,
+	jmp	.L241	;
+.L272:
+; src/parser.c:623:         parser_error("Expected ')' after while condition", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:623:         parser_error("Expected ')' after while condition", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC46(%rip), %rdi	;, tmp426
+; src/parser.c:623:         parser_error("Expected ')' after while condition", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp565, _318
+; src/parser.c:623:         parser_error("Expected ')' after while condition", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:625:         return NULL;
+	jmp	.L267	;
 .L252:
-; src/tac.c:325:         list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
-	movq	(%rax), %rsi	; parameter_25->type, parameter_25->type
-	movq	8(%rax), %rdi	; parameter_25->name, parameter_25->name
-	movq	%rbx, %rcx	; status,
-	movl	$112, %edx	;,
-	call	create_var	;
-; src/tac.c:325:         list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
-	movq	16(%rbp), %rdi	; subroutine_39->parameters, subroutine_39->parameters
-; src/tac.c:325:         list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
-	movq	%rax, %rsi	; tmp121, _8
-; src/tac.c:325:         list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
-	call	*list_append@GOTPCREL(%rip)	;
-.L251:
-; src/tac.c:324:     while ((parameter = (Variable*)list_pop(parameters)) != NULL)
-	movq	%r12, %rdi	; parameters,
-	call	*list_pop@GOTPCREL(%rip)	;
-; src/tac.c:324:     while ((parameter = (Variable*)list_pop(parameters)) != NULL)
-	testq	%rax, %rax	; parameter
-	jne	.L252	;,
-; src/tac.c:327:     Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
-	movq	%rbx, %rcx	; status,
-	movl	$98, %edx	;,
+; src/parser.c:571:         parser_error("Expected ';' after for loop condition", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:571:         parser_error("Expected ';' after for loop condition", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC39(%rip), %rdi	;, tmp398
+; src/parser.c:571:         parser_error("Expected ';' after for loop condition", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp538, _261
+; src/parser.c:571:         parser_error("Expected ';' after for loop condition", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:573:         return NULL;
+	jmp	.L236	;
+.L380:
+; src/parser.c:414:             if (token->type == SYMBOL && string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	movq	(%rax), %rdi	; token_85->lexeme, token_85->lexeme
+	movq	SEMICOLON_SYMBOL(%rip), %rsi	; SEMICOLON_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:414:             if (token->type == SYMBOL && string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	testb	%al, %al	; tmp582
+	je	.L281	;,
+; src/parser.c:416:                 return create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL);
+	xorl	%r9d, %r9d	;
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
 	xorl	%esi, %esi	;
-	xorl	%edi, %edi	;
-	call	create_var	;
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-; src/tac.c:327:     Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
-	movq	%rax, %r14	; tmp123, _10
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp124, block
-; src/tac.c:100:     block->label = label;
-	movq	%r14, (%rax)	; _10, block_43->label
-; src/tac.c:101:     block->instructions = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:328:     list_append(subroutine->blocks, (pointer)block);
-	movq	32(%rbp), %rdi	; subroutine_39->blocks, subroutine_39->blocks
-	movq	%r12, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%r12)	; tmp125, block_43->instructions
-; src/tac.c:328:     list_append(subroutine->blocks, (pointer)block);
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:329:     status->current_block = block;
-	movq	%r12, 16(%rbx)	; block, status_19(D)->current_block
-; src/tac.c:331:     list(Statement*) statements = list_copy(function->body);
-	movq	24(%r13), %rdi	; function_16(D)->body, function_16(D)->body
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp126, statements
-; src/tac.c:333:     while ((statement = (Statement*)list_pop(statements)) != NULL)
-	jmp	.L253	;
-	.p2align 4,,10
-	.p2align 3
-.L254:
-; src/tac.c:334:         tac_statement(statement, status);
-	movq	%rbx, %rsi	; status,
-	call	tac_statement	;
-.L253:
-; src/tac.c:333:     while ((statement = (Statement*)list_pop(statements)) != NULL)
-	movq	%rbp, %rdi	; statements,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp127, statement
-; src/tac.c:333:     while ((statement = (Statement*)list_pop(statements)) != NULL)
-	testq	%rax, %rax	; statement
-	jne	.L254	;,
-; src/tac.c:336:     status->current_subroutine = NULL;
-	movq	$0, 8(%rbx)	;, status_19(D)->current_subroutine
-; src/tac.c:338: }
-	addq	$16, %rsp	;,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	popq	%r14	;
-	ret	
-	.size	tac_function, .-tac_function
-	.p2align 4
-	.globl	tac_method
-	.type	tac_method, @function
-tac_method:
-	pushq	%r15	;
-	pushq	%r14	;
-	pushq	%r13	;
-	movq	%rdi, %r13	; tmp150, method
-	pushq	%r12	;
-	pushq	%rbp	;
-	pushq	%rbx	;
-	movq	%rsi, %rbx	; tmp151, status
-	subq	$24, %rsp	;,
-; src/tac.c:342:     Subroutine* subroutine = create_subroutine(method->name, method->return_type);
-	movdqu	(%rdi), %xmm0	; MEM <vector(2) long unsigned int> [(struct Symbol * *)method_32(D)], MEM <vector(2) long unsigned int> [(struct Symbol * *)method_32(D)]
-; src/tac.c:88:     Subroutine* subroutine = (Subroutine*)alloc_memory(sizeof(Subroutine));
-	movl	$40, %edi	;,
-; src/tac.c:342:     Subroutine* subroutine = create_subroutine(method->name, method->return_type);
-	movaps	%xmm0, (%rsp)	; MEM <vector(2) long unsigned int> [(struct Symbol * *)method_32(D)], %sfp
-; src/tac.c:88:     Subroutine* subroutine = (Subroutine*)alloc_memory(sizeof(Subroutine));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:89:     subroutine->name = name;
-	movdqa	(%rsp), %xmm0	; %sfp, MEM <vector(2) long unsigned int> [(struct Symbol * *)method_32(D)]
-; src/tac.c:88:     Subroutine* subroutine = (Subroutine*)alloc_memory(sizeof(Subroutine));
-	movq	%rax, %rbp	; tmp152, subroutine
-; src/tac.c:89:     subroutine->name = name;
-	movups	%xmm0, (%rax)	; MEM <vector(2) long unsigned int> [(struct Symbol * *)method_32(D)], MEM <vector(2) long unsigned int> [(struct Symbol * *)subroutine_67]
-; src/tac.c:91:     subroutine->parameters = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:91:     subroutine->parameters = create_list();
-	movq	%rax, 16(%rbp)	; tmp153, subroutine_67->parameters
-; src/tac.c:92:     subroutine->local_vars = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:92:     subroutine->local_vars = create_list();
-	movq	%rax, 24(%rbp)	; tmp154, subroutine_67->local_vars
-; src/tac.c:93:     subroutine->blocks = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:344:     list_append(status->tac->subroutines, (pointer)subroutine);
-	movq	%rbp, %rsi	; subroutine,
-; src/tac.c:93:     subroutine->blocks = create_list();
-	movq	%rax, 32(%rbp)	; tmp155, subroutine_67->blocks
-; src/tac.c:344:     list_append(status->tac->subroutines, (pointer)subroutine);
-	movq	(%rbx), %rax	; status_35(D)->tac, status_35(D)->tac
-; src/tac.c:343:     status->current_subroutine = subroutine;
-	movq	%rbp, 8(%rbx)	; subroutine, status_35(D)->current_subroutine
-; src/tac.c:344:     list_append(status->tac->subroutines, (pointer)subroutine);
-	movq	24(%rax), %rdi	; _3->subroutines, _3->subroutines
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:346:     list(Variable*) parameters = list_copy(method->parameters);
-	movq	16(%r13), %rdi	; method_32(D)->parameters, method_32(D)->parameters
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp156, parameters
-; src/tac.c:348:     while ((parameter = (Variable*)list_pop(parameters)) != NULL)
-	jmp	.L257	;
-	.p2align 4,,10
-	.p2align 3
-.L258:
-; src/tac.c:349:         list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
-	movq	(%rax), %rsi	; parameter_41->type, parameter_41->type
-	movq	8(%rax), %rdi	; parameter_41->name, parameter_41->name
-	movq	%rbx, %rcx	; status,
-	movl	$112, %edx	;,
-	call	create_var	;
-; src/tac.c:349:         list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
-	movq	16(%rbp), %rdi	; subroutine_67->parameters, subroutine_67->parameters
-; src/tac.c:349:         list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
-	movq	%rax, %rsi	; tmp157, _8
-; src/tac.c:349:         list_append(subroutine->parameters, (pointer)create_var(parameter->name, parameter->type, VAR_PARAM, status));
-	call	*list_append@GOTPCREL(%rip)	;
-.L257:
-; src/tac.c:348:     while ((parameter = (Variable*)list_pop(parameters)) != NULL)
-	movq	%r12, %rdi	; parameters,
-	call	*list_pop@GOTPCREL(%rip)	;
-; src/tac.c:348:     while ((parameter = (Variable*)list_pop(parameters)) != NULL)
-	testq	%rax, %rax	; parameter
-	jne	.L258	;,
-; src/tac.c:351:     Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
-	movq	%rbx, %rcx	; status,
-	movl	$98, %edx	;,
+	movl	$5, %edi	;,
+	jmp	.L373	;
+.L282:
+; src/parser.c:426:         } else if (string_equal(token->lexeme, CONTINUE_KEYWORD)) {
+	movq	(%r12), %rdi	; token_60->lexeme, token_60->lexeme
+	movq	CONTINUE_KEYWORD(%rip), %rsi	; CONTINUE_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:426:         } else if (string_equal(token->lexeme, CONTINUE_KEYWORD)) {
+	testb	%al, %al	; tmp588
+	je	.L202	;,
+; src/parser.c:427:             if (!parser->in_loop) {
+	cmpb	$0, 11(%rbp)	;, parser_62(D)->in_loop
+	je	.L393	;,
+; src/parser.c:432:             statement = create_statement(CONTINUE_STATEMENT, NULL, NULL, NULL, NULL, NULL);
+	xorl	%r9d, %r9d	;
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
 	xorl	%esi, %esi	;
-	xorl	%edi, %edi	;
-	call	create_var	;
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	movl	$16, %edi	;,
-; src/tac.c:351:     Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
-	movq	%rax, %r14	; tmp159, _10
-; src/tac.c:99:     Block* block = (Block*)alloc_memory(sizeof(Block));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp160, block
-; src/tac.c:100:     block->label = label;
-	movq	%r14, (%rax)	; _10, block_71->label
-; src/tac.c:101:     block->instructions = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:352:     list_append(subroutine->blocks, (pointer)block);
-	movq	32(%rbp), %rdi	; subroutine_67->blocks, subroutine_67->blocks
-	movq	%r12, %rsi	; block,
-; src/tac.c:101:     block->instructions = create_list();
-	movq	%rax, 8(%r12)	; tmp161, block_71->instructions
-; src/tac.c:352:     list_append(subroutine->blocks, (pointer)block);
-	call	*list_append@GOTPCREL(%rip)	;
-; src/tac.c:354:     if (strcmp(method->name->name, make_method_name(status->current_class->name->name, DEFAULT_CONSTRUCTOR_NAME)) == 0) {
-	movq	24(%rbx), %rax	; status_35(D)->current_class, status_35(D)->current_class
-; src/tac.c:354:     if (strcmp(method->name->name, make_method_name(status->current_class->name->name, DEFAULT_CONSTRUCTOR_NAME)) == 0) {
-	movq	DEFAULT_CONSTRUCTOR_NAME(%rip), %rsi	; DEFAULT_CONSTRUCTOR_NAME,
-; src/tac.c:353:     status->current_block = block;
-	movq	%r12, 16(%rbx)	; block, status_35(D)->current_block
-; src/tac.c:354:     if (strcmp(method->name->name, make_method_name(status->current_class->name->name, DEFAULT_CONSTRUCTOR_NAME)) == 0) {
-	movq	(%rax), %rax	; _13->name, _13->name
-	movq	8(%rax), %rdi	; _14->name, _14->name
-	call	*make_method_name@GOTPCREL(%rip)	;
-	movq	%rax, %rsi	; tmp162, _16
-; src/tac.c:354:     if (strcmp(method->name->name, make_method_name(status->current_class->name->name, DEFAULT_CONSTRUCTOR_NAME)) == 0) {
-	movq	0(%r13), %rax	; method_32(D)->name, method_32(D)->name
-; src/tac.c:354:     if (strcmp(method->name->name, make_method_name(status->current_class->name->name, DEFAULT_CONSTRUCTOR_NAME)) == 0) {
-	movq	8(%rax), %rdi	; _17->name, _17->name
-	call	*strcmp@GOTPCREL(%rip)	;
-; src/tac.c:354:     if (strcmp(method->name->name, make_method_name(status->current_class->name->name, DEFAULT_CONSTRUCTOR_NAME)) == 0) {
-	testl	%eax, %eax	; tmp163
-	je	.L263	;,
+	movl	$7, %edi	;,
+	call	*create_statement@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp590, <retval>
+	jmp	.L279	;
+.L246:
+; src/parser.c:564:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	movq	(%rax), %rdi	; token_246->lexeme, token_246->lexeme
+	movq	SEMICOLON_SYMBOL(%rip), %rsi	; SEMICOLON_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:564:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	testb	%al, %al	; tmp535
+	je	.L249	;,
+; src/parser.c:563:     Expression* condition = NULL;
+	movq	$0, 8(%rsp)	;, %sfp
+	jmp	.L250	;
+.L274:
+; src/parser.c:629:         parser_error("Expected '{' to start while body", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:629:         parser_error("Expected '{' to start while body", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC47(%rip), %rdi	;, tmp430
+; src/parser.c:629:         parser_error("Expected '{' to start while body", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp568, _325
+; src/parser.c:629:         parser_error("Expected '{' to start while body", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:631:         return NULL;
+	jmp	.L267	;
+.L388:
+; src/parser.c:643:     parser->in_loop = false;
+	movb	$0, 11(%rbp)	;, parser_62(D)->in_loop
+; src/parser.c:645:     return create_while(condition, body);
+	movq	%r14, %rsi	; body,
+	movq	%r15, %rdi	; condition,
+	call	*create_while@GOTPCREL(%rip)	;
+	movq	%rax, %rdx	; tmp576, _337
+	jmp	.L271	;
+.L381:
+; src/parser.c:554:             parser_error("Failed to parse for loop initializer", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:554:             parser_error("Failed to parse for loop initializer", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC36(%rip), %rdi	;, tmp388
+; src/parser.c:554:             parser_error("Failed to parse for loop initializer", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp529, _237
+; src/parser.c:554:             parser_error("Failed to parse for loop initializer", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L240	;
 .L259:
-; src/tac.c:359:     list(Statement*) statements = list_copy(method->body);
-	movq	24(%r13), %rdi	; method_32(D)->body, method_32(D)->body
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp168, statements
-; src/tac.c:361:     while ((statement = (Statement*)list_pop(statements)) != NULL)
-	jmp	.L260	;
-	.p2align 4,,10
-	.p2align 3
+; src/parser.c:584:         parser_error("Expected ')' after for loop increment", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:584:         parser_error("Expected ')' after for loop increment", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC41(%rip), %rdi	;, tmp406
+; src/parser.c:584:         parser_error("Expected ')' after for loop increment", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp545, _277
+; src/parser.c:584:         parser_error("Expected ')' after for loop increment", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:586:         return NULL;
+	jmp	.L236	;
+.L387:
+; src/parser.c:620:         parser_error("Failed to parse while condition", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:620:         parser_error("Failed to parse while condition", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC45(%rip), %rdi	;, tmp424
+; src/parser.c:620:         parser_error("Failed to parse while condition", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp563, _311
+; src/parser.c:620:         parser_error("Failed to parse while condition", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L269	;
+.L227:
+; src/parser.c:536:     token = peek_current_token(lexer);
+	movq	%rbx, %rdi	; lexer,
+	call	*peek_current_token@GOTPCREL(%rip)	;
+; src/parser.c:538:     return create_if(condition, body, else_if, else_body);
+	movq	8(%rsp), %rsi	; %sfp,
+	movq	40(%rsp), %rcx	; %sfp,
+	movq	24(%rsp), %rdx	; %sfp,
+	movq	32(%rsp), %rdi	; %sfp,
+	call	*create_if@GOTPCREL(%rip)	;
+	movq	%rax, %rsi	; tmp491, _221
+	jmp	.L216	;
+.L218:
+; src/parser.c:487:             parser_error("Expected '(' after 'elif'", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:487:             parser_error("Expected '(' after 'elif'", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC28(%rip), %rdi	;, tmp353
+; src/parser.c:487:             parser_error("Expected '(' after 'elif'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp493, _159
+; src/parser.c:487:             parser_error("Expected '(' after 'elif'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:489:             return NULL;
+	jmp	.L205	;
+.L221:
+; src/parser.c:497:             parser_error("Expected ')' after else-if condition", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:497:             parser_error("Expected ')' after else-if condition", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC30(%rip), %rdi	;, tmp359
+; src/parser.c:497:             parser_error("Expected ')' after else-if condition", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp499, _171
+; src/parser.c:497:             parser_error("Expected ')' after else-if condition", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:499:             return NULL;
+	jmp	.L205	;
+.L223:
+; src/parser.c:503:             parser_error("Expected '{' to start else-if body", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:503:             parser_error("Expected '{' to start else-if body", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC31(%rip), %rdi	;, tmp363
+; src/parser.c:503:             parser_error("Expected '{' to start else-if body", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp502, _179
+; src/parser.c:503:             parser_error("Expected '{' to start else-if body", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:505:             return NULL;
+	jmp	.L205	;
+.L253:
+; src/parser.c:577:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_262->lexeme, token_262->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:577:     if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp542
+	je	.L256	;,
+; src/parser.c:576:     Expression* increment = NULL;
+	movq	$0, 24(%rsp)	;, %sfp
+	jmp	.L257	;
+.L389:
+; src/parser.c:421:                 parser_error("Cannot use 'break' outside of a loop", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:421:                 parser_error("Cannot use 'break' outside of a loop", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC49(%rip), %rdi	;, tmp446
+; src/parser.c:421:                 parser_error("Cannot use 'break' outside of a loop", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp586, _31
+; src/parser.c:421:                 parser_error("Cannot use 'break' outside of a loop", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L284:
+; src/parser.c:423:                 return NULL;
+	xorl	%r12d, %r12d	; <retval>
+	jmp	.L201	;
+.L382:
+; src/parser.c:567:             parser_error("Failed to parse for loop condition", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:567:             parser_error("Failed to parse for loop condition", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC38(%rip), %rdi	;, tmp396
+; src/parser.c:567:             parser_error("Failed to parse for loop condition", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp536, _253
+; src/parser.c:567:             parser_error("Failed to parse for loop condition", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L248	;
+.L384:
+; src/parser.c:606:     return create_for(initializer, condition, increment, body);
+	movq	%r15, %rcx	; body,
+; src/parser.c:604:     parser->in_loop = false;
+	movb	$0, 11(%rbp)	;, parser_62(D)->in_loop
+; src/parser.c:606:     return create_for(initializer, condition, increment, body);
+	movq	24(%rsp), %rdx	; %sfp,
+	movq	%r14, %rdi	; initializer,
+	movq	8(%rsp), %rsi	; %sfp,
+	call	*create_for@GOTPCREL(%rip)	;
+	movq	%rax, %rcx	; tmp556, _299
+	jmp	.L244	;
 .L261:
-; src/tac.c:362:         tac_statement(statement, status);
-	movq	%rbx, %rsi	; status,
-	call	tac_statement	;
-.L260:
-; src/tac.c:361:     while ((statement = (Statement*)list_pop(statements)) != NULL)
-	movq	%rbp, %rdi	; statements,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp169, statement
-; src/tac.c:361:     while ((statement = (Statement*)list_pop(statements)) != NULL)
-	testq	%rax, %rax	; statement
-	jne	.L261	;,
-; src/tac.c:364:     status->current_subroutine = NULL;
-	movq	$0, 8(%rbx)	;, status_35(D)->current_subroutine
-; src/tac.c:366: }
-	addq	$24, %rsp	;,
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	popq	%r14	;
-	popq	%r15	;
-	ret	
+; src/parser.c:590:         parser_error("Expected '{' to start for loop body", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:590:         parser_error("Expected '{' to start for loop body", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC42(%rip), %rdi	;, tmp410
+; src/parser.c:590:         parser_error("Expected '{' to start for loop body", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp548, _284
+; src/parser.c:590:         parser_error("Expected '{' to start for loop body", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:592:         return NULL;
+	jmp	.L236	;
+.L390:
+; src/parser.c:519:     if (token->type == KEYWORD && string_equal(token->lexeme, ELSE_KEYWORD)) {
+	cmpl	$6, 24(%r12)	;, token_54->type
+	jne	.L227	;,
+; src/parser.c:519:     if (token->type == KEYWORD && string_equal(token->lexeme, ELSE_KEYWORD)) {
+	movq	(%r12), %rdi	; token_54->lexeme, token_54->lexeme
+	movq	ELSE_KEYWORD(%rip), %rsi	; ELSE_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:519:     if (token->type == KEYWORD && string_equal(token->lexeme, ELSE_KEYWORD)) {
+	testb	%al, %al	; tmp513
+	je	.L227	;,
+; src/parser.c:520:         token = get_next_token(lexer, true);  // consume 'else'
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:521:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:522:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_204->type
+; src/parser.c:521:         token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp514, token
+; src/parser.c:522:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	jne	.L230	;,
+; src/parser.c:522:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	L_BRACE_SYMBOL(%rip), %rsi	; L_BRACE_SYMBOL,
+	movq	(%rax), %rdi	; token_204->lexeme,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:522:         if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp516
+	je	.L230	;,
+; src/parser.c:527:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+; src/parser.c:531:                 parser_error("Failed to parse else body statement", token, get_full_path(parser->source_file));
+	leaq	.LC34(%rip), %r15	;, tmp457
+; src/parser.c:527:         token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp517, token
+; src/parser.c:528:         while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	jmp	.L231	;
 	.p2align 4,,10
 	.p2align 3
-.L263:
-; src/tac.c:355:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, status->current_class->name, VAR_TEMP, status));
-	movq	24(%rbx), %rax	; status_35(D)->current_class, status_35(D)->current_class
-	movq	%rbx, %rcx	; status,
-	movl	$116, %edx	;,
-	xorl	%edi, %edi	;
-	movq	(%rax), %rsi	; _20->name, _20->name
-	call	create_var	;
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:355:         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, status->current_class->name, VAR_TEMP, status));
-	movq	%rax, %rbp	; tmp164, _22
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movq	%rbp, %xmm0	; _22, tmp145
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movl	$24, %edi	;,
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movhps	16(%rbp), %xmm0	; _22->type, tmp145
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rax)	;, arg_85->is_get
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %r14	; tmp165, arg
-; src/tac.c:228:             arg->value.variable = (Var*)value;
-	movups	%xmm0, (%rax)	; tmp145, MEM <vector(2) long unsigned int> [(void *)arg_85]
-; src/tac.c:356:         list_append(block->instructions, (pointer)create_instruction(INST_ALLOC, temp, create_arg(ARG_INT, &status->current_class->size), NULL));
-	movq	24(%rbx), %r15	; status_35(D)->current_class, _23
-; src/tac.c:224:     arg->kind = kind;
-	movl	$0, 16(%rax)	;, arg_85->kind
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movl	$32, %edi	;,
-; src/tac.c:223:     Arg* arg = (Arg*)alloc_memory(sizeof(Arg));
-	movq	%rax, %rbp	; tmp166, arg
-; src/tac.c:224:     arg->kind = kind;
-	movl	$1, 16(%rax)	;, arg_73->kind
-; src/tac.c:232:             arg->value.int_value = *(long long*)value;
-	movq	24(%r15), %rax	; MEM[(long long int *)_23 + 24B], _75
-; src/tac.c:263:     arg->is_get = false;
-	movb	$0, 20(%rbp)	;, arg_73->is_get
-; src/tac.c:232:             arg->value.int_value = *(long long*)value;
-	movq	%rax, 0(%rbp)	; _75, arg_73->value.int_value
-; src/tac.c:233:             arg->type = name_int;
-	movq	name_int(%rip), %rax	; name_int, name_int
-	movq	%rax, 8(%rbp)	; name_int, arg_73->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-; src/tac.c:356:         list_append(block->instructions, (pointer)create_instruction(INST_ALLOC, temp, create_arg(ARG_INT, &status->current_class->size), NULL));
-	movq	8(%r12), %rdi	; block_71->instructions, block_71->instructions
-; src/tac.c:214:     inst->type = type;
-	movl	$18, 24(%rax)	;, inst_61->type
-; src/tac.c:213:     Instruction* inst = (Instruction*)alloc_memory(sizeof(Instruction));
-	movq	%rax, %rsi	; tmp167, inst
-; src/tac.c:215:     inst->arg1 = arg1;
-	movq	%r14, (%rax)	; arg, inst_61->arg1
-; src/tac.c:216:     inst->arg2 = arg2;
-	movq	%rbp, 8(%rax)	; arg, inst_61->arg2
-; src/tac.c:217:     inst->arg3 = arg3;
-	movq	$0, 16(%rax)	;, inst_61->arg3
-; src/tac.c:356:         list_append(block->instructions, (pointer)create_instruction(INST_ALLOC, temp, create_arg(ARG_INT, &status->current_class->size), NULL));
+.L232:
+; src/parser.c:532:             list_append(else_body, (pointer)statement);
+	movq	40(%rsp), %rdi	; %sfp,
+	movq	%r14, %rsi	; statement,
 	call	*list_append@GOTPCREL(%rip)	;
-	jmp	.L259	;
-	.size	tac_method, .-tac_method
+; src/parser.c:533:             token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%rbx, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp520, token
+.L231:
+; src/parser.c:528:         while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%r12)	;, token_215->type
+	jne	.L233	;,
+; src/parser.c:528:         while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movq	(%r12), %rdi	; token_215->lexeme, token_215->lexeme
+	movq	R_BRACE_SYMBOL(%rip), %rsi	; R_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:528:         while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp521
+	jne	.L227	;,
+.L233:
+; src/parser.c:529:             Statement* statement = parse_statement(lexer, now_scope, parser);
+	movq	%rbp, %rdx	; parser,
+	movq	%r13, %rsi	; now_scope,
+	movq	%rbx, %rdi	; lexer,
+	call	parse_statement	;
+	movq	%rax, %r14	; tmp518, statement
+; src/parser.c:530:             if (statement == NULL)
+	testq	%rax, %rax	; statement
+	jne	.L232	;,
+; src/parser.c:531:                 parser_error("Failed to parse else body statement", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file,
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:531:                 parser_error("Failed to parse else body statement", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	movq	%r15, %rdi	; tmp457,
+; src/parser.c:531:                 parser_error("Failed to parse else body statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp519, _214
+; src/parser.c:531:                 parser_error("Failed to parse else body statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L232	;
+.L383:
+; src/parser.c:580:             parser_error("Failed to parse for loop increment", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file, parser_62(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:580:             parser_error("Failed to parse for loop increment", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC40(%rip), %rdi	;, tmp404
+; src/parser.c:580:             parser_error("Failed to parse for loop increment", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp543, _269
+; src/parser.c:580:             parser_error("Failed to parse for loop increment", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L255	;
+.L393:
+; src/parser.c:428:                 parser_error("Cannot use 'continue' outside of a loop", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file,
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:428:                 parser_error("Cannot use 'continue' outside of a loop", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC50(%rip), %rdi	;, tmp449
+; src/parser.c:428:                 parser_error("Cannot use 'continue' outside of a loop", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp589, _37
+; src/parser.c:428:                 parser_error("Cannot use 'continue' outside of a loop", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:430:                 return NULL;
+	jmp	.L284	;
+.L230:
+; src/parser.c:523:             parser_error("Expected '{' to start else body", token, get_full_path(parser->source_file));
+	movq	0(%rbp), %rdi	; parser_62(D)->source_file,
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:523:             parser_error("Expected '{' to start else body", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC33(%rip), %rdi	;, tmp374
+; src/parser.c:523:             parser_error("Expected '{' to start else body", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp515, _210
+; src/parser.c:523:             parser_error("Expected '{' to start else body", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:525:             return NULL;
+	jmp	.L205	;
+	.size	parse_statement, .-parse_statement
 	.section	.rodata.str1.8
 	.align 8
-.LC24:
-	.string	"[warning] Unsupported class member type for tac_class: %d\n"
-	.text
-	.p2align 4
-	.globl	tac_class
-	.type	tac_class, @function
-tac_class:
-	pushq	%r14	;
-	pushq	%r13	;
-	pushq	%r12	;
-	movq	%rdi, %r12	; tmp110, class
-	pushq	%rbp	;
-	movq	%rsi, %rbp	; tmp111, status
-	pushq	%rbx	;
-; src/tac.c:369:     status->current_class = class;
-	movq	%rdi, 24(%rsi)	; class, status_13(D)->current_class
-; src/tac.c:370:     list(ClassMember*) members = list_copy(class->members);
-	movq	8(%rdi), %rdi	; class_14(D)->members, class_14(D)->members
-	call	*list_copy@GOTPCREL(%rip)	;
-; src/tac.c:372:     AttributeTable* attr_table = create_attribute_table(class->name);
-	movq	(%r12), %r14	; class_14(D)->name, _2
-; src/tac.c:8:     AttributeTable* table = (AttributeTable*)alloc_memory(sizeof(AttributeTable));
-	movl	$24, %edi	;,
-; src/tac.c:370:     list(ClassMember*) members = list_copy(class->members);
-	movq	%rax, %rbx	; tmp112, members
-; src/tac.c:8:     AttributeTable* table = (AttributeTable*)alloc_memory(sizeof(AttributeTable));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r13	; tmp113, table
-; src/tac.c:9:     table->attributes = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:9:     table->attributes = create_list();
-	movq	%r14, %xmm1	; _2, _2
-; src/tac.c:375:     list_append(status->tac->attribute_tables, (pointer)attr_table);
-	movq	%r13, %rsi	; table,
-; src/tac.c:9:     table->attributes = create_list();
-	movq	%rax, %xmm0	; tmp114, tmp101
-	punpcklqdq	%xmm1, %xmm0	; _2, tmp101
-	movups	%xmm0, 0(%r13)	; tmp101, MEM <vector(2) long unsigned int> [(void *)table_28]
-; src/tac.c:374:     attr_table->size = class->size;
-	movq	24(%r12), %rax	; class_14(D)->size, class_14(D)->size
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC24(%rip), %r12	;, tmp109
-; src/tac.c:374:     attr_table->size = class->size;
-	movq	%rax, 16(%r13)	; class_14(D)->size, table_28->size
-; src/tac.c:375:     list_append(status->tac->attribute_tables, (pointer)attr_table);
-	movq	0(%rbp), %rax	; status_13(D)->tac, status_13(D)->tac
-	movq	(%rax), %rdi	; _4->attribute_tables, _4->attribute_tables
-	call	*list_append@GOTPCREL(%rip)	;
-	.p2align 4,,10
-	.p2align 3
-.L265:
-; src/tac.c:376:     while ((member = (ClassMember*)list_pop(members)) != NULL) {
-	movq	%rbx, %rdi	; members,
-	call	*list_pop@GOTPCREL(%rip)	;
-; src/tac.c:376:     while ((member = (ClassMember*)list_pop(members)) != NULL) {
-	testq	%rax, %rax	; member
-	je	.L273	;,
-.L270:
-; src/tac.c:377:         switch (member->type) {
-	movl	8(%rax), %ecx	; member_23->type, _6
-; src/tac.c:377:         switch (member->type) {
-	testl	%ecx, %ecx	; _6
-	je	.L266	;,
-	cmpl	$1, %ecx	;, _6
-	je	.L267	;,
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	stderr(%rip), %rdi	; stderr,
-	xorl	%eax, %eax	;
-	movq	%r12, %rdx	; tmp109,
-	movl	$2, %esi	;,
-	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/tac.c:376:     while ((member = (ClassMember*)list_pop(members)) != NULL) {
-	movq	%rbx, %rdi	; members,
-	call	*list_pop@GOTPCREL(%rip)	;
-; src/tac.c:376:     while ((member = (ClassMember*)list_pop(members)) != NULL) {
-	testq	%rax, %rax	; member
-	jne	.L270	;,
-.L273:
-; src/tac.c:389:     status->current_class = NULL;
-	movq	$0, 24(%rbp)	;, status_13(D)->current_class
-; src/tac.c:391: }
-	popq	%rbx	;
-	popq	%rbp	;
-	popq	%r12	;
-	popq	%r13	;
-	popq	%r14	;
-	ret	
-	.p2align 4,,10
-	.p2align 3
-.L267:
-; src/tac.c:382:                 tac_variable(member->content.variable, status, VAR_ATTR);
-	movq	(%rax), %rdi	; member_23->content.variable, member_23->content.variable
-	movl	$97, %edx	;,
-	movq	%rbp, %rsi	; status,
-	call	tac_variable	;
-; src/tac.c:383:                 break;
-	jmp	.L265	;
-	.p2align 4,,10
-	.p2align 3
-.L266:
-; src/tac.c:379:                 tac_method(member->content.method, status);
-	movq	(%rax), %rdi	; member_23->content.method, member_23->content.method
-	movq	%rbp, %rsi	; status,
-	call	tac_method	;
-; src/tac.c:380:                 break;
-	jmp	.L265	;
-	.size	tac_class, .-tac_class
+.LC53:
+	.string	"Expected identifier after 'import'"
+	.align 8
+.LC54:
+	.string	"Expected string literal after 'from'"
+	.align 8
+.LC55:
+	.string	"Expected ';' at end of import statement"
 	.section	.rodata.str1.1
-.LC25:
-	.string	"main"
+.LC56:
+	.string	"Failed to import module"
+	.section	.rodata.str1.8
+	.align 8
+.LC57:
+	.string	"Failed to parse import statement"
+	.align 8
+.LC58:
+	.string	"Expected function return type after 'func'"
+	.section	.rodata.str1.1
+.LC59:
+	.string	"Unknown function return type"
+	.section	.rodata.str1.8
+	.align 8
+.LC60:
+	.string	"Expected function name after return type"
+	.align 8
+.LC61:
+	.string	"Expected '(' after function name"
+	.align 8
+.LC62:
+	.string	"Failed to parse function parameter"
+	.align 8
+.LC63:
+	.string	"Function parameters cannot have default values"
+	.align 8
+.LC64:
+	.string	"Expected ',' or ')' after function parameter"
+	.align 8
+.LC65:
+	.string	"Expected '{' to start function body"
+	.align 8
+.LC66:
+	.string	"Failed to parse function body statement"
+	.align 8
+.LC67:
+	.string	"Unreachable code after return statement"
+	.align 8
+.LC68:
+	.string	"Function missing return statement"
+	.align 8
+.LC69:
+	.string	"Failed to parse function declaration"
+	.align 8
+.LC70:
+	.string	"Expected class name after 'class'"
+	.align 8
+.LC71:
+	.string	"Expected '{' to start class body"
+	.align 8
+.LC72:
+	.string	"Expected method return type after 'method'"
+	.align 8
+.LC73:
+	.string	"Unknown return type for method"
+	.align 8
+.LC74:
+	.string	"Expected method name after return type"
+	.align 8
+.LC75:
+	.string	"Expected '(' after method name"
+	.align 8
+.LC76:
+	.string	"Expected 'self' as first parameter of method"
+	.align 8
+.LC77:
+	.string	"Expected ',' or ')' after method parameter"
+	.align 8
+.LC78:
+	.string	"Failed to parse method parameter"
+	.align 8
+.LC79:
+	.string	"Method parameters cannot have default values"
+	.align 8
+.LC80:
+	.string	"Expected '{' to start method body"
+	.align 8
+.LC82:
+	.string	"Failed to parse method body statement"
+	.align 8
+.LC83:
+	.string	"Method missing return statement"
+	.section	.rodata.str1.1
+.LC84:
+	.string	"Failed to parse class method"
+	.section	.rodata.str1.8
+	.align 8
+.LC85:
+	.string	"Failed to parse class variable"
+	.align 8
+.LC86:
+	.string	"Unsupported type for class variable"
+	.align 8
+.LC87:
+	.string	"Expected ';' after class variable declaration"
+	.align 8
+.LC88:
+	.string	"Unexpected token in class member"
+	.align 8
+.LC89:
+	.string	"Constructor name conflicts with existing member"
+	.section	.rodata.str1.1
+.LC90:
+	.string	"0"
+	.section	.rodata.str1.8
+	.align 8
+.LC91:
+	.string	"Failed to parse class declaration"
+	.align 8
+.LC92:
+	.string	"Unexpected token in code member"
 	.text
 	.p2align 4
-	.globl	tac_code
-	.type	tac_code, @function
-tac_code:
+	.globl	parse_code
+	.type	parse_code, @function
+parse_code:
+	pushq	%r15	;
+	movq	%rdi, %r15	; tmp641, lexer
 	pushq	%r14	;
-; src/tac.c:293:             if (strcmp(code_member->content.function->name->name, "main") == 0)
-	leaq	.LC25(%rip), %r14	;, tmp115
-; src/tac.c:283: TAC* tac_code(Code* code) {
 	pushq	%r13	;
 	pushq	%r12	;
 	pushq	%rbp	;
+	movq	%rdx, %rbp	; tmp643, parser
 	pushq	%rbx	;
-; src/tac.c:283: TAC* tac_code(Code* code) {
-	movq	%rdi, %rbx	; tmp116, code
-; src/tac.c:61:     TAC* tac = (TAC*)alloc_memory(sizeof(TAC));
+	movq	%rsi, %rbx	; tmp642, now_scope
+	subq	$120, %rsp	;,
+; src/parser.c:23:     if (builtin_scope == NULL) {
+	cmpq	$0, builtin_scope(%rip)	;, builtin_scope
+	je	.L596	;,
+.L395:
+; src/parser.c:32:         now_scope = builtin_scope;
+	testq	%rbx, %rbx	; now_scope
+	cmove	builtin_scope(%rip), %rbx	; builtin_scope,, now_scope
+	movq	%rbp, %r13	; parser, parser
+; src/parser.c:34:     list(CodeMember*) members = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+	movq	%rax, 24(%rsp)	; tmp650, %sfp
+; src/parser.c:35:     SymbolTable* global_scope = create_symbol_table(now_scope);
+	movq	%rbx, %rdi	; now_scope,
+	call	*create_symbol_table@GOTPCREL(%rip)	;
+; src/parser.c:36:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:35:     SymbolTable* global_scope = create_symbol_table(now_scope);
+	movq	%rax, 16(%rsp)	; tmp651, %sfp
+; src/parser.c:36:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, (%rsp)	; token, %sfp
+; src/parser.c:37:     while (token != NULL && token->type != EOF_TOKEN) {
+	testq	%rax, %rax	; token
+	jne	.L397	;,
+	jmp	.L513	;
+	.p2align 4,,10
+	.p2align 3
+.L442:
+; src/parser.c:54:             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:54:             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
+	movq	(%rsp), %rsi	; %sfp,
+	leaq	.LC92(%rip), %rdi	;,
+; src/parser.c:54:             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp838, _38
+; src/parser.c:54:             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L409:
+; src/parser.c:55:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, (%rsp)	; token, %sfp
+; src/parser.c:37:     while (token != NULL && token->type != EOF_TOKEN) {
+	testq	%rax, %rax	; token
+	je	.L513	;,
+.L397:
+; src/parser.c:37:     while (token != NULL && token->type != EOF_TOKEN) {
+	movq	(%rsp), %rax	; %sfp, token
+	movl	24(%rax), %eax	; token_369->type, _39
+; src/parser.c:37:     while (token != NULL && token->type != EOF_TOKEN) {
+	testl	%eax, %eax	; _39
+	je	.L513	;,
+; src/parser.c:38:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
+	cmpl	$6, %eax	;, _39
+	jne	.L442	;,
+; src/parser.c:38:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
+	movq	(%rsp), %rax	; %sfp, token
+	movq	IMPORT_KEYWORD(%rip), %rsi	; IMPORT_KEYWORD,
+	movq	(%rax), %rdi	; token_369->lexeme, token_369->lexeme
+	call	*string_equal@GOTPCREL(%rip)	;
+	movl	%eax, %ebp	; tmp653, have_return
+; src/parser.c:38:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
+	testb	%al, %al	; have_return
+	jne	.L597	;,
+; src/parser.c:43:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
+	movq	(%rsp), %rax	; %sfp, token
+	cmpl	$6, 24(%rax)	;, token_369->type
+	jne	.L442	;,
+; src/parser.c:43:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
+	movq	(%rax), %rdi	; token_369->lexeme, token_369->lexeme
+	movq	FUNC_KEYWORD(%rip), %rsi	; FUNC_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:43:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
+	testb	%al, %al	; tmp669
+	jne	.L598	;,
+; src/parser.c:48:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
+	movq	(%rsp), %rax	; %sfp, token
+	cmpl	$6, 24(%rax)	;, token_369->type
+	jne	.L442	;,
+; src/parser.c:48:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
+	movq	(%rax), %rdi	; token_369->lexeme, token_369->lexeme
+	movq	CLASS_KEYWORD(%rip), %rsi	; CLASS_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:48:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
+	testb	%al, %al	; tmp709
+	je	.L442	;,
+; src/parser.c:264:     SymbolTable* class_scope = create_symbol_table(now_scope);
+	movq	16(%rsp), %rdi	; %sfp,
+	call	*create_symbol_table@GOTPCREL(%rip)	;
+; src/parser.c:265:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:264:     SymbolTable* class_scope = create_symbol_table(now_scope);
+	movq	%rax, 32(%rsp)	; tmp710, %sfp
+; src/parser.c:265:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:266:     if (token->type != IDENTIFIER) {
+	cmpl	$1, 24(%rax)	;, token_219->type
+; src/parser.c:265:     token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp711, token
+; src/parser.c:266:     if (token->type != IDENTIFIER) {
+	jne	.L599	;,
+; src/parser.c:271:     Class* class = (Class*)alloc_memory(sizeof(Class));
 	movl	$32, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %r13	; tmp117, <retval>
-; src/tac.c:62:     tac->attribute_tables = create_list();
+; src/parser.c:273:     Symbol* name = create_symbol(token->lexeme, SYMBOL_CLASS, NULL, class);
+	movq	(%rbx), %rdi	; token_219->lexeme, token_219->lexeme
+	xorl	%edx, %edx	;
+	xorl	%esi, %esi	;
+; src/parser.c:271:     Class* class = (Class*)alloc_memory(sizeof(Class));
+	movq	%rax, %rcx	; tmp713, class
+	movq	%rax, 64(%rsp)	; class, %sfp
+; src/parser.c:272:     class->class_scope = class_scope;
+	movq	32(%rsp), %rax	; %sfp, class_scope
+	movq	%rax, 16(%rcx)	; class_scope, class_223->class_scope
+; src/parser.c:273:     Symbol* name = create_symbol(token->lexeme, SYMBOL_CLASS, NULL, class);
+	call	*create_symbol@GOTPCREL(%rip)	;
+; src/parser.c:274:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:273:     Symbol* name = create_symbol(token->lexeme, SYMBOL_CLASS, NULL, class);
+	movq	%rax, 40(%rsp)	; tmp714, %sfp
+; src/parser.c:274:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:275:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_226->type
+; src/parser.c:274:     token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp715, token
+; src/parser.c:275:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	jne	.L446	;,
+; src/parser.c:275:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	(%rax), %rdi	; token_226->lexeme, token_226->lexeme
+	movq	L_BRACE_SYMBOL(%rip), %rsi	; L_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:275:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp717
+	je	.L446	;,
+; src/parser.c:280:     list(ClassMember*) members = create_list();
 	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:63:     tac->entry_point = NULL;
-	movq	$0, 8(%r13)	;, tac_29->entry_point
-; src/tac.c:62:     tac->attribute_tables = create_list();
-	movq	%rax, 0(%r13)	; tmp118, tac_29->attribute_tables
-; src/tac.c:64:     tac->global_vars = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:64:     tac->global_vars = create_list();
-	movq	%rax, 16(%r13)	; tmp119, tac_29->global_vars
-; src/tac.c:65:     tac->subroutines = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:71:     TACStatus* status = (TACStatus*)alloc_memory(sizeof(TACStatus));
-	movl	$96, %edi	;,
-; src/tac.c:65:     tac->subroutines = create_list();
-	movq	%rax, 24(%r13)	; tmp120, tac_29->subroutines
-; src/tac.c:71:     TACStatus* status = (TACStatus*)alloc_memory(sizeof(TACStatus));
-	call	*alloc_memory@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp121, status
-; src/tac.c:72:     status->tac = tac;
-	movq	%r13, (%rax)	; <retval>, status_26->tac
-; src/tac.c:73:     status->current_subroutine = NULL;
-	movq	$0, 8(%rax)	;, status_26->current_subroutine
-; src/tac.c:74:     status->current_block = NULL;
-	movq	$0, 16(%rax)	;, status_26->current_block
-; src/tac.c:75:     status->end_labels = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:75:     status->end_labels = create_list();
-	movq	%rax, 32(%rbp)	; tmp122, status_26->end_labels
-; src/tac.c:76:     status->start_labels = create_list();
-	call	*create_list@GOTPCREL(%rip)	;
-; src/tac.c:77:     status->attr_count = 0;
-	pxor	%xmm0, %xmm0	; tmp101
-; src/tac.c:288:     list(CodeMember*) members = list_copy(code->members);
-	movq	(%rbx), %rdi	; code_17(D)->members, code_17(D)->members
-; src/tac.c:76:     status->start_labels = create_list();
-	movq	%rax, 40(%rbp)	; tmp123, status_26->start_labels
-; src/tac.c:77:     status->attr_count = 0;
-	movups	%xmm0, 48(%rbp)	; tmp101, MEM <vector(2) long unsigned int> [(long unsigned int *)status_26 + 48B]
-	movups	%xmm0, 64(%rbp)	; tmp101, MEM <vector(2) long unsigned int> [(long unsigned int *)status_26 + 64B]
-	movups	%xmm0, 80(%rbp)	; tmp101, MEM <vector(2) long unsigned int> [(long unsigned int *)status_26 + 80B]
-; src/tac.c:288:     list(CodeMember*) members = list_copy(code->members);
-	call	*list_copy@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp124, members
+; src/parser.c:281:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:280:     list(ClassMember*) members = create_list();
+	movq	%rax, 48(%rsp)	; tmp718, %sfp
+; src/parser.c:281:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:282:     size_t size = 0;
+	movq	$0, 72(%rsp)	;, %sfp
+; src/parser.c:281:     token = get_next_token(lexer, true);
+	movq	%rax, %r10	; tmp719, token
+; src/parser.c:283:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	jmp	.L447	;
 	.p2align 4,,10
 	.p2align 3
-.L275:
-; src/tac.c:290:     while ((code_member = (CodeMember*)list_pop(members)) != NULL) {
-	movq	%r12, %rdi	; members,
-	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rbx	; tmp126, code_member
-; src/tac.c:290:     while ((code_member = (CodeMember*)list_pop(members)) != NULL) {
-	testq	%rax, %rax	; code_member
-	je	.L283	;,
-; src/tac.c:291:         if (code_member->type == CODE_FUNCTION) {
-	movl	8(%rbx), %eax	; code_member_21->type, _2
-; src/tac.c:291:         if (code_member->type == CODE_FUNCTION) {
-	cmpl	$1, %eax	;, _2
-	je	.L284	;,
-; src/tac.c:295:         } else if (code_member->type == CODE_CLASS)
-	cmpl	$2, %eax	;, _2
-	je	.L285	;,
-; src/tac.c:297:         else if (code_member->type == CODE_IMPORT)
-	testl	%eax, %eax	; _2
-	jne	.L275	;,
-; src/tac.c:298:             tac_import(code_member->content.import, tac, status);
-	movq	(%rbx), %rdi	; code_member_21->content.import, code_member_21->content.import
-	movq	%rbp, %rdx	; status,
-	movq	%r13, %rsi	; <retval>,
-	call	tac_import	;
-	jmp	.L275	;
+.L499:
+; src/parser.c:284:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
+	cmpl	$6, %eax	;, _278
+	je	.L600	;,
+.L448:
+; src/parser.c:313:             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	movq	%r10, 8(%rsp)	; token, %sfp
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:313:             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
+	movq	8(%rsp), %rsi	; %sfp,
+	leaq	.LC88(%rip), %rdi	;,
+; src/parser.c:313:             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp775, _276
+; src/parser.c:313:             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L496:
+; src/parser.c:314:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r10	; tmp776, token
+.L447:
+; src/parser.c:283:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movl	24(%r10), %eax	; token_235->type, _278
+; src/parser.c:283:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	cmpl	$5, %eax	;, _278
+	jne	.L499	;,
+; src/parser.c:283:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movq	(%r10), %rdi	; token_235->lexeme, token_235->lexeme
+	movq	R_BRACE_SYMBOL(%rip), %rsi	; R_BRACE_SYMBOL,
+	movq	%r10, 8(%rsp)	; token, %sfp
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:283:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movq	8(%rsp), %r10	; %sfp, token
+	testb	%al, %al	; tmp777
+	jne	.L500	;,
+; src/parser.c:284:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
+	movl	24(%r10), %eax	; token_235->type, _278
+; src/parser.c:284:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
+	cmpl	$6, %eax	;, _278
+	jne	.L448	;,
+.L600:
+; src/parser.c:284:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
+	movq	(%r10), %rdi	; token_235->lexeme, token_235->lexeme
+	movq	METHOD_KEYWORD(%rip), %rsi	; METHOD_KEYWORD,
+	movq	%r10, 8(%rsp)	; token, %sfp
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:284:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
+	movq	8(%rsp), %r10	; %sfp, token
+	testb	%al, %al	; tmp720
+	jne	.L601	;,
+; src/parser.c:289:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
+	cmpl	$6, 24(%r10)	;, token_235->type
+	jne	.L448	;,
+; src/parser.c:289:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
+	movq	(%r10), %rdi	; token_235->lexeme, token_235->lexeme
+	movq	VAR_KEYWORD(%rip), %rsi	; VAR_KEYWORD,
+	movq	%r10, 8(%rsp)	; token, %sfp
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:289:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
+	movq	8(%rsp), %r10	; %sfp, token
+	testb	%al, %al	; tmp766
+	je	.L448	;,
+; src/parser.c:290:             token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:291:             parser->in_class = true;
+	movb	$1, 10(%r13)	;, parser_74(D)->in_class
+; src/parser.c:292:             Variable* variable = parse_variable(lexer, class_scope, parser);
+	movq	%r13, %rdx	; parser,
+	movq	%r15, %rdi	; lexer,
+	movq	32(%rsp), %rsi	; %sfp,
+; src/parser.c:290:             token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp767, token
+; src/parser.c:292:             Variable* variable = parse_variable(lexer, class_scope, parser);
+	call	parse_variable	;
+; src/parser.c:293:             parser->in_class = false;
+	movb	$0, 10(%r13)	;, parser_74(D)->in_class
+; src/parser.c:292:             Variable* variable = parse_variable(lexer, class_scope, parser);
+	movq	%rax, %rbp	; tmp768, variable
+; src/parser.c:294:             if (variable == NULL)
+	testq	%rax, %rax	; variable
+	je	.L602	;,
+.L487:
+; src/parser.c:296:             ClassMember* member = create_class_member(CLASS_VARIABLE, NULL, variable);
+	movq	%rbp, %rdx	; variable,
+	xorl	%esi, %esi	;
+	movl	$1, %edi	;,
+	call	*create_class_member@GOTPCREL(%rip)	;
+; src/parser.c:297:             list_append(members, (pointer)member);
+	movq	48(%rsp), %rdi	; %sfp,
+; src/parser.c:296:             ClassMember* member = create_class_member(CLASS_VARIABLE, NULL, variable);
+	movq	%rax, %rbp	; tmp770, member
+; src/parser.c:297:             list_append(members, (pointer)member);
+	movq	%rax, %rsi	; member,
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:298:             if (member->type == CLASS_VARIABLE) {
+	cmpl	$1, 8(%rbp)	;, member_252->type
+	je	.L603	;,
+.L491:
+; src/parser.c:309:             token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:310:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	cmpl	$5, 24(%rax)	;, token_268->type
+; src/parser.c:309:             token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp772, token
+; src/parser.c:310:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	je	.L495	;,
+.L497:
+; src/parser.c:311:                 parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:311:                 parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC87(%rip), %rdi	;,
+; src/parser.c:311:                 parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp773, _274
+; src/parser.c:311:                 parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L496	;
 	.p2align 4,,10
 	.p2align 3
-.L284:
-; src/tac.c:292:             tac_function(code_member->content.function, status);
-	movq	(%rbx), %rdi	; code_member_21->content.function, code_member_21->content.function
-	movq	%rbp, %rsi	; status,
-	call	tac_function	;
-; src/tac.c:293:             if (strcmp(code_member->content.function->name->name, "main") == 0)
-	movq	(%rbx), %rax	; code_member_21->content.function, code_member_21->content.function
-; src/tac.c:293:             if (strcmp(code_member->content.function->name->name, "main") == 0)
-	movq	%r14, %rsi	; tmp115,
-; src/tac.c:293:             if (strcmp(code_member->content.function->name->name, "main") == 0)
-	movq	(%rax), %rbx	; _4->name, _5
-; src/tac.c:293:             if (strcmp(code_member->content.function->name->name, "main") == 0)
-	movq	8(%rbx), %rdi	; _5->name, _5->name
-	call	*strcmp@GOTPCREL(%rip)	;
-; src/tac.c:293:             if (strcmp(code_member->content.function->name->name, "main") == 0)
-	testl	%eax, %eax	; tmp125
-	jne	.L275	;,
-; src/tac.c:294:                 tac->entry_point = code_member->content.function->name;
-	movq	%rbx, 8(%r13)	; _5, tac_29->entry_point
-	jmp	.L275	;
-	.p2align 4,,10
-	.p2align 3
-.L285:
-; src/tac.c:296:             tac_class(code_member->content.class, status);
-	movq	(%rbx), %rdi	; code_member_21->content.class, code_member_21->content.class
-	movq	%rbp, %rsi	; status,
-	call	tac_class	;
-	jmp	.L275	;
-	.p2align 4,,10
-	.p2align 3
-.L283:
-; src/tac.c:302: }
+.L513:
+; src/parser.c:58:     return create_code(members, global_scope);
+	movq	16(%rsp), %rsi	; %sfp,
+	movq	24(%rsp), %rdi	; %sfp,
+; src/parser.c:59: }
+	addq	$120, %rsp	;,
 	popq	%rbx	;
-	movq	%r13, %rax	; <retval>,
 	popq	%rbp	;
 	popq	%r12	;
 	popq	%r13	;
 	popq	%r14	;
-	ret	
-	.size	tac_code, .-tac_code
-	.section	.rodata
-	.align 32
-	.type	CSWTCH.43, @object
-	.size	CSWTCH.43, 76
-CSWTCH.43:
-	.long	0
-	.long	1
-	.long	2
-	.long	3
-	.long	4
-	.long	5
-	.long	6
-	.long	7
-	.long	8
-	.long	9
-	.long	10
-	.long	11
-	.long	12
-	.long	14
-	.long	0
-	.long	1
-	.long	2
-	.long	3
-	.long	4
-	.section	.rodata.cst8,"aM",@progbits,8
-	.align 8
-.LC17:
-	.long	0
-	.long	-1074790400
+	popq	%r15	;
+; src/parser.c:58:     return create_code(members, global_scope);
+	jmp	*create_code@GOTPCREL(%rip)	;
+	.p2align 4,,10
+	.p2align 3
+.L597:
+; src/parser.c:63:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:64:     if (token->type != IDENTIFIER) {
+	cmpl	$1, 24(%rax)	;, token_101->type
+; src/parser.c:63:     token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp654, token
+; src/parser.c:64:     if (token->type != IDENTIFIER) {
+	jne	.L604	;,
+; src/parser.c:69:     string import_name = token->lexeme;
+	movq	(%rax), %rbp	; token_101->lexeme, import_name
+; src/parser.c:71:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:70:     string source = NULL;
+	xorl	%ebx, %ebx	; source
+; src/parser.c:71:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp656, token
+; src/parser.c:72:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
+	movl	24(%rax), %eax	; token_106->type, _107
+; src/parser.c:72:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
+	cmpl	$6, %eax	;, _107
+	je	.L605	;,
+.L402:
+; src/parser.c:82:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	cmpl	$5, %eax	;, _107
+	jne	.L406	;,
+; src/parser.c:82:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	movq	(%r12), %rdi	; token_117->lexeme, token_117->lexeme
+	movq	SEMICOLON_SYMBOL(%rip), %rsi	; SEMICOLON_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:82:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	testb	%al, %al	; tmp662
+	je	.L406	;,
+; src/parser.c:88:     name = parse_import_file(import_name, source, now_scope, parser->source_file);
+	movq	%rbp, %rdi	; import_name,
+	movq	0(%r13), %rcx	; parser_74(D)->source_file, parser_74(D)->source_file
+	movq	16(%rsp), %rdx	; %sfp,
+	movq	%rbx, %rsi	; source,
+	call	*parse_import_file@GOTPCREL(%rip)	;
+	movq	%rax, %rdi	; tmp663, name
+; src/parser.c:89:     if (name == NULL) {
+	testq	%rax, %rax	; name
+	je	.L606	;,
+.L407:
+; src/parser.c:94:     return create_import(name, source);
+	movq	%rbx, %rsi	; source,
+	call	*create_import@GOTPCREL(%rip)	;
+	movq	%rax, %rsi	; tmp666, _132
+; src/parser.c:40:             if (import == NULL)
+	testq	%rax, %rax	; _132
+	je	.L401	;,
+.L408:
+; src/parser.c:42:             list_append(members, (pointer)create_code_member(CODE_IMPORT, import, NULL, NULL));
+	xorl	%edi, %edi	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	call	*create_code_member@GOTPCREL(%rip)	;
+; src/parser.c:42:             list_append(members, (pointer)create_code_member(CODE_IMPORT, import, NULL, NULL));
+	movq	24(%rsp), %rdi	; %sfp,
+; src/parser.c:42:             list_append(members, (pointer)create_code_member(CODE_IMPORT, import, NULL, NULL));
+	movq	%rax, %rsi	; tmp668, _22
+; src/parser.c:42:             list_append(members, (pointer)create_code_member(CODE_IMPORT, import, NULL, NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:38:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
+	jmp	.L409	;
+	.p2align 4,,10
+	.p2align 3
+.L598:
+; src/parser.c:99:     SymbolTable* function_scope = create_symbol_table(now_scope);
+	movq	16(%rsp), %rdi	; %sfp,
+	call	*create_symbol_table@GOTPCREL(%rip)	;
+; src/parser.c:100:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:99:     SymbolTable* function_scope = create_symbol_table(now_scope);
+	movq	%rax, %r12	; tmp670, function_scope
+; src/parser.c:100:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %rbx	; tmp671, token
+; src/parser.c:101:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	movl	24(%rax), %eax	; token_135->type, _136
+; src/parser.c:101:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	cmpl	$1, %eax	;, _136
+	je	.L411	;,
+; src/parser.c:101:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	cmpl	$6, %eax	;, _136
+	jne	.L414	;,
+; src/parser.c:101:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	movq	(%rbx), %rdi	; token_135->lexeme, token_135->lexeme
+	call	*is_builtin_type@GOTPCREL(%rip)	;
+; src/parser.c:101:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	testb	%al, %al	; tmp673
+	je	.L414	;,
+.L411:
+; src/parser.c:106:     Symbol* return_type = search_name(now_scope, token->lexeme);
+	movq	(%rbx), %rsi	; token_135->lexeme, token_135->lexeme
+	movq	16(%rsp), %rdi	; %sfp,
+	call	*search_name@GOTPCREL(%rip)	;
+	movq	%rax, 8(%rsp)	; return_type, %sfp
+; src/parser.c:107:     if (return_type == NULL) {
+	testq	%rax, %rax	; return_type
+	je	.L607	;,
+; src/parser.c:112:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:113:     if (token->type != IDENTIFIER) {
+	cmpl	$1, 24(%rax)	;, token_145->type
+; src/parser.c:112:     token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp676, token
+; src/parser.c:113:     if (token->type != IDENTIFIER) {
+	jne	.L608	;,
+; src/parser.c:118:     Function* function = (Function*)alloc_memory(sizeof(Function));
+	movl	$40, %edi	;,
+	call	*alloc_memory@GOTPCREL(%rip)	;
+; src/parser.c:120:     Symbol* name = create_symbol(token->lexeme, SYMBOL_FUNCTION, return_type, function);
+	movq	(%rbx), %rdi	; token_145->lexeme, token_145->lexeme
+	movq	8(%rsp), %rdx	; %sfp,
+	movl	$1, %esi	;,
+; src/parser.c:118:     Function* function = (Function*)alloc_memory(sizeof(Function));
+	movq	%rax, %rcx	; tmp678, function
+	movq	%rax, 40(%rsp)	; function, %sfp
+; src/parser.c:119:     function->function_scope = function_scope;
+	movq	%r12, 32(%rax)	; function_scope, function_149->function_scope
+; src/parser.c:120:     Symbol* name = create_symbol(token->lexeme, SYMBOL_FUNCTION, return_type, function);
+	call	*create_symbol@GOTPCREL(%rip)	;
+; src/parser.c:121:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:120:     Symbol* name = create_symbol(token->lexeme, SYMBOL_FUNCTION, return_type, function);
+	movq	%rax, 48(%rsp)	; tmp679, %sfp
+; src/parser.c:121:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:122:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_152->type
+; src/parser.c:121:     token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp680, token
+; src/parser.c:122:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	jne	.L418	;,
+; src/parser.c:122:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_152->lexeme, token_152->lexeme
+	movq	L_PAREN_SYMBOL(%rip), %rsi	; L_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:122:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp682
+	je	.L418	;,
+; src/parser.c:127:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:134:             parser_error("Function parameters cannot have default values", token, get_full_path(parser->source_file));
+	leaq	.LC63(%rip), %r14	;, tmp630
+; src/parser.c:127:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %rbx	; tmp683, token
+; src/parser.c:128:     list(Variable*) parameters = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+	movq	%rax, 32(%rsp)	; tmp684, %sfp
+	.p2align 4,,10
+	.p2align 3
+.L419:
+; src/parser.c:129:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rbx)	;, token_164->type
+	je	.L609	;,
+.L427:
+; src/parser.c:130:         Variable* parameter = parse_variable(lexer, function_scope, parser);
+	movq	%r13, %rdx	; parser,
+	movq	%r12, %rsi	; function_scope,
+	movq	%r15, %rdi	; lexer,
+	call	parse_variable	;
+; src/parser.c:131:         if (parameter == NULL)
+	testq	%rax, %rax	; parameter
+	je	.L610	;,
+; src/parser.c:133:         else if (parameter->value != NULL)
+	cmpq	$0, 16(%rax)	;, parameter_161->value
+	je	.L422	;,
+; src/parser.c:134:             parser_error("Function parameters cannot have default values", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:134:             parser_error("Function parameters cannot have default values", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	movq	%r14, %rdi	; tmp630,
+; src/parser.c:134:             parser_error("Function parameters cannot have default values", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp687, _167
+; src/parser.c:134:             parser_error("Function parameters cannot have default values", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L421:
+; src/parser.c:137:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:138:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_168->type
+; src/parser.c:137:         token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp688, token
+; src/parser.c:138:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+	je	.L423	;,
+.L426:
+; src/parser.c:141:             parser_error("Expected ',' or ')' after function parameter", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:141:             parser_error("Expected ',' or ')' after function parameter", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC64(%rip), %rdi	;,
+; src/parser.c:141:             parser_error("Expected ',' or ')' after function parameter", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp689, _179
+; src/parser.c:141:             parser_error("Expected ',' or ')' after function parameter", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L413:
+; src/parser.c:46:                 parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:46:                 parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
+	movq	(%rsp), %rsi	; %sfp,
+	leaq	.LC69(%rip), %rdi	;, tmp516
+; src/parser.c:46:                 parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp707, _28
+; src/parser.c:46:                 parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	xorl	%edx, %edx	; _214
+.L441:
+; src/parser.c:47:             list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
+	xorl	%esi, %esi	;
+	xorl	%ecx, %ecx	;
+	movl	$1, %edi	;,
+	call	*create_code_member@GOTPCREL(%rip)	;
+; src/parser.c:47:             list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
+	movq	24(%rsp), %rdi	; %sfp,
+; src/parser.c:47:             list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
+	movq	%rax, %rsi	; tmp708, _29
+; src/parser.c:47:             list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:43:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
+	jmp	.L409	;
+	.p2align 4,,10
+	.p2align 3
+.L446:
+; src/parser.c:276:         parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:276:         parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC71(%rip), %rdi	;, tmp523
+; src/parser.c:276:         parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp716, _232
+; src/parser.c:276:         parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L444:
+; src/parser.c:51:                 parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:51:                 parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
+	movq	(%rsp), %rsi	; %sfp,
+	leaq	.LC91(%rip), %rdi	;, tmp614
+; src/parser.c:51:                 parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp835, _35
+; src/parser.c:51:                 parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	xorl	%ecx, %ecx	; _368
+.L512:
+; src/parser.c:52:             list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
+	xorl	%esi, %esi	;
+	xorl	%edx, %edx	;
+	movl	$2, %edi	;,
+	call	*create_code_member@GOTPCREL(%rip)	;
+; src/parser.c:52:             list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
+	movq	24(%rsp), %rdi	; %sfp,
+; src/parser.c:52:             list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
+	movq	%rax, %rsi	; tmp836, _36
+; src/parser.c:52:             list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:48:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
+	jmp	.L409	;
+	.p2align 4,,10
+	.p2align 3
+.L601:
+; src/parser.c:178:     SymbolTable* method_scope = create_symbol_table(now_scope);
+	movq	32(%rsp), %rdi	; %sfp,
+	call	*create_symbol_table@GOTPCREL(%rip)	;
+; src/parser.c:179:     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, class_name, method_scope);
+	movq	40(%rsp), %rdx	; %sfp,
+	movl	$3, %esi	;,
+	movq	SELF_KEYWORD(%rip), %rdi	; SELF_KEYWORD,
+	movq	%rax, %rcx	; method_scope,
+; src/parser.c:178:     SymbolTable* method_scope = create_symbol_table(now_scope);
+	movq	%rax, %rbp	; tmp721, method_scope
+; src/parser.c:179:     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, class_name, method_scope);
+	call	*create_symbol@GOTPCREL(%rip)	;
+; src/parser.c:180:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:179:     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, class_name, method_scope);
+	movq	%rax, %r14	; tmp722, self
+; src/parser.c:180:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	movq	8(%rsp), %r10	; %sfp, token
+; src/parser.c:180:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp723, token
+; src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	movl	24(%rax), %eax	; token_375->type, _376
+; src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	cmpl	$1, %eax	;, _376
+	je	.L450	;,
+; src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	cmpl	$6, %eax	;, _376
+	jne	.L453	;,
+	movq	%r10, 8(%rsp)	; token, %sfp
+; src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	movq	(%r12), %rdi	; token_375->lexeme, token_375->lexeme
+	call	*is_builtin_type@GOTPCREL(%rip)	;
+; src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+	movq	8(%rsp), %r10	; %sfp, token
+	testb	%al, %al	; tmp725
+	je	.L453	;,
+.L450:
+; src/parser.c:186:     Symbol* return_type = search_name(now_scope, token->lexeme);
+	movq	(%r12), %rsi	; token_375->lexeme, token_375->lexeme
+	movq	32(%rsp), %rdi	; %sfp,
+	movq	%r10, 8(%rsp)	; token, %sfp
+	call	*search_name@GOTPCREL(%rip)	;
+; src/parser.c:187:     if (return_type == NULL) {
+	movq	8(%rsp), %r10	; %sfp, token
+	testq	%rax, %rax	; return_type
+; src/parser.c:186:     Symbol* return_type = search_name(now_scope, token->lexeme);
+	movq	%rax, 56(%rsp)	; return_type, %sfp
+; src/parser.c:187:     if (return_type == NULL) {
+	je	.L611	;,
+	movq	%r10, 8(%rsp)	; token, %sfp
+; src/parser.c:192:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:193:     if (token->type != IDENTIFIER) {
+	movq	8(%rsp), %r10	; %sfp, token
+	cmpl	$1, 24(%rax)	;, token_385->type
+; src/parser.c:192:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp728, token
+; src/parser.c:193:     if (token->type != IDENTIFIER) {
+	jne	.L612	;,
+	movq	%r10, 8(%rsp)	; token, %sfp
+; src/parser.c:198:     Method* method = (Method*)alloc_memory(sizeof(Method));
+	movl	$40, %edi	;,
+	call	*alloc_memory@GOTPCREL(%rip)	;
+; src/parser.c:200:     Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
+	movq	(%r12), %rsi	; token_385->lexeme, token_385->lexeme
+; src/parser.c:198:     Method* method = (Method*)alloc_memory(sizeof(Method));
+	movq	%rax, 88(%rsp)	; method, %sfp
+	movq	%rax, %rbx	; tmp730, method
+; src/parser.c:199:     method->method_scope = method_scope;
+	movq	%rbp, 32(%rax)	; method_scope, method_389->method_scope
+; src/parser.c:200:     Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
+	movq	40(%rsp), %rax	; %sfp, name
+	movq	8(%rax), %rdi	; name_225->name, name_225->name
+	call	*make_method_name@GOTPCREL(%rip)	;
+; src/parser.c:200:     Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
+	movq	56(%rsp), %rdx	; %sfp,
+	movq	%rbx, %rcx	; method,
+	movl	$2, %esi	;,
+; src/parser.c:200:     Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
+	movq	%rax, %rdi	; tmp731, _392
+; src/parser.c:200:     Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
+	call	*create_symbol@GOTPCREL(%rip)	;
+; src/parser.c:201:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:200:     Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
+	movq	%rax, 96(%rsp)	; tmp732, %sfp
+; src/parser.c:201:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:202:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movq	8(%rsp), %r10	; %sfp, token
+	cmpl	$5, 24(%rax)	;, token_394->type
+; src/parser.c:201:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp733, token
+; src/parser.c:202:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	jne	.L457	;,
+; src/parser.c:202:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movq	(%rax), %rdi	; token_394->lexeme, token_394->lexeme
+	movq	L_PAREN_SYMBOL(%rip), %rsi	; L_PAREN_SYMBOL,
+	movq	%r10, 8(%rsp)	; token, %sfp
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:202:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+	movq	8(%rsp), %r10	; %sfp, token
+	testb	%al, %al	; tmp735
+	je	.L457	;,
+; src/parser.c:207:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:208:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
+	movq	8(%rsp), %r10	; %sfp, token
+	cmpl	$6, 24(%rax)	;, token_401->type
+; src/parser.c:207:     token = get_next_token(lexer, true);
+	movq	%rax, %r12	; tmp736, token
+; src/parser.c:208:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
+	je	.L458	;,
+.L460:
+	movq	%r10, 8(%rsp)	; token, %sfp
+; src/parser.c:209:         parser_error("Expected 'self' as first parameter of method", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:209:         parser_error("Expected 'self' as first parameter of method", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC76(%rip), %rdi	;, tmp544
+; src/parser.c:209:         parser_error("Expected 'self' as first parameter of method", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp737, _407
+; src/parser.c:209:         parser_error("Expected 'self' as first parameter of method", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	movq	8(%rsp), %r10	; %sfp, token
+.L459:
+	movq	%r10, 104(%rsp)	; token, %sfp
+; src/parser.c:210:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %rbx	; tmp739, token
+; src/parser.c:211:     list(Variable*) parameters = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+; src/parser.c:212:     list_append(parameters, (pointer)create_variable(class_name, self, NULL));
+	movq	%r14, %rsi	; self,
+	movq	40(%rsp), %rdi	; %sfp,
+	xorl	%edx, %edx	;
+; src/parser.c:211:     list(Variable*) parameters = create_list();
+	movq	%rax, %r12	; tmp740, parameters
+	movq	%rax, 80(%rsp)	; parameters, %sfp
+; src/parser.c:223:             parser_error("Failed to parse method parameter", token, get_full_path(parser->source_file));
+	leaq	.LC78(%rip), %r14	;, tmp636
+; src/parser.c:212:     list_append(parameters, (pointer)create_variable(class_name, self, NULL));
+	call	*create_variable@GOTPCREL(%rip)	;
+; src/parser.c:212:     list_append(parameters, (pointer)create_variable(class_name, self, NULL));
+	movq	%r12, %rdi	; parameters,
+; src/parser.c:225:             parser_error("Method parameters cannot have default values", token, get_full_path(parser->source_file));
+	leaq	.LC79(%rip), %r12	;, tmp635
+; src/parser.c:212:     list_append(parameters, (pointer)create_variable(class_name, self, NULL));
+	movq	%rax, %rsi	; tmp741, _410
+; src/parser.c:212:     list_append(parameters, (pointer)create_variable(class_name, self, NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+	movq	%rbp, 8(%rsp)	; method_scope, %sfp
+	movq	104(%rsp), %rbp	; %sfp, token
+	.p2align 4,,10
+	.p2align 3
+.L461:
+; src/parser.c:213:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rbx)	;, token_411->type
+	je	.L613	;,
+.L591:
+	movq	%rbp, %r10	; token, token
+.L465:
+	movq	%r10, 8(%rsp)	; token, %sfp
+; src/parser.c:218:             parser_error("Expected ',' or ')' after method parameter", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:218:             parser_error("Expected ',' or ')' after method parameter", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC77(%rip), %rdi	;, tmp550
+; src/parser.c:218:             parser_error("Expected ',' or ')' after method parameter", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp745, _424
+; src/parser.c:218:             parser_error("Expected ',' or ')' after method parameter", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	movq	8(%rsp), %r10	; %sfp, token
+	jmp	.L452	;
+	.p2align 4,,10
+	.p2align 3
+.L500:
+; src/parser.c:316:     string init_name = make_method_name(name->name, DEFAULT_INIT_NAME);
+	movq	40(%rsp), %rax	; %sfp, name
+	movq	%r10, 8(%rsp)	; token, %sfp
+	movq	DEFAULT_INIT_NAME(%rip), %rsi	; DEFAULT_INIT_NAME,
+	movq	8(%rax), %rdi	; name_225->name, name_225->name
+	call	*make_method_name@GOTPCREL(%rip)	;
+; src/parser.c:317:     Symbol* init = search_name_use_strcmp(class_scope, init_name);
+	movq	32(%rsp), %rdi	; %sfp,
+; src/parser.c:316:     string init_name = make_method_name(name->name, DEFAULT_INIT_NAME);
+	movq	%rax, %rbx	; tmp778, init_name
+; src/parser.c:317:     Symbol* init = search_name_use_strcmp(class_scope, init_name);
+	movq	%rax, %rsi	; init_name,
+	call	*search_name_use_strcmp@GOTPCREL(%rip)	;
+; src/parser.c:318:     if (init == NULL) {
+	movq	8(%rsp), %r10	; %sfp, token
+	testq	%rax, %rax	; init
+; src/parser.c:317:     Symbol* init = search_name_use_strcmp(class_scope, init_name);
+	movq	%rax, 56(%rsp)	; init, %sfp
+; src/parser.c:318:     if (init == NULL) {
+	je	.L614	;,
+.L501:
+; src/parser.c:330:     if (init->kind != SYMBOL_METHOD)
+	movq	56(%rsp), %rax	; %sfp, init
+	movq	%r10, 8(%rsp)	; token, %sfp
+	cmpl	$2, 32(%rax)	;, init_301->kind
+	jne	.L615	;,
+.L502:
+; src/parser.c:332:     string constructor_name = make_method_name(name->name, DEFAULT_CONSTRUCTOR_NAME);
+	movq	40(%rsp), %r12	; %sfp, name
+	movq	DEFAULT_CONSTRUCTOR_NAME(%rip), %rsi	; DEFAULT_CONSTRUCTOR_NAME,
+	movq	8(%r12), %rdi	; name_225->name, name_225->name
+	call	*make_method_name@GOTPCREL(%rip)	;
+; src/parser.c:333:     Method* method = (Method*)alloc_memory(sizeof(Method));
+	movl	$40, %edi	;,
+; src/parser.c:332:     string constructor_name = make_method_name(name->name, DEFAULT_CONSTRUCTOR_NAME);
+	movq	%rax, %rbx	; tmp793, constructor_name
+; src/parser.c:333:     Method* method = (Method*)alloc_memory(sizeof(Method));
+	call	*alloc_memory@GOTPCREL(%rip)	;
+; src/parser.c:334:     method->method_scope = create_symbol_table(class_scope);
+	movq	32(%rsp), %rdi	; %sfp,
+; src/parser.c:333:     Method* method = (Method*)alloc_memory(sizeof(Method));
+	movq	%rax, %rbp	; tmp794, method
+; src/parser.c:334:     method->method_scope = create_symbol_table(class_scope);
+	call	*create_symbol_table@GOTPCREL(%rip)	;
+; src/parser.c:335:     Symbol* constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, method);
+	movq	%r12, %rdx	; name,
+	movq	%rbp, %rcx	; method,
+	movl	$2, %esi	;,
+	movq	%rbx, %rdi	; constructor_name,
+; src/parser.c:334:     method->method_scope = create_symbol_table(class_scope);
+	movq	%rax, 32(%rbp)	; tmp795, method_309->method_scope
+; src/parser.c:335:     Symbol* constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, method);
+	call	*create_symbol@GOTPCREL(%rip)	;
+	movq	%rax, 80(%rsp)	; tmp796, %sfp
+; src/parser.c:336:     list(Variable*) parameters = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+; src/parser.c:337:     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+	movq	%r12, %rdx	; name,
+	movq	32(%rbp), %rcx	; method_309->method_scope, method_309->method_scope
+	movq	SELF_KEYWORD(%rip), %rdi	; SELF_KEYWORD,
+	movl	$3, %esi	;,
+; src/parser.c:336:     list(Variable*) parameters = create_list();
+	movq	%rax, %r14	; tmp797, parameters
+; src/parser.c:337:     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+	call	*create_symbol@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp798, self
+; src/parser.c:338:     list(Variable*) init_params = list_copy(init->ast_node.method->parameters);
+	movq	56(%rsp), %rax	; %sfp, init
+	movq	24(%rax), %rax	; init_301->ast_node.method, init_301->ast_node.method
+	movq	16(%rax), %rdi	; _316->parameters, _316->parameters
+	call	*list_copy@GOTPCREL(%rip)	;
+	movq	%rax, 8(%rsp)	; tmp799, %sfp
+	.p2align 4,,10
+	.p2align 3
+.L504:
+; src/parser.c:340:     while ((param = (Variable*)list_pop(init_params)) != NULL) {
+	movq	8(%rsp), %rdi	; %sfp,
+	call	*list_pop@GOTPCREL(%rip)	;
+	movq	%rax, %rbx	; tmp802, param
+; src/parser.c:340:     while ((param = (Variable*)list_pop(init_params)) != NULL) {
+	testq	%rax, %rax	; param
+	je	.L616	;,
+; src/parser.c:341:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
+	movq	8(%rbx), %rax	; param_320->name, param_320->name
+	movq	SELF_KEYWORD(%rip), %rsi	; SELF_KEYWORD,
+	movq	8(%rax), %rdi	; _321->name, _321->name
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:341:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
+	testb	%al, %al	; tmp800
+	jne	.L504	;,
+; src/parser.c:342:         list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
+	movq	8(%rbx), %rsi	; param_320->name, param_320->name
+	movq	(%rbx), %rdi	; param_320->type, param_320->type
+	xorl	%edx, %edx	;
+	call	*create_variable@GOTPCREL(%rip)	;
+; src/parser.c:342:         list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
+	movq	%r14, %rdi	; parameters,
+; src/parser.c:342:         list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
+	movq	%rax, %rsi	; tmp801, _326
+; src/parser.c:342:         list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+	jmp	.L504	;
+	.p2align 4,,10
+	.p2align 3
+.L616:
+; src/parser.c:344:     list(Statement*) body = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+; src/parser.c:345:     list(ClassMember*) ms = list_copy(members);
+	movq	48(%rsp), %rdi	; %sfp,
+; src/parser.c:344:     list(Statement*) body = create_list();
+	movq	%rax, 8(%rsp)	; tmp803, %sfp
+; src/parser.c:345:     list(ClassMember*) ms = list_copy(members);
+	call	*list_copy@GOTPCREL(%rip)	;
+; src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	movq	%r12, %rdx	; self,
+	xorl	%esi, %esi	;
+	xorl	%edi, %edi	;
+; src/parser.c:345:     list(ClassMember*) ms = list_copy(members);
+	movq	%rax, %rbx	; tmp804, ms
+; src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	call	*create_variable_access@GOTPCREL(%rip)	;
+; src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	xorl	%esi, %esi	;
+	movl	$8, %edi	;,
+; src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	%rax, %r8	;, tmp805
+; src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	call	*create_primary@GOTPCREL(%rip)	;
+; src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	movl	$19, %edi	;,
+; src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	%rax, %rdx	; tmp806, _330
+.L595:
+; src/parser.c:352:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+	call	*create_expression@GOTPCREL(%rip)	;
+; src/parser.c:352:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+	xorl	%esi, %esi	;
+	xorl	%edi, %edi	;
+	xorl	%r9d, %r9d	;
+; src/parser.c:352:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+	movq	%rax, %r8	;, tmp816
+; src/parser.c:352:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	call	*create_statement@GOTPCREL(%rip)	;
+; src/parser.c:352:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+	movq	8(%rsp), %rdi	; %sfp,
+; src/parser.c:352:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+	movq	%rax, %rsi	; tmp817, _349
+; src/parser.c:352:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+	jmp	.L507	;
+	.p2align 4,,10
+	.p2align 3
+.L509:
+; src/parser.c:349:         if (mb->type == CLASS_VARIABLE) {
+	cmpl	$1, 8(%r9)	;, mb_333->type
+	je	.L617	;,
+.L507:
+; src/parser.c:348:     while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
+	movq	%rbx, %rdi	; ms,
+	call	*list_pop@GOTPCREL(%rip)	;
+	movq	%rax, %r9	; tmp818, mb
+; src/parser.c:348:     while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
+	testq	%rax, %rax	; mb
+	jne	.L509	;,
+; src/parser.c:355:     list(Expression*) args = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+; src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	movq	%r12, %rdx	; self,
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+; src/parser.c:355:     list(Expression*) args = create_list();
+	movq	%rax, %rbx	; tmp819, args
+; src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	xorl	%esi, %esi	;
+	xorl	%edi, %edi	;
+	call	*create_variable_access@GOTPCREL(%rip)	;
+; src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	xorl	%esi, %esi	;
+; src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	movq	%rax, %r8	;, tmp820
+; src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	movl	$8, %edi	;,
+	call	*create_primary@GOTPCREL(%rip)	;
+; src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	movl	$19, %edi	;,
+; src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	movq	%rax, %rdx	; tmp821, _352
+; src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	call	*create_expression@GOTPCREL(%rip)	;
+; src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	movq	%rbx, %rdi	; args,
+; src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	movq	%rax, %rsi	; tmp822, _353
+; src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:357:     list(Variable*) params = list_copy(parameters);
+	movq	%r14, %rdi	; parameters,
+	call	*list_copy@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp823, params
+; src/parser.c:358:     while ((param = (Variable*)list_pop(params)) != NULL)
+	jmp	.L510	;
+	.p2align 4,,10
+	.p2align 3
+.L511:
+; src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+	movq	8(%rax), %rdx	; param_355->name, param_355->name
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	xorl	%edi, %edi	;
+	call	*create_variable_access@GOTPCREL(%rip)	;
+; src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	xorl	%esi, %esi	;
+; src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+	movq	%rax, %r8	;, tmp824
+; src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+	movl	$8, %edi	;,
+	call	*create_primary@GOTPCREL(%rip)	;
+; src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+	xorl	%esi, %esi	;
+	movl	$19, %edi	;,
+	xorl	%ecx, %ecx	;
+; src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+	movq	%rax, %rdx	; tmp825, _358
+; src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+	call	*create_expression@GOTPCREL(%rip)	;
+; src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+	movq	%rbx, %rdi	; args,
+; src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+	movq	%rax, %rsi	; tmp826, _359
+; src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+.L510:
+; src/parser.c:358:     while ((param = (Variable*)list_pop(params)) != NULL)
+	movq	%r12, %rdi	; params,
+	call	*list_pop@GOTPCREL(%rip)	;
+; src/parser.c:358:     while ((param = (Variable*)list_pop(params)) != NULL)
+	testq	%rax, %rax	; param
+	jne	.L511	;,
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	movq	56(%rsp), %rdx	; %sfp,
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	xorl	%edi, %edi	;
+	call	*create_variable_access@GOTPCREL(%rip)	;
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	movq	%rbx, %r8	; args,
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	movq	%rax, %rsi	; tmp828, _360
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	movl	$1, %edi	;,
+	call	*create_variable_access@GOTPCREL(%rip)	;
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	xorl	%esi, %esi	;
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	movq	%rax, %r8	;, tmp829
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	movl	$8, %edi	;,
+	call	*create_primary@GOTPCREL(%rip)	;
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	movl	$19, %edi	;,
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	movq	%rax, %rdx	; tmp830, _362
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	call	*create_expression@GOTPCREL(%rip)	;
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	xorl	%r9d, %r9d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	movq	%rax, %r8	;, tmp831
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	xorl	%esi, %esi	;
+	movl	$5, %edi	;,
+	call	*create_statement@GOTPCREL(%rip)	;
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	movq	8(%rsp), %rbx	; %sfp, body
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	movq	%rax, %rsi	; tmp832, _364
+; src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
+	movq	%rbx, %rdi	; body,
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:361:     create_method_use_ptr(method, constructor, name, parameters, body, method->method_scope);
+	movq	%r14, %rcx	; parameters,
+	movq	40(%rsp), %r14	; %sfp, name
+	movq	%rbx, %r8	; body,
+	movq	32(%rbp), %r9	; method_309->method_scope,
+	movq	80(%rsp), %rsi	; %sfp,
+	movq	%rbp, %rdi	; method,
+	movq	%r14, %rdx	; name,
+	call	*create_method_use_ptr@GOTPCREL(%rip)	;
+; src/parser.c:362:     list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	xorl	%edx, %edx	;
+	movq	%rbp, %rsi	; method,
+	xorl	%edi, %edi	;
+	call	*create_class_member@GOTPCREL(%rip)	;
+; src/parser.c:362:     list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	movq	48(%rsp), %rbx	; %sfp, members
+; src/parser.c:362:     list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	movq	%rax, %rsi	; tmp833, _366
+; src/parser.c:362:     list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	movq	%rbx, %rdi	; members,
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:364:     return create_class_use_ptr(class, name, members, class_scope, size);
+	movq	32(%rsp), %rcx	; %sfp,
+	movq	%rbx, %rdx	; members,
+	movq	%r14, %rsi	; name,
+	movq	72(%rsp), %r8	; %sfp,
+	movq	64(%rsp), %rdi	; %sfp,
+	call	*create_class_use_ptr@GOTPCREL(%rip)	;
+	movq	%rax, %rcx	; tmp834, _368
+; src/parser.c:50:             if (class == NULL)
+	testq	%rax, %rax	; _368
+	jne	.L512	;,
+	jmp	.L444	;
+	.p2align 4,,10
+	.p2align 3
+.L617:
+; src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	movq	(%r9), %rax	; mb_333->content.variable, mb_333->content.variable
+	movq	%r9, 96(%rsp)	; mb, %sfp
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	movq	%r12, %rdx	; self,
+	xorl	%esi, %esi	;
+	xorl	%edi, %edi	;
+	movq	8(%rax), %rax	; _336->name, _337
+	movq	%rax, 88(%rsp)	; _337, %sfp
+	call	*create_variable_access@GOTPCREL(%rip)	;
+; src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	movq	88(%rsp), %rdx	; %sfp,
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+; src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	movq	%rax, %rsi	; tmp809, _338
+; src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	movl	$2, %edi	;,
+	call	*create_variable_access@GOTPCREL(%rip)	;
+; src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	xorl	%esi, %esi	;
+; src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	movq	%rax, %r8	;, tmp810
+; src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	movl	$8, %edi	;,
+	call	*create_primary@GOTPCREL(%rip)	;
+; src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	movl	$19, %edi	;,
+; src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	movq	%rax, %rdx	; tmp811, _340
+; src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	call	*create_expression@GOTPCREL(%rip)	;
+; src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	movq	96(%rsp), %r9	; %sfp, mb
+; src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	movq	%rax, %r10	; tmp812, left
+; src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	movq	(%r9), %rax	; mb_333->content.variable, mb_333->content.variable
+	movq	16(%rax), %rcx	; _342->value, _343
+; src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	testq	%rcx, %rcx	; _343
+	je	.L618	;,
+.L508:
+; src/parser.c:352:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+	xorl	%edx, %edx	;
+	movq	%r10, %rsi	; left,
+	movl	$13, %edi	;,
+	jmp	.L595	;
+	.p2align 4,,10
+	.p2align 3
+.L495:
+; src/parser.c:310:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	movq	(%rax), %rdi	; token_268->lexeme, token_268->lexeme
+	movq	SEMICOLON_SYMBOL(%rip), %rsi	; SEMICOLON_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:310:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	testb	%al, %al	; tmp774
+	je	.L497	;,
+	jmp	.L496	;
+	.p2align 4,,10
+	.p2align 3
+.L603:
+; src/parser.c:299:                 Symbol* type = member->content.variable->type;
+	movq	0(%rbp), %rax	; member_252->content.variable, member_252->content.variable
+	movq	(%rax), %rax	; _254->type, type
+; src/parser.c:300:                 if (type == name_int || type == name_float || type == name_string)
+	cmpq	name_int(%rip), %rax	; name_int, type
+	je	.L594	;,
+; src/parser.c:300:                 if (type == name_int || type == name_float || type == name_string)
+	cmpq	name_float(%rip), %rax	; name_float, type
+	je	.L594	;,
+; src/parser.c:300:                 if (type == name_int || type == name_float || type == name_string)
+	cmpq	name_string(%rip), %rax	; name_string, type
+	je	.L594	;,
+; src/parser.c:302:                 else if (type == name_bool || type == name_void)
+	cmpq	name_bool(%rip), %rax	; name_bool, type
+	je	.L492	;,
+; src/parser.c:302:                 else if (type == name_bool || type == name_void)
+	cmpq	name_void(%rip), %rax	; name_void, type
+	je	.L492	;,
+; src/parser.c:304:                 else if (type->kind == SYMBOL_CLASS)
+	movl	32(%rax), %eax	; type_255->kind,
+	testl	%eax, %eax	;
+	je	.L594	;,
+; src/parser.c:307:                     parser_error("Unsupported type for class variable", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:307:                     parser_error("Unsupported type for class variable", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC86(%rip), %rdi	;, tmp581
+; src/parser.c:307:                     parser_error("Unsupported type for class variable", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp771, _267
+; src/parser.c:307:                     parser_error("Unsupported type for class variable", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L491	;
+	.p2align 4,,10
+	.p2align 3
+.L594:
+; src/parser.c:305:                     size += 8;  // pointer to object
+	addq	$8, 72(%rsp)	;, %sfp
+	jmp	.L491	;
+	.p2align 4,,10
+	.p2align 3
+.L599:
+; src/parser.c:267:         parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:267:         parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC70(%rip), %rdi	;, tmp520
+; src/parser.c:267:         parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp712, _222
+; src/parser.c:267:         parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L444	;
+	.p2align 4,,10
+	.p2align 3
+.L604:
+; src/parser.c:65:         parser_error("Expected identifier after 'import'", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:65:         parser_error("Expected identifier after 'import'", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC53(%rip), %rdi	;, tmp461
+; src/parser.c:65:         parser_error("Expected identifier after 'import'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp655, _104
+; src/parser.c:65:         parser_error("Expected identifier after 'import'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L401:
+; src/parser.c:41:                 parser_error("Failed to parse import statement", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:41:                 parser_error("Failed to parse import statement", token, get_full_path(parser->source_file));
+	movq	(%rsp), %rsi	; %sfp,
+	leaq	.LC57(%rip), %rdi	;, tmp475
+; src/parser.c:41:                 parser_error("Failed to parse import statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp667, _21
+; src/parser.c:41:                 parser_error("Failed to parse import statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	xorl	%esi, %esi	; _132
+	jmp	.L408	;
+	.p2align 4,,10
+	.p2align 3
+.L615:
+; src/parser.c:331:         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:331:         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
+	movq	8(%rsp), %rsi	; %sfp,
+	leaq	.LC89(%rip), %rdi	;, tmp596
+; src/parser.c:331:         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp792, _304
+; src/parser.c:331:         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L502	;
+	.p2align 4,,10
+	.p2align 3
+.L406:
+; src/parser.c:83:         parser_error("Expected ';' at end of import statement", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:83:         parser_error("Expected ';' at end of import statement", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC55(%rip), %rdi	;, tmp467
+; src/parser.c:83:         parser_error("Expected ';' at end of import statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp661, _123
+; src/parser.c:83:         parser_error("Expected ';' at end of import statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L401	;
+	.p2align 4,,10
+	.p2align 3
+.L418:
+; src/parser.c:123:         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:123:         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC61(%rip), %rdi	;, tmp488
+; src/parser.c:123:         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp681, _158
+; src/parser.c:123:         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L413	;
+	.p2align 4,,10
+	.p2align 3
+.L457:
+	movq	%r10, 8(%rsp)	; token, %sfp
+; src/parser.c:203:         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:203:         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC75(%rip), %rdi	;, tmp540
+; src/parser.c:203:         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp734, _400
+; src/parser.c:203:         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	movq	8(%rsp), %r10	; %sfp, token
+.L452:
+	movq	%r10, 8(%rsp)	; token, %sfp
+; src/parser.c:287:                 parser_error("Failed to parse class method", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:287:                 parser_error("Failed to parse class method", token, get_full_path(parser->source_file));
+	movq	8(%rsp), %rsi	; %sfp,
+	leaq	.LC84(%rip), %rdi	;, tmp574
+; src/parser.c:287:                 parser_error("Failed to parse class method", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp764, _242
+; src/parser.c:287:                 parser_error("Failed to parse class method", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	xorl	%esi, %esi	; _464
+.L485:
+; src/parser.c:288:             list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	xorl	%edi, %edi	;
+	xorl	%edx, %edx	;
+	call	*create_class_member@GOTPCREL(%rip)	;
+; src/parser.c:288:             list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	movq	48(%rsp), %rdi	; %sfp,
+; src/parser.c:288:             list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	movq	%rax, %rsi	; tmp765, _243
+; src/parser.c:288:             list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:284:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
+	jmp	.L496	;
+	.p2align 4,,10
+	.p2align 3
+.L609:
+; src/parser.c:129:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%rbx), %rdi	; token_164->lexeme, token_164->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:129:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp693
+	je	.L427	;,
+; src/parser.c:146:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:147:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%rax)	;, token_185->type
+; src/parser.c:146:     token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp694, token
+; src/parser.c:147:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	jne	.L429	;,
+; src/parser.c:147:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	(%rax), %rdi	; token_185->lexeme, token_185->lexeme
+	movq	L_BRACE_SYMBOL(%rip), %rsi	; L_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:147:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp696
+	je	.L429	;,
+; src/parser.c:152:     list(Statement*) body = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+; src/parser.c:153:     parser->in_function = true;
+	movb	$1, 8(%r13)	;, parser_74(D)->in_function
+; src/parser.c:155:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:152:     list(Statement*) body = create_list();
+	movq	%rax, 56(%rsp)	; tmp697, %sfp
+; src/parser.c:155:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %rbx	; tmp698, token
+; src/parser.c:156:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	jmp	.L430	;
+	.p2align 4,,10
+	.p2align 3
+.L433:
+; src/parser.c:163:             have_return = true;
+	cmpl	$5, 8(%r14)	;, statement_194->type
+	movl	$1, %eax	;, tmp889
+	cmove	%eax, %ebp	; have_return,, tmp889, have_return
+.L434:
+; src/parser.c:164:         list_append(body, (pointer)statement);
+	movq	56(%rsp), %rdi	; %sfp,
+	movq	%r14, %rsi	; statement,
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:165:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %rbx	; tmp702, token
+.L430:
+; src/parser.c:156:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%rbx)	;, token_197->type
+	jne	.L435	;,
+; src/parser.c:156:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movq	(%rbx), %rdi	; token_197->lexeme, token_197->lexeme
+	movq	R_BRACE_SYMBOL(%rip), %rsi	; R_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:156:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp703
+	jne	.L619	;,
+.L435:
+; src/parser.c:157:         Statement* statement = parse_statement(lexer, function_scope, parser);
+	movq	%r13, %rdx	; parser,
+	movq	%r12, %rsi	; function_scope,
+	movq	%r15, %rdi	; lexer,
+	call	parse_statement	;
+	movq	%rax, %r14	; tmp699, statement
+; src/parser.c:158:         if (statement == NULL)
+	testq	%rax, %rax	; statement
+	je	.L620	;,
+; src/parser.c:160:         else if (have_return)
+	testb	%bpl, %bpl	; have_return
+	je	.L433	;,
+; src/parser.c:161:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:161:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC67(%rip), %rdi	;,
+; src/parser.c:161:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp701, _200
+; src/parser.c:161:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L433	;
+	.p2align 4,,10
+	.p2align 3
+.L422:
+; src/parser.c:136:             list_append(parameters, (pointer)parameter);
+	movq	32(%rsp), %rdi	; %sfp,
+	movq	%rax, %rsi	; parameter,
+	call	*list_append@GOTPCREL(%rip)	;
+	jmp	.L421	;
+	.p2align 4,,10
+	.p2align 3
+.L423:
+; src/parser.c:138:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+	movq	(%rax), %rdi	; token_168->lexeme, token_168->lexeme
+	movq	COMMA_SYMBOL(%rip), %rsi	; COMMA_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:138:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+	testb	%al, %al	; tmp690
+	jne	.L621	;,
+; src/parser.c:140:         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	cmpl	$5, 24(%rbx)	;, token_168->type
+	jne	.L426	;,
+; src/parser.c:140:         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%rbx), %rdi	; token_168->lexeme, token_168->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:140:         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp692
+	jne	.L419	;,
+	jmp	.L426	;
+	.p2align 4,,10
+	.p2align 3
+.L613:
+; src/parser.c:213:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	movq	(%rbx), %rdi	; token_411->lexeme, token_411->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:213:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+	testb	%al, %al	; tmp751
+	jne	.L622	;,
+; src/parser.c:214:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+	cmpl	$5, 24(%rbx)	;, token_411->type
+	jne	.L591	;,
+; src/parser.c:214:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+	movq	(%rbx), %rdi	; token_411->lexeme, token_411->lexeme
+	movq	COMMA_SYMBOL(%rip), %rsi	; COMMA_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:214:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+	testb	%al, %al	; tmp742
+	je	.L623	;,
+; src/parser.c:215:             token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:221:         Variable* parameter = parse_variable(lexer, method_scope, parser);
+	movq	8(%rsp), %rsi	; %sfp,
+	movq	%r13, %rdx	; parser,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:215:             token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp743, token
+; src/parser.c:221:         Variable* parameter = parse_variable(lexer, method_scope, parser);
+	call	parse_variable	;
+; src/parser.c:222:         if (parameter == NULL)
+	testq	%rax, %rax	; parameter
+	je	.L624	;,
+; src/parser.c:224:         else if (parameter->value != NULL)
+	cmpq	$0, 16(%rax)	;, parameter_417->value
+	je	.L471	;,
+; src/parser.c:225:             parser_error("Method parameters cannot have default values", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:225:             parser_error("Method parameters cannot have default values", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	movq	%r12, %rdi	; tmp635,
+; src/parser.c:225:             parser_error("Method parameters cannot have default values", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp749, _429
+; src/parser.c:225:             parser_error("Method parameters cannot have default values", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+.L470:
+; src/parser.c:228:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %rbx	; tmp750, token
+	jmp	.L461	;
+	.p2align 4,,10
+	.p2align 3
+.L471:
+; src/parser.c:227:             list_append(parameters, (pointer)parameter);
+	movq	80(%rsp), %rdi	; %sfp,
+	movq	%rax, %rsi	; parameter,
+	call	*list_append@GOTPCREL(%rip)	;
+	jmp	.L470	;
+	.p2align 4,,10
+	.p2align 3
+.L610:
+; src/parser.c:132:             parser_error("Failed to parse function parameter", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:132:             parser_error("Failed to parse function parameter", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC62(%rip), %rdi	;,
+; src/parser.c:132:             parser_error("Failed to parse function parameter", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp686, _163
+; src/parser.c:132:             parser_error("Failed to parse function parameter", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L421	;
+	.p2align 4,,10
+	.p2align 3
+.L624:
+; src/parser.c:223:             parser_error("Failed to parse method parameter", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:223:             parser_error("Failed to parse method parameter", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	movq	%r14, %rdi	; tmp636,
+; src/parser.c:223:             parser_error("Failed to parse method parameter", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp748, _426
+; src/parser.c:223:             parser_error("Failed to parse method parameter", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L470	;
+	.p2align 4,,10
+	.p2align 3
+.L596:
+; src/parser.c:24:         builtin_scope = create_symbol_table(NULL);
+	xorl	%edi, %edi	;
+	call	*create_symbol_table@GOTPCREL(%rip)	;
+; src/parser.c:25:         name_void = create_symbol(VOID_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	movq	VOID_KEYWORD(%rip), %rdi	; VOID_KEYWORD,
+	xorl	%edx, %edx	;
+	movl	$6, %esi	;,
+; src/parser.c:24:         builtin_scope = create_symbol_table(NULL);
+	movq	%rax, %rcx	; tmp644, _2
+; src/parser.c:24:         builtin_scope = create_symbol_table(NULL);
+	movq	%rax, builtin_scope(%rip)	; _2, builtin_scope
+; src/parser.c:25:         name_void = create_symbol(VOID_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	call	*create_symbol@GOTPCREL(%rip)	;
+; src/parser.c:26:         name_int = create_symbol(INT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	movq	builtin_scope(%rip), %rcx	; builtin_scope,
+	xorl	%edx, %edx	;
+	movq	INT_KEYWORD(%rip), %rdi	; INT_KEYWORD,
+	movl	$6, %esi	;,
+; src/parser.c:25:         name_void = create_symbol(VOID_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	movq	%rax, name_void(%rip)	; tmp645, name_void
+; src/parser.c:26:         name_int = create_symbol(INT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	call	*create_symbol@GOTPCREL(%rip)	;
+; src/parser.c:27:         name_float = create_symbol(FLOAT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	movq	builtin_scope(%rip), %rcx	; builtin_scope,
+	xorl	%edx, %edx	;
+	movq	FLOAT_KEYWORD(%rip), %rdi	; FLOAT_KEYWORD,
+	movl	$6, %esi	;,
+; src/parser.c:26:         name_int = create_symbol(INT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	movq	%rax, name_int(%rip)	; tmp646, name_int
+; src/parser.c:27:         name_float = create_symbol(FLOAT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	call	*create_symbol@GOTPCREL(%rip)	;
+; src/parser.c:28:         name_string = create_symbol(STRING_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	movq	builtin_scope(%rip), %rcx	; builtin_scope,
+	xorl	%edx, %edx	;
+	movq	STRING_KEYWORD(%rip), %rdi	; STRING_KEYWORD,
+	movl	$6, %esi	;,
+; src/parser.c:27:         name_float = create_symbol(FLOAT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	movq	%rax, name_float(%rip)	; tmp647, name_float
+; src/parser.c:28:         name_string = create_symbol(STRING_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	call	*create_symbol@GOTPCREL(%rip)	;
+; src/parser.c:29:         name_bool = create_symbol(BOOL_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	movq	builtin_scope(%rip), %rcx	; builtin_scope,
+	xorl	%edx, %edx	;
+	movq	BOOL_KEYWORD(%rip), %rdi	; BOOL_KEYWORD,
+; src/parser.c:28:         name_string = create_symbol(STRING_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	movq	%rax, name_string(%rip)	; tmp648, name_string
+; src/parser.c:29:         name_bool = create_symbol(BOOL_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	movl	$6, %esi	;,
+	call	*create_symbol@GOTPCREL(%rip)	;
+; src/parser.c:29:         name_bool = create_symbol(BOOL_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+	movq	%rax, name_bool(%rip)	; tmp649, name_bool
+	jmp	.L395	;
+	.p2align 4,,10
+	.p2align 3
+.L414:
+; src/parser.c:102:         parser_error("Expected function return type after 'func'", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:102:         parser_error("Expected function return type after 'func'", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC58(%rip), %rdi	;, tmp479
+; src/parser.c:102:         parser_error("Expected function return type after 'func'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp672, _140
+; src/parser.c:102:         parser_error("Expected function return type after 'func'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L413	;
+	.p2align 4,,10
+	.p2align 3
+.L453:
+	movq	%r10, 8(%rsp)	; token, %sfp
+; src/parser.c:182:         parser_error("Expected method return type after 'method'", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:182:         parser_error("Expected method return type after 'method'", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC72(%rip), %rdi	;, tmp530
+; src/parser.c:182:         parser_error("Expected method return type after 'method'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp724, _380
+; src/parser.c:182:         parser_error("Expected method return type after 'method'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	movq	8(%rsp), %r10	; %sfp, token
+	jmp	.L452	;
+	.p2align 4,,10
+	.p2align 3
+.L602:
+; src/parser.c:295:                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:295:                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC85(%rip), %rdi	;, tmp578
+; src/parser.c:295:                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp769, _251
+; src/parser.c:295:                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L487	;
+	.p2align 4,,10
+	.p2align 3
+.L621:
+; src/parser.c:139:             token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %rbx	; tmp691, token
+; src/parser.c:139:             token = get_next_token(lexer, true);
+	jmp	.L419	;
+.L608:
+; src/parser.c:114:         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:114:         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC60(%rip), %rdi	;, tmp485
+; src/parser.c:114:         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp677, _148
+; src/parser.c:114:         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L413	;
+.L612:
+; src/parser.c:194:         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:194:         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC74(%rip), %rdi	;, tmp536
+; src/parser.c:194:         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp729, _388
+; src/parser.c:194:         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	movq	8(%rsp), %r10	; %sfp, token
+	jmp	.L452	;
+.L605:
+; src/parser.c:72:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
+	movq	(%r12), %rdi	; token_106->lexeme, token_106->lexeme
+	movq	FROM_KEYWORD(%rip), %rsi	; FROM_KEYWORD,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:72:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
+	testb	%al, %al	; tmp657
+	jne	.L403	;,
+.L593:
+; src/parser.c:82:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+	movl	24(%r12), %eax	;, _107
+	jmp	.L402	;
+.L623:
+; src/parser.c:216:         } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
+	cmpl	$5, 24(%rbx)	;, token_411->type
+	movq	%rbp, %r10	; token, token
+	movq	8(%rsp), %rbp	; %sfp, method_scope
+	jne	.L465	;,
+; src/parser.c:216:         } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
+	movq	(%rbx), %rdi	; token_411->lexeme, token_411->lexeme
+	movq	R_PAREN_SYMBOL(%rip), %rsi	; R_PAREN_SYMBOL,
+	movq	%r10, 8(%rsp)	; token, %sfp
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:216:         } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
+	movq	8(%rsp), %r10	; %sfp, token
+	testb	%al, %al	; tmp746
+	je	.L465	;,
+.L473:
+	movq	%r10, 8(%rsp)	; token, %sfp
+; src/parser.c:230:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:231:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	8(%rsp), %r10	; %sfp, token
+	cmpl	$5, 24(%rax)	;, token_435->type
+; src/parser.c:230:     token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp747, token
+; src/parser.c:231:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	jne	.L468	;,
+; src/parser.c:231:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	(%rax), %rdi	; token_435->lexeme, token_435->lexeme
+	movq	L_BRACE_SYMBOL(%rip), %rsi	; L_BRACE_SYMBOL,
+	movq	%r10, 8(%rsp)	; token, %sfp
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:231:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	8(%rsp), %r10	; %sfp, token
+	testb	%al, %al	; tmp753
+	je	.L468	;,
+	movq	%r10, 104(%rsp)	; token, %sfp
+; src/parser.c:239:     bool have_return = false;
+	xorl	%r12d, %r12d	; have_return
+; src/parser.c:236:     list(Statement*) body = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+; src/parser.c:237:     parser->in_function = true;
+	movl	$257, %ecx	;,
+; src/parser.c:240:     token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+; src/parser.c:236:     list(Statement*) body = create_list();
+	movq	%rax, 8(%rsp)	; tmp754, %sfp
+; src/parser.c:237:     parser->in_function = true;
+	movw	%cx, 8(%r13)	;, MEM <vector(2) char> [(char *)parser_74(D) + 8B]
+; src/parser.c:240:     token = get_next_token(lexer, true);
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %rbx	; tmp755, token
+; src/parser.c:241:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	jmp	.L474	;
+	.p2align 4,,10
+	.p2align 3
+.L477:
+; src/parser.c:248:             have_return = true;
+	cmpl	$5, 8(%r14)	;, statement_444->type
+	movl	$1, %eax	;, tmp899
+	cmove	%eax, %r12d	; have_return,, tmp899, have_return
+.L478:
+; src/parser.c:249:         list_append(body, (pointer)statement);
+	movq	8(%rsp), %rdi	; %sfp,
+	movq	%r14, %rsi	; statement,
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:250:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %rbx	; tmp759, token
+.L474:
+; src/parser.c:241:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	cmpl	$5, 24(%rbx)	;, token_447->type
+	jne	.L479	;,
+; src/parser.c:241:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movq	(%rbx), %rdi	; token_447->lexeme, token_447->lexeme
+	movq	R_BRACE_SYMBOL(%rip), %rsi	; R_BRACE_SYMBOL,
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:241:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	testb	%al, %al	; tmp760
+	jne	.L625	;,
+.L479:
+; src/parser.c:242:         Statement* statement = parse_statement(lexer, method_scope, parser);
+	movq	%r13, %rdx	; parser,
+	movq	%rbp, %rsi	; method_scope,
+	movq	%r15, %rdi	; lexer,
+	call	parse_statement	;
+	movq	%rax, %r14	; tmp756, statement
+; src/parser.c:243:         if (statement == NULL)
+	testq	%rax, %rax	; statement
+	je	.L626	;,
+; src/parser.c:245:         else if (have_return)
+	testb	%r12b, %r12b	; have_return
+	je	.L477	;,
+; src/parser.c:246:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:246:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC67(%rip), %rdi	;,
+; src/parser.c:246:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp758, _450
+; src/parser.c:246:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L477	;
+.L614:
+; src/parser.c:319:         Method* method = (Method*)alloc_memory(sizeof(Method));
+	movl	$40, %edi	;,
+	call	*alloc_memory@GOTPCREL(%rip)	;
+; src/parser.c:320:         method->method_scope = create_symbol_table(class_scope);
+	movq	32(%rsp), %rdi	; %sfp,
+; src/parser.c:319:         Method* method = (Method*)alloc_memory(sizeof(Method));
+	movq	%rax, %rbp	; tmp780, method
+; src/parser.c:320:         method->method_scope = create_symbol_table(class_scope);
+	call	*create_symbol_table@GOTPCREL(%rip)	;
+; src/parser.c:321:         init = create_symbol(init_name, SYMBOL_METHOD, name, method);
+	movq	40(%rsp), %r14	; %sfp, name
+	movq	%rbx, %rdi	; init_name,
+	movq	%rbp, %rcx	; method,
+	movl	$2, %esi	;,
+; src/parser.c:320:         method->method_scope = create_symbol_table(class_scope);
+	movq	%rax, 32(%rbp)	; tmp781, method_286->method_scope
+; src/parser.c:321:         init = create_symbol(init_name, SYMBOL_METHOD, name, method);
+	movq	%r14, %rdx	; name,
+; src/parser.c:323:         Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+	movq	%r14, %rbx	; name, name
+; src/parser.c:321:         init = create_symbol(init_name, SYMBOL_METHOD, name, method);
+	call	*create_symbol@GOTPCREL(%rip)	;
+	movq	%rax, 56(%rsp)	; tmp782, %sfp
+; src/parser.c:322:         list(Variable*) parameters = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+; src/parser.c:323:         Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+	movq	32(%rbp), %rcx	; method_286->method_scope, method_286->method_scope
+	movq	%r14, %rdx	; name,
+	movq	SELF_KEYWORD(%rip), %rdi	; SELF_KEYWORD,
+; src/parser.c:322:         list(Variable*) parameters = create_list();
+	movq	%rax, %r12	; tmp783, parameters
+; src/parser.c:323:         Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+	movl	$3, %esi	;,
+	call	*create_symbol@GOTPCREL(%rip)	;
+; src/parser.c:324:         list_append(parameters, (pointer)create_variable(name, self, NULL));
+	xorl	%edx, %edx	;
+	movq	%rbx, %rdi	; name,
+	movq	%rbx, 40(%rsp)	; name, %sfp
+; src/parser.c:323:         Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+	movq	%rax, %r14	; tmp784, self
+; src/parser.c:324:         list_append(parameters, (pointer)create_variable(name, self, NULL));
+	movq	%rax, %rsi	; self,
+	call	*create_variable@GOTPCREL(%rip)	;
+; src/parser.c:324:         list_append(parameters, (pointer)create_variable(name, self, NULL));
+	movq	%r12, %rdi	; parameters,
+; src/parser.c:324:         list_append(parameters, (pointer)create_variable(name, self, NULL));
+	movq	%rax, %rsi	; tmp785, _293
+; src/parser.c:324:         list_append(parameters, (pointer)create_variable(name, self, NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:325:         list(Statement*) body = create_list();
+	call	*create_list@GOTPCREL(%rip)	;
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	movq	%r14, %rdx	; self,
+; src/parser.c:325:         list(Statement*) body = create_list();
+	movq	%rax, %rbx	; tmp786, body
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	xorl	%esi, %esi	;
+	xorl	%edi, %edi	;
+	call	*create_variable_access@GOTPCREL(%rip)	;
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	xorl	%esi, %esi	;
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	%rax, %r8	;, tmp787
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movl	$8, %edi	;,
+	call	*create_primary@GOTPCREL(%rip)	;
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	movl	$19, %edi	;,
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	%rax, %rdx	; tmp788, _296
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	call	*create_expression@GOTPCREL(%rip)	;
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	xorl	%r9d, %r9d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	%rax, %r8	;, tmp789
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	xorl	%esi, %esi	;
+	movl	$5, %edi	;,
+	call	*create_statement@GOTPCREL(%rip)	;
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	%rbx, %rdi	; body,
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	%rax, %rsi	; tmp790, _298
+; src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+; src/parser.c:327:         create_method_use_ptr(method, init, name, parameters, body, method->method_scope);
+	movq	32(%rbp), %r9	; method_286->method_scope,
+	movq	%rbx, %r8	; body,
+	movq	%r12, %rcx	; parameters,
+	movq	40(%rsp), %rdx	; %sfp,
+	movq	56(%rsp), %rsi	; %sfp,
+	movq	%rbp, %rdi	; method,
+	call	*create_method_use_ptr@GOTPCREL(%rip)	;
+; src/parser.c:328:         list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	xorl	%edx, %edx	;
+	movq	%rbp, %rsi	; method,
+	xorl	%edi, %edi	;
+	call	*create_class_member@GOTPCREL(%rip)	;
+; src/parser.c:328:         list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	movq	48(%rsp), %rdi	; %sfp,
+; src/parser.c:328:         list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	movq	%rax, %rsi	; tmp791, _300
+; src/parser.c:328:         list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+	movq	8(%rsp), %r10	; %sfp, token
+	jmp	.L501	;
+.L468:
+	movq	%r10, 8(%rsp)	; token, %sfp
+; src/parser.c:232:         parser_error("Expected '{' to start method body", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:232:         parser_error("Expected '{' to start method body", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC80(%rip), %rdi	;, tmp560
+; src/parser.c:232:         parser_error("Expected '{' to start method body", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp752, _441
+; src/parser.c:232:         parser_error("Expected '{' to start method body", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	movq	8(%rsp), %r10	; %sfp, token
+	jmp	.L452	;
+.L492:
+; src/parser.c:303:                     size += 1;
+	addq	$1, 72(%rsp)	;, %sfp
+	jmp	.L491	;
+	.p2align 4,,10
+	.p2align 3
+.L626:
+; src/parser.c:244:             parser_error("Failed to parse method body statement", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:244:             parser_error("Failed to parse method body statement", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC82(%rip), %rdi	;,
+; src/parser.c:244:             parser_error("Failed to parse method body statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp757, _446
+; src/parser.c:244:             parser_error("Failed to parse method body statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L478	;
+.L618:
+	movq	%r10, 88(%rsp)	; left, %sfp
+; src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	movl	$2, %esi	;,
+	leaq	.LC90(%rip), %rdi	;, tmp610
+	call	*create_string@GOTPCREL(%rip)	;
+; src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+; src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	movq	%rax, %rsi	; tmp813, _344
+; src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	xorl	%edi, %edi	;
+	call	*create_primary@GOTPCREL(%rip)	;
+; src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	xorl	%ecx, %ecx	;
+	xorl	%esi, %esi	;
+	movl	$19, %edi	;,
+; src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	movq	%rax, %rdx	; tmp814, _345
+; src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	call	*create_expression@GOTPCREL(%rip)	;
+	movq	88(%rsp), %r10	; %sfp, left
+	movq	%rax, %rcx	; tmp815, _343
+	jmp	.L508	;
+.L458:
+; src/parser.c:208:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
+	movq	(%rax), %rdi	; token_401->lexeme, token_401->lexeme
+	movq	SELF_KEYWORD(%rip), %rsi	; SELF_KEYWORD,
+	movq	%r10, 8(%rsp)	; token, %sfp
+	call	*string_equal@GOTPCREL(%rip)	;
+; src/parser.c:208:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
+	movq	8(%rsp), %r10	; %sfp, token
+	testb	%al, %al	; tmp738
+	je	.L460	;,
+	jmp	.L459	;
+.L625:
+; src/parser.c:252:     parser->in_function = false;
+	xorl	%edx, %edx	;
+	movq	104(%rsp), %r10	; %sfp, token
+	movw	%dx, 8(%r13)	;, MEM <vector(2) char> [(char *)parser_74(D) + 8B]
+; src/parser.c:254:     if (!have_return && return_type != name_void)
+	testb	%r12b, %r12b	; have_return
+	jne	.L481	;,
+; src/parser.c:254:     if (!have_return && return_type != name_void)
+	movq	56(%rsp), %rax	; %sfp, return_type
+	cmpq	name_void(%rip), %rax	; name_void, return_type
+	je	.L483	;,
+	movq	%r10, 104(%rsp)	; token, %sfp
+; src/parser.c:255:         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:255:         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC83(%rip), %rdi	;, tmp572
+; src/parser.c:255:         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp762, _460
+; src/parser.c:255:         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:256:     if (!have_return && return_type == name_void)
+	movq	56(%rsp), %rax	; %sfp, return_type
+	movq	104(%rsp), %r10	; %sfp, token
+	cmpq	name_void(%rip), %rax	; name_void, return_type
+	je	.L483	;,
+.L481:
+	movq	%r10, 104(%rsp)	; token, %sfp
+; src/parser.c:259:     return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
+	movq	96(%rsp), %rsi	; %sfp,
+	movq	%rbp, %r9	; method_scope,
+	movq	8(%rsp), %r8	; %sfp,
+	movq	80(%rsp), %rcx	; %sfp,
+	movq	56(%rsp), %rdx	; %sfp,
+	movq	88(%rsp), %rdi	; %sfp,
+	call	*create_method_use_ptr@GOTPCREL(%rip)	;
+; src/parser.c:286:             if (method == NULL)
+	movq	104(%rsp), %r10	; %sfp, token
+	testq	%rax, %rax	; _464
+; src/parser.c:259:     return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
+	movq	%rax, %rsi	; tmp763, _464
+; src/parser.c:286:             if (method == NULL)
+	jne	.L485	;,
+	jmp	.L452	;
+	.p2align 4,,10
+	.p2align 3
+.L606:
+; src/parser.c:90:         parser_error("Failed to import module", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:90:         parser_error("Failed to import module", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC56(%rip), %rdi	;, tmp472
+; src/parser.c:90:         parser_error("Failed to import module", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp664, _128
+; src/parser.c:90:         parser_error("Failed to import module", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:91:         name = create_symbol(import_name, SYMBOL_VARIABLE, name_void, now_scope);
+	movq	%rbp, %rdi	; import_name,
+	movq	16(%rsp), %rcx	; %sfp,
+	movq	name_void(%rip), %rdx	; name_void,
+	movl	$3, %esi	;,
+	call	*create_symbol@GOTPCREL(%rip)	;
+	movq	%rax, %rdi	; tmp665, name
+	jmp	.L407	;
+.L607:
+; src/parser.c:108:         parser_error("Unknown function return type", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:108:         parser_error("Unknown function return type", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC59(%rip), %rdi	;, tmp483
+; src/parser.c:108:         parser_error("Unknown function return type", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp675, _144
+; src/parser.c:108:         parser_error("Unknown function return type", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L413	;
+.L611:
+; src/parser.c:188:         parser_error("Unknown return type for method", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:188:         parser_error("Unknown return type for method", token, get_full_path(parser->source_file));
+	movq	%r12, %rsi	; token,
+	leaq	.LC73(%rip), %rdi	;, tmp534
+; src/parser.c:188:         parser_error("Unknown return type for method", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp727, _384
+; src/parser.c:188:         parser_error("Unknown return type for method", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	movq	8(%rsp), %r10	; %sfp, token
+	jmp	.L452	;
+.L403:
+; src/parser.c:73:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+; src/parser.c:74:         if (token->type != STRING) {
+	cmpl	$4, 24(%rax)	;, token_111->type
+; src/parser.c:73:         token = get_next_token(lexer, true);
+	movq	%rax, %rbx	; tmp658, token
+; src/parser.c:74:         if (token->type != STRING) {
+	jne	.L627	;,
+; src/parser.c:79:         source = token->lexeme;
+	movq	(%rax), %rbx	; token_111->lexeme, source
+; src/parser.c:80:         token = get_next_token(lexer, true);
+	movl	$1, %esi	;,
+	movq	%r15, %rdi	; lexer,
+	call	*get_next_token@GOTPCREL(%rip)	;
+	movq	%rax, %r12	; tmp660, token
+	jmp	.L593	;
+.L620:
+; src/parser.c:159:             parser_error("Failed to parse function body statement", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:159:             parser_error("Failed to parse function body statement", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC66(%rip), %rdi	;,
+; src/parser.c:159:             parser_error("Failed to parse function body statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp700, _196
+; src/parser.c:159:             parser_error("Failed to parse function body statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L434	;
+.L622:
+	movq	%rbp, %r10	; token, token
+	movq	8(%rsp), %rbp	; %sfp, method_scope
+	jmp	.L473	;
+.L619:
+; src/parser.c:167:     parser->in_function = false;
+	movb	$0, 8(%r13)	;, parser_74(D)->in_function
+; src/parser.c:168:     if (!have_return && return_type != name_void)
+	testb	%bpl, %bpl	; have_return
+	jne	.L437	;,
+; src/parser.c:168:     if (!have_return && return_type != name_void)
+	movq	8(%rsp), %rax	; %sfp, return_type
+	cmpq	name_void(%rip), %rax	; name_void, return_type
+	je	.L439	;,
+; src/parser.c:169:         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:169:         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC68(%rip), %rdi	;, tmp514
+; src/parser.c:169:         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp705, _210
+; src/parser.c:169:         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+; src/parser.c:170:     if (!have_return && return_type == name_void)
+	movq	8(%rsp), %rax	; %sfp, return_type
+	cmpq	name_void(%rip), %rax	; name_void, return_type
+	je	.L439	;,
+.L437:
+; src/parser.c:173:     return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
+	movq	8(%rsp), %rdx	; %sfp,
+	movq	56(%rsp), %r8	; %sfp,
+	movq	%r12, %r9	; function_scope,
+	movq	32(%rsp), %rcx	; %sfp,
+	movq	48(%rsp), %rsi	; %sfp,
+	movq	40(%rsp), %rdi	; %sfp,
+	call	*create_function_use_ptr@GOTPCREL(%rip)	;
+	movq	%rax, %rdx	; tmp706, _214
+; src/parser.c:45:             if (function == NULL)
+	testq	%rax, %rax	; _214
+	jne	.L441	;,
+	jmp	.L413	;
+	.p2align 4,,10
+	.p2align 3
+.L429:
+; src/parser.c:148:         parser_error("Expected '{' to start function body", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:148:         parser_error("Expected '{' to start function body", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC65(%rip), %rdi	;, tmp504
+; src/parser.c:148:         parser_error("Expected '{' to start function body", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp695, _191
+; src/parser.c:148:         parser_error("Expected '{' to start function body", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L413	;
+.L627:
+; src/parser.c:75:             parser_error("Expected string literal after 'from'", token, get_full_path(parser->source_file));
+	movq	0(%r13), %rdi	; parser_74(D)->source_file, parser_74(D)->source_file
+	call	*get_full_path@GOTPCREL(%rip)	;
+; src/parser.c:75:             parser_error("Expected string literal after 'from'", token, get_full_path(parser->source_file));
+	movq	%rbx, %rsi	; token,
+	leaq	.LC54(%rip), %rdi	;, tmp465
+; src/parser.c:75:             parser_error("Expected string literal after 'from'", token, get_full_path(parser->source_file));
+	movq	%rax, %rdx	; tmp659, _114
+; src/parser.c:75:             parser_error("Expected string literal after 'from'", token, get_full_path(parser->source_file));
+	call	*parser_error@GOTPCREL(%rip)	;
+	jmp	.L401	;
+.L483:
+	movq	%r10, 104(%rsp)	; token, %sfp
+; src/parser.c:257:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+	xorl	%r9d, %r9d	;
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	xorl	%esi, %esi	;
+	movl	$5, %edi	;,
+	call	*create_statement@GOTPCREL(%rip)	;
+; src/parser.c:257:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+	movq	8(%rsp), %rdi	; %sfp,
+; src/parser.c:257:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+	movq	%rax, %rsi	; tmp761, _463
+; src/parser.c:257:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+	movq	104(%rsp), %r10	; %sfp, token
+	jmp	.L481	;
+.L439:
+; src/parser.c:171:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+	xorl	%esi, %esi	;
+	xorl	%r9d, %r9d	;
+	xorl	%r8d, %r8d	;
+	xorl	%ecx, %ecx	;
+	xorl	%edx, %edx	;
+	movl	$5, %edi	;,
+	call	*create_statement@GOTPCREL(%rip)	;
+; src/parser.c:171:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+	movq	56(%rsp), %rdi	; %sfp,
+; src/parser.c:171:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+	movq	%rax, %rsi	; tmp704, _213
+; src/parser.c:171:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+	call	*list_append@GOTPCREL(%rip)	;
+	jmp	.L437	;
+	.size	parse_code, .-parse_code
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits

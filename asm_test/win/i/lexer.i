@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,6 +92,8 @@ pointer alloc_memory(size_t size);
 char is_keyword(const string str);
 char string_equal(string a, string b);
 string get_info(void);
+char to_lower(char c);
+char to_upper(char c);
 typedef enum TokenType {
     EOF_TOKEN,
     IDENTIFIER,
@@ -109,6 +110,7 @@ typedef struct Token {
     TokenType type;
 } Token;
 typedef struct Lexer {
+    string filename;
     string source;
     size_t position;
     size_t length;
@@ -120,12 +122,12 @@ typedef struct Lexer {
     size_t peeked_column;
     Token* current_token;
 } Lexer;
-Lexer* create_lexer(string source, size_t length);
+Lexer* create_lexer(string source, size_t length, string filename);
 Token* get_next_token(Lexer* lexer, char skip_comment);
 Token* peek_next_token(Lexer* lexer, char skip_comment);
 void reset_lexer(Lexer* lexer);
 Token* peek_current_token(Lexer* lexer);
-Lexer* create_lexer(string source, size_t length) {
+Lexer* create_lexer(string source, size_t length, string filename) {
     Lexer* lexer = (Lexer*)alloc_memory(sizeof(Lexer));
     lexer->source = source;
     lexer->position = 0;
@@ -137,6 +139,7 @@ Lexer* create_lexer(string source, size_t length) {
     lexer->peeked_line = 0;
     lexer->peeked_column = 0;
     lexer->current_token = NULL;
+    lexer->filename = filename;
     return lexer;
 }
 static Token* create_token(TokenType type, string lexeme, size_t line, size_t column) {
@@ -147,8 +150,8 @@ static Token* create_token(TokenType type, string lexeme, size_t line, size_t co
     token->column = column;
     return token;
 }
-static void lexer_error(const string message, size_t line, size_t column) {
-    fprintf(stderr, "Lexer Error at Line %zu, Column %zu: %s\n", line + 1, column + 1, message);
+static void lexer_error(const string message, size_t line, size_t column, string filename) {
+    fprintf(stderr, "[Lexer Error] at %s:%zu:%zu: %s\n", filename, line + 1, column + 1, message);
 }
 static char get_current_char(Lexer* lexer) {
     if (lexer->position >= lexer->length)
@@ -216,7 +219,7 @@ static Token* next_token(Lexer* lexer, char skip_comment) {
         while (c != '"' && c != '\0' && c != '\n')
             c = get_current_char(lexer);
         if (c != '"') {
-            lexer_error("Unterminated string literal", lexer->line, start - 1);
+            lexer_error("Unterminated string literal", lexer->line, start - 1, lexer->filename);
             if (c == '\n') newline(lexer);
         }
         if (lexer->position - start == 1)
@@ -245,7 +248,7 @@ static Token* next_token(Lexer* lexer, char skip_comment) {
             }
             if (p == '\0') {
                 if (c == '\0') move_position(lexer, -1);
-                lexer_error("Unterminated comment", lexer->line, start);
+                lexer_error("Unterminated comment", lexer->line, start, lexer->filename);
                 if (skip_comment)
                     return next_token(lexer, skip_comment);
                 return create_token(COMMENT, create_string(&lexer->source[start], lexer->position - start), lexer->line, column_start);
@@ -326,7 +329,7 @@ static Token* next_token(Lexer* lexer, char skip_comment) {
         else if (c == '=')
             return create_token(SYMBOL, ASSIGN_SYMBOL, lexer->line, lexer->column - 1);
         else {
-            lexer_error("Unexpected character", lexer->line, lexer->column - 1);
+            lexer_error("Unexpected character", lexer->line, lexer->column - 1, lexer->filename);
             return create_token(EOF_TOKEN, NULL, 0, 0);
         }
     }

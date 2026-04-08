@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,6 +92,8 @@ pointer alloc_memory(size_t size);
 char is_keyword(const string str);
 char string_equal(string a, string b);
 string get_info(void);
+char to_lower(char c);
+char to_upper(char c);
 typedef struct StrNode StrNode;
 struct StrNode {
     string dir;
@@ -113,6 +114,39 @@ string get_file_dir(File* path);
 string get_full_path(File* path);
 void change_file_extension(File* file, const string new_extension);
 void change_file_name(File* file, const string new_name);
+typedef enum TokenType {
+    EOF_TOKEN,
+    IDENTIFIER,
+    INTEGER,
+    FLOAT,
+    STRING,
+    SYMBOL,
+    KEYWORD,
+    COMMENT
+} TokenType;
+typedef struct Token {
+    string lexeme;
+    size_t line, column;
+    TokenType type;
+} Token;
+typedef struct Lexer {
+    string filename;
+    string source;
+    size_t position;
+    size_t length;
+    size_t line;
+    size_t column;
+    Token* peeked_token;
+    size_t peeked_position;
+    size_t peeked_line;
+    size_t peeked_column;
+    Token* current_token;
+} Lexer;
+Lexer* create_lexer(string source, size_t length, string filename);
+Token* get_next_token(Lexer* lexer, char skip_comment);
+Token* peek_next_token(Lexer* lexer, char skip_comment);
+void reset_lexer(Lexer* lexer);
+Token* peek_current_token(Lexer* lexer);
 typedef enum CodeMemberType {
     CODE_IMPORT,
     CODE_FUNCTION,
@@ -189,7 +223,7 @@ typedef struct Primary Primary;
 typedef struct VariableAccess VariableAccess;
 typedef struct List List;
 typedef struct Node Node;
-typedef enum SymbolTableType {
+typedef enum SymbolType {
     SYMBOL_CLASS,
     SYMBOL_FUNCTION,
     SYMBOL_METHOD,
@@ -326,10 +360,6 @@ struct Symbol {
     } ast_node;
     SymbolType kind;
 };
-typedef struct Lexer Lexer;
-typedef struct Parser Parser;
-Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
 typedef struct Parser {
     File* source_file;
     char in_function;
@@ -337,6 +367,8 @@ typedef struct Parser {
     char in_class;
     char in_loop;
 } Parser;
+Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
+void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
 typedef struct Token Token;
 List* create_list(void);
 void list_append(List* list, pointer item);
@@ -368,38 +400,6 @@ void output_token(FILE* file, Lexer* lexer);
 void output_ast(FILE* file, Code* ast);
 void output_tac(FILE* file, TAC* tac);
 void parse_file(const string name, char o_token, char o_ast, char o_tac);
-typedef enum TokenType {
-    EOF_TOKEN,
-    IDENTIFIER,
-    INTEGER,
-    FLOAT,
-    STRING,
-    SYMBOL,
-    KEYWORD,
-    COMMENT
-} TokenType;
-typedef struct Token {
-    string lexeme;
-    size_t line, column;
-    TokenType type;
-} Token;
-typedef struct Lexer {
-    string source;
-    size_t position;
-    size_t length;
-    size_t line;
-    size_t column;
-    Token* peeked_token;
-    size_t peeked_position;
-    size_t peeked_line;
-    size_t peeked_column;
-    Token* current_token;
-} Lexer;
-Lexer* create_lexer(string source, size_t length);
-Token* get_next_token(Lexer* lexer, char skip_comment);
-Token* peek_next_token(Lexer* lexer, char skip_comment);
-void reset_lexer(Lexer* lexer);
-Token* peek_current_token(Lexer* lexer);
 List* create_list(void) {
     List* new_list = (List*)alloc_memory(sizeof(List));
     new_list->head = NULL;
@@ -475,12 +475,12 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_ATTRIBUTE:
         case SYMBOL_TYPE: scope = (SymbolTable*)ast_node; break;
         default:
-            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %u\n", kind);
+            fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType: %u\n", kind);
             break;
     }
     Symbol* result = search_name(scope, name);
     if (result != NULL)
-        fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+        fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
     new_name->name = name;
     new_name->id = ++id_counter;
@@ -495,11 +495,11 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_ATTRIBUTE:
         case SYMBOL_TYPE: new_name->ast_node.scope = (SymbolTable*)ast_node; break;
         default:
-            fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
+            fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
             break;
     }
     if (scope == NULL)
-        fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
+        fprintf(stderr, "[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
     else
         list_append(scope->symbols, (pointer)new_name);
     return new_name;
@@ -542,7 +542,7 @@ inline char is_builtin_type(string type) {
     return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
 }
 inline void parser_error(const string message, Token* token, string file_name) {
-    fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+    fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 }
 static void set_bool_list(char bool_list[32], size_t index, char value) {
     char word = bool_list[index / 8];
@@ -585,12 +585,12 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
         fprintf(stderr, "Error opening library file for import: %s\n", filename);
         return NULL;
     }
-    printf("Info: Starting parsing lib file for import: %s\n", filename);
+    fprintf(stderr, "Info: Starting parsing lib file for import: %s\n", filename);
     size_t length = 0;
     string source_code = read_source(openfile, &length);
     fclose(openfile);
-    Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-    printf("Info: Finished parsing lib file for import: %s\n", filename);
+    Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+    fprintf(stderr, "Info: Finished parsing lib file for import: %s\n", filename);
     if (code == NULL) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
         return NULL;

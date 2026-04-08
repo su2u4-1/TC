@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,6 +92,61 @@ pointer alloc_memory(size_t size);
 char is_keyword(const string str);
 char string_equal(string a, string b);
 string get_info(void);
+char to_lower(char c);
+char to_upper(char c);
+typedef struct StrNode StrNode;
+struct StrNode {
+    string dir;
+    StrNode* next;
+};
+typedef struct File {
+    StrNode* dirs;
+    string extension;
+    string name;
+    string path;
+} File;
+string get_cwd(void);
+File* create_file(const string path);
+string absolute_path(string path, string base_path);
+string get_file_name(File* path);
+string get_file_extension(File* path);
+string get_file_dir(File* path);
+string get_full_path(File* path);
+void change_file_extension(File* file, const string new_extension);
+void change_file_name(File* file, const string new_name);
+typedef enum TokenType {
+    EOF_TOKEN,
+    IDENTIFIER,
+    INTEGER,
+    FLOAT,
+    STRING,
+    SYMBOL,
+    KEYWORD,
+    COMMENT
+} TokenType;
+typedef struct Token {
+    string lexeme;
+    size_t line, column;
+    TokenType type;
+} Token;
+typedef struct Lexer {
+    string filename;
+    string source;
+    size_t position;
+    size_t length;
+    size_t line;
+    size_t column;
+    Token* peeked_token;
+    size_t peeked_position;
+    size_t peeked_line;
+    size_t peeked_column;
+    Token* current_token;
+} Lexer;
+Lexer* create_lexer(string source, size_t length, string filename);
+Token* get_next_token(Lexer* lexer, char skip_comment);
+Token* peek_next_token(Lexer* lexer, char skip_comment);
+void reset_lexer(Lexer* lexer);
+Token* peek_current_token(Lexer* lexer);
 typedef enum CodeMemberType {
     CODE_IMPORT,
     CODE_FUNCTION,
@@ -169,7 +223,7 @@ typedef struct Primary Primary;
 typedef struct VariableAccess VariableAccess;
 typedef struct List List;
 typedef struct Node Node;
-typedef enum SymbolTableType {
+typedef enum SymbolType {
     SYMBOL_CLASS,
     SYMBOL_FUNCTION,
     SYMBOL_METHOD,
@@ -306,20 +360,22 @@ struct Symbol {
     } ast_node;
     SymbolType kind;
 };
-typedef struct Lexer Lexer;
-typedef struct Parser Parser;
+typedef struct Parser {
+    File* source_file;
+    char in_function;
+    char in_method;
+    char in_class;
+    char in_loop;
+} Parser;
 Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
 void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
 CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content);
 Code* create_code(List* members, SymbolTable* global_scope);
 Import* create_import(Symbol* name, string source);
 Function* create_function_use_ptr(Function* function, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* function_scope);
-Function* create_function(Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* function_scope);
 Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* method_scope);
-Method* create_method(Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* method_scope);
 ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content);
 Class* create_class_use_ptr(Class* class, Symbol* name, List* members, SymbolTable* class_scope, size_t size);
-Class* create_class(Symbol* name, List* members, SymbolTable* class_scope, size_t size);
 Variable* create_variable(Symbol* type, Symbol* name, Expression* value);
 Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt);
 If* create_if(Expression* condition, List* body, List* else_if, List* else_body);
@@ -338,13 +394,10 @@ CodeMember* create_code_member(CodeMemberType type, Import* import_content, Func
         code_member->content.function = function_content;
     else if (type == CODE_CLASS && class_content != NULL)
         code_member->content.class = class_content;
-    else {
-        if (import_content == NULL && function_content == NULL && class_content == NULL)
-            fprintf(stderr, "Error creating code member: content is NULL\n");
-        else
-            fprintf(stderr, "Error creating code member: unknown type %u\n", type);
-        return NULL;
-    }
+    else if (import_content == NULL && function_content == NULL && class_content == NULL)
+        fprintf(stderr, "Error creating code member: content is NULL\n");
+    else
+        fprintf(stderr, "Error creating code member: unknown type %u\n", type);
     return code_member;
 }
 Code* create_code(List* members, SymbolTable* global_scope) {
@@ -375,14 +428,6 @@ Function* create_function_use_ptr(Function* function, Symbol* name, Symbol* retu
     function->function_scope = function_scope;
     return function;
 }
-Function* create_function(Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* function_scope) {
-    if (name == NULL || return_type == NULL) {
-        fprintf(stderr, "Error creating function: name or return_type is NULL\n");
-        return NULL;
-    }
-    Function* function = (Function*)alloc_memory(sizeof(Function));
-    return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
-}
 Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* method_scope) {
     if (name == NULL || return_type == NULL) {
         fprintf(stderr, "Error creating method: name or return_type is NULL\n");
@@ -394,14 +439,6 @@ Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type,
     method->body = body;
     method->method_scope = method_scope;
     return method;
-}
-Method* create_method(Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* method_scope) {
-    if (name == NULL || return_type == NULL) {
-        fprintf(stderr, "Error creating method: name or return_type is NULL\n");
-        return NULL;
-    }
-    Method* method = (Method*)alloc_memory(sizeof(Method));
-    return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
 }
 ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content) {
     ClassMember* class_member = (ClassMember*)alloc_memory(sizeof(ClassMember));
@@ -429,14 +466,6 @@ Class* create_class_use_ptr(Class* class, Symbol* name, List* members, SymbolTab
     class->class_scope = class_scope;
     class->size = size;
     return class;
-}
-Class* create_class(Symbol* name, List* members, SymbolTable* class_scope, size_t size) {
-    if (name == NULL) {
-        fprintf(stderr, "Error creating class: name is NULL\n");
-        return NULL;
-    }
-    Class* class = (Class*)alloc_memory(sizeof(Class));
-    return create_class_use_ptr(class, name, members, class_scope, size);
 }
 Variable* create_variable(Symbol* type, Symbol* name, Expression* value) {
     if (type == NULL || name == NULL) {
@@ -511,17 +540,17 @@ While* create_while(Expression* condition, List* body) {
     while_->body = body;
     return while_;
 }
-Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
-    if ((operator == OP_NONE) != (right == NULL) || (expr_left == NULL && prim_left == NULL)) {
+Expression* create_expression(OperatorType operator, Expression * expr_left, Primary* prim_left, Expression* right) {
+    if ((operator== OP_NONE) != (right == NULL) || (expr_left == NULL && prim_left == NULL)) {
         fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
-                operator == OP_NONE ? "true" : "false",
+                        operator== OP_NONE ? "true" : "false",
                 expr_left == NULL ? "true" : "false",
                 prim_left == NULL ? "true" : "false",
                 right == NULL ? "true" : "false");
         return NULL;
     }
     Expression* expression = (Expression*)alloc_memory(sizeof(Expression));
-    expression->operator = operator;
+    expression->operator= operator;
     if (expr_left != NULL)
         expression->expr_left = expr_left;
     else if (prim_left != NULL)

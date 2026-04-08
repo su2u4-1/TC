@@ -141,12 +141,12 @@ init:
 	cmpq	$0, string_memory(%rip)	 ;, string_memory
 	je	.L40	 ;,
 .L19:
-	leaq	keywordStrings(%rip), %rbx	 ;, ivtmp.105
+	leaq	keywordStrings(%rip), %rbx	 ;, ivtmp.113
  ; D:/TC/src/lib.c:195:     initialized = true;
 	movl	$1, %edi	 ;, pretmp_130
 	movl	$6, %edx	 ;, _28
 	movb	$1, initialized(%rip)	 ;, initialized
-	leaq	keywordList(%rip), %rsi	 ;, ivtmp.107
+	leaq	keywordList(%rip), %rsi	 ;, ivtmp.115
 	leaq	176(%rbx), %r12	 ;, _143
 	jmp	.L26	 ;
 	.p2align 4,,10
@@ -161,12 +161,12 @@ init:
 	movq	%rax, (%rsi)	 ; tmp303, MEM[(char * *)_95]
 .L38:
  ; D:/TC/src/lib.c:196:     for (size_t i = 0; i < keywordCount; ++i)
-	addq	$8, %rbx	 ;, ivtmp.105
+	addq	$8, %rbx	 ;, ivtmp.113
  ; D:/TC/src/lib.c:127:     if (!initialized) init();
 	movzbl	initialized(%rip), %edi	 ; initialized, pretmp_130
  ; D:/TC/src/lib.c:196:     for (size_t i = 0; i < keywordCount; ++i)
-	addq	$8, %rsi	 ;, ivtmp.107
-	cmpq	%r12, %rbx	 ; _143, ivtmp.105
+	addq	$8, %rsi	 ;, ivtmp.115
+	cmpq	%r12, %rbx	 ; _143, ivtmp.113
 	je	.L41	 ;,
  ; D:/TC/src/lib.c:197:         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
 	movq	(%rbx), %rcx	 ; MEM[(const char * *)_141], MEM[(const char * *)_141]
@@ -195,8 +195,8 @@ init:
 	.p2align 4,,10
 	.p2align 3
 .L41:
-	leaq	symbolStrings(%rip), %rbx	 ;, ivtmp.84
-	leaq	symbolList(%rip), %rsi	 ;, ivtmp.86
+	leaq	symbolStrings(%rip), %rbx	 ;, ivtmp.92
+	leaq	symbolList(%rip), %rsi	 ;, ivtmp.94
  ; D:/TC/src/lib.c:195:     initialized = true;
 	movl	$1, %edx	 ;, _38
 	leaq	240(%rbx), %rdi	 ;, _182
@@ -210,12 +210,12 @@ init:
 .L43:
 	call	create_string_check.part.0	 ;
  ; D:/TC/src/lib.c:198:     for (size_t i = 0; i < symbolCount; ++i)
-	addq	$8, %rbx	 ;, ivtmp.84
-	addq	$8, %rsi	 ;, ivtmp.86
+	addq	$8, %rbx	 ;, ivtmp.92
+	addq	$8, %rsi	 ;, ivtmp.94
  ; D:/TC/src/lib.c:199:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
 	movq	%rax, -8(%rsi)	 ; tmp305, MEM[(char * *)_93]
  ; D:/TC/src/lib.c:198:     for (size_t i = 0; i < symbolCount; ++i)
-	cmpq	%rdi, %rbx	 ; _182, ivtmp.84
+	cmpq	%rdi, %rbx	 ; _182, ivtmp.92
 	je	.L30	 ;,
 .L29:
  ; D:/TC/src/lib.c:199:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
@@ -242,12 +242,12 @@ init:
 	.p2align 3
 .L28:
  ; D:/TC/src/lib.c:198:     for (size_t i = 0; i < symbolCount; ++i)
-	addq	$8, %rbx	 ;, ivtmp.84
+	addq	$8, %rbx	 ;, ivtmp.92
  ; D:/TC/src/lib.c:199:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
 	movq	$0, (%rsi)	 ;, MEM[(char * *)_190]
  ; D:/TC/src/lib.c:198:     for (size_t i = 0; i < symbolCount; ++i)
-	addq	$8, %rsi	 ;, ivtmp.86
-	cmpq	%rdi, %rbx	 ; _182, ivtmp.84
+	addq	$8, %rsi	 ;, ivtmp.94
+	cmpq	%rdi, %rbx	 ; _182, ivtmp.92
 	jne	.L29	 ;,
 	.p2align 4,,10
 	.p2align 3
@@ -919,15 +919,15 @@ is_keyword:
 	cmpb	$0, initialized(%rip)	 ;, initialized
 	je	.L105	 ;,
 .L99:
-	leaq	keywordList(%rip), %rax	 ;, ivtmp.136
+	leaq	keywordList(%rip), %rax	 ;, ivtmp.144
 	leaq	176(%rax), %rdx	 ;, _12
 	jmp	.L101	 ;
 	.p2align 4,,10
 	.p2align 3
 .L107:
  ; D:/TC/src/lib.c:272:     for (size_t i = 0; i < keywordCount; ++i)
-	addq	$8, %rax	 ;, ivtmp.136
-	cmpq	%rax, %rdx	 ; ivtmp.136, _12
+	addq	$8, %rax	 ;, ivtmp.144
+	cmpq	%rax, %rdx	 ; ivtmp.144, _12
 	je	.L106	 ;,
 .L101:
  ; D:/TC/src/lib.c:273:         if (string_equal(str, keywordList[i]))
@@ -1079,6 +1079,30 @@ get_info:
 .L119:
 	call	init	 ;
 	jmp	.L113	 ;
+	.p2align 4
+	.globl	to_lower
+	.def	to_lower;	.scl	2;	.type	32;	.endef
+to_lower:
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	leal	-65(%rcx), %edx	 ;, tmp88
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	leal	32(%rcx), %eax	 ;, tmp90
+	cmpb	$26, %dl	 ;, tmp88
+	cmovnb	%ecx, %eax	 ; c,, c
+ ; D:/TC/src/lib.c:303: }
+	ret	
+	.p2align 4
+	.globl	to_upper
+	.def	to_upper;	.scl	2;	.type	32;	.endef
+to_upper:
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	leal	-97(%rcx), %edx	 ;, tmp88
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	leal	-32(%rcx), %eax	 ;, tmp90
+	cmpb	$26, %dl	 ;, tmp88
+	cmovnb	%ecx, %eax	 ; c,, c
+ ; D:/TC/src/lib.c:307: }
+	ret	
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

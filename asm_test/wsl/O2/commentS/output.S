@@ -1871,324 +1871,413 @@ output_statement:
 .LC67:
 	.string	"NULL\t%s\n"
 .LC68:
+	.string	"%s\t%s(%s)\n"
+.LC69:
 	.string	"%s\t%s\n"
 	.text
 	.p2align 4
 	.type	output_var, @function
 output_var:
 	pushq	%rbp	;
-	movq	%rsi, %rbp	; tmp98, outfile
-	movq	%rdx, %rsi	; tmp99, indent
+	movq	%rsi, %rbp	; tmp110, outfile
+	movq	%rdx, %rsi	; tmp111, indent
 	pushq	%rbx	;
 	subq	$8, %rsp	;,
 ; src/output.c:509:     if (var == NULL) {
 	testq	%rdi, %rdi	; var
-	je	.L118	;,
-	movq	%rdi, %rbx	; tmp97, var
+	je	.L119	;,
+	movq	%rdi, %rbx	; tmp109, var
 ; src/output.c:515:         tac_output(indent, "NULL\t%s\n", var->name);
 	movq	%rbp, %rdi	; outfile,
 ; src/output.c:514:     if (var->type == NULL)
-	cmpq	$0, 16(%rbx)	;, var_7(D)->type
-	je	.L119	;,
-; src/output.c:517:         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
+	cmpq	$0, 16(%rbx)	;, var_13(D)->type
+	je	.L120	;,
+; src/output.c:516:     else if (var->original_name)
+	cmpq	$0, (%rbx)	;, var_13(D)->original_name
+	je	.L117	;,
+; src/output.c:517:         tac_output(indent, "%s\t%s(%s)\n", var->type->name, var->name, var->original_name->name);
 	call	*indention_tac@GOTPCREL(%rip)	;
-; src/output.c:517:         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
-	movq	16(%rbx), %rax	; var_7(D)->type, var_7(D)->type
+; src/output.c:517:         tac_output(indent, "%s\t%s(%s)\n", var->type->name, var->name, var->original_name->name);
+	movq	(%rbx), %rax	; var_13(D)->original_name, var_13(D)->original_name
+	movq	16(%rbx), %rdx	; var_13(D)->type, var_13(D)->type
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	8(%rbx), %r8	; var_7(D)->name,
 	movq	%rbp, %rdi	; outfile,
-	leaq	.LC68(%rip), %rdx	;, tmp96
+	movq	8(%rbx), %r8	; var_13(D)->name,
 	movl	$2, %esi	;,
-	movq	8(%rax), %rcx	; _4->name, _4->name
-; src/output.c:519: }
+	movq	8(%rdx), %rcx	; _7->name, _7->name
+	movq	8(%rax), %r9	; _4->name,
+; src/output.c:521: }
 	addq	$8, %rsp	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	xorl	%eax, %eax	;
-; src/output.c:519: }
+; src/output.c:521: }
 	popq	%rbx	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	leaq	.LC68(%rip), %rdx	;, tmp104
+; src/output.c:521: }
+	popq	%rbp	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
+	.p2align 4,,10
+	.p2align 3
+.L117:
+; src/output.c:519:         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
+	call	*indention_tac@GOTPCREL(%rip)	;
+; src/output.c:519:         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
+	movq	16(%rbx), %rax	; var_13(D)->type, var_13(D)->type
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	8(%rbx), %r8	; var_13(D)->name,
+	movq	%rbp, %rdi	; outfile,
+	leaq	.LC69(%rip), %rdx	;, tmp108
+	movl	$2, %esi	;,
+	movq	8(%rax), %rcx	; _10->name, _10->name
+; src/output.c:521: }
+	addq	$8, %rsp	;,
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	xorl	%eax, %eax	;
+; src/output.c:521: }
+	popq	%rbx	;
+	popq	%rbp	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
+	.p2align 4,,10
+	.p2align 3
+.L120:
+; src/output.c:515:         tac_output(indent, "NULL\t%s\n", var->name);
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	8(%rbx), %rcx	; var_13(D)->name, var_13(D)->name
+; src/output.c:521: }
+	addq	$8, %rsp	;,
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbp, %rdi	; outfile,
+; src/output.c:521: }
+	popq	%rbx	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	leaq	.LC67(%rip), %rdx	;, tmp98
+	movl	$2, %esi	;,
+	xorl	%eax, %eax	;
+; src/output.c:521: }
 	popq	%rbp	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
 .L119:
-; src/output.c:515:         tac_output(indent, "NULL\t%s\n", var->name);
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	8(%rbx), %rcx	; var_7(D)->name, var_7(D)->name
-; src/output.c:519: }
-	addq	$8, %rsp	;,
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbp, %rdi	; outfile,
-; src/output.c:519: }
-	popq	%rbx	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC67(%rip), %rdx	;, tmp92
-	movl	$2, %esi	;,
-	xorl	%eax, %eax	;
-; src/output.c:519: }
-	popq	%rbp	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
-	.p2align 4,,10
-	.p2align 3
-.L118:
 ; src/output.c:510:         tac_output(indent, "Var: \"NULL\"\n");
 	movq	%rbp, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
-; src/output.c:519: }
+; src/output.c:521: }
 	addq	$8, %rsp	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbp, %rcx	; outfile,
 	movl	$12, %edx	;,
-; src/output.c:519: }
+; src/output.c:521: }
 	popq	%rbx	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$1, %esi	;,
-	leaq	.LC66(%rip), %rdi	;, tmp90
-; src/output.c:519: }
+	leaq	.LC66(%rip), %rdi	;, tmp96
+; src/output.c:521: }
 	popq	%rbp	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	jmp	*fwrite@GOTPCREL(%rip)	;
 	.size	output_var, .-output_var
 	.section	.rodata.str1.1
-.LC69:
-	.string	"true"
 .LC70:
-	.string	"false"
+	.string	"true"
 .LC71:
-	.string	"\"NULL\""
+	.string	"false"
 .LC72:
-	.string	"%lld"
+	.string	"\"NULL\""
 .LC73:
-	.string	"%f"
+	.string	"%s(%s)"
 .LC74:
-	.string	"void"
+	.string	"%lld"
 .LC75:
-	.string	"NONE"
+	.string	"%f"
 .LC76:
+	.string	"\"%s\""
+.LC77:
+	.string	"void"
+.LC78:
+	.string	"NONE"
+.LC79:
 	.string	"unknown_ArgType: %u"
 	.text
 	.p2align 4
 	.type	output_arg, @function
 output_arg:
 	pushq	%rbp	;
-	movq	%rsi, %rbp	; tmp126, outfile
+	movq	%rsi, %rbp	; tmp149, outfile
 	pushq	%rbx	;
 	subq	$8, %rsp	;,
-; src/output.c:544:     if (arg == NULL) {
+; src/output.c:546:     if (arg == NULL) {
 	testq	%rdi, %rdi	; arg
-	je	.L137	;,
-; src/output.c:549:     switch (arg->kind) {
-	cmpl	$8, 16(%rdi)	;, arg_15(D)->kind
-	movq	%rdi, %rbx	; tmp125, arg
-	ja	.L122	;,
-	movl	16(%rdi), %eax	; arg_15(D)->kind, arg_15(D)->kind
-	leaq	.L124(%rip), %rdx	;, tmp99
-; src/output.c:558:         case ARG_NONE: tac_output(0, "NONE"); break;
-	xorl	%esi, %esi	;
-	movq	%rbp, %rdi	; outfile,
-; src/output.c:549:     switch (arg->kind) {
-	movslq	(%rdx,%rax,4), %rax	;, tmp101
-	addq	%rdx, %rax	; tmp99, tmp102
-	jmp	*%rax	; tmp102
+	je	.L143	;,
+; src/output.c:551:     switch (arg->kind) {
+	cmpl	$9, 16(%rdi)	;, arg_27(D)->kind
+	movq	%rdi, %rbx	; tmp148, arg
+	ja	.L123	;,
+	movl	16(%rdi), %eax	; arg_27(D)->kind, arg_27(D)->kind
+	leaq	.L125(%rip), %rdx	;, tmp111
+	movslq	(%rdx,%rax,4), %rax	;, tmp113
+	addq	%rdx, %rax	; tmp111, tmp114
+	jmp	*%rax	; tmp114
 	.section	.rodata
 	.align 4
 	.align 4
-.L124:
-	.long	.L125-.L124
-	.long	.L131-.L124
-	.long	.L130-.L124
-	.long	.L129-.L124
-	.long	.L128-.L124
-	.long	.L127-.L124
-	.long	.L125-.L124
-	.long	.L125-.L124
-	.long	.L123-.L124
+.L125:
+	.long	.L126-.L125
+	.long	.L132-.L125
+	.long	.L131-.L125
+	.long	.L130-.L125
+	.long	.L129-.L125
+	.long	.L128-.L125
+	.long	.L127-.L125
+	.long	.L126-.L125
+	.long	.L126-.L125
+	.long	.L124-.L125
 	.text
 	.p2align 4,,10
 	.p2align 3
-.L125:
-; src/output.c:557:         case ARG_SUBROUTINE: tac_output(0, "%s", arg->value.subroutine->name); break;
+.L126:
+; src/output.c:566:             if (arg->value.subroutine->original_name)
+	movq	(%rdi), %rax	;* arg, arg_27(D)->value.subroutine
+; src/output.c:567:                 tac_output(0, "%s(%s)", arg->value.subroutine->name, arg->value.subroutine->original_name->name);
+	xorl	%esi, %esi	;
+	movq	%rbp, %rdi	; outfile,
+; src/output.c:566:             if (arg->value.subroutine->original_name)
+	cmpq	$0, (%rax)	;,* arg_27(D)->value.subroutine
+	je	.L136	;,
+; src/output.c:567:                 tac_output(0, "%s(%s)", arg->value.subroutine->name, arg->value.subroutine->original_name->name);
 	call	*indention_tac@GOTPCREL(%rip)	;
-; src/output.c:557:         case ARG_SUBROUTINE: tac_output(0, "%s", arg->value.subroutine->name); break;
-	movq	(%rbx), %rax	;* arg, arg_15(D)->value.subroutine
+; src/output.c:567:                 tac_output(0, "%s(%s)", arg->value.subroutine->name, arg->value.subroutine->original_name->name);
+	movq	(%rbx), %rax	;* arg, _18
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	8(%rax), %rdi	;, _10->name
-.L136:
-; src/output.c:562: }
+	movq	%rbp, %rdi	; outfile,
+	movl	$2, %esi	;,
+; src/output.c:567:                 tac_output(0, "%s(%s)", arg->value.subroutine->name, arg->value.subroutine->original_name->name);
+	movq	(%rax), %rdx	;* _18, _18->original_name
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	8(%rax), %rcx	;, _18->name
+	xorl	%eax, %eax	;
+	movq	8(%rdx), %r8	;,
+; src/output.c:575: }
+	addq	$8, %rsp	;,
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	leaq	.LC73(%rip), %rdx	;, tmp136
+; src/output.c:575: }
+	popq	%rbx	;
+	popq	%rbp	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
+	.p2align 4,,10
+	.p2align 3
+.L132:
+; src/output.c:558:         case ARG_INT: tac_output(0, "%lld", arg->value.int_value); break;
+	xorl	%esi, %esi	;
+	movq	%rbp, %rdi	; outfile,
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	(%rbx), %rcx	; arg_27(D)->value.int_value, arg_27(D)->value.int_value
+	leaq	.LC74(%rip), %rdx	;, tmp124
+.L141:
+; src/output.c:575: }
+	addq	$8, %rsp	;,
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbp, %rdi	; outfile,
+	movl	$2, %esi	;,
+	xorl	%eax, %eax	;
+; src/output.c:575: }
+	popq	%rbx	;
+	popq	%rbp	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
+	.p2align 4,,10
+	.p2align 3
+.L129:
+; src/output.c:561:         case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
+	xorl	%esi, %esi	;
+	movq	%rbp, %rdi	; outfile,
+	call	*indention_tac@GOTPCREL(%rip)	;
+; src/output.c:561:         case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
+	cmpb	$0, (%rbx)	;, arg_27(D)->value.bool_value
+	leaq	.LC71(%rip), %rdi	;, tmp146
+	leaq	.LC70(%rip), %rax	;, tmp147
+	cmovne	%rax, %rdi	; tmp146,, tmp147, iftmp.2_25
+.L140:
+; src/output.c:575: }
 	addq	$8, %rsp	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbp, %rsi	; outfile,
-; src/output.c:562: }
+; src/output.c:575: }
 	popq	%rbx	;
 	popq	%rbp	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	jmp	*fputs@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
-.L123:
-; src/output.c:558:         case ARG_NONE: tac_output(0, "NONE"); break;
+.L128:
+; src/output.c:562:         case ARG_VOID: tac_output(0, "void"); break;
+	movq	%rbp, %rdi	; outfile,
+	xorl	%esi, %esi	;
 	call	*indention_tac@GOTPCREL(%rip)	;
-; src/output.c:562: }
+; src/output.c:575: }
 	addq	$8, %rsp	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbp, %rcx	; outfile,
 	movl	$4, %edx	;,
-; src/output.c:562: }
+; src/output.c:575: }
 	popq	%rbx	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$1, %esi	;,
-	leaq	.LC75(%rip), %rdi	;, tmp116
-; src/output.c:562: }
+	leaq	.LC77(%rip), %rdi	;, tmp129
+; src/output.c:575: }
+	popq	%rbp	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	jmp	*fwrite@GOTPCREL(%rip)	;
+	.p2align 4,,10
+	.p2align 3
+.L127:
+; src/output.c:563:         case ARG_LABEL: tac_output(0, "%s", arg->value.label->name); break;
+	movq	%rbp, %rdi	; outfile,
+	xorl	%esi, %esi	;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; src/output.c:563:         case ARG_LABEL: tac_output(0, "%s", arg->value.label->name); break;
+	movq	(%rbx), %rax	;* arg, arg_27(D)->value.label
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	8(%rax), %rdi	;, _14->name
+	jmp	.L140	;
+	.p2align 4,,10
+	.p2align 3
+.L124:
+; src/output.c:571:         case ARG_NONE: tac_output(0, "NONE"); break;
+	movq	%rbp, %rdi	; outfile,
+	xorl	%esi, %esi	;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; src/output.c:575: }
+	addq	$8, %rsp	;,
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%rbp, %rcx	; outfile,
+	movl	$4, %edx	;,
+; src/output.c:575: }
+	popq	%rbx	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movl	$1, %esi	;,
+	leaq	.LC78(%rip), %rdi	;, tmp139
+; src/output.c:575: }
 	popq	%rbp	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	jmp	*fwrite@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
 .L131:
-; src/output.c:551:         case ARG_INT: tac_output(0, "%lld", arg->value.int_value); break;
+; src/output.c:559:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
+	movq	%rbp, %rdi	; outfile,
+	xorl	%esi, %esi	;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	(%rbx), %rcx	; arg_15(D)->value.int_value, arg_15(D)->value.int_value
-; src/output.c:562: }
+	movsd	(%rbx), %xmm0	; arg_27(D)->value.float_value, arg_27(D)->value.float_value
+; src/output.c:575: }
 	addq	$8, %rsp	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbp, %rdi	; outfile,
-; src/output.c:562: }
-	popq	%rbx	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC72(%rip), %rdx	;, tmp107
-	movl	$2, %esi	;,
-	xorl	%eax, %eax	;
-; src/output.c:562: }
-	popq	%rbp	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
-	.p2align 4,,10
-	.p2align 3
-.L130:
-; src/output.c:552:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movsd	(%rbx), %xmm0	; arg_15(D)->value.float_value, arg_15(D)->value.float_value
-; src/output.c:562: }
-	addq	$8, %rsp	;,
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbp, %rdi	; outfile,
-; src/output.c:562: }
+; src/output.c:575: }
 	popq	%rbx	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$2, %esi	;,
 	movl	$1, %eax	;,
-; src/output.c:562: }
+; src/output.c:575: }
 	popq	%rbp	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC73(%rip), %rdx	;, tmp109
+	leaq	.LC75(%rip), %rdx	;, tmp126
 	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
-.L129:
-; src/output.c:553:         case ARG_STRING: tac_output(0, "%s", arg->value.string_value); break;
+.L130:
+; src/output.c:560:         case ARG_STRING: tac_output(0, "\"%s\"", arg->value.string_value); break;
+	xorl	%esi, %esi	;
+	movq	%rbp, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	(%rbx), %rdi	; arg_15(D)->value.string_value, arg_15(D)->value.string_value
-	jmp	.L136	;
+	movq	(%rbx), %rcx	; arg_27(D)->value.string_value, arg_27(D)->value.string_value
+	leaq	.LC76(%rip), %rdx	;, tmp128
+	jmp	.L141	;
 	.p2align 4,,10
 	.p2align 3
-.L128:
-; src/output.c:554:         case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; src/output.c:554:         case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
-	cmpb	$0, (%rbx)	;, arg_15(D)->value.bool_value
-	leaq	.LC70(%rip), %rdi	;, tmp123
-	leaq	.LC69(%rip), %rax	;, tmp124
-	cmovne	%rax, %rdi	; tmp123,, tmp124, iftmp.2_13
-	jmp	.L136	;
-	.p2align 4,,10
-	.p2align 3
-.L127:
-; src/output.c:555:         case ARG_VOID: tac_output(0, "void"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; src/output.c:562: }
-	addq	$8, %rsp	;,
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%rbp, %rcx	; outfile,
-	movl	$4, %edx	;,
-; src/output.c:562: }
-	popq	%rbx	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	$1, %esi	;,
-	leaq	.LC74(%rip), %rdi	;, tmp111
-; src/output.c:562: }
-	popq	%rbp	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	jmp	*fwrite@GOTPCREL(%rip)	;
-	.p2align 4,,10
-	.p2align 3
-.L137:
-; src/output.c:545:         tac_output(0, "\"NULL\"");
+.L143:
+; src/output.c:547:         tac_output(0, "\"NULL\"");
 	movq	%rbp, %rdi	; outfile,
 	xorl	%esi, %esi	;
 	call	*indention_tac@GOTPCREL(%rip)	;
-; src/output.c:562: }
+; src/output.c:575: }
 	addq	$8, %rsp	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbp, %rcx	; outfile,
 	movl	$6, %edx	;,
-; src/output.c:562: }
+; src/output.c:575: }
 	popq	%rbx	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$1, %esi	;,
-	leaq	.LC71(%rip), %rdi	;, tmp97
-; src/output.c:562: }
+	leaq	.LC72(%rip), %rdi	;, tmp109
+; src/output.c:575: }
 	popq	%rbp	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	jmp	*fwrite@GOTPCREL(%rip)	;
-.L122:
-; src/output.c:559:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
+.L123:
+; src/output.c:572:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
 	movq	%rbp, %rdi	; outfile,
 	xorl	%esi, %esi	;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	16(%rbx), %ecx	; arg_15(D)->kind, arg_15(D)->kind
-; src/output.c:562: }
+	movl	16(%rbx), %ecx	; arg_27(D)->kind, arg_27(D)->kind
+; src/output.c:575: }
 	addq	$8, %rsp	;,
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%rbp, %rdi	; outfile,
-; src/output.c:562: }
+; src/output.c:575: }
 	popq	%rbx	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC76(%rip), %rdx	;, tmp118
+	leaq	.LC79(%rip), %rdx	;, tmp141
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
-; src/output.c:562: }
+; src/output.c:575: }
 	popq	%rbp	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	jmp	*__fprintf_chk@GOTPCREL(%rip)	;
+	.p2align 4,,10
+	.p2align 3
+.L136:
+; src/output.c:569:                 tac_output(0, "%s", arg->value.subroutine->name);
+	call	*indention_tac@GOTPCREL(%rip)	;
+; src/output.c:569:                 tac_output(0, "%s", arg->value.subroutine->name);
+	movq	(%rbx), %rax	;* arg, arg_27(D)->value.subroutine
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	8(%rax), %rdi	;, _22->name
+	jmp	.L140	;
 	.size	output_arg, .-output_arg
 	.section	.rodata.str1.1
-.LC77:
-	.string	"NULL"
-.LC78:
-	.string	"import\n"
-.LC79:
-	.string	"source: \"%s\"\n"
 .LC80:
-	.string	"parameters\n"
+	.string	"NULL"
 .LC81:
-	.string	"parameters[%d]\n"
+	.string	"import\n"
 .LC82:
-	.string	"class\n"
+	.string	"source: \"%s\"\n"
 .LC83:
-	.string	"members\n"
+	.string	"parameters\n"
 .LC84:
-	.string	"method\n"
+	.string	"parameters[%d]\n"
 .LC85:
-	.string	"variable\n"
+	.string	"class\n"
 .LC86:
-	.string	"unknown_ClassMemberType: %u\n"
+	.string	"members\n"
 .LC87:
+	.string	"method\n"
+.LC88:
+	.string	"variable\n"
+.LC89:
+	.string	"unknown_ClassMemberType: %u\n"
+.LC90:
 	.string	"unknown_CodeMemberType: %u\n"
 	.text
 	.p2align 4
@@ -2211,14 +2300,14 @@ output_code:
 	movq	%rax, 40(%rsp)	; tmp190, %sfp
 	.p2align 4,,10
 	.p2align 3
-.L139:
+.L145:
 ; src/output.c:47:     while ((member = (CodeMember*)list_pop(members)) != NULL)
 	movq	40(%rsp), %rdi	; %sfp,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %rbx	; tmp201, member
 ; src/output.c:47:     while ((member = (CodeMember*)list_pop(members)) != NULL)
 	testq	%rax, %rax	; member
-	je	.L163	;,
+	je	.L169	;,
 ; src/output.c:24:     switch (code_member->type) {
 	movl	8(%rbx), %eax	; member_9->type, _14
 ; src/output.c:48:         output_code_member(member, outfile, indent + 1, indent_has_next);
@@ -2229,11 +2318,11 @@ output_code:
 	movq	%r13, %rdi	; outfile,
 ; src/output.c:24:     switch (code_member->type) {
 	cmpl	$1, %eax	;, _14
-	je	.L140	;,
+	je	.L146	;,
 	cmpl	$2, %eax	;, _14
-	je	.L141	;,
+	je	.L147	;,
 	testl	%eax, %eax	; _14
-	jne	.L142	;,
+	jne	.L148	;,
 ; src/output.c:26:             ast_output(0, false, "import\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
@@ -2243,7 +2332,7 @@ output_code:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$7, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC78(%rip), %rdi	;, tmp135
+	leaq	.LC81(%rip), %rdi	;, tmp135
 	call	*fwrite@GOTPCREL(%rip)	;
 ; src/output.c:27:             output_import(code_member->content.import, outfile, indent + 1, indent_has_next);
 	movq	(%rbx), %rbx	; member_9->content.import, _16
@@ -2277,9 +2366,9 @@ output_code:
 	movl	$2, %esi	;,
 	movq	%r13, %rdi	; outfile,
 ; src/output.c:55:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
-	leaq	.LC77(%rip), %rax	;, tmp175
+	leaq	.LC80(%rip), %rax	;, tmp175
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC79(%rip), %rdx	;, tmp139
+	leaq	.LC82(%rip), %rdx	;, tmp139
 ; src/output.c:55:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 	testq	%rcx, %rcx	; _24
 	cmove	%rax, %rcx	; _24,, tmp175, _24
@@ -2287,10 +2376,10 @@ output_code:
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
 ; src/output.c:57: }
-	jmp	.L139	;
+	jmp	.L145	;
 	.p2align 4,,10
 	.p2align 3
-.L140:
+.L146:
 ; src/output.c:30:             ast_output(0, false, "function\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
@@ -2355,7 +2444,7 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$11, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC80(%rip), %rdi	;, tmp145
+	leaq	.LC83(%rip), %rdi	;, tmp145
 	call	*fwrite@GOTPCREL(%rip)	;
 ; src/output.c:65:     list(Variable*) parameters = list_copy(function->parameters);
 	movq	16(%rbx), %rdi	; _18->parameters, _18->parameters
@@ -2370,10 +2459,10 @@ output_code:
 	call	*list_copy@GOTPCREL(%rip)	;
 	movq	%rax, 16(%rsp)	; body, %sfp
 ; src/output.c:69:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
-	jmp	.L145	;
+	jmp	.L151	;
 	.p2align 4,,10
 	.p2align 3
-.L146:
+.L152:
 ; src/output.c:70:         ast_output(1, false, "parameters[%d]\n", ++index);
 	addl	$1, %ebx	;, index
 ; src/output.c:70:         ast_output(1, false, "parameters[%d]\n", ++index);
@@ -2384,7 +2473,7 @@ output_code:
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	%ebx, %ecx	; index,
-	leaq	.LC81(%rip), %rdx	;,
+	leaq	.LC84(%rip), %rdx	;,
 	xorl	%eax, %eax	;
 	movl	$2, %esi	;,
 	movq	%r13, %rdi	; outfile,
@@ -2395,14 +2484,14 @@ output_code:
 	movq	%r13, %rsi	; outfile,
 	movq	%r12, %rdi	; parameter,
 	call	output_variable	;
-.L145:
+.L151:
 ; src/output.c:69:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	movq	(%rsp), %rdi	; %sfp,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %r12	; tmp193, parameter
 ; src/output.c:69:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	testq	%rax, %rax	; parameter
-	jne	.L146	;,
+	jne	.L152	;,
 ; src/output.c:73:     ast_output(0, true, "body\n");
 	movq	8(%rsp), %rsi	; %sfp,
 	movq	%r14, %rcx	; indent_has_next,
@@ -2416,40 +2505,40 @@ output_code:
 	movl	$1, %esi	;,
 	leaq	.LC48(%rip), %rdi	;, tmp150
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L147	;
+	jmp	.L153	;
 	.p2align 4,,10
 	.p2align 3
-.L148:
+.L154:
 ; src/output.c:76:         output_statement(statement, outfile, indent + 1, indent_has_next);
 	movq	%r14, %rcx	; indent_has_next,
 	movq	%rbp, %rdx	; _26,
 	movq	%r13, %rsi	; outfile,
 	call	output_statement	;
-.L147:
+.L153:
 ; src/output.c:75:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%r12, %rdi	; body,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %rdi	; tmp194, statement
 ; src/output.c:75:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	; statement
-	jne	.L148	;,
-	jmp	.L139	;
+	jne	.L154	;,
+	jmp	.L145	;
 	.p2align 4,,10
 	.p2align 3
-.L142:
+.L148:
 ; src/output.c:38:             ast_output(0, false, "unknown_CodeMemberType: %u\n", code_member->type);
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	8(%rbx), %ecx	; member_9->type, member_9->type
 	movl	$2, %esi	;,
 	movq	%r13, %rdi	; outfile,
-	leaq	.LC87(%rip), %rdx	;, tmp173
+	leaq	.LC90(%rip), %rdx	;, tmp173
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-	jmp	.L139	;
+	jmp	.L145	;
 	.p2align 4,,10
 	.p2align 3
-.L141:
+.L147:
 ; src/output.c:34:             ast_output(0, false, "class\n");
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
@@ -2459,7 +2548,7 @@ output_code:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$6, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC82(%rip), %rdi	;, tmp151
+	leaq	.LC85(%rip), %rdi	;, tmp151
 	call	*fwrite@GOTPCREL(%rip)	;
 ; src/output.c:35:             output_class(code_member->content.class, outfile, indent + 1, indent_has_next);
 	movq	(%rbx), %rbx	; member_9->content.class, _20
@@ -2493,7 +2582,7 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$8, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC83(%rip), %rdi	;, tmp154
+	leaq	.LC86(%rip), %rdi	;, tmp154
 	call	*fwrite@GOTPCREL(%rip)	;
 ; src/output.c:122:     list(ClassMember*) members = list_copy(class->members);
 	movq	8(%rbx), %rdi	; _20->members, _20->members
@@ -2501,21 +2590,21 @@ output_code:
 	movq	%rax, 8(%rsp)	; tmp195, %sfp
 	.p2align 4,,10
 	.p2align 3
-.L149:
+.L155:
 ; src/output.c:124:     while ((member = (ClassMember*)list_pop(members)) != NULL)
 	movq	8(%rsp), %rdi	; %sfp,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %rbx	; tmp200, member
 ; src/output.c:124:     while ((member = (ClassMember*)list_pop(members)) != NULL)
 	testq	%rax, %rax	; member
-	je	.L139	;,
+	je	.L145	;,
 ; src/output.c:102:     switch (class_member->type) {
 	movl	8(%rbx), %eax	; member_42->type, _43
 ; src/output.c:102:     switch (class_member->type) {
 	testl	%eax, %eax	; _43
-	je	.L150	;,
+	je	.L156	;,
 	cmpl	$1, %eax	;, _43
-	je	.L151	;,
+	je	.L157	;,
 ; src/output.c:112:             ast_output(0, false, "unknown_ClassMemberType: %u\n", class_member->type);
 	movq	16(%rsp), %rsi	; %sfp,
 	movq	%r14, %rcx	; indent_has_next,
@@ -2526,13 +2615,13 @@ output_code:
 	movl	8(%rbx), %ecx	; member_42->type, member_42->type
 	movl	$2, %esi	;,
 	movq	%r13, %rdi	; outfile,
-	leaq	.LC86(%rip), %rdx	;, tmp171
+	leaq	.LC89(%rip), %rdx	;, tmp171
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-	jmp	.L149	;
+	jmp	.L155	;
 	.p2align 4,,10
 	.p2align 3
-.L150:
+.L156:
 ; src/output.c:104:             ast_output(0, false, "method\n");
 	movq	16(%rsp), %rsi	; %sfp,
 	movq	%r14, %rcx	; indent_has_next,
@@ -2546,7 +2635,7 @@ output_code:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$7, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC84(%rip), %rdi	;,
+	leaq	.LC87(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
 ; src/output.c:105:             output_method(class_member->content.method, outfile, indent + 1, indent_has_next);
 	movq	(%rbx), %rbx	; member_42->content.method, _45
@@ -2603,7 +2692,7 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$11, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC80(%rip), %rdi	;, tmp161
+	leaq	.LC83(%rip), %rdi	;, tmp161
 	call	*fwrite@GOTPCREL(%rip)	;
 ; src/output.c:86:     list(Variable*) parameters = list_copy(method->parameters);
 	movq	16(%rbx), %rdi	; _45->parameters, _45->parameters
@@ -2618,10 +2707,10 @@ output_code:
 	call	*list_copy@GOTPCREL(%rip)	;
 	movq	%rax, 32(%rsp)	; body, %sfp
 ; src/output.c:90:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
-	jmp	.L153	;
+	jmp	.L159	;
 	.p2align 4,,10
 	.p2align 3
-.L154:
+.L160:
 ; src/output.c:91:         ast_output(1, false, "parameters[%d]\n", ++index);
 	addl	$1, %ebx	;, index
 ; src/output.c:91:         ast_output(1, false, "parameters[%d]\n", ++index);
@@ -2632,7 +2721,7 @@ output_code:
 	call	*indention@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	%ebx, %ecx	; index,
-	leaq	.LC81(%rip), %rdx	;,
+	leaq	.LC84(%rip), %rdx	;,
 	xorl	%eax, %eax	;
 	movl	$2, %esi	;,
 	movq	%r13, %rdi	; outfile,
@@ -2643,14 +2732,14 @@ output_code:
 	movq	%r13, %rsi	; outfile,
 	movq	%r12, %rdi	; parameter,
 	call	output_variable	;
-.L153:
+.L159:
 ; src/output.c:90:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	movq	(%rsp), %rdi	; %sfp,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %r12	; tmp198, parameter
 ; src/output.c:90:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	testq	%rax, %rax	; parameter
-	jne	.L154	;,
+	jne	.L160	;,
 ; src/output.c:94:     ast_output(0, true, "body\n");
 	movq	24(%rsp), %rsi	; %sfp,
 	movq	%r14, %rcx	; indent_has_next,
@@ -2664,27 +2753,27 @@ output_code:
 	movl	$1, %esi	;,
 	leaq	.LC48(%rip), %rdi	;, tmp166
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L155	;
+	jmp	.L161	;
 	.p2align 4,,10
 	.p2align 3
-.L156:
+.L162:
 ; src/output.c:97:         output_statement(statement, outfile, indent + 1, indent_has_next);
 	movq	%r14, %rcx	; indent_has_next,
 	movq	%rbp, %rdx	; _49,
 	movq	%r13, %rsi	; outfile,
 	call	output_statement	;
-.L155:
+.L161:
 ; src/output.c:96:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%r12, %rdi	; body,
 	call	*list_pop@GOTPCREL(%rip)	;
 	movq	%rax, %rdi	; tmp199, statement
 ; src/output.c:96:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	; statement
-	jne	.L156	;,
-	jmp	.L149	;
+	jne	.L162	;,
+	jmp	.L155	;
 	.p2align 4,,10
 	.p2align 3
-.L151:
+.L157:
 ; src/output.c:108:             ast_output(0, false, "variable\n");
 	movq	16(%rsp), %rsi	; %sfp,
 	movq	%r14, %rcx	; indent_has_next,
@@ -2695,7 +2784,7 @@ output_code:
 	movq	%r13, %rcx	; outfile,
 	movl	$9, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC85(%rip), %rdi	;, tmp167
+	leaq	.LC88(%rip), %rdi	;, tmp167
 	call	*fwrite@GOTPCREL(%rip)	;
 ; src/output.c:109:             output_variable(class_member->content.variable, outfile, indent + 1, indent_has_next);
 	movq	(%rbx), %rdi	; member_42->content.variable, member_42->content.variable
@@ -2704,10 +2793,10 @@ output_code:
 	movq	%r13, %rsi	; outfile,
 	call	output_variable	;
 ; src/output.c:110:             break;
-	jmp	.L149	;
+	jmp	.L155	;
 	.p2align 4,,10
 	.p2align 3
-.L163:
+.L169:
 ; src/output.c:50: }
 	addq	$56, %rsp	;,
 	popq	%rbx	;
@@ -2719,119 +2808,121 @@ output_code:
 	ret	
 	.size	output_code, .-output_code
 	.section	.rodata.str1.1
-.LC88:
-	.string	"TAC: \"NULL\"\n"
-.LC89:
-	.string	"TAC {\n"
-.LC90:
-	.string	"designs: []\n"
 .LC91:
-	.string	"designs: [\n"
+	.string	"TAC: \"NULL\"\n"
 .LC92:
-	.string	"NULL "
+	.string	"TAC {\n"
 .LC93:
-	.string	"%s "
+	.string	"designs: []\n"
 .LC94:
-	.string	"%zu "
+	.string	"designs: [\n"
 .LC95:
-	.string	"{}\n"
+	.string	"NULL "
 .LC96:
-	.string	"{\n"
+	.string	"%s "
 .LC97:
-	.string	"NULL\t"
+	.string	"%zu "
 .LC98:
-	.string	"%s\t"
+	.string	"{}\n"
 .LC99:
-	.string	"%zu\n"
+	.string	"{\n"
 .LC100:
-	.string	"}\n"
+	.string	"NULL\t"
 .LC101:
-	.string	"]\n"
+	.string	"%s\t"
 .LC102:
-	.string	"entry_point: \"NULL\"\n"
+	.string	"%s(%s) "
 .LC103:
-	.string	"entry_point: %s\n"
+	.string	"%zu\n"
 .LC104:
-	.string	"global: []\n"
+	.string	"}\n"
 .LC105:
-	.string	"global: [\n"
+	.string	"]\n"
 .LC106:
-	.string	"subroutines: []\n"
+	.string	"entry_point: \"NULL\"\n"
 .LC107:
-	.string	"subroutines: [\n"
+	.string	"entry_point: %s\n"
 .LC108:
-	.string	"NULL {\n"
+	.string	"global: []\n"
 .LC109:
-	.string	"%s {\n"
+	.string	"global: [\n"
 .LC110:
-	.string	"return_type: \"NULL\"\n"
+	.string	"subroutines: []\n"
 .LC111:
-	.string	"return_type: %s\n"
+	.string	"subroutines: [\n"
 .LC112:
-	.string	"parameters: []\n"
+	.string	"NULL {\n"
 .LC113:
-	.string	"parameters: [\n"
+	.string	"%s {\n"
 .LC114:
-	.string	"local: []\n"
+	.string	"return_type: \"NULL\"\n"
 .LC115:
-	.string	"local: [\n"
+	.string	"return_type: %s\n"
 .LC116:
-	.string	"instructions: []\n"
+	.string	"parameters: []\n"
 .LC117:
-	.string	"instructions: [\n"
+	.string	"parameters: [\n"
 .LC118:
-	.string	"add\t"
+	.string	"local: []\n"
 .LC119:
-	.string	"sub\t"
+	.string	"local: [\n"
 .LC120:
-	.string	"mul\t"
+	.string	"instructions: []\n"
 .LC121:
-	.string	"div\t"
+	.string	"instructions: [\n"
 .LC122:
-	.string	"mod\t"
+	.string	"add\t"
 .LC123:
-	.string	"eq \t"
+	.string	"sub\t"
 .LC124:
-	.string	"ne \t"
+	.string	"mul\t"
 .LC125:
-	.string	"lt \t"
+	.string	"div\t"
 .LC126:
-	.string	"gt \t"
+	.string	"mod\t"
 .LC127:
-	.string	"le \t"
+	.string	"eq \t"
 .LC128:
-	.string	"ge \t"
+	.string	"ne \t"
 .LC129:
-	.string	"and\t"
+	.string	"lt \t"
 .LC130:
-	.string	"or \t"
+	.string	"gt \t"
 .LC131:
-	.string	"not\t"
+	.string	"le \t"
 .LC132:
-	.string	"assign\t"
+	.string	"ge \t"
 .LC133:
-	.string	"get_attr\t"
+	.string	"and\t"
 .LC134:
-	.string	"get_elem\t"
+	.string	"or \t"
 .LC135:
-	.string	"param\t"
+	.string	"not\t"
 .LC136:
-	.string	"alloc\t"
+	.string	"assign\t"
 .LC137:
-	.string	"jmp_c\t"
+	.string	"get_attr\t"
 .LC138:
-	.string	"jmp\t"
+	.string	"get_elem\t"
 .LC139:
-	.string	"ret\t"
+	.string	"param\t"
 .LC140:
-	.string	"call\t"
+	.string	"alloc\t"
 .LC141:
-	.string	"load\t"
+	.string	"jmp_c\t"
 .LC142:
-	.string	"store\t"
+	.string	"jmp\t"
 .LC143:
-	.string	"INST_NONE\n"
+	.string	"ret\t"
 .LC144:
+	.string	"call\t"
+.LC145:
+	.string	"load\t"
+.LC146:
+	.string	"store\t"
+.LC147:
+	.string	"INST_NONE\n"
+.LC148:
 	.string	"unknown_InstructionType: %u\n"
 	.text
 	.p2align 4
@@ -2839,12 +2930,12 @@ output_code:
 	.type	output_TAC, @function
 output_TAC:
 	pushq	%r15	;
-	movq	%rsi, %r15	; tmp305, outfile
+	movq	%rsi, %r15	; tmp314, outfile
 ; src/output.c:423:         tac_output(indent, "TAC: \"NULL\"\n");
 	movq	%rdx, %rsi	; indent,
 ; src/output.c:420: void output_TAC(TAC* tac, FILE* outfile, size_t indent) {
 	pushq	%r14	;
-	movq	%rdx, %r14	; tmp306, indent
+	movq	%rdx, %r14	; tmp315, indent
 	pushq	%r13	;
 	pushq	%r12	;
 	pushq	%rbp	;
@@ -2857,16 +2948,16 @@ output_TAC:
 ; src/output.c:423:         tac_output(indent, "TAC: \"NULL\"\n");
 	movq	%r15, %rdi	; outfile,
 ; src/output.c:422:     if (tac == NULL) {
-	je	.L247	;,
+	je	.L254	;,
 ; src/output.c:427:     tac_output(indent, "TAC {\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$1, %esi	;,
 	movq	%r15, %rcx	; outfile,
 	movl	$6, %edx	;,
-	leaq	.LC89(%rip), %rdi	;, tmp162
+	leaq	.LC92(%rip), %rdi	;, tmp167
 ; src/output.c:429:         tac_output(indent + 1, "designs: []\n");
-	leaq	1(%r14), %r13	;, _232
+	leaq	1(%r14), %r13	;, _239
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	call	*fwrite@GOTPCREL(%rip)	;
 ; src/output.c:428:     if (list_is_empty(tac->attribute_tables))
@@ -2874,30 +2965,30 @@ output_TAC:
 	movq	(%rax), %rdi	; tac_32(D)->attribute_tables, tac_32(D)->attribute_tables
 	call	*list_is_empty@GOTPCREL(%rip)	;
 ; src/output.c:429:         tac_output(indent + 1, "designs: []\n");
-	movq	%r13, %rsi	; _232,
+	movq	%r13, %rsi	; _239,
 	movq	%r15, %rdi	; outfile,
 ; src/output.c:428:     if (list_is_empty(tac->attribute_tables))
-	testb	%al, %al	; tmp307
-	je	.L166	;,
+	testb	%al, %al	; tmp316
+	je	.L172	;,
 ; src/output.c:429:         tac_output(indent + 1, "designs: []\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$12, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC90(%rip), %rdi	;, tmp164
+	leaq	.LC93(%rip), %rdi	;, tmp169
 	call	*fwrite@GOTPCREL(%rip)	;
-	leaq	.LC100(%rip), %rax	;, tmp282
-	movq	%rax, 16(%rsp)	; tmp282, %sfp
-.L167:
+	leaq	.LC104(%rip), %rax	;, tmp291
+	movq	%rax, 16(%rsp)	; tmp291, %sfp
+.L173:
 ; src/output.c:437:     if (tac->entry_point == NULL)
 	movq	32(%rsp), %rax	; %sfp, tac
 ; src/output.c:438:         tac_output(indent + 1, "entry_point: \"NULL\"\n");
-	movq	%r13, %rsi	; _232,
+	movq	%r13, %rsi	; _239,
 	movq	%r15, %rdi	; outfile,
 ; src/output.c:437:     if (tac->entry_point == NULL)
 	cmpq	$0, 8(%rax)	;, tac_32(D)->entry_point
-	je	.L248	;,
+	je	.L255	;,
 ; src/output.c:440:         tac_output(indent + 1, "entry_point: %s\n", tac->entry_point->name);
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; src/output.c:440:         tac_output(indent + 1, "entry_point: %s\n", tac->entry_point->name);
@@ -2905,52 +2996,52 @@ output_TAC:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$2, %esi	;,
 	movq	%r15, %rdi	; outfile,
-	leaq	.LC103(%rip), %rdx	;, tmp192
+	leaq	.LC107(%rip), %rdx	;, tmp201
 ; src/output.c:440:         tac_output(indent + 1, "entry_point: %s\n", tac->entry_point->name);
 	movq	8(%rax), %rax	; tac_32(D)->entry_point, tac_32(D)->entry_point
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	8(%rax), %rcx	; _10->name, _10->name
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L181:
+.L188:
 ; src/output.c:441:     if (list_is_empty(tac->global_vars))
 	movq	32(%rsp), %rax	; %sfp, tac
 	movq	16(%rax), %rdi	; tac_32(D)->global_vars, tac_32(D)->global_vars
 	call	*list_is_empty@GOTPCREL(%rip)	;
 ; src/output.c:442:         tac_output(indent + 1, "global: []\n");
-	movq	%r13, %rsi	; _232,
+	movq	%r13, %rsi	; _239,
 	movq	%r15, %rdi	; outfile,
 ; src/output.c:441:     if (list_is_empty(tac->global_vars))
-	testb	%al, %al	; tmp311
-	je	.L182	;,
+	testb	%al, %al	; tmp320
+	je	.L189	;,
 ; src/output.c:442:         tac_output(indent + 1, "global: []\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$11, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC104(%rip), %rdi	;, tmp194
+	leaq	.LC108(%rip), %rdi	;, tmp203
 	call	*fwrite@GOTPCREL(%rip)	;
-.L183:
+.L190:
 ; src/output.c:450:     if (list_is_empty(tac->subroutines))
 	movq	32(%rsp), %rax	; %sfp, tac
 	movq	24(%rax), %rdi	; tac_32(D)->subroutines, tac_32(D)->subroutines
 	call	*list_is_empty@GOTPCREL(%rip)	;
 ; src/output.c:451:         tac_output(indent + 1, "subroutines: []\n");
-	movq	%r13, %rsi	; _232,
+	movq	%r13, %rsi	; _239,
 	movq	%r15, %rdi	; outfile,
 ; src/output.c:450:     if (list_is_empty(tac->subroutines))
-	testb	%al, %al	; tmp313
-	je	.L186	;,
+	testb	%al, %al	; tmp322
+	je	.L193	;,
 ; src/output.c:451:         tac_output(indent + 1, "subroutines: []\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$16, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC106(%rip), %rdi	;, tmp200
+	leaq	.LC110(%rip), %rdi	;, tmp209
 	call	*fwrite@GOTPCREL(%rip)	;
-.L187:
+.L194:
 ; src/output.c:459:     tac_output(indent, "}\n");
 	movq	%r14, %rsi	; indent,
 	movq	%r15, %rdi	; outfile,
@@ -2960,7 +3051,7 @@ output_TAC:
 	movq	%r15, %rcx	; outfile,
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
-.L246:
+.L253:
 ; src/output.c:461: }
 	addq	$72, %rsp	;,
 	popq	%rbx	;
@@ -2971,52 +3062,51 @@ output_TAC:
 	popq	%r15	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	jmp	*fwrite@GOTPCREL(%rip)	;
-.L166:
+.L172:
 ; src/output.c:431:         tac_output(indent + 1, "designs: [\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$11, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC91(%rip), %rdi	;, tmp165
-	leaq	.LC93(%rip), %r12	;, tmp300
+	leaq	.LC94(%rip), %rdi	;, tmp170
 	call	*fwrite@GOTPCREL(%rip)	;
-	leaq	.LC100(%rip), %rax	;, tmp282
+	leaq	.LC104(%rip), %rax	;, tmp291
 	movq	32(%rsp), %rbx	; %sfp, tac
-	movq	%rax, 16(%rsp)	; tmp282, %sfp
+	movq	%rax, 16(%rsp)	; tmp291, %sfp
 	.p2align 4,,10
 	.p2align 3
-.L168:
+.L174:
 ; src/output.c:433:         while ((attribute_table = (AttributeTable*)list_pop(tac->attribute_tables)) != NULL)
 	movq	(%rbx), %rdi	; tac_32(D)->attribute_tables, tac_32(D)->attribute_tables
 	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp310, attribute_table
+	movq	%rax, %rbp	; tmp319, attribute_table
 ; src/output.c:433:         while ((attribute_table = (AttributeTable*)list_pop(tac->attribute_tables)) != NULL)
 	testq	%rax, %rax	; attribute_table
-	je	.L249	;,
+	je	.L256	;,
 ; src/output.c:434:             output_attribute_table(attribute_table, outfile, indent + 2);
 	leaq	2(%r14), %rax	;, _5
-; src/output.c:653:     if (attribute_table->name == NULL)
+; src/output.c:666:     if (attribute_table->name == NULL)
 	cmpq	$0, 8(%rbp)	;, attribute_table_40->name
 ; src/output.c:434:             output_attribute_table(attribute_table, outfile, indent + 2);
 	movq	%rax, 8(%rsp)	; _5, %sfp
-; src/output.c:653:     if (attribute_table->name == NULL)
-	je	.L250	;,
-; src/output.c:656:         tac_output(indent, "%s ", attribute_table->name->name);
+; src/output.c:666:     if (attribute_table->name == NULL)
+	je	.L257	;,
+; src/output.c:669:         tac_output(indent, "%s ", attribute_table->name->name);
 	movq	8(%rsp), %rsi	; %sfp,
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
-; src/output.c:656:         tac_output(indent, "%s ", attribute_table->name->name);
+; src/output.c:669:         tac_output(indent, "%s ", attribute_table->name->name);
 	movq	8(%rbp), %rax	; attribute_table_40->name, attribute_table_40->name
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r12, %rdx	; tmp300,
-	movq	%r15, %rdi	; outfile,
 	movl	$2, %esi	;,
+	movq	%r15, %rdi	; outfile,
+	leaq	.LC96(%rip), %rdx	;,
 	movq	8(%rax), %rcx	; _77->name, _77->name
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L170:
-; src/output.c:657:     tac_output(0, "%zu ", attribute_table->size);
+.L176:
+; src/output.c:670:     tac_output(0, "%zu ", attribute_table->size);
 	xorl	%esi, %esi	;
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
@@ -3024,76 +3114,84 @@ output_TAC:
 	movl	$2, %esi	;,
 	movq	16(%rbp), %rcx	; attribute_table_40->size, attribute_table_40->size
 	xorl	%eax, %eax	;
-	leaq	.LC94(%rip), %rdx	;, tmp171
+	leaq	.LC97(%rip), %rdx	;, tmp176
 	movq	%r15, %rdi	; outfile,
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/output.c:658:     if (list_is_empty(attribute_table->attributes))
+; src/output.c:671:     if (list_is_empty(attribute_table->attributes))
 	movq	0(%rbp), %rdi	; attribute_table_40->attributes, attribute_table_40->attributes
 	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/output.c:659:         tac_output(0, "{}\n");
+; src/output.c:672:         tac_output(0, "{}\n");
 	xorl	%esi, %esi	;
 	movq	%r15, %rdi	; outfile,
-; src/output.c:658:     if (list_is_empty(attribute_table->attributes))
-	testb	%al, %al	; tmp308
-	je	.L171	;,
-; src/output.c:659:         tac_output(0, "{}\n");
+; src/output.c:671:     if (list_is_empty(attribute_table->attributes))
+	testb	%al, %al	; tmp317
+	je	.L177	;,
+; src/output.c:672:         tac_output(0, "{}\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$3, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC95(%rip), %rdi	;, tmp173
+	leaq	.LC98(%rip), %rdi	;, tmp178
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L168	;
+	jmp	.L174	;
 	.p2align 4,,10
 	.p2align 3
-.L171:
-; src/output.c:661:         tac_output(0, "{\n");
+.L177:
+; src/output.c:674:         tac_output(0, "{\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	leaq	.LC101(%rip), %r12	;, tmp305
 	movq	%r15, %rcx	; outfile,
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC96(%rip), %rdi	;, tmp174
+	leaq	.LC99(%rip), %rdi	;, tmp179
 	call	*fwrite@GOTPCREL(%rip)	;
-	movq	%r13, 24(%rsp)	; _232, %sfp
-	jmp	.L173	;
+	movq	%r13, 24(%rsp)	; _239, %sfp
+	jmp	.L179	;
 	.p2align 4,,10
 	.p2align 3
-.L174:
-; src/output.c:679:         tac_output(indent, "%s\t", attribute->type->name);
+.L180:
+; src/output.c:692:         tac_output(indent, "%s\t", attribute->type->name);
 	call	*indention_tac@GOTPCREL(%rip)	;
-; src/output.c:679:         tac_output(indent, "%s\t", attribute->type->name);
+; src/output.c:692:         tac_output(indent, "%s\t", attribute->type->name);
 	movq	8(%r13), %rax	; attribute_83->type, attribute_83->type
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rdi	; outfile,
+	movq	%r12, %rdx	; tmp305,
 	movl	$2, %esi	;,
-	leaq	.LC98(%rip), %rdx	;,
 	movq	8(%rax), %rcx	; _86->name, _86->name
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/output.c:681:         tac_output(0, "NULL ");
+; src/output.c:693:     if (attribute->var == NULL)
+	movq	0(%r13), %rax	; attribute_83->var, _88
+; src/output.c:694:         tac_output(0, "NULL ");
 	xorl	%esi, %esi	;
-; src/output.c:680:     if (attribute->var == NULL)
-	cmpq	$0, 0(%r13)	;, attribute_83->var
-; src/output.c:681:         tac_output(0, "NULL ");
 	movq	%r15, %rdi	; outfile,
-; src/output.c:680:     if (attribute->var == NULL)
-	je	.L251	;,
-.L176:
-; src/output.c:683:         tac_output(0, "%s ", attribute->var->name);
+; src/output.c:693:     if (attribute->var == NULL)
+	testq	%rax, %rax	; _88
+	je	.L258	;,
+.L182:
+; src/output.c:695:     else if (attribute->var->original_name)
+	cmpq	$0, (%rax)	;, _88->original_name
+	je	.L184	;,
+; src/output.c:696:         tac_output(0, "%s(%s) ", attribute->var->name, attribute->var->original_name->name);
 	call	*indention_tac@GOTPCREL(%rip)	;
-; src/output.c:683:         tac_output(0, "%s ", attribute->var->name);
-	movq	0(%r13), %rax	; attribute_83->var, attribute_83->var
+; src/output.c:696:         tac_output(0, "%s(%s) ", attribute->var->name, attribute->var->original_name->name);
+	movq	0(%r13), %rax	; attribute_83->var, _90
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r12, %rdx	; tmp300,
-	movq	%r15, %rdi	; outfile,
 	movl	$2, %esi	;,
-	movq	8(%rax), %rcx	; _89->name, _89->name
+	movq	%r15, %rdi	; outfile,
+; src/output.c:696:         tac_output(0, "%s(%s) ", attribute->var->name, attribute->var->original_name->name);
+	movq	(%rax), %rdx	; _90->original_name, _90->original_name
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	8(%rax), %rcx	; _90->name, _90->name
 	xorl	%eax, %eax	;
+	movq	8(%rdx), %r8	; _91->name,
+	leaq	.LC102(%rip), %rdx	;,
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L177:
-; src/output.c:684:     tac_output(0, "%zu\n", attribute->offset);
+.L183:
+; src/output.c:699:     tac_output(0, "%zu\n", attribute->offset);
 	xorl	%esi, %esi	;
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
@@ -3101,58 +3199,73 @@ output_TAC:
 	movq	16(%r13), %rcx	; attribute_83->offset, attribute_83->offset
 	movl	$2, %esi	;,
 	xorl	%eax, %eax	;
-	leaq	.LC99(%rip), %rdx	;, tmp184
+	leaq	.LC103(%rip), %rdx	;, tmp193
 	movq	%r15, %rdi	; outfile,
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L173:
-; src/output.c:663:         while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
+.L179:
+; src/output.c:676:         while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
 	movq	0(%rbp), %rdi	; attribute_table_40->attributes, attribute_table_40->attributes
 	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %r13	; tmp309, attribute
-; src/output.c:663:         while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
+	movq	%rax, %r13	; tmp318, attribute
+; src/output.c:676:         while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
 	testq	%rax, %rax	; attribute
-	je	.L252	;,
-; src/output.c:676:     if (attribute->type == NULL)
+	je	.L259	;,
+; src/output.c:689:     if (attribute->type == NULL)
 	cmpq	$0, 8(%r13)	;, attribute_83->type
-; src/output.c:664:             output_attribute(attribute, outfile, indent + 1);
+; src/output.c:677:             output_attribute(attribute, outfile, indent + 1);
 	leaq	3(%r14), %rsi	;, _82
-; src/output.c:677:         tac_output(indent, "NULL\t");
+; src/output.c:690:         tac_output(indent, "NULL\t");
 	movq	%r15, %rdi	; outfile,
-; src/output.c:676:     if (attribute->type == NULL)
-	jne	.L174	;,
-; src/output.c:677:         tac_output(indent, "NULL\t");
+; src/output.c:689:     if (attribute->type == NULL)
+	jne	.L180	;,
+; src/output.c:690:         tac_output(indent, "NULL\t");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$1, %esi	;,
 	movq	%r15, %rcx	; outfile,
-	leaq	.LC97(%rip), %rdi	;,
+	leaq	.LC100(%rip), %rdi	;,
 	movl	$5, %edx	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-; src/output.c:681:         tac_output(0, "NULL ");
+; src/output.c:693:     if (attribute->var == NULL)
+	movq	0(%r13), %rax	; attribute_83->var, _88
+; src/output.c:694:         tac_output(0, "NULL ");
 	xorl	%esi, %esi	;
-; src/output.c:680:     if (attribute->var == NULL)
-	cmpq	$0, 0(%r13)	;, attribute_83->var
-; src/output.c:681:         tac_output(0, "NULL ");
 	movq	%r15, %rdi	; outfile,
-; src/output.c:680:     if (attribute->var == NULL)
-	jne	.L176	;,
-.L251:
-; src/output.c:681:         tac_output(0, "NULL ");
+; src/output.c:693:     if (attribute->var == NULL)
+	testq	%rax, %rax	; _88
+	jne	.L182	;,
+.L258:
+; src/output.c:694:         tac_output(0, "NULL ");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC92(%rip), %rdi	;,
+	leaq	.LC95(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L177	;
+	jmp	.L183	;
 	.p2align 4,,10
 	.p2align 3
-.L252:
-; src/output.c:665:         tac_output(indent, "}\n");
+.L184:
+; src/output.c:698:         tac_output(0, "%s ", attribute->var->name);
+	call	*indention_tac@GOTPCREL(%rip)	;
+; src/output.c:698:         tac_output(0, "%s ", attribute->var->name);
+	movq	0(%r13), %rax	; attribute_83->var, attribute_83->var
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movl	$2, %esi	;,
+	movq	%r15, %rdi	; outfile,
+	leaq	.LC96(%rip), %rdx	;,
+	movq	8(%rax), %rcx	; _94->name, _94->name
+	xorl	%eax, %eax	;
+	call	*__fprintf_chk@GOTPCREL(%rip)	;
+	jmp	.L183	;
+	.p2align 4,,10
+	.p2align 3
+.L259:
+; src/output.c:678:         tac_output(indent, "}\n");
 	movq	8(%rsp), %rsi	; %sfp,
 	movq	%r15, %rdi	; outfile,
-	movq	24(%rsp), %r13	; %sfp, _232
+	movq	24(%rsp), %r13	; %sfp, _239
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	16(%rsp), %rdi	; %sfp,
@@ -3160,11 +3273,11 @@ output_TAC:
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L168	;
+	jmp	.L174	;
 	.p2align 4,,10
 	.p2align 3
-.L250:
-; src/output.c:654:         tac_output(indent, "NULL ");
+.L257:
+; src/output.c:667:         tac_output(indent, "NULL ");
 	movq	%r15, %rdi	; outfile,
 	movq	%rax, %rsi	; _5,
 	call	*indention_tac@GOTPCREL(%rip)	;
@@ -3172,86 +3285,86 @@ output_TAC:
 	movq	%r15, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC92(%rip), %rdi	;,
+	leaq	.LC95(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L170	;
-.L249:
+	jmp	.L176	;
+.L256:
 ; src/output.c:435:         tac_output(indent + 1, "]\n");
-	movq	%r13, %rsi	; _232,
+	movq	%r13, %rsi	; _239,
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC101(%rip), %r8	;, tmp283
+	leaq	.LC105(%rip), %r8	;, tmp292
 	movq	%r15, %rcx	; outfile,
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
-	movq	%r8, %rdi	; tmp283,
+	movq	%r8, %rdi	; tmp292,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L167	;
-.L186:
+	jmp	.L173	;
+.L193:
 ; src/output.c:453:         tac_output(indent + 1, "subroutines: [\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$15, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC107(%rip), %rdi	;, tmp201
-; src/output.c:570:     switch (instruction->type) {
-	leaq	.L211(%rip), %r12	;, tmp292
+	leaq	.LC111(%rip), %rdi	;, tmp210
+; src/output.c:583:     switch (instruction->type) {
+	leaq	.L218(%rip), %r12	;, tmp301
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	call	*fwrite@GOTPCREL(%rip)	;
-	leaq	.LC101(%rip), %r8	;, tmp283
-	movq	%r13, 56(%rsp)	; _232, %sfp
-	movq	%r8, 40(%rsp)	; tmp283, %sfp
-	jmp	.L188	;
+	leaq	.LC105(%rip), %r8	;, tmp292
+	movq	%r13, 56(%rsp)	; _239, %sfp
+	movq	%r8, 40(%rsp)	; tmp292, %sfp
+	jmp	.L195	;
 	.p2align 4,,10
 	.p2align 3
-.L256:
+.L263:
 ; src/output.c:478:         tac_output(indent + 1, "parameters: []\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$15, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC112(%rip), %rdi	;, tmp211
+	leaq	.LC116(%rip), %rdi	;, tmp220
 	call	*fwrite@GOTPCREL(%rip)	;
-.L194:
+.L201:
 ; src/output.c:486:     if (list_is_empty(subroutine->local_vars))
 	movq	24(%rbp), %rdi	; subroutine_56->local_vars, subroutine_56->local_vars
 	call	*list_is_empty@GOTPCREL(%rip)	;
 ; src/output.c:487:         tac_output(indent + 1, "local: []\n");
-	movq	%r13, %rsi	; _231,
+	movq	%r13, %rsi	; _238,
 	movq	%r15, %rdi	; outfile,
 ; src/output.c:486:     if (list_is_empty(subroutine->local_vars))
-	testb	%al, %al	; tmp316
-	je	.L197	;,
+	testb	%al, %al	; tmp325
+	je	.L204	;,
 ; src/output.c:487:         tac_output(indent + 1, "local: []\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$10, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC114(%rip), %rdi	;, tmp217
+	leaq	.LC118(%rip), %rdi	;, tmp226
 	call	*fwrite@GOTPCREL(%rip)	;
-.L198:
+.L205:
 ; src/output.c:495:     if (list_is_empty(subroutine->blocks))
 	movq	32(%rbp), %rdi	; subroutine_56->blocks, subroutine_56->blocks
 	call	*list_is_empty@GOTPCREL(%rip)	;
 ; src/output.c:496:         tac_output(indent + 1, "instructions: []\n");
-	movq	%r13, %rsi	; _231,
+	movq	%r13, %rsi	; _238,
 	movq	%r15, %rdi	; outfile,
 ; src/output.c:495:     if (list_is_empty(subroutine->blocks))
-	testb	%al, %al	; tmp318
-	je	.L201	;,
+	testb	%al, %al	; tmp327
+	je	.L208	;,
 ; src/output.c:496:         tac_output(indent + 1, "instructions: []\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$17, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC116(%rip), %rdi	;, tmp223
+	leaq	.LC120(%rip), %rdi	;, tmp232
 	call	*fwrite@GOTPCREL(%rip)	;
-.L202:
+.L209:
 ; src/output.c:504:     tac_output(indent, "}\n");
 	movq	24(%rsp), %rsi	; %sfp,
 	movq	%r15, %rdi	; outfile,
@@ -3262,15 +3375,15 @@ output_TAC:
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-.L188:
+.L195:
 ; src/output.c:455:         while ((subroutine = (Subroutine*)list_pop(tac->subroutines)) != NULL)
 	movq	32(%rsp), %rax	; %sfp, tac
 	movq	24(%rax), %rdi	; tac_32(D)->subroutines, tac_32(D)->subroutines
 	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp322, subroutine
+	movq	%rax, %rbp	; tmp331, subroutine
 ; src/output.c:455:         while ((subroutine = (Subroutine*)list_pop(tac->subroutines)) != NULL)
 	testq	%rax, %rax	; subroutine
-	je	.L253	;,
+	je	.L260	;,
 ; src/output.c:456:             output_subroutine(subroutine, outfile, indent + 2);
 	leaq	2(%r14), %rax	;, _22
 ; src/output.c:469:     if (subroutine->name == NULL)
@@ -3278,7 +3391,7 @@ output_TAC:
 ; src/output.c:456:             output_subroutine(subroutine, outfile, indent + 2);
 	movq	%rax, 24(%rsp)	; _22, %sfp
 ; src/output.c:469:     if (subroutine->name == NULL)
-	je	.L254	;,
+	je	.L261	;,
 ; src/output.c:472:         tac_output(indent, "%s {\n", subroutine->name->name);
 	movq	24(%rsp), %rsi	; %sfp,
 	movq	%r15, %rdi	; outfile,
@@ -3288,20 +3401,20 @@ output_TAC:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$2, %esi	;,
 	movq	%r15, %rdi	; outfile,
-	leaq	.LC109(%rip), %rdx	;,
-	movq	8(%rax), %rcx	; _93->name, _93->name
+	leaq	.LC113(%rip), %rdx	;,
+	movq	8(%rax), %rcx	; _98->name, _98->name
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L190:
-; src/output.c:664:             output_attribute(attribute, outfile, indent + 1);
-	leaq	3(%r14), %r13	;, _231
+.L197:
+; src/output.c:677:             output_attribute(attribute, outfile, indent + 1);
+	leaq	3(%r14), %r13	;, _238
 ; src/output.c:473:     if (subroutine->return_type == NULL)
 	cmpq	$0, 8(%rbp)	;, subroutine_56->return_type
 ; src/output.c:474:         tac_output(indent + 1, "return_type: \"NULL\"\n");
 	movq	%r15, %rdi	; outfile,
-	movq	%r13, %rsi	; _231,
+	movq	%r13, %rsi	; _238,
 ; src/output.c:473:     if (subroutine->return_type == NULL)
-	je	.L255	;,
+	je	.L262	;,
 ; src/output.c:476:         tac_output(indent + 1, "return_type: %s\n", subroutine->return_type->name);
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; src/output.c:476:         tac_output(indent + 1, "return_type: %s\n", subroutine->return_type->name);
@@ -3309,48 +3422,48 @@ output_TAC:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$2, %esi	;,
 	movq	%r15, %rdi	; outfile,
-	leaq	.LC111(%rip), %rdx	;, tmp209
-	movq	8(%rax), %rcx	; _98->name, _98->name
+	leaq	.LC115(%rip), %rdx	;, tmp218
+	movq	8(%rax), %rcx	; _103->name, _103->name
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L192:
+.L199:
 ; src/output.c:477:     if (list_is_empty(subroutine->parameters))
 	movq	16(%rbp), %rdi	; subroutine_56->parameters, subroutine_56->parameters
 	call	*list_is_empty@GOTPCREL(%rip)	;
 ; src/output.c:478:         tac_output(indent + 1, "parameters: []\n");
-	movq	%r13, %rsi	; _231,
+	movq	%r13, %rsi	; _238,
 	movq	%r15, %rdi	; outfile,
 ; src/output.c:477:     if (list_is_empty(subroutine->parameters))
-	testb	%al, %al	; tmp314
-	jne	.L256	;,
+	testb	%al, %al	; tmp323
+	jne	.L263	;,
 ; src/output.c:480:         tac_output(indent + 1, "parameters: [\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; src/output.c:483:             output_var(parameter, outfile, indent + 2);
-	leaq	4(%r14), %rbx	;, tmp290
+	leaq	4(%r14), %rbx	;, tmp299
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$14, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC113(%rip), %rdi	;, tmp212
+	leaq	.LC117(%rip), %rdi	;, tmp221
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L195	;
+	jmp	.L202	;
 	.p2align 4,,10
 	.p2align 3
-.L196:
+.L203:
 ; src/output.c:483:             output_var(parameter, outfile, indent + 2);
-	movq	%rbx, %rdx	; tmp290,
+	movq	%rbx, %rdx	; tmp299,
 	movq	%r15, %rsi	; outfile,
 	call	output_var	;
-.L195:
+.L202:
 ; src/output.c:482:         while ((parameter = (Var*)list_pop(subroutine->parameters)) != NULL)
 	movq	16(%rbp), %rdi	; subroutine_56->parameters, subroutine_56->parameters
 	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp315, parameter
+	movq	%rax, %rdi	; tmp324, parameter
 ; src/output.c:482:         while ((parameter = (Var*)list_pop(subroutine->parameters)) != NULL)
 	testq	%rax, %rax	; parameter
-	jne	.L196	;,
+	jne	.L203	;,
 ; src/output.c:484:         tac_output(indent + 1, "]\n");
-	movq	%r13, %rsi	; _231,
+	movq	%r13, %rsi	; _238,
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
@@ -3359,168 +3472,168 @@ output_TAC:
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L194	;
+	jmp	.L201	;
 	.p2align 4,,10
 	.p2align 3
-.L201:
+.L208:
 ; src/output.c:498:         tac_output(indent + 1, "instructions: [\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$16, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC117(%rip), %rdi	;, tmp224
+	leaq	.LC121(%rip), %rdi	;, tmp233
 	call	*fwrite@GOTPCREL(%rip)	;
 	movq	%rbp, 8(%rsp)	; subroutine, %sfp
-	movq	%r13, 48(%rsp)	; _231, %sfp
+	movq	%r13, 48(%rsp)	; _238, %sfp
 	.p2align 4,,10
 	.p2align 3
-.L203:
+.L210:
 ; src/output.c:500:         while ((block = (Block*)list_pop(subroutine->blocks)) != NULL)
 	movq	8(%rsp), %rax	; %sfp, subroutine
 	movq	32(%rax), %rdi	; subroutine_56->blocks, subroutine_56->blocks
 	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rbx	; tmp321, block
+	movq	%rax, %rbx	; tmp330, block
 ; src/output.c:500:         while ((block = (Block*)list_pop(subroutine->blocks)) != NULL)
 	testq	%rax, %rax	; block
-	je	.L257	;,
+	je	.L264	;,
 ; src/output.c:501:             output_block(block, outfile, indent + 2);
-	leaq	4(%r14), %r13	;, _118
-; src/output.c:527:     if (block->label == NULL)
-	cmpq	$0, (%rbx)	;, block_119->label
-; src/output.c:528:         tac_output(indent, "NULL ");
+	leaq	4(%r14), %r13	;, _123
+; src/output.c:529:     if (block->label == NULL)
+	cmpq	$0, (%rbx)	;, block_124->label
+; src/output.c:530:         tac_output(indent, "NULL ");
 	movq	%r15, %rdi	; outfile,
-	movq	%r13, %rsi	; _118,
-; src/output.c:527:     if (block->label == NULL)
-	je	.L258	;,
-; src/output.c:530:         tac_output(indent, "%s ", block->label->name);
+	movq	%r13, %rsi	; _123,
+; src/output.c:529:     if (block->label == NULL)
+	je	.L265	;,
+; src/output.c:532:         tac_output(indent, "%s ", block->label->name);
 	call	*indention_tac@GOTPCREL(%rip)	;
-; src/output.c:530:         tac_output(indent, "%s ", block->label->name);
-	movq	(%rbx), %rax	; block_119->label, block_119->label
+; src/output.c:532:         tac_output(indent, "%s ", block->label->name);
+	movq	(%rbx), %rax	; block_124->label, block_124->label
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movl	$2, %esi	;,
 	movq	%r15, %rdi	; outfile,
-	leaq	.LC93(%rip), %rdx	;,
-	movq	8(%rax), %rcx	; _122->name, _122->name
+	leaq	.LC96(%rip), %rdx	;,
+	movq	8(%rax), %rcx	; _127->name, _127->name
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-.L205:
-; src/output.c:531:     if (list_is_empty(block->instructions))
-	movq	8(%rbx), %rdi	; block_119->instructions, block_119->instructions
+.L212:
+; src/output.c:533:     if (list_is_empty(block->instructions))
+	movq	8(%rbx), %rdi	; block_124->instructions, block_124->instructions
 	call	*list_is_empty@GOTPCREL(%rip)	;
-; src/output.c:532:         tac_output(0, "{}\n");
+; src/output.c:534:         tac_output(0, "{}\n");
 	xorl	%esi, %esi	;
 	movq	%r15, %rdi	; outfile,
-; src/output.c:531:     if (list_is_empty(block->instructions))
-	testb	%al, %al	; tmp319
-	je	.L206	;,
-; src/output.c:532:         tac_output(0, "{}\n");
+; src/output.c:533:     if (list_is_empty(block->instructions))
+	testb	%al, %al	; tmp328
+	je	.L213	;,
+; src/output.c:534:         tac_output(0, "{}\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$3, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC95(%rip), %rdi	;, tmp230
+	leaq	.LC98(%rip), %rdi	;, tmp239
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L203	;
+	jmp	.L210	;
 	.p2align 4,,10
 	.p2align 3
-.L206:
-; src/output.c:534:         tac_output(0, "{\n");
+.L213:
+; src/output.c:536:         tac_output(0, "{\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC96(%rip), %rdi	;, tmp231
+	leaq	.LC99(%rip), %rdi	;, tmp240
 	call	*fwrite@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
-.L208:
-; src/output.c:536:         while ((instruction = (Instruction*)list_pop(block->instructions)) != NULL)
-	movq	8(%rbx), %rdi	; block_119->instructions, block_119->instructions
+.L215:
+; src/output.c:538:         while ((instruction = (Instruction*)list_pop(block->instructions)) != NULL)
+	movq	8(%rbx), %rdi	; block_124->instructions, block_124->instructions
 	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp320, instruction
-; src/output.c:536:         while ((instruction = (Instruction*)list_pop(block->instructions)) != NULL)
+	movq	%rax, %rbp	; tmp329, instruction
+; src/output.c:538:         while ((instruction = (Instruction*)list_pop(block->instructions)) != NULL)
 	testq	%rax, %rax	; instruction
-	je	.L259	;,
-; src/output.c:570:     switch (instruction->type) {
-	cmpl	$25, 24(%rbp)	;, instruction_127->type
-; src/output.c:537:             output_instruction(instruction, outfile, indent + 1);
-	leaq	5(%r14), %rsi	;, _126
-; src/output.c:570:     switch (instruction->type) {
-	ja	.L209	;,
-	movl	24(%rbp), %eax	; instruction_127->type, instruction_127->type
-; src/output.c:596:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
+	je	.L266	;,
+; src/output.c:583:     switch (instruction->type) {
+	cmpl	$25, 24(%rbp)	;, instruction_132->type
+; src/output.c:539:             output_instruction(instruction, outfile, indent + 1);
+	leaq	5(%r14), %rsi	;, _131
+; src/output.c:583:     switch (instruction->type) {
+	ja	.L216	;,
+	movl	24(%rbp), %eax	; instruction_132->type, instruction_132->type
+; src/output.c:609:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
 	movq	%r15, %rdi	; outfile,
-; src/output.c:570:     switch (instruction->type) {
-	movslq	(%r12,%rax,4), %rax	;, tmp235
-	addq	%r12, %rax	; tmp292, tmp236
-	jmp	*%rax	; tmp236
+; src/output.c:583:     switch (instruction->type) {
+	movslq	(%r12,%rax,4), %rax	;, tmp244
+	addq	%r12, %rax	; tmp301, tmp245
+	jmp	*%rax	; tmp245
 	.section	.rodata
 	.align 4
 	.align 4
-.L211:
-	.long	.L236-.L211
-	.long	.L235-.L211
-	.long	.L234-.L211
-	.long	.L233-.L211
-	.long	.L232-.L211
-	.long	.L231-.L211
-	.long	.L230-.L211
-	.long	.L229-.L211
-	.long	.L228-.L211
-	.long	.L227-.L211
-	.long	.L226-.L211
-	.long	.L225-.L211
-	.long	.L224-.L211
-	.long	.L223-.L211
-	.long	.L222-.L211
-	.long	.L221-.L211
-	.long	.L220-.L211
-	.long	.L219-.L211
-	.long	.L218-.L211
-	.long	.L217-.L211
-	.long	.L216-.L211
-	.long	.L215-.L211
-	.long	.L214-.L211
-	.long	.L213-.L211
-	.long	.L212-.L211
-	.long	.L210-.L211
+.L218:
+	.long	.L243-.L218
+	.long	.L242-.L218
+	.long	.L241-.L218
+	.long	.L240-.L218
+	.long	.L239-.L218
+	.long	.L238-.L218
+	.long	.L237-.L218
+	.long	.L236-.L218
+	.long	.L235-.L218
+	.long	.L234-.L218
+	.long	.L233-.L218
+	.long	.L232-.L218
+	.long	.L231-.L218
+	.long	.L230-.L218
+	.long	.L229-.L218
+	.long	.L228-.L218
+	.long	.L227-.L218
+	.long	.L226-.L218
+	.long	.L225-.L218
+	.long	.L224-.L218
+	.long	.L223-.L218
+	.long	.L222-.L218
+	.long	.L221-.L218
+	.long	.L220-.L218
+	.long	.L219-.L218
+	.long	.L217-.L218
 	.text
 	.p2align 4,,10
 	.p2align 3
-.L212:
-; src/output.c:595:         case INST_STORE: tac_output(indent, "store\t"); break;
+.L219:
+; src/output.c:608:         case INST_STORE: tac_output(indent, "store\t"); break;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$6, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC142(%rip), %rdi	;, tmp262
+	leaq	.LC146(%rip), %rdi	;, tmp271
 	call	*fwrite@GOTPCREL(%rip)	;
 	.p2align 4,,10
 	.p2align 3
-.L237:
-; src/output.c:602:     output_arg(instruction->arg1, outfile);
-	movq	0(%rbp), %rdi	; instruction_127->arg1, instruction_127->arg1
+.L244:
+; src/output.c:615:     output_arg(instruction->arg1, outfile);
+	movq	0(%rbp), %rdi	; instruction_132->arg1, instruction_132->arg1
 	movq	%r15, %rsi	; outfile,
 	call	output_arg	;
-; src/output.c:603:     switch (instruction->type) {
-	movl	24(%rbp), %ecx	; instruction_127->type, _132
-; src/output.c:603:     switch (instruction->type) {
-	cmpl	$24, %ecx	;, _132
-	ja	.L208	;,
-	movl	$1, %eax	;, tmp267
-	salq	%cl, %rax	; _132, _4
+; src/output.c:616:     switch (instruction->type) {
+	movl	24(%rbp), %ecx	; instruction_132->type, _137
+; src/output.c:616:     switch (instruction->type) {
+	cmpl	$24, %ecx	;, _137
+	ja	.L215	;,
+	movl	$1, %eax	;, tmp276
+	salq	%cl, %rax	; _137, _4
 	testl	$4825087, %eax	;, _4
-	jne	.L239	;,
+	jne	.L246	;,
 	testl	$25583616, %eax	;, _4
-	jne	.L240	;,
+	jne	.L247	;,
 	testl	$3145728, %eax	;, _4
-	je	.L208	;,
-.L241:
-; src/output.c:643:     tac_output(0, "\n");
+	je	.L215	;,
+.L248:
+; src/output.c:656:     tac_output(0, "\n");
 	xorl	%esi, %esi	;
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
@@ -3528,311 +3641,311 @@ output_TAC:
 	movq	%r15, %rsi	; outfile,
 	movl	$10, %edi	;,
 	call	*fputc@GOTPCREL(%rip)	;
-	jmp	.L208	;
-	.p2align 4,,10
-	.p2align 3
-.L213:
-; src/output.c:594:         case INST_LOAD: tac_output(indent, "load\t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$5, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC141(%rip), %rdi	;, tmp261
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L214:
-; src/output.c:593:         case INST_CALL: tac_output(indent, "call\t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$5, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC140(%rip), %rdi	;, tmp260
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L215:
-; src/output.c:592:         case INST_RET: tac_output(indent, "ret\t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$4, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC139(%rip), %rdi	;, tmp259
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L216:
-; src/output.c:591:         case INST_JMP: tac_output(indent, "jmp\t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$4, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC138(%rip), %rdi	;, tmp258
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L217:
-; src/output.c:590:         case INST_JMP_C: tac_output(indent, "jmp_c\t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$6, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC137(%rip), %rdi	;, tmp257
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L218:
-; src/output.c:589:         case INST_ALLOC: tac_output(indent, "alloc\t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$6, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC136(%rip), %rdi	;, tmp256
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L219:
-; src/output.c:588:         case INST_PARAM: tac_output(indent, "param\t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$6, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC135(%rip), %rdi	;, tmp255
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
+	jmp	.L215	;
 	.p2align 4,,10
 	.p2align 3
 .L220:
-; src/output.c:587:         case INST_GET_ELEM: tac_output(indent, "get_elem\t"); break;
+; src/output.c:607:         case INST_LOAD: tac_output(indent, "load\t"); break;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
-	movl	$9, %edx	;,
+	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC134(%rip), %rdi	;, tmp254
+	leaq	.LC145(%rip), %rdi	;, tmp270
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
+	jmp	.L244	;
 	.p2align 4,,10
 	.p2align 3
 .L221:
-; src/output.c:586:         case INST_GET_ATTR: tac_output(indent, "get_attr\t"); break;
+; src/output.c:606:         case INST_CALL: tac_output(indent, "call\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$5, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC144(%rip), %rdi	;, tmp269
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L222:
+; src/output.c:605:         case INST_RET: tac_output(indent, "ret\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$4, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC143(%rip), %rdi	;, tmp268
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L223:
+; src/output.c:604:         case INST_JMP: tac_output(indent, "jmp\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$4, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC142(%rip), %rdi	;, tmp267
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L224:
+; src/output.c:603:         case INST_JMP_C: tac_output(indent, "jmp_c\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$6, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC141(%rip), %rdi	;, tmp266
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L225:
+; src/output.c:602:         case INST_ALLOC: tac_output(indent, "alloc\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$6, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC140(%rip), %rdi	;, tmp265
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L226:
+; src/output.c:601:         case INST_PARAM: tac_output(indent, "param\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$6, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC139(%rip), %rdi	;, tmp264
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L227:
+; src/output.c:600:         case INST_GET_ELEM: tac_output(indent, "get_elem\t"); break;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$9, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC133(%rip), %rdi	;, tmp253
+	leaq	.LC138(%rip), %rdi	;, tmp263
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
+	jmp	.L244	;
 	.p2align 4,,10
 	.p2align 3
-.L222:
-; src/output.c:585:         case INST_ASSIGN: tac_output(indent, "assign\t"); break;
+.L228:
+; src/output.c:599:         case INST_GET_ATTR: tac_output(indent, "get_attr\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$9, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC137(%rip), %rdi	;, tmp262
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L229:
+; src/output.c:598:         case INST_ASSIGN: tac_output(indent, "assign\t"); break;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$7, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC132(%rip), %rdi	;, tmp252
+	leaq	.LC136(%rip), %rdi	;, tmp261
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L223:
-; src/output.c:584:         case INST_NOT: tac_output(indent, "not\t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$4, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC131(%rip), %rdi	;, tmp251
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L224:
-; src/output.c:583:         case INST_OR: tac_output(indent, "or \t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$4, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC130(%rip), %rdi	;, tmp250
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L225:
-; src/output.c:582:         case INST_AND: tac_output(indent, "and\t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$4, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC129(%rip), %rdi	;, tmp249
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L226:
-; src/output.c:581:         case INST_GE: tac_output(indent, "ge \t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$4, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC128(%rip), %rdi	;, tmp248
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L227:
-; src/output.c:580:         case INST_LE: tac_output(indent, "le \t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$4, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC127(%rip), %rdi	;, tmp247
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L228:
-; src/output.c:579:         case INST_GT: tac_output(indent, "gt \t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$4, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC126(%rip), %rdi	;, tmp246
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
-	.p2align 4,,10
-	.p2align 3
-.L229:
-; src/output.c:578:         case INST_LT: tac_output(indent, "lt \t"); break;
-	call	*indention_tac@GOTPCREL(%rip)	;
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; outfile,
-	movl	$4, %edx	;,
-	movl	$1, %esi	;,
-	leaq	.LC125(%rip), %rdi	;, tmp245
-	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
+	jmp	.L244	;
 	.p2align 4,,10
 	.p2align 3
 .L230:
-; src/output.c:577:         case INST_NE: tac_output(indent, "ne \t"); break;
+; src/output.c:597:         case INST_NOT: tac_output(indent, "not\t"); break;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$4, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC124(%rip), %rdi	;, tmp244
+	leaq	.LC135(%rip), %rdi	;, tmp260
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
+	jmp	.L244	;
 	.p2align 4,,10
 	.p2align 3
 .L231:
-; src/output.c:576:         case INST_EQ: tac_output(indent, "eq \t"); break;
+; src/output.c:596:         case INST_OR: tac_output(indent, "or \t"); break;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$4, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC123(%rip), %rdi	;, tmp243
+	leaq	.LC134(%rip), %rdi	;, tmp259
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
+	jmp	.L244	;
 	.p2align 4,,10
 	.p2align 3
 .L232:
-; src/output.c:575:         case INST_MOD: tac_output(indent, "mod\t"); break;
+; src/output.c:595:         case INST_AND: tac_output(indent, "and\t"); break;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$4, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC122(%rip), %rdi	;, tmp242
+	leaq	.LC133(%rip), %rdi	;, tmp258
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
+	jmp	.L244	;
 	.p2align 4,,10
 	.p2align 3
 .L233:
-; src/output.c:574:         case INST_DIV: tac_output(indent, "div\t"); break;
+; src/output.c:594:         case INST_GE: tac_output(indent, "ge \t"); break;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$4, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC121(%rip), %rdi	;, tmp241
+	leaq	.LC132(%rip), %rdi	;, tmp257
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
+	jmp	.L244	;
 	.p2align 4,,10
 	.p2align 3
 .L234:
-; src/output.c:573:         case INST_MUL: tac_output(indent, "mul\t"); break;
+; src/output.c:593:         case INST_LE: tac_output(indent, "le \t"); break;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$4, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC120(%rip), %rdi	;, tmp240
+	leaq	.LC131(%rip), %rdi	;, tmp256
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
+	jmp	.L244	;
 	.p2align 4,,10
 	.p2align 3
 .L235:
-; src/output.c:572:         case INST_SUB: tac_output(indent, "sub\t"); break;
+; src/output.c:592:         case INST_GT: tac_output(indent, "gt \t"); break;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$4, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC119(%rip), %rdi	;, tmp239
+	leaq	.LC130(%rip), %rdi	;, tmp255
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
+	jmp	.L244	;
 	.p2align 4,,10
 	.p2align 3
 .L236:
-; src/output.c:571:         case INST_ADD: tac_output(indent, "add\t"); break;
+; src/output.c:591:         case INST_LT: tac_output(indent, "lt \t"); break;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$4, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC118(%rip), %rdi	;, tmp238
+	leaq	.LC129(%rip), %rdi	;, tmp254
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L237	;
+	jmp	.L244	;
 	.p2align 4,,10
 	.p2align 3
-.L210:
-; src/output.c:596:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
+.L237:
+; src/output.c:590:         case INST_NE: tac_output(indent, "ne \t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$4, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC128(%rip), %rdi	;, tmp253
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L238:
+; src/output.c:589:         case INST_EQ: tac_output(indent, "eq \t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$4, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC127(%rip), %rdi	;, tmp252
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L239:
+; src/output.c:588:         case INST_MOD: tac_output(indent, "mod\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$4, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC126(%rip), %rdi	;, tmp251
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L240:
+; src/output.c:587:         case INST_DIV: tac_output(indent, "div\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$4, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC125(%rip), %rdi	;, tmp250
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L241:
+; src/output.c:586:         case INST_MUL: tac_output(indent, "mul\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$4, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC124(%rip), %rdi	;, tmp249
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L242:
+; src/output.c:585:         case INST_SUB: tac_output(indent, "sub\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$4, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC123(%rip), %rdi	;, tmp248
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L243:
+; src/output.c:584:         case INST_ADD: tac_output(indent, "add\t"); break;
+	call	*indention_tac@GOTPCREL(%rip)	;
+; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+	movq	%r15, %rcx	; outfile,
+	movl	$4, %edx	;,
+	movl	$1, %esi	;,
+	leaq	.LC122(%rip), %rdi	;, tmp247
+	call	*fwrite@GOTPCREL(%rip)	;
+	jmp	.L244	;
+	.p2align 4,,10
+	.p2align 3
+.L217:
+; src/output.c:609:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$10, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC143(%rip), %rdi	;, tmp263
+	leaq	.LC147(%rip), %rdi	;, tmp272
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L208	;
+	jmp	.L215	;
 	.p2align 4,,10
 	.p2align 3
-.L240:
-; src/output.c:632:             tac_output(0, " ");
+.L247:
+; src/output.c:645:             tac_output(0, " ");
 	xorl	%esi, %esi	;
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
@@ -3840,16 +3953,16 @@ output_TAC:
 	movq	%r15, %rsi	; outfile,
 	movl	$32, %edi	;,
 	call	*fputc@GOTPCREL(%rip)	;
-; src/output.c:633:             output_arg(instruction->arg2, outfile);
-	movq	8(%rbp), %rdi	; instruction_127->arg2, instruction_127->arg2
+; src/output.c:646:             output_arg(instruction->arg2, outfile);
+	movq	8(%rbp), %rdi	; instruction_132->arg2, instruction_132->arg2
 	movq	%r15, %rsi	; outfile,
 	call	output_arg	;
-; src/output.c:634:             break;
-	jmp	.L241	;
+; src/output.c:647:             break;
+	jmp	.L248	;
 	.p2align 4,,10
 	.p2align 3
-.L239:
-; src/output.c:621:             tac_output(0, " ");
+.L246:
+; src/output.c:634:             tac_output(0, " ");
 	xorl	%esi, %esi	;
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
@@ -3857,11 +3970,11 @@ output_TAC:
 	movq	%r15, %rsi	; outfile,
 	movl	$32, %edi	;,
 	call	*fputc@GOTPCREL(%rip)	;
-; src/output.c:622:             output_arg(instruction->arg2, outfile);
-	movq	8(%rbp), %rdi	; instruction_127->arg2, instruction_127->arg2
+; src/output.c:635:             output_arg(instruction->arg2, outfile);
+	movq	8(%rbp), %rdi	; instruction_132->arg2, instruction_132->arg2
 	movq	%r15, %rsi	; outfile,
 	call	output_arg	;
-; src/output.c:623:             tac_output(0, " ");
+; src/output.c:636:             tac_output(0, " ");
 	xorl	%esi, %esi	;
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
@@ -3869,17 +3982,17 @@ output_TAC:
 	movq	%r15, %rsi	; outfile,
 	movl	$32, %edi	;,
 	call	*fputc@GOTPCREL(%rip)	;
-; src/output.c:624:             output_arg(instruction->arg3, outfile);
-	movq	16(%rbp), %rdi	; instruction_127->arg3, instruction_127->arg3
+; src/output.c:637:             output_arg(instruction->arg3, outfile);
+	movq	16(%rbp), %rdi	; instruction_132->arg3, instruction_132->arg3
 	movq	%r15, %rsi	; outfile,
 	call	output_arg	;
-; src/output.c:625:             break;
-	jmp	.L241	;
+; src/output.c:638:             break;
+	jmp	.L248	;
 	.p2align 4,,10
 	.p2align 3
-.L259:
-; src/output.c:538:         tac_output(indent, "}\n");
-	movq	%r13, %rsi	; _118,
+.L266:
+; src/output.c:540:         tac_output(indent, "}\n");
+	movq	%r13, %rsi	; _123,
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
@@ -3888,22 +4001,22 @@ output_TAC:
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L203	;
+	jmp	.L210	;
 	.p2align 4,,10
 	.p2align 3
-.L258:
-; src/output.c:528:         tac_output(indent, "NULL ");
+.L265:
+; src/output.c:530:         tac_output(indent, "NULL ");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$5, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC92(%rip), %rdi	;,
+	leaq	.LC95(%rip), %rdi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L205	;
+	jmp	.L212	;
 	.p2align 4,,10
 	.p2align 3
-.L257:
+.L264:
 ; src/output.c:502:         tac_output(indent + 1, "]\n");
 	movq	48(%rsp), %rsi	; %sfp,
 	movq	%r15, %rdi	; outfile,
@@ -3914,38 +4027,38 @@ output_TAC:
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L202	;
+	jmp	.L209	;
 	.p2align 4,,10
 	.p2align 3
-.L197:
+.L204:
 ; src/output.c:489:         tac_output(indent + 1, "local: [\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; src/output.c:492:             output_var(var, outfile, indent + 2);
-	leaq	4(%r14), %rbx	;, tmp289
+	leaq	4(%r14), %rbx	;, tmp298
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$9, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC115(%rip), %rdi	;, tmp218
+	leaq	.LC119(%rip), %rdi	;, tmp227
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L199	;
+	jmp	.L206	;
 	.p2align 4,,10
 	.p2align 3
-.L200:
+.L207:
 ; src/output.c:492:             output_var(var, outfile, indent + 2);
-	movq	%rbx, %rdx	; tmp289,
+	movq	%rbx, %rdx	; tmp298,
 	movq	%r15, %rsi	; outfile,
 	call	output_var	;
-.L199:
+.L206:
 ; src/output.c:491:         while ((var = (Var*)list_pop(subroutine->local_vars)) != NULL)
 	movq	24(%rbp), %rdi	; subroutine_56->local_vars, subroutine_56->local_vars
 	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp317, var
+	movq	%rax, %rdi	; tmp326, var
 ; src/output.c:491:         while ((var = (Var*)list_pop(subroutine->local_vars)) != NULL)
 	testq	%rax, %rax	; var
-	jne	.L200	;,
+	jne	.L207	;,
 ; src/output.c:493:         tac_output(indent + 1, "]\n");
-	movq	%r13, %rsi	; _231,
+	movq	%r13, %rsi	; _238,
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
@@ -3954,34 +4067,34 @@ output_TAC:
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L198	;
-.L209:
-; src/output.c:598:             tac_output(indent, "unknown_InstructionType: %u\n", instruction->type);
+	jmp	.L205	;
+.L216:
+; src/output.c:611:             tac_output(indent, "unknown_InstructionType: %u\n", instruction->type);
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	24(%rbp), %ecx	; instruction_127->type, instruction_127->type
+	movl	24(%rbp), %ecx	; instruction_132->type, instruction_132->type
 	movl	$2, %esi	;,
 	movq	%r15, %rdi	; outfile,
-	leaq	.LC144(%rip), %rdx	;, tmp265
+	leaq	.LC148(%rip), %rdx	;, tmp274
 	xorl	%eax, %eax	;
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-	jmp	.L208	;
+	jmp	.L215	;
 	.p2align 4,,10
 	.p2align 3
-.L255:
+.L262:
 ; src/output.c:474:         tac_output(indent + 1, "return_type: \"NULL\"\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$20, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC110(%rip), %rdi	;, tmp206
+	leaq	.LC114(%rip), %rdi	;, tmp215
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L192	;
+	jmp	.L199	;
 	.p2align 4,,10
 	.p2align 3
-.L254:
+.L261:
 ; src/output.c:470:         tac_output(indent, "NULL {\n");
 	movq	%r15, %rdi	; outfile,
 	movq	%rax, %rsi	; _22,
@@ -3990,56 +4103,56 @@ output_TAC:
 	movq	%r15, %rcx	; outfile,
 	movl	$7, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC108(%rip), %rdi	;, tmp202
+	leaq	.LC112(%rip), %rdi	;, tmp211
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L190	;
-.L182:
+	jmp	.L197	;
+.L189:
 ; src/output.c:444:         tac_output(indent + 1, "global: [\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; src/output.c:447:             output_var(var, outfile, indent + 2);
-	leaq	2(%r14), %rbx	;, tmp295
+	leaq	2(%r14), %rbx	;, tmp304
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$10, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC105(%rip), %rdi	;, tmp195
+	leaq	.LC109(%rip), %rdi	;, tmp204
 	call	*fwrite@GOTPCREL(%rip)	;
 	movq	32(%rsp), %rbp	; %sfp, tac
-	jmp	.L184	;
+	jmp	.L191	;
 	.p2align 4,,10
 	.p2align 3
-.L185:
+.L192:
 ; src/output.c:447:             output_var(var, outfile, indent + 2);
-	movq	%rbx, %rdx	; tmp295,
+	movq	%rbx, %rdx	; tmp304,
 	movq	%r15, %rsi	; outfile,
 	call	output_var	;
-.L184:
+.L191:
 ; src/output.c:446:         while ((var = (Var*)list_pop(tac->global_vars)) != NULL)
 	movq	16(%rbp), %rdi	; tac_32(D)->global_vars, tac_32(D)->global_vars
 	call	*list_pop@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp312, var
+	movq	%rax, %rdi	; tmp321, var
 ; src/output.c:446:         while ((var = (Var*)list_pop(tac->global_vars)) != NULL)
 	testq	%rax, %rax	; var
-	jne	.L185	;,
+	jne	.L192	;,
 ; src/output.c:448:         tac_output(indent + 1, "]\n");
-	movq	%r13, %rsi	; _232,
+	movq	%r13, %rsi	; _239,
 	movq	%r15, %rdi	; outfile,
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	leaq	.LC101(%rip), %r8	;, tmp283
+	leaq	.LC105(%rip), %r8	;, tmp292
 	movq	%r15, %rcx	; outfile,
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
-	movq	%r8, %rdi	; tmp283,
+	movq	%r8, %rdi	; tmp292,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L183	;
-.L253:
+	jmp	.L190	;
+.L260:
 ; src/output.c:457:         tac_output(indent + 1, "]\n");
-	movq	56(%rsp), %r13	; %sfp, _232
-	movq	40(%rsp), %r8	; %sfp, tmp283
+	movq	56(%rsp), %r13	; %sfp, _239
+	movq	40(%rsp), %r8	; %sfp, tmp292
 	movq	%r15, %rdi	; outfile,
-	movq	%r13, %rsi	; _232,
-	movq	%r8, 8(%rsp)	; tmp283, %sfp
+	movq	%r13, %rsi	; _239,
+	movq	%r8, 8(%rsp)	; tmp292, %sfp
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	8(%rsp), %rdi	; %sfp,
@@ -4047,26 +4160,26 @@ output_TAC:
 	movl	$2, %edx	;,
 	movl	$1, %esi	;,
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L187	;
-.L248:
+	jmp	.L194	;
+.L255:
 ; src/output.c:438:         tac_output(indent + 1, "entry_point: \"NULL\"\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$20, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC102(%rip), %rdi	;, tmp189
+	leaq	.LC106(%rip), %rdi	;, tmp198
 	call	*fwrite@GOTPCREL(%rip)	;
-	jmp	.L181	;
-.L247:
+	jmp	.L188	;
+.L254:
 ; src/output.c:423:         tac_output(indent, "TAC: \"NULL\"\n");
 	call	*indention_tac@GOTPCREL(%rip)	;
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; outfile,
 	movl	$12, %edx	;,
 	movl	$1, %esi	;,
-	leaq	.LC88(%rip), %rdi	;, tmp161
-	jmp	.L246	;
+	leaq	.LC91(%rip), %rdi	;, tmp166
+	jmp	.L253	;
 	.size	output_TAC, .-output_TAC
 	.ident	"GCC: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0"
 	.section	.note.GNU-stack,"",@progbits

@@ -131,11 +131,11 @@ init:
 	cmpq	$0, string_memory(%rip)	;, string_memory
 	je	.L40	;,
 .L19:
-	leaq	keywordStrings(%rip), %rbx	;, ivtmp.113
+	leaq	keywordStrings(%rip), %rbx	;, ivtmp.121
 ; src/lib.c:195:     initialized = true;
 	movb	$1, initialized(%rip)	;, initialized
 	movl	$6, %esi	;, _25
-	leaq	keywordList(%rip), %rbp	;, ivtmp.115
+	leaq	keywordList(%rip), %rbp	;, ivtmp.123
 	leaq	176(%rbx), %r13	;, _140
 	movl	$1, %r12d	;, pretmp_127
 	jmp	.L26	;
@@ -151,12 +151,12 @@ init:
 	movq	%rax, 0(%rbp)	; tmp299, MEM[(char * *)_92]
 .L38:
 ; src/lib.c:196:     for (size_t i = 0; i < keywordCount; ++i)
-	addq	$8, %rbx	;, ivtmp.113
+	addq	$8, %rbx	;, ivtmp.121
 ; src/lib.c:127:     if (!initialized) init();
 	movzbl	initialized(%rip), %r12d	; initialized, pretmp_127
 ; src/lib.c:196:     for (size_t i = 0; i < keywordCount; ++i)
-	addq	$8, %rbp	;, ivtmp.115
-	cmpq	%r13, %rbx	; _140, ivtmp.113
+	addq	$8, %rbp	;, ivtmp.123
+	cmpq	%r13, %rbx	; _140, ivtmp.121
 	je	.L41	;,
 ; src/lib.c:197:         keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
 	movq	(%rbx), %rdi	; MEM[(const char * *)_138], MEM[(const char * *)_138]
@@ -185,8 +185,8 @@ init:
 	.p2align 4,,10
 	.p2align 3
 .L41:
-	leaq	symbolStrings(%rip), %rbx	;, ivtmp.92
-	leaq	symbolList(%rip), %rbp	;, ivtmp.94
+	leaq	symbolStrings(%rip), %rbx	;, ivtmp.100
+	leaq	symbolList(%rip), %rbp	;, ivtmp.102
 ; src/lib.c:195:     initialized = true;
 	movl	$1, %esi	;, _35
 	leaq	240(%rbx), %r12	;, _178
@@ -200,12 +200,12 @@ init:
 .L43:
 	call	create_string_check.part.0	;
 ; src/lib.c:198:     for (size_t i = 0; i < symbolCount; ++i)
-	addq	$8, %rbx	;, ivtmp.92
-	addq	$8, %rbp	;, ivtmp.94
+	addq	$8, %rbx	;, ivtmp.100
+	addq	$8, %rbp	;, ivtmp.102
 ; src/lib.c:199:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
 	movq	%rax, -8(%rbp)	; tmp301, MEM[(char * *)_90]
 ; src/lib.c:198:     for (size_t i = 0; i < symbolCount; ++i)
-	cmpq	%r12, %rbx	; _178, ivtmp.92
+	cmpq	%r12, %rbx	; _178, ivtmp.100
 	je	.L30	;,
 .L29:
 ; src/lib.c:199:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
@@ -232,12 +232,12 @@ init:
 	.p2align 3
 .L28:
 ; src/lib.c:198:     for (size_t i = 0; i < symbolCount; ++i)
-	addq	$8, %rbx	;, ivtmp.92
+	addq	$8, %rbx	;, ivtmp.100
 ; src/lib.c:199:         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
 	movq	$0, 0(%rbp)	;, MEM[(char * *)_186]
 ; src/lib.c:198:     for (size_t i = 0; i < symbolCount; ++i)
-	addq	$8, %rbp	;, ivtmp.94
-	cmpq	%r12, %rbx	; _178, ivtmp.92
+	addq	$8, %rbp	;, ivtmp.102
+	cmpq	%r12, %rbx	; _178, ivtmp.100
 	jne	.L29	;,
 	.p2align 4,,10
 	.p2align 3
@@ -909,15 +909,15 @@ is_keyword:
 ; src/lib.c:271:     if (!initialized) init();
 	je	.L105	;,
 .L99:
-	leaq	keywordList(%rip), %rax	;, ivtmp.144
+	leaq	keywordList(%rip), %rax	;, ivtmp.152
 	leaq	176(%rax), %rdx	;, _12
 	jmp	.L101	;
 	.p2align 4,,10
 	.p2align 3
 .L107:
 ; src/lib.c:272:     for (size_t i = 0; i < keywordCount; ++i)
-	addq	$8, %rax	;, ivtmp.144
-	cmpq	%rax, %rdx	; ivtmp.144, _12
+	addq	$8, %rax	;, ivtmp.152
+	cmpq	%rax, %rdx	; ivtmp.152, _12
 	je	.L106	;,
 .L101:
 ; src/lib.c:273:         if (string_equal(str, keywordList[i]))
@@ -1080,6 +1080,32 @@ get_info:
 	call	init	;
 	jmp	.L113	;
 	.size	get_info, .-get_info
+	.p2align 4
+	.globl	to_lower
+	.type	to_lower, @function
+to_lower:
+; src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	leal	-65(%rdi), %edx	;, tmp88
+; src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	leal	32(%rdi), %eax	;, tmp90
+	cmpb	$26, %dl	;, tmp88
+	cmovnb	%edi, %eax	; c,, c
+; src/lib.c:303: }
+	ret	
+	.size	to_lower, .-to_lower
+	.p2align 4
+	.globl	to_upper
+	.type	to_upper, @function
+to_upper:
+; src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	leal	-97(%rdi), %edx	;, tmp88
+; src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	leal	-32(%rdi), %eax	;, tmp90
+	cmpb	$26, %dl	;, tmp88
+	cmovnb	%edi, %eax	; c,, c
+; src/lib.c:307: }
+	ret	
+	.size	to_upper, .-to_upper
 	.section	.rodata
 	.align 8
 	.type	__PRETTY_FUNCTION__.0, @object

@@ -1649,6 +1649,58 @@ get_info:
 	leave	
 	ret	
 	.size	get_info, .-get_info
+	.globl	to_lower
+	.type	to_lower, @function
+to_lower:
+	pushq	%rbp	;
+	movq	%rsp, %rbp	;,
+	movl	%edi, %eax	; c, tmp86
+	movb	%al, -4(%rbp)	; tmp87, c
+; src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	cmpb	$64, -4(%rbp)	;, c
+	jle	.L57	;,
+; src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	cmpb	$90, -4(%rbp)	;, c
+	jg	.L57	;,
+; src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	movzbl	-4(%rbp), %eax	; c, c.54_1
+	addl	$32, %eax	;, _2
+; src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	jmp	.L59	;
+.L57:
+; src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	movzbl	-4(%rbp), %eax	; c, iftmp.53_3
+.L59:
+; src/lib.c:303: }
+	popq	%rbp	;
+	ret	
+	.size	to_lower, .-to_lower
+	.globl	to_upper
+	.type	to_upper, @function
+to_upper:
+	pushq	%rbp	;
+	movq	%rsp, %rbp	;,
+	movl	%edi, %eax	; c, tmp86
+	movb	%al, -4(%rbp)	; tmp87, c
+; src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	cmpb	$96, -4(%rbp)	;, c
+	jle	.L61	;,
+; src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	cmpb	$122, -4(%rbp)	;, c
+	jg	.L61	;,
+; src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	movzbl	-4(%rbp), %eax	; c, c.56_1
+	subl	$32, %eax	;, _2
+; src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	jmp	.L63	;
+.L61:
+; src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	movzbl	-4(%rbp), %eax	; c, iftmp.55_3
+.L63:
+; src/lib.c:307: }
+	popq	%rbp	;
+	ret	
+	.size	to_upper, .-to_upper
 	.section	.rodata
 	.align 8
 	.type	__PRETTY_FUNCTION__.0, @object

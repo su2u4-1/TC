@@ -231,13 +231,13 @@ search_name:
 	.size	search_name, .-search_name
 	.section	.rodata.str1.1
 .LC1:
-	.string	"Warning: Creating symbol with unknown SymbolType: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType: %u\n"
 .LC2:
-	.string	"Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n"
+	.string	"[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n"
 .LC3:
-	.string	"Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
 .LC4:
-	.string	"Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
+	.string	"[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
 	.text
 	.globl	create_symbol
 	.type	create_symbol, @function
@@ -391,7 +391,7 @@ is_builtin_type:
 	.size	is_builtin_type, .-is_builtin_type
 	.section	.rodata.str1.1
 .LC5:
-	.string	"Parser Error at %s:%zu:%zu: %s\n"
+	.string	"[Parser Error] at %s:%zu:%zu: %s\n"
 	.text
 	.globl	parser_error
 	.type	parser_error, @function
@@ -591,16 +591,17 @@ parse_import_file:
 	movq	%rax, %rbx
 	movq	%rax, %rdi
 	call	*fopen@GOTPCREL(%rip)
+	movq	stderr(%rip), %rdi
 	movq	%rbx, %rcx
 	leaq	.LC14(%rip), %rdx
-	movq	%rax, %rbp
 	testq	%rax, %rax
+	movq	%rax, %rbp
+	movl	$2, %esi
 	je	.L122
-	movq	%rbx, %rdx
-	leaq	.LC15(%rip), %rsi
-	movl	$2, %edi
+	leaq	.LC15(%rip), %rdx
+	movl	$2, %esi
 	xorl	%eax, %eax
-	call	*__printf_chk@GOTPCREL(%rip)
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	xorl	%eax, %eax
 	leaq	24(%rsp), %rsi
 	movq	%rbp, %rdi
@@ -613,28 +614,30 @@ parse_import_file:
 	call	*create_file@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	call	create_parser
-	movq	builtin_scope(%rip), %rbp
 	movq	24(%rsp), %rsi
-	movq	%r14, %rdi
-	movq	%rax, %r15
-	call	*create_lexer@GOTPCREL(%rip)
-	movq	%rbp, %rsi
-	movq	%r15, %rdx
-	movq	%rax, %rdi
-	call	*parse_code@GOTPCREL(%rip)
 	movq	%rbx, %rdx
-	movl	$2, %edi
-	leaq	.LC16(%rip), %rsi
+	movq	%r14, %rdi
+	movq	builtin_scope(%rip), %r15
 	movq	%rax, %rbp
+	call	*create_lexer@GOTPCREL(%rip)
+	movq	%rbp, %rdx
+	movq	%rax, %rdi
+	movq	%r15, %rsi
+	call	*parse_code@GOTPCREL(%rip)
+	movq	stderr(%rip), %rdi
+	movq	%rbx, %rcx
+	leaq	.LC16(%rip), %rdx
+	movq	%rax, %rbp
+	movl	$2, %esi
 	xorl	%eax, %eax
-	call	*__printf_chk@GOTPCREL(%rip)
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	testq	%rbp, %rbp
 	jne	.L117
+	movq	stderr(%rip), %rdi
 	movq	%rbx, %rcx
+	movl	$2, %esi
 	leaq	.LC17(%rip), %rdx
 .L122:
-	movq	stderr(%rip), %rdi
-	movl	$2, %esi
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
 .L116:
@@ -853,7 +856,7 @@ operator_precedence:
 	cmpl	$18, %edi
 	ja	.L147
 	movl	%edi, %edi
-	leaq	CSWTCH.68(%rip), %rax
+	leaq	CSWTCH.69(%rip), %rax
 	movsbl	(%rax,%rdi), %eax
 .L147:
 	ret
@@ -954,9 +957,9 @@ operator_to_string:
 	.size	operator_to_string, .-operator_to_string
 	.section	.rodata
 	.align 16
-	.type	CSWTCH.68, @object
-	.size	CSWTCH.68, 19
-CSWTCH.68:
+	.type	CSWTCH.69, @object
+	.size	CSWTCH.69, 19
+CSWTCH.69:
 	.byte	4
 	.byte	4
 	.byte	5

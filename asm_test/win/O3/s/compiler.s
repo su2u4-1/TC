@@ -389,18 +389,16 @@ output_tac:
 .LC15:
 	.ascii "r\0"
 .LC16:
-	.ascii "Error opening file: %s\0"
+	.ascii "Error opening file: %s\12\0"
 .LC17:
 	.ascii ".token\0"
 .LC18:
 	.ascii "w\0"
 .LC19:
-	.ascii "Error opening file: %s\12\0"
-.LC20:
 	.ascii ".ast\0"
-.LC21:
+.LC20:
 	.ascii ".tc\0"
-.LC22:
+.LC21:
 	.ascii ".tac\0"
 	.text
 	.p2align 4
@@ -409,6 +407,7 @@ output_tac:
 parse_file:
 	pushq	%rbp
 	movq	%rsp, %rbp
+	pushq	%r15
 	pushq	%r14
 	movl	%edx, %r14d
 	pushq	%r13
@@ -430,20 +429,21 @@ parse_file:
 	movq	%rax, %rdi
 	call	fopen
 	testq	%rax, %rax
-	je	.L64
+	je	.L63
 	leaq	40(%rsp), %rdx
 	movq	%rax, %rbx
 	movq	%rax, %rcx
 	call	read_source
 	movq	%rbx, %rcx
-	movq	%rax, %rdi
+	movq	%rax, %r15
 	call	fclose
 	movq	40(%rsp), %rdx
-	movq	%rdi, %rcx
+	movq	%rdi, %r8
+	movq	%r15, %rcx
 	call	create_lexer
 	movq	%rax, %rdi
 	testb	%r14b, %r14b
-	jne	.L65
+	jne	.L64
 .L48:
 	movq	%rdi, %rcx
 	movl	%r12d, %ebx
@@ -451,20 +451,21 @@ parse_file:
 	movq	%rsi, %rcx
 	call	create_parser
 	orb	%r13b, %bl
-	jne	.L66
+	jne	.L65
 .L46:
-	leaq	-48(%rbp), %rsp
+	leaq	-56(%rbp), %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%r12
 	popq	%r13
 	popq	%r14
+	popq	%r15
 	popq	%rbp
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L65:
+.L64:
 	movl	$6, %edx
 	leaq	.LC17(%rip), %rcx
 	call	create_string
@@ -482,13 +483,13 @@ parse_file:
 	jne	.L49
 	call	__getreent
 	movq	%rbx, %r8
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
 	jmp	.L48
 	.p2align 4,,10
 	.p2align 3
-.L67:
+.L66:
 	movq	%rax, %rdx
 	movq	%r14, %rcx
 	call	output_one_token
@@ -501,7 +502,7 @@ parse_file:
 	call	get_next_token
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	jne	.L67
+	jne	.L66
 .L50:
 	call	get_info
 	movq	%r14, %rcx
@@ -513,7 +514,7 @@ parse_file:
 	jmp	.L48
 	.p2align 4,,10
 	.p2align 3
-.L66:
+.L65:
 	movq	.refptr.builtin_scope(%rip), %rdx
 	movq	%rax, %r8
 	movq	%rdi, %rcx
@@ -521,12 +522,12 @@ parse_file:
 	call	parse_code
 	movq	%rax, %r14
 	testb	%r13b, %r13b
-	jne	.L68
+	jne	.L67
 .L54:
 	testb	%r12b, %r12b
 	je	.L46
 	movl	$4, %edx
-	leaq	.LC22(%rip), %rcx
+	leaq	.LC21(%rip), %rcx
 	call	create_string
 	movq	%rsi, %rcx
 	movq	%rax, %rdx
@@ -534,7 +535,7 @@ parse_file:
 	movq	%rsi, %rcx
 	call	get_full_path
 	movl	$3, %edx
-	leaq	.LC21(%rip), %rcx
+	leaq	.LC20(%rip), %rcx
 	movq	%rax, %rdi
 	call	create_string
 	movq	%rsi, %rcx
@@ -545,7 +546,7 @@ parse_file:
 	call	fopen
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L69
+	je	.L63
 	movq	%r14, %rcx
 	call	tac_code
 	movq	%rbx, %rdx
@@ -557,7 +558,7 @@ parse_file:
 	leaq	.LC14(%rip), %rdx
 	movq	%rax, %r8
 	call	fprintf
-	leaq	-48(%rbp), %rsp
+	leaq	-56(%rbp), %rsp
 	movq	%rbx, %rcx
 	popq	%rbx
 	popq	%rsi
@@ -565,13 +566,31 @@ parse_file:
 	popq	%r12
 	popq	%r13
 	popq	%r14
+	popq	%r15
 	popq	%rbp
 	jmp	fclose
 	.p2align 4,,10
 	.p2align 3
-.L68:
+.L63:
+	call	__getreent
+	movq	%rdi, %r8
+	leaq	.LC16(%rip), %rdx
+	movq	24(%rax), %rcx
+	leaq	-56(%rbp), %rsp
+	popq	%rbx
+	popq	%rsi
+	popq	%rdi
+	popq	%r12
+	popq	%r13
+	popq	%r14
+	popq	%r15
+	popq	%rbp
+	jmp	fprintf
+	.p2align 4,,10
+	.p2align 3
+.L67:
 	movl	$4, %edx
-	leaq	.LC20(%rip), %rcx
+	leaq	.LC19(%rip), %rcx
 	call	create_string
 	movq	%rsi, %rcx
 	movq	%rax, %rdx
@@ -579,7 +598,7 @@ parse_file:
 	movq	%rsi, %rcx
 	call	get_full_path
 	movl	$3, %edx
-	leaq	.LC21(%rip), %rcx
+	leaq	.LC20(%rip), %rcx
 	movq	%rax, %rdi
 	call	create_string
 	movq	%rsi, %rcx
@@ -590,7 +609,7 @@ parse_file:
 	call	fopen
 	movq	%rax, %rbx
 	testq	%rax, %rax
-	je	.L70
+	je	.L68
 	leaq	48(%rsp), %r9
 	xorl	%r8d, %r8d
 	movq	%r14, %rcx
@@ -606,35 +625,10 @@ parse_file:
 	jmp	.L54
 	.p2align 4,,10
 	.p2align 3
-.L69:
-	call	__getreent
-	movq	%rdi, %r8
-	leaq	.LC19(%rip), %rdx
-	movq	24(%rax), %rcx
-.L63:
-	leaq	-48(%rbp), %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rdi
-	popq	%r12
-	popq	%r13
-	popq	%r14
-	popq	%rbp
-	jmp	fprintf
-	.p2align 4,,10
-	.p2align 3
-.L64:
+.L68:
 	call	__getreent
 	movq	%rdi, %r8
 	leaq	.LC16(%rip), %rdx
-	movq	24(%rax), %rcx
-	jmp	.L63
-	.p2align 4,,10
-	.p2align 3
-.L70:
-	call	__getreent
-	movq	%rdi, %r8
-	leaq	.LC19(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
 	jmp	.L54

@@ -164,16 +164,16 @@ list_is_empty:
 	.section	.rodata.str1.8
 	.align 8
 .LC1:
-	.string	"Warning: Creating symbol with unknown SymbolType: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType: %u\n"
 	.align 8
 .LC2:
-	.string	"Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
 	.align 8
 .LC3:
-	.string	"Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
+	.string	"[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
 	.align 8
 .LC4:
-	.string	"Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n"
+	.string	"[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n"
 	.text
 	.p2align 4
 	.globl	create_symbol
@@ -517,7 +517,7 @@ is_builtin_type:
 	.section	.rodata.str1.8
 	.align 8
 .LC5:
-	.string	"Parser Error at %s:%zu:%zu: %s\n"
+	.string	"[Parser Error] at %s:%zu:%zu: %s\n"
 	.text
 	.p2align 4
 	.globl	parser_error
@@ -755,14 +755,15 @@ parse_import_file:
 	leaq	.LC13(%rip), %rsi
 	movq	%r13, %rdi
 	call	*fopen@GOTPCREL(%rip)
+	movq	%r13, %rcx
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	je	.L176
-	movq	%r13, %rdx
-	leaq	.LC15(%rip), %rsi
-	movl	$2, %edi
+	leaq	.LC15(%rip), %rdx
+	movq	stderr(%rip), %rdi
+	movl	$2, %esi
 	xorl	%eax, %eax
-	call	*__printf_chk@GOTPCREL(%rip)
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	leaq	8(%rsp), %rsi
 	movq	%rbx, %rdi
 	movq	$0, 8(%rsp)
@@ -776,6 +777,7 @@ parse_import_file:
 	movq	%rax, %r14
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
+	movq	%r13, %rdx
 	movq	%rbp, %rdi
 	movq	%rax, %rbx
 	xorl	%eax, %eax
@@ -788,12 +790,13 @@ parse_import_file:
 	movq	%r14, %rsi
 	movq	%rax, %rdi
 	call	*parse_code@GOTPCREL(%rip)
-	movq	%r13, %rdx
-	movl	$2, %edi
-	leaq	.LC16(%rip), %rsi
+	movq	stderr(%rip), %rdi
+	movq	%r13, %rcx
+	leaq	.LC16(%rip), %rdx
 	movq	%rax, %rbx
+	movl	$2, %esi
 	xorl	%eax, %eax
-	call	*__printf_chk@GOTPCREL(%rip)
+	call	*__fprintf_chk@GOTPCREL(%rip)
 	testq	%rbx, %rbx
 	je	.L177
 	movq	8(%rbx), %r14
@@ -901,11 +904,10 @@ parse_import_file:
 	jmp	.L149
 .L176:
 	movq	stderr(%rip), %rdi
-	movq	%r13, %rcx
+	movl	$2, %esi
 	xorl	%eax, %eax
 	xorl	%ebp, %ebp
 	leaq	.LC14(%rip), %rdx
-	movl	$2, %esi
 	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L149
 	.size	parse_import_file, .-parse_import_file
@@ -1098,7 +1100,7 @@ operator_precedence:
 	cmpl	$18, %edi
 	ja	.L205
 	movl	%edi, %edi
-	leaq	CSWTCH.68(%rip), %rax
+	leaq	CSWTCH.69(%rip), %rax
 	movl	(%rax,%rdi,4), %eax
 .L205:
 	ret
@@ -1252,9 +1254,9 @@ operator_to_string.cold:
 .LHOTE20:
 	.section	.rodata
 	.align 32
-	.type	CSWTCH.68, @object
-	.size	CSWTCH.68, 76
-CSWTCH.68:
+	.type	CSWTCH.69, @object
+	.size	CSWTCH.69, 76
+CSWTCH.69:
 	.long	4
 	.long	4
 	.long	5

@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,6 +92,8 @@ pointer alloc_memory(size_t size);
 char is_keyword(const string str);
 char string_equal(string a, string b);
 string get_info(void);
+char to_lower(char c);
+char to_upper(char c);
 static const char* keywordStrings[22] = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void", "var"};
 string keywordList[22] = {0};
 static const char* symbolStrings[30] = {"(", ")", "{", "}", ",", "!", ".", "[", "]", ";", "_", "+", "-", "*", "/", "%", "<", ">", "=", "==", "!=", "<=", ">=", "+=", "-=", "*=", "/=", "%=", "&&", "||"};
@@ -367,6 +368,12 @@ string get_info(void) {
     string string_memory_used_str = create_string_check("", 48, 0);
     sprintf(string_memory_used_str, "%zu/%zu bytes", string_memory_used + string_memory->used, string_memory_count);
     string info = (string)create_string_check("", 240, 0);
-    sprintf(info, "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu", 3, struct_memory_used_str, string_memory_used_str, stringCount, memoryBlockCount);
+    sprintf(info, "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu", 2, struct_memory_used_str, string_memory_used_str, stringCount, memoryBlockCount);
     return info;
+}
+inline char to_lower(char c) {
+    return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+}
+inline char to_upper(char c) {
+    return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
 }

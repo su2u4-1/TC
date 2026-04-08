@@ -64,7 +64,7 @@ create_code_member:
 	leaq	.LC0(%rip), %rax
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
-	jmp	.L7
+	jmp	.L3
 .L6:
 	movq	stderr(%rip), %rax
 	movl	-20(%rbp), %edx
@@ -73,12 +73,8 @@ create_code_member:
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*fprintf@GOTPCREL(%rip)
-.L7:
-	movl	$0, %eax
-	jmp	.L8
 .L3:
 	movq	-8(%rbp), %rax
-.L8:
 	leave
 	ret
 	.size	create_code_member, .-create_code_member
@@ -117,7 +113,7 @@ create_import:
 	movq	%rdi, -24(%rbp)
 	movq	%rsi, -32(%rbp)
 	cmpq	$0, -24(%rbp)
-	jne	.L12
+	jne	.L11
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$36, %edx
@@ -126,8 +122,8 @@ create_import:
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L13
-.L12:
+	jmp	.L12
+.L11:
 	movl	$16, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, -8(%rbp)
@@ -138,7 +134,7 @@ create_import:
 	movq	-32(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
-.L13:
+.L12:
 	leave
 	ret
 	.size	create_import, .-create_import
@@ -160,10 +156,10 @@ create_function_use_ptr:
 	movq	%r8, -40(%rbp)
 	movq	%r9, -48(%rbp)
 	cmpq	$0, -16(%rbp)
-	je	.L15
+	je	.L14
 	cmpq	$0, -24(%rbp)
-	jne	.L16
-.L15:
+	jne	.L15
+.L14:
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$53, %edx
@@ -172,8 +168,8 @@ create_function_use_ptr:
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L17
-.L16:
+	jmp	.L16
+.L15:
 	movq	-8(%rbp), %rax
 	movq	-16(%rbp), %rdx
 	movq	%rdx, (%rax)
@@ -190,53 +186,10 @@ create_function_use_ptr:
 	movq	-48(%rbp), %rdx
 	movq	%rdx, 32(%rax)
 	movq	-8(%rbp), %rax
-.L17:
+.L16:
 	leave
 	ret
 	.size	create_function_use_ptr, .-create_function_use_ptr
-	.globl	create_function
-	.type	create_function, @function
-create_function:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$64, %rsp
-	movq	%rdi, -24(%rbp)
-	movq	%rsi, -32(%rbp)
-	movq	%rdx, -40(%rbp)
-	movq	%rcx, -48(%rbp)
-	movq	%r8, -56(%rbp)
-	cmpq	$0, -24(%rbp)
-	je	.L19
-	cmpq	$0, -32(%rbp)
-	jne	.L20
-.L19:
-	movq	stderr(%rip), %rax
-	movq	%rax, %rcx
-	movl	$53, %edx
-	movl	$1, %esi
-	leaq	.LC3(%rip), %rax
-	movq	%rax, %rdi
-	call	*fwrite@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L21
-.L20:
-	movl	$40, %edi
-	call	*alloc_memory@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-56(%rbp), %r8
-	movq	-48(%rbp), %rdi
-	movq	-40(%rbp), %rcx
-	movq	-32(%rbp), %rdx
-	movq	-24(%rbp), %rsi
-	movq	-8(%rbp), %rax
-	movq	%r8, %r9
-	movq	%rdi, %r8
-	movq	%rax, %rdi
-	call	create_function_use_ptr
-.L21:
-	leave
-	ret
-	.size	create_function, .-create_function
 	.section	.rodata
 	.align 8
 .LC4:
@@ -255,10 +208,10 @@ create_method_use_ptr:
 	movq	%r8, -40(%rbp)
 	movq	%r9, -48(%rbp)
 	cmpq	$0, -16(%rbp)
-	je	.L23
+	je	.L18
 	cmpq	$0, -24(%rbp)
-	jne	.L24
-.L23:
+	jne	.L19
+.L18:
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$51, %edx
@@ -267,8 +220,8 @@ create_method_use_ptr:
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L25
-.L24:
+	jmp	.L20
+.L19:
 	movq	-8(%rbp), %rax
 	movq	-16(%rbp), %rdx
 	movq	%rdx, (%rax)
@@ -285,53 +238,10 @@ create_method_use_ptr:
 	movq	-48(%rbp), %rdx
 	movq	%rdx, 32(%rax)
 	movq	-8(%rbp), %rax
-.L25:
+.L20:
 	leave
 	ret
 	.size	create_method_use_ptr, .-create_method_use_ptr
-	.globl	create_method
-	.type	create_method, @function
-create_method:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$64, %rsp
-	movq	%rdi, -24(%rbp)
-	movq	%rsi, -32(%rbp)
-	movq	%rdx, -40(%rbp)
-	movq	%rcx, -48(%rbp)
-	movq	%r8, -56(%rbp)
-	cmpq	$0, -24(%rbp)
-	je	.L27
-	cmpq	$0, -32(%rbp)
-	jne	.L28
-.L27:
-	movq	stderr(%rip), %rax
-	movq	%rax, %rcx
-	movl	$51, %edx
-	movl	$1, %esi
-	leaq	.LC4(%rip), %rax
-	movq	%rax, %rdi
-	call	*fwrite@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L29
-.L28:
-	movl	$40, %edi
-	call	*alloc_memory@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-56(%rbp), %r8
-	movq	-48(%rbp), %rdi
-	movq	-40(%rbp), %rcx
-	movq	-32(%rbp), %rdx
-	movq	-24(%rbp), %rsi
-	movq	-8(%rbp), %rax
-	movq	%r8, %r9
-	movq	%rdi, %r8
-	movq	%rax, %rdi
-	call	create_method_use_ptr
-.L29:
-	leave
-	ret
-	.size	create_method, .-create_method
 	.section	.rodata
 	.align 8
 .LC5:
@@ -356,27 +266,27 @@ create_class_member:
 	movl	-20(%rbp), %edx
 	movl	%edx, 8(%rax)
 	cmpl	$0, -20(%rbp)
-	jne	.L31
+	jne	.L22
 	cmpq	$0, -32(%rbp)
-	je	.L31
+	je	.L22
 	movq	-8(%rbp), %rax
 	movq	-32(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L32
-.L31:
+	jmp	.L23
+.L22:
 	cmpl	$1, -20(%rbp)
-	jne	.L33
+	jne	.L24
 	cmpq	$0, -40(%rbp)
-	je	.L33
+	je	.L24
 	movq	-8(%rbp), %rax
 	movq	-40(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L32
-.L33:
+	jmp	.L23
+.L24:
 	cmpq	$0, -32(%rbp)
-	jne	.L34
+	jne	.L25
 	cmpq	$0, -40(%rbp)
-	jne	.L34
+	jne	.L25
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$45, %edx
@@ -384,8 +294,8 @@ create_class_member:
 	leaq	.LC5(%rip), %rax
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
-	jmp	.L35
-.L34:
+	jmp	.L26
+.L25:
 	movq	stderr(%rip), %rax
 	movl	-20(%rbp), %edx
 	leaq	.LC6(%rip), %rcx
@@ -393,12 +303,12 @@ create_class_member:
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*fprintf@GOTPCREL(%rip)
-.L35:
+.L26:
 	movl	$0, %eax
-	jmp	.L36
-.L32:
+	jmp	.L27
+.L23:
 	movq	-8(%rbp), %rax
-.L36:
+.L27:
 	leave
 	ret
 	.size	create_class_member, .-create_class_member
@@ -419,7 +329,7 @@ create_class_use_ptr:
 	movq	%rcx, -32(%rbp)
 	movq	%r8, -40(%rbp)
 	cmpq	$0, -16(%rbp)
-	jne	.L38
+	jne	.L29
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$35, %edx
@@ -428,8 +338,8 @@ create_class_use_ptr:
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L39
-.L38:
+	jmp	.L30
+.L29:
 	movq	-8(%rbp), %rax
 	movq	-16(%rbp), %rdx
 	movq	%rdx, (%rax)
@@ -443,47 +353,10 @@ create_class_use_ptr:
 	movq	-40(%rbp), %rdx
 	movq	%rdx, 24(%rax)
 	movq	-8(%rbp), %rax
-.L39:
+.L30:
 	leave
 	ret
 	.size	create_class_use_ptr, .-create_class_use_ptr
-	.globl	create_class
-	.type	create_class, @function
-create_class:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$48, %rsp
-	movq	%rdi, -24(%rbp)
-	movq	%rsi, -32(%rbp)
-	movq	%rdx, -40(%rbp)
-	movq	%rcx, -48(%rbp)
-	cmpq	$0, -24(%rbp)
-	jne	.L41
-	movq	stderr(%rip), %rax
-	movq	%rax, %rcx
-	movl	$35, %edx
-	movl	$1, %esi
-	leaq	.LC7(%rip), %rax
-	movq	%rax, %rdi
-	call	*fwrite@GOTPCREL(%rip)
-	movl	$0, %eax
-	jmp	.L42
-.L41:
-	movl	$32, %edi
-	call	*alloc_memory@GOTPCREL(%rip)
-	movq	%rax, -8(%rbp)
-	movq	-48(%rbp), %rdi
-	movq	-40(%rbp), %rcx
-	movq	-32(%rbp), %rdx
-	movq	-24(%rbp), %rsi
-	movq	-8(%rbp), %rax
-	movq	%rdi, %r8
-	movq	%rax, %rdi
-	call	create_class_use_ptr
-.L42:
-	leave
-	ret
-	.size	create_class, .-create_class
 	.section	.rodata
 	.align 8
 .LC8:
@@ -499,10 +372,10 @@ create_variable:
 	movq	%rsi, -32(%rbp)
 	movq	%rdx, -40(%rbp)
 	cmpq	$0, -24(%rbp)
-	je	.L44
+	je	.L32
 	cmpq	$0, -32(%rbp)
-	jne	.L45
-.L44:
+	jne	.L33
+.L32:
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$46, %edx
@@ -511,8 +384,8 @@ create_variable:
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L46
-.L45:
+	jmp	.L34
+.L33:
 	movl	$24, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, -8(%rbp)
@@ -526,7 +399,7 @@ create_variable:
 	movq	-40(%rbp), %rdx
 	movq	%rdx, 16(%rax)
 	movq	-8(%rbp), %rax
-.L46:
+.L34:
 	leave
 	ret
 	.size	create_variable, .-create_variable
@@ -557,76 +430,76 @@ create_statement:
 	movl	-20(%rbp), %edx
 	movl	%edx, 8(%rax)
 	cmpl	$0, -20(%rbp)
-	jne	.L48
+	jne	.L36
 	cmpq	$0, -56(%rbp)
-	je	.L48
+	je	.L36
 	movq	-8(%rbp), %rax
 	movq	-56(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L49
-.L48:
+	jmp	.L37
+.L36:
 	cmpl	$1, -20(%rbp)
-	jne	.L50
+	jne	.L38
 	cmpq	$0, -64(%rbp)
-	je	.L50
+	je	.L38
 	movq	-8(%rbp), %rax
 	movq	-64(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L49
-.L50:
+	jmp	.L37
+.L38:
 	cmpl	$2, -20(%rbp)
-	jne	.L51
+	jne	.L39
 	cmpq	$0, -32(%rbp)
-	je	.L51
+	je	.L39
 	movq	-8(%rbp), %rax
 	movq	-32(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L49
-.L51:
+	jmp	.L37
+.L39:
 	cmpl	$3, -20(%rbp)
-	jne	.L52
+	jne	.L40
 	cmpq	$0, -40(%rbp)
-	je	.L52
+	je	.L40
 	movq	-8(%rbp), %rax
 	movq	-40(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L49
-.L52:
+	jmp	.L37
+.L40:
 	cmpl	$4, -20(%rbp)
-	jne	.L53
+	jne	.L41
 	cmpq	$0, -48(%rbp)
-	je	.L53
+	je	.L41
 	movq	-8(%rbp), %rax
 	movq	-48(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L49
-.L53:
+	jmp	.L37
+.L41:
 	cmpl	$5, -20(%rbp)
-	jne	.L54
+	jne	.L42
 	movq	-8(%rbp), %rax
 	movq	-56(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L49
-.L54:
+	jmp	.L37
+.L42:
 	cmpl	$6, -20(%rbp)
-	je	.L55
+	je	.L43
 	cmpl	$7, -20(%rbp)
-	jne	.L56
-.L55:
+	jne	.L44
+.L43:
 	movq	-8(%rbp), %rax
 	movq	$0, (%rax)
-	jmp	.L49
-.L56:
+	jmp	.L37
+.L44:
 	cmpq	$0, -32(%rbp)
-	jne	.L57
+	jne	.L45
 	cmpq	$0, -40(%rbp)
-	jne	.L57
+	jne	.L45
 	cmpq	$0, -48(%rbp)
-	jne	.L57
+	jne	.L45
 	cmpq	$0, -56(%rbp)
-	jne	.L57
+	jne	.L45
 	cmpq	$0, -64(%rbp)
-	jne	.L57
+	jne	.L45
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$42, %edx
@@ -634,8 +507,8 @@ create_statement:
 	leaq	.LC9(%rip), %rax
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
-	jmp	.L58
-.L57:
+	jmp	.L46
+.L45:
 	movq	stderr(%rip), %rax
 	movl	-20(%rbp), %edx
 	leaq	.LC10(%rip), %rcx
@@ -643,12 +516,12 @@ create_statement:
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*fprintf@GOTPCREL(%rip)
-.L58:
+.L46:
 	movl	$0, %eax
-	jmp	.L59
-.L49:
+	jmp	.L47
+.L37:
 	movq	-8(%rbp), %rax
-.L59:
+.L47:
 	leave
 	ret
 	.size	create_statement, .-create_statement
@@ -668,7 +541,7 @@ create_if:
 	movq	%rdx, -40(%rbp)
 	movq	%rcx, -48(%rbp)
 	cmpq	$0, -24(%rbp)
-	jne	.L61
+	jne	.L49
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$47, %edx
@@ -677,8 +550,8 @@ create_if:
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L62
-.L61:
+	jmp	.L50
+.L49:
 	movl	$32, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, -8(%rbp)
@@ -695,7 +568,7 @@ create_if:
 	movq	-48(%rbp), %rdx
 	movq	%rdx, 24(%rax)
 	movq	-8(%rbp), %rax
-.L62:
+.L50:
 	leave
 	ret
 	.size	create_if, .-create_if
@@ -713,7 +586,7 @@ create_else_if:
 	movq	%rdi, -24(%rbp)
 	movq	%rsi, -32(%rbp)
 	cmpq	$0, -24(%rbp)
-	jne	.L64
+	jne	.L52
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$52, %edx
@@ -722,8 +595,8 @@ create_else_if:
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L65
-.L64:
+	jmp	.L53
+.L52:
 	movl	$16, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, -8(%rbp)
@@ -734,7 +607,7 @@ create_else_if:
 	movq	-32(%rbp), %rdx
 	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
-.L65:
+.L53:
 	leave
 	ret
 	.size	create_else_if, .-create_else_if
@@ -816,40 +689,40 @@ create_expression:
 	sete	%al
 	xorl	%edx, %eax
 	testb	%al, %al
-	jne	.L71
+	jne	.L59
 	cmpq	$0, -32(%rbp)
-	jne	.L72
+	jne	.L60
 	cmpq	$0, -40(%rbp)
-	jne	.L72
-.L71:
+	jne	.L60
+.L59:
 	cmpq	$0, -48(%rbp)
-	jne	.L73
+	jne	.L61
 	leaq	.LC13(%rip), %rsi
-	jmp	.L74
-.L73:
+	jmp	.L62
+.L61:
 	leaq	.LC14(%rip), %rsi
-.L74:
+.L62:
 	cmpq	$0, -40(%rbp)
-	jne	.L75
+	jne	.L63
 	leaq	.LC13(%rip), %rcx
-	jmp	.L76
-.L75:
+	jmp	.L64
+.L63:
 	leaq	.LC14(%rip), %rcx
-.L76:
+.L64:
 	cmpq	$0, -32(%rbp)
-	jne	.L77
+	jne	.L65
 	leaq	.LC13(%rip), %rdx
-	jmp	.L78
-.L77:
+	jmp	.L66
+.L65:
 	leaq	.LC14(%rip), %rdx
-.L78:
+.L66:
 	cmpl	$19, -20(%rbp)
-	jne	.L79
+	jne	.L67
 	leaq	.LC13(%rip), %rax
-	jmp	.L80
-.L79:
+	jmp	.L68
+.L67:
 	leaq	.LC14(%rip), %rax
-.L80:
+.L68:
 	movq	stderr(%rip), %rdi
 	movq	%rsi, %r9
 	movq	%rcx, %r8
@@ -860,8 +733,8 @@ create_expression:
 	movl	$0, %eax
 	call	*fprintf@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L81
-.L72:
+	jmp	.L69
+.L60:
 	movl	$32, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, -8(%rbp)
@@ -869,19 +742,19 @@ create_expression:
 	movl	-20(%rbp), %edx
 	movl	%edx, 24(%rax)
 	cmpq	$0, -32(%rbp)
-	je	.L82
+	je	.L70
 	movq	-8(%rbp), %rax
 	movq	-32(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L83
-.L82:
+	jmp	.L71
+.L70:
 	cmpq	$0, -40(%rbp)
-	je	.L84
+	je	.L72
 	movq	-8(%rbp), %rax
 	movq	-40(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	jmp	.L83
-.L84:
+	jmp	.L71
+.L72:
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$65, %edx
@@ -890,13 +763,13 @@ create_expression:
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L81
-.L83:
+	jmp	.L69
+.L71:
 	movq	-8(%rbp), %rax
 	movq	-48(%rbp), %rdx
 	movq	%rdx, 16(%rax)
 	movq	-8(%rbp), %rax
-.L81:
+.L69:
 	leave
 	ret
 	.size	create_expression, .-create_expression
@@ -926,61 +799,61 @@ create_primary:
 	movl	-20(%rbp), %edx
 	movl	%edx, 8(%rax)
 	cmpl	$0, -20(%rbp)
-	je	.L86
+	je	.L74
 	cmpl	$1, -20(%rbp)
-	je	.L86
+	je	.L74
 	cmpl	$2, -20(%rbp)
-	je	.L86
+	je	.L74
 	cmpl	$3, -20(%rbp)
-	je	.L86
+	je	.L74
 	cmpl	$4, -20(%rbp)
-	jne	.L87
-.L86:
+	jne	.L75
+.L74:
 	cmpq	$0, -32(%rbp)
-	je	.L87
+	je	.L75
 	movq	-8(%rbp), %rax
 	movq	-32(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L88
-.L87:
+	jmp	.L76
+.L75:
 	cmpl	$5, -20(%rbp)
-	jne	.L89
+	jne	.L77
 	cmpq	$0, -40(%rbp)
-	je	.L89
+	je	.L77
 	movq	-8(%rbp), %rax
 	movq	-40(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L88
-.L89:
+	jmp	.L76
+.L77:
 	cmpl	$6, -20(%rbp)
-	je	.L90
+	je	.L78
 	cmpl	$7, -20(%rbp)
-	jne	.L91
-.L90:
+	jne	.L79
+.L78:
 	cmpq	$0, -48(%rbp)
-	je	.L91
+	je	.L79
 	movq	-8(%rbp), %rax
 	movq	-48(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L88
-.L91:
+	jmp	.L76
+.L79:
 	cmpl	$8, -20(%rbp)
-	jne	.L92
+	jne	.L80
 	cmpq	$0, -56(%rbp)
-	je	.L92
+	je	.L80
 	movq	-8(%rbp), %rax
 	movq	-56(%rbp), %rdx
 	movq	%rdx, (%rax)
-	jmp	.L88
-.L92:
+	jmp	.L76
+.L80:
 	cmpq	$0, -32(%rbp)
-	jne	.L93
+	jne	.L81
 	cmpq	$0, -40(%rbp)
-	jne	.L93
+	jne	.L81
 	cmpq	$0, -48(%rbp)
-	jne	.L93
+	jne	.L81
 	cmpq	$0, -56(%rbp)
-	jne	.L93
+	jne	.L81
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$38, %edx
@@ -988,8 +861,8 @@ create_primary:
 	leaq	.LC17(%rip), %rax
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
-	jmp	.L94
-.L93:
+	jmp	.L82
+.L81:
 	movq	stderr(%rip), %rax
 	movl	-20(%rbp), %edx
 	leaq	.LC18(%rip), %rcx
@@ -997,12 +870,12 @@ create_primary:
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*fprintf@GOTPCREL(%rip)
-.L94:
+.L82:
 	movl	$0, %eax
-	jmp	.L95
-.L88:
+	jmp	.L83
+.L76:
 	movq	-8(%rbp), %rax
-.L95:
+.L83:
 	leave
 	ret
 	.size	create_primary, .-create_primary
@@ -1034,21 +907,21 @@ create_variable_access:
 	sete	%al
 	xorl	%edx, %eax
 	testb	%al, %al
-	je	.L97
+	je	.L85
 	cmpl	$0, -20(%rbp)
-	jne	.L98
+	jne	.L86
 	leaq	.LC13(%rip), %rdx
-	jmp	.L99
-.L98:
+	jmp	.L87
+.L86:
 	leaq	.LC14(%rip), %rdx
-.L99:
+.L87:
 	cmpq	$0, -32(%rbp)
-	jne	.L100
+	jne	.L88
 	leaq	.LC13(%rip), %rax
-	jmp	.L101
-.L100:
+	jmp	.L89
+.L88:
 	leaq	.LC14(%rip), %rax
-.L101:
+.L89:
 	movq	stderr(%rip), %rdi
 	movq	%rdx, %rcx
 	movq	%rax, %rdx
@@ -1057,8 +930,8 @@ create_variable_access:
 	movl	$0, %eax
 	call	*fprintf@GOTPCREL(%rip)
 	movl	$0, %eax
-	jmp	.L102
-.L97:
+	jmp	.L90
+.L85:
 	movl	$24, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rax, -8(%rbp)
@@ -1069,47 +942,47 @@ create_variable_access:
 	movq	-32(%rbp), %rdx
 	movq	%rdx, (%rax)
 	cmpl	$0, -20(%rbp)
-	jne	.L103
+	jne	.L91
 	cmpq	$0, -40(%rbp)
-	je	.L103
+	je	.L91
 	movq	-8(%rbp), %rax
 	movq	-40(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	jmp	.L104
-.L103:
+	jmp	.L92
+.L91:
 	cmpl	$1, -20(%rbp)
-	jne	.L105
+	jne	.L93
 	cmpq	$0, -56(%rbp)
-	je	.L105
+	je	.L93
 	movq	-8(%rbp), %rax
 	movq	-56(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	jmp	.L104
-.L105:
+	jmp	.L92
+.L93:
 	cmpl	$3, -20(%rbp)
-	jne	.L106
+	jne	.L94
 	cmpq	$0, -48(%rbp)
-	je	.L106
+	je	.L94
 	movq	-8(%rbp), %rax
 	movq	-48(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	jmp	.L104
-.L106:
+	jmp	.L92
+.L94:
 	cmpl	$2, -20(%rbp)
-	jne	.L107
+	jne	.L95
 	cmpq	$0, -40(%rbp)
-	je	.L107
+	je	.L95
 	movq	-8(%rbp), %rax
 	movq	-40(%rbp), %rdx
 	movq	%rdx, 8(%rax)
-	jmp	.L104
-.L107:
+	jmp	.L92
+.L95:
 	cmpq	$0, -40(%rbp)
-	jne	.L108
+	jne	.L96
 	cmpq	$0, -48(%rbp)
-	jne	.L108
+	jne	.L96
 	cmpq	$0, -56(%rbp)
-	jne	.L108
+	jne	.L96
 	movq	stderr(%rip), %rax
 	movq	%rax, %rcx
 	movl	$48, %edx
@@ -1117,8 +990,8 @@ create_variable_access:
 	leaq	.LC20(%rip), %rax
 	movq	%rax, %rdi
 	call	*fwrite@GOTPCREL(%rip)
-	jmp	.L109
-.L108:
+	jmp	.L97
+.L96:
 	movq	stderr(%rip), %rax
 	movl	-20(%rbp), %edx
 	leaq	.LC21(%rip), %rcx
@@ -1126,12 +999,12 @@ create_variable_access:
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*fprintf@GOTPCREL(%rip)
-.L109:
+.L97:
 	movl	$0, %eax
-	jmp	.L102
-.L104:
+	jmp	.L90
+.L92:
 	movq	-8(%rbp), %rax
-.L102:
+.L90:
 	leave
 	ret
 	.size	create_variable_access, .-create_variable_access

@@ -435,18 +435,16 @@ output_tac:
 .LC15:
 	.string	"r"
 .LC16:
-	.string	"Error opening file: %s"
+	.string	"Error opening file: %s\n"
 .LC17:
 	.string	".token"
 .LC18:
 	.string	"w"
 .LC19:
-	.string	"Error opening file: %s\n"
-.LC20:
 	.string	".ast"
-.LC21:
+.LC20:
 	.string	".tc"
-.LC22:
+.LC21:
 	.string	".tac"
 	.text
 	.globl	parse_file
@@ -458,19 +456,19 @@ parse_file:
 	pushq	%r12	;
 	pushq	%rbp	;
 	pushq	%rbx	;
-	subq	$24, %rsp	;,
-	movl	%esi, %r14d	; tmp141, o_token
-	movl	%edx, %r13d	; tmp142, o_ast
-	movl	%ecx, %r12d	; tmp143, o_tac
+	subq	$40, %rsp	;,
+	movl	%esi, %r15d	; tmp141, o_token
+	movl	%edx, %r14d	; tmp142, o_ast
+	movl	%ecx, %r13d	; tmp143, o_tac
 ; src/compiler.c:74:     File* file = create_file(name);
 	call	*create_file@GOTPCREL(%rip)	;
 	movq	%rax, %rbx	; tmp144, file
 ; src/compiler.c:75:     string filename = get_full_path(file);
 	movq	%rax, %rdi	; file,
 	call	*get_full_path@GOTPCREL(%rip)	;
-	movq	%rax, %r15	; tmp145, filename
+	movq	%rax, %r12	; tmp145, filename
 ; src/compiler.c:76:     size_t length = 0;
-	movq	$0, 8(%rsp)	;, length
+	movq	$0, 24(%rsp)	;, length
 ; src/compiler.c:77:     FILE* source_file = fopen(filename, "r");
 	leaq	.LC15(%rip), %rsi	;, tmp115
 	movq	%rax, %rdi	; filename,
@@ -480,20 +478,21 @@ parse_file:
 	je	.L51	;,
 	movq	%rax, %rbp	; tmp146, source_file
 ; src/compiler.c:82:     string source = read_source(source_file, &length);
-	leaq	8(%rsp), %rsi	;, tmp119
+	leaq	24(%rsp), %rsi	;, tmp119
 	movq	%rax, %rdi	; source_file,
 	call	read_source	;
-	movq	%rax, %r15	; tmp147, source
+	movq	%rax, 8(%rsp)	; tmp147, %sfp
 ; src/compiler.c:83:     fclose(source_file);
 	movq	%rbp, %rdi	; source_file,
 	call	*fclose@GOTPCREL(%rip)	;
-; src/compiler.c:84:     Lexer* lexer = create_lexer(source, length);
-	movq	8(%rsp), %rsi	; length,
-	movq	%r15, %rdi	; source,
+; src/compiler.c:84:     Lexer* lexer = create_lexer(source, length, filename);
+	movq	%r12, %rdx	; filename,
+	movq	24(%rsp), %rsi	; length,
+	movq	8(%rsp), %rdi	; %sfp,
 	call	*create_lexer@GOTPCREL(%rip)	;
 	movq	%rax, %rbp	; tmp148, lexer
 ; src/compiler.c:85:     if (o_token) {
-	testb	%r14b, %r14b	; o_token
+	testb	%r15b, %r15b	; o_token
 	jne	.L52	;,
 .L44:
 ; src/compiler.c:96:     reset_lexer(lexer);
@@ -503,12 +502,12 @@ parse_file:
 	movq	%rbx, %rdi	; file,
 	call	*create_parser@GOTPCREL(%rip)	;
 ; src/compiler.c:99:     if (o_ast || o_tac)
-	movl	%r12d, %ecx	; o_tac, tmp163
-	orb	%r13b, %cl	; o_ast, tmp163
+	movl	%r13d, %ecx	; o_tac, tmp163
+	orb	%r14b, %cl	; o_ast, tmp163
 	jne	.L53	;,
 .L41:
 ; src/compiler.c:126: }
-	addq	$24, %rsp	;,
+	addq	$40, %rsp	;,
 	popq	%rbx	;
 	popq	%rbp	;
 	popq	%r12	;
@@ -518,7 +517,7 @@ parse_file:
 	ret	
 .L51:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movq	%r15, %rcx	; filename,
+	movq	%r12, %rcx	; filename,
 	leaq	.LC16(%rip), %rdx	;, tmp118
 	movl	$2, %esi	;,
 	movq	stderr(%rip), %rdi	; stderr,
@@ -542,7 +541,7 @@ parse_file:
 	leaq	.LC18(%rip), %rsi	;, tmp122
 	movq	%rax, %rdi	; out_token_name,
 	call	*fopen@GOTPCREL(%rip)	;
-	movq	%rax, %r14	; tmp151, out_token_file
+	movq	%rax, %r12	; tmp151, out_token_file
 ; src/compiler.c:89:         if (out_token_file == NULL)
 	testq	%rax, %rax	; out_token_file
 	je	.L54	;,
@@ -551,13 +550,13 @@ parse_file:
 	movq	%rax, %rdi	; out_token_file,
 	call	output_token	;
 ; src/compiler.c:93:             fclose(out_token_file);
-	movq	%r14, %rdi	; out_token_file,
+	movq	%r12, %rdi	; out_token_file,
 	call	*fclose@GOTPCREL(%rip)	;
 	jmp	.L44	;
 .L54:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r15, %rcx	; out_token_name,
-	leaq	.LC19(%rip), %rdx	;, tmp125
+	leaq	.LC16(%rip), %rdx	;, tmp125
 	movl	$2, %esi	;,
 	movq	stderr(%rip), %rdi	; stderr,
 	movl	$0, %eax	;,
@@ -571,15 +570,15 @@ parse_file:
 	call	*parse_code@GOTPCREL(%rip)	;
 	movq	%rax, %rbp	; tmp153, ast
 ; src/compiler.c:101:     if (o_ast) {
-	testb	%r13b, %r13b	; o_ast
+	testb	%r14b, %r14b	; o_ast
 	jne	.L55	;,
 .L47:
 ; src/compiler.c:113:     if (o_tac) {
-	testb	%r12b, %r12b	; o_tac
+	testb	%r13b, %r13b	; o_tac
 	je	.L41	;,
 ; src/compiler.c:114:         change_file_extension(file, create_string(".tac", 4));
 	movl	$4, %esi	;,
-	leaq	.LC22(%rip), %rdi	;, tmp134
+	leaq	.LC21(%rip), %rdi	;, tmp134
 	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rsi	; tmp158, _10
 ; src/compiler.c:114:         change_file_extension(file, create_string(".tac", 4));
@@ -591,7 +590,7 @@ parse_file:
 	movq	%rax, %r12	; tmp159, out_tac_name
 ; src/compiler.c:116:         change_file_extension(file, create_string(".tc", 3));
 	movl	$3, %esi	;,
-	leaq	.LC21(%rip), %rdi	;, tmp135
+	leaq	.LC20(%rip), %rdi	;, tmp135
 	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rsi	; tmp160, _11
 ; src/compiler.c:116:         change_file_extension(file, create_string(".tc", 3));
@@ -619,7 +618,7 @@ parse_file:
 .L55:
 ; src/compiler.c:102:         change_file_extension(file, create_string(".ast", 4));
 	movl	$4, %esi	;,
-	leaq	.LC20(%rip), %rdi	;, tmp128
+	leaq	.LC19(%rip), %rdi	;, tmp128
 	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rsi	; tmp154, _7
 ; src/compiler.c:102:         change_file_extension(file, create_string(".ast", 4));
@@ -631,7 +630,7 @@ parse_file:
 	movq	%rax, %r14	; tmp155, out_ast_name
 ; src/compiler.c:104:         change_file_extension(file, create_string(".tc", 3));
 	movl	$3, %esi	;,
-	leaq	.LC21(%rip), %rdi	;, tmp129
+	leaq	.LC20(%rip), %rdi	;, tmp129
 	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rsi	; tmp156, _8
 ; src/compiler.c:104:         change_file_extension(file, create_string(".tc", 3));
@@ -641,7 +640,7 @@ parse_file:
 	leaq	.LC18(%rip), %rsi	;, tmp130
 	movq	%r14, %rdi	; out_ast_name,
 	call	*fopen@GOTPCREL(%rip)	;
-	movq	%rax, %r13	; tmp157, out_ast_file
+	movq	%rax, %r12	; tmp157, out_ast_file
 ; src/compiler.c:106:         if (out_ast_file == NULL)
 	testq	%rax, %rax	; out_ast_file
 	je	.L57	;,
@@ -650,13 +649,13 @@ parse_file:
 	movq	%rax, %rdi	; out_ast_file,
 	call	output_ast	;
 ; src/compiler.c:110:             fclose(out_ast_file);
-	movq	%r13, %rdi	; out_ast_file,
+	movq	%r12, %rdi	; out_ast_file,
 	call	*fclose@GOTPCREL(%rip)	;
 	jmp	.L47	;
 .L57:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
 	movq	%r14, %rcx	; out_ast_name,
-	leaq	.LC19(%rip), %rdx	;, tmp133
+	leaq	.LC16(%rip), %rdx	;, tmp133
 	movl	$2, %esi	;,
 	movq	stderr(%rip), %rdi	; stderr,
 	movl	$0, %eax	;,
@@ -664,7 +663,7 @@ parse_file:
 	jmp	.L47	;
 .L56:
 	movq	%r12, %rcx	; out_tac_name,
-	leaq	.LC19(%rip), %rdx	;, tmp139
+	leaq	.LC16(%rip), %rdx	;, tmp139
 	movl	$2, %esi	;,
 	movq	stderr(%rip), %rdi	; stderr,
 	movl	$0, %eax	;,

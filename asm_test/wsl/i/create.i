@@ -1,0 +1,609 @@
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+typedef char* string;
+typedef size_t* pointer;
+typedef struct MemoryBlock MemoryBlock;
+struct MemoryBlock {
+    size_t size;
+    size_t used;
+    MemoryBlock* next;
+    pointer block;
+};
+typedef struct StringList StringList;
+struct StringList {
+    string str;
+    size_t length;
+    StringList* next;
+};
+extern string keywordList[22];
+extern string symbolList[30];
+extern MemoryBlock* struct_memory;
+extern MemoryBlock* string_memory;
+extern char initialized;
+extern StringList* all_string_list;
+extern string DEFAULT_INIT_NAME;
+extern string DEFAULT_CONSTRUCTOR_NAME;
+extern string IMPORT_KEYWORD;
+extern string FROM_KEYWORD;
+extern string FUNC_KEYWORD;
+extern string CLASS_KEYWORD;
+extern string METHOD_KEYWORD;
+extern string SELF_KEYWORD;
+extern string IF_KEYWORD;
+extern string ELIF_KEYWORD;
+extern string ELSE_KEYWORD;
+extern string WHILE_KEYWORD;
+extern string FOR_KEYWORD;
+extern string TRUE_KEYWORD;
+extern string FALSE_KEYWORD;
+extern string RETURN_KEYWORD;
+extern string BREAK_KEYWORD;
+extern string CONTINUE_KEYWORD;
+extern string INT_KEYWORD;
+extern string FLOAT_KEYWORD;
+extern string STRING_KEYWORD;
+extern string BOOL_KEYWORD;
+extern string VOID_KEYWORD;
+extern string VAR_KEYWORD;
+extern string L_PAREN_SYMBOL;
+extern string R_PAREN_SYMBOL;
+extern string L_BRACE_SYMBOL;
+extern string R_BRACE_SYMBOL;
+extern string COMMA_SYMBOL;
+extern string NOT_SYMBOL;
+extern string DOT_SYMBOL;
+extern string L_BRACKET_SYMBOL;
+extern string R_BRACKET_SYMBOL;
+extern string SEMICOLON_SYMBOL;
+extern string UNDERLINE_SYMBOL;
+extern string ADD_SYMBOL;
+extern string SUB_SYMBOL;
+extern string MUL_SYMBOL;
+extern string DIV_SYMBOL;
+extern string MOD_SYMBOL;
+extern string LT_SYMBOL;
+extern string GT_SYMBOL;
+extern string ASSIGN_SYMBOL;
+extern string EQ_SYMBOL;
+extern string NE_SYMBOL;
+extern string LE_SYMBOL;
+extern string GE_SYMBOL;
+extern string ADD_ASSIGN_SYMBOL;
+extern string SUB_ASSIGN_SYMBOL;
+extern string MUL_ASSIGN_SYMBOL;
+extern string DIV_ASSIGN_SYMBOL;
+extern string MOD_ASSIGN_SYMBOL;
+extern string AND_SYMBOL;
+extern string OR_SYMBOL;
+typedef struct SymbolTable SymbolTable;
+typedef struct Symbol Symbol;
+extern Symbol* name_void;
+extern Symbol* name_int;
+extern Symbol* name_float;
+extern Symbol* name_string;
+extern Symbol* name_bool;
+extern SymbolTable* builtin_scope;
+string create_string_not_check(const char* data, size_t length);
+string create_string(const char* data, size_t length);
+pointer alloc_memory(size_t size);
+char is_keyword(const string str);
+char string_equal(string a, string b);
+string get_info(void);
+char to_lower(char c);
+char to_upper(char c);
+typedef struct StrNode StrNode;
+struct StrNode {
+    string dir;
+    StrNode* next;
+};
+typedef struct File {
+    StrNode* dirs;
+    string extension;
+    string name;
+    string path;
+} File;
+string get_cwd(void);
+File* create_file(const string path);
+string absolute_path(string path, string base_path);
+string get_file_name(File* path);
+string get_file_extension(File* path);
+string get_file_dir(File* path);
+string get_full_path(File* path);
+void change_file_extension(File* file, const string new_extension);
+void change_file_name(File* file, const string new_name);
+typedef enum TokenType {
+    EOF_TOKEN,
+    IDENTIFIER,
+    INTEGER,
+    FLOAT,
+    STRING,
+    SYMBOL,
+    KEYWORD,
+    COMMENT
+} TokenType;
+typedef struct Token {
+    string lexeme;
+    size_t line, column;
+    TokenType type;
+} Token;
+typedef struct Lexer {
+    string filename;
+    string source;
+    size_t position;
+    size_t length;
+    size_t line;
+    size_t column;
+    Token* peeked_token;
+    size_t peeked_position;
+    size_t peeked_line;
+    size_t peeked_column;
+    Token* current_token;
+} Lexer;
+Lexer* create_lexer(string source, size_t length, string filename);
+Token* get_next_token(Lexer* lexer, char skip_comment);
+Token* peek_next_token(Lexer* lexer, char skip_comment);
+void reset_lexer(Lexer* lexer);
+Token* peek_current_token(Lexer* lexer);
+typedef enum CodeMemberType {
+    CODE_IMPORT,
+    CODE_FUNCTION,
+    CODE_CLASS
+} CodeMemberType;
+typedef enum ClassMemberType {
+    CLASS_METHOD,
+    CLASS_VARIABLE
+} ClassMemberType;
+typedef enum StatementType {
+    EXPRESSION_STATEMENT,
+    VARIABLE_STATEMENT,
+    IF_STATEMENT,
+    WHILE_STATEMENT,
+    FOR_STATEMENT,
+    RETURN_STATEMENT,
+    BREAK_STATEMENT,
+    CONTINUE_STATEMENT
+} StatementType;
+typedef enum OperatorType {
+    OP_ADD,
+    OP_SUB,
+    OP_MUL,
+    OP_DIV,
+    OP_MOD,
+    OP_EQ,
+    OP_NE,
+    OP_LT,
+    OP_GT,
+    OP_LE,
+    OP_GE,
+    OP_AND,
+    OP_OR,
+    OP_ASSIGN,
+    OP_ADD_ASSIGN,
+    OP_SUB_ASSIGN,
+    OP_MUL_ASSIGN,
+    OP_DIV_ASSIGN,
+    OP_MOD_ASSIGN,
+    OP_NONE
+} OperatorType;
+typedef enum PrimaryType {
+    PRIM_INTEGER,
+    PRIM_FLOAT,
+    PRIM_STRING,
+    PRIM_TRUE,
+    PRIM_FALSE,
+    PRIM_EXPRESSION,
+    PRIM_NOT_OPERAND,
+    PRIM_NEG_OPERAND,
+    PRIM_VARIABLE_ACCESS
+} PrimaryType;
+typedef enum VariableAccessType {
+    VAR_NAME,
+    VAR_FUNC_CALL,
+    VAR_GET_ATTR,
+    VAR_GET_SEQ
+} VariableAccessType;
+typedef struct CodeMember CodeMember;
+typedef struct Code Code;
+typedef struct Import Import;
+typedef struct Function Function;
+typedef struct Method Method;
+typedef struct ClassMember ClassMember;
+typedef struct Class Class;
+typedef struct Variable Variable;
+typedef struct Statement Statement;
+typedef struct If If;
+typedef struct ElseIf ElseIf;
+typedef struct For For;
+typedef struct While While;
+typedef struct Expression Expression;
+typedef struct Primary Primary;
+typedef struct VariableAccess VariableAccess;
+typedef struct List List;
+typedef struct Node Node;
+typedef enum SymbolType {
+    SYMBOL_CLASS,
+    SYMBOL_FUNCTION,
+    SYMBOL_METHOD,
+    SYMBOL_VARIABLE,
+    SYMBOL_PARAM,
+    SYMBOL_ATTRIBUTE,
+    SYMBOL_TYPE
+} SymbolType;
+struct CodeMember {
+    union {
+        Import* import;
+        Function* function;
+        Class* class;
+    } content;
+    CodeMemberType type;
+};
+struct Code {
+    List* members;
+    SymbolTable* global_scope;
+};
+struct Import {
+    Symbol* name;
+    string source;
+};
+struct Function {
+    Symbol* name;
+    Symbol* return_type;
+    List* parameters;
+    List* body;
+    SymbolTable* function_scope;
+};
+struct Method {
+    Symbol* name;
+    Symbol* return_type;
+    List* parameters;
+    List* body;
+    SymbolTable* method_scope;
+};
+struct ClassMember {
+    union {
+        Method* method;
+        Variable* variable;
+    } content;
+    ClassMemberType type;
+};
+struct Class {
+    Symbol* name;
+    List* members;
+    SymbolTable* class_scope;
+    size_t size;
+};
+struct Variable {
+    Symbol* type;
+    Symbol* name;
+    Expression* value;
+};
+struct Statement {
+    union {
+        Expression* expr;
+        Variable* var;
+        If* if_stmt;
+        While* while_stmt;
+        For* for_stmt;
+        Expression* return_expr;
+    } stmt;
+    StatementType type;
+};
+struct If {
+    Expression* condition;
+    List* body;
+    List* else_if;
+    List* else_body;
+};
+struct ElseIf {
+    Expression* condition;
+    List* body;
+};
+struct For {
+    Variable* initializer;
+    Expression* condition;
+    Expression* increment;
+    List* body;
+};
+struct While {
+    Expression* condition;
+    List* body;
+};
+struct Expression {
+    Expression* expr_left;
+    Primary* prim_left;
+    Expression* right;
+    OperatorType operator;
+};
+struct Primary {
+    union {
+        string literal_value;
+        Expression* expr;
+        Primary* operand;
+        VariableAccess* var;
+    } value;
+    PrimaryType type;
+};
+struct VariableAccess {
+    VariableAccess* base;
+    union {
+        Symbol* name;
+        List* args;
+        Symbol* attr_name;
+        Expression* index;
+    } content;
+    VariableAccessType type;
+};
+struct List {
+    Node* head;
+    Node* tail;
+};
+struct Node {
+    Node* next;
+    pointer content;
+};
+struct SymbolTable {
+    SymbolTable* parent;
+    List* symbols;
+};
+struct Symbol {
+    Symbol* type;
+    string name;
+    size_t id;
+    union {
+        Class* class;
+        Function* function;
+        Method* method;
+        SymbolTable* scope;
+    } ast_node;
+    SymbolType kind;
+};
+typedef struct Parser {
+    File* source_file;
+    char in_function;
+    char in_method;
+    char in_class;
+    char in_loop;
+} Parser;
+Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
+void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
+CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content);
+Code* create_code(List* members, SymbolTable* global_scope);
+Import* create_import(Symbol* name, string source);
+Function* create_function_use_ptr(Function* function, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* function_scope);
+Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* method_scope);
+ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content);
+Class* create_class_use_ptr(Class* class, Symbol* name, List* members, SymbolTable* class_scope, size_t size);
+Variable* create_variable(Symbol* type, Symbol* name, Expression* value);
+Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt);
+If* create_if(Expression* condition, List* body, List* else_if, List* else_body);
+ElseIf* create_else_if(Expression* condition, List* body);
+For* create_for(Variable* initializer, Expression* condition, Expression* increment, List* body);
+While* create_while(Expression* condition, List* body);
+Expression* create_expression(OperatorType operator, Expression * expr_left, Primary* prim_left, Expression* right);
+Primary* create_primary(PrimaryType type, string str_value, Expression* expr_value, Primary* prim_value, VariableAccess* variable_value);
+VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Symbol* name_content, Expression* expr_content, List* args_content);
+CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content) {
+    CodeMember* code_member = (CodeMember*)alloc_memory(sizeof(CodeMember));
+    code_member->type = type;
+    if (type == CODE_IMPORT && import_content != NULL)
+        code_member->content.import = import_content;
+    else if (type == CODE_FUNCTION && function_content != NULL)
+        code_member->content.function = function_content;
+    else if (type == CODE_CLASS && class_content != NULL)
+        code_member->content.class = class_content;
+    else if (import_content == NULL && function_content == NULL && class_content == NULL)
+        fprintf(stderr, "Error creating code member: content is NULL\n");
+    else
+        fprintf(stderr, "Error creating code member: unknown type %u\n", type);
+    return code_member;
+}
+Code* create_code(List* members, SymbolTable* global_scope) {
+    Code* code = (Code*)alloc_memory(sizeof(Code));
+    code->members = members;
+    code->global_scope = global_scope;
+    return code;
+}
+Import* create_import(Symbol* name, string source) {
+    if (name == NULL) {
+        fprintf(stderr, "Error creating import: name is NULL\n");
+        return NULL;
+    }
+    Import* import = (Import*)alloc_memory(sizeof(Import));
+    import->name = name;
+    import->source = source;
+    return import;
+}
+Function* create_function_use_ptr(Function* function, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* function_scope) {
+    if (name == NULL || return_type == NULL) {
+        fprintf(stderr, "Error creating function: name or return_type is NULL\n");
+        return NULL;
+    }
+    function->name = name;
+    function->return_type = return_type;
+    function->parameters = parameters;
+    function->body = body;
+    function->function_scope = function_scope;
+    return function;
+}
+Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* method_scope) {
+    if (name == NULL || return_type == NULL) {
+        fprintf(stderr, "Error creating method: name or return_type is NULL\n");
+        return NULL;
+    }
+    method->name = name;
+    method->return_type = return_type;
+    method->parameters = parameters;
+    method->body = body;
+    method->method_scope = method_scope;
+    return method;
+}
+ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content) {
+    ClassMember* class_member = (ClassMember*)alloc_memory(sizeof(ClassMember));
+    class_member->type = type;
+    if (type == CLASS_METHOD && method_content != NULL)
+        class_member->content.method = method_content;
+    else if (type == CLASS_VARIABLE && variable_content != NULL)
+        class_member->content.variable = variable_content;
+    else {
+        if (method_content == NULL && variable_content == NULL)
+            fprintf(stderr, "Error creating class member: content is NULL\n");
+        else
+            fprintf(stderr, "Error creating class member: unknown type %u\n", type);
+        return NULL;
+    }
+    return class_member;
+}
+Class* create_class_use_ptr(Class* class, Symbol* name, List* members, SymbolTable* class_scope, size_t size) {
+    if (name == NULL) {
+        fprintf(stderr, "Error creating class: name is NULL\n");
+        return NULL;
+    }
+    class->name = name;
+    class->members = members;
+    class->class_scope = class_scope;
+    class->size = size;
+    return class;
+}
+Variable* create_variable(Symbol* type, Symbol* name, Expression* value) {
+    if (type == NULL || name == NULL) {
+        fprintf(stderr, "Error creating variable: type or name is NULL\n");
+        return NULL;
+    }
+    Variable* variable = (Variable*)alloc_memory(sizeof(Variable));
+    variable->type = type;
+    variable->name = name;
+    variable->value = value;
+    return variable;
+}
+Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt) {
+    Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
+    statement->type = type;
+    if (type == EXPRESSION_STATEMENT && expr != NULL)
+        statement->stmt.expr = expr;
+    else if (type == VARIABLE_STATEMENT && var_stmt != NULL)
+        statement->stmt.var = var_stmt;
+    else if (type == IF_STATEMENT && if_stmt != NULL)
+        statement->stmt.if_stmt = if_stmt;
+    else if (type == WHILE_STATEMENT && while_stmt != NULL)
+        statement->stmt.while_stmt = while_stmt;
+    else if (type == FOR_STATEMENT && for_stmt != NULL)
+        statement->stmt.for_stmt = for_stmt;
+    else if (type == RETURN_STATEMENT)
+        statement->stmt.return_expr = expr;
+    else if (type == BREAK_STATEMENT || type == CONTINUE_STATEMENT)
+        statement->stmt.expr = NULL;
+    else {
+        if (if_stmt == NULL && while_stmt == NULL && for_stmt == NULL && expr == NULL && var_stmt == NULL)
+            fprintf(stderr, "Error creating statement: content is NULL\n");
+        else
+            fprintf(stderr, "Error creating statement: unknown type %u\n", type);
+        return NULL;
+    }
+    return statement;
+}
+If* create_if(Expression* condition, List* body, List* else_if, List* else_body) {
+    if (condition == NULL) {
+        fprintf(stderr, "Error creating if statement: condition is NULL\n");
+        return NULL;
+    }
+    If* if_ = (If*)alloc_memory(sizeof(If));
+    if_->condition = condition;
+    if_->body = body;
+    if_->else_if = else_if;
+    if_->else_body = else_body;
+    return if_;
+}
+ElseIf* create_else_if(Expression* condition, List* body) {
+    if (condition == NULL) {
+        fprintf(stderr, "Error creating else-if statement: condition is NULL\n");
+        return NULL;
+    }
+    ElseIf* else_if = (ElseIf*)alloc_memory(sizeof(ElseIf));
+    else_if->condition = condition;
+    else_if->body = body;
+    return else_if;
+}
+For* create_for(Variable* initializer, Expression* condition, Expression* increment, List* body) {
+    For* for_ = (For*)alloc_memory(sizeof(For));
+    for_->initializer = initializer;
+    for_->condition = condition;
+    for_->increment = increment;
+    for_->body = body;
+    return for_;
+}
+While* create_while(Expression* condition, List* body) {
+    While* while_ = (While*)alloc_memory(sizeof(While));
+    while_->condition = condition;
+    while_->body = body;
+    return while_;
+}
+Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
+    if ((operator == OP_NONE) != (right == NULL) || (expr_left == NULL && prim_left == NULL)) {
+        fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
+                operator == OP_NONE ? "true" : "false",
+                expr_left == NULL ? "true" : "false",
+                prim_left == NULL ? "true" : "false",
+                right == NULL ? "true" : "false");
+        return NULL;
+    }
+    Expression* expression = (Expression*)alloc_memory(sizeof(Expression));
+    expression->operator = operator;
+    if (expr_left != NULL)
+        expression->expr_left = expr_left;
+    else if (prim_left != NULL)
+        expression->prim_left = prim_left;
+    else {
+        fprintf(stderr, "Error creating expression: both expr_left and prim_left are NULL\n");
+        return NULL;
+    }
+    expression->right = right;
+    return expression;
+}
+Primary* create_primary(PrimaryType type, string str_value, Expression* expr_value, Primary* prim_value, VariableAccess* variable_value) {
+    Primary* primary = (Primary*)alloc_memory(sizeof(Primary));
+    primary->type = type;
+    if ((type == PRIM_INTEGER || type == PRIM_FLOAT || type == PRIM_STRING || type == PRIM_TRUE || type == PRIM_FALSE) && str_value != NULL)
+        primary->value.literal_value = str_value;
+    else if (type == PRIM_EXPRESSION && expr_value != NULL)
+        primary->value.expr = expr_value;
+    else if ((type == PRIM_NOT_OPERAND || type == PRIM_NEG_OPERAND) && prim_value != NULL)
+        primary->value.operand = prim_value;
+    else if (type == PRIM_VARIABLE_ACCESS && variable_value != NULL)
+        primary->value.var = variable_value;
+    else {
+        if (str_value == NULL && expr_value == NULL && prim_value == NULL && variable_value == NULL)
+            fprintf(stderr, "Error creating primary: value is NULL\n");
+        else
+            fprintf(stderr, "Error creating primary: unknown type %u\n", type);
+        return NULL;
+    }
+    return primary;
+}
+VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Symbol* name_content, Expression* expr_content, List* args_content) {
+    if ((base == NULL) != (type == VAR_NAME)) {
+        fprintf(stderr, "Error creating variable access: base and type mismatch, base == NULL: %s, type == VAR_NAME: %s\n", base == NULL ? "true" : "false", type == VAR_NAME ? "true" : "false");
+        return NULL;
+    }
+    VariableAccess* variable_access = (VariableAccess*)alloc_memory(sizeof(VariableAccess));
+    variable_access->type = type;
+    variable_access->base = base;
+    if (type == VAR_NAME && name_content != NULL)
+        variable_access->content.name = name_content;
+    else if (type == VAR_FUNC_CALL && args_content != NULL)
+        variable_access->content.args = args_content;
+    else if (type == VAR_GET_SEQ && expr_content != NULL)
+        variable_access->content.index = expr_content;
+    else if (type == VAR_GET_ATTR && name_content != NULL)
+        variable_access->content.attr_name = name_content;
+    else {
+        if (name_content == NULL && expr_content == NULL && args_content == NULL)
+            fprintf(stderr, "Error creating variable access: content is NULL\n");
+        else
+            fprintf(stderr, "Error creating variable access: unknown type %u\n", type);
+        return NULL;
+    }
+    return variable_access;
+}

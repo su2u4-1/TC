@@ -320,16 +320,16 @@ list_is_empty:
 	.section	.rodata
 	.align 8
 .LC1:
-	.string	"Warning: Creating symbol with unknown SymbolType: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType: %u\n"
 	.align 8
 .LC2:
-	.string	"Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n"
+	.string	"[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n"
 	.align 8
 .LC3:
-	.string	"Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
 	.align 8
 .LC4:
-	.string	"Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
+	.string	"[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
 	.text
 	.globl	create_symbol
 	.type	create_symbol, @function
@@ -391,7 +391,7 @@ create_symbol:
 ; src/helper.c:88:         case SYMBOL_TYPE: scope = (SymbolTable*)ast_node; break;
 	jmp	.L35	;
 .L30:
-; src/helper.c:90:             fprintf(stderr, "Warning: Creating symbol with unknown SymbolType: %u\n", kind);
+; src/helper.c:90:             fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType: %u\n", kind);
 	movq	stderr(%rip), %rax	; stderr, stderr.2_4
 	movl	-44(%rbp), %edx	; kind, tmp107
 	leaq	.LC1(%rip), %rcx	;, tmp108
@@ -412,15 +412,15 @@ create_symbol:
 ; src/helper.c:94:     if (result != NULL)
 	cmpq	$0, -16(%rbp)	;, result
 	je	.L36	;,
-; src/helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+; src/helper.c:95:         fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
 	movq	id_counter.0(%rip), %rax	; id_counter, id_counter.3_5
 	leaq	1(%rax), %rdi	;, _6
 	movq	-16(%rbp), %rax	; result, tmp112
 	movq	16(%rax), %rsi	; result_33->id, _7
-; src/helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+; src/helper.c:95:         fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
 	movq	-16(%rbp), %rax	; result, tmp113
 	movl	32(%rax), %ecx	; result_33->kind, _8
-; src/helper.c:95:         fprintf(stderr, "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n", name, result->kind, result->id, id_counter + 1);
+; src/helper.c:95:         fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
 	movq	stderr(%rip), %rax	; stderr, stderr.4_9
 	movq	-40(%rbp), %rdx	; name, tmp114
 	movq	%rdi, %r9	; _6,
@@ -497,7 +497,7 @@ create_symbol:
 ; src/helper.c:108:         case SYMBOL_TYPE: new_name->ast_node.scope = (SymbolTable*)ast_node; break;
 	jmp	.L42	;
 .L37:
-; src/helper.c:110:             fprintf(stderr, "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
+; src/helper.c:110:             fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
 	movq	stderr(%rip), %rax	; stderr, stderr.7_13
 	movl	-44(%rbp), %edx	; kind, tmp132
 	leaq	.LC3(%rip), %rcx	;, tmp133
@@ -511,7 +511,7 @@ create_symbol:
 ; src/helper.c:113:     if (scope == NULL)
 	cmpq	$0, -8(%rbp)	;, scope
 	jne	.L43	;,
-; src/helper.c:114:         fprintf(stderr, "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
+; src/helper.c:114:         fprintf(stderr, "[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
 	movq	-24(%rbp), %rax	; new_name, tmp134
 	movq	16(%rax), %rsi	; new_name_36->id, _14
 	movq	stderr(%rip), %rax	; stderr, stderr.8_15
@@ -759,7 +759,7 @@ is_builtin_type:
 	.section	.rodata
 	.align 8
 .LC5:
-	.string	"Parser Error at %s:%zu:%zu: %s\n"
+	.string	"[Parser Error] at %s:%zu:%zu: %s\n"
 	.text
 	.globl	parser_error
 	.type	parser_error, @function
@@ -770,15 +770,15 @@ parser_error:
 	movq	%rdi, -8(%rbp)	; message, message
 	movq	%rsi, -16(%rbp)	; token, token
 	movq	%rdx, -24(%rbp)	; file_name, file_name
-; src/helper.c:162:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+; src/helper.c:162:     fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 	movq	-16(%rbp), %rax	; token, tmp87
 	movq	16(%rax), %rax	; token_7(D)->column, _1
-; src/helper.c:162:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+; src/helper.c:162:     fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 	leaq	1(%rax), %rdi	;, _2
-; src/helper.c:162:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+; src/helper.c:162:     fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 	movq	-16(%rbp), %rax	; token, tmp88
 	movq	8(%rax), %rax	; token_7(D)->line, _3
-; src/helper.c:162:     fprintf(stderr, "Parser Error at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
+; src/helper.c:162:     fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
 	leaq	1(%rax), %rcx	;, _4
 	movq	stderr(%rip), %rax	; stderr, stderr.15_5
 	movq	-8(%rbp), %rsi	; message, tmp89
@@ -1077,161 +1077,164 @@ parse_import_file:
 	cmpq	$0, -96(%rbp)	;, source
 	jne	.L88	;,
 ; src/helper.c:202:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
-	movq	-88(%rbp), %rax	; import_name, tmp97
-	movq	%rax, %rdi	; tmp97,
+	movq	-88(%rbp), %rax	; import_name, tmp99
+	movq	%rax, %rdi	; tmp99,
 	call	*strlen@GOTPCREL(%rip)	;
 ; src/helper.c:202:         string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
 	addq	$4, %rax	;, _2
 	movq	%rax, %rsi	; _2,
-	leaq	.LC10(%rip), %rax	;, tmp98
-	movq	%rax, %rdi	; tmp98,
+	leaq	.LC10(%rip), %rax	;, tmp100
+	movq	%rax, %rdi	; tmp100,
 	call	*create_string_not_check@GOTPCREL(%rip)	;
-	movq	%rax, -40(%rbp)	; tmp99, temp_import_name
+	movq	%rax, -40(%rbp)	; tmp101, temp_import_name
 ; src/helper.c:203:         sprintf(temp_import_name, "%s.tc", import_name);
-	movq	-88(%rbp), %rdx	; import_name, tmp100
-	movq	-40(%rbp), %rax	; temp_import_name, tmp101
-	leaq	.LC11(%rip), %rcx	;, tmp102
-	movq	%rcx, %rsi	; tmp102,
-	movq	%rax, %rdi	; tmp101,
+	movq	-88(%rbp), %rdx	; import_name, tmp102
+	movq	-40(%rbp), %rax	; temp_import_name, tmp103
+	leaq	.LC11(%rip), %rcx	;, tmp104
+	movq	%rcx, %rsi	; tmp104,
+	movq	%rax, %rdi	; tmp103,
 	movl	$0, %eax	;,
 	call	*sprintf@GOTPCREL(%rip)	;
 ; src/helper.c:204:         filename = absolute_path(temp_import_name, std_path);
-	movq	-40(%rbp), %rax	; temp_import_name, tmp103
-	leaq	.LC12(%rip), %rdx	;, tmp104
-	movq	%rdx, %rsi	; tmp104,
-	movq	%rax, %rdi	; tmp103,
+	movq	-40(%rbp), %rax	; temp_import_name, tmp105
+	leaq	.LC12(%rip), %rdx	;, tmp106
+	movq	%rdx, %rsi	; tmp106,
+	movq	%rax, %rdi	; tmp105,
 	call	*absolute_path@GOTPCREL(%rip)	;
-	movq	%rax, -24(%rbp)	; tmp105, filename
+	movq	%rax, -24(%rbp)	; tmp107, filename
 	jmp	.L89	;
 .L88:
 ; src/helper.c:206:         filename = absolute_path(source, get_file_dir(source_file));
-	movq	-112(%rbp), %rax	; source_file, tmp106
-	movq	%rax, %rdi	; tmp106,
+	movq	-112(%rbp), %rax	; source_file, tmp108
+	movq	%rax, %rdi	; tmp108,
 	call	*get_file_dir@GOTPCREL(%rip)	;
 	movq	%rax, %rdx	;, _3
 ; src/helper.c:206:         filename = absolute_path(source, get_file_dir(source_file));
-	movq	-96(%rbp), %rax	; source, tmp107
+	movq	-96(%rbp), %rax	; source, tmp109
 	movq	%rdx, %rsi	; _3,
-	movq	%rax, %rdi	; tmp107,
+	movq	%rax, %rdi	; tmp109,
 	call	*absolute_path@GOTPCREL(%rip)	;
-	movq	%rax, -24(%rbp)	; tmp108, filename
+	movq	%rax, -24(%rbp)	; tmp110, filename
 .L89:
 ; src/helper.c:207:     openfile = fopen(filename, "r");
-	movq	-24(%rbp), %rax	; filename, tmp109
-	leaq	.LC13(%rip), %rdx	;, tmp110
-	movq	%rdx, %rsi	; tmp110,
-	movq	%rax, %rdi	; tmp109,
+	movq	-24(%rbp), %rax	; filename, tmp111
+	leaq	.LC13(%rip), %rdx	;, tmp112
+	movq	%rdx, %rsi	; tmp112,
+	movq	%rax, %rdi	; tmp111,
 	call	*fopen@GOTPCREL(%rip)	;
-	movq	%rax, -48(%rbp)	; tmp111, openfile
+	movq	%rax, -48(%rbp)	; tmp113, openfile
 ; src/helper.c:208:     if (openfile == NULL) {
 	cmpq	$0, -48(%rbp)	;, openfile
 	jne	.L90	;,
 ; src/helper.c:209:         fprintf(stderr, "Error opening library file for import: %s\n", filename);
 	movq	stderr(%rip), %rax	; stderr, stderr.19_4
-	movq	-24(%rbp), %rdx	; filename, tmp112
-	leaq	.LC14(%rip), %rcx	;, tmp113
-	movq	%rcx, %rsi	; tmp113,
+	movq	-24(%rbp), %rdx	; filename, tmp114
+	leaq	.LC14(%rip), %rcx	;, tmp115
+	movq	%rcx, %rsi	; tmp115,
 	movq	%rax, %rdi	; stderr.19_4,
 	movl	$0, %eax	;,
 	call	*fprintf@GOTPCREL(%rip)	;
 ; src/helper.c:210:         return NULL;
-	movl	$0, %eax	;, _15
+	movl	$0, %eax	;, _17
 	jmp	.L95	;
 .L90:
-; src/helper.c:212:     printf("Info: Starting parsing lib file for import: %s\n", filename);
-	movq	-24(%rbp), %rax	; filename, tmp114
-	movq	%rax, %rsi	; tmp114,
-	leaq	.LC15(%rip), %rax	;, tmp115
-	movq	%rax, %rdi	; tmp115,
+; src/helper.c:212:     fprintf(stderr, "Info: Starting parsing lib file for import: %s\n", filename);
+	movq	stderr(%rip), %rax	; stderr, stderr.20_5
+	movq	-24(%rbp), %rdx	; filename, tmp116
+	leaq	.LC15(%rip), %rcx	;, tmp117
+	movq	%rcx, %rsi	; tmp117,
+	movq	%rax, %rdi	; stderr.20_5,
 	movl	$0, %eax	;,
-	call	*printf@GOTPCREL(%rip)	;
+	call	*fprintf@GOTPCREL(%rip)	;
 ; src/helper.c:213:     size_t length = 0;
 	movq	$0, -72(%rbp)	;, length
 ; src/helper.c:214:     string source_code = read_source(openfile, &length);
-	leaq	-72(%rbp), %rdx	;, tmp116
-	movq	-48(%rbp), %rax	; openfile, tmp117
-	movq	%rdx, %rsi	; tmp116,
-	movq	%rax, %rdi	; tmp117,
-	call	*read_source@GOTPCREL(%rip)	;
-	movq	%rax, -56(%rbp)	; tmp118, source_code
-; src/helper.c:215:     fclose(openfile);
+	leaq	-72(%rbp), %rdx	;, tmp118
 	movq	-48(%rbp), %rax	; openfile, tmp119
+	movq	%rdx, %rsi	; tmp118,
 	movq	%rax, %rdi	; tmp119,
-	call	*fclose@GOTPCREL(%rip)	;
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	-24(%rbp), %rax	; filename, tmp120
-	movq	%rax, %rdi	; tmp120,
-	call	*create_file@GOTPCREL(%rip)	;
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	%rax, %rdi	; _5,
-	call	create_parser	;
-	movq	%rax, %r12	;, _6
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	builtin_scope(%rip), %rbx	; builtin_scope, builtin_scope.20_7
-	movq	-72(%rbp), %rdx	; length, length.21_8
-	movq	-56(%rbp), %rax	; source_code, tmp121
-	movq	%rdx, %rsi	; length.21_8,
+	call	*read_source@GOTPCREL(%rip)	;
+	movq	%rax, -56(%rbp)	; tmp120, source_code
+; src/helper.c:215:     fclose(openfile);
+	movq	-48(%rbp), %rax	; openfile, tmp121
 	movq	%rax, %rdi	; tmp121,
-	call	*create_lexer@GOTPCREL(%rip)	;
-; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length), builtin_scope, create_parser(create_file(filename)));
-	movq	%r12, %rdx	; _6,
-	movq	%rbx, %rsi	; builtin_scope.20_7,
-	movq	%rax, %rdi	; _9,
-	call	*parse_code@GOTPCREL(%rip)	;
-	movq	%rax, -64(%rbp)	; tmp122, code
-; src/helper.c:217:     printf("Info: Finished parsing lib file for import: %s\n", filename);
-	movq	-24(%rbp), %rax	; filename, tmp123
-	movq	%rax, %rsi	; tmp123,
-	leaq	.LC16(%rip), %rax	;, tmp124
+	call	*fclose@GOTPCREL(%rip)	;
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	-24(%rbp), %rax	; filename, tmp122
+	movq	%rax, %rdi	; tmp122,
+	call	*create_file@GOTPCREL(%rip)	;
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	%rax, %rdi	; _6,
+	call	create_parser	;
+	movq	%rax, %r12	;, _7
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	builtin_scope(%rip), %rbx	; builtin_scope, builtin_scope.21_8
+	movq	-72(%rbp), %rcx	; length, length.22_9
+	movq	-24(%rbp), %rdx	; filename, tmp123
+	movq	-56(%rbp), %rax	; source_code, tmp124
+	movq	%rcx, %rsi	; length.22_9,
 	movq	%rax, %rdi	; tmp124,
+	call	*create_lexer@GOTPCREL(%rip)	;
+; src/helper.c:216:     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+	movq	%r12, %rdx	; _7,
+	movq	%rbx, %rsi	; builtin_scope.21_8,
+	movq	%rax, %rdi	; _10,
+	call	*parse_code@GOTPCREL(%rip)	;
+	movq	%rax, -64(%rbp)	; tmp125, code
+; src/helper.c:217:     fprintf(stderr, "Info: Finished parsing lib file for import: %s\n", filename);
+	movq	stderr(%rip), %rax	; stderr, stderr.23_11
+	movq	-24(%rbp), %rdx	; filename, tmp126
+	leaq	.LC16(%rip), %rcx	;, tmp127
+	movq	%rcx, %rsi	; tmp127,
+	movq	%rax, %rdi	; stderr.23_11,
 	movl	$0, %eax	;,
-	call	*printf@GOTPCREL(%rip)	;
+	call	*fprintf@GOTPCREL(%rip)	;
 ; src/helper.c:218:     if (code == NULL) {
 	cmpq	$0, -64(%rbp)	;, code
 	jne	.L92	;,
 ; src/helper.c:219:         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
-	movq	stderr(%rip), %rax	; stderr, stderr.22_10
-	movq	-24(%rbp), %rdx	; filename, tmp125
-	leaq	.LC17(%rip), %rcx	;, tmp126
-	movq	%rcx, %rsi	; tmp126,
-	movq	%rax, %rdi	; stderr.22_10,
+	movq	stderr(%rip), %rax	; stderr, stderr.24_12
+	movq	-24(%rbp), %rdx	; filename, tmp128
+	leaq	.LC17(%rip), %rcx	;, tmp129
+	movq	%rcx, %rsi	; tmp129,
+	movq	%rax, %rdi	; stderr.24_12,
 	movl	$0, %eax	;,
 	call	*fprintf@GOTPCREL(%rip)	;
 ; src/helper.c:220:         return NULL;
-	movl	$0, %eax	;, _15
+	movl	$0, %eax	;, _17
 	jmp	.L95	;
 .L92:
 ; src/helper.c:222:     name = search_name_use_strcmp(code->global_scope, import_name);
-	movq	-64(%rbp), %rax	; code, tmp127
-	movq	8(%rax), %rax	; code_43->global_scope, _11
-	movq	-88(%rbp), %rdx	; import_name, tmp128
-	movq	%rdx, %rsi	; tmp128,
-	movq	%rax, %rdi	; _11,
+	movq	-64(%rbp), %rax	; code, tmp130
+	movq	8(%rax), %rax	; code_45->global_scope, _13
+	movq	-88(%rbp), %rdx	; import_name, tmp131
+	movq	%rdx, %rsi	; tmp131,
+	movq	%rax, %rdi	; _13,
 	call	search_name_use_strcmp	;
-	movq	%rax, -32(%rbp)	; tmp129, name
+	movq	%rax, -32(%rbp)	; tmp132, name
 ; src/helper.c:223:     if (name != NULL)
 	cmpq	$0, -32(%rbp)	;, name
 	je	.L93	;,
 ; src/helper.c:224:         list_append(scope->symbols, (pointer)name);
-	movq	-104(%rbp), %rax	; scope, tmp130
-	movq	8(%rax), %rax	; scope_48(D)->symbols, _12
-	movq	-32(%rbp), %rdx	; name, tmp131
-	movq	%rdx, %rsi	; tmp131,
-	movq	%rax, %rdi	; _12,
+	movq	-104(%rbp), %rax	; scope, tmp133
+	movq	8(%rax), %rax	; scope_50(D)->symbols, _14
+	movq	-32(%rbp), %rdx	; name, tmp134
+	movq	%rdx, %rsi	; tmp134,
+	movq	%rax, %rdi	; _14,
 	call	list_append	;
 	jmp	.L94	;
 .L93:
 ; src/helper.c:226:         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
-	movq	stderr(%rip), %rax	; stderr, stderr.23_13
-	movq	-24(%rbp), %rcx	; filename, tmp132
-	movq	-88(%rbp), %rdx	; import_name, tmp133
-	leaq	.LC18(%rip), %rsi	;, tmp134
-	movq	%rax, %rdi	; stderr.23_13,
+	movq	stderr(%rip), %rax	; stderr, stderr.25_15
+	movq	-24(%rbp), %rcx	; filename, tmp135
+	movq	-88(%rbp), %rdx	; import_name, tmp136
+	leaq	.LC18(%rip), %rsi	;, tmp137
+	movq	%rax, %rdi	; stderr.25_15,
 	movl	$0, %eax	;,
 	call	*fprintf@GOTPCREL(%rip)	;
 .L94:
 ; src/helper.c:227:     return name;
-	movq	-32(%rbp), %rax	; name, _15
+	movq	-32(%rbp), %rax	; name, _17
 .L95:
 ; src/helper.c:228: }
 	addq	$96, %rsp	;,
@@ -1294,9 +1297,9 @@ string_to_operator:
 	subq	$16, %rsp	;,
 	movq	%rdi, -8(%rbp)	; str, str
 ; src/helper.c:238:     if (string_equal(str, ASSIGN_SYMBOL)) return OP_ASSIGN;
-	movq	ASSIGN_SYMBOL(%rip), %rdx	; ASSIGN_SYMBOL, ASSIGN_SYMBOL.24_1
+	movq	ASSIGN_SYMBOL(%rip), %rdx	; ASSIGN_SYMBOL, ASSIGN_SYMBOL.26_1
 	movq	-8(%rbp), %rax	; str, tmp122
-	movq	%rdx, %rsi	; ASSIGN_SYMBOL.24_1,
+	movq	%rdx, %rsi	; ASSIGN_SYMBOL.26_1,
 	movq	%rax, %rdi	; tmp122,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:238:     if (string_equal(str, ASSIGN_SYMBOL)) return OP_ASSIGN;
@@ -1308,9 +1311,9 @@ string_to_operator:
 	jmp	.L100	;
 .L99:
 ; src/helper.c:239:     else if (string_equal(str, ADD_ASSIGN_SYMBOL)) return OP_ADD_ASSIGN;
-	movq	ADD_ASSIGN_SYMBOL(%rip), %rdx	; ADD_ASSIGN_SYMBOL, ADD_ASSIGN_SYMBOL.25_3
+	movq	ADD_ASSIGN_SYMBOL(%rip), %rdx	; ADD_ASSIGN_SYMBOL, ADD_ASSIGN_SYMBOL.27_3
 	movq	-8(%rbp), %rax	; str, tmp123
-	movq	%rdx, %rsi	; ADD_ASSIGN_SYMBOL.25_3,
+	movq	%rdx, %rsi	; ADD_ASSIGN_SYMBOL.27_3,
 	movq	%rax, %rdi	; tmp123,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:239:     else if (string_equal(str, ADD_ASSIGN_SYMBOL)) return OP_ADD_ASSIGN;
@@ -1322,9 +1325,9 @@ string_to_operator:
 	jmp	.L100	;
 .L101:
 ; src/helper.c:240:     else if (string_equal(str, SUB_ASSIGN_SYMBOL)) return OP_SUB_ASSIGN;
-	movq	SUB_ASSIGN_SYMBOL(%rip), %rdx	; SUB_ASSIGN_SYMBOL, SUB_ASSIGN_SYMBOL.26_5
+	movq	SUB_ASSIGN_SYMBOL(%rip), %rdx	; SUB_ASSIGN_SYMBOL, SUB_ASSIGN_SYMBOL.28_5
 	movq	-8(%rbp), %rax	; str, tmp124
-	movq	%rdx, %rsi	; SUB_ASSIGN_SYMBOL.26_5,
+	movq	%rdx, %rsi	; SUB_ASSIGN_SYMBOL.28_5,
 	movq	%rax, %rdi	; tmp124,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:240:     else if (string_equal(str, SUB_ASSIGN_SYMBOL)) return OP_SUB_ASSIGN;
@@ -1336,9 +1339,9 @@ string_to_operator:
 	jmp	.L100	;
 .L102:
 ; src/helper.c:241:     else if (string_equal(str, MUL_ASSIGN_SYMBOL)) return OP_MUL_ASSIGN;
-	movq	MUL_ASSIGN_SYMBOL(%rip), %rdx	; MUL_ASSIGN_SYMBOL, MUL_ASSIGN_SYMBOL.27_7
+	movq	MUL_ASSIGN_SYMBOL(%rip), %rdx	; MUL_ASSIGN_SYMBOL, MUL_ASSIGN_SYMBOL.29_7
 	movq	-8(%rbp), %rax	; str, tmp125
-	movq	%rdx, %rsi	; MUL_ASSIGN_SYMBOL.27_7,
+	movq	%rdx, %rsi	; MUL_ASSIGN_SYMBOL.29_7,
 	movq	%rax, %rdi	; tmp125,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:241:     else if (string_equal(str, MUL_ASSIGN_SYMBOL)) return OP_MUL_ASSIGN;
@@ -1350,9 +1353,9 @@ string_to_operator:
 	jmp	.L100	;
 .L103:
 ; src/helper.c:242:     else if (string_equal(str, DIV_ASSIGN_SYMBOL)) return OP_DIV_ASSIGN;
-	movq	DIV_ASSIGN_SYMBOL(%rip), %rdx	; DIV_ASSIGN_SYMBOL, DIV_ASSIGN_SYMBOL.28_9
+	movq	DIV_ASSIGN_SYMBOL(%rip), %rdx	; DIV_ASSIGN_SYMBOL, DIV_ASSIGN_SYMBOL.30_9
 	movq	-8(%rbp), %rax	; str, tmp126
-	movq	%rdx, %rsi	; DIV_ASSIGN_SYMBOL.28_9,
+	movq	%rdx, %rsi	; DIV_ASSIGN_SYMBOL.30_9,
 	movq	%rax, %rdi	; tmp126,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:242:     else if (string_equal(str, DIV_ASSIGN_SYMBOL)) return OP_DIV_ASSIGN;
@@ -1364,9 +1367,9 @@ string_to_operator:
 	jmp	.L100	;
 .L104:
 ; src/helper.c:243:     else if (string_equal(str, MOD_ASSIGN_SYMBOL)) return OP_MOD_ASSIGN;
-	movq	MOD_ASSIGN_SYMBOL(%rip), %rdx	; MOD_ASSIGN_SYMBOL, MOD_ASSIGN_SYMBOL.29_11
+	movq	MOD_ASSIGN_SYMBOL(%rip), %rdx	; MOD_ASSIGN_SYMBOL, MOD_ASSIGN_SYMBOL.31_11
 	movq	-8(%rbp), %rax	; str, tmp127
-	movq	%rdx, %rsi	; MOD_ASSIGN_SYMBOL.29_11,
+	movq	%rdx, %rsi	; MOD_ASSIGN_SYMBOL.31_11,
 	movq	%rax, %rdi	; tmp127,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:243:     else if (string_equal(str, MOD_ASSIGN_SYMBOL)) return OP_MOD_ASSIGN;
@@ -1378,9 +1381,9 @@ string_to_operator:
 	jmp	.L100	;
 .L105:
 ; src/helper.c:244:     else if (string_equal(str, AND_SYMBOL)) return OP_AND;
-	movq	AND_SYMBOL(%rip), %rdx	; AND_SYMBOL, AND_SYMBOL.30_13
+	movq	AND_SYMBOL(%rip), %rdx	; AND_SYMBOL, AND_SYMBOL.32_13
 	movq	-8(%rbp), %rax	; str, tmp128
-	movq	%rdx, %rsi	; AND_SYMBOL.30_13,
+	movq	%rdx, %rsi	; AND_SYMBOL.32_13,
 	movq	%rax, %rdi	; tmp128,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:244:     else if (string_equal(str, AND_SYMBOL)) return OP_AND;
@@ -1392,9 +1395,9 @@ string_to_operator:
 	jmp	.L100	;
 .L106:
 ; src/helper.c:245:     else if (string_equal(str, OR_SYMBOL)) return OP_OR;
-	movq	OR_SYMBOL(%rip), %rdx	; OR_SYMBOL, OR_SYMBOL.31_15
+	movq	OR_SYMBOL(%rip), %rdx	; OR_SYMBOL, OR_SYMBOL.33_15
 	movq	-8(%rbp), %rax	; str, tmp129
-	movq	%rdx, %rsi	; OR_SYMBOL.31_15,
+	movq	%rdx, %rsi	; OR_SYMBOL.33_15,
 	movq	%rax, %rdi	; tmp129,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:245:     else if (string_equal(str, OR_SYMBOL)) return OP_OR;
@@ -1406,9 +1409,9 @@ string_to_operator:
 	jmp	.L100	;
 .L107:
 ; src/helper.c:246:     else if (string_equal(str, EQ_SYMBOL)) return OP_EQ;
-	movq	EQ_SYMBOL(%rip), %rdx	; EQ_SYMBOL, EQ_SYMBOL.32_17
+	movq	EQ_SYMBOL(%rip), %rdx	; EQ_SYMBOL, EQ_SYMBOL.34_17
 	movq	-8(%rbp), %rax	; str, tmp130
-	movq	%rdx, %rsi	; EQ_SYMBOL.32_17,
+	movq	%rdx, %rsi	; EQ_SYMBOL.34_17,
 	movq	%rax, %rdi	; tmp130,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:246:     else if (string_equal(str, EQ_SYMBOL)) return OP_EQ;
@@ -1420,9 +1423,9 @@ string_to_operator:
 	jmp	.L100	;
 .L108:
 ; src/helper.c:247:     else if (string_equal(str, NE_SYMBOL)) return OP_NE;
-	movq	NE_SYMBOL(%rip), %rdx	; NE_SYMBOL, NE_SYMBOL.33_19
+	movq	NE_SYMBOL(%rip), %rdx	; NE_SYMBOL, NE_SYMBOL.35_19
 	movq	-8(%rbp), %rax	; str, tmp131
-	movq	%rdx, %rsi	; NE_SYMBOL.33_19,
+	movq	%rdx, %rsi	; NE_SYMBOL.35_19,
 	movq	%rax, %rdi	; tmp131,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:247:     else if (string_equal(str, NE_SYMBOL)) return OP_NE;
@@ -1434,9 +1437,9 @@ string_to_operator:
 	jmp	.L100	;
 .L109:
 ; src/helper.c:248:     else if (string_equal(str, LT_SYMBOL)) return OP_LT;
-	movq	LT_SYMBOL(%rip), %rdx	; LT_SYMBOL, LT_SYMBOL.34_21
+	movq	LT_SYMBOL(%rip), %rdx	; LT_SYMBOL, LT_SYMBOL.36_21
 	movq	-8(%rbp), %rax	; str, tmp132
-	movq	%rdx, %rsi	; LT_SYMBOL.34_21,
+	movq	%rdx, %rsi	; LT_SYMBOL.36_21,
 	movq	%rax, %rdi	; tmp132,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:248:     else if (string_equal(str, LT_SYMBOL)) return OP_LT;
@@ -1448,9 +1451,9 @@ string_to_operator:
 	jmp	.L100	;
 .L110:
 ; src/helper.c:249:     else if (string_equal(str, GT_SYMBOL)) return OP_GT;
-	movq	GT_SYMBOL(%rip), %rdx	; GT_SYMBOL, GT_SYMBOL.35_23
+	movq	GT_SYMBOL(%rip), %rdx	; GT_SYMBOL, GT_SYMBOL.37_23
 	movq	-8(%rbp), %rax	; str, tmp133
-	movq	%rdx, %rsi	; GT_SYMBOL.35_23,
+	movq	%rdx, %rsi	; GT_SYMBOL.37_23,
 	movq	%rax, %rdi	; tmp133,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:249:     else if (string_equal(str, GT_SYMBOL)) return OP_GT;
@@ -1462,9 +1465,9 @@ string_to_operator:
 	jmp	.L100	;
 .L111:
 ; src/helper.c:250:     else if (string_equal(str, LE_SYMBOL)) return OP_LE;
-	movq	LE_SYMBOL(%rip), %rdx	; LE_SYMBOL, LE_SYMBOL.36_25
+	movq	LE_SYMBOL(%rip), %rdx	; LE_SYMBOL, LE_SYMBOL.38_25
 	movq	-8(%rbp), %rax	; str, tmp134
-	movq	%rdx, %rsi	; LE_SYMBOL.36_25,
+	movq	%rdx, %rsi	; LE_SYMBOL.38_25,
 	movq	%rax, %rdi	; tmp134,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:250:     else if (string_equal(str, LE_SYMBOL)) return OP_LE;
@@ -1476,9 +1479,9 @@ string_to_operator:
 	jmp	.L100	;
 .L112:
 ; src/helper.c:251:     else if (string_equal(str, GE_SYMBOL)) return OP_GE;
-	movq	GE_SYMBOL(%rip), %rdx	; GE_SYMBOL, GE_SYMBOL.37_27
+	movq	GE_SYMBOL(%rip), %rdx	; GE_SYMBOL, GE_SYMBOL.39_27
 	movq	-8(%rbp), %rax	; str, tmp135
-	movq	%rdx, %rsi	; GE_SYMBOL.37_27,
+	movq	%rdx, %rsi	; GE_SYMBOL.39_27,
 	movq	%rax, %rdi	; tmp135,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:251:     else if (string_equal(str, GE_SYMBOL)) return OP_GE;
@@ -1490,9 +1493,9 @@ string_to_operator:
 	jmp	.L100	;
 .L113:
 ; src/helper.c:252:     else if (string_equal(str, ADD_SYMBOL)) return OP_ADD;
-	movq	ADD_SYMBOL(%rip), %rdx	; ADD_SYMBOL, ADD_SYMBOL.38_29
+	movq	ADD_SYMBOL(%rip), %rdx	; ADD_SYMBOL, ADD_SYMBOL.40_29
 	movq	-8(%rbp), %rax	; str, tmp136
-	movq	%rdx, %rsi	; ADD_SYMBOL.38_29,
+	movq	%rdx, %rsi	; ADD_SYMBOL.40_29,
 	movq	%rax, %rdi	; tmp136,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:252:     else if (string_equal(str, ADD_SYMBOL)) return OP_ADD;
@@ -1504,9 +1507,9 @@ string_to_operator:
 	jmp	.L100	;
 .L114:
 ; src/helper.c:253:     else if (string_equal(str, SUB_SYMBOL)) return OP_SUB;
-	movq	SUB_SYMBOL(%rip), %rdx	; SUB_SYMBOL, SUB_SYMBOL.39_31
+	movq	SUB_SYMBOL(%rip), %rdx	; SUB_SYMBOL, SUB_SYMBOL.41_31
 	movq	-8(%rbp), %rax	; str, tmp137
-	movq	%rdx, %rsi	; SUB_SYMBOL.39_31,
+	movq	%rdx, %rsi	; SUB_SYMBOL.41_31,
 	movq	%rax, %rdi	; tmp137,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:253:     else if (string_equal(str, SUB_SYMBOL)) return OP_SUB;
@@ -1518,9 +1521,9 @@ string_to_operator:
 	jmp	.L100	;
 .L115:
 ; src/helper.c:254:     else if (string_equal(str, MUL_SYMBOL)) return OP_MUL;
-	movq	MUL_SYMBOL(%rip), %rdx	; MUL_SYMBOL, MUL_SYMBOL.40_33
+	movq	MUL_SYMBOL(%rip), %rdx	; MUL_SYMBOL, MUL_SYMBOL.42_33
 	movq	-8(%rbp), %rax	; str, tmp138
-	movq	%rdx, %rsi	; MUL_SYMBOL.40_33,
+	movq	%rdx, %rsi	; MUL_SYMBOL.42_33,
 	movq	%rax, %rdi	; tmp138,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:254:     else if (string_equal(str, MUL_SYMBOL)) return OP_MUL;
@@ -1532,9 +1535,9 @@ string_to_operator:
 	jmp	.L100	;
 .L116:
 ; src/helper.c:255:     else if (string_equal(str, DIV_SYMBOL)) return OP_DIV;
-	movq	DIV_SYMBOL(%rip), %rdx	; DIV_SYMBOL, DIV_SYMBOL.41_35
+	movq	DIV_SYMBOL(%rip), %rdx	; DIV_SYMBOL, DIV_SYMBOL.43_35
 	movq	-8(%rbp), %rax	; str, tmp139
-	movq	%rdx, %rsi	; DIV_SYMBOL.41_35,
+	movq	%rdx, %rsi	; DIV_SYMBOL.43_35,
 	movq	%rax, %rdi	; tmp139,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:255:     else if (string_equal(str, DIV_SYMBOL)) return OP_DIV;
@@ -1546,9 +1549,9 @@ string_to_operator:
 	jmp	.L100	;
 .L117:
 ; src/helper.c:256:     else if (string_equal(str, MOD_SYMBOL)) return OP_MOD;
-	movq	MOD_SYMBOL(%rip), %rdx	; MOD_SYMBOL, MOD_SYMBOL.42_37
+	movq	MOD_SYMBOL(%rip), %rdx	; MOD_SYMBOL, MOD_SYMBOL.44_37
 	movq	-8(%rbp), %rax	; str, tmp140
-	movq	%rdx, %rsi	; MOD_SYMBOL.42_37,
+	movq	%rdx, %rsi	; MOD_SYMBOL.44_37,
 	movq	%rax, %rdi	; tmp140,
 	call	*string_equal@GOTPCREL(%rip)	;
 ; src/helper.c:256:     else if (string_equal(str, MOD_SYMBOL)) return OP_MOD;

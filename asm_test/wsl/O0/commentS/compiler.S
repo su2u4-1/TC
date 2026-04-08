@@ -565,18 +565,16 @@ output_tac:
 .LC15:
 	.string	"r"
 .LC16:
-	.string	"Error opening file: %s"
+	.string	"Error opening file: %s\n"
 .LC17:
 	.string	".token"
 .LC18:
 	.string	"w"
 .LC19:
-	.string	"Error opening file: %s\n"
-.LC20:
 	.string	".ast"
-.LC21:
+.LC20:
 	.string	".tc"
-.LC22:
+.LC21:
 	.string	".tac"
 	.text
 	.globl	parse_file
@@ -613,7 +611,7 @@ parse_file:
 ; src/compiler.c:78:     if (source_file == NULL) {
 	cmpq	$0, -32(%rbp)	;, source_file
 	jne	.L33	;,
-; src/compiler.c:79:         fprintf(stderr, "Error opening file: %s", filename);
+; src/compiler.c:79:         fprintf(stderr, "Error opening file: %s\n", filename);
 	movq	stderr(%rip), %rax	; stderr, stderr.0_1
 	movq	-24(%rbp), %rdx	; filename, tmp106
 	leaq	.LC16(%rip), %rcx	;, tmp107
@@ -634,72 +632,73 @@ parse_file:
 	movq	-32(%rbp), %rax	; source_file, tmp111
 	movq	%rax, %rdi	; tmp111,
 	call	*fclose@GOTPCREL(%rip)	;
-; src/compiler.c:84:     Lexer* lexer = create_lexer(source, length);
-	movq	-120(%rbp), %rdx	; length, length.1_2
-	movq	-40(%rbp), %rax	; source, tmp112
-	movq	%rdx, %rsi	; length.1_2,
-	movq	%rax, %rdi	; tmp112,
+; src/compiler.c:84:     Lexer* lexer = create_lexer(source, length, filename);
+	movq	-120(%rbp), %rcx	; length, length.1_2
+	movq	-24(%rbp), %rdx	; filename, tmp112
+	movq	-40(%rbp), %rax	; source, tmp113
+	movq	%rcx, %rsi	; length.1_2,
+	movq	%rax, %rdi	; tmp113,
 	call	*create_lexer@GOTPCREL(%rip)	;
-	movq	%rax, -48(%rbp)	; tmp113, lexer
+	movq	%rax, -48(%rbp)	; tmp114, lexer
 ; src/compiler.c:85:     if (o_token) {
 	cmpb	$0, -140(%rbp)	;, o_token
 	je	.L35	;,
 ; src/compiler.c:86:         change_file_extension(file, create_string(".token", 6));
 	movl	$6, %esi	;,
-	leaq	.LC17(%rip), %rax	;, tmp114
-	movq	%rax, %rdi	; tmp114,
+	leaq	.LC17(%rip), %rax	;, tmp115
+	movq	%rax, %rdi	; tmp115,
 	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rdx	;, _3
 ; src/compiler.c:86:         change_file_extension(file, create_string(".token", 6));
-	movq	-16(%rbp), %rax	; file, tmp115
+	movq	-16(%rbp), %rax	; file, tmp116
 	movq	%rdx, %rsi	; _3,
-	movq	%rax, %rdi	; tmp115,
+	movq	%rax, %rdi	; tmp116,
 	call	*change_file_extension@GOTPCREL(%rip)	;
 ; src/compiler.c:87:         string out_token_name = get_full_path(file);
-	movq	-16(%rbp), %rax	; file, tmp116
-	movq	%rax, %rdi	; tmp116,
+	movq	-16(%rbp), %rax	; file, tmp117
+	movq	%rax, %rdi	; tmp117,
 	call	*get_full_path@GOTPCREL(%rip)	;
-	movq	%rax, -56(%rbp)	; tmp117, out_token_name
+	movq	%rax, -56(%rbp)	; tmp118, out_token_name
 ; src/compiler.c:88:         FILE* out_token_file = fopen(out_token_name, "w");
-	movq	-56(%rbp), %rax	; out_token_name, tmp118
-	leaq	.LC18(%rip), %rdx	;, tmp119
-	movq	%rdx, %rsi	; tmp119,
-	movq	%rax, %rdi	; tmp118,
+	movq	-56(%rbp), %rax	; out_token_name, tmp119
+	leaq	.LC18(%rip), %rdx	;, tmp120
+	movq	%rdx, %rsi	; tmp120,
+	movq	%rax, %rdi	; tmp119,
 	call	*fopen@GOTPCREL(%rip)	;
-	movq	%rax, -64(%rbp)	; tmp120, out_token_file
+	movq	%rax, -64(%rbp)	; tmp121, out_token_file
 ; src/compiler.c:89:         if (out_token_file == NULL)
 	cmpq	$0, -64(%rbp)	;, out_token_file
 	jne	.L36	;,
 ; src/compiler.c:90:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
 	movq	stderr(%rip), %rax	; stderr, stderr.2_4
-	movq	-56(%rbp), %rdx	; out_token_name, tmp121
-	leaq	.LC19(%rip), %rcx	;, tmp122
-	movq	%rcx, %rsi	; tmp122,
+	movq	-56(%rbp), %rdx	; out_token_name, tmp122
+	leaq	.LC16(%rip), %rcx	;, tmp123
+	movq	%rcx, %rsi	; tmp123,
 	movq	%rax, %rdi	; stderr.2_4,
 	movl	$0, %eax	;,
 	call	*fprintf@GOTPCREL(%rip)	;
 	jmp	.L35	;
 .L36:
 ; src/compiler.c:92:             output_token(out_token_file, lexer);
-	movq	-48(%rbp), %rdx	; lexer, tmp123
-	movq	-64(%rbp), %rax	; out_token_file, tmp124
-	movq	%rdx, %rsi	; tmp123,
-	movq	%rax, %rdi	; tmp124,
+	movq	-48(%rbp), %rdx	; lexer, tmp124
+	movq	-64(%rbp), %rax	; out_token_file, tmp125
+	movq	%rdx, %rsi	; tmp124,
+	movq	%rax, %rdi	; tmp125,
 	call	output_token	;
 ; src/compiler.c:93:             fclose(out_token_file);
-	movq	-64(%rbp), %rax	; out_token_file, tmp125
-	movq	%rax, %rdi	; tmp125,
+	movq	-64(%rbp), %rax	; out_token_file, tmp126
+	movq	%rax, %rdi	; tmp126,
 	call	*fclose@GOTPCREL(%rip)	;
 .L35:
 ; src/compiler.c:96:     reset_lexer(lexer);
-	movq	-48(%rbp), %rax	; lexer, tmp126
-	movq	%rax, %rdi	; tmp126,
+	movq	-48(%rbp), %rax	; lexer, tmp127
+	movq	%rax, %rdi	; tmp127,
 	call	*reset_lexer@GOTPCREL(%rip)	;
 ; src/compiler.c:97:     Parser* parser = create_parser(file);
-	movq	-16(%rbp), %rax	; file, tmp127
-	movq	%rax, %rdi	; tmp127,
+	movq	-16(%rbp), %rax	; file, tmp128
+	movq	%rax, %rdi	; tmp128,
 	call	*create_parser@GOTPCREL(%rip)	;
-	movq	%rax, -72(%rbp)	; tmp128, parser
+	movq	%rax, -72(%rbp)	; tmp129, parser
 ; src/compiler.c:98:     Code* ast = NULL;
 	movq	$0, -8(%rbp)	;, ast
 ; src/compiler.c:99:     if (o_ast || o_tac)
@@ -711,72 +710,72 @@ parse_file:
 .L37:
 ; src/compiler.c:100:         ast = parse_code(lexer, builtin_scope, parser);
 	movq	builtin_scope(%rip), %rcx	; builtin_scope, builtin_scope.3_5
-	movq	-72(%rbp), %rdx	; parser, tmp129
-	movq	-48(%rbp), %rax	; lexer, tmp130
+	movq	-72(%rbp), %rdx	; parser, tmp130
+	movq	-48(%rbp), %rax	; lexer, tmp131
 	movq	%rcx, %rsi	; builtin_scope.3_5,
-	movq	%rax, %rdi	; tmp130,
+	movq	%rax, %rdi	; tmp131,
 	call	*parse_code@GOTPCREL(%rip)	;
-	movq	%rax, -8(%rbp)	; tmp131, ast
+	movq	%rax, -8(%rbp)	; tmp132, ast
 .L38:
 ; src/compiler.c:101:     if (o_ast) {
 	cmpb	$0, -144(%rbp)	;, o_ast
 	je	.L39	;,
 ; src/compiler.c:102:         change_file_extension(file, create_string(".ast", 4));
 	movl	$4, %esi	;,
-	leaq	.LC20(%rip), %rax	;, tmp132
-	movq	%rax, %rdi	; tmp132,
+	leaq	.LC19(%rip), %rax	;, tmp133
+	movq	%rax, %rdi	; tmp133,
 	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rdx	;, _6
 ; src/compiler.c:102:         change_file_extension(file, create_string(".ast", 4));
-	movq	-16(%rbp), %rax	; file, tmp133
+	movq	-16(%rbp), %rax	; file, tmp134
 	movq	%rdx, %rsi	; _6,
-	movq	%rax, %rdi	; tmp133,
+	movq	%rax, %rdi	; tmp134,
 	call	*change_file_extension@GOTPCREL(%rip)	;
 ; src/compiler.c:103:         string out_ast_name = get_full_path(file);
-	movq	-16(%rbp), %rax	; file, tmp134
-	movq	%rax, %rdi	; tmp134,
+	movq	-16(%rbp), %rax	; file, tmp135
+	movq	%rax, %rdi	; tmp135,
 	call	*get_full_path@GOTPCREL(%rip)	;
-	movq	%rax, -80(%rbp)	; tmp135, out_ast_name
+	movq	%rax, -80(%rbp)	; tmp136, out_ast_name
 ; src/compiler.c:104:         change_file_extension(file, create_string(".tc", 3));
 	movl	$3, %esi	;,
-	leaq	.LC21(%rip), %rax	;, tmp136
-	movq	%rax, %rdi	; tmp136,
+	leaq	.LC20(%rip), %rax	;, tmp137
+	movq	%rax, %rdi	; tmp137,
 	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rdx	;, _7
 ; src/compiler.c:104:         change_file_extension(file, create_string(".tc", 3));
-	movq	-16(%rbp), %rax	; file, tmp137
+	movq	-16(%rbp), %rax	; file, tmp138
 	movq	%rdx, %rsi	; _7,
-	movq	%rax, %rdi	; tmp137,
+	movq	%rax, %rdi	; tmp138,
 	call	*change_file_extension@GOTPCREL(%rip)	;
 ; src/compiler.c:105:         FILE* out_ast_file = fopen(out_ast_name, "w");
-	movq	-80(%rbp), %rax	; out_ast_name, tmp138
-	leaq	.LC18(%rip), %rdx	;, tmp139
-	movq	%rdx, %rsi	; tmp139,
-	movq	%rax, %rdi	; tmp138,
+	movq	-80(%rbp), %rax	; out_ast_name, tmp139
+	leaq	.LC18(%rip), %rdx	;, tmp140
+	movq	%rdx, %rsi	; tmp140,
+	movq	%rax, %rdi	; tmp139,
 	call	*fopen@GOTPCREL(%rip)	;
-	movq	%rax, -88(%rbp)	; tmp140, out_ast_file
+	movq	%rax, -88(%rbp)	; tmp141, out_ast_file
 ; src/compiler.c:106:         if (out_ast_file == NULL)
 	cmpq	$0, -88(%rbp)	;, out_ast_file
 	jne	.L40	;,
 ; src/compiler.c:107:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
 	movq	stderr(%rip), %rax	; stderr, stderr.4_8
-	movq	-80(%rbp), %rdx	; out_ast_name, tmp141
-	leaq	.LC19(%rip), %rcx	;, tmp142
-	movq	%rcx, %rsi	; tmp142,
+	movq	-80(%rbp), %rdx	; out_ast_name, tmp142
+	leaq	.LC16(%rip), %rcx	;, tmp143
+	movq	%rcx, %rsi	; tmp143,
 	movq	%rax, %rdi	; stderr.4_8,
 	movl	$0, %eax	;,
 	call	*fprintf@GOTPCREL(%rip)	;
 	jmp	.L39	;
 .L40:
 ; src/compiler.c:109:             output_ast(out_ast_file, ast);
-	movq	-8(%rbp), %rdx	; ast, tmp143
-	movq	-88(%rbp), %rax	; out_ast_file, tmp144
-	movq	%rdx, %rsi	; tmp143,
-	movq	%rax, %rdi	; tmp144,
+	movq	-8(%rbp), %rdx	; ast, tmp144
+	movq	-88(%rbp), %rax	; out_ast_file, tmp145
+	movq	%rdx, %rsi	; tmp144,
+	movq	%rax, %rdi	; tmp145,
 	call	output_ast	;
 ; src/compiler.c:110:             fclose(out_ast_file);
-	movq	-88(%rbp), %rax	; out_ast_file, tmp145
-	movq	%rax, %rdi	; tmp145,
+	movq	-88(%rbp), %rax	; out_ast_file, tmp146
+	movq	%rax, %rdi	; tmp146,
 	call	*fclose@GOTPCREL(%rip)	;
 .L39:
 ; src/compiler.c:113:     if (o_tac) {
@@ -784,65 +783,65 @@ parse_file:
 	je	.L32	;,
 ; src/compiler.c:114:         change_file_extension(file, create_string(".tac", 4));
 	movl	$4, %esi	;,
-	leaq	.LC22(%rip), %rax	;, tmp146
-	movq	%rax, %rdi	; tmp146,
+	leaq	.LC21(%rip), %rax	;, tmp147
+	movq	%rax, %rdi	; tmp147,
 	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rdx	;, _9
 ; src/compiler.c:114:         change_file_extension(file, create_string(".tac", 4));
-	movq	-16(%rbp), %rax	; file, tmp147
+	movq	-16(%rbp), %rax	; file, tmp148
 	movq	%rdx, %rsi	; _9,
-	movq	%rax, %rdi	; tmp147,
+	movq	%rax, %rdi	; tmp148,
 	call	*change_file_extension@GOTPCREL(%rip)	;
 ; src/compiler.c:115:         string out_tac_name = get_full_path(file);
-	movq	-16(%rbp), %rax	; file, tmp148
-	movq	%rax, %rdi	; tmp148,
+	movq	-16(%rbp), %rax	; file, tmp149
+	movq	%rax, %rdi	; tmp149,
 	call	*get_full_path@GOTPCREL(%rip)	;
-	movq	%rax, -96(%rbp)	; tmp149, out_tac_name
+	movq	%rax, -96(%rbp)	; tmp150, out_tac_name
 ; src/compiler.c:116:         change_file_extension(file, create_string(".tc", 3));
 	movl	$3, %esi	;,
-	leaq	.LC21(%rip), %rax	;, tmp150
-	movq	%rax, %rdi	; tmp150,
+	leaq	.LC20(%rip), %rax	;, tmp151
+	movq	%rax, %rdi	; tmp151,
 	call	*create_string@GOTPCREL(%rip)	;
 	movq	%rax, %rdx	;, _10
 ; src/compiler.c:116:         change_file_extension(file, create_string(".tc", 3));
-	movq	-16(%rbp), %rax	; file, tmp151
+	movq	-16(%rbp), %rax	; file, tmp152
 	movq	%rdx, %rsi	; _10,
-	movq	%rax, %rdi	; tmp151,
+	movq	%rax, %rdi	; tmp152,
 	call	*change_file_extension@GOTPCREL(%rip)	;
 ; src/compiler.c:117:         FILE* out_tac_file = fopen(out_tac_name, "w");
-	movq	-96(%rbp), %rax	; out_tac_name, tmp152
-	leaq	.LC18(%rip), %rdx	;, tmp153
-	movq	%rdx, %rsi	; tmp153,
-	movq	%rax, %rdi	; tmp152,
+	movq	-96(%rbp), %rax	; out_tac_name, tmp153
+	leaq	.LC18(%rip), %rdx	;, tmp154
+	movq	%rdx, %rsi	; tmp154,
+	movq	%rax, %rdi	; tmp153,
 	call	*fopen@GOTPCREL(%rip)	;
-	movq	%rax, -104(%rbp)	; tmp154, out_tac_file
+	movq	%rax, -104(%rbp)	; tmp155, out_tac_file
 ; src/compiler.c:118:         if (out_tac_file == NULL)
 	cmpq	$0, -104(%rbp)	;, out_tac_file
 	jne	.L42	;,
 ; src/compiler.c:119:             fprintf(stderr, "Error opening file: %s\n", out_tac_name);
 	movq	stderr(%rip), %rax	; stderr, stderr.5_11
-	movq	-96(%rbp), %rdx	; out_tac_name, tmp155
-	leaq	.LC19(%rip), %rcx	;, tmp156
-	movq	%rcx, %rsi	; tmp156,
+	movq	-96(%rbp), %rdx	; out_tac_name, tmp156
+	leaq	.LC16(%rip), %rcx	;, tmp157
+	movq	%rcx, %rsi	; tmp157,
 	movq	%rax, %rdi	; stderr.5_11,
 	movl	$0, %eax	;,
 	call	*fprintf@GOTPCREL(%rip)	;
 	jmp	.L32	;
 .L42:
 ; src/compiler.c:121:             TAC* tac = tac_code(ast);
-	movq	-8(%rbp), %rax	; ast, tmp157
-	movq	%rax, %rdi	; tmp157,
+	movq	-8(%rbp), %rax	; ast, tmp158
+	movq	%rax, %rdi	; tmp158,
 	call	*tac_code@GOTPCREL(%rip)	;
-	movq	%rax, -112(%rbp)	; tmp158, tac
+	movq	%rax, -112(%rbp)	; tmp159, tac
 ; src/compiler.c:122:             output_tac(out_tac_file, tac);
-	movq	-112(%rbp), %rdx	; tac, tmp159
-	movq	-104(%rbp), %rax	; out_tac_file, tmp160
-	movq	%rdx, %rsi	; tmp159,
-	movq	%rax, %rdi	; tmp160,
+	movq	-112(%rbp), %rdx	; tac, tmp160
+	movq	-104(%rbp), %rax	; out_tac_file, tmp161
+	movq	%rdx, %rsi	; tmp160,
+	movq	%rax, %rdi	; tmp161,
 	call	output_tac	;
 ; src/compiler.c:123:             fclose(out_tac_file);
-	movq	-104(%rbp), %rax	; out_tac_file, tmp161
-	movq	%rax, %rdi	; tmp161,
+	movq	-104(%rbp), %rax	; out_tac_file, tmp162
+	movq	%rax, %rdi	; tmp162,
 	call	*fclose@GOTPCREL(%rip)	;
 .L32:
 ; src/compiler.c:126: }

@@ -600,6 +600,24 @@ get_info:
 	movl	$0, %ebx
 	jmp	.L67
 	.size	get_info, .-get_info
+	.globl	to_lower
+	.type	to_lower, @function
+to_lower:
+	leal	-65(%rdi), %edx
+	leal	32(%rdi), %eax
+	cmpb	$26, %dl
+	cmovnb	%edi, %eax
+	ret
+	.size	to_lower, .-to_lower
+	.globl	to_upper
+	.type	to_upper, @function
+to_upper:
+	leal	-97(%rdi), %edx
+	leal	-32(%rdi), %eax
+	cmpb	$26, %dl
+	cmovnb	%edi, %eax
+	ret
+	.size	to_upper, .-to_upper
 	.section	.rodata
 	.align 8
 	.type	__PRETTY_FUNCTION__.0, @object

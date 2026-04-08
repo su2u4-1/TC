@@ -2,14 +2,14 @@
 	.text
 	.type	get_current_char, @function
 get_current_char:
-	movq	8(%rdi), %rax
+	movq	16(%rdi), %rax
 	movl	$0, %edx
-	cmpq	16(%rdi), %rax
+	cmpq	24(%rdi), %rax
 	jnb	.L1
-	addq	$1, 32(%rdi)
-	movq	(%rdi), %rdx
+	addq	$1, 40(%rdi)
+	movq	8(%rdi), %rdx
 	leaq	1(%rax), %rcx
-	movq	%rcx, 8(%rdi)
+	movq	%rcx, 16(%rdi)
 	movzbl	(%rdx,%rax), %edx
 .L1:
 	movl	%edx, %eax
@@ -42,20 +42,20 @@ create_token:
 	.section	.rodata.str1.8,"aMS",@progbits,1
 	.align 8
 .LC0:
-	.string	"Lexer Error at Line %zu, Column %zu: %s\n"
+	.string	"[Lexer Error] at %s:%zu:%zu: %s\n"
 	.text
 	.type	lexer_error, @function
 lexer_error:
-	subq	$8, %rsp
-	movq	%rdi, %r9
-	leaq	1(%rsi), %rcx
-	leaq	1(%rdx), %r8
+	subq	$16, %rsp
+	pushq	%rdi
+	leaq	1(%rdx), %r9
+	leaq	1(%rsi), %r8
 	leaq	.LC0(%rip), %rdx
 	movl	$2, %esi
 	movq	stderr(%rip), %rdi
 	movl	$0, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	addq	$8, %rsp
+	addq	$24, %rsp
 	ret
 	.size	lexer_error, .-lexer_error
 	.section	.rodata.str1.1,"aMS",@progbits,1
@@ -133,8 +133,8 @@ next_token:
 	.long	.L10-.L11
 	.text
 .L13:
-	movq	32(%rbx), %rcx
-	movq	24(%rbx), %rdx
+	movq	40(%rbx), %rcx
+	movq	32(%rbx), %rdx
 	movl	$0, %esi
 	movl	$0, %edi
 	call	create_token
@@ -153,8 +153,8 @@ next_token:
 	call	next_token
 	jmp	.L8
 .L12:
-	addq	$1, 24(%rbx)
-	movq	$0, 32(%rbx)
+	addq	$1, 32(%rbx)
+	movq	$0, 40(%rbx)
 	movsbl	%bpl, %esi
 	movq	%rbx, %rdi
 	call	next_token
@@ -166,8 +166,8 @@ next_token:
 	jg	.L16
 	cmpb	$34, %al
 	jne	.L103
-	movq	8(%rbx), %r12
-	movq	32(%rbx), %rax
+	movq	16(%rbx), %r12
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %r13
 	movq	%rbx, %rdi
 	call	get_current_char
@@ -191,14 +191,14 @@ next_token:
 	cmpb	$34, %bpl
 	jne	.L104
 .L34:
-	movq	8(%rbx), %rsi
+	movq	16(%rbx), %rsi
 	subq	%r12, %rsi
 	cmpq	$1, %rsi
 	je	.L105
-	movq	24(%rbx), %rbp
+	movq	32(%rbx), %rbp
 	subq	$1, %rsi
 	movq	%r12, %rdi
-	addq	(%rbx), %rdi
+	addq	8(%rbx), %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
 	movq	%r13, %rcx
@@ -213,9 +213,9 @@ next_token:
 	movabsq	$288230372997595135, %rcx
 	btq	%rdx, %rcx
 	jnc	.L20
-	movq	8(%rbx), %r14
+	movq	16(%rbx), %r14
 	leaq	-1(%r14), %r13
-	movq	32(%rbx), %rcx
+	movq	40(%rbx), %rcx
 	leaq	-1(%rcx), %r12
 	movabsq	$288230372997595135, %rbp
 	jmp	.L22
@@ -234,36 +234,36 @@ next_token:
 	btq	%rax, %rbp
 	jc	.L24
 .L25:
-	movq	8(%rbx), %rsi
+	movq	16(%rbx), %rsi
 	leaq	-1(%rsi), %rax
-	movq	%rax, 8(%rbx)
-	subq	$1, 32(%rbx)
+	movq	%rax, 16(%rbx)
+	subq	$1, 40(%rbx)
 	subq	%r14, %rsi
 	movq	%r13, %rdi
-	addq	(%rbx), %rdi
+	addq	8(%rbx), %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rbp
 	movq	%rax, %rdi
 	call	*is_keyword@GOTPCREL(%rip)
 	testb	%al, %al
 	je	.L27
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	%r12, %rcx
 	movq	%rbp, %rsi
 	movl	$6, %edi
 	call	create_token
 	jmp	.L8
 .L27:
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	%r12, %rcx
 	movq	%rbp, %rsi
 	movl	$1, %edi
 	call	create_token
 	jmp	.L8
 .L16:
-	movq	8(%rbx), %r13
+	movq	16(%rbx), %r13
 	leaq	-1(%r13), %r12
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rbp
 .L28:
 	movq	%rbx, %rdi
@@ -271,21 +271,21 @@ next_token:
 	leal	-48(%rax), %edx
 	cmpb	$9, %dl
 	jbe	.L28
-	movq	8(%rbx), %rdx
+	movq	16(%rbx), %rdx
 	movl	$2, %r14d
-	cmpq	16(%rbx), %rdx
+	cmpq	24(%rbx), %rdx
 	jnb	.L29
 	cmpb	$46, %al
 	je	.L107
 .L29:
-	movq	8(%rbx), %rsi
+	movq	16(%rbx), %rsi
 	leaq	-1(%rsi), %rax
-	movq	%rax, 8(%rbx)
-	subq	$1, 32(%rbx)
-	movq	24(%rbx), %r15
+	movq	%rax, 16(%rbx)
+	subq	$1, 40(%rbx)
+	movq	32(%rbx), %r15
 	subq	%r13, %rsi
 	movq	%r12, %rdi
-	addq	(%rbx), %rdi
+	addq	8(%rbx), %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
 	movq	%rbp, %rcx
@@ -294,7 +294,7 @@ next_token:
 	call	create_token
 	jmp	.L8
 .L107:
-	movq	(%rbx), %rax
+	movq	8(%rbx), %rax
 	movzbl	(%rax,%rdx), %eax
 	subl	$48, %eax
 	cmpb	$9, %al
@@ -316,17 +316,18 @@ next_token:
 	movl	$3, %r14d
 	jmp	.L29
 .L104:
+	movq	(%rbx), %rcx
 	leaq	-1(%r12), %rdx
-	movq	24(%rbx), %rsi
+	movq	32(%rbx), %rsi
 	leaq	.LC1(%rip), %rdi
 	call	lexer_error
 	cmpb	$10, %bpl
 	jne	.L34
-	addq	$1, 24(%rbx)
-	movq	$0, 32(%rbx)
+	addq	$1, 32(%rbx)
+	movq	$0, 40(%rbx)
 	jmp	.L34
 .L105:
-	movq	24(%rbx), %rbx
+	movq	32(%rbx), %rbx
 	leaq	.LC2(%rip), %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
@@ -336,11 +337,11 @@ next_token:
 	call	create_token
 	jmp	.L8
 .L103:
-	movq	8(%rbx), %r13
-	movq	16(%rbx), %r12
+	movq	16(%rbx), %r13
+	movq	24(%rbx), %r12
 	cmpq	%r12, %r13
 	jnb	.L36
-	movq	(%rbx), %r14
+	movq	8(%rbx), %r14
 	movzbl	(%r14,%r13), %edx
 	cmpb	$47, %al
 	sete	%cl
@@ -348,7 +349,7 @@ next_token:
 	jne	.L37
 	testb	%cl, %cl
 	je	.L37
-	movq	32(%rbx), %r12
+	movq	40(%rbx), %r12
 .L38:
 	movq	%rbx, %rdi
 	call	get_current_char
@@ -357,10 +358,10 @@ next_token:
 	testb	%al, %al
 	jne	.L38
 .L91:
-	movq	8(%rbx), %rax
+	movq	16(%rbx), %rax
 	leaq	-1(%rax), %rsi
-	movq	%rsi, 8(%rbx)
-	subq	$1, 32(%rbx)
+	movq	%rsi, 16(%rbx)
+	subq	$1, 40(%rbx)
 	testb	%bpl, %bpl
 	je	.L40
 	movsbl	%bpl, %esi
@@ -369,7 +370,7 @@ next_token:
 	jmp	.L8
 .L40:
 	addq	$1, %r13
-	movq	24(%rbx), %rbx
+	movq	32(%rbx), %rbx
 	subq	%r13, %rsi
 	leaq	(%r14,%r13), %rdi
 	call	*create_string@GOTPCREL(%rip)
@@ -382,10 +383,10 @@ next_token:
 .L46:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	8(%rbx), %rdx
+	movq	16(%rbx), %rdx
 	cmpq	%r12, %rdx
 	jnb	.L43
-	movq	(%rbx), %rcx
+	movq	8(%rbx), %rcx
 	movzbl	(%rcx,%rdx), %edx
 	cmpb	$10, %al
 	je	.L80
@@ -403,12 +404,12 @@ next_token:
 	call	get_current_char
 	testb	%bpl, %bpl
 	jne	.L83
-	movq	24(%rbx), %rbp
-	movq	8(%rbx), %rax
+	movq	32(%rbx), %rbp
+	movq	16(%rbx), %rax
 	leaq	-2(%rax), %rsi
 	subq	%r13, %rsi
 	movq	%r13, %rdi
-	addq	(%rbx), %rdi
+	addq	8(%rbx), %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
 	movq	%r15, %rcx
@@ -418,20 +419,20 @@ next_token:
 	jmp	.L8
 .L108:
 	leaq	__PRETTY_FUNCTION__.0(%rip), %rcx
-	movl	$126, %edx
+	movl	$127, %edx
 	leaq	.LC3(%rip), %rsi
 	leaq	.LC4(%rip), %rdi
 	call	*__assert_fail@GOTPCREL(%rip)
 .L109:
-	subq	$1, 8(%rbx)
-	subq	$1, 32(%rbx)
+	subq	$1, 16(%rbx)
+	subq	$1, 40(%rbx)
 	jmp	.L82
 .L48:
-	movq	24(%rbx), %rbp
-	movq	8(%rbx), %rsi
+	movq	32(%rbx), %rbp
+	movq	16(%rbx), %rsi
 	subq	%r13, %rsi
 	movq	%r13, %rdi
-	addq	(%rbx), %rdi
+	addq	8(%rbx), %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rsi
 	movq	%r15, %rcx
@@ -447,9 +448,9 @@ next_token:
 .L111:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-2(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	EQ_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
@@ -457,9 +458,9 @@ next_token:
 .L112:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-2(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	NE_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
@@ -467,9 +468,9 @@ next_token:
 .L113:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-2(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	LE_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
@@ -477,9 +478,9 @@ next_token:
 .L114:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-2(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	GE_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
@@ -487,9 +488,9 @@ next_token:
 .L115:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-2(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	ADD_ASSIGN_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
@@ -497,9 +498,9 @@ next_token:
 .L116:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-2(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	SUB_ASSIGN_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
@@ -507,9 +508,9 @@ next_token:
 .L117:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-2(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	MUL_ASSIGN_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
@@ -517,9 +518,9 @@ next_token:
 .L118:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-2(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	DIV_ASSIGN_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
@@ -527,9 +528,9 @@ next_token:
 .L119:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-2(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	MOD_ASSIGN_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
@@ -537,9 +538,9 @@ next_token:
 .L120:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-2(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	AND_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
@@ -547,161 +548,162 @@ next_token:
 .L121:
 	movq	%rbx, %rdi
 	call	get_current_char
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-2(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	OR_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L77:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	L_PAREN_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L76:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	R_PAREN_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L63:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	L_BRACE_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L61:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	R_BRACE_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L73:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	COMMA_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L79:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	NOT_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L71:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	DOT_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L65:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	L_BRACKET_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L64:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	R_BRACKET_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L69:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	SEMICOLON_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L74:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	ADD_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L72:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	SUB_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L75:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	MUL_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L70:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	DIV_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L78:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	MOD_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L68:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	LT_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L66:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	GT_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L67:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rcx
-	movq	24(%rbx), %rdx
+	movq	32(%rbx), %rdx
 	movq	ASSIGN_SYMBOL(%rip), %rsi
 	movl	$5, %edi
 	call	create_token
 	jmp	.L8
 .L60:
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %rdx
-	movq	24(%rbx), %rsi
+	movq	32(%rbx), %rsi
+	movq	(%rbx), %rcx
 	leaq	.LC6(%rip), %rdi
 	call	lexer_error
 	movl	$0, %ecx
@@ -715,14 +717,15 @@ next_token:
 	jne	.L45
 	movl	%r14d, %edx
 .L80:
-	addq	$1, 24(%rbx)
-	movq	$0, 32(%rbx)
+	addq	$1, 32(%rbx)
+	movq	$0, 40(%rbx)
 	jmp	.L44
 .L45:
 	testb	%al, %al
 	je	.L109
 .L82:
-	movq	24(%rbx), %rsi
+	movq	(%rbx), %rcx
+	movq	32(%rbx), %rsi
 	movq	%r13, %rdx
 	leaq	.LC5(%rip), %rdi
 	call	lexer_error
@@ -733,7 +736,7 @@ next_token:
 	call	next_token
 	jmp	.L8
 .L110:
-	movq	(%rbx), %rdx
+	movq	8(%rbx), %rdx
 	movzbl	(%rdx,%r13), %edx
 	cmpb	$47, %al
 	sete	%cl
@@ -743,14 +746,14 @@ next_token:
 	testb	%cl, %cl
 	je	.L41
 	addq	$1, %r13
-	movq	32(%rbx), %rax
+	movq	40(%rbx), %rax
 	leaq	-1(%rax), %r15
 	movl	$47, %eax
 	movl	$0, %r14d
 	jmp	.L42
 .L20:
-	movq	8(%rbx), %r13
-	movq	16(%rbx), %r12
+	movq	16(%rbx), %r13
+	movq	24(%rbx), %r12
 	cmpq	%r12, %r13
 	jb	.L110
 .L36:
@@ -925,26 +928,28 @@ next_token:
 	.globl	create_lexer
 	.type	create_lexer, @function
 create_lexer:
+	pushq	%r12
 	pushq	%rbp
 	pushq	%rbx
-	subq	$8, %rsp
-	movq	%rdi, %rbp
-	movq	%rsi, %rbx
-	movl	$80, %edi
+	movq	%rdi, %r12
+	movq	%rsi, %rbp
+	movq	%rdx, %rbx
+	movl	$88, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
-	movq	%rbp, (%rax)
-	movq	$0, 8(%rax)
-	movq	%rbx, 16(%rax)
-	movq	$0, 24(%rax)
+	movq	%r12, 8(%rax)
+	movq	$0, 16(%rax)
+	movq	%rbp, 24(%rax)
 	movq	$0, 32(%rax)
 	movq	$0, 40(%rax)
 	movq	$0, 48(%rax)
 	movq	$0, 56(%rax)
 	movq	$0, 64(%rax)
 	movq	$0, 72(%rax)
-	addq	$8, %rsp
+	movq	$0, 80(%rax)
+	movq	%rbx, (%rax)
 	popq	%rbx
 	popq	%rbp
+	popq	%r12
 	ret
 	.size	create_lexer, .-create_lexer
 	.globl	get_next_token
@@ -952,30 +957,30 @@ create_lexer:
 get_next_token:
 	pushq	%rbx
 	movq	%rdi, %rbx
-	movq	40(%rdi), %rax
+	movq	48(%rdi), %rax
 	testq	%rax, %rax
 	je	.L125
-	movq	%rax, 72(%rdi)
-	movq	48(%rdi), %rdx
-	movq	%rdx, 8(%rdi)
+	movq	%rax, 80(%rdi)
 	movq	56(%rdi), %rdx
-	movq	%rdx, 24(%rdi)
+	movq	%rdx, 16(%rdi)
 	movq	64(%rdi), %rdx
 	movq	%rdx, 32(%rdi)
-	movq	$0, 40(%rdi)
+	movq	72(%rdi), %rdx
+	movq	%rdx, 40(%rdi)
+	movq	$0, 48(%rdi)
 .L124:
 	popq	%rbx
 	ret
 .L125:
 	movsbl	%sil, %esi
 	call	next_token
-	movq	%rax, 72(%rbx)
+	movq	%rax, 80(%rbx)
 	jmp	.L124
 	.size	get_next_token, .-get_next_token
 	.globl	peek_next_token
 	.type	peek_next_token, @function
 peek_next_token:
-	movq	40(%rdi), %rax
+	movq	48(%rdi), %rax
 	testq	%rax, %rax
 	je	.L134
 	ret
@@ -986,21 +991,21 @@ peek_next_token:
 	pushq	%rbx
 	subq	$8, %rsp
 	movq	%rdi, %rbx
-	movq	8(%rdi), %r13
-	movq	24(%rdi), %r12
-	movq	32(%rdi), %rbp
+	movq	16(%rdi), %r13
+	movq	32(%rdi), %r12
+	movq	40(%rdi), %rbp
 	movsbl	%sil, %esi
 	call	get_next_token
-	movq	8(%rbx), %rdx
-	movq	%rdx, 48(%rbx)
-	movq	24(%rbx), %rdx
+	movq	16(%rbx), %rdx
 	movq	%rdx, 56(%rbx)
 	movq	32(%rbx), %rdx
 	movq	%rdx, 64(%rbx)
-	movq	%r13, 8(%rbx)
-	movq	%r12, 24(%rbx)
-	movq	%rbp, 32(%rbx)
-	movq	%rax, 40(%rbx)
+	movq	40(%rbx), %rdx
+	movq	%rdx, 72(%rbx)
+	movq	%r13, 16(%rbx)
+	movq	%r12, 32(%rbx)
+	movq	%rbp, 40(%rbx)
+	movq	%rax, 48(%rbx)
 	addq	$8, %rsp
 	popq	%rbx
 	popq	%rbp
@@ -1011,20 +1016,20 @@ peek_next_token:
 	.globl	peek_current_token
 	.type	peek_current_token, @function
 peek_current_token:
-	movq	72(%rdi), %rax
+	movq	80(%rdi), %rax
 	ret
 	.size	peek_current_token, .-peek_current_token
 	.globl	reset_lexer
 	.type	reset_lexer, @function
 reset_lexer:
-	movq	$0, 8(%rdi)
-	movq	$0, 24(%rdi)
+	movq	$0, 16(%rdi)
 	movq	$0, 32(%rdi)
 	movq	$0, 40(%rdi)
 	movq	$0, 48(%rdi)
 	movq	$0, 56(%rdi)
 	movq	$0, 64(%rdi)
 	movq	$0, 72(%rdi)
+	movq	$0, 80(%rdi)
 	ret
 	.size	reset_lexer, .-reset_lexer
 	.section	.rodata

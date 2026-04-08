@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,6 +92,8 @@ pointer alloc_memory(size_t size);
 char is_keyword(const string str);
 char string_equal(string a, string b);
 string get_info(void);
+char to_lower(char c);
+char to_upper(char c);
 typedef struct Token Token;
 typedef struct Lexer Lexer;
 typedef struct TAC TAC;
@@ -123,6 +124,39 @@ string get_file_dir(File* path);
 string get_full_path(File* path);
 void change_file_extension(File* file, const string new_extension);
 void change_file_name(File* file, const string new_name);
+typedef enum TokenType {
+    EOF_TOKEN,
+    IDENTIFIER,
+    INTEGER,
+    FLOAT,
+    STRING,
+    SYMBOL,
+    KEYWORD,
+    COMMENT
+} TokenType;
+typedef struct Token {
+    string lexeme;
+    size_t line, column;
+    TokenType type;
+} Token;
+typedef struct Lexer {
+    string filename;
+    string source;
+    size_t position;
+    size_t length;
+    size_t line;
+    size_t column;
+    Token* peeked_token;
+    size_t peeked_position;
+    size_t peeked_line;
+    size_t peeked_column;
+    Token* current_token;
+} Lexer;
+Lexer* create_lexer(string source, size_t length, string filename);
+Token* get_next_token(Lexer* lexer, char skip_comment);
+Token* peek_next_token(Lexer* lexer, char skip_comment);
+void reset_lexer(Lexer* lexer);
+Token* peek_current_token(Lexer* lexer);
 typedef enum CodeMemberType {
     CODE_IMPORT,
     CODE_FUNCTION,
@@ -199,7 +233,7 @@ typedef struct Primary Primary;
 typedef struct VariableAccess VariableAccess;
 typedef struct List List;
 typedef struct Node Node;
-typedef enum SymbolTableType {
+typedef enum SymbolType {
     SYMBOL_CLASS,
     SYMBOL_FUNCTION,
     SYMBOL_METHOD,
@@ -336,10 +370,6 @@ struct Symbol {
     } ast_node;
     SymbolType kind;
 };
-typedef struct Lexer Lexer;
-typedef struct Parser Parser;
-Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
-void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
 typedef struct Parser {
     File* source_file;
     char in_function;
@@ -347,6 +377,8 @@ typedef struct Parser {
     char in_class;
     char in_loop;
 } Parser;
+Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
+void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
 typedef struct Token Token;
 List* create_list(void);
 void list_append(List* list, pointer item);
@@ -368,38 +400,6 @@ string make_method_name(string class_name, string method_name);
 OperatorType string_to_operator(string str);
 int operator_precedence(OperatorType op);
 string operator_to_string(OperatorType op);
-typedef enum TokenType {
-    EOF_TOKEN,
-    IDENTIFIER,
-    INTEGER,
-    FLOAT,
-    STRING,
-    SYMBOL,
-    KEYWORD,
-    COMMENT
-} TokenType;
-typedef struct Token {
-    string lexeme;
-    size_t line, column;
-    TokenType type;
-} Token;
-typedef struct Lexer {
-    string source;
-    size_t position;
-    size_t length;
-    size_t line;
-    size_t column;
-    Token* peeked_token;
-    size_t peeked_position;
-    size_t peeked_line;
-    size_t peeked_column;
-    Token* current_token;
-} Lexer;
-Lexer* create_lexer(string source, size_t length);
-Token* get_next_token(Lexer* lexer, char skip_comment);
-Token* peek_next_token(Lexer* lexer, char skip_comment);
-void reset_lexer(Lexer* lexer);
-Token* peek_current_token(Lexer* lexer);
 typedef struct TAC {
     List* attribute_tables;
     Symbol* entry_point;
@@ -430,7 +430,8 @@ typedef enum ArgType {
     ARG_BOOL,
     ARG_VOID,
     ARG_LABEL,
-    ARG_SUBROUTINE,
+    ARG_FUNCTION,
+    ARG_METHOD,
     ARG_NONE
 } ArgType;
 typedef struct Arg {
@@ -519,7 +520,7 @@ void tac_function(Function* function, TACStatus* status);
 void tac_method(Method* method, TACStatus* status);
 void tac_class_member(ClassMember* class_member, TACStatus* status);
 void tac_class(Class* class, TACStatus* status);
-void tac_variable(Variable* variable, TACStatus* status, VarType type);
+void tac_variable(Variable* variable, TACStatus* status, char is_attr);
 void tac_statement(Statement* statement, TACStatus* status);
 void tac_if(If* if_, TACStatus* status);
 void tac_else_if(ElseIf* else_if, TACStatus* status);
@@ -599,12 +600,12 @@ void parse_file(const string name, char o_token, char o_ast, char o_tac) {
     size_t length = 0;
     FILE* source_file = fopen(filename, "r");
     if (source_file == NULL) {
-        fprintf(stderr, "Error opening file: %s", filename);
+        fprintf(stderr, "Error opening file: %s\n", filename);
         return;
     }
     string source = read_source(source_file, &length);
     fclose(source_file);
-    Lexer* lexer = create_lexer(source, length);
+    Lexer* lexer = create_lexer(source, length, filename);
     if (o_token) {
         change_file_extension(file, create_string(".token", 6));
         string out_token_name = get_full_path(file);

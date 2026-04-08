@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,6 +92,61 @@ pointer alloc_memory(size_t size);
 char is_keyword(const string str);
 char string_equal(string a, string b);
 string get_info(void);
+char to_lower(char c);
+char to_upper(char c);
+typedef struct StrNode StrNode;
+struct StrNode {
+    string dir;
+    StrNode* next;
+};
+typedef struct File {
+    StrNode* dirs;
+    string extension;
+    string name;
+    string path;
+} File;
+string get_cwd(void);
+File* create_file(const string path);
+string absolute_path(string path, string base_path);
+string get_file_name(File* path);
+string get_file_extension(File* path);
+string get_file_dir(File* path);
+string get_full_path(File* path);
+void change_file_extension(File* file, const string new_extension);
+void change_file_name(File* file, const string new_name);
+typedef enum TokenType {
+    EOF_TOKEN,
+    IDENTIFIER,
+    INTEGER,
+    FLOAT,
+    STRING,
+    SYMBOL,
+    KEYWORD,
+    COMMENT
+} TokenType;
+typedef struct Token {
+    string lexeme;
+    size_t line, column;
+    TokenType type;
+} Token;
+typedef struct Lexer {
+    string filename;
+    string source;
+    size_t position;
+    size_t length;
+    size_t line;
+    size_t column;
+    Token* peeked_token;
+    size_t peeked_position;
+    size_t peeked_line;
+    size_t peeked_column;
+    Token* current_token;
+} Lexer;
+Lexer* create_lexer(string source, size_t length, string filename);
+Token* get_next_token(Lexer* lexer, char skip_comment);
+Token* peek_next_token(Lexer* lexer, char skip_comment);
+void reset_lexer(Lexer* lexer);
+Token* peek_current_token(Lexer* lexer);
 typedef enum CodeMemberType {
     CODE_IMPORT,
     CODE_FUNCTION,
@@ -169,7 +223,7 @@ typedef struct Primary Primary;
 typedef struct VariableAccess VariableAccess;
 typedef struct List List;
 typedef struct Node Node;
-typedef enum SymbolTableType {
+typedef enum SymbolType {
     SYMBOL_CLASS,
     SYMBOL_FUNCTION,
     SYMBOL_METHOD,
@@ -306,8 +360,13 @@ struct Symbol {
     } ast_node;
     SymbolType kind;
 };
-typedef struct Lexer Lexer;
-typedef struct Parser Parser;
+typedef struct Parser {
+    File* source_file;
+    char in_function;
+    char in_method;
+    char in_class;
+    char in_loop;
+} Parser;
 Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
 void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
 typedef struct TAC {
@@ -340,7 +399,8 @@ typedef enum ArgType {
     ARG_BOOL,
     ARG_VOID,
     ARG_LABEL,
-    ARG_SUBROUTINE,
+    ARG_FUNCTION,
+    ARG_METHOD,
     ARG_NONE
 } ArgType;
 typedef struct Arg {
@@ -429,7 +489,7 @@ void tac_function(Function* function, TACStatus* status);
 void tac_method(Method* method, TACStatus* status);
 void tac_class_member(ClassMember* class_member, TACStatus* status);
 void tac_class(Class* class, TACStatus* status);
-void tac_variable(Variable* variable, TACStatus* status, VarType type);
+void tac_variable(Variable* variable, TACStatus* status, char is_attr);
 void tac_statement(Statement* statement, TACStatus* status);
 void tac_if(If* if_, TACStatus* status);
 void tac_else_if(ElseIf* else_if, TACStatus* status);
@@ -439,33 +499,22 @@ Arg* tac_expression(Expression* expression, TACStatus* status);
 Arg* tac_primary(Primary* primary, TACStatus* status);
 Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status);
 void output_TAC(TAC* tac, FILE* outfile, size_t indent);
-typedef struct StrNode StrNode;
-struct StrNode {
-    string dir;
-    StrNode* next;
-};
-typedef struct File {
-    StrNode* dirs;
-    string extension;
-    string name;
-    string path;
-} File;
-string get_cwd(void);
-File* create_file(const string path);
-string absolute_path(string path, string base_path);
-string get_file_name(File* path);
-string get_file_extension(File* path);
-string get_file_dir(File* path);
-string get_full_path(File* path);
-void change_file_extension(File* file, const string new_extension);
-void change_file_name(File* file, const string new_name);
-typedef struct Parser {
-    File* source_file;
-    char in_function;
-    char in_method;
-    char in_class;
-    char in_loop;
-} Parser;
+CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content);
+Code* create_code(List* members, SymbolTable* global_scope);
+Import* create_import(Symbol* name, string source);
+Function* create_function_use_ptr(Function* function, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* function_scope);
+Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type, List* parameters, List* body, SymbolTable* method_scope);
+ClassMember* create_class_member(ClassMemberType type, Method* method_content, Variable* variable_content);
+Class* create_class_use_ptr(Class* class, Symbol* name, List* members, SymbolTable* class_scope, size_t size);
+Variable* create_variable(Symbol* type, Symbol* name, Expression* value);
+Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt);
+If* create_if(Expression* condition, List* body, List* else_if, List* else_body);
+ElseIf* create_else_if(Expression* condition, List* body);
+For* create_for(Variable* initializer, Expression* condition, Expression* increment, List* body);
+While* create_while(Expression* condition, List* body);
+Expression* create_expression(OperatorType operator, Expression * expr_left, Primary* prim_left, Expression* right);
+Primary* create_primary(PrimaryType type, string str_value, Expression* expr_value, Primary* prim_value, VariableAccess* variable_value);
+VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Symbol* name_content, Expression* expr_content, List* args_content);
 typedef struct Token Token;
 List* create_list(void);
 void list_append(List* list, pointer item);
@@ -505,7 +554,7 @@ static size_t get_type_size(Symbol* type) {
     else if (type->kind == SYMBOL_CLASS)
         result = type->ast_node.class->size;
     else
-        fprintf(stderr, "[warning] Unsupported type for size lookup: %s\n", type->name);
+        fprintf(stderr, "[Warning] Unsupported type for size lookup: %s\n", type->name);
     return result;
 }
 static inline char is_assignment_operator(OperatorType op) {
@@ -659,10 +708,11 @@ static Attribute* create_attribute(Symbol* var, Symbol* type, AttributeTable* ta
     attr->var = create_var(var, type, VAR_ATTR, status);
     attr->type = type;
     attr->offset = offset;
-    if (offset == 0) {
+    if (offset == 0 && table != NULL) {
         attr->offset = table->size;
         table->size += get_type_size(type);
-    }
+    } else if (table == NULL)
+        fprintf(stderr, "Error: create_attribute received NULL table\n");
     if (table == NULL || table->attributes == NULL)
         fprintf(stderr, "Error: create_attribute received NULL table or attributes list\n");
     else
@@ -709,13 +759,14 @@ static Arg* create_arg(ArgType kind, void* value) {
         case ARG_LABEL:
             arg->value.label = (Var*)value;
             break;
-        case ARG_SUBROUTINE:
+        case ARG_FUNCTION:
+        case ARG_METHOD:
             arg->value.subroutine = (Var*)value;
             arg->type = arg->value.subroutine->type;
             break;
         case ARG_NONE:
         default:
-            fprintf(stderr, "[warning] Unsupported argument type for create_arg: %d\n", kind);
+            fprintf(stderr, "[Warning] Unsupported argument type for create_arg: %d\n", kind);
             break;
     }
     arg->is_get = 0;
@@ -755,9 +806,9 @@ void tac_import(Import* import, TAC* tac, TACStatus* status) {
     else if (import->name->kind == SYMBOL_FUNCTION || import->name->kind == SYMBOL_METHOD)
         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_SUBROUTINE, status));
     else if (import->name->kind == SYMBOL_CLASS)
-        list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name));
+        tac_class(import->name->ast_node.class, status);
     else
-        fprintf(stderr, "[warning] Unsupported symbol kind for import: %d\n", import->name->kind);
+        fprintf(stderr, "[Warning] Unsupported symbol kind for import: %d\n", import->name->kind);
 }
 void tac_function(Function* function, TACStatus* status) {
     Subroutine* subroutine = create_subroutine(function->name, function->return_type);
@@ -787,11 +838,16 @@ void tac_method(Method* method, TACStatus* status) {
     Block* block = create_block(create_var(NULL, NULL, VAR_BLOCK, status));
     list_append(subroutine->blocks, (pointer)block);
     status->current_block = block;
-    if (strcmp(method->name->name, make_method_name(status->current_class->name->name, DEFAULT_CONSTRUCTOR_NAME)) == 0) {
-        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, status->current_class->name, VAR_TEMP, status));
-        list_append(block->instructions, (pointer)create_instruction(INST_ALLOC, temp, create_arg(ARG_INT, &status->current_class->size), NULL));
-    }
     List* statements = list_copy(method->body);
+    if (strcmp(method->name->name, make_method_name(status->current_class->name->name, DEFAULT_CONSTRUCTOR_NAME)) == 0) {
+        Statement* stmt = (Statement*)list_pop(statements);
+        if (stmt->type != EXPRESSION_STATEMENT || stmt->stmt.expr->operator != OP_NONE || stmt->stmt.expr->prim_left->type != PRIM_VARIABLE_ACCESS || stmt->stmt.expr->prim_left->value.var->type != VAR_NAME) {
+            fprintf(stderr, "[Warning] Constructor '%s' does not start with 'self' initialization\n", method->name->name);
+            return;
+        }
+        Symbol* self = stmt->stmt.expr->prim_left->value.var->content.name;
+        list_append(block->instructions, (pointer)create_instruction(INST_ALLOC, create_arg(ARG_VARIABLE, create_var(self, self->type, VAR_VAR, status)), create_arg(ARG_INT, &status->current_class->size), NULL));
+    }
     Statement* statement;
     while ((statement = (Statement*)list_pop(statements)) != NULL)
         tac_statement(statement, status);
@@ -802,7 +858,6 @@ void tac_class(Class* class, TACStatus* status) {
     List* members = list_copy(class->members);
     ClassMember* member;
     AttributeTable* attr_table = create_attribute_table(class->name);
-    attr_table->size = class->size;
     list_append(status->tac->attribute_tables, (pointer)attr_table);
     while ((member = (ClassMember*)list_pop(members)) != NULL) {
         switch (member->type) {
@@ -810,51 +865,42 @@ void tac_class(Class* class, TACStatus* status) {
                 tac_method(member->content.method, status);
                 break;
             case CLASS_VARIABLE:
-                tac_variable(member->content.variable, status, VAR_ATTR);
+                tac_variable(member->content.variable, status, 1);
                 break;
             default:
-                fprintf(stderr, "[warning] Unsupported class member type for tac_class: %d\n", member->type);
+                fprintf(stderr, "[Warning] Unsupported class member type for tac_class: %d\n", member->type);
                 break;
         }
     }
     status->current_class = NULL;
 }
-void tac_variable(Variable* variable, TACStatus* status, VarType type) {
+void tac_variable(Variable* variable, TACStatus* status, char is_attr) {
     Var* var = NULL;
-    switch (type) {
-        case VAR_PARAM:
-            var = create_var(variable->name, variable->type, type, status);
-            list_append(status->current_subroutine->parameters, (pointer)var);
-            break;
-        case VAR_VAR: break;
-        case VAR_TEMP: break;
-        case VAR_SUBROUTINE:
-            var = create_var(variable->name, variable->type, type, status);
-            list_append(status->tac->global_vars, (pointer)var);
-            break;
-        case VAR_ATTR: {
-            AttributeTable* attr_table = (AttributeTable*)list_pop_back(status->tac->attribute_tables);
-            list_append(status->tac->attribute_tables, (pointer)attr_table);
-            create_attribute(variable->name, variable->type, attr_table, 0, status);
-            break;
-        }
-        case VAR_BLOCK:
-        default:
-            fprintf(stderr, "[warning] Unsupported variable type for tac_variable: %d\n", type);
-            break;
+    if (is_attr) {
+        AttributeTable* attr_table = (AttributeTable*)list_pop_back(status->tac->attribute_tables);
+        list_append(status->tac->attribute_tables, (pointer)attr_table);
+        create_attribute(variable->name, variable->type, attr_table, 0, status);
+    } else {
+        var = create_var(variable->name, variable->type, VAR_VAR, status);
+        Arg* value;
+        if (variable->value != NULL)
+            value = load_rvalue(tac_expression(variable->value, status), status);
+        else
+            value = create_arg(ARG_INT, &(long long){0});
+        list_append(status->current_block->instructions, (pointer)create_instruction(INST_ASSIGN, create_arg(ARG_VARIABLE, var), value, NULL));
     }
 }
 void tac_statement(Statement* statement, TACStatus* status) {
     switch (statement->type) {
-        case EXPRESSION_STATEMENT: tac_expression(statement->stmt.expr, status); break;
-        case VARIABLE_STATEMENT: tac_variable(statement->stmt.var, status, VAR_VAR); break;
+        case EXPRESSION_STATEMENT: load_rvalue(tac_expression(statement->stmt.expr, status), status); break;
+        case VARIABLE_STATEMENT: tac_variable(statement->stmt.var, status, 0); break;
         case IF_STATEMENT: tac_if(statement->stmt.if_stmt, status); break;
         case WHILE_STATEMENT: tac_while(statement->stmt.while_stmt, status); break;
         case FOR_STATEMENT: tac_for(statement->stmt.for_stmt, status); break;
         case RETURN_STATEMENT: {
             Arg* return_value = create_arg(ARG_VOID, NULL);
             if (statement->stmt.return_expr != NULL)
-                return_value = tac_expression(statement->stmt.return_expr, status);
+                return_value = load_rvalue(tac_expression(statement->stmt.return_expr, status), status);
             list_append(status->current_block->instructions, (pointer)create_instruction(INST_RET, return_value, NULL, NULL));
             break;
         }
@@ -867,7 +913,7 @@ void tac_statement(Statement* statement, TACStatus* status) {
                     break;
                 }
             }
-            fprintf(stderr, "[warning] 'break' statement used outside of loop\n");
+            fprintf(stderr, "[Warning] 'break' statement used outside of loop\n");
             break;
         case CONTINUE_STATEMENT:
             if (!list_is_empty(status->start_labels)) {
@@ -878,10 +924,10 @@ void tac_statement(Statement* statement, TACStatus* status) {
                     break;
                 }
             }
-            fprintf(stderr, "[warning] 'continue' statement used outside of loop\n");
+            fprintf(stderr, "[Warning] 'continue' statement used outside of loop\n");
             break;
         default:
-            fprintf(stderr, "[warning] Unsupported statement type for tac_statement: %d\n", statement->type);
+            fprintf(stderr, "[Warning] Unsupported statement type for tac_statement: %d\n", statement->type);
             break;
     }
 }
@@ -894,7 +940,7 @@ void tac_if(If* if_, TACStatus* status) {
     else
         end_label = create_var(NULL, NULL, VAR_BLOCK, status);
     Arg* end_block_arg = create_arg(ARG_LABEL, end_label);
-    Arg* condition = tac_expression(if_->condition, status);
+    Arg* condition = load_rvalue(tac_expression(if_->condition, status), status);
     Instruction* inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, then_label), create_arg(ARG_LABEL, else_label));
     list_append(status->current_block->instructions, (pointer)inst);
     Block* then_block = create_block(then_label);
@@ -915,7 +961,7 @@ void tac_if(If* if_, TACStatus* status) {
             status->current_block = else_if_block;
             then_label = create_var(NULL, NULL, VAR_BLOCK, status);
             else_label = create_var(NULL, NULL, VAR_BLOCK, status);
-            condition = tac_expression(elif->condition, status);
+            condition = load_rvalue(tac_expression(elif->condition, status), status);
             if (list_is_empty(elif_list) && list_is_empty(if_->else_body))
                 else_label = end_label;
             inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, then_label), create_arg(ARG_LABEL, else_label));
@@ -948,7 +994,7 @@ void tac_if(If* if_, TACStatus* status) {
 }
 void tac_for(For* for_, TACStatus* status) {
     if (for_->initializer != NULL)
-        tac_variable(for_->initializer, status, VAR_VAR);
+        tac_variable(for_->initializer, status, 0);
     Var* condition_label = create_var(NULL, NULL, VAR_BLOCK, status);
     Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
     Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
@@ -958,7 +1004,7 @@ void tac_for(For* for_, TACStatus* status) {
         Block* condition_block = create_block(condition_label);
         list_append(status->current_subroutine->blocks, (pointer)condition_block);
         status->current_block = condition_block;
-        Arg* condition = tac_expression(for_->condition, status);
+        Arg* condition = load_rvalue(tac_expression(for_->condition, status), status);
         inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, body_label), create_arg(ARG_LABEL, end_label));
         list_append(status->current_block->instructions, (pointer)inst);
     } else {
@@ -988,7 +1034,7 @@ void tac_for(For* for_, TACStatus* status) {
         Block* increment_block = create_block(increment_label);
         list_append(status->current_subroutine->blocks, (pointer)increment_block);
         status->current_block = increment_block;
-        tac_expression(for_->increment, status);
+        load_rvalue(tac_expression(for_->increment, status), status);
     }
     Instruction* inst = create_instruction(INST_JMP, create_arg(ARG_LABEL, condition_label), NULL, NULL);
     if (for_->condition == NULL)
@@ -1007,7 +1053,7 @@ void tac_while(While* while_, TACStatus* status) {
     status->current_block = condition_block;
     Var* body_label = create_var(NULL, NULL, VAR_BLOCK, status);
     Var* end_label = create_var(NULL, NULL, VAR_BLOCK, status);
-    Arg* condition = tac_expression(while_->condition, status);
+    Arg* condition = load_rvalue(tac_expression(while_->condition, status), status);
     inst = create_instruction(INST_JMP_C, condition, create_arg(ARG_LABEL, body_label), create_arg(ARG_LABEL, end_label));
     list_append(status->current_block->instructions, (pointer)inst);
     Block* body_block = create_block(body_label);
@@ -1044,7 +1090,7 @@ Arg* tac_expression(Expression* expression, TACStatus* status) {
             right = temp;
         }
         if (left->kind != ARG_VARIABLE)
-            fprintf(stderr, "[warning] Left-hand side of assignment is not a variable\n");
+            fprintf(stderr, "[Warning] Left-hand side of assignment is not a variable\n");
         inst = create_instruction(INST_ASSIGN, left, right, NULL);
         if (left->is_get)
             inst = create_instruction(INST_STORE, left, right, NULL);
@@ -1096,7 +1142,7 @@ Arg* tac_primary(Primary* primary, TACStatus* status) {
             else if (operand->type == name_float)
                 inst = create_instruction(INST_MUL, temp, create_arg(ARG_FLOAT, &neg_one_float), operand);
             else {
-                fprintf(stderr, "[warning] Unsupported type for negation: %s\n", operand->type->name);
+                fprintf(stderr, "[Warning] Unsupported type for negation: %s\n", operand->type->name);
                 return NULL;
             }
             list_append(status->current_block->instructions, (pointer)inst);
@@ -1105,32 +1151,35 @@ Arg* tac_primary(Primary* primary, TACStatus* status) {
         case PRIM_VARIABLE_ACCESS:
             return tac_variable_access(primary->value.var, status);
         default:
-            fprintf(stderr, "[warning] Unsupported primary type for tac_primary: %d\n", primary->type);
+            fprintf(stderr, "[Warning] Unsupported primary type for tac_primary: %d\n", primary->type);
             return NULL;
     }
 }
 Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
     if (variable_access->type == VAR_NAME && variable_access->content.name != NULL) {
-        if (variable_access->content.name->kind != SYMBOL_FUNCTION && variable_access->content.name->kind != SYMBOL_METHOD) {
-            Arg* result = create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status));
+        if (variable_access->content.name->kind == SYMBOL_FUNCTION || variable_access->content.name->kind == SYMBOL_METHOD) {
+            Arg* result = create_arg(ARG_FUNCTION, create_var(variable_access->content.name, variable_access->content.name->type, VAR_SUBROUTINE, status));
+            return result;
+        } else if (variable_access->content.name->kind == SYMBOL_CLASS) {
+            Arg* result = create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name, VAR_VAR, status));
             return result;
         } else {
-            Arg* result = create_arg(ARG_SUBROUTINE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_SUBROUTINE, status));
+            Arg* result = create_arg(ARG_VARIABLE, create_var(variable_access->content.name, variable_access->content.name->type, VAR_VAR, status));
             return result;
         }
     }
     if (variable_access->base == NULL) {
-        fprintf(stderr, "[warning] Unsupported variable access with NULL base\n");
+        fprintf(stderr, "[Warning] Unsupported variable access with NULL base\n");
         return NULL;
     }
     Arg* base = load_rvalue(tac_variable_access(variable_access->base, status), status);
     if (base == NULL) {
-        fprintf(stderr, "[warning] Failed to generate variable access for base\n");
+        fprintf(stderr, "[Warning] Failed to generate variable access for base\n");
         return NULL;
     }
     if (variable_access->type == VAR_GET_ATTR) {
         if (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
-            fprintf(stderr, "[warning] Attempting to access attribute of non-object type: %s\n", base->type->name);
+            fprintf(stderr, "[Warning] Attempting to access attribute of non-object type: %s\n", base->type->name);
             return NULL;
         }
         SymbolTable* scope = base->type->ast_node.scope;
@@ -1138,13 +1187,17 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
             scope = base->type->ast_node.class->class_scope;
         Symbol* attr = search_name_use_strcmp(scope, variable_access->content.attr_name->name);
         if (attr == NULL) {
-            fprintf(stderr, "[warning] Attribute '%s' not found in type '%s'\n", variable_access->content.attr_name->name, base->type->name);
+            fprintf(stderr, "[Warning] Attribute '%s' not found in type '%s'\n", variable_access->content.attr_name->name, base->type->name);
             return NULL;
         }
-        if (attr->kind == SYMBOL_METHOD || attr->kind == SYMBOL_FUNCTION)
-            return create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
+        if (attr->kind == SYMBOL_FUNCTION) {
+            fprintf(stderr, "[Warning] Attempting to access function '%s' as attribute of type '%s'\n", variable_access->content.attr_name->name, base->type->name);
+            return create_arg(ARG_FUNCTION, create_var(attr, attr->type, VAR_SUBROUTINE, status));
+        }
+        if (attr->kind == SYMBOL_METHOD)
+            return create_arg(ARG_METHOD, create_var(attr, attr->type, VAR_SUBROUTINE, status));
         if (attr->kind != SYMBOL_ATTRIBUTE) {
-            fprintf(stderr, "[warning] Symbol '%s' in type '%s' is not an attribute\n", variable_access->content.attr_name->name, base->type->name);
+            fprintf(stderr, "[Warning] Symbol '%s' in type '%s' is not an attribute\n", variable_access->content.attr_name->name, base->type->name);
             return NULL;
         }
         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, attr->type, VAR_TEMP, status));
@@ -1153,20 +1206,16 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
         list_append(status->current_block->instructions, (pointer)inst);
         return temp;
     } else if (variable_access->type == VAR_GET_SEQ) {
-        if (base->type->kind != SYMBOL_VARIABLE && base->type->kind != SYMBOL_PARAM && base->type->kind != SYMBOL_ATTRIBUTE) {
-            fprintf(stderr, "[warning] Attempting to index non-array type: %s\n", base->type->name);
-            return NULL;
-        }
         if (strcmp(base->type->name, "arr") != 0) {
-            fprintf(stderr, "[warning] Attempting to index non-array type: %s\n", base->type->name);
+            fprintf(stderr, "[Warning] Attempting to index non-array type: %s\n", base->value.variable->original_name->name);
             return NULL;
         }
         Arg* index = load_rvalue(tac_expression(variable_access->content.index, status), status);
         if (index == NULL) {
-            fprintf(stderr, "[warning] Failed to generate variable access for index\n");
+            fprintf(stderr, "[Warning] Failed to generate variable access for index\n");
             return NULL;
         }
-        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type->type, VAR_TEMP, status));
+        Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, name_int, VAR_TEMP, status));
         Instruction* inst = create_instruction(INST_GET_ELEM, temp, base, index);
         temp->is_get = 1;
         list_append(status->current_block->instructions, (pointer)inst);
@@ -1174,28 +1223,36 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
     } else if (variable_access->type == VAR_FUNC_CALL) {
         if (base->kind == ARG_VARIABLE && base->type->kind == SYMBOL_CLASS) {
             Symbol* attr = search_name_use_strcmp(base->type->ast_node.class->class_scope, make_method_name(base->type->name, DEFAULT_CONSTRUCTOR_NAME));
-            base = create_arg(ARG_SUBROUTINE, create_var(attr, attr->type, VAR_SUBROUTINE, status));
+            base = create_arg(ARG_METHOD, create_var(attr, attr->type, VAR_SUBROUTINE, status));
         }
-        if (base->kind != ARG_SUBROUTINE) {
-            fprintf(stderr, "[warning] Attempting to call non-function, kind: %u, type name: %s\n", base->kind, base->type->name);
+        if (base->kind != ARG_METHOD && base->kind != ARG_FUNCTION) {
+            fprintf(stderr, "[Warning] Attempting to call non-function, kind: %u, type name: %s\n", base->kind, base->type->name);
             return NULL;
+        }
+        long long arg_count = 0;
+        List* arguments = create_list();
+        if (base->kind == ARG_METHOD && strcmp(base->value.subroutine->original_name->name, make_method_name(base->type->name, DEFAULT_CONSTRUCTOR_NAME)) != 0) {
+            Arg* self = load_rvalue(tac_expression(create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, variable_access->base->base), NULL), status), status);
+            long long size = (long long)get_type_size(self->type);
+            list_append(arguments, (pointer)create_instruction(INST_PARAM, create_arg(ARG_INT, &size), self, NULL));
+            arg_count++;
         }
         List* args = list_copy(variable_access->content.args);
         Expression* arg_expr;
-        long long arg_count = 0;
         while ((arg_expr = (Expression*)list_pop(args)) != NULL) {
-            Arg* arg = tac_expression(arg_expr, status);
+            Arg* arg = load_rvalue(tac_expression(arg_expr, status), status);
             long long size = (long long)get_type_size(arg->type);
-            Instruction* inst = create_instruction(INST_PARAM, create_arg(ARG_INT, &size), arg, NULL);
-            list_append(status->current_block->instructions, (pointer)inst);
+            list_append(arguments, (pointer)create_instruction(INST_PARAM, create_arg(ARG_INT, &size), arg, NULL));
             arg_count++;
         }
+        Instruction* arg;
+        while ((arg = (Instruction*)list_pop(arguments)) != NULL)
+            list_append(status->current_block->instructions, (pointer)arg);
         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, base->type, VAR_TEMP, status));
-        Instruction* inst = create_instruction(INST_CALL, temp, base, create_arg(ARG_INT, &arg_count));
-        list_append(status->current_block->instructions, (pointer)inst);
+        list_append(status->current_block->instructions, (pointer)create_instruction(INST_CALL, temp, base, create_arg(ARG_INT, &arg_count)));
         return temp;
     } else {
-        fprintf(stderr, "[warning] Unsupported variable access type for tac_variable_access: %u\n", variable_access->type);
+        fprintf(stderr, "[Warning] Unsupported variable access type for tac_variable_access: %u\n", variable_access->type);
         return NULL;
     }
 }

@@ -629,6 +629,24 @@ get_info:
 	popq	%rbp
 	popq	%r12
 	ret
+	.p2align 4
+	.globl	to_lower
+	.def	to_lower;	.scl	2;	.type	32;	.endef
+to_lower:
+	leal	-65(%rcx), %edx
+	leal	32(%rcx), %eax
+	cmpb	$26, %dl
+	cmovnb	%ecx, %eax
+	ret
+	.p2align 4
+	.globl	to_upper
+	.def	to_upper;	.scl	2;	.type	32;	.endef
+to_upper:
+	leal	-97(%rcx), %edx
+	leal	-32(%rcx), %eax
+	cmpb	$26, %dl
+	cmovnb	%ecx, %eax
+	ret
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

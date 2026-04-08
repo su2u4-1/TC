@@ -344,30 +344,29 @@ output_tac:
 .LC15:
 	.ascii "r\0"
 .LC16:
-	.ascii "Error opening file: %s\0"
+	.ascii "Error opening file: %s\12\0"
 .LC17:
 	.ascii ".token\0"
 .LC18:
 	.ascii "w\0"
 .LC19:
-	.ascii "Error opening file: %s\12\0"
-.LC20:
 	.ascii ".ast\0"
-.LC21:
+.LC20:
 	.ascii ".tc\0"
-.LC22:
+.LC21:
 	.ascii ".tac\0"
 	.text
 	.globl	parse_file
 	.def	parse_file;	.scl	2;	.type	32;	.endef
 parse_file:
+	pushq	%r14
 	pushq	%r13
 	pushq	%r12
 	pushq	%rbp
 	pushq	%rdi
 	pushq	%rsi
 	pushq	%rbx
-	subq	$56, %rsp
+	subq	$48, %rsp
 	movl	%edx, %r13d
 	movl	%r8d, %r12d
 	movl	%r9d, %ebp
@@ -386,11 +385,12 @@ parse_file:
 	leaq	40(%rsp), %rdx
 	movq	%rax, %rcx
 	call	read_source
-	movq	%rax, %rdi
+	movq	%rax, %r14
 	movq	%rsi, %rcx
 	call	fclose
+	movq	%rdi, %r8
 	movq	40(%rsp), %rdx
-	movq	%rdi, %rcx
+	movq	%r14, %rcx
 	call	create_lexer
 	movq	%rax, %rsi
 	testb	%r13b, %r13b
@@ -404,13 +404,14 @@ parse_file:
 	orb	%r12b, %dil
 	jne	.L53
 .L41:
-	addq	$56, %rsp
+	addq	$48, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	popq	%r12
 	popq	%r13
+	popq	%r14
 	ret
 .L51:
 	call	__getreent
@@ -445,7 +446,7 @@ parse_file:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%r13, %r8
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	call	fprintf
 	jmp	.L44
 .L53:
@@ -461,7 +462,7 @@ parse_file:
 	testb	%bpl, %bpl
 	je	.L41
 	movl	$4, %edx
-	leaq	.LC22(%rip), %rcx
+	leaq	.LC21(%rip), %rcx
 	call	create_string
 	movq	%rax, %rdx
 	movq	%rbx, %rcx
@@ -470,7 +471,7 @@ parse_file:
 	call	get_full_path
 	movq	%rax, %rsi
 	movl	$3, %edx
-	leaq	.LC21(%rip), %rcx
+	leaq	.LC20(%rip), %rcx
 	call	create_string
 	movq	%rax, %rdx
 	movq	%rbx, %rcx
@@ -491,7 +492,7 @@ parse_file:
 	jmp	.L41
 .L55:
 	movl	$4, %edx
-	leaq	.LC20(%rip), %rcx
+	leaq	.LC19(%rip), %rcx
 	call	create_string
 	movq	%rax, %rdx
 	movq	%rbx, %rcx
@@ -500,7 +501,7 @@ parse_file:
 	call	get_full_path
 	movq	%rax, %r12
 	movl	$3, %edx
-	leaq	.LC21(%rip), %rcx
+	leaq	.LC20(%rip), %rcx
 	call	create_string
 	movq	%rax, %rdx
 	movq	%rbx, %rcx
@@ -521,14 +522,14 @@ parse_file:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%r12, %r8
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	call	fprintf
 	jmp	.L47
 .L56:
 	call	__getreent
 	movq	24(%rax), %rcx
 	movq	%rsi, %r8
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	call	fprintf
 	jmp	.L41
 	.ident	"GCC: (GNU) 13.2.0"

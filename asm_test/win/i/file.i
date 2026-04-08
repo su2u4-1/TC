@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,6 +92,8 @@ pointer alloc_memory(size_t size);
 char is_keyword(const string str);
 char string_equal(string a, string b);
 string get_info(void);
+char to_lower(char c);
+char to_upper(char c);
 typedef struct StrNode StrNode;
 struct StrNode {
     string dir;
@@ -139,11 +140,9 @@ string absolute_path(string path, string base_path) {
             i--;
         }
     }
-    if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':') {
-        path[0] = (char)tolower(path[0]);
-        memmove(path, path + 1, path_len);
-        path[0] = '/';
-        path[2] = '/';
+    if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
+        path[0] = to_upper(path[1]);
+        path[1] = ':';
         return path;
     }
     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':')
@@ -257,8 +256,8 @@ void normalize_path(File* file) {
             if (i > start) {
                 size_t comp_len = i - start;
                 if (comp_len >= 256) {
-                    comp_len = 256 - 1;
                     fprintf(stderr, "Warning: Path component too long, truncating to %zu characters\n", comp_len);
+                    comp_len = 256 - 1;
                 }
                 char component[256];
                 strncpy(component, path_copy + start, comp_len);

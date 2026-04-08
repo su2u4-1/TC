@@ -376,23 +376,22 @@ output_tac:
 .LC15:
 	.ascii "r\0"
 .LC16:
-	.ascii "Error opening file: %s\0"
+	.ascii "Error opening file: %s\12\0"
 .LC17:
 	.ascii ".token\0"
 .LC18:
 	.ascii "w\0"
 .LC19:
-	.ascii "Error opening file: %s\12\0"
-.LC20:
 	.ascii ".ast\0"
-.LC21:
+.LC20:
 	.ascii ".tc\0"
-.LC22:
+.LC21:
 	.ascii ".tac\0"
 	.text
 	.globl	parse_file
 	.def	parse_file;	.scl	2;	.type	32;	.endef
 parse_file:
+	pushq	%r14	 ;
 	pushq	%r13	 ;
 	movl	%edx, %r13d	 ; tmp141, o_token
 	pushq	%r12	 ;
@@ -402,7 +401,7 @@ parse_file:
 	pushq	%rdi	 ;
 	pushq	%rsi	 ;
 	pushq	%rbx	 ;
-	subq	$56, %rsp	 ;,
+	subq	$48, %rsp	 ;,
  ; D:/TC/src/compiler.c:74:     File* file = create_file(name);
 	call	create_file	 ;
  ; D:/TC/src/compiler.c:75:     string filename = get_full_path(file);
@@ -418,34 +417,27 @@ parse_file:
 	movq	%rax, %rcx	 ; filename,
 	leaq	.LC15(%rip), %rdx	 ;, tmp119
  ; D:/TC/src/compiler.c:75:     string filename = get_full_path(file);
-	movq	%rax, %rdi	 ; tmp145, filename
+	movq	%rax, %rsi	 ; tmp145, filename
  ; D:/TC/src/compiler.c:77:     FILE* source_file = fopen(filename, "r");
 	call	fopen	 ;
  ; D:/TC/src/compiler.c:78:     if (source_file == NULL) {
 	testq	%rax, %rax	 ; source_file
-	jne	.L41	 ;,
- ; D:/TC/src/compiler.c:79:         fprintf(stderr, "Error opening file: %s", filename);
-	call	__getreent	 ;
- ; D:/TC/src/compiler.c:79:         fprintf(stderr, "Error opening file: %s", filename);
-	movq	%rdi, %r8	 ; filename,
-	leaq	.LC16(%rip), %rdx	 ;, tmp121
-	movq	24(%rax), %rcx	 ; _1->_stderr, _1->_stderr
-	jmp	.L51	 ;
-.L41:
-	movq	%rax, %rsi	 ; tmp146, source_file
+	je	.L51	 ;,
  ; D:/TC/src/compiler.c:82:     string source = read_source(source_file, &length);
 	leaq	40(%rsp), %rdx	 ;, tmp122
+	movq	%rax, %rdi	 ; tmp146, source_file
 	movq	%rax, %rcx	 ; source_file,
 	call	read_source	 ;
  ; D:/TC/src/compiler.c:83:     fclose(source_file);
-	movq	%rsi, %rcx	 ; source_file,
+	movq	%rdi, %rcx	 ; source_file,
  ; D:/TC/src/compiler.c:82:     string source = read_source(source_file, &length);
-	movq	%rax, %rdi	 ; tmp148, source
+	movq	%rax, %r14	 ; tmp148, source
  ; D:/TC/src/compiler.c:83:     fclose(source_file);
 	call	fclose	 ;
- ; D:/TC/src/compiler.c:84:     Lexer* lexer = create_lexer(source, length);
+ ; D:/TC/src/compiler.c:84:     Lexer* lexer = create_lexer(source, length, filename);
 	movq	40(%rsp), %rdx	 ; length,
-	movq	%rdi, %rcx	 ; source,
+	movq	%rsi, %r8	 ; filename,
+	movq	%r14, %rcx	 ; source,
 	call	create_lexer	 ;
 	movq	%rax, %rsi	 ; tmp149, lexer
  ; D:/TC/src/compiler.c:85:     if (o_token) {
@@ -479,7 +471,7 @@ parse_file:
 	call	__getreent	 ;
  ; D:/TC/src/compiler.c:90:             fprintf(stderr, "Error opening file: %s\n", out_token_name);
 	movq	%r13, %r8	 ; out_token_name,
-	leaq	.LC19(%rip), %rdx	 ;, tmp127
+	leaq	.LC16(%rip), %rdx	 ;, tmp127
 	movq	24(%rax), %rcx	 ; _5->_stderr, _5->_stderr
 	call	fprintf	 ;
 	jmp	.L42	 ;
@@ -514,7 +506,7 @@ parse_file:
 	je	.L46	 ;,
  ; D:/TC/src/compiler.c:102:         change_file_extension(file, create_string(".ast", 4));
 	movl	$4, %edx	 ;,
-	leaq	.LC20(%rip), %rcx	 ;, tmp130
+	leaq	.LC19(%rip), %rcx	 ;, tmp130
 	call	create_string	 ;
  ; D:/TC/src/compiler.c:102:         change_file_extension(file, create_string(".ast", 4));
 	movq	%rbx, %rcx	 ; file,
@@ -527,7 +519,7 @@ parse_file:
 	call	get_full_path	 ;
  ; D:/TC/src/compiler.c:104:         change_file_extension(file, create_string(".tc", 3));
 	movl	$3, %edx	 ;,
-	leaq	.LC21(%rip), %rcx	 ;, tmp131
+	leaq	.LC20(%rip), %rcx	 ;, tmp131
  ; D:/TC/src/compiler.c:103:         string out_ast_name = get_full_path(file);
 	movq	%rax, %r12	 ; tmp157, out_ast_name
  ; D:/TC/src/compiler.c:104:         change_file_extension(file, create_string(".tc", 3));
@@ -550,7 +542,7 @@ parse_file:
 	call	__getreent	 ;
  ; D:/TC/src/compiler.c:107:             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
 	movq	%r12, %r8	 ; out_ast_name,
-	leaq	.LC19(%rip), %rdx	 ;, tmp134
+	leaq	.LC16(%rip), %rdx	 ;, tmp134
 	movq	24(%rax), %rcx	 ; _11->_stderr, _11->_stderr
 	call	fprintf	 ;
 	jmp	.L46	 ;
@@ -568,7 +560,7 @@ parse_file:
 	je	.L40	 ;,
  ; D:/TC/src/compiler.c:114:         change_file_extension(file, create_string(".tac", 4));
 	movl	$4, %edx	 ;,
-	leaq	.LC22(%rip), %rcx	 ;, tmp135
+	leaq	.LC21(%rip), %rcx	 ;, tmp135
 	call	create_string	 ;
  ; D:/TC/src/compiler.c:114:         change_file_extension(file, create_string(".tac", 4));
 	movq	%rbx, %rcx	 ; file,
@@ -581,7 +573,7 @@ parse_file:
 	call	get_full_path	 ;
  ; D:/TC/src/compiler.c:116:         change_file_extension(file, create_string(".tc", 3));
 	movl	$3, %edx	 ;,
-	leaq	.LC21(%rip), %rcx	 ;, tmp136
+	leaq	.LC20(%rip), %rcx	 ;, tmp136
  ; D:/TC/src/compiler.c:115:         string out_tac_name = get_full_path(file);
 	movq	%rax, %rsi	 ; tmp162, out_tac_name
  ; D:/TC/src/compiler.c:116:         change_file_extension(file, create_string(".tc", 3));
@@ -600,21 +592,22 @@ parse_file:
  ; D:/TC/src/compiler.c:118:         if (out_tac_file == NULL)
 	testq	%rax, %rax	 ; out_tac_file
 	jne	.L49	 ;,
+.L51:
  ; D:/TC/src/compiler.c:119:             fprintf(stderr, "Error opening file: %s\n", out_tac_name);
 	call	__getreent	 ;
  ; D:/TC/src/compiler.c:119:             fprintf(stderr, "Error opening file: %s\n", out_tac_name);
 	movq	%rsi, %r8	 ; out_tac_name,
-	leaq	.LC19(%rip), %rdx	 ;, tmp139
-	movq	24(%rax), %rcx	 ; _15->_stderr, _15->_stderr
-.L51:
+	leaq	.LC16(%rip), %rdx	 ;, tmp139
+	movq	24(%rax), %rcx	 ;, _15->_stderr
  ; D:/TC/src/compiler.c:126: }
-	addq	$56, %rsp	 ;,
+	addq	$48, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	popq	%r12	 ;
 	popq	%r13	 ;
+	popq	%r14	 ;
  ; D:/TC/src/compiler.c:119:             fprintf(stderr, "Error opening file: %s\n", out_tac_name);
 	jmp	fprintf	 ;
 .L49:
@@ -628,7 +621,7 @@ parse_file:
  ; D:/TC/src/compiler.c:122:             output_tac(out_tac_file, tac);
 	call	output_tac	 ;
  ; D:/TC/src/compiler.c:126: }
-	addq	$56, %rsp	 ;,
+	addq	$48, %rsp	 ;,
  ; D:/TC/src/compiler.c:123:             fclose(out_tac_file);
 	movq	%rbx, %rcx	 ; out_tac_file,
  ; D:/TC/src/compiler.c:126: }
@@ -638,17 +631,19 @@ parse_file:
 	popq	%rbp	 ;
 	popq	%r12	 ;
 	popq	%r13	 ;
+	popq	%r14	 ;
  ; D:/TC/src/compiler.c:123:             fclose(out_tac_file);
 	jmp	fclose	 ;
 .L40:
  ; D:/TC/src/compiler.c:126: }
-	addq	$56, %rsp	 ;,
+	addq	$48, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
 	popq	%rdi	 ;
 	popq	%rbp	 ;
 	popq	%r12	 ;
 	popq	%r13	 ;
+	popq	%r14	 ;
 	ret	
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	fseek;	.scl	2;	.type	32;	.endef
@@ -667,11 +662,11 @@ parse_file:
 	.def	create_file;	.scl	2;	.type	32;	.endef
 	.def	get_full_path;	.scl	2;	.type	32;	.endef
 	.def	fopen;	.scl	2;	.type	32;	.endef
-	.def	__getreent;	.scl	2;	.type	32;	.endef
 	.def	fclose;	.scl	2;	.type	32;	.endef
 	.def	create_lexer;	.scl	2;	.type	32;	.endef
 	.def	create_string;	.scl	2;	.type	32;	.endef
 	.def	change_file_extension;	.scl	2;	.type	32;	.endef
+	.def	__getreent;	.scl	2;	.type	32;	.endef
 	.def	reset_lexer;	.scl	2;	.type	32;	.endef
 	.def	create_parser;	.scl	2;	.type	32;	.endef
 	.def	parse_code;	.scl	2;	.type	32;	.endef

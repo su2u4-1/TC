@@ -1335,6 +1335,46 @@ get_info:
 	leave
 	ret
 	.size	get_info, .-get_info
+	.globl	to_lower
+	.type	to_lower, @function
+to_lower:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	movl	%edi, %eax
+	movb	%al, -4(%rbp)
+	cmpb	$64, -4(%rbp)
+	jle	.L57
+	cmpb	$90, -4(%rbp)
+	jg	.L57
+	movzbl	-4(%rbp), %eax
+	addl	$32, %eax
+	jmp	.L59
+.L57:
+	movzbl	-4(%rbp), %eax
+.L59:
+	popq	%rbp
+	ret
+	.size	to_lower, .-to_lower
+	.globl	to_upper
+	.type	to_upper, @function
+to_upper:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	movl	%edi, %eax
+	movb	%al, -4(%rbp)
+	cmpb	$96, -4(%rbp)
+	jle	.L61
+	cmpb	$122, -4(%rbp)
+	jg	.L61
+	movzbl	-4(%rbp), %eax
+	subl	$32, %eax
+	jmp	.L63
+.L61:
+	movzbl	-4(%rbp), %eax
+.L63:
+	popq	%rbp
+	ret
+	.size	to_upper, .-to_upper
 	.section	.rodata
 	.align 8
 	.type	__PRETTY_FUNCTION__.0, @object

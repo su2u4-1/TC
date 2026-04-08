@@ -228,13 +228,13 @@ search_name:
 	ret
 	.section .rdata,"dr"
 .LC1:
-	.ascii "Warning: Creating symbol with unknown SymbolType: %u\12\0"
+	.ascii "[Warning] Creating symbol with unknown SymbolType: %u\12\0"
 .LC2:
-	.ascii "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\12\0"
+	.ascii "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\12\0"
 .LC3:
-	.ascii "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\12\0"
+	.ascii "[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\12\0"
 .LC4:
-	.ascii "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\12\0"
+	.ascii "[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\12\0"
 	.text
 	.globl	create_symbol
 	.def	create_symbol;	.scl	2;	.type	32;	.endef
@@ -392,7 +392,7 @@ is_builtin_type:
 	ret
 	.section .rdata,"dr"
 .LC5:
-	.ascii "Parser Error at %s:%zu:%zu: %s\12\0"
+	.ascii "[Parser Error] at %s:%zu:%zu: %s\12\0"
 	.text
 	.globl	parser_error
 	.def	parser_error;	.scl	2;	.type	32;	.endef
@@ -568,6 +568,7 @@ create_parser:
 	.globl	parse_import_file
 	.def	parse_import_file;	.scl	2;	.type	32;	.endef
 parse_import_file:
+	pushq	%r13
 	pushq	%r12
 	pushq	%rbp
 	movq	%r8, %rbp
@@ -575,7 +576,7 @@ parse_import_file:
 	movq	%rcx, %rdi
 	pushq	%rsi
 	pushq	%rbx
-	subq	$64, %rsp
+	subq	$72, %rsp
 	testq	%rdx, %rdx
 	jne	.L112
 	call	strlen
@@ -610,9 +611,11 @@ parse_import_file:
 	movq	24(%rax), %rcx
 	jmp	.L121
 .L114:
-	movq	%rbx, %rdx
-	leaq	.LC15(%rip), %rcx
-	call	printf
+	call	__getreent
+	movq	%rbx, %r8
+	leaq	.LC15(%rip), %rdx
+	movq	24(%rax), %rcx
+	call	fprintf
 	leaq	56(%rsp), %rdx
 	xorl	%eax, %eax
 	movq	%rsi, %rcx
@@ -626,19 +629,22 @@ parse_import_file:
 	movq	%rax, %rcx
 	call	create_parser
 	movq	56(%rsp), %rdx
+	movq	%rbx, %r8
 	movq	%r12, %rcx
-	movq	%rax, 40(%rsp)
-	movq	.refptr.builtin_scope(%rip), %rax
-	movq	(%rax), %rsi
-	call	create_lexer
-	movq	40(%rsp), %r8
-	movq	%rsi, %rdx
-	movq	%rax, %rcx
-	call	parse_code
-	movq	%rbx, %rdx
-	leaq	.LC16(%rip), %rcx
 	movq	%rax, %rsi
-	call	printf
+	movq	.refptr.builtin_scope(%rip), %rax
+	movq	(%rax), %r13
+	call	create_lexer
+	movq	%rsi, %r8
+	movq	%rax, %rcx
+	movq	%r13, %rdx
+	call	parse_code
+	movq	%rax, %rsi
+	call	__getreent
+	movq	%rbx, %r8
+	leaq	.LC16(%rip), %rdx
+	movq	24(%rax), %rcx
+	call	fprintf
 	testq	%rsi, %rsi
 	jne	.L116
 	call	__getreent
@@ -671,12 +677,13 @@ parse_import_file:
 	call	fprintf
 	jmp	.L115
 .L111:
-	addq	$64, %rsp
+	addq	$72, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	popq	%r12
+	popq	%r13
 	ret
 	.section .rdata,"dr"
 .LC19:
@@ -1011,7 +1018,6 @@ CSWTCH.56:
 	.def	get_file_dir;	.scl	2;	.type	32;	.endef
 	.def	absolute_path;	.scl	2;	.type	32;	.endef
 	.def	fopen;	.scl	2;	.type	32;	.endef
-	.def	printf;	.scl	2;	.type	32;	.endef
 	.def	read_source;	.scl	2;	.type	32;	.endef
 	.def	fclose;	.scl	2;	.type	32;	.endef
 	.def	create_file;	.scl	2;	.type	32;	.endef

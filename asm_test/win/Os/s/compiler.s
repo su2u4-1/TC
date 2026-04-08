@@ -281,23 +281,22 @@ output_tac:
 .LC15:
 	.ascii "r\0"
 .LC16:
-	.ascii "Error opening file: %s\0"
+	.ascii "Error opening file: %s\12\0"
 .LC17:
 	.ascii ".token\0"
 .LC18:
 	.ascii "w\0"
 .LC19:
-	.ascii "Error opening file: %s\12\0"
-.LC20:
 	.ascii ".ast\0"
-.LC21:
+.LC20:
 	.ascii ".tc\0"
-.LC22:
+.LC21:
 	.ascii ".tac\0"
 	.text
 	.globl	parse_file
 	.def	parse_file;	.scl	2;	.type	32;	.endef
 parse_file:
+	pushq	%r14
 	pushq	%r13
 	movl	%edx, %r13d
 	pushq	%r12
@@ -307,7 +306,7 @@ parse_file:
 	pushq	%rdi
 	pushq	%rsi
 	pushq	%rbx
-	subq	$56, %rsp
+	subq	$48, %rsp
 	call	create_file
 	movq	%rax, %rcx
 	movq	%rax, %rbx
@@ -316,25 +315,20 @@ parse_file:
 	movq	%rdx, 40(%rsp)
 	movq	%rax, %rcx
 	leaq	.LC15(%rip), %rdx
-	movq	%rax, %rdi
+	movq	%rax, %rsi
 	call	fopen
 	testq	%rax, %rax
-	jne	.L41
-	call	__getreent
-	movq	%rdi, %r8
-	leaq	.LC16(%rip), %rdx
-	movq	24(%rax), %rcx
-	jmp	.L51
-.L41:
-	movq	%rax, %rsi
+	je	.L51
 	leaq	40(%rsp), %rdx
+	movq	%rax, %rdi
 	movq	%rax, %rcx
 	call	read_source
-	movq	%rsi, %rcx
-	movq	%rax, %rdi
+	movq	%rdi, %rcx
+	movq	%rax, %r14
 	call	fclose
 	movq	40(%rsp), %rdx
-	movq	%rdi, %rcx
+	movq	%rsi, %r8
+	movq	%r14, %rcx
 	call	create_lexer
 	movq	%rax, %rsi
 	testb	%r13b, %r13b
@@ -356,7 +350,7 @@ parse_file:
 	jne	.L43
 	call	__getreent
 	movq	%r13, %r8
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
 	jmp	.L42
@@ -383,7 +377,7 @@ parse_file:
 	testb	%r12b, %r12b
 	je	.L46
 	movl	$4, %edx
-	leaq	.LC20(%rip), %rcx
+	leaq	.LC19(%rip), %rcx
 	call	create_string
 	movq	%rbx, %rcx
 	movq	%rax, %rdx
@@ -391,7 +385,7 @@ parse_file:
 	movq	%rbx, %rcx
 	call	get_full_path
 	movl	$3, %edx
-	leaq	.LC21(%rip), %rcx
+	leaq	.LC20(%rip), %rcx
 	movq	%rax, %r12
 	call	create_string
 	movq	%rbx, %rcx
@@ -405,7 +399,7 @@ parse_file:
 	jne	.L47
 	call	__getreent
 	movq	%r12, %r8
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
 	jmp	.L46
@@ -419,7 +413,7 @@ parse_file:
 	testb	%bpl, %bpl
 	je	.L40
 	movl	$4, %edx
-	leaq	.LC22(%rip), %rcx
+	leaq	.LC21(%rip), %rcx
 	call	create_string
 	movq	%rbx, %rcx
 	movq	%rax, %rdx
@@ -427,7 +421,7 @@ parse_file:
 	movq	%rbx, %rcx
 	call	get_full_path
 	movl	$3, %edx
-	leaq	.LC21(%rip), %rcx
+	leaq	.LC20(%rip), %rcx
 	movq	%rax, %rsi
 	call	create_string
 	movq	%rbx, %rcx
@@ -439,18 +433,19 @@ parse_file:
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	jne	.L49
+.L51:
 	call	__getreent
 	movq	%rsi, %r8
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	movq	24(%rax), %rcx
-.L51:
-	addq	$56, %rsp
+	addq	$48, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	popq	%r12
 	popq	%r13
+	popq	%r14
 	jmp	fprintf
 .L49:
 	movq	%rdi, %rcx
@@ -458,7 +453,7 @@ parse_file:
 	movq	%rbx, %rcx
 	movq	%rax, %rdx
 	call	output_tac
-	addq	$56, %rsp
+	addq	$48, %rsp
 	movq	%rbx, %rcx
 	popq	%rbx
 	popq	%rsi
@@ -466,15 +461,17 @@ parse_file:
 	popq	%rbp
 	popq	%r12
 	popq	%r13
+	popq	%r14
 	jmp	fclose
 .L40:
-	addq	$56, %rsp
+	addq	$48, %rsp
 	popq	%rbx
 	popq	%rsi
 	popq	%rdi
 	popq	%rbp
 	popq	%r12
 	popq	%r13
+	popq	%r14
 	ret
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	fseek;	.scl	2;	.type	32;	.endef
@@ -493,11 +490,11 @@ parse_file:
 	.def	create_file;	.scl	2;	.type	32;	.endef
 	.def	get_full_path;	.scl	2;	.type	32;	.endef
 	.def	fopen;	.scl	2;	.type	32;	.endef
-	.def	__getreent;	.scl	2;	.type	32;	.endef
 	.def	fclose;	.scl	2;	.type	32;	.endef
 	.def	create_lexer;	.scl	2;	.type	32;	.endef
 	.def	create_string;	.scl	2;	.type	32;	.endef
 	.def	change_file_extension;	.scl	2;	.type	32;	.endef
+	.def	__getreent;	.scl	2;	.type	32;	.endef
 	.def	reset_lexer;	.scl	2;	.type	32;	.endef
 	.def	create_parser;	.scl	2;	.type	32;	.endef
 	.def	parse_code;	.scl	2;	.type	32;	.endef

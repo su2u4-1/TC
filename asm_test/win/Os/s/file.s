@@ -91,15 +91,13 @@ absolute_path:
 	jbe	.L14
 	cmpb	$47, (%rbx)
 	jne	.L15
-	movb	1(%rbx), %sil
-	leal	-97(%rsi), %eax
+	movsbl	1(%rbx), %ecx
+	leal	-97(%rcx), %eax
 	cmpb	$25, %al
 	ja	.L2
 	cmpb	$47, 2(%rbx)
 	jne	.L2
-	call	__locale_ctype_ptr
-	movsbl	%sil, %ecx
-	call	toupper
+	call	to_upper
 	movb	$58, 1(%rbx)
 	movb	%al, (%rbx)
 	jmp	.L2
@@ -189,13 +187,13 @@ create_file:
 	call	strlen
 	leaq	.LC0(%rip), %rcx
 	leaq	1(%rax), %rdx
-	movq	%rax, %r12
+	movq	%rax, %r13
 	call	create_string_not_check
 	movq	24(%rsi), %rdx
 	movq	%rax, %rcx
 	movq	%rax, %rbp
 	call	strcpy
-	testq	%r12, %r12
+	testq	%r13, %r13
 	je	.L62
 	cmpb	$47, 0(%rbp)
 	jne	.L62
@@ -219,7 +217,7 @@ create_file:
 	movq	%r15, %rbx
 	movq	%rax, 40(%rsp)
 .L42:
-	cmpq	%rdi, %r12
+	cmpq	%rdi, %r13
 	jb	.L95
 	je	.L43
 	cmpb	$47, 0(%rbp,%rdi)
@@ -227,24 +225,24 @@ create_file:
 .L43:
 	cmpq	%rdi, %r14
 	jnb	.L45
-	movq	%rdi, %r13
-	subq	%r14, %r13
-	cmpq	$255, %r13
+	movq	%rdi, %r12
+	subq	%r14, %r12
+	cmpq	$255, %r12
 	jbe	.L46
 	call	__getreent
-	movl	$255, %r8d
+	movq	%r12, %r8
 	leaq	.LC3(%rip), %rdx
-	movl	$255, %r13d
+	movl	$255, %r12d
 	movq	24(%rax), %rcx
 	call	fprintf
 .L46:
 	movq	40(%rsp), %rcx
 	leaq	0(%rbp,%r14), %rdx
-	movq	%r13, %r8
+	movq	%r12, %r8
 	call	strncpy
 	movq	40(%rsp), %rcx
 	leaq	.LC4(%rip), %rdx
-	movb	$0, 48(%rsp,%r13)
+	movb	$0, 48(%rsp,%r12)
 	call	strcmp
 	testl	%eax, %eax
 	je	.L45
@@ -267,13 +265,13 @@ create_file:
 	call	alloc_memory
 	movl	$2, %edx
 	movq	%r14, %rcx
-	movq	%rax, %r13
+	movq	%rax, %r12
 	call	create_string
 	xorl	%r8d, %r8d
-	movq	%rax, 0(%r13)
-	movq	%r8, 8(%r13)
-	movq	%r13, 8(%r15)
-	movq	%r13, %r15
+	movq	%rax, (%r12)
+	movq	%r8, 8(%r12)
+	movq	%r12, 8(%r15)
+	movq	%r12, %r15
 	jmp	.L45
 .L63:
 	movq	%rbx, %rax
@@ -309,7 +307,7 @@ create_file:
 	movl	$16, %ecx
 	call	alloc_memory
 	movq	40(%rsp), %rcx
-	movq	%r13, %rdx
+	movq	%r12, %rdx
 	movq	%rax, %r14
 	call	create_string
 	movq	%rax, (%r14)
@@ -680,8 +678,7 @@ change_file_name:
 	.def	strlen;	.scl	2;	.type	32;	.endef
 	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
 	.def	memmove;	.scl	2;	.type	32;	.endef
-	.def	__locale_ctype_ptr;	.scl	2;	.type	32;	.endef
-	.def	toupper;	.scl	2;	.type	32;	.endef
+	.def	to_upper;	.scl	2;	.type	32;	.endef
 	.def	sprintf;	.scl	2;	.type	32;	.endef
 	.def	create_string;	.scl	2;	.type	32;	.endef
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef

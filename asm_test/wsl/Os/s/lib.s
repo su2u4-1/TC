@@ -561,6 +561,28 @@ get_info:
 	popq	%r14
 	ret
 	.size	get_info, .-get_info
+	.globl	to_lower
+	.type	to_lower, @function
+to_lower:
+	leal	-65(%rdi), %edx
+	movl	%edi, %eax
+	cmpb	$25, %dl
+	ja	.L62
+	leal	32(%rdi), %eax
+.L62:
+	ret
+	.size	to_lower, .-to_lower
+	.globl	to_upper
+	.type	to_upper, @function
+to_upper:
+	leal	-97(%rdi), %edx
+	movl	%edi, %eax
+	cmpb	$25, %dl
+	ja	.L64
+	leal	-32(%rdi), %eax
+.L64:
+	ret
+	.size	to_upper, .-to_upper
 	.section	.rodata
 	.align 8
 	.type	__PRETTY_FUNCTION__.0, @object

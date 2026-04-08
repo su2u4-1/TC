@@ -283,9 +283,8 @@ parse_code:
 	.align 8
 .LC6:
 	.ascii "Expected ';' at end of import statement\0"
-	.align 8
 .LC7:
-	.ascii "Failed to import module '%s' from source '%s'\12\0"
+	.ascii "Failed to import module\0"
 	.text
 	.def	parse_import;	.scl	3;	.type	32;	.endef
 parse_import:
@@ -411,15 +410,17 @@ parse_import:
 	movq	%rax, -24(%rbp)
 	cmpq	$0, -24(%rbp)
 	jne	.L22
-	call	__getreent
-	movq	24(%rax), %rax
-	movq	-16(%rbp), %rcx
-	movq	-32(%rbp), %rdx
-	movq	%rcx, %r9
-	movq	%rdx, %r8
-	leaq	.LC7(%rip), %rdx
+	movq	32(%rbp), %rax
+	movq	(%rax), %rax
 	movq	%rax, %rcx
-	call	fprintf
+	call	get_full_path
+	movq	%rax, %rdx
+	movq	-8(%rbp), %rax
+	movq	%rdx, %r8
+	movq	%rax, %rdx
+	leaq	.LC7(%rip), %rax
+	movq	%rax, %rcx
+	call	parser_error
 	movq	.refptr.name_void(%rip), %rax
 	movq	(%rax), %rdx
 	movq	24(%rbp), %rcx
@@ -1416,7 +1417,7 @@ parse_method:
 	.ascii "Failed to parse class variable\0"
 	.align 8
 .LC34:
-	.ascii "[warning] Unsupported type for class variable '%s': %s\12\0"
+	.ascii "Unsupported type for class variable\0"
 	.align 8
 .LC35:
 	.ascii "Expected ';' after class variable declaration\0"
@@ -1433,9 +1434,8 @@ parse_method:
 parse_class:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	pushq	%rsi
 	pushq	%rbx
-	subq	$288, %rsp
+	subq	$296, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
@@ -1665,19 +1665,17 @@ parse_class:
 	addq	$8, -32(%rbp)
 	jmp	.L88
 .L93:
-	movq	-256(%rbp), %rax
-	movq	8(%rax), %rsi
-	movq	-248(%rbp), %rax
+	movq	32(%rbp), %rax
 	movq	(%rax), %rax
-	movq	8(%rax), %rax
-	movq	8(%rax), %rbx
-	call	__getreent
-	movq	24(%rax), %rax
-	movq	%rsi, %r9
-	movq	%rbx, %r8
-	leaq	.LC34(%rip), %rdx
 	movq	%rax, %rcx
-	call	fprintf
+	call	get_full_path
+	movq	%rax, %rdx
+	movq	-24(%rbp), %rax
+	movq	%rdx, %r8
+	movq	%rax, %rdx
+	leaq	.LC34(%rip), %rax
+	movq	%rax, %rcx
+	call	parser_error
 .L88:
 	movq	16(%rbp), %rax
 	movl	$1, %edx
@@ -1901,15 +1899,6 @@ parse_class:
 	movq	%rax, %rcx
 	call	create_symbol
 	movq	%rax, -152(%rbp)
-	movq	-152(%rbp), %rdx
-	movq	-64(%rbp), %rax
-	movl	$0, %r8d
-	movq	%rax, %rcx
-	call	create_variable
-	movq	%rax, %rdx
-	movq	-144(%rbp), %rax
-	movq	%rax, %rcx
-	call	list_append
 	movq	-40(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	16(%rax), %rax
@@ -1954,6 +1943,35 @@ parse_class:
 	movq	%rax, %rcx
 	call	list_copy
 	movq	%rax, -184(%rbp)
+	movq	-152(%rbp), %rax
+	movq	$0, 32(%rsp)
+	movl	$0, %r9d
+	movq	%rax, %r8
+	movl	$0, %edx
+	movl	$0, %ecx
+	call	create_variable_access
+	movq	%rax, 32(%rsp)
+	movl	$0, %r9d
+	movl	$0, %r8d
+	movl	$0, %edx
+	movl	$8, %ecx
+	call	create_primary
+	movl	$0, %r9d
+	movq	%rax, %r8
+	movl	$0, %edx
+	movl	$19, %ecx
+	call	create_expression
+	movq	$0, 40(%rsp)
+	movq	%rax, 32(%rsp)
+	movl	$0, %r9d
+	movl	$0, %r8d
+	movl	$0, %edx
+	movl	$0, %ecx
+	call	create_statement
+	movq	%rax, %rdx
+	movq	-176(%rbp), %rax
+	movq	%rax, %rcx
+	call	list_append
 	jmp	.L104
 .L107:
 	movq	-192(%rbp), %rax
@@ -1962,12 +1980,19 @@ parse_class:
 	jne	.L104
 	movq	-192(%rbp), %rax
 	movq	(%rax), %rax
-	movq	8(%rax), %rax
+	movq	8(%rax), %rbx
+	movq	-152(%rbp), %rax
 	movq	$0, 32(%rsp)
 	movl	$0, %r9d
 	movq	%rax, %r8
 	movl	$0, %edx
 	movl	$0, %ecx
+	call	create_variable_access
+	movq	$0, 32(%rsp)
+	movl	$0, %r9d
+	movq	%rbx, %r8
+	movq	%rax, %rdx
+	movl	$2, %ecx
 	call	create_variable_access
 	movq	%rax, 32(%rsp)
 	movl	$0, %r9d
@@ -2035,6 +2060,28 @@ parse_class:
 	jne	.L107
 	call	create_list
 	movq	%rax, -200(%rbp)
+	movq	-152(%rbp), %rax
+	movq	$0, 32(%rsp)
+	movl	$0, %r9d
+	movq	%rax, %r8
+	movl	$0, %edx
+	movl	$0, %ecx
+	call	create_variable_access
+	movq	%rax, 32(%rsp)
+	movl	$0, %r9d
+	movl	$0, %r8d
+	movl	$0, %edx
+	movl	$8, %ecx
+	call	create_primary
+	movl	$0, %r9d
+	movq	%rax, %r8
+	movl	$0, %edx
+	movl	$19, %ecx
+	call	create_expression
+	movq	%rax, %rdx
+	movq	-200(%rbp), %rax
+	movq	%rax, %rcx
+	call	list_append
 	movq	-144(%rbp), %rax
 	movq	%rax, %rcx
 	call	list_copy
@@ -2136,10 +2183,8 @@ parse_class:
 	movq	%rax, %rcx
 	call	create_class_use_ptr
 .L79:
-	addq	$288, %rsp
-	popq	%rbx
-	popq	%rsi
-	popq	%rbp
+	movq	-8(%rbp), %rbx
+	leave
 	ret
 	.section .rdata,"dr"
 .LC39:
@@ -4914,8 +4959,6 @@ parse_variable_access:
 	.def	list_append;	.scl	2;	.type	32;	.endef
 	.def	create_code;	.scl	2;	.type	32;	.endef
 	.def	parse_import_file;	.scl	2;	.type	32;	.endef
-	.def	__getreent;	.scl	2;	.type	32;	.endef
-	.def	fprintf;	.scl	2;	.type	32;	.endef
 	.def	create_import;	.scl	2;	.type	32;	.endef
 	.def	is_builtin_type;	.scl	2;	.type	32;	.endef
 	.def	search_name;	.scl	2;	.type	32;	.endef

@@ -8,19 +8,18 @@ create_lexer:
 	subq	$48, %rsp
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
-	movl	$80, %ecx
+	movq	%r8, 32(%rbp)
+	movl	$88, %ecx
 	call	alloc_memory
 	movq	%rax, -8(%rbp)
 	movq	-8(%rbp), %rax
 	movq	16(%rbp), %rdx
-	movq	%rdx, (%rax)
+	movq	%rdx, 8(%rax)
 	movq	-8(%rbp), %rax
-	movq	$0, 8(%rax)
+	movq	$0, 16(%rax)
 	movq	-8(%rbp), %rax
 	movq	24(%rbp), %rdx
-	movq	%rdx, 16(%rax)
-	movq	-8(%rbp), %rax
-	movq	$0, 24(%rax)
+	movq	%rdx, 24(%rax)
 	movq	-8(%rbp), %rax
 	movq	$0, 32(%rax)
 	movq	-8(%rbp), %rax
@@ -33,6 +32,11 @@ create_lexer:
 	movq	$0, 64(%rax)
 	movq	-8(%rbp), %rax
 	movq	$0, 72(%rax)
+	movq	-8(%rbp), %rax
+	movq	$0, 80(%rax)
+	movq	-8(%rbp), %rax
+	movq	32(%rbp), %rdx
+	movq	%rdx, (%rax)
 	movq	-8(%rbp), %rax
 	leave
 	ret
@@ -66,7 +70,7 @@ create_token:
 	.section .rdata,"dr"
 	.align 8
 .LC0:
-	.ascii "Lexer Error at Line %zu, Column %zu: %s\12\0"
+	.ascii "[Lexer Error] at %s:%zu:%zu: %s\12\0"
 	.text
 	.def	lexer_error;	.scl	3;	.type	32;	.endef
 lexer_error:
@@ -78,16 +82,19 @@ lexer_error:
 	movq	%rcx, 16(%rbp)
 	movq	%rdx, 24(%rbp)
 	movq	%r8, 32(%rbp)
+	movq	%r9, 40(%rbp)
 	movq	32(%rbp), %rax
-	leaq	1(%rax), %rsi
-	movq	24(%rbp), %rax
 	leaq	1(%rax), %rbx
+	movq	24(%rbp), %rax
+	leaq	1(%rax), %rsi
 	call	__getreent
 	movq	24(%rax), %rax
+	movq	40(%rbp), %rcx
 	movq	16(%rbp), %rdx
-	movq	%rdx, 32(%rsp)
+	movq	%rdx, 40(%rsp)
+	movq	%rbx, 32(%rsp)
 	movq	%rsi, %r9
-	movq	%rbx, %r8
+	movq	%rcx, %r8
 	leaq	.LC0(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
@@ -103,26 +110,26 @@ get_current_char:
 	movq	%rsp, %rbp
 	movq	%rcx, 16(%rbp)
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rdx
+	movq	16(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	16(%rax), %rax
+	movq	24(%rax), %rax
 	cmpq	%rax, %rdx
 	jb	.L7
 	movl	$0, %eax
 	jmp	.L8
 .L7:
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	1(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	%rdx, 32(%rax)
+	movq	%rdx, 40(%rax)
 	movq	16(%rbp), %rax
-	movq	(%rax), %r8
+	movq	8(%rax), %r8
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	leaq	1(%rax), %rcx
 	movq	16(%rbp), %rdx
-	movq	%rcx, 8(%rdx)
+	movq	%rcx, 16(%rdx)
 	addq	%r8, %rax
 	movzbl	(%rax), %eax
 .L8:
@@ -134,18 +141,18 @@ peek_next_char:
 	movq	%rsp, %rbp
 	movq	%rcx, 16(%rbp)
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rdx
+	movq	16(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	16(%rax), %rax
+	movq	24(%rax), %rax
 	cmpq	%rax, %rdx
 	jb	.L10
 	movl	$0, %eax
 	jmp	.L11
 .L10:
 	movq	16(%rbp), %rax
-	movq	(%rax), %rdx
+	movq	8(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	addq	%rdx, %rax
 	movzbl	(%rax), %eax
 .L11:
@@ -157,12 +164,12 @@ newline:
 	movq	%rsp, %rbp
 	movq	%rcx, 16(%rbp)
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rax
+	movq	32(%rax), %rax
 	leaq	1(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	%rdx, 24(%rax)
+	movq	%rdx, 32(%rax)
 	movq	16(%rbp), %rax
-	movq	$0, 32(%rax)
+	movq	$0, 40(%rax)
 	nop
 	popq	%rbp
 	ret
@@ -175,37 +182,37 @@ move_position:
 	cmpl	$0, 24(%rbp)
 	js	.L14
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rdx
+	movq	16(%rax), %rdx
 	movl	24(%rbp), %eax
 	cltq
 	addq	%rax, %rdx
 	movq	16(%rbp), %rax
-	movq	%rdx, 8(%rax)
+	movq	%rdx, 16(%rax)
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rdx
+	movq	40(%rax), %rdx
 	movl	24(%rbp), %eax
 	cltq
 	addq	%rax, %rdx
 	movq	16(%rbp), %rax
-	movq	%rdx, 32(%rax)
+	movq	%rdx, 40(%rax)
 	jmp	.L16
 .L14:
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rdx
+	movq	16(%rax), %rdx
 	movl	24(%rbp), %eax
 	negl	%eax
 	cltq
 	subq	%rax, %rdx
 	movq	16(%rbp), %rax
-	movq	%rdx, 8(%rax)
+	movq	%rdx, 16(%rax)
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rdx
+	movq	40(%rax), %rdx
 	movl	24(%rbp), %eax
 	negl	%eax
 	cltq
 	subq	%rax, %rdx
 	movq	16(%rbp), %rax
-	movq	%rdx, 32(%rax)
+	movq	%rdx, 40(%rax)
 .L16:
 	nop
 	popq	%rbp
@@ -240,9 +247,9 @@ next_token:
 	cmpb	$0, -17(%rbp)
 	jne	.L18
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rdx
+	movq	40(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rax
+	movq	32(%rax), %rax
 	movq	%rdx, %r9
 	movq	%rax, %r8
 	movl	$0, %edx
@@ -288,11 +295,11 @@ next_token:
 	jne	.L26
 .L24:
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	subq	$1, %rax
 	movq	%rax, -112(%rbp)
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	subq	$1, %rax
 	movq	%rax, -120(%rbp)
 	jmp	.L27
@@ -324,10 +331,10 @@ next_token:
 	movq	%rax, %rcx
 	call	move_position
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	subq	-112(%rbp), %rax
 	movq	16(%rbp), %rdx
-	movq	(%rdx), %rcx
+	movq	8(%rdx), %rcx
 	movq	-112(%rbp), %rdx
 	addq	%rdx, %rcx
 	movq	%rax, %rdx
@@ -339,7 +346,7 @@ next_token:
 	testb	%al, %al
 	je	.L32
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	-120(%rbp), %rcx
 	movq	-128(%rbp), %rax
 	movq	%rcx, %r9
@@ -350,7 +357,7 @@ next_token:
 	jmp	.L19
 .L32:
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	-120(%rbp), %rcx
 	movq	-128(%rbp), %rax
 	movq	%rcx, %r9
@@ -365,11 +372,11 @@ next_token:
 	cmpb	$57, -17(%rbp)
 	jg	.L33
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	subq	$1, %rax
 	movq	%rax, -40(%rbp)
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	subq	$1, %rax
 	movq	%rax, -48(%rbp)
 	jmp	.L34
@@ -418,12 +425,12 @@ next_token:
 	movq	%rax, %rcx
 	call	move_position
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rbx
+	movq	32(%rax), %rbx
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	subq	-40(%rbp), %rax
 	movq	16(%rbp), %rdx
-	movq	(%rdx), %rcx
+	movq	8(%rdx), %rcx
 	movq	-40(%rbp), %rdx
 	addq	%rdx, %rcx
 	movq	%rax, %rdx
@@ -440,10 +447,10 @@ next_token:
 	cmpb	$34, -17(%rbp)
 	jne	.L41
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	movq	%rax, -96(%rbp)
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	subq	$1, %rax
 	movq	%rax, -104(%rbp)
 	movq	16(%rbp), %rax
@@ -466,11 +473,14 @@ next_token:
 .L43:
 	cmpb	$34, -17(%rbp)
 	je	.L45
-	movq	-96(%rbp), %rax
-	leaq	-1(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rax
-	movq	%rdx, %r8
+	movq	(%rax), %rdx
+	movq	-96(%rbp), %rax
+	leaq	-1(%rax), %rcx
+	movq	16(%rbp), %rax
+	movq	32(%rax), %rax
+	movq	%rdx, %r9
+	movq	%rcx, %r8
 	movq	%rax, %rdx
 	leaq	.LC1(%rip), %rax
 	movq	%rax, %rcx
@@ -482,12 +492,12 @@ next_token:
 	call	newline
 .L45:
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	subq	-96(%rbp), %rax
 	cmpq	$1, %rax
 	jne	.L46
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rbx
+	movq	32(%rax), %rbx
 	movl	$1, %edx
 	leaq	.LC2(%rip), %rax
 	movq	%rax, %rcx
@@ -501,13 +511,13 @@ next_token:
 	jmp	.L19
 .L46:
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rbx
+	movq	32(%rax), %rbx
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	subq	-96(%rbp), %rax
 	leaq	-1(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	(%rax), %rcx
+	movq	8(%rax), %rcx
 	movq	-96(%rbp), %rax
 	addq	%rcx, %rax
 	movq	%rax, %rcx
@@ -529,11 +539,11 @@ next_token:
 	cmpb	$47, -25(%rbp)
 	jne	.L47
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	addq	$1, %rax
 	movq	%rax, -64(%rbp)
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	subq	$1, %rax
 	movq	%rax, -72(%rbp)
 	jmp	.L48
@@ -561,12 +571,12 @@ next_token:
 	jmp	.L19
 .L51:
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rbx
+	movq	32(%rax), %rbx
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	subq	-64(%rbp), %rax
 	movq	16(%rbp), %rdx
-	movq	(%rdx), %rcx
+	movq	8(%rdx), %rcx
 	movq	-64(%rbp), %rdx
 	addq	%rdx, %rcx
 	movq	%rax, %rdx
@@ -584,11 +594,11 @@ next_token:
 	cmpb	$42, -25(%rbp)
 	jne	.L52
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	addq	$1, %rax
 	movq	%rax, -80(%rbp)
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	subq	$1, %rax
 	movq	%rax, -88(%rbp)
 	jmp	.L53
@@ -613,7 +623,7 @@ next_token:
 	jne	.L53
 	leaq	.LC3(%rip), %r9
 	leaq	__func__.0(%rip), %r8
-	movl	$126, %edx
+	movl	$127, %edx
 	leaq	.LC4(%rip), %rax
 	movq	%rax, %rcx
 	call	__assert_func
@@ -636,8 +646,11 @@ next_token:
 	call	move_position
 .L59:
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rax
+	movq	(%rax), %rcx
+	movq	16(%rbp), %rax
+	movq	32(%rax), %rax
 	movq	-80(%rbp), %rdx
+	movq	%rcx, %r9
 	movq	%rdx, %r8
 	movq	%rax, %rdx
 	leaq	.LC5(%rip), %rax
@@ -652,12 +665,12 @@ next_token:
 	jmp	.L19
 .L60:
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rbx
+	movq	32(%rax), %rbx
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	subq	-80(%rbp), %rax
 	movq	16(%rbp), %rdx
-	movq	(%rdx), %rcx
+	movq	8(%rdx), %rcx
 	movq	-80(%rbp), %rdx
 	addq	%rdx, %rcx
 	movq	%rax, %rdx
@@ -683,13 +696,13 @@ next_token:
 	jmp	.L19
 .L61:
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rbx
+	movq	32(%rax), %rbx
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	subq	-80(%rbp), %rax
 	leaq	-2(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	(%rax), %rcx
+	movq	8(%rax), %rcx
 	movq	-80(%rbp), %rax
 	addq	%rcx, %rax
 	movq	%rax, %rcx
@@ -710,10 +723,10 @@ next_token:
 	movq	%rax, %rcx
 	call	get_current_char
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-2(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.EQ_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -731,10 +744,10 @@ next_token:
 	movq	%rax, %rcx
 	call	get_current_char
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-2(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.NE_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -752,10 +765,10 @@ next_token:
 	movq	%rax, %rcx
 	call	get_current_char
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-2(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.LE_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -773,10 +786,10 @@ next_token:
 	movq	%rax, %rcx
 	call	get_current_char
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-2(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.GE_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -794,10 +807,10 @@ next_token:
 	movq	%rax, %rcx
 	call	get_current_char
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-2(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.ADD_ASSIGN_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -815,10 +828,10 @@ next_token:
 	movq	%rax, %rcx
 	call	get_current_char
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-2(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.SUB_ASSIGN_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -836,10 +849,10 @@ next_token:
 	movq	%rax, %rcx
 	call	get_current_char
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-2(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.MUL_ASSIGN_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -857,10 +870,10 @@ next_token:
 	movq	%rax, %rcx
 	call	get_current_char
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-2(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.DIV_ASSIGN_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -878,10 +891,10 @@ next_token:
 	movq	%rax, %rcx
 	call	get_current_char
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-2(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.MOD_ASSIGN_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -899,10 +912,10 @@ next_token:
 	movq	%rax, %rcx
 	call	get_current_char
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-2(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.AND_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -920,10 +933,10 @@ next_token:
 	movq	%rax, %rcx
 	call	get_current_char
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-2(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.OR_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -936,10 +949,10 @@ next_token:
 	cmpb	$40, -17(%rbp)
 	jne	.L73
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -952,10 +965,10 @@ next_token:
 	cmpb	$41, -17(%rbp)
 	jne	.L74
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -968,10 +981,10 @@ next_token:
 	cmpb	$123, -17(%rbp)
 	jne	.L75
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -984,10 +997,10 @@ next_token:
 	cmpb	$125, -17(%rbp)
 	jne	.L76
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1000,10 +1013,10 @@ next_token:
 	cmpb	$44, -17(%rbp)
 	jne	.L77
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.COMMA_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1016,10 +1029,10 @@ next_token:
 	cmpb	$33, -17(%rbp)
 	jne	.L78
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.NOT_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1032,10 +1045,10 @@ next_token:
 	cmpb	$46, -17(%rbp)
 	jne	.L79
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.DOT_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1048,10 +1061,10 @@ next_token:
 	cmpb	$91, -17(%rbp)
 	jne	.L80
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.L_BRACKET_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1064,10 +1077,10 @@ next_token:
 	cmpb	$93, -17(%rbp)
 	jne	.L81
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.R_BRACKET_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1080,10 +1093,10 @@ next_token:
 	cmpb	$59, -17(%rbp)
 	jne	.L82
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1096,10 +1109,10 @@ next_token:
 	cmpb	$95, -17(%rbp)
 	jne	.L83
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.UNDERLINE_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1112,10 +1125,10 @@ next_token:
 	cmpb	$43, -17(%rbp)
 	jne	.L84
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.ADD_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1128,10 +1141,10 @@ next_token:
 	cmpb	$45, -17(%rbp)
 	jne	.L85
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.SUB_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1144,10 +1157,10 @@ next_token:
 	cmpb	$42, -17(%rbp)
 	jne	.L86
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.MUL_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1160,10 +1173,10 @@ next_token:
 	cmpb	$47, -17(%rbp)
 	jne	.L87
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.DIV_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1176,10 +1189,10 @@ next_token:
 	cmpb	$37, -17(%rbp)
 	jne	.L88
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.MOD_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1192,10 +1205,10 @@ next_token:
 	cmpb	$60, -17(%rbp)
 	jne	.L89
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.LT_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1208,10 +1221,10 @@ next_token:
 	cmpb	$62, -17(%rbp)
 	jne	.L90
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.GT_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1224,10 +1237,10 @@ next_token:
 	cmpb	$61, -17(%rbp)
 	jne	.L91
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	leaq	-1(%rax), %rcx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	32(%rax), %rdx
 	movq	.refptr.ASSIGN_SYMBOL(%rip), %rax
 	movq	(%rax), %rax
 	movq	%rcx, %r9
@@ -1238,11 +1251,14 @@ next_token:
 	jmp	.L19
 .L91:
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
-	leaq	-1(%rax), %rdx
+	movq	(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rax
-	movq	%rdx, %r8
+	movq	40(%rax), %rax
+	leaq	-1(%rax), %rcx
+	movq	16(%rbp), %rax
+	movq	32(%rax), %rax
+	movq	%rdx, %r9
+	movq	%rcx, %r8
 	movq	%rax, %rdx
 	leaq	.LC6(%rip), %rax
 	movq	%rax, %rcx
@@ -1266,29 +1282,29 @@ get_next_token:
 	movl	%edx, %eax
 	movb	%al, 24(%rbp)
 	movq	16(%rbp), %rax
-	movq	40(%rax), %rax
+	movq	48(%rax), %rax
 	testq	%rax, %rax
 	je	.L94
 	movq	16(%rbp), %rax
-	movq	40(%rax), %rdx
-	movq	16(%rbp), %rax
-	movq	%rdx, 72(%rax)
-	movq	16(%rbp), %rax
 	movq	48(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	%rdx, 8(%rax)
+	movq	%rdx, 80(%rax)
 	movq	16(%rbp), %rax
 	movq	56(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	%rdx, 24(%rax)
+	movq	%rdx, 16(%rax)
 	movq	16(%rbp), %rax
 	movq	64(%rax), %rdx
 	movq	16(%rbp), %rax
 	movq	%rdx, 32(%rax)
 	movq	16(%rbp), %rax
-	movq	$0, 40(%rax)
+	movq	72(%rax), %rdx
 	movq	16(%rbp), %rax
-	movq	72(%rax), %rax
+	movq	%rdx, 40(%rax)
+	movq	16(%rbp), %rax
+	movq	$0, 48(%rax)
+	movq	16(%rbp), %rax
+	movq	80(%rax), %rax
 	jmp	.L95
 .L94:
 	movsbl	24(%rbp), %edx
@@ -1298,9 +1314,9 @@ get_next_token:
 	movq	%rax, -8(%rbp)
 	movq	16(%rbp), %rax
 	movq	-8(%rbp), %rdx
-	movq	%rdx, 72(%rax)
+	movq	%rdx, 80(%rax)
 	movq	16(%rbp), %rax
-	movq	72(%rax), %rax
+	movq	80(%rax), %rax
 .L95:
 	leave
 	ret
@@ -1314,21 +1330,21 @@ peek_next_token:
 	movl	%edx, %eax
 	movb	%al, 24(%rbp)
 	movq	16(%rbp), %rax
-	movq	40(%rax), %rax
+	movq	48(%rax), %rax
 	testq	%rax, %rax
 	je	.L97
 	movq	16(%rbp), %rax
-	movq	40(%rax), %rax
+	movq	48(%rax), %rax
 	jmp	.L98
 .L97:
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rax
+	movq	16(%rax), %rax
 	movq	%rax, -8(%rbp)
 	movq	16(%rbp), %rax
-	movq	24(%rax), %rax
+	movq	32(%rax), %rax
 	movq	%rax, -16(%rbp)
 	movq	16(%rbp), %rax
-	movq	32(%rax), %rax
+	movq	40(%rax), %rax
 	movq	%rax, -24(%rbp)
 	movsbl	24(%rbp), %edx
 	movq	16(%rbp), %rax
@@ -1336,11 +1352,7 @@ peek_next_token:
 	call	get_next_token
 	movq	%rax, -32(%rbp)
 	movq	16(%rbp), %rax
-	movq	8(%rax), %rdx
-	movq	16(%rbp), %rax
-	movq	%rdx, 48(%rax)
-	movq	16(%rbp), %rax
-	movq	24(%rax), %rdx
+	movq	16(%rax), %rdx
 	movq	16(%rbp), %rax
 	movq	%rdx, 56(%rax)
 	movq	16(%rbp), %rax
@@ -1348,17 +1360,21 @@ peek_next_token:
 	movq	16(%rbp), %rax
 	movq	%rdx, 64(%rax)
 	movq	16(%rbp), %rax
+	movq	40(%rax), %rdx
+	movq	16(%rbp), %rax
+	movq	%rdx, 72(%rax)
+	movq	16(%rbp), %rax
 	movq	-8(%rbp), %rdx
-	movq	%rdx, 8(%rax)
+	movq	%rdx, 16(%rax)
 	movq	16(%rbp), %rax
 	movq	-16(%rbp), %rdx
-	movq	%rdx, 24(%rax)
-	movq	16(%rbp), %rax
-	movq	-24(%rbp), %rdx
 	movq	%rdx, 32(%rax)
 	movq	16(%rbp), %rax
-	movq	-32(%rbp), %rdx
+	movq	-24(%rbp), %rdx
 	movq	%rdx, 40(%rax)
+	movq	16(%rbp), %rax
+	movq	-32(%rbp), %rdx
+	movq	%rdx, 48(%rax)
 	movq	-32(%rbp), %rax
 .L98:
 	leave
@@ -1370,7 +1386,7 @@ peek_current_token:
 	movq	%rsp, %rbp
 	movq	%rcx, 16(%rbp)
 	movq	16(%rbp), %rax
-	movq	72(%rax), %rax
+	movq	80(%rax), %rax
 	popq	%rbp
 	ret
 	.globl	reset_lexer
@@ -1380,9 +1396,7 @@ reset_lexer:
 	movq	%rsp, %rbp
 	movq	%rcx, 16(%rbp)
 	movq	16(%rbp), %rax
-	movq	$0, 8(%rax)
-	movq	16(%rbp), %rax
-	movq	$0, 24(%rax)
+	movq	$0, 16(%rax)
 	movq	16(%rbp), %rax
 	movq	$0, 32(%rax)
 	movq	16(%rbp), %rax
@@ -1395,6 +1409,8 @@ reset_lexer:
 	movq	$0, 64(%rax)
 	movq	16(%rbp), %rax
 	movq	$0, 72(%rax)
+	movq	16(%rbp), %rax
+	movq	$0, 80(%rax)
 	nop
 	popq	%rbp
 	ret

@@ -448,18 +448,16 @@ output_tac:
 .LC15:
 	.string	"r"
 .LC16:
-	.string	"Error opening file: %s"
+	.string	"Error opening file: %s\n"
 .LC17:
 	.string	".token"
 .LC18:
 	.string	"w"
 .LC19:
-	.string	"Error opening file: %s\n"
-.LC20:
 	.string	".ast"
-.LC21:
+.LC20:
 	.string	".tc"
-.LC22:
+.LC21:
 	.string	".tac"
 	.text
 	.globl	parse_file
@@ -509,9 +507,10 @@ parse_file:
 	movq	-32(%rbp), %rax
 	movq	%rax, %rdi
 	call	*fclose@GOTPCREL(%rip)
-	movq	-120(%rbp), %rdx
+	movq	-120(%rbp), %rcx
+	movq	-24(%rbp), %rdx
 	movq	-40(%rbp), %rax
-	movq	%rdx, %rsi
+	movq	%rcx, %rsi
 	movq	%rax, %rdi
 	call	*create_lexer@GOTPCREL(%rip)
 	movq	%rax, -48(%rbp)
@@ -540,7 +539,7 @@ parse_file:
 	jne	.L36
 	movq	stderr(%rip), %rax
 	movq	-56(%rbp), %rdx
-	leaq	.LC19(%rip), %rcx
+	leaq	.LC16(%rip), %rcx
 	movq	%rcx, %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
@@ -580,7 +579,7 @@ parse_file:
 	cmpb	$0, -144(%rbp)
 	je	.L39
 	movl	$4, %esi
-	leaq	.LC20(%rip), %rax
+	leaq	.LC19(%rip), %rax
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rdx
@@ -593,7 +592,7 @@ parse_file:
 	call	*get_full_path@GOTPCREL(%rip)
 	movq	%rax, -80(%rbp)
 	movl	$3, %esi
-	leaq	.LC21(%rip), %rax
+	leaq	.LC20(%rip), %rax
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rdx
@@ -611,7 +610,7 @@ parse_file:
 	jne	.L40
 	movq	stderr(%rip), %rax
 	movq	-80(%rbp), %rdx
-	leaq	.LC19(%rip), %rcx
+	leaq	.LC16(%rip), %rcx
 	movq	%rcx, %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
@@ -630,7 +629,7 @@ parse_file:
 	cmpb	$0, -148(%rbp)
 	je	.L32
 	movl	$4, %esi
-	leaq	.LC22(%rip), %rax
+	leaq	.LC21(%rip), %rax
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rdx
@@ -643,7 +642,7 @@ parse_file:
 	call	*get_full_path@GOTPCREL(%rip)
 	movq	%rax, -96(%rbp)
 	movl	$3, %esi
-	leaq	.LC21(%rip), %rax
+	leaq	.LC20(%rip), %rax
 	movq	%rax, %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rax, %rdx
@@ -661,7 +660,7 @@ parse_file:
 	jne	.L42
 	movq	stderr(%rip), %rax
 	movq	-96(%rbp), %rdx
-	leaq	.LC19(%rip), %rcx
+	leaq	.LC16(%rip), %rcx
 	movq	%rcx, %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax

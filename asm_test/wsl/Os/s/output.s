@@ -1252,34 +1252,36 @@ output_statement:
 .LC67:
 	.string	"NULL\t%s\n"
 .LC68:
+	.string	"%s\t%s(%s)\n"
+.LC69:
 	.string	"%s\t%s\n"
 	.text
 	.type	output_var, @function
 output_var:
 	pushq	%rbp
 	pushq	%rbx
-	pushq	%rbx
-	movq	%rsi, %rbx
+	pushq	%rbp
+	movq	%rsi, %rbp
 	movq	%rdx, %rsi
 	testq	%rdi, %rdi
 	jne	.L103
-	movq	%rbx, %rdi
+	movq	%rbp, %rdi
 	call	*indention_tac@GOTPCREL(%rip)
-	popq	%r11
-	movq	%rbx, %rsi
+	popq	%rbx
+	movq	%rbp, %rsi
 	popq	%rbx
 	leaq	.LC66(%rip), %rdi
 	popq	%rbp
 	jmp	*fputs@GOTPCREL(%rip)
 .L103:
-	movq	%rdi, %rbp
-	movq	%rbx, %rdi
-	cmpq	$0, 16(%rbp)
+	movq	%rdi, %rbx
+	movq	%rbp, %rdi
+	cmpq	$0, 16(%rbx)
 	jne	.L104
 	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%rbp), %rcx
-	movq	%rbx, %rdi
-	popq	%r10
+	movq	8(%rbx), %rcx
+	movq	%rbp, %rdi
+	popq	%r11
 	leaq	.LC67(%rip), %rdx
 	popq	%rbx
 	movl	$2, %esi
@@ -1287,11 +1289,28 @@ output_var:
 	popq	%rbp
 	jmp	*__fprintf_chk@GOTPCREL(%rip)
 .L104:
+	cmpq	$0, (%rbx)
+	je	.L105
 	call	*indention_tac@GOTPCREL(%rip)
-	movq	16(%rbp), %rax
-	movq	8(%rbp), %r8
-	movq	%rbx, %rdi
+	movq	(%rbx), %rax
+	movq	16(%rbx), %rdx
+	movq	%rbp, %rdi
+	movq	8(%rbx), %r8
+	movl	$2, %esi
+	movq	8(%rdx), %rcx
+	movq	8(%rax), %r9
 	leaq	.LC68(%rip), %rdx
+	xorl	%eax, %eax
+	popq	%r10
+	popq	%rbx
+	popq	%rbp
+	jmp	*__fprintf_chk@GOTPCREL(%rip)
+.L105:
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	16(%rbx), %rax
+	movq	8(%rbx), %r8
+	movq	%rbp, %rdi
+	leaq	.LC69(%rip), %rdx
 	movl	$2, %esi
 	movq	8(%rax), %rcx
 	popq	%r9
@@ -1301,125 +1320,163 @@ output_var:
 	jmp	*__fprintf_chk@GOTPCREL(%rip)
 	.size	output_var, .-output_var
 	.section	.rodata.str1.1
-.LC69:
-	.string	"true"
 .LC70:
-	.string	"false"
+	.string	"true"
 .LC71:
-	.string	"\"NULL\""
+	.string	"false"
 .LC72:
-	.string	"%lld"
+	.string	"\"NULL\""
 .LC73:
-	.string	"%f"
+	.string	"%s(%s)"
 .LC74:
-	.string	"void"
+	.string	"%lld"
 .LC75:
-	.string	"NONE"
+	.string	"%f"
 .LC76:
+	.string	"\"%s\""
+.LC77:
+	.string	"void"
+.LC78:
+	.string	"NONE"
+.LC79:
 	.string	"unknown_ArgType: %u"
 	.text
 	.type	output_arg, @function
 output_arg:
 	pushq	%rbp
 	pushq	%rbx
-	pushq	%rbx
 	movq	%rsi, %rbx
+	pushq	%rbp
 	testq	%rdi, %rdi
-	jne	.L107
+	jne	.L108
 	xorl	%esi, %esi
 	movq	%rbx, %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	%rbx, %rsi
-	leaq	.LC71(%rip), %rdi
-	jmp	.L122
-.L107:
-	cmpl	$8, 16(%rdi)
+	leaq	.LC72(%rip), %rdi
+	jmp	.L125
+.L108:
+	cmpl	$9, 16(%rdi)
 	movq	%rdi, %rbp
-	ja	.L108
+	ja	.L109
 	movl	16(%rdi), %eax
-	leaq	.L110(%rip), %rdx
-	xorl	%esi, %esi
-	movq	%rbx, %rdi
+	leaq	.L111(%rip), %rdx
 	movslq	(%rdx,%rax,4), %rax
 	addq	%rdx, %rax
 	jmp	*%rax
 	.section	.rodata
 	.align 4
 	.align 4
-.L110:
-	.long	.L118-.L110
-	.long	.L117-.L110
-	.long	.L116-.L110
-	.long	.L115-.L110
-	.long	.L114-.L110
-	.long	.L113-.L110
-	.long	.L118-.L110
-	.long	.L118-.L110
-	.long	.L109-.L110
+.L111:
+	.long	.L112-.L111
+	.long	.L118-.L111
+	.long	.L117-.L111
+	.long	.L116-.L111
+	.long	.L115-.L111
+	.long	.L114-.L111
+	.long	.L113-.L111
+	.long	.L112-.L111
+	.long	.L112-.L111
+	.long	.L110-.L111
 	.text
-.L118:
+.L113:
+	xorl	%esi, %esi
+	movq	%rbx, %rdi
+.L120:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	0(%rbp), %rax
 	movq	8(%rax), %rdi
-.L123:
+.L127:
 	movq	%rbx, %rsi
-.L122:
-	popq	%r11
+.L125:
+	popq	%rbx
 	popq	%rbx
 	popq	%rbp
 	jmp	*fputs@GOTPCREL(%rip)
-.L117:
+.L118:
+	xorl	%esi, %esi
+	movq	%rbx, %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	0(%rbp), %rcx
+	leaq	.LC74(%rip), %rdx
+	jmp	.L128
+.L117:
 	movq	%rbx, %rdi
-	popq	%r10
-	leaq	.LC72(%rip), %rdx
-	popq	%rbx
-	movl	$2, %esi
-	xorl	%eax, %eax
-	popq	%rbp
-	jmp	*__fprintf_chk@GOTPCREL(%rip)
-.L116:
+	xorl	%esi, %esi
 	call	*indention_tac@GOTPCREL(%rip)
 	movsd	0(%rbp), %xmm0
 	movq	%rbx, %rdi
-	popq	%r9
-	leaq	.LC73(%rip), %rdx
+	popq	%r11
+	leaq	.LC75(%rip), %rdx
 	popq	%rbx
 	movl	$2, %esi
 	movb	$1, %al
 	popq	%rbp
 	jmp	*__fprintf_chk@GOTPCREL(%rip)
-.L115:
+.L116:
+	xorl	%esi, %esi
+	movq	%rbx, %rdi
 	call	*indention_tac@GOTPCREL(%rip)
-	movq	0(%rbp), %rdi
-	movq	%rbx, %rsi
-	jmp	.L122
-.L114:
+	movq	0(%rbp), %rcx
+	leaq	.LC76(%rip), %rdx
+.L128:
+	popq	%r10
+	movq	%rbx, %rdi
+	movl	$2, %esi
+	popq	%rbx
+	xorl	%eax, %eax
+	popq	%rbp
+	jmp	*__fprintf_chk@GOTPCREL(%rip)
+.L115:
+	xorl	%esi, %esi
+	movq	%rbx, %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	cmpb	$0, 0(%rbp)
-	leaq	.LC70(%rip), %rdi
-	leaq	.LC69(%rip), %rax
+	leaq	.LC71(%rip), %rdi
+	leaq	.LC70(%rip), %rax
 	cmovne	%rax, %rdi
-	jmp	.L123
-.L113:
+	jmp	.L127
+.L114:
+	xorl	%esi, %esi
+	movq	%rbx, %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	%rbx, %rsi
-	leaq	.LC74(%rip), %rdi
-	jmp	.L122
+	leaq	.LC77(%rip), %rdi
+	jmp	.L125
+.L112:
+	movq	(%rdi), %rax
+	xorl	%esi, %esi
+	movq	%rbx, %rdi
+	cmpq	$0, (%rax)
+	je	.L120
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	0(%rbp), %rax
+	movq	%rbx, %rdi
+	movl	$2, %esi
+	movq	(%rax), %rdx
+	movq	8(%rax), %rcx
+	xorl	%eax, %eax
+	movq	8(%rdx), %r8
+	popq	%r9
+	leaq	.LC73(%rip), %rdx
+	popq	%rbx
+	popq	%rbp
+	jmp	*__fprintf_chk@GOTPCREL(%rip)
+.L110:
+	xorl	%esi, %esi
+	movq	%rbx, %rdi
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	%rbx, %rsi
+	leaq	.LC78(%rip), %rdi
+	jmp	.L125
 .L109:
-	call	*indention_tac@GOTPCREL(%rip)
-	movq	%rbx, %rsi
-	leaq	.LC75(%rip), %rdi
-	jmp	.L122
-.L108:
 	movq	%rbx, %rdi
 	xorl	%esi, %esi
 	call	*indention_tac@GOTPCREL(%rip)
 	movl	16(%rbp), %ecx
 	movq	%rbx, %rdi
 	popq	%r8
-	leaq	.LC76(%rip), %rdx
+	leaq	.LC79(%rip), %rdx
 	popq	%rbx
 	movl	$2, %esi
 	xorl	%eax, %eax
@@ -1427,27 +1484,27 @@ output_arg:
 	jmp	*__fprintf_chk@GOTPCREL(%rip)
 	.size	output_arg, .-output_arg
 	.section	.rodata.str1.1
-.LC77:
-	.string	"NULL"
-.LC78:
-	.string	"import\n"
-.LC79:
-	.string	"source: \"%s\"\n"
 .LC80:
-	.string	"parameters\n"
+	.string	"NULL"
 .LC81:
-	.string	"parameters[%d]\n"
+	.string	"import\n"
 .LC82:
-	.string	"class\n"
+	.string	"source: \"%s\"\n"
 .LC83:
-	.string	"members\n"
+	.string	"parameters\n"
 .LC84:
-	.string	"method\n"
+	.string	"parameters[%d]\n"
 .LC85:
-	.string	"variable\n"
+	.string	"class\n"
 .LC86:
-	.string	"unknown_ClassMemberType: %u\n"
+	.string	"members\n"
 .LC87:
+	.string	"method\n"
+.LC88:
+	.string	"variable\n"
+.LC89:
+	.string	"unknown_ClassMemberType: %u\n"
+.LC90:
 	.string	"unknown_CodeMemberType: %u\n"
 	.text
 	.globl	output_code
@@ -1466,26 +1523,26 @@ output_code:
 	movq	%rcx, 16(%rsp)
 	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, 48(%rsp)
-.L125:
+.L131:
 	movq	48(%rsp), %rdi
 	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rbp
 	testq	%rax, %rax
-	je	.L149
+	je	.L155
 	movl	8(%rbp), %eax
 	movq	16(%rsp), %rcx
 	leaq	1(%rbx), %rsi
 	xorl	%edx, %edx
 	movq	8(%rsp), %rdi
 	cmpl	$1, %eax
-	je	.L126
+	je	.L132
 	cmpl	$2, %eax
-	je	.L127
+	je	.L133
 	testl	%eax, %eax
-	jne	.L128
+	jne	.L134
 	call	*indention@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC78(%rip), %rdi
+	leaq	.LC81(%rip), %rdi
 	leaq	2(%rbx), %r12
 	call	*fputs@GOTPCREL(%rip)
 	movq	0(%rbp), %rbp
@@ -1509,16 +1566,16 @@ output_code:
 	call	*indention@GOTPCREL(%rip)
 	movq	8(%rbp), %rcx
 	testq	%rcx, %rcx
-	jne	.L129
-	leaq	.LC77(%rip), %rcx
-.L129:
+	jne	.L135
+	leaq	.LC80(%rip), %rcx
+.L135:
 	movq	8(%rsp), %rdi
-	leaq	.LC79(%rip), %rdx
+	leaq	.LC82(%rip), %rdx
 	movl	$2, %esi
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	jmp	.L125
-.L126:
+	jmp	.L131
+.L132:
 	call	*indention@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	2(%rbx), %r12
@@ -1529,7 +1586,7 @@ output_code:
 	xorl	%edx, %edx
 	movq	8(%rsp), %rdi
 	movq	%r12, %rsi
-	leaq	.LC81(%rip), %r15
+	leaq	.LC84(%rip), %r15
 	call	*indention@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC32(%rip), %rdi
@@ -1560,7 +1617,7 @@ output_code:
 	movq	8(%rsp), %rdi
 	call	*indention@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC80(%rip), %rdi
+	leaq	.LC83(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
 	movq	16(%r14), %rdi
 	call	*list_copy@GOTPCREL(%rip)
@@ -1569,13 +1626,13 @@ output_code:
 	movq	%rax, %r13
 	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, 32(%rsp)
-.L131:
+.L137:
 	movq	%r13, %rdi
 	call	*list_pop@GOTPCREL(%rip)
 	movq	16(%rsp), %rcx
 	movq	%rax, %rbp
 	testq	%rax, %rax
-	je	.L150
+	je	.L156
 	incl	%r14d
 	movq	24(%rsp), %rsi
 	movq	8(%rsp), %rdi
@@ -1592,8 +1649,8 @@ output_code:
 	movq	%rbp, %rdi
 	leaq	4(%rbx), %rdx
 	call	output_variable
-	jmp	.L131
-.L150:
+	jmp	.L137
+.L156:
 	movq	8(%rsp), %rdi
 	movq	%r12, %rsi
 	movl	$1, %edx
@@ -1601,21 +1658,21 @@ output_code:
 	movq	8(%rsp), %rsi
 	leaq	.LC48(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-.L133:
+.L139:
 	movq	32(%rsp), %rdi
 	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	je	.L125
+	je	.L131
 	movq	16(%rsp), %rcx
 	movq	24(%rsp), %rdx
 	movq	8(%rsp), %rsi
 	call	output_statement
-	jmp	.L133
-.L127:
+	jmp	.L139
+.L133:
 	call	*indention@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC82(%rip), %rdi
+	leaq	.LC85(%rip), %rdi
 	leaq	2(%rbx), %r12
 	call	*fputs@GOTPCREL(%rip)
 	movq	0(%rbp), %rbp
@@ -1640,46 +1697,46 @@ output_code:
 	movq	8(%rsp), %rdi
 	call	*indention@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC83(%rip), %rdi
+	leaq	.LC86(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
 	movq	8(%rbp), %rdi
 	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, 56(%rsp)
-.L135:
+.L141:
 	movq	56(%rsp), %rdi
 	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %r12
 	testq	%rax, %rax
-	je	.L125
+	je	.L131
 	movl	8(%r12), %eax
 	testl	%eax, %eax
-	je	.L136
+	je	.L142
 	decl	%eax
-	jne	.L151
+	jne	.L157
 	movq	16(%rsp), %rcx
 	xorl	%edx, %edx
 	movq	24(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	call	*indention@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC85(%rip), %rdi
+	leaq	.LC88(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
 	movq	16(%rsp), %rcx
 	movq	8(%rsp), %rsi
 	leaq	4(%rbx), %rdx
 	movq	(%r12), %rdi
 	call	output_variable
-	jmp	.L135
-.L136:
+	jmp	.L141
+.L142:
 	movq	16(%rsp), %rcx
 	xorl	%edx, %edx
 	movq	24(%rsp), %rsi
 	orl	$-1, %r14d
 	movq	8(%rsp), %rdi
-	leaq	.LC81(%rip), %r15
+	leaq	.LC84(%rip), %r15
 	call	*indention@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC84(%rip), %rdi
+	leaq	.LC87(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
 	movq	(%r12), %r12
 	leaq	4(%rbx), %rax
@@ -1718,7 +1775,7 @@ output_code:
 	movq	8(%rsp), %rdi
 	call	*indention@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC80(%rip), %rdi
+	leaq	.LC83(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
 	movq	16(%r12), %rdi
 	call	*list_copy@GOTPCREL(%rip)
@@ -1726,13 +1783,13 @@ output_code:
 	movq	%rax, %r13
 	call	*list_copy@GOTPCREL(%rip)
 	movq	%rax, %r12
-.L139:
+.L145:
 	movq	%r13, %rdi
 	call	*list_pop@GOTPCREL(%rip)
 	movq	16(%rsp), %rcx
 	movq	%rax, %rbp
 	testq	%rax, %rax
-	je	.L152
+	je	.L158
 	incl	%r14d
 	movq	40(%rsp), %rsi
 	movq	8(%rsp), %rdi
@@ -1749,8 +1806,8 @@ output_code:
 	movq	%rbp, %rdi
 	leaq	6(%rbx), %rdx
 	call	output_variable
-	jmp	.L139
-.L152:
+	jmp	.L145
+.L158:
 	movq	32(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	movl	$1, %edx
@@ -1758,18 +1815,18 @@ output_code:
 	movq	8(%rsp), %rsi
 	leaq	.LC48(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-.L141:
+.L147:
 	movq	%r12, %rdi
 	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	je	.L135
+	je	.L141
 	movq	16(%rsp), %rcx
 	movq	40(%rsp), %rdx
 	movq	8(%rsp), %rsi
 	call	output_statement
-	jmp	.L141
-.L151:
+	jmp	.L147
+.L157:
 	movq	16(%rsp), %rcx
 	movq	24(%rsp), %rsi
 	xorl	%edx, %edx
@@ -1778,20 +1835,20 @@ output_code:
 	movl	8(%r12), %ecx
 	movq	8(%rsp), %rdi
 	xorl	%eax, %eax
-	leaq	.LC86(%rip), %rdx
+	leaq	.LC89(%rip), %rdx
 	movl	$2, %esi
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	jmp	.L135
-.L128:
+	jmp	.L141
+.L134:
 	call	*indention@GOTPCREL(%rip)
 	movl	8(%rbp), %ecx
 	movq	8(%rsp), %rdi
 	xorl	%eax, %eax
-	leaq	.LC87(%rip), %rdx
+	leaq	.LC90(%rip), %rdx
 	movl	$2, %esi
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	jmp	.L125
-.L149:
+	jmp	.L131
+.L155:
 	addq	$72, %rsp
 	popq	%rbx
 	popq	%rbp
@@ -1802,119 +1859,121 @@ output_code:
 	ret
 	.size	output_code, .-output_code
 	.section	.rodata.str1.1
-.LC88:
-	.string	"TAC: \"NULL\"\n"
-.LC89:
-	.string	"TAC {\n"
-.LC90:
-	.string	"designs: []\n"
 .LC91:
-	.string	"designs: [\n"
+	.string	"TAC: \"NULL\"\n"
 .LC92:
-	.string	"NULL "
+	.string	"TAC {\n"
 .LC93:
-	.string	"%s "
+	.string	"designs: []\n"
 .LC94:
-	.string	"%zu "
+	.string	"designs: [\n"
 .LC95:
-	.string	"{}\n"
+	.string	"NULL "
 .LC96:
-	.string	"{\n"
+	.string	"%s "
 .LC97:
-	.string	"NULL\t"
+	.string	"%zu "
 .LC98:
-	.string	"%s\t"
+	.string	"{}\n"
 .LC99:
-	.string	"%zu\n"
+	.string	"{\n"
 .LC100:
-	.string	"}\n"
+	.string	"NULL\t"
 .LC101:
-	.string	"]\n"
+	.string	"%s\t"
 .LC102:
-	.string	"entry_point: \"NULL\"\n"
+	.string	"%s(%s) "
 .LC103:
-	.string	"entry_point: %s\n"
+	.string	"%zu\n"
 .LC104:
-	.string	"global: []\n"
+	.string	"}\n"
 .LC105:
-	.string	"global: [\n"
+	.string	"]\n"
 .LC106:
-	.string	"subroutines: []\n"
+	.string	"entry_point: \"NULL\"\n"
 .LC107:
-	.string	"subroutines: [\n"
+	.string	"entry_point: %s\n"
 .LC108:
-	.string	"NULL {\n"
+	.string	"global: []\n"
 .LC109:
-	.string	"%s {\n"
+	.string	"global: [\n"
 .LC110:
-	.string	"return_type: \"NULL\"\n"
+	.string	"subroutines: []\n"
 .LC111:
-	.string	"return_type: %s\n"
+	.string	"subroutines: [\n"
 .LC112:
-	.string	"parameters: []\n"
+	.string	"NULL {\n"
 .LC113:
-	.string	"parameters: [\n"
+	.string	"%s {\n"
 .LC114:
-	.string	"local: []\n"
+	.string	"return_type: \"NULL\"\n"
 .LC115:
-	.string	"local: [\n"
+	.string	"return_type: %s\n"
 .LC116:
-	.string	"instructions: []\n"
+	.string	"parameters: []\n"
 .LC117:
-	.string	"instructions: [\n"
+	.string	"parameters: [\n"
 .LC118:
-	.string	"add\t"
+	.string	"local: []\n"
 .LC119:
-	.string	"sub\t"
+	.string	"local: [\n"
 .LC120:
-	.string	"mul\t"
+	.string	"instructions: []\n"
 .LC121:
-	.string	"div\t"
+	.string	"instructions: [\n"
 .LC122:
-	.string	"mod\t"
+	.string	"add\t"
 .LC123:
-	.string	"eq \t"
+	.string	"sub\t"
 .LC124:
-	.string	"ne \t"
+	.string	"mul\t"
 .LC125:
-	.string	"lt \t"
+	.string	"div\t"
 .LC126:
-	.string	"gt \t"
+	.string	"mod\t"
 .LC127:
-	.string	"le \t"
+	.string	"eq \t"
 .LC128:
-	.string	"ge \t"
+	.string	"ne \t"
 .LC129:
-	.string	"and\t"
+	.string	"lt \t"
 .LC130:
-	.string	"or \t"
+	.string	"gt \t"
 .LC131:
-	.string	"not\t"
+	.string	"le \t"
 .LC132:
-	.string	"assign\t"
+	.string	"ge \t"
 .LC133:
-	.string	"get_attr\t"
+	.string	"and\t"
 .LC134:
-	.string	"get_elem\t"
+	.string	"or \t"
 .LC135:
-	.string	"param\t"
+	.string	"not\t"
 .LC136:
-	.string	"alloc\t"
+	.string	"assign\t"
 .LC137:
-	.string	"jmp_c\t"
+	.string	"get_attr\t"
 .LC138:
-	.string	"jmp\t"
+	.string	"get_elem\t"
 .LC139:
-	.string	"ret\t"
+	.string	"param\t"
 .LC140:
-	.string	"call\t"
+	.string	"alloc\t"
 .LC141:
-	.string	"load\t"
+	.string	"jmp_c\t"
 .LC142:
-	.string	"store\t"
+	.string	"jmp\t"
 .LC143:
-	.string	"INST_NONE\n"
+	.string	"ret\t"
 .LC144:
+	.string	"call\t"
+.LC145:
+	.string	"load\t"
+.LC146:
+	.string	"store\t"
+.LC147:
+	.string	"INST_NONE\n"
+.LC148:
 	.string	"unknown_InstructionType: %u\n"
 	.text
 	.globl	output_TAC
@@ -1930,417 +1989,432 @@ output_TAC:
 	subq	$56, %rsp
 	movq	%rsi, 8(%rsp)
 	testq	%rdi, %rdi
-	jne	.L154
+	jne	.L160
 	movq	8(%rsp), %rdi
 	movq	%rdx, %rsi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC88(%rip), %rdi
-	jmp	.L246
-.L154:
+	leaq	.LC91(%rip), %rdi
+	jmp	.L253
+.L160:
 	movq	%rdi, %rbp
 	movq	%rdx, %rsi
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC89(%rip), %rdi
+	leaq	.LC92(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
 	movq	0(%rbp), %rdi
 	call	*list_is_empty@GOTPCREL(%rip)
 	leaq	1(%rbx), %rdx
 	movq	%rdx, 16(%rsp)
 	testb	%al, %al
-	je	.L155
+	je	.L161
 	movq	8(%rsp), %rdi
 	movq	%rdx, %rsi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC90(%rip), %rdi
-	jmp	.L236
-.L155:
+	leaq	.LC93(%rip), %rdi
+	jmp	.L243
+.L161:
 	movq	16(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC91(%rip), %rdi
-.L235:
+	leaq	.LC94(%rip), %rdi
+.L242:
 	call	*fputs@GOTPCREL(%rip)
 	movq	0(%rbp), %rdi
 	call	*list_pop@GOTPCREL(%rip)
-	movq	%rax, %r12
+	movq	%rax, %r13
 	testq	%rax, %rax
-	je	.L247
+	je	.L254
 	leaq	2(%rbx), %r14
-	cmpq	$0, 8(%r12)
+	cmpq	$0, 8(%r13)
 	movq	8(%rsp), %rdi
 	movq	%r14, %rsi
-	jne	.L158
+	jne	.L164
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC92(%rip), %rdi
+	leaq	.LC95(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L159
-.L158:
+	jmp	.L165
+.L164:
 	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%r12), %rax
+	movq	8(%r13), %rax
 	movq	8(%rsp), %rdi
-	leaq	.LC93(%rip), %rdx
+	leaq	.LC96(%rip), %rdx
 	movl	$2, %esi
 	movq	8(%rax), %rcx
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-.L159:
+.L165:
 	movq	8(%rsp), %rdi
 	xorl	%esi, %esi
 	call	*indention_tac@GOTPCREL(%rip)
 	movl	$2, %esi
+	movq	16(%r13), %rcx
 	xorl	%eax, %eax
-	movq	16(%r12), %rcx
 	movq	8(%rsp), %rdi
-	leaq	.LC94(%rip), %rdx
+	leaq	.LC97(%rip), %rdx
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	movq	(%r12), %rdi
+	movq	0(%r13), %rdi
 	call	*list_is_empty@GOTPCREL(%rip)
 	movq	8(%rsp), %rdi
 	xorl	%esi, %esi
 	testb	%al, %al
-	je	.L160
+	je	.L166
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC95(%rip), %rdi
-	jmp	.L235
-.L160:
+	leaq	.LC98(%rip), %rdi
+	jmp	.L242
+.L166:
 	call	*indention_tac@GOTPCREL(%rip)
-	leaq	.LC98(%rip), %r15
+	leaq	.LC101(%rip), %r15
 	movq	8(%rsp), %rsi
-	leaq	.LC96(%rip), %rdi
+	leaq	.LC99(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-.L162:
-	movq	(%r12), %rdi
+.L168:
+	movq	0(%r13), %rdi
 	call	*list_pop@GOTPCREL(%rip)
-	movq	%rax, %r13
+	movq	%rax, %r12
 	testq	%rax, %rax
-	je	.L248
-	cmpq	$0, 8(%r13)
+	je	.L255
+	cmpq	$0, 8(%r12)
 	movq	8(%rsp), %rdi
 	leaq	3(%rbx), %rsi
-	jne	.L163
+	jne	.L169
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC97(%rip), %rdi
+	leaq	.LC100(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L164
-.L163:
+	jmp	.L170
+.L169:
 	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%r13), %rax
+	movq	8(%r12), %rax
 	movq	8(%rsp), %rdi
 	movq	%r15, %rdx
 	movl	$2, %esi
 	movq	8(%rax), %rcx
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-.L164:
-	xorl	%esi, %esi
-	cmpq	$0, 0(%r13)
+.L170:
+	movq	(%r12), %rax
 	movq	8(%rsp), %rdi
-	jne	.L165
+	xorl	%esi, %esi
+	testq	%rax, %rax
+	jne	.L171
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC92(%rip), %rdi
+	leaq	.LC95(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L166
-.L165:
+	jmp	.L172
+.L171:
+	cmpq	$0, (%rax)
+	je	.L173
 	call	*indention_tac@GOTPCREL(%rip)
-	movq	0(%r13), %rax
+	movq	(%r12), %rax
 	movq	8(%rsp), %rdi
-	leaq	.LC93(%rip), %rdx
+	movl	$2, %esi
+	movq	(%rax), %rdx
+	movq	8(%rax), %rcx
+	xorl	%eax, %eax
+	movq	8(%rdx), %r8
+	leaq	.LC102(%rip), %rdx
+	call	*__fprintf_chk@GOTPCREL(%rip)
+	jmp	.L172
+.L173:
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	(%r12), %rax
+	movq	8(%rsp), %rdi
+	leaq	.LC96(%rip), %rdx
 	movl	$2, %esi
 	movq	8(%rax), %rcx
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-.L166:
+.L172:
 	movq	8(%rsp), %rdi
 	xorl	%esi, %esi
 	call	*indention_tac@GOTPCREL(%rip)
-	movq	16(%r13), %rcx
+	movq	16(%r12), %rcx
 	movq	8(%rsp), %rdi
 	xorl	%eax, %eax
-	leaq	.LC99(%rip), %rdx
+	leaq	.LC103(%rip), %rdx
 	movl	$2, %esi
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	jmp	.L162
-.L248:
+	jmp	.L168
+.L255:
 	movq	8(%rsp), %rdi
 	movq	%r14, %rsi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC100(%rip), %rdi
-	jmp	.L235
-.L247:
+	leaq	.LC104(%rip), %rdi
+	jmp	.L242
+.L254:
 	movq	16(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC101(%rip), %rdi
-.L236:
+	leaq	.LC105(%rip), %rdi
+.L243:
 	call	*fputs@GOTPCREL(%rip)
 	cmpq	$0, 8(%rbp)
 	movq	16(%rsp), %rsi
 	movq	8(%rsp), %rdi
-	jne	.L169
+	jne	.L176
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC102(%rip), %rdi
+	leaq	.LC106(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L170
-.L169:
+	jmp	.L177
+.L176:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rbp), %rax
 	movq	8(%rsp), %rdi
-	leaq	.LC103(%rip), %rdx
+	leaq	.LC107(%rip), %rdx
 	movl	$2, %esi
 	movq	8(%rax), %rcx
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-.L170:
+.L177:
 	movq	16(%rbp), %rdi
 	call	*list_is_empty@GOTPCREL(%rip)
 	movq	16(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	testb	%al, %al
-	je	.L171
+	je	.L178
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC104(%rip), %rdi
-	jmp	.L237
-.L171:
+	leaq	.LC108(%rip), %rdi
+	jmp	.L244
+.L178:
 	call	*indention_tac@GOTPCREL(%rip)
 	leaq	2(%rbx), %r12
 	movq	8(%rsp), %rsi
-	leaq	.LC105(%rip), %rdi
+	leaq	.LC109(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-.L173:
+.L180:
 	movq	16(%rbp), %rdi
 	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	je	.L249
+	je	.L256
 	movq	8(%rsp), %rsi
 	movq	%r12, %rdx
 	call	output_var
-	jmp	.L173
-.L249:
+	jmp	.L180
+.L256:
 	movq	16(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC101(%rip), %rdi
-.L237:
-	call	*fputs@GOTPCREL(%rip)
-	movq	24(%rbp), %rdi
-	call	*list_is_empty@GOTPCREL(%rip)
-	movq	16(%rsp), %rsi
-	movq	8(%rsp), %rdi
-	testb	%al, %al
-	je	.L175
-	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%rsp), %rsi
-	leaq	.LC106(%rip), %rdi
-	jmp	.L245
-.L175:
-	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%rsp), %rsi
-	leaq	.LC107(%rip), %rdi
+	leaq	.LC105(%rip), %rdi
 .L244:
 	call	*fputs@GOTPCREL(%rip)
 	movq	24(%rbp), %rdi
-	call	*list_pop@GOTPCREL(%rip)
-	movq	%rax, %r12
-	testq	%rax, %rax
-	je	.L250
-	leaq	2(%rbx), %rax
-	cmpq	$0, (%r12)
-	movq	%rax, 32(%rsp)
-	jne	.L178
-	movq	8(%rsp), %rdi
-	movq	%rax, %rsi
-	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%rsp), %rsi
-	leaq	.LC108(%rip), %rdi
-	call	*fputs@GOTPCREL(%rip)
-	jmp	.L179
-.L178:
-	movq	32(%rsp), %rsi
-	movq	8(%rsp), %rdi
-	call	*indention_tac@GOTPCREL(%rip)
-	movq	(%r12), %rax
-	movq	8(%rsp), %rdi
-	leaq	.LC109(%rip), %rdx
-	movl	$2, %esi
-	movq	8(%rax), %rcx
-	xorl	%eax, %eax
-	call	*__fprintf_chk@GOTPCREL(%rip)
-.L179:
-	leaq	3(%rbx), %rax
-	cmpq	$0, 8(%r12)
-	movq	%rax, 24(%rsp)
-	jne	.L180
-	movq	8(%rsp), %rdi
-	movq	%rax, %rsi
-	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%rsp), %rsi
-	leaq	.LC110(%rip), %rdi
-	call	*fputs@GOTPCREL(%rip)
-	jmp	.L181
-.L180:
-	movq	24(%rsp), %rsi
-	movq	8(%rsp), %rdi
-	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%r12), %rax
-	movq	8(%rsp), %rdi
-	leaq	.LC111(%rip), %rdx
-	movl	$2, %esi
-	movq	8(%rax), %rcx
-	xorl	%eax, %eax
-	call	*__fprintf_chk@GOTPCREL(%rip)
-.L181:
-	movq	16(%r12), %rdi
 	call	*list_is_empty@GOTPCREL(%rip)
-	movq	24(%rsp), %rsi
+	movq	16(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	testb	%al, %al
 	je	.L182
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC112(%rip), %rdi
-	jmp	.L238
+	leaq	.LC110(%rip), %rdi
+	jmp	.L252
 .L182:
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	8(%rsp), %rsi
+	leaq	.LC111(%rip), %rdi
+.L251:
+	call	*fputs@GOTPCREL(%rip)
+	movq	24(%rbp), %rdi
+	call	*list_pop@GOTPCREL(%rip)
+	movq	%rax, %r12
+	testq	%rax, %rax
+	je	.L257
+	leaq	2(%rbx), %rax
+	cmpq	$0, (%r12)
+	movq	%rax, 32(%rsp)
+	jne	.L185
+	movq	8(%rsp), %rdi
+	movq	%rax, %rsi
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	8(%rsp), %rsi
+	leaq	.LC112(%rip), %rdi
+	call	*fputs@GOTPCREL(%rip)
+	jmp	.L186
+.L185:
+	movq	32(%rsp), %rsi
+	movq	8(%rsp), %rdi
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	(%r12), %rax
+	movq	8(%rsp), %rdi
+	leaq	.LC113(%rip), %rdx
+	movl	$2, %esi
+	movq	8(%rax), %rcx
+	xorl	%eax, %eax
+	call	*__fprintf_chk@GOTPCREL(%rip)
+.L186:
+	leaq	3(%rbx), %rax
+	cmpq	$0, 8(%r12)
+	movq	%rax, 24(%rsp)
+	jne	.L187
+	movq	8(%rsp), %rdi
+	movq	%rax, %rsi
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	8(%rsp), %rsi
+	leaq	.LC114(%rip), %rdi
+	call	*fputs@GOTPCREL(%rip)
+	jmp	.L188
+.L187:
+	movq	24(%rsp), %rsi
+	movq	8(%rsp), %rdi
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	8(%r12), %rax
+	movq	8(%rsp), %rdi
+	leaq	.LC115(%rip), %rdx
+	movl	$2, %esi
+	movq	8(%rax), %rcx
+	xorl	%eax, %eax
+	call	*__fprintf_chk@GOTPCREL(%rip)
+.L188:
+	movq	16(%r12), %rdi
+	call	*list_is_empty@GOTPCREL(%rip)
+	movq	24(%rsp), %rsi
+	movq	8(%rsp), %rdi
+	testb	%al, %al
+	je	.L189
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	8(%rsp), %rsi
+	leaq	.LC116(%rip), %rdi
+	jmp	.L245
+.L189:
 	call	*indention_tac@GOTPCREL(%rip)
 	leaq	4(%rbx), %r13
 	movq	8(%rsp), %rsi
-	leaq	.LC113(%rip), %rdi
+	leaq	.LC117(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-.L184:
+.L191:
 	movq	16(%r12), %rdi
 	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	je	.L251
+	je	.L258
 	movq	8(%rsp), %rsi
 	movq	%r13, %rdx
 	call	output_var
-	jmp	.L184
-.L251:
+	jmp	.L191
+.L258:
 	movq	24(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC101(%rip), %rdi
-.L238:
+	leaq	.LC105(%rip), %rdi
+.L245:
 	call	*fputs@GOTPCREL(%rip)
 	movq	24(%r12), %rdi
 	call	*list_is_empty@GOTPCREL(%rip)
 	movq	24(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	testb	%al, %al
-	je	.L186
+	je	.L193
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC114(%rip), %rdi
-	jmp	.L239
-.L186:
+	leaq	.LC118(%rip), %rdi
+	jmp	.L246
+.L193:
 	call	*indention_tac@GOTPCREL(%rip)
 	leaq	4(%rbx), %r13
 	movq	8(%rsp), %rsi
-	leaq	.LC115(%rip), %rdi
+	leaq	.LC119(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-.L188:
+.L195:
 	movq	24(%r12), %rdi
 	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	testq	%rax, %rax
-	je	.L252
+	je	.L259
 	movq	8(%rsp), %rsi
 	movq	%r13, %rdx
 	call	output_var
-	jmp	.L188
-.L252:
+	jmp	.L195
+.L259:
 	movq	24(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC101(%rip), %rdi
-.L239:
+	leaq	.LC105(%rip), %rdi
+.L246:
 	call	*fputs@GOTPCREL(%rip)
 	movq	32(%r12), %rdi
 	call	*list_is_empty@GOTPCREL(%rip)
 	movq	24(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	testb	%al, %al
-	je	.L190
+	je	.L197
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC116(%rip), %rdi
-	jmp	.L243
-.L190:
+	leaq	.LC120(%rip), %rdi
+	jmp	.L250
+.L197:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC117(%rip), %rdi
-.L242:
+	leaq	.LC121(%rip), %rdi
+.L249:
 	call	*fputs@GOTPCREL(%rip)
 	movq	32(%r12), %rdi
 	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %r14
 	testq	%rax, %rax
-	je	.L253
+	je	.L260
 	leaq	4(%rbx), %rax
 	cmpq	$0, (%r14)
 	movq	%rax, 40(%rsp)
-	jne	.L193
+	jne	.L200
 	movq	8(%rsp), %rdi
 	movq	%rax, %rsi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC92(%rip), %rdi
+	leaq	.LC95(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L194
-.L193:
+	jmp	.L201
+.L200:
 	movq	40(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	(%r14), %rax
 	movq	8(%rsp), %rdi
-	leaq	.LC93(%rip), %rdx
+	leaq	.LC96(%rip), %rdx
 	movl	$2, %esi
 	movq	8(%rax), %rcx
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-.L194:
+.L201:
 	movq	8(%r14), %rdi
 	call	*list_is_empty@GOTPCREL(%rip)
 	movq	8(%rsp), %rdi
 	xorl	%esi, %esi
 	testb	%al, %al
-	je	.L195
+	je	.L202
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC95(%rip), %rdi
-	jmp	.L242
-.L195:
+	leaq	.LC98(%rip), %rdi
+	jmp	.L249
+.L202:
 	call	*indention_tac@GOTPCREL(%rip)
-	leaq	.L200(%rip), %r15
+	leaq	.L207(%rip), %r15
 	movq	8(%rsp), %rsi
-	leaq	.LC96(%rip), %rdi
+	leaq	.LC99(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-.L197:
+.L204:
 	movq	8(%r14), %rdi
 	call	*list_pop@GOTPCREL(%rip)
 	movq	%rax, %r13
 	testq	%rax, %rax
-	je	.L254
+	je	.L261
 	cmpl	$25, 24(%r13)
 	leaq	5(%rbx), %rsi
-	ja	.L198
+	ja	.L205
 	movl	24(%r13), %eax
 	movq	8(%rsp), %rdi
 	movslq	(%r15,%rax,4), %rax
@@ -2349,194 +2423,194 @@ output_TAC:
 	.section	.rodata
 	.align 4
 	.align 4
-.L200:
-	.long	.L225-.L200
-	.long	.L224-.L200
-	.long	.L223-.L200
-	.long	.L222-.L200
-	.long	.L221-.L200
-	.long	.L220-.L200
-	.long	.L219-.L200
-	.long	.L218-.L200
-	.long	.L217-.L200
-	.long	.L216-.L200
-	.long	.L215-.L200
-	.long	.L214-.L200
-	.long	.L213-.L200
-	.long	.L212-.L200
-	.long	.L211-.L200
-	.long	.L210-.L200
-	.long	.L209-.L200
-	.long	.L208-.L200
-	.long	.L207-.L200
-	.long	.L206-.L200
-	.long	.L205-.L200
-	.long	.L204-.L200
-	.long	.L203-.L200
-	.long	.L202-.L200
-	.long	.L201-.L200
-	.long	.L199-.L200
+.L207:
+	.long	.L232-.L207
+	.long	.L231-.L207
+	.long	.L230-.L207
+	.long	.L229-.L207
+	.long	.L228-.L207
+	.long	.L227-.L207
+	.long	.L226-.L207
+	.long	.L225-.L207
+	.long	.L224-.L207
+	.long	.L223-.L207
+	.long	.L222-.L207
+	.long	.L221-.L207
+	.long	.L220-.L207
+	.long	.L219-.L207
+	.long	.L218-.L207
+	.long	.L217-.L207
+	.long	.L216-.L207
+	.long	.L215-.L207
+	.long	.L214-.L207
+	.long	.L213-.L207
+	.long	.L212-.L207
+	.long	.L211-.L207
+	.long	.L210-.L207
+	.long	.L209-.L207
+	.long	.L208-.L207
+	.long	.L206-.L207
 	.text
-.L225:
-	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%rsp), %rsi
-	leaq	.LC118(%rip), %rdi
-	jmp	.L240
-.L224:
-	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%rsp), %rsi
-	leaq	.LC119(%rip), %rdi
-	jmp	.L240
-.L223:
-	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%rsp), %rsi
-	leaq	.LC120(%rip), %rdi
-	jmp	.L240
-.L222:
-	call	*indention_tac@GOTPCREL(%rip)
-	movq	8(%rsp), %rsi
-	leaq	.LC121(%rip), %rdi
-	jmp	.L240
-.L221:
+.L232:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC122(%rip), %rdi
-	jmp	.L240
-.L220:
+	jmp	.L247
+.L231:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC123(%rip), %rdi
-	jmp	.L240
-.L219:
+	jmp	.L247
+.L230:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC124(%rip), %rdi
-	jmp	.L240
-.L218:
+	jmp	.L247
+.L229:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC125(%rip), %rdi
-	jmp	.L240
-.L217:
+	jmp	.L247
+.L228:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC126(%rip), %rdi
-	jmp	.L240
-.L216:
+	jmp	.L247
+.L227:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC127(%rip), %rdi
-	jmp	.L240
-.L215:
+	jmp	.L247
+.L226:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC128(%rip), %rdi
-	jmp	.L240
-.L214:
+	jmp	.L247
+.L225:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC129(%rip), %rdi
-	jmp	.L240
-.L213:
+	jmp	.L247
+.L224:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC130(%rip), %rdi
-	jmp	.L240
-.L212:
+	jmp	.L247
+.L223:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC131(%rip), %rdi
-	jmp	.L240
-.L211:
+	jmp	.L247
+.L222:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC132(%rip), %rdi
-	jmp	.L240
-.L210:
+	jmp	.L247
+.L221:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC133(%rip), %rdi
-	jmp	.L240
-.L209:
+	jmp	.L247
+.L220:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC134(%rip), %rdi
-	jmp	.L240
-.L208:
+	jmp	.L247
+.L219:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC135(%rip), %rdi
-	jmp	.L240
-.L207:
+	jmp	.L247
+.L218:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC136(%rip), %rdi
-	jmp	.L240
-.L206:
+	jmp	.L247
+.L217:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC137(%rip), %rdi
-	jmp	.L240
-.L205:
+	jmp	.L247
+.L216:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC138(%rip), %rdi
-	jmp	.L240
-.L204:
+	jmp	.L247
+.L215:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC139(%rip), %rdi
-	jmp	.L240
-.L203:
+	jmp	.L247
+.L214:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC140(%rip), %rdi
-	jmp	.L240
-.L202:
+	jmp	.L247
+.L213:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC141(%rip), %rdi
-	jmp	.L240
-.L201:
+	jmp	.L247
+.L212:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	leaq	.LC142(%rip), %rdi
-.L240:
+	jmp	.L247
+.L211:
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	8(%rsp), %rsi
+	leaq	.LC143(%rip), %rdi
+	jmp	.L247
+.L210:
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	8(%rsp), %rsi
+	leaq	.LC144(%rip), %rdi
+	jmp	.L247
+.L209:
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	8(%rsp), %rsi
+	leaq	.LC145(%rip), %rdi
+	jmp	.L247
+.L208:
+	call	*indention_tac@GOTPCREL(%rip)
+	movq	8(%rsp), %rsi
+	leaq	.LC146(%rip), %rdi
+.L247:
 	call	*fputs@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	movq	0(%r13), %rdi
 	call	output_arg
 	movl	24(%r13), %ecx
 	cmpl	$24, %ecx
-	jbe	.L255
-	jmp	.L197
-.L199:
+	jbe	.L262
+	jmp	.L204
+.L206:
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC143(%rip), %rdi
+	leaq	.LC147(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L197
-.L198:
+	jmp	.L204
+.L205:
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movl	24(%r13), %ecx
 	movq	8(%rsp), %rdi
 	xorl	%eax, %eax
-	leaq	.LC144(%rip), %rdx
+	leaq	.LC148(%rip), %rdx
 	movl	$2, %esi
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	jmp	.L197
-.L255:
+	jmp	.L204
+.L262:
 	movl	$1, %eax
 	salq	%cl, %rax
 	testl	$4825087, %eax
-	jne	.L228
+	jne	.L235
 	testl	$25583616, %eax
-	jne	.L229
+	jne	.L236
 	testl	$3145728, %eax
-	jne	.L230
-	jmp	.L197
-.L228:
+	jne	.L237
+	jmp	.L204
+.L235:
 	movq	8(%rsp), %rdi
 	xorl	%esi, %esi
 	call	*indention_tac@GOTPCREL(%rip)
@@ -2553,8 +2627,8 @@ output_TAC:
 	movq	8(%rsp), %rsi
 	call	*fputc@GOTPCREL(%rip)
 	movq	16(%r13), %rdi
-	jmp	.L241
-.L229:
+	jmp	.L248
+.L236:
 	movq	8(%rsp), %rdi
 	xorl	%esi, %esi
 	call	*indention_tac@GOTPCREL(%rip)
@@ -2562,52 +2636,52 @@ output_TAC:
 	movq	8(%rsp), %rsi
 	call	*fputc@GOTPCREL(%rip)
 	movq	8(%r13), %rdi
-.L241:
+.L248:
 	movq	8(%rsp), %rsi
 	call	output_arg
-.L230:
+.L237:
 	movq	8(%rsp), %rdi
 	xorl	%esi, %esi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
 	movl	$10, %edi
 	call	*fputc@GOTPCREL(%rip)
-	jmp	.L197
-.L254:
+	jmp	.L204
+.L261:
 	movq	40(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC100(%rip), %rdi
-	jmp	.L242
-.L253:
+	leaq	.LC104(%rip), %rdi
+	jmp	.L249
+.L260:
 	movq	24(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC101(%rip), %rdi
-.L243:
+	leaq	.LC105(%rip), %rdi
+.L250:
 	call	*fputs@GOTPCREL(%rip)
 	movq	32(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC100(%rip), %rdi
-	jmp	.L244
-.L250:
+	leaq	.LC104(%rip), %rdi
+	jmp	.L251
+.L257:
 	movq	16(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC101(%rip), %rdi
-.L245:
+	leaq	.LC105(%rip), %rdi
+.L252:
 	call	*fputs@GOTPCREL(%rip)
 	movq	8(%rsp), %rdi
 	movq	%rbx, %rsi
 	call	*indention_tac@GOTPCREL(%rip)
 	movq	8(%rsp), %rsi
-	leaq	.LC100(%rip), %rdi
-.L246:
+	leaq	.LC104(%rip), %rdi
+.L253:
 	addq	$56, %rsp
 	popq	%rbx
 	popq	%rbp

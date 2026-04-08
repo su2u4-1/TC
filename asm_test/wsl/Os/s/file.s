@@ -88,12 +88,13 @@ absolute_path:
 .L35:
 	cmpq	$1, %rbp
 	jbe	.L14
-	movb	(%rbx), %al
-	subl	$65, %eax
+	movsbl	(%rbx), %edi
+	leal	-65(%rdi), %eax
 	cmpb	$25, %al
 	ja	.L15
 	cmpb	$58, 1(%rbx)
 	jne	.L16
+	call	*to_lower@GOTPCREL(%rip)
 	leaq	1(%rbx), %rsi
 	movq	%rbp, %rdx
 	movq	%rbx, %rdi
@@ -192,19 +193,19 @@ create_file:
 	call	*alloc_memory@GOTPCREL(%rip)
 	leaq	.LC2(%rip), %rdi
 	movl	$1, %esi
-	movq	%rax, %r14
+	movq	%rax, %r15
 	call	*create_string@GOTPCREL(%rip)
 	xorl	%edi, %edi
 	movl	$1, %r9d
-	movq	%rax, (%r14)
-	movq	%rdi, 8(%r14)
+	movq	%rax, (%r15)
+	movq	%rdi, 8(%r15)
 	jmp	.L38
 .L59:
 	xorl	%r9d, %r9d
-	xorl	%r14d, %r14d
+	xorl	%r15d, %r15d
 .L38:
 	movq	%r9, %r12
-	movq	%r14, %rbx
+	movq	%r15, %rbx
 .L39:
 	cmpq	%r12, 16(%rsp)
 	jb	.L92
@@ -214,27 +215,27 @@ create_file:
 .L40:
 	cmpq	%r12, %r9
 	jnb	.L42
-	movq	%r12, %r15
-	subq	%r9, %r15
-	cmpq	$255, %r15
+	movq	%r12, %r14
+	subq	%r9, %r14
+	cmpq	$255, %r14
 	jbe	.L43
 	movq	%r9, 8(%rsp)
-	movq	stderr(%rip), %rdi
-	xorl	%eax, %eax
-	movl	$255, %ecx
-	leaq	.LC3(%rip), %rdx
+	movq	%r14, %rcx
 	movl	$2, %esi
-	movl	$255, %r15d
+	xorl	%eax, %eax
+	movq	stderr(%rip), %rdi
+	leaq	.LC3(%rip), %rdx
+	movl	$255, %r14d
 	call	*__fprintf_chk@GOTPCREL(%rip)
 	movq	8(%rsp), %r9
 .L43:
 	leaq	32(%rsp), %rax
 	leaq	0(%r13,%r9), %rsi
-	movq	%r15, %rdx
+	movq	%r14, %rdx
 	movq	%rax, %rdi
 	movq	%rax, 8(%rsp)
 	call	*strncpy@GOTPCREL(%rip)
-	movb	$0, 32(%rsp,%r15)
+	movb	$0, 32(%rsp,%r14)
 	movq	8(%rsp), %rdi
 	leaq	.LC4(%rip), %rsi
 	call	*strcmp@GOTPCREL(%rip)
@@ -245,11 +246,11 @@ create_file:
 	call	*strcmp@GOTPCREL(%rip)
 	testl	%eax, %eax
 	jne	.L45
-	testq	%r14, %r14
+	testq	%r15, %r15
 	je	.L46
-	cmpq	%rbx, %r14
+	cmpq	%rbx, %r15
 	je	.L46
-	movq	(%r14), %rdi
+	movq	(%r15), %rdi
 	leaq	.LC5(%rip), %rsi
 	call	*strcmp@GOTPCREL(%rip)
 	testl	%eax, %eax
@@ -258,13 +259,13 @@ create_file:
 	call	*alloc_memory@GOTPCREL(%rip)
 	movl	$2, %esi
 	leaq	.LC5(%rip), %rdi
-	movq	%rax, %r15
+	movq	%rax, %r14
 	call	*create_string@GOTPCREL(%rip)
 	xorl	%esi, %esi
-	movq	%rax, (%r15)
-	movq	%rsi, 8(%r15)
-	movq	%r15, 8(%r14)
-	movq	%r15, %r14
+	movq	%rax, (%r14)
+	movq	%rsi, 8(%r14)
+	movq	%r14, 8(%r15)
+	movq	%r14, %r15
 	jmp	.L42
 .L60:
 	movq	%rbx, %rax
@@ -272,13 +273,13 @@ create_file:
 	testq	%rax, %rax
 	je	.L42
 	movq	8(%rax), %rdx
-	cmpq	%rdx, %r14
+	cmpq	%rdx, %r15
 	je	.L93
 	movq	%rdx, %rax
 	jmp	.L47
 .L93:
 	xorl	%ecx, %ecx
-	movq	%rax, %r14
+	movq	%rax, %r15
 	movq	%rcx, 8(%rax)
 	jmp	.L42
 .L46:
@@ -300,23 +301,23 @@ create_file:
 	movl	$16, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	8(%rsp), %rdi
-	movq	%r15, %rsi
+	movq	%r14, %rsi
 	movq	%rax, 24(%rsp)
 	call	*create_string@GOTPCREL(%rip)
 	movq	24(%rsp), %rdx
 	movq	%rax, (%rdx)
 	xorl	%eax, %eax
 	movq	%rax, 8(%rdx)
-	testq	%r14, %r14
+	testq	%r15, %r15
 	je	.L48
-	movq	%rdx, 8(%r14)
+	movq	%rdx, 8(%r15)
 .L48:
-	movq	%rdx, %r14
+	movq	%rdx, %r15
 	testq	%rbx, %rbx
 	jne	.L42
 	movq	%rdx, %rbx
 .L91:
-	movq	%rbx, %r14
+	movq	%rbx, %r15
 .L42:
 	leaq	1(%r12), %r9
 .L41:
@@ -324,20 +325,20 @@ create_file:
 	jmp	.L39
 .L92:
 	movq	%rbx, 0(%rbp)
-	testq	%r14, %r14
+	testq	%r15, %r15
 	je	.L50
-	movq	(%r14), %r14
+	movq	(%r15), %r15
 	movl	$46, %esi
-	movq	%r14, %rdi
+	movq	%r15, %rdi
 	call	*strrchr@GOTPCREL(%rip)
 	movq	%rax, %r12
-	cmpq	%rax, %r14
+	cmpq	%rax, %r15
 	je	.L50
 	testq	%rax, %rax
 	je	.L50
 	movq	%rax, %rsi
-	movq	%r14, %rdi
-	subq	%r14, %rsi
+	movq	%r15, %rdi
+	subq	%r15, %rsi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%r12, %rdi
 	movq	%rax, 16(%rbp)
@@ -347,7 +348,7 @@ create_file:
 	call	*create_string@GOTPCREL(%rip)
 	jmp	.L51
 .L50:
-	movq	%r14, 16(%rbp)
+	movq	%r15, 16(%rbp)
 	xorl	%eax, %eax
 .L51:
 	movq	%rax, 8(%rbp)

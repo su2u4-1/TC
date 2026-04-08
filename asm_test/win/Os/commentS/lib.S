@@ -800,6 +800,36 @@ get_info:
 	popq	%rbp	 ;
 	popq	%r12	 ;
 	ret	
+	.globl	to_lower
+	.def	to_lower;	.scl	2;	.type	32;	.endef
+to_lower:
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	leal	-65(%rcx), %edx	 ;, tmp88
+ ; D:/TC/src/lib.c:301: inline char to_lower(char c) {
+	movl	%ecx, %eax	 ; c, c
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	cmpb	$25, %dl	 ;, tmp88
+	ja	.L62	 ;,
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	leal	32(%rcx), %eax	 ;, c
+.L62:
+ ; D:/TC/src/lib.c:303: }
+	ret	
+	.globl	to_upper
+	.def	to_upper;	.scl	2;	.type	32;	.endef
+to_upper:
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	leal	-97(%rcx), %edx	 ;, tmp88
+ ; D:/TC/src/lib.c:305: inline char to_upper(char c) {
+	movl	%ecx, %eax	 ; c, c
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	cmpb	$25, %dl	 ;, tmp88
+	ja	.L64	 ;,
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	leal	-32(%rcx), %eax	 ;, c
+.L64:
+ ; D:/TC/src/lib.c:307: }
+	ret	
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

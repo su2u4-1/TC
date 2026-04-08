@@ -239,16 +239,16 @@ list_is_empty:
 	.section	.rodata
 	.align 8
 .LC1:
-	.string	"Warning: Creating symbol with unknown SymbolType: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType: %u\n"
 	.align 8
 .LC2:
-	.string	"Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\n"
+	.string	"[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n"
 	.align 8
 .LC3:
-	.string	"Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
+	.string	"[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n"
 	.align 8
 .LC4:
-	.string	"Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
+	.string	"[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n"
 	.text
 	.globl	create_symbol
 	.type	create_symbol, @function
@@ -587,7 +587,7 @@ is_builtin_type:
 	.section	.rodata
 	.align 8
 .LC5:
-	.string	"Parser Error at %s:%zu:%zu: %s\n"
+	.string	"[Parser Error] at %s:%zu:%zu: %s\n"
 	.text
 	.globl	parser_error
 	.type	parser_error, @function
@@ -900,12 +900,13 @@ parse_import_file:
 	movl	$0, %eax
 	jmp	.L95
 .L90:
-	movq	-24(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC15(%rip), %rax
+	movq	stderr(%rip), %rax
+	movq	-24(%rbp), %rdx
+	leaq	.LC15(%rip), %rcx
+	movq	%rcx, %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
-	call	*printf@GOTPCREL(%rip)
+	call	*fprintf@GOTPCREL(%rip)
 	movq	$0, -72(%rbp)
 	leaq	-72(%rbp), %rdx
 	movq	-48(%rbp), %rax
@@ -923,9 +924,10 @@ parse_import_file:
 	call	create_parser
 	movq	%rax, %r12
 	movq	builtin_scope(%rip), %rbx
-	movq	-72(%rbp), %rdx
+	movq	-72(%rbp), %rcx
+	movq	-24(%rbp), %rdx
 	movq	-56(%rbp), %rax
-	movq	%rdx, %rsi
+	movq	%rcx, %rsi
 	movq	%rax, %rdi
 	call	*create_lexer@GOTPCREL(%rip)
 	movq	%r12, %rdx
@@ -933,12 +935,13 @@ parse_import_file:
 	movq	%rax, %rdi
 	call	*parse_code@GOTPCREL(%rip)
 	movq	%rax, -64(%rbp)
-	movq	-24(%rbp), %rax
-	movq	%rax, %rsi
-	leaq	.LC16(%rip), %rax
+	movq	stderr(%rip), %rax
+	movq	-24(%rbp), %rdx
+	leaq	.LC16(%rip), %rcx
+	movq	%rcx, %rsi
 	movq	%rax, %rdi
 	movl	$0, %eax
-	call	*printf@GOTPCREL(%rip)
+	call	*fprintf@GOTPCREL(%rip)
 	cmpq	$0, -64(%rbp)
 	jne	.L92
 	movq	stderr(%rip), %rax

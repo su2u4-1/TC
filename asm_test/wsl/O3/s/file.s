@@ -174,6 +174,8 @@ absolute_path:
 .L40:
 	cmpb	$58, 1(%r15)
 	jne	.L5
+	movsbl	%al, %edi
+	call	*to_lower@GOTPCREL(%rip)
 	leaq	1(%r15), %rsi
 	movq	%r13, %rdx
 	movq	%r15, %rdi
@@ -258,17 +260,18 @@ create_file:
 	jnb	.L50
 .L47:
 	subq	%r8, %rax
-	movq	%rax, %rdx
+	movq	%rax, %rcx
 	cmpq	$255, %rax
 	ja	.L114
 .L51:
-	movq	%rdx, 16(%rsp)
+	movq	%rcx, 16(%rsp)
+	movq	%rcx, %rdx
 	movq	8(%rsp), %rdi
 	leaq	(%r14,%r8), %rsi
 	call	*strncpy@GOTPCREL(%rip)
-	movq	16(%rsp), %rdx
+	movq	16(%rsp), %rcx
 	movq	8(%rsp), %rax
-	movb	$0, 32(%rsp,%rdx)
+	movb	$0, 32(%rsp,%rcx)
 	cmpw	$46, (%rax)
 	je	.L50
 	cmpw	$11822, (%rax)
@@ -362,14 +365,13 @@ create_file:
 	.p2align 3
 .L114:
 	movq	%r8, 16(%rsp)
-	leaq	.LC3(%rip), %rdx
-	movl	$255, %ecx
-	xorl	%eax, %eax
 	movq	stderr(%rip), %rdi
+	leaq	.LC3(%rip), %rdx
+	xorl	%eax, %eax
 	movl	$2, %esi
 	call	*__fprintf_chk@GOTPCREL(%rip)
 	movq	16(%rsp), %r8
-	movl	$255, %edx
+	movl	$255, %ecx
 	jmp	.L51
 	.p2align 4,,10
 	.p2align 3
@@ -466,25 +468,25 @@ create_file:
 	.p2align 4,,10
 	.p2align 3
 .L116:
-	movq	%rdx, 24(%rsp)
+	movq	%rcx, 24(%rsp)
 	movl	$16, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	24(%rsp), %rsi
 	movq	8(%rsp), %rdi
 	movq	%rax, 16(%rsp)
 	call	*create_string@GOTPCREL(%rip)
-	movq	16(%rsp), %rcx
-	movq	%rax, (%rcx)
-	movq	$0, 8(%rcx)
+	movq	16(%rsp), %rdx
+	movq	%rax, (%rdx)
+	movq	$0, 8(%rdx)
 	testq	%r13, %r13
 	je	.L61
-	movq	%rcx, 8(%r13)
+	movq	%rdx, 8(%r13)
 .L61:
-	movq	%rcx, %r13
+	movq	%rdx, %r13
 	testq	%rbx, %rbx
 	jne	.L50
-	movq	%rcx, %rbx
-	movq	%rcx, %r13
+	movq	%rdx, %rbx
+	movq	%rdx, %r13
 	jmp	.L50
 	.p2align 4,,10
 	.p2align 3

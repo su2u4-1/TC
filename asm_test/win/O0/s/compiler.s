@@ -448,18 +448,16 @@ output_tac:
 .LC15:
 	.ascii "r\0"
 .LC16:
-	.ascii "Error opening file: %s\0"
+	.ascii "Error opening file: %s\12\0"
 .LC17:
 	.ascii ".token\0"
 .LC18:
 	.ascii "w\0"
 .LC19:
-	.ascii "Error opening file: %s\12\0"
-.LC20:
 	.ascii ".ast\0"
-.LC21:
+.LC20:
 	.ascii ".tc\0"
-.LC22:
+.LC21:
 	.ascii ".tac\0"
 	.text
 	.globl	parse_file
@@ -511,7 +509,9 @@ parse_file:
 	movq	%rax, %rcx
 	call	fclose
 	movq	-120(%rbp), %rdx
+	movq	-24(%rbp), %rcx
 	movq	-40(%rbp), %rax
+	movq	%rcx, %r8
 	movq	%rax, %rcx
 	call	create_lexer
 	movq	%rax, -48(%rbp)
@@ -540,7 +540,7 @@ parse_file:
 	movq	24(%rax), %rax
 	movq	-56(%rbp), %rdx
 	movq	%rdx, %r8
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
 	jmp	.L35
@@ -578,7 +578,7 @@ parse_file:
 	cmpb	$0, 32(%rbp)
 	je	.L39
 	movl	$4, %edx
-	leaq	.LC20(%rip), %rax
+	leaq	.LC19(%rip), %rax
 	movq	%rax, %rcx
 	call	create_string
 	movq	%rax, %rdx
@@ -590,7 +590,7 @@ parse_file:
 	call	get_full_path
 	movq	%rax, -80(%rbp)
 	movl	$3, %edx
-	leaq	.LC21(%rip), %rax
+	leaq	.LC20(%rip), %rax
 	movq	%rax, %rcx
 	call	create_string
 	movq	%rax, %rdx
@@ -608,7 +608,7 @@ parse_file:
 	movq	24(%rax), %rax
 	movq	-80(%rbp), %rdx
 	movq	%rdx, %r8
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
 	jmp	.L39
@@ -624,7 +624,7 @@ parse_file:
 	cmpb	$0, 40(%rbp)
 	je	.L32
 	movl	$4, %edx
-	leaq	.LC22(%rip), %rax
+	leaq	.LC21(%rip), %rax
 	movq	%rax, %rcx
 	call	create_string
 	movq	%rax, %rdx
@@ -636,7 +636,7 @@ parse_file:
 	call	get_full_path
 	movq	%rax, -96(%rbp)
 	movl	$3, %edx
-	leaq	.LC21(%rip), %rax
+	leaq	.LC20(%rip), %rax
 	movq	%rax, %rcx
 	call	create_string
 	movq	%rax, %rdx
@@ -654,7 +654,7 @@ parse_file:
 	movq	24(%rax), %rax
 	movq	-96(%rbp), %rdx
 	movq	%rdx, %r8
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	movq	%rax, %rcx
 	call	fprintf
 	jmp	.L32

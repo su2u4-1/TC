@@ -9,61 +9,61 @@
 	.globl	create_code_member
 	.type	create_code_member, @function
 create_code_member:
+	pushq	%r14
+	movq	%rdx, %r14
 	pushq	%r13
-	movq	%rdx, %r13
+	movq	%rsi, %r13
 	pushq	%r12
-	movq	%rsi, %r12
+	movq	%rcx, %r12
 	pushq	%rbp
-	movq	%rcx, %rbp
-	pushq	%rbx
-	movl	%edi, %ebx
+	movl	%edi, %ebp
 	movl	$16, %edi
-	pushq	%r8
+	pushq	%rbx
 	call	*alloc_memory@GOTPCREL(%rip)
-	movl	%ebx, 8(%rax)
-	testl	%ebx, %ebx
+	movl	%ebp, 8(%rax)
+	movq	%rax, %rbx
+	testl	%ebp, %ebp
 	jne	.L2
-	testq	%r12, %r12
-	je	.L2
-	movq	%r12, (%rax)
-	jmp	.L1
-.L2:
-	cmpl	$1, %ebx
-	jne	.L4
 	testq	%r13, %r13
-	je	.L4
+	je	.L2
 	movq	%r13, (%rax)
 	jmp	.L1
-.L4:
-	cmpl	$2, %ebx
-	jne	.L6
-	testq	%rbp, %rbp
-	je	.L6
-	movq	%rbp, (%rax)
+.L2:
+	cmpl	$1, %ebp
+	jne	.L4
+	testq	%r14, %r14
+	je	.L4
+	movq	%r14, (%rbx)
 	jmp	.L1
-.L6:
-	orq	%r13, %rbp
+.L4:
+	cmpl	$2, %ebp
+	jne	.L5
+	testq	%r12, %r12
+	je	.L5
+	movq	%r12, (%rbx)
+	jmp	.L1
+.L5:
+	orq	%r14, %r12
 	movq	stderr(%rip), %rdi
-	orq	%rbp, %r12
-	jne	.L7
+	orq	%r12, %r13
+	jne	.L6
 	movq	%rdi, %rsi
 	leaq	.LC0(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L8
-.L7:
-	movl	%ebx, %ecx
+	jmp	.L1
+.L6:
+	movl	%ebp, %ecx
 	leaq	.LC1(%rip), %rdx
 	movl	$2, %esi
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-.L8:
-	xorl	%eax, %eax
 .L1:
-	popq	%rdx
+	movq	%rbx, %rax
 	popq	%rbx
 	popq	%rbp
 	popq	%r12
 	popq	%r13
+	popq	%r14
 	ret
 	.size	create_code_member, .-create_code_member
 	.globl	create_code
@@ -94,20 +94,20 @@ create_import:
 	pushq	%rbx
 	pushq	%rcx
 	testq	%rdi, %rdi
-	jne	.L32
+	jne	.L30
 	movq	stderr(%rip), %rsi
 	leaq	.LC2(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
 	xorl	%eax, %eax
-	jmp	.L31
-.L32:
+	jmp	.L29
+.L30:
 	movq	%rdi, %rbx
 	movq	%rsi, %rbp
 	movl	$16, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbx, (%rax)
 	movq	%rbp, 8(%rax)
-.L31:
+.L29:
 	popq	%rdx
 	popq	%rbx
 	popq	%rbp
@@ -121,10 +121,10 @@ create_import:
 	.type	create_function_use_ptr, @function
 create_function_use_ptr:
 	testq	%rsi, %rsi
-	je	.L39
+	je	.L37
 	testq	%rdx, %rdx
-	jne	.L36
-.L39:
+	jne	.L34
+.L37:
 	leaq	.LC3(%rip), %rdi
 	pushq	%rax
 	movq	stderr(%rip), %rsi
@@ -132,7 +132,7 @@ create_function_use_ptr:
 	xorl	%eax, %eax
 	popq	%rdx
 	ret
-.L36:
+.L34:
 	movq	%rsi, (%rdi)
 	movq	%rdi, %rax
 	movq	%rdx, 8(%rdi)
@@ -141,49 +141,6 @@ create_function_use_ptr:
 	movq	%r9, 32(%rdi)
 	ret
 	.size	create_function_use_ptr, .-create_function_use_ptr
-	.globl	create_function
-	.type	create_function, @function
-create_function:
-	pushq	%r13
-	pushq	%r12
-	pushq	%rbp
-	pushq	%rbx
-	subq	$24, %rsp
-	testq	%rdi, %rdi
-	je	.L47
-	movq	%rsi, %rbp
-	testq	%rsi, %rsi
-	je	.L47
-	movq	%rdx, %r12
-	movq	%rcx, %r13
-	movq	%r8, 8(%rsp)
-	movq	%rdi, %rbx
-	movl	$40, %edi
-	call	*alloc_memory@GOTPCREL(%rip)
-	movq	8(%rsp), %r9
-	movq	%r13, %r8
-	movq	%r12, %rcx
-	addq	$24, %rsp
-	movq	%rbp, %rdx
-	movq	%rbx, %rsi
-	movq	%rax, %rdi
-	popq	%rbx
-	popq	%rbp
-	popq	%r12
-	popq	%r13
-	jmp	create_function_use_ptr
-.L47:
-	movq	stderr(%rip), %rsi
-	leaq	.LC3(%rip), %rdi
-	call	*fputs@GOTPCREL(%rip)
-	addq	$24, %rsp
-	xorl	%eax, %eax
-	popq	%rbx
-	popq	%rbp
-	popq	%r12
-	popq	%r13
-	ret
-	.size	create_function, .-create_function
 	.section	.rodata.str1.1
 .LC4:
 	.string	"Error creating method: name or return_type is NULL\n"
@@ -192,10 +149,10 @@ create_function:
 	.type	create_method_use_ptr, @function
 create_method_use_ptr:
 	testq	%rsi, %rsi
-	je	.L54
+	je	.L45
 	testq	%rdx, %rdx
-	jne	.L51
-.L54:
+	jne	.L42
+.L45:
 	leaq	.LC4(%rip), %rdi
 	pushq	%rax
 	movq	stderr(%rip), %rsi
@@ -203,7 +160,7 @@ create_method_use_ptr:
 	xorl	%eax, %eax
 	popq	%rdx
 	ret
-.L51:
+.L42:
 	movq	%rsi, (%rdi)
 	movq	%rdi, %rax
 	movq	%rdx, 8(%rdi)
@@ -212,49 +169,6 @@ create_method_use_ptr:
 	movq	%r9, 32(%rdi)
 	ret
 	.size	create_method_use_ptr, .-create_method_use_ptr
-	.globl	create_method
-	.type	create_method, @function
-create_method:
-	pushq	%r13
-	pushq	%r12
-	pushq	%rbp
-	pushq	%rbx
-	subq	$24, %rsp
-	testq	%rdi, %rdi
-	je	.L62
-	movq	%rsi, %rbp
-	testq	%rsi, %rsi
-	je	.L62
-	movq	%rdx, %r12
-	movq	%rcx, %r13
-	movq	%r8, 8(%rsp)
-	movq	%rdi, %rbx
-	movl	$40, %edi
-	call	*alloc_memory@GOTPCREL(%rip)
-	movq	8(%rsp), %r9
-	movq	%r13, %r8
-	movq	%r12, %rcx
-	addq	$24, %rsp
-	movq	%rbp, %rdx
-	movq	%rbx, %rsi
-	movq	%rax, %rdi
-	popq	%rbx
-	popq	%rbp
-	popq	%r12
-	popq	%r13
-	jmp	create_method_use_ptr
-.L62:
-	movq	stderr(%rip), %rsi
-	leaq	.LC4(%rip), %rdi
-	call	*fputs@GOTPCREL(%rip)
-	addq	$24, %rsp
-	xorl	%eax, %eax
-	popq	%rbx
-	popq	%rbp
-	popq	%r12
-	popq	%r13
-	ret
-	.size	create_method, .-create_method
 	.section	.rodata.str1.1
 .LC5:
 	.string	"Error creating class member: content is NULL\n"
@@ -274,35 +188,35 @@ create_class_member:
 	call	*alloc_memory@GOTPCREL(%rip)
 	movl	%ebx, 8(%rax)
 	testl	%ebx, %ebx
-	jne	.L66
+	jne	.L50
 	testq	%rbp, %rbp
-	je	.L66
+	je	.L50
 	movq	%rbp, (%rax)
-	jmp	.L65
-.L66:
+	jmp	.L49
+.L50:
 	cmpl	$1, %ebx
-	jne	.L68
+	jne	.L52
 	testq	%r12, %r12
-	je	.L68
+	je	.L52
 	movq	%r12, (%rax)
-	jmp	.L65
-.L68:
+	jmp	.L49
+.L52:
 	orq	%r12, %rbp
 	movq	stderr(%rip), %rdi
-	jne	.L70
+	jne	.L54
 	movq	%rdi, %rsi
 	leaq	.LC5(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L71
-.L70:
+	jmp	.L55
+.L54:
 	movl	%ebx, %ecx
 	leaq	.LC6(%rip), %rdx
 	movl	$2, %esi
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-.L71:
+.L55:
 	xorl	%eax, %eax
-.L65:
+.L49:
 	popq	%rbx
 	popq	%rbp
 	popq	%r12
@@ -318,56 +232,22 @@ create_class_use_ptr:
 	pushq	%rbx
 	movq	%rsi, %rbx
 	testq	%rsi, %rsi
-	jne	.L86
+	jne	.L70
 	movq	stderr(%rip), %rsi
 	leaq	.LC7(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L87
-.L86:
+	jmp	.L71
+.L70:
 	movq	%rsi, (%rdi)
 	movq	%rdi, %rbx
 	movq	%rdx, 8(%rdi)
 	movq	%rcx, 16(%rdi)
 	movq	%r8, 24(%rdi)
-.L87:
+.L71:
 	movq	%rbx, %rax
 	popq	%rbx
 	ret
 	.size	create_class_use_ptr, .-create_class_use_ptr
-	.globl	create_class
-	.type	create_class, @function
-create_class:
-	pushq	%r13
-	pushq	%r12
-	pushq	%rbp
-	pushq	%rbx
-	pushq	%r8
-	testq	%rdi, %rdi
-	jne	.L90
-	movq	stderr(%rip), %rsi
-	leaq	.LC7(%rip), %rdi
-	call	*fputs@GOTPCREL(%rip)
-	xorl	%eax, %eax
-	jmp	.L89
-.L90:
-	movq	%rdi, %rbx
-	movq	%rsi, %r13
-	movq	%rdx, %r12
-	movq	%rcx, %rbp
-	movl	$32, %edi
-	call	*alloc_memory@GOTPCREL(%rip)
-	movq	%rbx, (%rax)
-	movq	%r13, 8(%rax)
-	movq	%r12, 16(%rax)
-	movq	%rbp, 24(%rax)
-.L89:
-	popq	%rdx
-	popq	%rbx
-	popq	%rbp
-	popq	%r12
-	popq	%r13
-	ret
-	.size	create_class, .-create_class
 	.section	.rodata.str1.1
 .LC8:
 	.string	"Error creating variable: type or name is NULL\n"
@@ -379,17 +259,17 @@ create_variable:
 	pushq	%rbp
 	pushq	%rbx
 	testq	%rdi, %rdi
-	je	.L97
+	je	.L77
 	movq	%rsi, %rbx
 	testq	%rsi, %rsi
-	jne	.L94
-.L97:
+	jne	.L74
+.L77:
 	movq	stderr(%rip), %rsi
 	leaq	.LC8(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
 	xorl	%eax, %eax
-	jmp	.L93
-.L94:
+	jmp	.L73
+.L74:
 	movq	%rdi, %rbp
 	movq	%rdx, %r12
 	movl	$24, %edi
@@ -397,7 +277,7 @@ create_variable:
 	movq	%rbp, (%rax)
 	movq	%rbx, 8(%rax)
 	movq	%r12, 16(%rax)
-.L93:
+.L73:
 	popq	%rbx
 	popq	%rbp
 	popq	%r12
@@ -429,70 +309,70 @@ create_statement:
 	call	*alloc_memory@GOTPCREL(%rip)
 	movl	%ebx, 8(%rax)
 	testl	%ebx, %ebx
-	jne	.L100
+	jne	.L80
 	testq	%r14, %r14
-	jne	.L142
-.L100:
+	jne	.L122
+.L80:
 	cmpl	$1, %ebx
-	jne	.L102
+	jne	.L82
 	testq	%rbp, %rbp
-	je	.L102
+	je	.L82
 	movq	%rbp, (%rax)
-	jmp	.L99
-.L102:
+	jmp	.L79
+.L82:
 	cmpl	$2, %ebx
-	jne	.L104
+	jne	.L84
 	testq	%r12, %r12
-	je	.L104
+	je	.L84
 	movq	%r12, (%rax)
-	jmp	.L99
-.L104:
+	jmp	.L79
+.L84:
 	cmpl	$3, %ebx
-	jne	.L105
+	jne	.L85
 	testq	%r15, %r15
-	je	.L105
+	je	.L85
 	movq	%r15, (%rax)
-	jmp	.L99
-.L105:
+	jmp	.L79
+.L85:
 	cmpl	$4, %ebx
-	jne	.L106
+	jne	.L86
 	testq	%r13, %r13
-	je	.L106
+	je	.L86
 	movq	%r13, (%rax)
-	jmp	.L99
-.L106:
+	jmp	.L79
+.L86:
 	cmpl	$5, %ebx
-	jne	.L107
-.L142:
+	jne	.L87
+.L122:
 	movq	%r14, (%rax)
-	jmp	.L99
-.L107:
+	jmp	.L79
+.L87:
 	leal	-6(%rbx), %edx
 	cmpl	$1, %edx
-	ja	.L108
+	ja	.L88
 	xorl	%ecx, %ecx
 	movq	%rcx, (%rax)
-	jmp	.L99
-.L108:
+	jmp	.L79
+.L88:
 	orq	%r15, %r13
 	movq	stderr(%rip), %rdi
 	orq	%r13, %r12
 	orq	%r12, %rbp
 	orq	%r14, %rbp
-	jne	.L109
+	jne	.L89
 	movq	%rdi, %rsi
 	leaq	.LC9(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L110
-.L109:
+	jmp	.L90
+.L89:
 	movl	%ebx, %ecx
 	leaq	.LC10(%rip), %rdx
 	movl	$2, %esi
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-.L110:
+.L90:
 	xorl	%eax, %eax
-.L99:
+.L79:
 	popq	%rdx
 	popq	%rbx
 	popq	%rbp
@@ -515,13 +395,13 @@ create_if:
 	pushq	%rbx
 	pushq	%r8
 	testq	%rdi, %rdi
-	jne	.L144
+	jne	.L124
 	movq	stderr(%rip), %rsi
 	leaq	.LC11(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
 	xorl	%eax, %eax
-	jmp	.L143
-.L144:
+	jmp	.L123
+.L124:
 	movq	%rdi, %rbx
 	movq	%rsi, %r13
 	movq	%rdx, %r12
@@ -532,7 +412,7 @@ create_if:
 	movq	%r13, 8(%rax)
 	movq	%r12, 16(%rax)
 	movq	%rbp, 24(%rax)
-.L143:
+.L123:
 	popq	%rdx
 	popq	%rbx
 	popq	%rbp
@@ -551,20 +431,20 @@ create_else_if:
 	pushq	%rbx
 	pushq	%rcx
 	testq	%rdi, %rdi
-	jne	.L148
+	jne	.L128
 	movq	stderr(%rip), %rsi
 	leaq	.LC12(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
 	xorl	%eax, %eax
-	jmp	.L147
-.L148:
+	jmp	.L127
+.L128:
 	movq	%rdi, %rbx
 	movq	%rsi, %rbp
 	movl	$16, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movq	%rbx, (%rax)
 	movq	%rbp, 8(%rax)
-.L147:
+.L127:
 	popq	%rdx
 	popq	%rbx
 	popq	%rbp
@@ -639,12 +519,12 @@ create_expression:
 	movq	%rsi, %rbx
 	pushq	%r9
 	cmpb	%al, %dl
-	jne	.L156
+	jne	.L136
 	movq	%r12, %rax
 	orq	%rsi, %rax
-	jne	.L173
-	jmp	.L175
-.L156:
+	jne	.L153
+	jmp	.L155
+.L136:
 	leaq	.LC14(%rip), %r9
 	leaq	.LC13(%rip), %rdx
 	testq	%rcx, %rcx
@@ -652,21 +532,21 @@ create_expression:
 	cmove	%rdx, %rax
 	testq	%r12, %r12
 	cmove	%rdx, %r9
-.L160:
+.L140:
 	testq	%rbx, %rbx
 	leaq	.LC14(%rip), %r8
 	leaq	.LC13(%rip), %rdx
 	cmove	%rdx, %r8
-	jmp	.L161
-.L175:
+	jmp	.L141
+.L155:
 	leaq	.LC14(%rip), %rax
 	leaq	.LC13(%rip), %r9
 	testq	%rcx, %rcx
-	jne	.L160
+	jne	.L140
 	leaq	.LC13(%rip), %rax
 	movq	%rax, %r9
 	movq	%rax, %r8
-.L161:
+.L141:
 	cmpl	$19, %r13d
 	leaq	.LC13(%rip), %rdx
 	leaq	.LC14(%rip), %rcx
@@ -680,30 +560,30 @@ create_expression:
 	call	*__fprintf_chk@GOTPCREL(%rip)
 	popq	%rdi
 	popq	%r8
-	jmp	.L163
-.L173:
+	jmp	.L143
+.L153:
 	movl	$32, %edi
 	call	*alloc_memory@GOTPCREL(%rip)
 	movl	%r13d, 24(%rax)
 	testq	%rbx, %rbx
-	je	.L164
+	je	.L144
 	movq	%rbx, (%rax)
-	jmp	.L165
-.L164:
+	jmp	.L145
+.L144:
 	testq	%r12, %r12
-	je	.L166
+	je	.L146
 	movq	%r12, 8(%rax)
-	jmp	.L165
-.L166:
+	jmp	.L145
+.L146:
 	movq	stderr(%rip), %rsi
 	leaq	.LC16(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-.L163:
+.L143:
 	xorl	%eax, %eax
-	jmp	.L155
-.L165:
+	jmp	.L135
+.L145:
 	movq	%rbp, 16(%rax)
-.L155:
+.L135:
 	popq	%rdx
 	popq	%rbx
 	popq	%rbp
@@ -734,52 +614,52 @@ create_primary:
 	call	*alloc_memory@GOTPCREL(%rip)
 	movl	%ebx, 8(%rax)
 	cmpl	$4, %ebx
-	ja	.L177
+	ja	.L157
 	testq	%r13, %r13
-	je	.L177
+	je	.L157
 	movq	%r13, (%rax)
-	jmp	.L176
-.L177:
+	jmp	.L156
+.L157:
 	cmpl	$5, %ebx
-	jne	.L179
+	jne	.L159
 	testq	%rbp, %rbp
-	je	.L179
+	je	.L159
 	movq	%rbp, (%rax)
-	jmp	.L176
-.L179:
+	jmp	.L156
+.L159:
 	leal	-6(%rbx), %edx
 	cmpl	$1, %edx
-	ja	.L181
+	ja	.L161
 	testq	%r14, %r14
-	je	.L181
+	je	.L161
 	movq	%r14, (%rax)
-	jmp	.L176
-.L181:
+	jmp	.L156
+.L161:
 	cmpl	$8, %ebx
-	jne	.L182
+	jne	.L162
 	testq	%r12, %r12
-	je	.L182
+	je	.L162
 	movq	%r12, (%rax)
-	jmp	.L176
-.L182:
+	jmp	.L156
+.L162:
 	orq	%r14, %r12
 	movq	stderr(%rip), %rdi
 	orq	%r12, %rbp
 	orq	%r13, %rbp
-	jne	.L183
+	jne	.L163
 	movq	%rdi, %rsi
 	leaq	.LC17(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L184
-.L183:
+	jmp	.L164
+.L163:
 	movl	%ebx, %ecx
 	leaq	.LC18(%rip), %rdx
 	movl	$2, %esi
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-.L184:
+.L164:
 	xorl	%eax, %eax
-.L176:
+.L156:
 	popq	%rbx
 	popq	%rbp
 	popq	%r12
@@ -812,7 +692,7 @@ create_variable_access:
 	movl	%edi, %ebx
 	pushq	%r9
 	cmpb	%al, %r15b
-	je	.L211
+	je	.L191
 	leaq	.LC13(%rip), %rax
 	testl	%edi, %edi
 	leaq	.LC14(%rip), %rcx
@@ -825,8 +705,8 @@ create_variable_access:
 	cmove	%rax, %rcx
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-	jmp	.L214
-.L211:
+	jmp	.L194
+.L191:
 	movq	%rdx, %r12
 	movq	%rcx, %rbp
 	movq	%r8, %r13
@@ -837,49 +717,49 @@ create_variable_access:
 	setne	%dl
 	movq	%r14, (%rax)
 	testb	%r15b, %r15b
-	je	.L215
+	je	.L195
 	testb	%dl, %dl
-	jne	.L249
-.L215:
+	jne	.L229
+.L195:
 	cmpl	$1, %ebx
-	jne	.L217
+	jne	.L197
 	testq	%r13, %r13
-	je	.L217
+	je	.L197
 	movq	%r13, 8(%rax)
-	jmp	.L210
-.L217:
+	jmp	.L190
+.L197:
 	cmpl	$3, %ebx
-	jne	.L219
+	jne	.L199
 	testq	%rbp, %rbp
-	je	.L219
+	je	.L199
 	movq	%rbp, 8(%rax)
-	jmp	.L210
-.L219:
+	jmp	.L190
+.L199:
 	cmpl	$2, %ebx
-	jne	.L220
+	jne	.L200
 	testb	%dl, %dl
-	je	.L220
-.L249:
+	je	.L200
+.L229:
 	movq	%r12, 8(%rax)
-	jmp	.L210
-.L220:
+	jmp	.L190
+.L200:
 	orq	%r13, %rbp
 	movq	stderr(%rip), %rdi
 	orq	%r12, %rbp
-	jne	.L221
+	jne	.L201
 	movq	%rdi, %rsi
 	leaq	.LC20(%rip), %rdi
 	call	*fputs@GOTPCREL(%rip)
-	jmp	.L214
-.L221:
+	jmp	.L194
+.L201:
 	movl	%ebx, %ecx
 	leaq	.LC21(%rip), %rdx
 	movl	$2, %esi
 	xorl	%eax, %eax
 	call	*__fprintf_chk@GOTPCREL(%rip)
-.L214:
+.L194:
 	xorl	%eax, %eax
-.L210:
+.L190:
 	popq	%rdx
 	popq	%rbx
 	popq	%rbp

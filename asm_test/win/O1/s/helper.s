@@ -242,16 +242,16 @@ search_name:
 	.section .rdata,"dr"
 	.align 8
 .LC1:
-	.ascii "Warning: Creating symbol with unknown SymbolType: %u\12\0"
+	.ascii "[Warning] Creating symbol with unknown SymbolType: %u\12\0"
 	.align 8
 .LC2:
-	.ascii "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\12\0"
+	.ascii "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\12\0"
 	.align 8
 .LC3:
-	.ascii "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\12\0"
+	.ascii "[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\12\0"
 	.align 8
 .LC4:
-	.ascii "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\12\0"
+	.ascii "[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\12\0"
 	.text
 	.globl	create_symbol
 	.def	create_symbol;	.scl	2;	.type	32;	.endef
@@ -431,7 +431,7 @@ is_builtin_type:
 	.section .rdata,"dr"
 	.align 8
 .LC5:
-	.ascii "Parser Error at %s:%zu:%zu: %s\12\0"
+	.ascii "[Parser Error] at %s:%zu:%zu: %s\12\0"
 	.text
 	.globl	parser_error
 	.def	parser_error;	.scl	2;	.type	32;	.endef
@@ -641,9 +641,11 @@ parse_import_file:
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	je	.L114
-	movq	%rsi, %rdx
-	leaq	.LC15(%rip), %rcx
-	call	printf
+	call	__getreent
+	movq	24(%rax), %rcx
+	movq	%rsi, %r8
+	leaq	.LC15(%rip), %rdx
+	call	fprintf
 	movq	$0, 40(%rsp)
 	leaq	40(%rsp), %rdx
 	movq	%rbx, %rcx
@@ -658,6 +660,7 @@ parse_import_file:
 	movq	%rax, %rbx
 	movq	.refptr.builtin_scope(%rip), %rax
 	movq	(%rax), %r13
+	movq	%rsi, %r8
 	movq	40(%rsp), %rdx
 	movq	%r12, %rcx
 	call	create_lexer
@@ -666,9 +669,11 @@ parse_import_file:
 	movq	%r13, %rdx
 	call	parse_code
 	movq	%rax, %rbx
-	movq	%rsi, %rdx
-	leaq	.LC16(%rip), %rcx
-	call	printf
+	call	__getreent
+	movq	24(%rax), %rcx
+	movq	%rsi, %r8
+	leaq	.LC16(%rip), %rdx
+	call	fprintf
 	testq	%rbx, %rbx
 	je	.L115
 	movq	8(%rbx), %rcx
@@ -1099,7 +1104,6 @@ operator_to_string:
 	.def	get_file_dir;	.scl	2;	.type	32;	.endef
 	.def	absolute_path;	.scl	2;	.type	32;	.endef
 	.def	fopen;	.scl	2;	.type	32;	.endef
-	.def	printf;	.scl	2;	.type	32;	.endef
 	.def	read_source;	.scl	2;	.type	32;	.endef
 	.def	fclose;	.scl	2;	.type	32;	.endef
 	.def	create_file;	.scl	2;	.type	32;	.endef

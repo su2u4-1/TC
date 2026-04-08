@@ -167,10 +167,9 @@ absolute_path:
 	movzbl	(%rax), %eax
 	movsbl	%al, %eax
 	movl	%eax, %edi
-	call	*tolower@GOTPCREL(%rip)
-	movl	%eax, %edx
-	movq	-40(%rbp), %rax
-	movb	%dl, (%rax)
+	call	*to_lower@GOTPCREL(%rip)
+	movq	-40(%rbp), %rdx
+	movb	%al, (%rdx)
 	movq	-40(%rbp), %rax
 	leaq	1(%rax), %rcx
 	movq	-8(%rbp), %rdx
@@ -713,7 +712,6 @@ normalize_path:
 	movq	%rax, -40(%rbp)
 	cmpq	$255, -40(%rbp)
 	jbe	.L58
-	movq	$255, -40(%rbp)
 	movq	stderr(%rip), %rax
 	movq	-40(%rbp), %rdx
 	leaq	.LC5(%rip), %rcx
@@ -721,6 +719,7 @@ normalize_path:
 	movq	%rax, %rdi
 	movl	$0, %eax
 	call	*fprintf@GOTPCREL(%rip)
+	movq	$255, -40(%rbp)
 .L58:
 	movq	-96(%rbp), %rdx
 	movq	-24(%rbp), %rax

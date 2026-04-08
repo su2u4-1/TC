@@ -686,15 +686,15 @@ is_keyword:
 	cmpb	$0, initialized(%rip)	 ;, initialized
 	je	.L64	 ;,
 .L58:
-	leaq	keywordList(%rip), %rax	 ;, ivtmp.95
+	leaq	keywordList(%rip), %rax	 ;, ivtmp.103
 	leaq	176(%rax), %rdx	 ;, _17
 .L60:
  ; D:/TC/src/lib.c:273:         if (string_equal(str, keywordList[i]))
 	cmpq	%rbx, (%rax)	 ; str, MEM[(char * *)_5]
 	je	.L61	 ;,
  ; D:/TC/src/lib.c:272:     for (size_t i = 0; i < keywordCount; ++i)
-	addq	$8, %rax	 ;, ivtmp.95
-	cmpq	%rdx, %rax	 ; _17, ivtmp.95
+	addq	$8, %rax	 ;, ivtmp.103
+	cmpq	%rdx, %rax	 ; _17, ivtmp.103
 	jne	.L60	 ;,
  ; D:/TC/src/lib.c:275:     return false;
 	movl	$0, %eax	 ;, <retval>
@@ -812,6 +812,28 @@ get_info:
  ; D:/TC/src/lib.c:283:     size_t stringCount = 0;
 	movl	$0, %ebx	 ;, stringCount
 	jmp	.L67	 ;
+	.globl	to_lower
+	.def	to_lower;	.scl	2;	.type	32;	.endef
+to_lower:
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	leal	-65(%rcx), %edx	 ;, tmp88
+ ; D:/TC/src/lib.c:302:     return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	leal	32(%rcx), %eax	 ;, tmp90
+	cmpb	$26, %dl	 ;, tmp88
+	cmovnb	%ecx, %eax	 ; c,, c
+ ; D:/TC/src/lib.c:303: }
+	ret	
+	.globl	to_upper
+	.def	to_upper;	.scl	2;	.type	32;	.endef
+to_upper:
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	leal	-97(%rcx), %edx	 ;, tmp88
+ ; D:/TC/src/lib.c:306:     return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+	leal	-32(%rcx), %eax	 ;, tmp90
+	cmpb	$26, %dl	 ;, tmp88
+	cmovnb	%ecx, %eax	 ; c,, c
+ ; D:/TC/src/lib.c:307: }
+	ret	
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

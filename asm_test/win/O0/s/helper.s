@@ -235,16 +235,16 @@ list_is_empty:
 	.section .rdata,"dr"
 	.align 8
 .LC1:
-	.ascii "Warning: Creating symbol with unknown SymbolType: %u\12\0"
+	.ascii "[Warning] Creating symbol with unknown SymbolType: %u\12\0"
 	.align 8
 .LC2:
-	.ascii "Warning: Name '%s' already exists in the current scope, kind: %u, id: %zu %zu\12\0"
+	.ascii "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\12\0"
 	.align 8
 .LC3:
-	.ascii "Warning: Creating symbol with unknown SymbolType for ast_node assignment: %u\12\0"
+	.ascii "[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\12\0"
 	.align 8
 .LC4:
-	.ascii "Warning: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\12\0"
+	.ascii "[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\12\0"
 	.text
 	.globl	create_symbol
 	.def	create_symbol;	.scl	2;	.type	32;	.endef
@@ -585,7 +585,7 @@ is_builtin_type:
 	.section .rdata,"dr"
 	.align 8
 .LC5:
-	.ascii "Parser Error at %s:%zu:%zu: %s\12\0"
+	.ascii "[Parser Error] at %s:%zu:%zu: %s\12\0"
 	.text
 	.globl	parser_error
 	.def	parser_error;	.scl	2;	.type	32;	.endef
@@ -891,11 +891,13 @@ parse_import_file:
 	movl	$0, %eax
 	jmp	.L95
 .L90:
-	movq	-24(%rbp), %rax
-	movq	%rax, %rdx
-	leaq	.LC15(%rip), %rax
+	call	__getreent
+	movq	24(%rax), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, %r8
+	leaq	.LC15(%rip), %rdx
 	movq	%rax, %rcx
-	call	printf
+	call	fprintf
 	movq	$0, -72(%rbp)
 	leaq	-72(%rbp), %rdx
 	movq	-48(%rbp), %rax
@@ -914,7 +916,9 @@ parse_import_file:
 	movq	.refptr.builtin_scope(%rip), %rax
 	movq	(%rax), %rbx
 	movq	-72(%rbp), %rdx
+	movq	-24(%rbp), %rcx
 	movq	-56(%rbp), %rax
+	movq	%rcx, %r8
 	movq	%rax, %rcx
 	call	create_lexer
 	movq	%rsi, %r8
@@ -922,11 +926,13 @@ parse_import_file:
 	movq	%rax, %rcx
 	call	parse_code
 	movq	%rax, -64(%rbp)
-	movq	-24(%rbp), %rax
-	movq	%rax, %rdx
-	leaq	.LC16(%rip), %rax
+	call	__getreent
+	movq	24(%rax), %rax
+	movq	-24(%rbp), %rdx
+	movq	%rdx, %r8
+	leaq	.LC16(%rip), %rdx
 	movq	%rax, %rcx
-	call	printf
+	call	fprintf
 	cmpq	$0, -64(%rbp)
 	jne	.L92
 	call	__getreent
@@ -1405,7 +1411,6 @@ operator_to_string:
 	.def	absolute_path;	.scl	2;	.type	32;	.endef
 	.def	get_file_dir;	.scl	2;	.type	32;	.endef
 	.def	fopen;	.scl	2;	.type	32;	.endef
-	.def	printf;	.scl	2;	.type	32;	.endef
 	.def	read_source;	.scl	2;	.type	32;	.endef
 	.def	fclose;	.scl	2;	.type	32;	.endef
 	.def	create_file;	.scl	2;	.type	32;	.endef

@@ -279,18 +279,16 @@ output_tac:
 .LC15:
 	.string	"r"
 .LC16:
-	.string	"Error opening file: %s"
+	.string	"Error opening file: %s\n"
 .LC17:
 	.string	".token"
 .LC18:
 	.string	"w"
 .LC19:
-	.string	"Error opening file: %s\n"
-.LC20:
 	.string	".ast"
-.LC21:
+.LC20:
 	.string	".tc"
-.LC22:
+.LC21:
 	.string	".tac"
 	.text
 	.globl	parse_file
@@ -305,29 +303,28 @@ parse_file:
 	movl	%esi, %r12d
 	pushq	%rbp
 	pushq	%rbx
-	subq	$24, %rsp
+	subq	$40, %rsp
 	call	*create_file@GOTPCREL(%rip)
 	movq	%rax, %rdi
 	movq	%rax, %rbx
 	call	*get_full_path@GOTPCREL(%rip)
 	xorl	%edx, %edx
 	leaq	.LC15(%rip), %rsi
-	movq	%rdx, 8(%rsp)
-	movq	%rax, %r15
+	movq	%rdx, 24(%rsp)
+	movq	%rax, %rbp
 	movq	%rax, %rdi
 	call	*fopen@GOTPCREL(%rip)
-	movq	%r15, %rcx
-	leaq	.LC16(%rip), %rdx
 	testq	%rax, %rax
 	je	.L51
-	leaq	8(%rsp), %rsi
+	leaq	24(%rsp), %rsi
 	movq	%rax, %rdi
-	movq	%rax, %rbp
+	movq	%rax, 8(%rsp)
 	call	read_source
-	movq	%rbp, %rdi
+	movq	8(%rsp), %rdi
 	movq	%rax, %r15
 	call	*fclose@GOTPCREL(%rip)
-	movq	8(%rsp), %rsi
+	movq	%rbp, %rdx
+	movq	24(%rsp), %rsi
 	movq	%r15, %rdi
 	call	*create_lexer@GOTPCREL(%rip)
 	movq	%rax, %rbp
@@ -352,7 +349,7 @@ parse_file:
 	movq	%r15, %rcx
 	movl	$2, %esi
 	xorl	%eax, %eax
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L42
 .L43:
@@ -377,7 +374,7 @@ parse_file:
 	testb	%r14b, %r14b
 	je	.L46
 	movl	$4, %esi
-	leaq	.LC20(%rip), %rdi
+	leaq	.LC19(%rip), %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rbx, %rdi
 	movq	%rax, %rsi
@@ -385,7 +382,7 @@ parse_file:
 	movq	%rbx, %rdi
 	call	*get_full_path@GOTPCREL(%rip)
 	movl	$3, %esi
-	leaq	.LC21(%rip), %rdi
+	leaq	.LC20(%rip), %rdi
 	movq	%rax, %r14
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rbx, %rdi
@@ -401,7 +398,7 @@ parse_file:
 	movq	%r14, %rcx
 	movl	$2, %esi
 	xorl	%eax, %eax
-	leaq	.LC19(%rip), %rdx
+	leaq	.LC16(%rip), %rdx
 	call	*__fprintf_chk@GOTPCREL(%rip)
 	jmp	.L46
 .L47:
@@ -414,7 +411,7 @@ parse_file:
 	testb	%r13b, %r13b
 	je	.L40
 	movl	$4, %esi
-	leaq	.LC22(%rip), %rdi
+	leaq	.LC21(%rip), %rdi
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rbx, %rdi
 	movq	%rax, %rsi
@@ -422,7 +419,7 @@ parse_file:
 	movq	%rbx, %rdi
 	call	*get_full_path@GOTPCREL(%rip)
 	movl	$3, %esi
-	leaq	.LC21(%rip), %rdi
+	leaq	.LC20(%rip), %rdi
 	movq	%rax, %rbp
 	call	*create_string@GOTPCREL(%rip)
 	movq	%rbx, %rdi
@@ -434,15 +431,15 @@ parse_file:
 	movq	%rax, %rbx
 	testq	%rax, %rax
 	jne	.L49
-	movq	%rbp, %rcx
-	leaq	.LC19(%rip), %rdx
 .L51:
 	movq	stderr(%rip), %rdi
-	addq	$24, %rsp
-	movl	$2, %esi
+	addq	$40, %rsp
+	movq	%rbp, %rcx
 	xorl	%eax, %eax
 	popq	%rbx
+	leaq	.LC16(%rip), %rdx
 	popq	%rbp
+	movl	$2, %esi
 	popq	%r12
 	popq	%r13
 	popq	%r14
@@ -454,7 +451,7 @@ parse_file:
 	movq	%rbx, %rdi
 	movq	%rax, %rsi
 	call	output_tac
-	addq	$24, %rsp
+	addq	$40, %rsp
 	movq	%rbx, %rdi
 	popq	%rbx
 	popq	%rbp
@@ -464,7 +461,7 @@ parse_file:
 	popq	%r15
 	jmp	*fclose@GOTPCREL(%rip)
 .L40:
-	addq	$24, %rsp
+	addq	$40, %rsp
 	popq	%rbx
 	popq	%rbp
 	popq	%r12

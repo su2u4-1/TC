@@ -1877,310 +1877,385 @@ output_statement:
 .LC67:
 	.ascii "NULL\11%s\12\0"
 .LC68:
+	.ascii "%s\11%s(%s)\12\0"
+.LC69:
 	.ascii "%s\11%s\12\0"
 	.text
 	.p2align 4
 	.def	output_var;	.scl	3;	.type	32;	.endef
 output_var:
 	pushq	%rsi	 ;
-	movq	%rdx, %rsi	 ; tmp98, outfile
-	movq	%r8, %rdx	 ; tmp99, indent
+	movq	%rdx, %rsi	 ; tmp110, outfile
+	movq	%r8, %rdx	 ; tmp111, indent
 	pushq	%rbx	 ;
-	subq	$40, %rsp	 ;,
+	subq	$56, %rsp	 ;,
  ; D:/TC/src/output.c:509:     if (var == NULL) {
 	testq	%rcx, %rcx	 ; var
-	je	.L118	 ;,
-	movq	%rcx, %rbx	 ; tmp97, var
+	je	.L121	 ;,
+	movq	%rcx, %rbx	 ; tmp109, var
  ; D:/TC/src/output.c:515:         tac_output(indent, "NULL\t%s\n", var->name);
 	movq	%rsi, %rcx	 ; outfile,
  ; D:/TC/src/output.c:514:     if (var->type == NULL)
-	cmpq	$0, 16(%rbx)	 ;, var_7(D)->type
-	je	.L119	 ;,
- ; D:/TC/src/output.c:517:         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
+	cmpq	$0, 16(%rbx)	 ;, var_13(D)->type
+	je	.L122	 ;,
+ ; D:/TC/src/output.c:516:     else if (var->original_name)
+	cmpq	$0, (%rbx)	 ;, var_13(D)->original_name
+	je	.L117	 ;,
+ ; D:/TC/src/output.c:517:         tac_output(indent, "%s\t%s(%s)\n", var->type->name, var->name, var->original_name->name);
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:517:         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
-	movq	16(%rbx), %rax	 ; var_7(D)->type, var_7(D)->type
-	movq	8(%rbx), %r9	 ; var_7(D)->name,
+ ; D:/TC/src/output.c:517:         tac_output(indent, "%s\t%s(%s)\n", var->type->name, var->name, var->original_name->name);
+	movq	16(%rbx), %rax	 ; var_13(D)->type, var_13(D)->type
 	movq	%rsi, %rcx	 ; outfile,
-	leaq	.LC68(%rip), %rdx	 ;, tmp96
-	movq	8(%rax), %r8	 ; _4->name,
- ; D:/TC/src/output.c:519: }
-	addq	$40, %rsp	 ;,
+	leaq	.LC68(%rip), %rdx	 ;, tmp104
+	movq	8(%rax), %r8	 ; _7->name, _7->name
+	movq	(%rbx), %rax	 ; var_13(D)->original_name, var_13(D)->original_name
+	movq	8(%rax), %rax	 ; _4->name, _4->name
+	movq	%rax, 32(%rsp)	 ; _4->name,
+	movq	8(%rbx), %r9	 ; var_13(D)->name,
+	call	fprintf	 ;
+ ; D:/TC/src/output.c:521: }
+	addq	$56, %rsp	 ;,
 	popq	%rbx	 ;
 	popq	%rsi	 ;
- ; D:/TC/src/output.c:517:         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
+	ret	
+	.p2align 4,,10
+	.p2align 3
+.L117:
+ ; D:/TC/src/output.c:519:         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:519:         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
+	movq	16(%rbx), %rax	 ; var_13(D)->type, var_13(D)->type
+	movq	8(%rbx), %r9	 ; var_13(D)->name,
+	movq	%rsi, %rcx	 ; outfile,
+	leaq	.LC69(%rip), %rdx	 ;, tmp108
+	movq	8(%rax), %r8	 ; _10->name,
+ ; D:/TC/src/output.c:521: }
+	addq	$56, %rsp	 ;,
+	popq	%rbx	 ;
+	popq	%rsi	 ;
+ ; D:/TC/src/output.c:519:         tac_output(indent, "%s\t%s\n", var->type->name, var->name);
 	jmp	fprintf	 ;
 	.p2align 4,,10
 	.p2align 3
-.L119:
+.L122:
  ; D:/TC/src/output.c:515:         tac_output(indent, "NULL\t%s\n", var->name);
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:515:         tac_output(indent, "NULL\t%s\n", var->name);
-	movq	8(%rbx), %r8	 ; var_7(D)->name,
- ; D:/TC/src/output.c:519: }
-	addq	$40, %rsp	 ;,
+	movq	8(%rbx), %r8	 ; var_13(D)->name,
+ ; D:/TC/src/output.c:521: }
+	addq	$56, %rsp	 ;,
  ; D:/TC/src/output.c:515:         tac_output(indent, "NULL\t%s\n", var->name);
 	movq	%rsi, %rcx	 ; outfile,
- ; D:/TC/src/output.c:519: }
+ ; D:/TC/src/output.c:521: }
 	popq	%rbx	 ;
  ; D:/TC/src/output.c:515:         tac_output(indent, "NULL\t%s\n", var->name);
-	leaq	.LC67(%rip), %rdx	 ;, tmp92
- ; D:/TC/src/output.c:519: }
+	leaq	.LC67(%rip), %rdx	 ;, tmp98
+ ; D:/TC/src/output.c:521: }
 	popq	%rsi	 ;
  ; D:/TC/src/output.c:515:         tac_output(indent, "NULL\t%s\n", var->name);
 	jmp	fprintf	 ;
 	.p2align 4,,10
 	.p2align 3
-.L118:
+.L121:
  ; D:/TC/src/output.c:510:         tac_output(indent, "Var: \"NULL\"\n");
 	movq	%rsi, %rcx	 ; outfile,
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:519: }
-	addq	$40, %rsp	 ;,
+ ; D:/TC/src/output.c:521: }
+	addq	$56, %rsp	 ;,
  ; D:/TC/src/output.c:510:         tac_output(indent, "Var: \"NULL\"\n");
 	movq	%rsi, %r9	 ; outfile,
 	movl	$12, %r8d	 ;,
- ; D:/TC/src/output.c:519: }
+ ; D:/TC/src/output.c:521: }
 	popq	%rbx	 ;
  ; D:/TC/src/output.c:510:         tac_output(indent, "Var: \"NULL\"\n");
 	movl	$1, %edx	 ;,
-	leaq	.LC66(%rip), %rcx	 ;, tmp90
- ; D:/TC/src/output.c:519: }
+	leaq	.LC66(%rip), %rcx	 ;, tmp96
+ ; D:/TC/src/output.c:521: }
 	popq	%rsi	 ;
  ; D:/TC/src/output.c:510:         tac_output(indent, "Var: \"NULL\"\n");
 	jmp	fwrite	 ;
 	.section .rdata,"dr"
-.LC69:
-	.ascii "true\0"
 .LC70:
-	.ascii "false\0"
+	.ascii "true\0"
 .LC71:
-	.ascii "\"NULL\"\0"
+	.ascii "false\0"
 .LC72:
-	.ascii "%lld\0"
+	.ascii "\"NULL\"\0"
 .LC73:
-	.ascii "%f\0"
+	.ascii "%s(%s)\0"
 .LC74:
-	.ascii "void\0"
+	.ascii "%lld\0"
 .LC75:
-	.ascii "NONE\0"
+	.ascii "%f\0"
 .LC76:
+	.ascii "\"%s\"\0"
+.LC77:
+	.ascii "void\0"
+.LC78:
+	.ascii "NONE\0"
+.LC79:
 	.ascii "unknown_ArgType: %u\0"
 	.text
 	.p2align 4
 	.def	output_arg;	.scl	3;	.type	32;	.endef
 output_arg:
 	pushq	%rsi	 ;
-	movq	%rdx, %rsi	 ; tmp127, outfile
+	movq	%rdx, %rsi	 ; tmp150, outfile
 	pushq	%rbx	 ;
 	subq	$40, %rsp	 ;,
- ; D:/TC/src/output.c:544:     if (arg == NULL) {
+ ; D:/TC/src/output.c:546:     if (arg == NULL) {
 	testq	%rcx, %rcx	 ; arg
-	je	.L137	 ;,
- ; D:/TC/src/output.c:549:     switch (arg->kind) {
-	cmpl	$8, 16(%rcx)	 ;, arg_15(D)->kind
-	movq	%rcx, %rbx	 ; tmp126, arg
-	ja	.L122	 ;,
-	movl	16(%rcx), %eax	 ; arg_15(D)->kind, arg_15(D)->kind
-	leaq	.L124(%rip), %rdx	 ;, tmp99
- ; D:/TC/src/output.c:558:         case ARG_NONE: tac_output(0, "NONE"); break;
-	movq	%rsi, %rcx	 ; outfile,
- ; D:/TC/src/output.c:549:     switch (arg->kind) {
-	movslq	(%rdx,%rax,4), %rax	 ;, tmp101
-	addq	%rdx, %rax	 ; tmp99, tmp102
- ; D:/TC/src/output.c:558:         case ARG_NONE: tac_output(0, "NONE"); break;
-	xorl	%edx, %edx	 ;
- ; D:/TC/src/output.c:549:     switch (arg->kind) {
-	jmp	*%rax	 ; tmp102
+	je	.L145	 ;,
+ ; D:/TC/src/output.c:551:     switch (arg->kind) {
+	cmpl	$9, 16(%rcx)	 ;, arg_27(D)->kind
+	movq	%rcx, %rbx	 ; tmp149, arg
+	ja	.L125	 ;,
+	movl	16(%rcx), %eax	 ; arg_27(D)->kind, arg_27(D)->kind
+	leaq	.L127(%rip), %rdx	 ;, tmp111
+	movslq	(%rdx,%rax,4), %rax	 ;, tmp113
+	addq	%rdx, %rax	 ; tmp111, tmp114
+	jmp	*%rax	 ; tmp114
 	.section .rdata,"dr"
 	.align 4
-.L124:
-	.long	.L125-.L124
-	.long	.L131-.L124
-	.long	.L130-.L124
-	.long	.L129-.L124
-	.long	.L128-.L124
-	.long	.L127-.L124
-	.long	.L125-.L124
-	.long	.L125-.L124
-	.long	.L123-.L124
+.L127:
+	.long	.L128-.L127
+	.long	.L134-.L127
+	.long	.L133-.L127
+	.long	.L132-.L127
+	.long	.L131-.L127
+	.long	.L130-.L127
+	.long	.L129-.L127
+	.long	.L128-.L127
+	.long	.L128-.L127
+	.long	.L126-.L127
 	.text
 	.p2align 4,,10
 	.p2align 3
-.L125:
- ; D:/TC/src/output.c:557:         case ARG_SUBROUTINE: tac_output(0, "%s", arg->value.subroutine->name); break;
+.L128:
+ ; D:/TC/src/output.c:566:             if (arg->value.subroutine->original_name)
+	movq	(%rcx), %rax	 ;* arg, arg_27(D)->value.subroutine
+ ; D:/TC/src/output.c:567:                 tac_output(0, "%s(%s)", arg->value.subroutine->name, arg->value.subroutine->original_name->name);
+	xorl	%edx, %edx	 ;
+	movq	%rsi, %rcx	 ; outfile,
+ ; D:/TC/src/output.c:566:             if (arg->value.subroutine->original_name)
+	cmpq	$0, (%rax)	 ;,* arg_27(D)->value.subroutine
+	je	.L138	 ;,
+ ; D:/TC/src/output.c:567:                 tac_output(0, "%s(%s)", arg->value.subroutine->name, arg->value.subroutine->original_name->name);
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:557:         case ARG_SUBROUTINE: tac_output(0, "%s", arg->value.subroutine->name); break;
-	movq	(%rbx), %rax	 ;* arg, arg_15(D)->value.subroutine
-	movq	8(%rax), %rcx	 ;, _10->name
-.L136:
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:567:                 tac_output(0, "%s(%s)", arg->value.subroutine->name, arg->value.subroutine->original_name->name);
+	movq	(%rbx), %rax	 ;* arg, _18
+	movq	%rsi, %rcx	 ; outfile,
+	movq	(%rax), %rdx	 ;* _18, _18->original_name
+	movq	8(%rax), %r8	 ;,
+	movq	8(%rdx), %r9	 ;,
+ ; D:/TC/src/output.c:575: }
 	addq	$40, %rsp	 ;,
- ; D:/TC/src/output.c:553:         case ARG_STRING: tac_output(0, "%s", arg->value.string_value); break;
-	movq	%rsi, %rdx	 ; outfile,
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:567:                 tac_output(0, "%s(%s)", arg->value.subroutine->name, arg->value.subroutine->original_name->name);
+	leaq	.LC73(%rip), %rdx	 ;, tmp137
+ ; D:/TC/src/output.c:575: }
 	popq	%rbx	 ;
 	popq	%rsi	 ;
- ; D:/TC/src/output.c:553:         case ARG_STRING: tac_output(0, "%s", arg->value.string_value); break;
-	jmp	fputs	 ;
+ ; D:/TC/src/output.c:567:                 tac_output(0, "%s(%s)", arg->value.subroutine->name, arg->value.subroutine->original_name->name);
+	jmp	fprintf	 ;
 	.p2align 4,,10
 	.p2align 3
-.L123:
- ; D:/TC/src/output.c:558:         case ARG_NONE: tac_output(0, "NONE"); break;
+.L134:
+ ; D:/TC/src/output.c:558:         case ARG_INT: tac_output(0, "%lld", arg->value.int_value); break;
+	xorl	%edx, %edx	 ;
+	movq	%rsi, %rcx	 ; outfile,
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:558:         case ARG_INT: tac_output(0, "%lld", arg->value.int_value); break;
+	movq	(%rbx), %r8	 ; arg_27(D)->value.int_value,
+	leaq	.LC74(%rip), %rdx	 ;, tmp124
+.L143:
+ ; D:/TC/src/output.c:575: }
 	addq	$40, %rsp	 ;,
- ; D:/TC/src/output.c:558:         case ARG_NONE: tac_output(0, "NONE"); break;
-	movq	%rsi, %r9	 ; outfile,
-	movl	$4, %r8d	 ;,
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:560:         case ARG_STRING: tac_output(0, "\"%s\"", arg->value.string_value); break;
+	movq	%rsi, %rcx	 ; outfile,
+ ; D:/TC/src/output.c:575: }
 	popq	%rbx	 ;
- ; D:/TC/src/output.c:558:         case ARG_NONE: tac_output(0, "NONE"); break;
-	movl	$1, %edx	 ;,
-	leaq	.LC75(%rip), %rcx	 ;, tmp117
- ; D:/TC/src/output.c:562: }
 	popq	%rsi	 ;
- ; D:/TC/src/output.c:558:         case ARG_NONE: tac_output(0, "NONE"); break;
-	jmp	fwrite	 ;
+ ; D:/TC/src/output.c:560:         case ARG_STRING: tac_output(0, "\"%s\"", arg->value.string_value); break;
+	jmp	fprintf	 ;
 	.p2align 4,,10
 	.p2align 3
 .L131:
- ; D:/TC/src/output.c:551:         case ARG_INT: tac_output(0, "%lld", arg->value.int_value); break;
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:551:         case ARG_INT: tac_output(0, "%lld", arg->value.int_value); break;
-	movq	(%rbx), %r8	 ; arg_15(D)->value.int_value,
- ; D:/TC/src/output.c:562: }
-	addq	$40, %rsp	 ;,
- ; D:/TC/src/output.c:551:         case ARG_INT: tac_output(0, "%lld", arg->value.int_value); break;
+ ; D:/TC/src/output.c:561:         case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
+	xorl	%edx, %edx	 ;
 	movq	%rsi, %rcx	 ; outfile,
- ; D:/TC/src/output.c:562: }
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:561:         case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
+	cmpb	$0, (%rbx)	 ;, arg_27(D)->value.bool_value
+	leaq	.LC71(%rip), %rcx	 ;, tmp147
+	leaq	.LC70(%rip), %rax	 ;, tmp148
+	cmovne	%rax, %rcx	 ; tmp147,, tmp148, iftmp.2_25
+.L142:
+ ; D:/TC/src/output.c:575: }
+	addq	$40, %rsp	 ;,
+ ; D:/TC/src/output.c:561:         case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
+	movq	%rsi, %rdx	 ; outfile,
+ ; D:/TC/src/output.c:575: }
 	popq	%rbx	 ;
- ; D:/TC/src/output.c:551:         case ARG_INT: tac_output(0, "%lld", arg->value.int_value); break;
-	leaq	.LC72(%rip), %rdx	 ;, tmp107
- ; D:/TC/src/output.c:562: }
 	popq	%rsi	 ;
- ; D:/TC/src/output.c:551:         case ARG_INT: tac_output(0, "%lld", arg->value.int_value); break;
-	jmp	fprintf	 ;
+ ; D:/TC/src/output.c:561:         case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
+	jmp	fputs	 ;
 	.p2align 4,,10
 	.p2align 3
 .L130:
- ; D:/TC/src/output.c:552:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:552:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
-	movq	(%rbx), %r8	 ; arg_15(D)->value.float_value, arg_15(D)->value.float_value
- ; D:/TC/src/output.c:562: }
-	addq	$40, %rsp	 ;,
- ; D:/TC/src/output.c:552:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
+ ; D:/TC/src/output.c:562:         case ARG_VOID: tac_output(0, "void"); break;
 	movq	%rsi, %rcx	 ; outfile,
- ; D:/TC/src/output.c:562: }
+	xorl	%edx, %edx	 ;
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:575: }
+	addq	$40, %rsp	 ;,
+ ; D:/TC/src/output.c:562:         case ARG_VOID: tac_output(0, "void"); break;
+	movq	%rsi, %r9	 ; outfile,
+	movl	$4, %r8d	 ;,
+ ; D:/TC/src/output.c:575: }
 	popq	%rbx	 ;
- ; D:/TC/src/output.c:552:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
-	leaq	.LC73(%rip), %rdx	 ;, tmp110
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:562:         case ARG_VOID: tac_output(0, "void"); break;
+	movl	$1, %edx	 ;,
+	leaq	.LC77(%rip), %rcx	 ;, tmp130
+ ; D:/TC/src/output.c:575: }
 	popq	%rsi	 ;
- ; D:/TC/src/output.c:552:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
-	movq	%r8, %xmm2	 ; arg_15(D)->value.float_value,
-	jmp	fprintf	 ;
+ ; D:/TC/src/output.c:562:         case ARG_VOID: tac_output(0, "void"); break;
+	jmp	fwrite	 ;
 	.p2align 4,,10
 	.p2align 3
 .L129:
- ; D:/TC/src/output.c:553:         case ARG_STRING: tac_output(0, "%s", arg->value.string_value); break;
+ ; D:/TC/src/output.c:563:         case ARG_LABEL: tac_output(0, "%s", arg->value.label->name); break;
+	movq	%rsi, %rcx	 ; outfile,
+	xorl	%edx, %edx	 ;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:553:         case ARG_STRING: tac_output(0, "%s", arg->value.string_value); break;
-	movq	(%rbx), %rcx	 ; arg_15(D)->value.string_value, arg_15(D)->value.string_value
-	jmp	.L136	 ;
+ ; D:/TC/src/output.c:563:         case ARG_LABEL: tac_output(0, "%s", arg->value.label->name); break;
+	movq	(%rbx), %rax	 ;* arg, arg_27(D)->value.label
+	movq	8(%rax), %rcx	 ;, _14->name
+	jmp	.L142	 ;
 	.p2align 4,,10
 	.p2align 3
-.L128:
- ; D:/TC/src/output.c:554:         case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
+.L126:
+ ; D:/TC/src/output.c:571:         case ARG_NONE: tac_output(0, "NONE"); break;
+	movq	%rsi, %rcx	 ; outfile,
+	xorl	%edx, %edx	 ;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:554:         case ARG_BOOL: tac_output(0, "%s", arg->value.bool_value ? "true" : "false"); break;
-	cmpb	$0, (%rbx)	 ;, arg_15(D)->value.bool_value
-	leaq	.LC70(%rip), %rcx	 ;, tmp124
-	leaq	.LC69(%rip), %rax	 ;, tmp125
-	cmovne	%rax, %rcx	 ; tmp124,, tmp125, iftmp.2_13
-	jmp	.L136	 ;
-	.p2align 4,,10
-	.p2align 3
-.L127:
- ; D:/TC/src/output.c:555:         case ARG_VOID: tac_output(0, "void"); break;
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:575: }
 	addq	$40, %rsp	 ;,
- ; D:/TC/src/output.c:555:         case ARG_VOID: tac_output(0, "void"); break;
+ ; D:/TC/src/output.c:571:         case ARG_NONE: tac_output(0, "NONE"); break;
 	movq	%rsi, %r9	 ; outfile,
 	movl	$4, %r8d	 ;,
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:575: }
 	popq	%rbx	 ;
- ; D:/TC/src/output.c:555:         case ARG_VOID: tac_output(0, "void"); break;
+ ; D:/TC/src/output.c:571:         case ARG_NONE: tac_output(0, "NONE"); break;
 	movl	$1, %edx	 ;,
-	leaq	.LC74(%rip), %rcx	 ;, tmp112
- ; D:/TC/src/output.c:562: }
+	leaq	.LC78(%rip), %rcx	 ;, tmp140
+ ; D:/TC/src/output.c:575: }
 	popq	%rsi	 ;
- ; D:/TC/src/output.c:555:         case ARG_VOID: tac_output(0, "void"); break;
+ ; D:/TC/src/output.c:571:         case ARG_NONE: tac_output(0, "NONE"); break;
 	jmp	fwrite	 ;
 	.p2align 4,,10
 	.p2align 3
-.L137:
- ; D:/TC/src/output.c:545:         tac_output(0, "\"NULL\"");
+.L133:
+ ; D:/TC/src/output.c:559:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
 	movq	%rsi, %rcx	 ; outfile,
 	xorl	%edx, %edx	 ;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:559:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
+	movq	(%rbx), %r8	 ; arg_27(D)->value.float_value, arg_27(D)->value.float_value
+ ; D:/TC/src/output.c:575: }
 	addq	$40, %rsp	 ;,
- ; D:/TC/src/output.c:545:         tac_output(0, "\"NULL\"");
+ ; D:/TC/src/output.c:559:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
+	movq	%rsi, %rcx	 ; outfile,
+ ; D:/TC/src/output.c:575: }
+	popq	%rbx	 ;
+ ; D:/TC/src/output.c:559:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
+	leaq	.LC75(%rip), %rdx	 ;, tmp127
+ ; D:/TC/src/output.c:575: }
+	popq	%rsi	 ;
+ ; D:/TC/src/output.c:559:         case ARG_FLOAT: tac_output(0, "%f", arg->value.float_value); break;
+	movq	%r8, %xmm2	 ; arg_27(D)->value.float_value,
+	jmp	fprintf	 ;
+	.p2align 4,,10
+	.p2align 3
+.L132:
+ ; D:/TC/src/output.c:560:         case ARG_STRING: tac_output(0, "\"%s\"", arg->value.string_value); break;
+	xorl	%edx, %edx	 ;
+	movq	%rsi, %rcx	 ; outfile,
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:560:         case ARG_STRING: tac_output(0, "\"%s\"", arg->value.string_value); break;
+	movq	(%rbx), %r8	 ; arg_27(D)->value.string_value,
+	leaq	.LC76(%rip), %rdx	 ;, tmp129
+	jmp	.L143	 ;
+	.p2align 4,,10
+	.p2align 3
+.L145:
+ ; D:/TC/src/output.c:547:         tac_output(0, "\"NULL\"");
+	movq	%rsi, %rcx	 ; outfile,
+	xorl	%edx, %edx	 ;
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:575: }
+	addq	$40, %rsp	 ;,
+ ; D:/TC/src/output.c:547:         tac_output(0, "\"NULL\"");
 	movq	%rsi, %r9	 ; outfile,
 	movl	$6, %r8d	 ;,
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:575: }
 	popq	%rbx	 ;
- ; D:/TC/src/output.c:545:         tac_output(0, "\"NULL\"");
+ ; D:/TC/src/output.c:547:         tac_output(0, "\"NULL\"");
 	movl	$1, %edx	 ;,
-	leaq	.LC71(%rip), %rcx	 ;, tmp97
- ; D:/TC/src/output.c:562: }
+	leaq	.LC72(%rip), %rcx	 ;, tmp109
+ ; D:/TC/src/output.c:575: }
 	popq	%rsi	 ;
- ; D:/TC/src/output.c:545:         tac_output(0, "\"NULL\"");
+ ; D:/TC/src/output.c:547:         tac_output(0, "\"NULL\"");
 	jmp	fwrite	 ;
-.L122:
- ; D:/TC/src/output.c:559:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
+.L125:
+ ; D:/TC/src/output.c:572:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
 	movq	%rsi, %rcx	 ; outfile,
 	xorl	%edx, %edx	 ;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:559:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
-	movl	16(%rbx), %r8d	 ; arg_15(D)->kind,
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:572:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
+	movl	16(%rbx), %r8d	 ; arg_27(D)->kind,
+ ; D:/TC/src/output.c:575: }
 	addq	$40, %rsp	 ;,
- ; D:/TC/src/output.c:559:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
+ ; D:/TC/src/output.c:572:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
 	movq	%rsi, %rcx	 ; outfile,
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:575: }
 	popq	%rbx	 ;
- ; D:/TC/src/output.c:559:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
-	leaq	.LC76(%rip), %rdx	 ;, tmp119
- ; D:/TC/src/output.c:562: }
+ ; D:/TC/src/output.c:572:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
+	leaq	.LC79(%rip), %rdx	 ;, tmp142
+ ; D:/TC/src/output.c:575: }
 	popq	%rsi	 ;
- ; D:/TC/src/output.c:559:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
+ ; D:/TC/src/output.c:572:         default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
 	jmp	fprintf	 ;
+	.p2align 4,,10
+	.p2align 3
+.L138:
+ ; D:/TC/src/output.c:569:                 tac_output(0, "%s", arg->value.subroutine->name);
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:569:                 tac_output(0, "%s", arg->value.subroutine->name);
+	movq	(%rbx), %rax	 ;* arg, arg_27(D)->value.subroutine
+	movq	8(%rax), %rcx	 ;, _22->name
+	jmp	.L142	 ;
 	.section .rdata,"dr"
-.LC77:
-	.ascii "NULL\0"
-.LC78:
-	.ascii "import\12\0"
-.LC79:
-	.ascii "source: \"%s\"\12\0"
 .LC80:
-	.ascii "parameters\12\0"
+	.ascii "NULL\0"
 .LC81:
-	.ascii "parameters[%d]\12\0"
+	.ascii "import\12\0"
 .LC82:
-	.ascii "class\12\0"
+	.ascii "source: \"%s\"\12\0"
 .LC83:
-	.ascii "members\12\0"
+	.ascii "parameters\12\0"
 .LC84:
-	.ascii "method\12\0"
+	.ascii "parameters[%d]\12\0"
 .LC85:
-	.ascii "variable\12\0"
+	.ascii "class\12\0"
 .LC86:
-	.ascii "unknown_ClassMemberType: %u\12\0"
+	.ascii "members\12\0"
 .LC87:
+	.ascii "method\12\0"
+.LC88:
+	.ascii "variable\12\0"
+.LC89:
+	.ascii "unknown_ClassMemberType: %u\12\0"
+.LC90:
 	.ascii "unknown_CodeMemberType: %u\12\0"
 	.text
 	.p2align 4
@@ -2205,14 +2280,14 @@ output_code:
 	movq	%rax, 72(%rsp)	 ; tmp190, %sfp
 	.p2align 4,,10
 	.p2align 3
-.L139:
+.L147:
  ; D:/TC/src/output.c:47:     while ((member = (CodeMember*)list_pop(members)) != NULL)
 	movq	72(%rsp), %rcx	 ; %sfp,
 	call	list_pop	 ;
 	movq	%rax, %rbx	 ; tmp201, member
  ; D:/TC/src/output.c:47:     while ((member = (CodeMember*)list_pop(members)) != NULL)
 	testq	%rax, %rax	 ; member
-	je	.L163	 ;,
+	je	.L171	 ;,
  ; D:/TC/src/output.c:24:     switch (code_member->type) {
 	movl	8(%rbx), %eax	 ; member_9->type, _14
  ; D:/TC/src/output.c:48:         output_code_member(member, outfile, indent + 1, indent_has_next);
@@ -2223,11 +2298,11 @@ output_code:
 	movq	%r15, %rcx	 ; outfile,
  ; D:/TC/src/output.c:24:     switch (code_member->type) {
 	cmpl	$1, %eax	 ;, _14
-	je	.L140	 ;,
+	je	.L148	 ;,
 	cmpl	$2, %eax	 ;, _14
-	je	.L141	 ;,
+	je	.L149	 ;,
 	testl	%eax, %eax	 ; _14
-	jne	.L142	 ;,
+	jne	.L150	 ;,
  ; D:/TC/src/output.c:26:             ast_output(0, false, "import\n");
 	call	indention	 ;
  ; D:/TC/src/output.c:27:             output_import(code_member->content.import, outfile, indent + 1, indent_has_next);
@@ -2236,7 +2311,7 @@ output_code:
 	movq	%r15, %r9	 ; outfile,
 	movl	$7, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC78(%rip), %rcx	 ;, tmp135
+	leaq	.LC81(%rip), %rcx	 ;, tmp135
 	call	fwrite	 ;
  ; D:/TC/src/output.c:27:             output_import(code_member->content.import, outfile, indent + 1, indent_has_next);
 	movq	(%rbx), %rbx	 ; member_9->content.import, _16
@@ -2267,19 +2342,19 @@ output_code:
  ; D:/TC/src/output.c:55:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 	movq	8(%rbx), %rax	 ; _16->source, _24
  ; D:/TC/src/output.c:55:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
-	leaq	.LC77(%rip), %r8	 ;, tmp175
+	leaq	.LC80(%rip), %r8	 ;, tmp175
 	movq	%r15, %rcx	 ; outfile,
-	leaq	.LC79(%rip), %rdx	 ;, tmp139
+	leaq	.LC82(%rip), %rdx	 ;, tmp139
  ; D:/TC/src/output.c:55:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 	testq	%rax, %rax	 ; _24
  ; D:/TC/src/output.c:55:     ast_output(0, true, "source: \"%s\"\n", import->source != NULL ? import->source : "NULL");
 	cmovne	%rax, %r8	 ; _24,,
 	call	fprintf	 ;
  ; D:/TC/src/output.c:57: }
-	jmp	.L139	 ;
+	jmp	.L147	 ;
 	.p2align 4,,10
 	.p2align 3
-.L140:
+.L148:
  ; D:/TC/src/output.c:30:             ast_output(0, false, "function\n");
 	call	indention	 ;
  ; D:/TC/src/output.c:31:             output_function(code_member->content.function, outfile, indent + 1, indent_has_next);
@@ -2346,7 +2421,7 @@ output_code:
 	movq	%r15, %r9	 ; outfile,
 	movl	$11, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC80(%rip), %rcx	 ;, tmp145
+	leaq	.LC83(%rip), %rcx	 ;, tmp145
 	call	fwrite	 ;
  ; D:/TC/src/output.c:65:     list(Variable*) parameters = list_copy(function->parameters);
 	movq	16(%rbx), %rcx	 ; _18->parameters, _18->parameters
@@ -2361,10 +2436,10 @@ output_code:
 	call	list_copy	 ;
 	movq	%rax, 48(%rsp)	 ; body, %sfp
  ; D:/TC/src/output.c:69:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
-	jmp	.L145	 ;
+	jmp	.L153	 ;
 	.p2align 4,,10
 	.p2align 3
-.L146:
+.L154:
  ; D:/TC/src/output.c:70:         ast_output(1, false, "parameters[%d]\n", ++index);
 	movq	%r13, %r9	 ; indent_has_next,
 	xorl	%r8d, %r8d	 ;
@@ -2373,7 +2448,7 @@ output_code:
 	call	indention	 ;
  ; D:/TC/src/output.c:70:         ast_output(1, false, "parameters[%d]\n", ++index);
 	addl	$1, %ebx	 ;, index
-	leaq	.LC81(%rip), %rdx	 ;,
+	leaq	.LC84(%rip), %rdx	 ;,
 	movq	%r15, %rcx	 ; outfile,
 	movl	%ebx, %r8d	 ; index,
 	call	fprintf	 ;
@@ -2383,14 +2458,14 @@ output_code:
 	movq	%r15, %rdx	 ; outfile,
 	movq	%rdi, %rcx	 ; parameter,
 	call	output_variable	 ;
-.L145:
+.L153:
  ; D:/TC/src/output.c:69:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	movq	%rbp, %rcx	 ; parameters,
 	call	list_pop	 ;
 	movq	%rax, %rdi	 ; tmp193, parameter
  ; D:/TC/src/output.c:69:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	testq	%rax, %rax	 ; parameter
-	jne	.L146	 ;,
+	jne	.L154	 ;,
  ; D:/TC/src/output.c:73:     ast_output(0, true, "body\n");
 	movq	40(%rsp), %rdx	 ; %sfp,
 	movq	%r13, %r9	 ; indent_has_next,
@@ -2405,39 +2480,39 @@ output_code:
 	leaq	.LC48(%rip), %rcx	 ;, tmp150
 	call	fwrite	 ;
  ; D:/TC/src/output.c:75:     while ((statement = (Statement*)list_pop(body)) != NULL)
-	jmp	.L147	 ;
+	jmp	.L155	 ;
 	.p2align 4,,10
 	.p2align 3
-.L148:
+.L156:
  ; D:/TC/src/output.c:76:         output_statement(statement, outfile, indent + 1, indent_has_next);
 	movq	%r13, %r9	 ; indent_has_next,
 	movq	%rsi, %r8	 ; _26,
 	movq	%r15, %rdx	 ; outfile,
 	call	output_statement	 ;
-.L147:
+.L155:
  ; D:/TC/src/output.c:75:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%rdi, %rcx	 ; body,
 	call	list_pop	 ;
 	movq	%rax, %rcx	 ; tmp194, statement
  ; D:/TC/src/output.c:75:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	 ; statement
-	jne	.L148	 ;,
-	jmp	.L139	 ;
+	jne	.L156	 ;,
+	jmp	.L147	 ;
 	.p2align 4,,10
 	.p2align 3
-.L142:
+.L150:
  ; D:/TC/src/output.c:38:             ast_output(0, false, "unknown_CodeMemberType: %u\n", code_member->type);
 	call	indention	 ;
  ; D:/TC/src/output.c:38:             ast_output(0, false, "unknown_CodeMemberType: %u\n", code_member->type);
 	movl	8(%rbx), %r8d	 ; member_9->type,
-	leaq	.LC87(%rip), %rdx	 ;, tmp173
+	leaq	.LC90(%rip), %rdx	 ;, tmp173
 	movq	%r15, %rcx	 ; outfile,
 	call	fprintf	 ;
  ; D:/TC/src/output.c:39:             break;
-	jmp	.L139	 ;
+	jmp	.L147	 ;
 	.p2align 4,,10
 	.p2align 3
-.L141:
+.L149:
  ; D:/TC/src/output.c:34:             ast_output(0, false, "class\n");
 	call	indention	 ;
  ; D:/TC/src/output.c:35:             output_class(code_member->content.class, outfile, indent + 1, indent_has_next);
@@ -2446,7 +2521,7 @@ output_code:
 	movq	%r15, %r9	 ; outfile,
 	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC82(%rip), %rcx	 ;, tmp151
+	leaq	.LC85(%rip), %rcx	 ;, tmp151
 	call	fwrite	 ;
  ; D:/TC/src/output.c:35:             output_class(code_member->content.class, outfile, indent + 1, indent_has_next);
 	movq	(%rbx), %rbx	 ; member_9->content.class, _20
@@ -2480,7 +2555,7 @@ output_code:
 	movq	%r15, %r9	 ; outfile,
 	movl	$8, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC83(%rip), %rcx	 ;, tmp154
+	leaq	.LC86(%rip), %rcx	 ;, tmp154
 	call	fwrite	 ;
  ; D:/TC/src/output.c:122:     list(ClassMember*) members = list_copy(class->members);
 	movq	8(%rbx), %rcx	 ; _20->members, _20->members
@@ -2488,21 +2563,21 @@ output_code:
 	movq	%rax, 40(%rsp)	 ; tmp195, %sfp
 	.p2align 4,,10
 	.p2align 3
-.L149:
+.L157:
  ; D:/TC/src/output.c:124:     while ((member = (ClassMember*)list_pop(members)) != NULL)
 	movq	40(%rsp), %rcx	 ; %sfp,
 	call	list_pop	 ;
 	movq	%rax, %rbx	 ; tmp200, member
  ; D:/TC/src/output.c:124:     while ((member = (ClassMember*)list_pop(members)) != NULL)
 	testq	%rax, %rax	 ; member
-	je	.L139	 ;,
+	je	.L147	 ;,
  ; D:/TC/src/output.c:102:     switch (class_member->type) {
 	movl	8(%rbx), %eax	 ; member_42->type, _43
  ; D:/TC/src/output.c:102:     switch (class_member->type) {
 	testl	%eax, %eax	 ; _43
-	je	.L150	 ;,
+	je	.L158	 ;,
 	cmpl	$1, %eax	 ;, _43
-	je	.L151	 ;,
+	je	.L159	 ;,
  ; D:/TC/src/output.c:112:             ast_output(0, false, "unknown_ClassMemberType: %u\n", class_member->type);
 	movq	48(%rsp), %rdx	 ; %sfp,
 	xorl	%r8d, %r8d	 ;
@@ -2511,14 +2586,14 @@ output_code:
 	call	indention	 ;
  ; D:/TC/src/output.c:112:             ast_output(0, false, "unknown_ClassMemberType: %u\n", class_member->type);
 	movl	8(%rbx), %r8d	 ; member_42->type,
-	leaq	.LC86(%rip), %rdx	 ;, tmp171
+	leaq	.LC89(%rip), %rdx	 ;, tmp171
 	movq	%r15, %rcx	 ; outfile,
 	call	fprintf	 ;
  ; D:/TC/src/output.c:113:             break;
-	jmp	.L149	 ;
+	jmp	.L157	 ;
 	.p2align 4,,10
 	.p2align 3
-.L150:
+.L158:
  ; D:/TC/src/output.c:104:             ast_output(0, false, "method\n");
 	movq	48(%rsp), %rdx	 ; %sfp,
 	movq	%r13, %r9	 ; indent_has_next,
@@ -2537,7 +2612,7 @@ output_code:
  ; D:/TC/src/output.c:104:             ast_output(0, false, "method\n");
 	movl	$7, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC84(%rip), %rcx	 ;,
+	leaq	.LC87(%rip), %rcx	 ;,
 	call	fwrite	 ;
  ; D:/TC/src/output.c:105:             output_method(class_member->content.method, outfile, indent + 1, indent_has_next);
 	movq	(%rbx), %rbx	 ; member_42->content.method, _45
@@ -2590,7 +2665,7 @@ output_code:
 	movq	%r15, %r9	 ; outfile,
 	movl	$11, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC80(%rip), %rcx	 ;, tmp161
+	leaq	.LC83(%rip), %rcx	 ;, tmp161
 	call	fwrite	 ;
  ; D:/TC/src/output.c:86:     list(Variable*) parameters = list_copy(method->parameters);
 	movq	16(%rbx), %rcx	 ; _45->parameters, _45->parameters
@@ -2605,10 +2680,10 @@ output_code:
 	call	list_copy	 ;
 	movq	%rax, 64(%rsp)	 ; body, %sfp
  ; D:/TC/src/output.c:90:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
-	jmp	.L153	 ;
+	jmp	.L161	 ;
 	.p2align 4,,10
 	.p2align 3
-.L154:
+.L162:
  ; D:/TC/src/output.c:91:         ast_output(1, false, "parameters[%d]\n", ++index);
 	movq	%r13, %r9	 ; indent_has_next,
 	xorl	%r8d, %r8d	 ;
@@ -2617,7 +2692,7 @@ output_code:
 	call	indention	 ;
  ; D:/TC/src/output.c:91:         ast_output(1, false, "parameters[%d]\n", ++index);
 	addl	$1, %ebx	 ;, index
-	leaq	.LC81(%rip), %rdx	 ;,
+	leaq	.LC84(%rip), %rdx	 ;,
 	movq	%r15, %rcx	 ; outfile,
 	movl	%ebx, %r8d	 ; index,
 	call	fprintf	 ;
@@ -2627,14 +2702,14 @@ output_code:
 	movq	%r15, %rdx	 ; outfile,
 	movq	%rdi, %rcx	 ; parameter,
 	call	output_variable	 ;
-.L153:
+.L161:
  ; D:/TC/src/output.c:90:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	movq	%rbp, %rcx	 ; parameters,
 	call	list_pop	 ;
 	movq	%rax, %rdi	 ; tmp198, parameter
  ; D:/TC/src/output.c:90:     while ((parameter = (Variable*)list_pop(parameters)) != NULL) {
 	testq	%rax, %rax	 ; parameter
-	jne	.L154	 ;,
+	jne	.L162	 ;,
  ; D:/TC/src/output.c:94:     ast_output(0, true, "body\n");
 	movq	56(%rsp), %rdx	 ; %sfp,
 	movq	%r13, %r9	 ; indent_has_next,
@@ -2649,27 +2724,27 @@ output_code:
 	leaq	.LC48(%rip), %rcx	 ;, tmp166
 	call	fwrite	 ;
  ; D:/TC/src/output.c:96:     while ((statement = (Statement*)list_pop(body)) != NULL)
-	jmp	.L155	 ;
+	jmp	.L163	 ;
 	.p2align 4,,10
 	.p2align 3
-.L156:
+.L164:
  ; D:/TC/src/output.c:97:         output_statement(statement, outfile, indent + 1, indent_has_next);
 	movq	%r13, %r9	 ; indent_has_next,
 	movq	%rsi, %r8	 ; _49,
 	movq	%r15, %rdx	 ; outfile,
 	call	output_statement	 ;
-.L155:
+.L163:
  ; D:/TC/src/output.c:96:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	movq	%rdi, %rcx	 ; body,
 	call	list_pop	 ;
 	movq	%rax, %rcx	 ; tmp199, statement
  ; D:/TC/src/output.c:96:     while ((statement = (Statement*)list_pop(body)) != NULL)
 	testq	%rax, %rax	 ; statement
-	jne	.L156	 ;,
-	jmp	.L149	 ;
+	jne	.L164	 ;,
+	jmp	.L157	 ;
 	.p2align 4,,10
 	.p2align 3
-.L151:
+.L159:
  ; D:/TC/src/output.c:108:             ast_output(0, false, "variable\n");
 	movq	48(%rsp), %rdx	 ; %sfp,
 	movq	%r13, %r9	 ; indent_has_next,
@@ -2680,7 +2755,7 @@ output_code:
 	movq	%r15, %r9	 ; outfile,
 	movl	$9, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC85(%rip), %rcx	 ;, tmp167
+	leaq	.LC88(%rip), %rcx	 ;, tmp167
 	call	fwrite	 ;
  ; D:/TC/src/output.c:109:             output_variable(class_member->content.variable, outfile, indent + 1, indent_has_next);
 	movq	(%rbx), %rcx	 ; member_42->content.variable, member_42->content.variable
@@ -2689,10 +2764,10 @@ output_code:
 	movq	%r15, %rdx	 ; outfile,
 	call	output_variable	 ;
  ; D:/TC/src/output.c:110:             break;
-	jmp	.L149	 ;
+	jmp	.L157	 ;
 	.p2align 4,,10
 	.p2align 3
-.L163:
+.L171:
  ; D:/TC/src/output.c:50: }
 	addq	$88, %rsp	 ;,
 	popq	%rbx	 ;
@@ -2705,119 +2780,121 @@ output_code:
 	popq	%r15	 ;
 	ret	
 	.section .rdata,"dr"
-.LC88:
-	.ascii "TAC: \"NULL\"\12\0"
-.LC89:
-	.ascii "TAC {\12\0"
-.LC90:
-	.ascii "designs: []\12\0"
 .LC91:
-	.ascii "designs: [\12\0"
+	.ascii "TAC: \"NULL\"\12\0"
 .LC92:
-	.ascii "NULL \0"
+	.ascii "TAC {\12\0"
 .LC93:
-	.ascii "%s \0"
+	.ascii "designs: []\12\0"
 .LC94:
-	.ascii "%zu \0"
+	.ascii "designs: [\12\0"
 .LC95:
-	.ascii "{}\12\0"
+	.ascii "NULL \0"
 .LC96:
-	.ascii "{\12\0"
+	.ascii "%s \0"
 .LC97:
-	.ascii "NULL\11\0"
+	.ascii "%zu \0"
 .LC98:
-	.ascii "%s\11\0"
+	.ascii "{}\12\0"
 .LC99:
-	.ascii "%zu\12\0"
+	.ascii "{\12\0"
 .LC100:
-	.ascii "}\12\0"
+	.ascii "NULL\11\0"
 .LC101:
-	.ascii "]\12\0"
+	.ascii "%s\11\0"
 .LC102:
-	.ascii "entry_point: \"NULL\"\12\0"
+	.ascii "%s(%s) \0"
 .LC103:
-	.ascii "entry_point: %s\12\0"
+	.ascii "%zu\12\0"
 .LC104:
-	.ascii "global: []\12\0"
+	.ascii "}\12\0"
 .LC105:
-	.ascii "global: [\12\0"
+	.ascii "]\12\0"
 .LC106:
-	.ascii "subroutines: []\12\0"
+	.ascii "entry_point: \"NULL\"\12\0"
 .LC107:
-	.ascii "subroutines: [\12\0"
+	.ascii "entry_point: %s\12\0"
 .LC108:
-	.ascii "NULL {\12\0"
+	.ascii "global: []\12\0"
 .LC109:
-	.ascii "%s {\12\0"
+	.ascii "global: [\12\0"
 .LC110:
-	.ascii "return_type: \"NULL\"\12\0"
+	.ascii "subroutines: []\12\0"
 .LC111:
-	.ascii "return_type: %s\12\0"
+	.ascii "subroutines: [\12\0"
 .LC112:
-	.ascii "parameters: []\12\0"
+	.ascii "NULL {\12\0"
 .LC113:
-	.ascii "parameters: [\12\0"
+	.ascii "%s {\12\0"
 .LC114:
-	.ascii "local: []\12\0"
+	.ascii "return_type: \"NULL\"\12\0"
 .LC115:
-	.ascii "local: [\12\0"
+	.ascii "return_type: %s\12\0"
 .LC116:
-	.ascii "instructions: []\12\0"
+	.ascii "parameters: []\12\0"
 .LC117:
-	.ascii "instructions: [\12\0"
+	.ascii "parameters: [\12\0"
 .LC118:
-	.ascii "add\11\0"
+	.ascii "local: []\12\0"
 .LC119:
-	.ascii "sub\11\0"
+	.ascii "local: [\12\0"
 .LC120:
-	.ascii "mul\11\0"
+	.ascii "instructions: []\12\0"
 .LC121:
-	.ascii "div\11\0"
+	.ascii "instructions: [\12\0"
 .LC122:
-	.ascii "mod\11\0"
+	.ascii "add\11\0"
 .LC123:
-	.ascii "eq \11\0"
+	.ascii "sub\11\0"
 .LC124:
-	.ascii "ne \11\0"
+	.ascii "mul\11\0"
 .LC125:
-	.ascii "lt \11\0"
+	.ascii "div\11\0"
 .LC126:
-	.ascii "gt \11\0"
+	.ascii "mod\11\0"
 .LC127:
-	.ascii "le \11\0"
+	.ascii "eq \11\0"
 .LC128:
-	.ascii "ge \11\0"
+	.ascii "ne \11\0"
 .LC129:
-	.ascii "and\11\0"
+	.ascii "lt \11\0"
 .LC130:
-	.ascii "or \11\0"
+	.ascii "gt \11\0"
 .LC131:
-	.ascii "not\11\0"
+	.ascii "le \11\0"
 .LC132:
-	.ascii "assign\11\0"
+	.ascii "ge \11\0"
 .LC133:
-	.ascii "get_attr\11\0"
+	.ascii "and\11\0"
 .LC134:
-	.ascii "get_elem\11\0"
+	.ascii "or \11\0"
 .LC135:
-	.ascii "param\11\0"
+	.ascii "not\11\0"
 .LC136:
-	.ascii "alloc\11\0"
+	.ascii "assign\11\0"
 .LC137:
-	.ascii "jmp_c\11\0"
+	.ascii "get_attr\11\0"
 .LC138:
-	.ascii "jmp\11\0"
+	.ascii "get_elem\11\0"
 .LC139:
-	.ascii "ret\11\0"
+	.ascii "param\11\0"
 .LC140:
-	.ascii "call\11\0"
+	.ascii "alloc\11\0"
 .LC141:
-	.ascii "load\11\0"
+	.ascii "jmp_c\11\0"
 .LC142:
-	.ascii "store\11\0"
+	.ascii "jmp\11\0"
 .LC143:
-	.ascii "INST_NONE\12\0"
+	.ascii "ret\11\0"
 .LC144:
+	.ascii "call\11\0"
+.LC145:
+	.ascii "load\11\0"
+.LC146:
+	.ascii "store\11\0"
+.LC147:
+	.ascii "INST_NONE\12\0"
+.LC148:
 	.ascii "unknown_InstructionType: %u\12\0"
 	.text
 	.p2align 4
@@ -2826,12 +2903,12 @@ output_code:
 output_TAC:
 	pushq	%r15	 ;
 	pushq	%r14	 ;
-	movq	%rdx, %r14	 ; tmp303, outfile
+	movq	%rdx, %r14	 ; tmp312, outfile
  ; D:/TC/src/output.c:423:         tac_output(indent, "TAC: \"NULL\"\n");
 	movq	%r8, %rdx	 ; indent,
  ; D:/TC/src/output.c:420: void output_TAC(TAC* tac, FILE* outfile, size_t indent) {
 	pushq	%r13	 ;
-	movq	%r8, %r13	 ; tmp304, indent
+	movq	%r8, %r13	 ; tmp313, indent
 	pushq	%r12	 ;
 	pushq	%rbp	 ;
 	pushq	%rdi	 ;
@@ -2845,16 +2922,16 @@ output_TAC:
  ; D:/TC/src/output.c:423:         tac_output(indent, "TAC: \"NULL\"\n");
 	movq	%r14, %rcx	 ; outfile,
  ; D:/TC/src/output.c:422:     if (tac == NULL) {
-	je	.L247	 ;,
+	je	.L256	 ;,
  ; D:/TC/src/output.c:427:     tac_output(indent, "TAC {\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:427:     tac_output(indent, "TAC {\n");
 	movl	$1, %edx	 ;,
 	movq	%r14, %r9	 ; outfile,
 	movl	$6, %r8d	 ;,
-	leaq	.LC89(%rip), %rcx	 ;, tmp162
+	leaq	.LC92(%rip), %rcx	 ;, tmp167
  ; D:/TC/src/output.c:429:         tac_output(indent + 1, "designs: []\n");
-	leaq	1(%r13), %r12	 ;, _232
+	leaq	1(%r13), %rbp	 ;, _239
  ; D:/TC/src/output.c:427:     tac_output(indent, "TAC {\n");
 	call	fwrite	 ;
  ; D:/TC/src/output.c:428:     if (list_is_empty(tac->attribute_tables))
@@ -2862,78 +2939,78 @@ output_TAC:
 	movq	(%rax), %rcx	 ; tac_32(D)->attribute_tables, tac_32(D)->attribute_tables
 	call	list_is_empty	 ;
  ; D:/TC/src/output.c:429:         tac_output(indent + 1, "designs: []\n");
-	movq	%r12, %rdx	 ; _232,
+	movq	%rbp, %rdx	 ; _239,
 	movq	%r14, %rcx	 ; outfile,
  ; D:/TC/src/output.c:428:     if (list_is_empty(tac->attribute_tables))
-	testb	%al, %al	 ; tmp305
-	je	.L166	 ;,
+	testb	%al, %al	 ; tmp314
+	je	.L174	 ;,
  ; D:/TC/src/output.c:429:         tac_output(indent + 1, "designs: []\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:429:         tac_output(indent + 1, "designs: []\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$12, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC90(%rip), %rcx	 ;, tmp164
+	leaq	.LC93(%rip), %rcx	 ;, tmp169
 	call	fwrite	 ;
-	leaq	.LC100(%rip), %rax	 ;, tmp282
-	movq	%rax, 56(%rsp)	 ; tmp282, %sfp
-.L167:
+	leaq	.LC104(%rip), %rax	 ;, tmp291
+	movq	%rax, 56(%rsp)	 ; tmp291, %sfp
+.L175:
  ; D:/TC/src/output.c:437:     if (tac->entry_point == NULL)
 	movq	48(%rsp), %rax	 ; %sfp, tac
  ; D:/TC/src/output.c:438:         tac_output(indent + 1, "entry_point: \"NULL\"\n");
-	movq	%r12, %rdx	 ; _232,
+	movq	%rbp, %rdx	 ; _239,
 	movq	%r14, %rcx	 ; outfile,
  ; D:/TC/src/output.c:437:     if (tac->entry_point == NULL)
 	cmpq	$0, 8(%rax)	 ;, tac_32(D)->entry_point
-	je	.L248	 ;,
+	je	.L257	 ;,
  ; D:/TC/src/output.c:440:         tac_output(indent + 1, "entry_point: %s\n", tac->entry_point->name);
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:440:         tac_output(indent + 1, "entry_point: %s\n", tac->entry_point->name);
 	movq	48(%rsp), %rax	 ; %sfp, tac
-	leaq	.LC103(%rip), %rdx	 ;, tmp192
+	leaq	.LC107(%rip), %rdx	 ;, tmp201
 	movq	%r14, %rcx	 ; outfile,
 	movq	8(%rax), %rax	 ; tac_32(D)->entry_point, tac_32(D)->entry_point
 	movq	8(%rax), %r8	 ; _10->name,
 	call	fprintf	 ;
-.L181:
+.L190:
  ; D:/TC/src/output.c:441:     if (list_is_empty(tac->global_vars))
 	movq	48(%rsp), %rax	 ; %sfp, tac
 	movq	16(%rax), %rcx	 ; tac_32(D)->global_vars, tac_32(D)->global_vars
 	call	list_is_empty	 ;
  ; D:/TC/src/output.c:442:         tac_output(indent + 1, "global: []\n");
-	movq	%r12, %rdx	 ; _232,
+	movq	%rbp, %rdx	 ; _239,
 	movq	%r14, %rcx	 ; outfile,
  ; D:/TC/src/output.c:441:     if (list_is_empty(tac->global_vars))
-	testb	%al, %al	 ; tmp309
-	je	.L182	 ;,
+	testb	%al, %al	 ; tmp318
+	je	.L191	 ;,
  ; D:/TC/src/output.c:442:         tac_output(indent + 1, "global: []\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:442:         tac_output(indent + 1, "global: []\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$11, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC104(%rip), %rcx	 ;, tmp194
+	leaq	.LC108(%rip), %rcx	 ;, tmp203
 	call	fwrite	 ;
-.L183:
+.L192:
  ; D:/TC/src/output.c:450:     if (list_is_empty(tac->subroutines))
 	movq	48(%rsp), %rax	 ; %sfp, tac
 	movq	24(%rax), %rcx	 ; tac_32(D)->subroutines, tac_32(D)->subroutines
 	call	list_is_empty	 ;
  ; D:/TC/src/output.c:451:         tac_output(indent + 1, "subroutines: []\n");
-	movq	%r12, %rdx	 ; _232,
+	movq	%rbp, %rdx	 ; _239,
 	movq	%r14, %rcx	 ; outfile,
  ; D:/TC/src/output.c:450:     if (list_is_empty(tac->subroutines))
-	testb	%al, %al	 ; tmp311
-	je	.L186	 ;,
+	testb	%al, %al	 ; tmp320
+	je	.L195	 ;,
  ; D:/TC/src/output.c:451:         tac_output(indent + 1, "subroutines: []\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:451:         tac_output(indent + 1, "subroutines: []\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$16, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC106(%rip), %rcx	 ;, tmp200
+	leaq	.LC110(%rip), %rcx	 ;, tmp209
 	call	fwrite	 ;
-.L187:
+.L196:
  ; D:/TC/src/output.c:459:     tac_output(indent, "}\n");
 	movq	%r13, %rdx	 ; indent,
 	movq	%r14, %rcx	 ; outfile,
@@ -2943,7 +3020,7 @@ output_TAC:
 	movq	%r14, %r9	 ; outfile,
 	movl	$2, %r8d	 ;,
 	movl	$1, %edx	 ;,
-.L246:
+.L255:
  ; D:/TC/src/output.c:461: }
 	addq	$104, %rsp	 ;,
 	popq	%rbx	 ;
@@ -2956,276 +3033,293 @@ output_TAC:
 	popq	%r15	 ;
  ; D:/TC/src/output.c:459:     tac_output(indent, "}\n");
 	jmp	fwrite	 ;
-.L166:
+.L174:
  ; D:/TC/src/output.c:431:         tac_output(indent + 1, "designs: [\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:431:         tac_output(indent + 1, "designs: [\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$11, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC91(%rip), %rcx	 ;, tmp165
- ; D:/TC/src/output.c:656:         tac_output(indent, "%s ", attribute_table->name->name);
-	leaq	.LC93(%rip), %rdi	 ;, tmp299
+	leaq	.LC94(%rip), %rcx	 ;, tmp170
+ ; D:/TC/src/output.c:669:         tac_output(indent, "%s ", attribute_table->name->name);
+	leaq	.LC96(%rip), %r12	 ;, tmp308
  ; D:/TC/src/output.c:431:         tac_output(indent + 1, "designs: [\n");
 	call	fwrite	 ;
-	leaq	.LC100(%rip), %rax	 ;, tmp282
- ; D:/TC/src/output.c:679:         tac_output(indent, "%s\t", attribute->type->name);
-	leaq	.LC98(%rip), %rbp	 ;, tmp300
-	movq	%rax, 56(%rsp)	 ; tmp282, %sfp
+	leaq	.LC104(%rip), %rax	 ;, tmp291
+ ; D:/TC/src/output.c:692:         tac_output(indent, "%s\t", attribute->type->name);
+	leaq	.LC101(%rip), %rdi	 ;, tmp309
+	movq	%rax, 56(%rsp)	 ; tmp291, %sfp
 	.p2align 4,,10
 	.p2align 3
-.L168:
+.L176:
  ; D:/TC/src/output.c:433:         while ((attribute_table = (AttributeTable*)list_pop(tac->attribute_tables)) != NULL)
 	movq	48(%rsp), %rax	 ; %sfp, tac
 	movq	(%rax), %rcx	 ; tac_32(D)->attribute_tables, tac_32(D)->attribute_tables
 	call	list_pop	 ;
-	movq	%rax, %rsi	 ; tmp308, attribute_table
+	movq	%rax, %rsi	 ; tmp317, attribute_table
  ; D:/TC/src/output.c:433:         while ((attribute_table = (AttributeTable*)list_pop(tac->attribute_tables)) != NULL)
 	testq	%rax, %rax	 ; attribute_table
-	je	.L249	 ;,
+	je	.L258	 ;,
  ; D:/TC/src/output.c:434:             output_attribute_table(attribute_table, outfile, indent + 2);
 	leaq	2(%r13), %r15	 ;, _5
- ; D:/TC/src/output.c:653:     if (attribute_table->name == NULL)
+ ; D:/TC/src/output.c:666:     if (attribute_table->name == NULL)
 	cmpq	$0, 8(%rsi)	 ;, attribute_table_42->name
- ; D:/TC/src/output.c:654:         tac_output(indent, "NULL ");
+ ; D:/TC/src/output.c:667:         tac_output(indent, "NULL ");
 	movq	%r14, %rcx	 ; outfile,
 	movq	%r15, %rdx	 ; _5,
- ; D:/TC/src/output.c:653:     if (attribute_table->name == NULL)
-	je	.L250	 ;,
- ; D:/TC/src/output.c:656:         tac_output(indent, "%s ", attribute_table->name->name);
+ ; D:/TC/src/output.c:666:     if (attribute_table->name == NULL)
+	je	.L259	 ;,
+ ; D:/TC/src/output.c:669:         tac_output(indent, "%s ", attribute_table->name->name);
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:656:         tac_output(indent, "%s ", attribute_table->name->name);
+ ; D:/TC/src/output.c:669:         tac_output(indent, "%s ", attribute_table->name->name);
 	movq	8(%rsi), %rax	 ; attribute_table_42->name, attribute_table_42->name
-	movq	%rdi, %rdx	 ; tmp299,
+	movq	%r12, %rdx	 ; tmp308,
 	movq	%r14, %rcx	 ; outfile,
 	movq	8(%rax), %r8	 ; _77->name,
 	call	fprintf	 ;
-.L170:
- ; D:/TC/src/output.c:657:     tac_output(0, "%zu ", attribute_table->size);
+.L178:
+ ; D:/TC/src/output.c:670:     tac_output(0, "%zu ", attribute_table->size);
 	xorl	%edx, %edx	 ;
 	movq	%r14, %rcx	 ; outfile,
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:657:     tac_output(0, "%zu ", attribute_table->size);
+ ; D:/TC/src/output.c:670:     tac_output(0, "%zu ", attribute_table->size);
 	movq	16(%rsi), %r8	 ; attribute_table_42->size,
-	leaq	.LC94(%rip), %rdx	 ;, tmp171
+	leaq	.LC97(%rip), %rdx	 ;, tmp176
 	movq	%r14, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:/TC/src/output.c:658:     if (list_is_empty(attribute_table->attributes))
+ ; D:/TC/src/output.c:671:     if (list_is_empty(attribute_table->attributes))
 	movq	(%rsi), %rcx	 ; attribute_table_42->attributes, attribute_table_42->attributes
 	call	list_is_empty	 ;
- ; D:/TC/src/output.c:659:         tac_output(0, "{}\n");
+ ; D:/TC/src/output.c:672:         tac_output(0, "{}\n");
 	xorl	%edx, %edx	 ;
 	movq	%r14, %rcx	 ; outfile,
- ; D:/TC/src/output.c:658:     if (list_is_empty(attribute_table->attributes))
-	testb	%al, %al	 ; tmp306
-	je	.L171	 ;,
- ; D:/TC/src/output.c:659:         tac_output(0, "{}\n");
+ ; D:/TC/src/output.c:671:     if (list_is_empty(attribute_table->attributes))
+	testb	%al, %al	 ; tmp315
+	je	.L179	 ;,
+ ; D:/TC/src/output.c:672:         tac_output(0, "{}\n");
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:659:         tac_output(0, "{}\n");
+ ; D:/TC/src/output.c:672:         tac_output(0, "{}\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$3, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC95(%rip), %rcx	 ;, tmp173
+	leaq	.LC98(%rip), %rcx	 ;, tmp178
 	call	fwrite	 ;
-	jmp	.L168	 ;
+	jmp	.L176	 ;
 	.p2align 4,,10
 	.p2align 3
-.L171:
- ; D:/TC/src/output.c:661:         tac_output(0, "{\n");
+.L179:
+ ; D:/TC/src/output.c:674:         tac_output(0, "{\n");
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:661:         tac_output(0, "{\n");
+ ; D:/TC/src/output.c:674:         tac_output(0, "{\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$2, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC96(%rip), %rcx	 ;, tmp174
+	leaq	.LC99(%rip), %rcx	 ;, tmp179
 	call	fwrite	 ;
- ; D:/TC/src/output.c:663:         while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
-	jmp	.L173	 ;
+ ; D:/TC/src/output.c:676:         while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
+	jmp	.L181	 ;
 	.p2align 4,,10
 	.p2align 3
-.L174:
- ; D:/TC/src/output.c:679:         tac_output(indent, "%s\t", attribute->type->name);
+.L182:
+ ; D:/TC/src/output.c:692:         tac_output(indent, "%s\t", attribute->type->name);
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:679:         tac_output(indent, "%s\t", attribute->type->name);
+ ; D:/TC/src/output.c:692:         tac_output(indent, "%s\t", attribute->type->name);
 	movq	8(%rbx), %rax	 ; attribute_83->type, attribute_83->type
-	movq	%rbp, %rdx	 ; tmp300,
+	movq	%rdi, %rdx	 ; tmp309,
 	movq	%r14, %rcx	 ; outfile,
 	movq	8(%rax), %r8	 ; _86->name,
 	call	fprintf	 ;
- ; D:/TC/src/output.c:681:         tac_output(0, "NULL ");
+ ; D:/TC/src/output.c:693:     if (attribute->var == NULL)
+	movq	(%rbx), %rax	 ; attribute_83->var, _88
+ ; D:/TC/src/output.c:694:         tac_output(0, "NULL ");
 	xorl	%edx, %edx	 ;
- ; D:/TC/src/output.c:680:     if (attribute->var == NULL)
-	cmpq	$0, (%rbx)	 ;, attribute_83->var
- ; D:/TC/src/output.c:681:         tac_output(0, "NULL ");
 	movq	%r14, %rcx	 ; outfile,
- ; D:/TC/src/output.c:680:     if (attribute->var == NULL)
-	je	.L251	 ;,
-.L176:
- ; D:/TC/src/output.c:683:         tac_output(0, "%s ", attribute->var->name);
+ ; D:/TC/src/output.c:693:     if (attribute->var == NULL)
+	testq	%rax, %rax	 ; _88
+	je	.L260	 ;,
+.L184:
+ ; D:/TC/src/output.c:695:     else if (attribute->var->original_name)
+	cmpq	$0, (%rax)	 ;, _88->original_name
+	je	.L186	 ;,
+ ; D:/TC/src/output.c:696:         tac_output(0, "%s(%s) ", attribute->var->name, attribute->var->original_name->name);
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:683:         tac_output(0, "%s ", attribute->var->name);
-	movq	(%rbx), %rax	 ; attribute_83->var, attribute_83->var
-	movq	%rdi, %rdx	 ; tmp299,
+ ; D:/TC/src/output.c:696:         tac_output(0, "%s(%s) ", attribute->var->name, attribute->var->original_name->name);
+	movq	(%rbx), %rax	 ; attribute_83->var, _90
 	movq	%r14, %rcx	 ; outfile,
-	movq	8(%rax), %r8	 ; _89->name,
+	movq	(%rax), %rdx	 ; _90->original_name, _90->original_name
+	movq	8(%rax), %r8	 ; _90->name,
+	movq	8(%rdx), %r9	 ; _91->name,
+	leaq	.LC102(%rip), %rdx	 ;, tmp188
 	call	fprintf	 ;
-.L177:
- ; D:/TC/src/output.c:684:     tac_output(0, "%zu\n", attribute->offset);
+.L185:
+ ; D:/TC/src/output.c:699:     tac_output(0, "%zu\n", attribute->offset);
 	xorl	%edx, %edx	 ;
 	movq	%r14, %rcx	 ; outfile,
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:684:     tac_output(0, "%zu\n", attribute->offset);
+ ; D:/TC/src/output.c:699:     tac_output(0, "%zu\n", attribute->offset);
 	movq	16(%rbx), %r8	 ; attribute_83->offset,
-	leaq	.LC99(%rip), %rdx	 ;, tmp184
+	leaq	.LC103(%rip), %rdx	 ;, tmp193
 	movq	%r14, %rcx	 ; outfile,
 	call	fprintf	 ;
-.L173:
- ; D:/TC/src/output.c:663:         while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
+.L181:
+ ; D:/TC/src/output.c:676:         while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
 	movq	(%rsi), %rcx	 ; attribute_table_42->attributes, attribute_table_42->attributes
 	call	list_pop	 ;
-	movq	%rax, %rbx	 ; tmp307, attribute
- ; D:/TC/src/output.c:663:         while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
+	movq	%rax, %rbx	 ; tmp316, attribute
+ ; D:/TC/src/output.c:676:         while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
 	testq	%rax, %rax	 ; attribute
-	je	.L252	 ;,
- ; D:/TC/src/output.c:676:     if (attribute->type == NULL)
+	je	.L261	 ;,
+ ; D:/TC/src/output.c:689:     if (attribute->type == NULL)
 	cmpq	$0, 8(%rbx)	 ;, attribute_83->type
- ; D:/TC/src/output.c:664:             output_attribute(attribute, outfile, indent + 1);
+ ; D:/TC/src/output.c:677:             output_attribute(attribute, outfile, indent + 1);
 	leaq	3(%r13), %rdx	 ;, _82
- ; D:/TC/src/output.c:677:         tac_output(indent, "NULL\t");
+ ; D:/TC/src/output.c:690:         tac_output(indent, "NULL\t");
 	movq	%r14, %rcx	 ; outfile,
- ; D:/TC/src/output.c:676:     if (attribute->type == NULL)
-	jne	.L174	 ;,
- ; D:/TC/src/output.c:677:         tac_output(indent, "NULL\t");
+ ; D:/TC/src/output.c:689:     if (attribute->type == NULL)
+	jne	.L182	 ;,
+ ; D:/TC/src/output.c:690:         tac_output(indent, "NULL\t");
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:677:         tac_output(indent, "NULL\t");
+ ; D:/TC/src/output.c:690:         tac_output(indent, "NULL\t");
 	movl	$1, %edx	 ;,
 	movq	%r14, %r9	 ; outfile,
-	leaq	.LC97(%rip), %rcx	 ;,
+	leaq	.LC100(%rip), %rcx	 ;,
 	movl	$5, %r8d	 ;,
 	call	fwrite	 ;
- ; D:/TC/src/output.c:681:         tac_output(0, "NULL ");
+ ; D:/TC/src/output.c:693:     if (attribute->var == NULL)
+	movq	(%rbx), %rax	 ; attribute_83->var, _88
+ ; D:/TC/src/output.c:694:         tac_output(0, "NULL ");
 	xorl	%edx, %edx	 ;
- ; D:/TC/src/output.c:680:     if (attribute->var == NULL)
-	cmpq	$0, (%rbx)	 ;, attribute_83->var
- ; D:/TC/src/output.c:681:         tac_output(0, "NULL ");
 	movq	%r14, %rcx	 ; outfile,
- ; D:/TC/src/output.c:680:     if (attribute->var == NULL)
-	jne	.L176	 ;,
-.L251:
- ; D:/TC/src/output.c:681:         tac_output(0, "NULL ");
+ ; D:/TC/src/output.c:693:     if (attribute->var == NULL)
+	testq	%rax, %rax	 ; _88
+	jne	.L184	 ;,
+.L260:
+ ; D:/TC/src/output.c:694:         tac_output(0, "NULL ");
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:681:         tac_output(0, "NULL ");
+ ; D:/TC/src/output.c:694:         tac_output(0, "NULL ");
 	movq	%r14, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC92(%rip), %rcx	 ;, tmp179
+	leaq	.LC95(%rip), %rcx	 ;, tmp184
 	call	fwrite	 ;
-	jmp	.L177	 ;
+	jmp	.L185	 ;
 	.p2align 4,,10
 	.p2align 3
-.L252:
- ; D:/TC/src/output.c:665:         tac_output(indent, "}\n");
+.L186:
+ ; D:/TC/src/output.c:698:         tac_output(0, "%s ", attribute->var->name);
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:698:         tac_output(0, "%s ", attribute->var->name);
+	movq	(%rbx), %rax	 ; attribute_83->var, attribute_83->var
+	movq	%r12, %rdx	 ; tmp308,
+	movq	%r14, %rcx	 ; outfile,
+	movq	8(%rax), %r8	 ; _94->name,
+	call	fprintf	 ;
+	jmp	.L185	 ;
+	.p2align 4,,10
+	.p2align 3
+.L261:
+ ; D:/TC/src/output.c:678:         tac_output(indent, "}\n");
 	movq	%r15, %rdx	 ; _5,
 	movq	%r14, %rcx	 ; outfile,
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:665:         tac_output(indent, "}\n");
+ ; D:/TC/src/output.c:678:         tac_output(indent, "}\n");
 	movq	56(%rsp), %rcx	 ; %sfp,
 	movq	%r14, %r9	 ; outfile,
 	movl	$2, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	call	fwrite	 ;
-	jmp	.L168	 ;
+	jmp	.L176	 ;
 	.p2align 4,,10
 	.p2align 3
-.L250:
- ; D:/TC/src/output.c:654:         tac_output(indent, "NULL ");
+.L259:
+ ; D:/TC/src/output.c:667:         tac_output(indent, "NULL ");
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:654:         tac_output(indent, "NULL ");
+ ; D:/TC/src/output.c:667:         tac_output(indent, "NULL ");
 	movq	%r14, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC92(%rip), %rcx	 ;, tmp166
+	leaq	.LC95(%rip), %rcx	 ;, tmp171
 	call	fwrite	 ;
-	jmp	.L170	 ;
-.L249:
+	jmp	.L178	 ;
+.L258:
  ; D:/TC/src/output.c:435:         tac_output(indent + 1, "]\n");
-	movq	%r12, %rdx	 ; _232,
+	movq	%rbp, %rdx	 ; _239,
 	movq	%r14, %rcx	 ; outfile,
  ; D:/TC/src/output.c:435:         tac_output(indent + 1, "]\n");
-	leaq	.LC101(%rip), %rbx	 ;, tmp283
+	leaq	.LC105(%rip), %r12	 ;, tmp292
  ; D:/TC/src/output.c:435:         tac_output(indent + 1, "]\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:435:         tac_output(indent + 1, "]\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$1, %edx	 ;,
-	movq	%rbx, %rcx	 ; tmp283,
+	movq	%r12, %rcx	 ; tmp292,
 	movl	$2, %r8d	 ;,
 	call	fwrite	 ;
-	jmp	.L167	 ;
-.L186:
+	jmp	.L175	 ;
+.L195:
  ; D:/TC/src/output.c:453:         tac_output(indent + 1, "subroutines: [\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:453:         tac_output(indent + 1, "subroutines: [\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$15, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC107(%rip), %rcx	 ;, tmp201
-	leaq	.LC101(%rip), %rbx	 ;, tmp283
+	leaq	.LC111(%rip), %rcx	 ;, tmp210
+	leaq	.LC105(%rip), %r12	 ;, tmp292
 	call	fwrite	 ;
- ; D:/TC/src/output.c:570:     switch (instruction->type) {
-	leaq	.L211(%rip), %r15	 ;, tmp292
-	movq	%r12, 88(%rsp)	 ; _232, %sfp
-	movq	%rbx, 64(%rsp)	 ; tmp283, %sfp
+ ; D:/TC/src/output.c:583:     switch (instruction->type) {
+	leaq	.L220(%rip), %r15	 ;, tmp301
+	movq	%rbp, 88(%rsp)	 ; _239, %sfp
+	movq	%r12, 64(%rsp)	 ; tmp292, %sfp
  ; D:/TC/src/output.c:455:         while ((subroutine = (Subroutine*)list_pop(tac->subroutines)) != NULL)
-	jmp	.L188	 ;
+	jmp	.L197	 ;
 	.p2align 4,,10
 	.p2align 3
-.L256:
+.L265:
  ; D:/TC/src/output.c:478:         tac_output(indent + 1, "parameters: []\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:478:         tac_output(indent + 1, "parameters: []\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$15, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC112(%rip), %rcx	 ;, tmp211
+	leaq	.LC116(%rip), %rcx	 ;, tmp220
 	call	fwrite	 ;
-.L194:
+.L203:
  ; D:/TC/src/output.c:486:     if (list_is_empty(subroutine->local_vars))
 	movq	24(%rsi), %rcx	 ; subroutine_66->local_vars, subroutine_66->local_vars
 	call	list_is_empty	 ;
  ; D:/TC/src/output.c:487:         tac_output(indent + 1, "local: []\n");
-	movq	%rdi, %rdx	 ; _231,
+	movq	%rdi, %rdx	 ; _238,
 	movq	%r14, %rcx	 ; outfile,
  ; D:/TC/src/output.c:486:     if (list_is_empty(subroutine->local_vars))
-	testb	%al, %al	 ; tmp314
-	je	.L197	 ;,
+	testb	%al, %al	 ; tmp323
+	je	.L206	 ;,
  ; D:/TC/src/output.c:487:         tac_output(indent + 1, "local: []\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:487:         tac_output(indent + 1, "local: []\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$10, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC114(%rip), %rcx	 ;, tmp217
+	leaq	.LC118(%rip), %rcx	 ;, tmp226
 	call	fwrite	 ;
-.L198:
+.L207:
  ; D:/TC/src/output.c:495:     if (list_is_empty(subroutine->blocks))
 	movq	32(%rsi), %rcx	 ; subroutine_66->blocks, subroutine_66->blocks
 	call	list_is_empty	 ;
  ; D:/TC/src/output.c:496:         tac_output(indent + 1, "instructions: []\n");
-	movq	%rdi, %rdx	 ; _231,
+	movq	%rdi, %rdx	 ; _238,
 	movq	%r14, %rcx	 ; outfile,
  ; D:/TC/src/output.c:495:     if (list_is_empty(subroutine->blocks))
-	testb	%al, %al	 ; tmp316
-	je	.L201	 ;,
+	testb	%al, %al	 ; tmp325
+	je	.L210	 ;,
  ; D:/TC/src/output.c:496:         tac_output(indent + 1, "instructions: []\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:496:         tac_output(indent + 1, "instructions: []\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$17, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC116(%rip), %rcx	 ;, tmp223
+	leaq	.LC120(%rip), %rcx	 ;, tmp232
 	call	fwrite	 ;
-.L202:
+.L211:
  ; D:/TC/src/output.c:504:     tac_output(indent, "}\n");
 	movq	%rbp, %rdx	 ; _22,
 	movq	%r14, %rcx	 ; outfile,
@@ -3236,15 +3330,15 @@ output_TAC:
 	movl	$2, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	call	fwrite	 ;
-.L188:
+.L197:
  ; D:/TC/src/output.c:455:         while ((subroutine = (Subroutine*)list_pop(tac->subroutines)) != NULL)
 	movq	48(%rsp), %rax	 ; %sfp, tac
 	movq	24(%rax), %rcx	 ; tac_32(D)->subroutines, tac_32(D)->subroutines
 	call	list_pop	 ;
-	movq	%rax, %rsi	 ; tmp320, subroutine
+	movq	%rax, %rsi	 ; tmp329, subroutine
  ; D:/TC/src/output.c:455:         while ((subroutine = (Subroutine*)list_pop(tac->subroutines)) != NULL)
 	testq	%rax, %rax	 ; subroutine
-	je	.L253	 ;,
+	je	.L262	 ;,
  ; D:/TC/src/output.c:456:             output_subroutine(subroutine, outfile, indent + 2);
 	leaq	2(%r13), %rbp	 ;, _22
  ; D:/TC/src/output.c:469:     if (subroutine->name == NULL)
@@ -3253,73 +3347,73 @@ output_TAC:
 	movq	%r14, %rcx	 ; outfile,
 	movq	%rbp, %rdx	 ; _22,
  ; D:/TC/src/output.c:469:     if (subroutine->name == NULL)
-	je	.L254	 ;,
+	je	.L263	 ;,
  ; D:/TC/src/output.c:472:         tac_output(indent, "%s {\n", subroutine->name->name);
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:472:         tac_output(indent, "%s {\n", subroutine->name->name);
 	movq	(%rsi), %rax	 ; subroutine_66->name, subroutine_66->name
-	leaq	.LC109(%rip), %rdx	 ;, tmp205
+	leaq	.LC113(%rip), %rdx	 ;, tmp214
 	movq	%r14, %rcx	 ; outfile,
-	movq	8(%rax), %r8	 ; _93->name,
+	movq	8(%rax), %r8	 ; _98->name,
 	call	fprintf	 ;
-.L190:
- ; D:/TC/src/output.c:664:             output_attribute(attribute, outfile, indent + 1);
-	leaq	3(%r13), %rdi	 ;, _231
+.L199:
+ ; D:/TC/src/output.c:677:             output_attribute(attribute, outfile, indent + 1);
+	leaq	3(%r13), %rdi	 ;, _238
  ; D:/TC/src/output.c:473:     if (subroutine->return_type == NULL)
 	cmpq	$0, 8(%rsi)	 ;, subroutine_66->return_type
  ; D:/TC/src/output.c:474:         tac_output(indent + 1, "return_type: \"NULL\"\n");
 	movq	%r14, %rcx	 ; outfile,
-	movq	%rdi, %rdx	 ; _231,
+	movq	%rdi, %rdx	 ; _238,
  ; D:/TC/src/output.c:473:     if (subroutine->return_type == NULL)
-	je	.L255	 ;,
+	je	.L264	 ;,
  ; D:/TC/src/output.c:476:         tac_output(indent + 1, "return_type: %s\n", subroutine->return_type->name);
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:476:         tac_output(indent + 1, "return_type: %s\n", subroutine->return_type->name);
 	movq	8(%rsi), %rax	 ; subroutine_66->return_type, subroutine_66->return_type
-	leaq	.LC111(%rip), %rdx	 ;, tmp209
+	leaq	.LC115(%rip), %rdx	 ;, tmp218
 	movq	%r14, %rcx	 ; outfile,
-	movq	8(%rax), %r8	 ; _98->name,
+	movq	8(%rax), %r8	 ; _103->name,
 	call	fprintf	 ;
-.L192:
+.L201:
  ; D:/TC/src/output.c:477:     if (list_is_empty(subroutine->parameters))
 	movq	16(%rsi), %rcx	 ; subroutine_66->parameters, subroutine_66->parameters
 	call	list_is_empty	 ;
  ; D:/TC/src/output.c:478:         tac_output(indent + 1, "parameters: []\n");
-	movq	%rdi, %rdx	 ; _231,
+	movq	%rdi, %rdx	 ; _238,
 	movq	%r14, %rcx	 ; outfile,
  ; D:/TC/src/output.c:477:     if (list_is_empty(subroutine->parameters))
-	testb	%al, %al	 ; tmp312
-	jne	.L256	 ;,
+	testb	%al, %al	 ; tmp321
+	jne	.L265	 ;,
  ; D:/TC/src/output.c:480:         tac_output(indent + 1, "parameters: [\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:480:         tac_output(indent + 1, "parameters: [\n");
 	movq	%r14, %r9	 ; outfile,
  ; D:/TC/src/output.c:483:             output_var(parameter, outfile, indent + 2);
-	leaq	4(%r13), %rbx	 ;, tmp291
+	leaq	4(%r13), %rbx	 ;, tmp300
  ; D:/TC/src/output.c:480:         tac_output(indent + 1, "parameters: [\n");
 	movl	$14, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC113(%rip), %rcx	 ;, tmp212
+	leaq	.LC117(%rip), %rcx	 ;, tmp221
 	call	fwrite	 ;
  ; D:/TC/src/output.c:482:         while ((parameter = (Var*)list_pop(subroutine->parameters)) != NULL)
-	jmp	.L195	 ;
+	jmp	.L204	 ;
 	.p2align 4,,10
 	.p2align 3
-.L196:
+.L205:
  ; D:/TC/src/output.c:483:             output_var(parameter, outfile, indent + 2);
-	movq	%rbx, %r8	 ; tmp291,
+	movq	%rbx, %r8	 ; tmp300,
 	movq	%r14, %rdx	 ; outfile,
 	call	output_var	 ;
-.L195:
+.L204:
  ; D:/TC/src/output.c:482:         while ((parameter = (Var*)list_pop(subroutine->parameters)) != NULL)
 	movq	16(%rsi), %rcx	 ; subroutine_66->parameters, subroutine_66->parameters
 	call	list_pop	 ;
-	movq	%rax, %rcx	 ; tmp313, parameter
+	movq	%rax, %rcx	 ; tmp322, parameter
  ; D:/TC/src/output.c:482:         while ((parameter = (Var*)list_pop(subroutine->parameters)) != NULL)
 	testq	%rax, %rax	 ; parameter
-	jne	.L196	 ;,
+	jne	.L205	 ;,
  ; D:/TC/src/output.c:484:         tac_output(indent + 1, "]\n");
-	movq	%rdi, %rdx	 ; _231,
+	movq	%rdi, %rdx	 ; _238,
 	movq	%r14, %rcx	 ; outfile,
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:484:         tac_output(indent + 1, "]\n");
@@ -3328,575 +3422,575 @@ output_TAC:
 	movl	$2, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	call	fwrite	 ;
-	jmp	.L194	 ;
+	jmp	.L203	 ;
 	.p2align 4,,10
 	.p2align 3
-.L201:
+.L210:
  ; D:/TC/src/output.c:498:         tac_output(indent + 1, "instructions: [\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:498:         tac_output(indent + 1, "instructions: [\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$16, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC117(%rip), %rcx	 ;, tmp224
+	leaq	.LC121(%rip), %rcx	 ;, tmp233
 	call	fwrite	 ;
 	movq	%rbp, 72(%rsp)	 ; _22, %sfp
 	movq	%rsi, 40(%rsp)	 ; subroutine, %sfp
-	movq	%rdi, 80(%rsp)	 ; _231, %sfp
+	movq	%rdi, 80(%rsp)	 ; _238, %sfp
 	.p2align 4,,10
 	.p2align 3
-.L203:
+.L212:
  ; D:/TC/src/output.c:500:         while ((block = (Block*)list_pop(subroutine->blocks)) != NULL)
 	movq	40(%rsp), %rax	 ; %sfp, subroutine
 	movq	32(%rax), %rcx	 ; subroutine_66->blocks, subroutine_66->blocks
 	call	list_pop	 ;
-	movq	%rax, %rbx	 ; tmp319, block
+	movq	%rax, %rbx	 ; tmp328, block
  ; D:/TC/src/output.c:500:         while ((block = (Block*)list_pop(subroutine->blocks)) != NULL)
 	testq	%rax, %rax	 ; block
-	je	.L257	 ;,
+	je	.L266	 ;,
  ; D:/TC/src/output.c:501:             output_block(block, outfile, indent + 2);
-	leaq	4(%r13), %r12	 ;, _118
- ; D:/TC/src/output.c:527:     if (block->label == NULL)
-	cmpq	$0, (%rbx)	 ;, block_119->label
- ; D:/TC/src/output.c:528:         tac_output(indent, "NULL ");
+	leaq	4(%r13), %r12	 ;, _123
+ ; D:/TC/src/output.c:529:     if (block->label == NULL)
+	cmpq	$0, (%rbx)	 ;, block_124->label
+ ; D:/TC/src/output.c:530:         tac_output(indent, "NULL ");
 	movq	%r14, %rcx	 ; outfile,
-	movq	%r12, %rdx	 ; _118,
- ; D:/TC/src/output.c:527:     if (block->label == NULL)
-	je	.L258	 ;,
- ; D:/TC/src/output.c:530:         tac_output(indent, "%s ", block->label->name);
+	movq	%r12, %rdx	 ; _123,
+ ; D:/TC/src/output.c:529:     if (block->label == NULL)
+	je	.L267	 ;,
+ ; D:/TC/src/output.c:532:         tac_output(indent, "%s ", block->label->name);
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:530:         tac_output(indent, "%s ", block->label->name);
-	movq	(%rbx), %rax	 ; block_119->label, block_119->label
-	leaq	.LC93(%rip), %rdx	 ;,
+ ; D:/TC/src/output.c:532:         tac_output(indent, "%s ", block->label->name);
+	movq	(%rbx), %rax	 ; block_124->label, block_124->label
+	leaq	.LC96(%rip), %rdx	 ;,
 	movq	%r14, %rcx	 ; outfile,
-	movq	8(%rax), %r8	 ; _122->name,
+	movq	8(%rax), %r8	 ; _127->name,
 	call	fprintf	 ;
-.L205:
- ; D:/TC/src/output.c:531:     if (list_is_empty(block->instructions))
-	movq	8(%rbx), %rcx	 ; block_119->instructions, block_119->instructions
+.L214:
+ ; D:/TC/src/output.c:533:     if (list_is_empty(block->instructions))
+	movq	8(%rbx), %rcx	 ; block_124->instructions, block_124->instructions
 	call	list_is_empty	 ;
- ; D:/TC/src/output.c:532:         tac_output(0, "{}\n");
+ ; D:/TC/src/output.c:534:         tac_output(0, "{}\n");
 	xorl	%edx, %edx	 ;
 	movq	%r14, %rcx	 ; outfile,
- ; D:/TC/src/output.c:531:     if (list_is_empty(block->instructions))
-	testb	%al, %al	 ; tmp317
-	je	.L206	 ;,
- ; D:/TC/src/output.c:532:         tac_output(0, "{}\n");
+ ; D:/TC/src/output.c:533:     if (list_is_empty(block->instructions))
+	testb	%al, %al	 ; tmp326
+	je	.L215	 ;,
+ ; D:/TC/src/output.c:534:         tac_output(0, "{}\n");
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:532:         tac_output(0, "{}\n");
+ ; D:/TC/src/output.c:534:         tac_output(0, "{}\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$3, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC95(%rip), %rcx	 ;, tmp230
+	leaq	.LC98(%rip), %rcx	 ;, tmp239
 	call	fwrite	 ;
-	jmp	.L203	 ;
-	.p2align 4,,10
-	.p2align 3
-.L206:
- ; D:/TC/src/output.c:534:         tac_output(0, "{\n");
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:534:         tac_output(0, "{\n");
-	movq	%r14, %r9	 ; outfile,
- ; D:/TC/src/output.c:537:             output_instruction(instruction, outfile, indent + 1);
-	leaq	5(%r13), %rdi	 ;, _126
- ; D:/TC/src/output.c:534:         tac_output(0, "{\n");
-	movl	$2, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC96(%rip), %rcx	 ;, tmp231
-	movl	$1, %ebp	 ;, tmp286
-	call	fwrite	 ;
-	.p2align 4,,10
-	.p2align 3
-.L208:
- ; D:/TC/src/output.c:536:         while ((instruction = (Instruction*)list_pop(block->instructions)) != NULL)
-	movq	8(%rbx), %rcx	 ; block_119->instructions, block_119->instructions
-	call	list_pop	 ;
-	movq	%rax, %rsi	 ; tmp318, instruction
- ; D:/TC/src/output.c:536:         while ((instruction = (Instruction*)list_pop(block->instructions)) != NULL)
-	testq	%rax, %rax	 ; instruction
-	je	.L259	 ;,
- ; D:/TC/src/output.c:570:     switch (instruction->type) {
-	cmpl	$25, 24(%rsi)	 ;, instruction_127->type
-	ja	.L209	 ;,
-	movl	24(%rsi), %eax	 ; instruction_127->type, instruction_127->type
- ; D:/TC/src/output.c:596:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
-	movq	%rdi, %rdx	 ; _126,
-	movq	%r14, %rcx	 ; outfile,
- ; D:/TC/src/output.c:570:     switch (instruction->type) {
-	movslq	(%r15,%rax,4), %rax	 ;, tmp235
-	addq	%r15, %rax	 ; tmp292, tmp236
-	jmp	*%rax	 ; tmp236
-	.section .rdata,"dr"
-	.align 4
-.L211:
-	.long	.L236-.L211
-	.long	.L235-.L211
-	.long	.L234-.L211
-	.long	.L233-.L211
-	.long	.L232-.L211
-	.long	.L231-.L211
-	.long	.L230-.L211
-	.long	.L229-.L211
-	.long	.L228-.L211
-	.long	.L227-.L211
-	.long	.L226-.L211
-	.long	.L225-.L211
-	.long	.L224-.L211
-	.long	.L223-.L211
-	.long	.L222-.L211
-	.long	.L221-.L211
-	.long	.L220-.L211
-	.long	.L219-.L211
-	.long	.L218-.L211
-	.long	.L217-.L211
-	.long	.L216-.L211
-	.long	.L215-.L211
-	.long	.L214-.L211
-	.long	.L213-.L211
-	.long	.L212-.L211
-	.long	.L210-.L211
-	.text
-	.p2align 4,,10
-	.p2align 3
-.L212:
- ; D:/TC/src/output.c:595:         case INST_STORE: tac_output(indent, "store\t"); break;
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:595:         case INST_STORE: tac_output(indent, "store\t"); break;
-	movq	%r14, %r9	 ; outfile,
-	movl	$6, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC142(%rip), %rcx	 ;, tmp262
-	call	fwrite	 ;
-	.p2align 4,,10
-	.p2align 3
-.L237:
- ; D:/TC/src/output.c:602:     output_arg(instruction->arg1, outfile);
-	movq	(%rsi), %rcx	 ; instruction_127->arg1, instruction_127->arg1
-	movq	%r14, %rdx	 ; outfile,
-	call	output_arg	 ;
- ; D:/TC/src/output.c:603:     switch (instruction->type) {
-	movl	24(%rsi), %ecx	 ; instruction_127->type, _132
- ; D:/TC/src/output.c:603:     switch (instruction->type) {
-	cmpl	$24, %ecx	 ;, _132
-	ja	.L208	 ;,
-	movq	%rbp, %rax	 ; tmp286, _4
-	salq	%cl, %rax	 ; _132, _4
-	testl	$4825087, %eax	 ;, _4
-	jne	.L239	 ;,
-	testl	$25583616, %eax	 ;, _4
-	jne	.L240	 ;,
-	testl	$3145728, %eax	 ;, _4
-	je	.L208	 ;,
-.L241:
- ; D:/TC/src/output.c:643:     tac_output(0, "\n");
-	xorl	%edx, %edx	 ;
-	movq	%r14, %rcx	 ; outfile,
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:643:     tac_output(0, "\n");
-	movq	%r14, %rdx	 ; outfile,
-	movl	$10, %ecx	 ;,
-	call	fputc	 ;
-	jmp	.L208	 ;
-	.p2align 4,,10
-	.p2align 3
-.L213:
- ; D:/TC/src/output.c:594:         case INST_LOAD: tac_output(indent, "load\t"); break;
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:594:         case INST_LOAD: tac_output(indent, "load\t"); break;
-	movq	%r14, %r9	 ; outfile,
-	movl	$5, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC141(%rip), %rcx	 ;, tmp261
-	call	fwrite	 ;
- ; D:/TC/src/output.c:594:         case INST_LOAD: tac_output(indent, "load\t"); break;
-	jmp	.L237	 ;
-	.p2align 4,,10
-	.p2align 3
-.L214:
- ; D:/TC/src/output.c:593:         case INST_CALL: tac_output(indent, "call\t"); break;
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:593:         case INST_CALL: tac_output(indent, "call\t"); break;
-	movq	%r14, %r9	 ; outfile,
-	movl	$5, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC140(%rip), %rcx	 ;, tmp260
-	call	fwrite	 ;
- ; D:/TC/src/output.c:593:         case INST_CALL: tac_output(indent, "call\t"); break;
-	jmp	.L237	 ;
+	jmp	.L212	 ;
 	.p2align 4,,10
 	.p2align 3
 .L215:
- ; D:/TC/src/output.c:592:         case INST_RET: tac_output(indent, "ret\t"); break;
+ ; D:/TC/src/output.c:536:         tac_output(0, "{\n");
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:592:         case INST_RET: tac_output(indent, "ret\t"); break;
+ ; D:/TC/src/output.c:536:         tac_output(0, "{\n");
 	movq	%r14, %r9	 ; outfile,
-	movl	$4, %r8d	 ;,
+ ; D:/TC/src/output.c:539:             output_instruction(instruction, outfile, indent + 1);
+	leaq	5(%r13), %rdi	 ;, _131
+ ; D:/TC/src/output.c:536:         tac_output(0, "{\n");
+	movl	$2, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC139(%rip), %rcx	 ;, tmp259
+	leaq	.LC99(%rip), %rcx	 ;, tmp240
+	movl	$1, %ebp	 ;, tmp295
 	call	fwrite	 ;
- ; D:/TC/src/output.c:592:         case INST_RET: tac_output(indent, "ret\t"); break;
-	jmp	.L237	 ;
-	.p2align 4,,10
-	.p2align 3
-.L216:
- ; D:/TC/src/output.c:591:         case INST_JMP: tac_output(indent, "jmp\t"); break;
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:591:         case INST_JMP: tac_output(indent, "jmp\t"); break;
-	movq	%r14, %r9	 ; outfile,
-	movl	$4, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC138(%rip), %rcx	 ;, tmp258
-	call	fwrite	 ;
- ; D:/TC/src/output.c:591:         case INST_JMP: tac_output(indent, "jmp\t"); break;
-	jmp	.L237	 ;
 	.p2align 4,,10
 	.p2align 3
 .L217:
- ; D:/TC/src/output.c:590:         case INST_JMP_C: tac_output(indent, "jmp_c\t"); break;
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:590:         case INST_JMP_C: tac_output(indent, "jmp_c\t"); break;
-	movq	%r14, %r9	 ; outfile,
-	movl	$6, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC137(%rip), %rcx	 ;, tmp257
-	call	fwrite	 ;
- ; D:/TC/src/output.c:590:         case INST_JMP_C: tac_output(indent, "jmp_c\t"); break;
-	jmp	.L237	 ;
-	.p2align 4,,10
-	.p2align 3
-.L218:
- ; D:/TC/src/output.c:589:         case INST_ALLOC: tac_output(indent, "alloc\t"); break;
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:589:         case INST_ALLOC: tac_output(indent, "alloc\t"); break;
-	movq	%r14, %r9	 ; outfile,
-	movl	$6, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC136(%rip), %rcx	 ;, tmp256
-	call	fwrite	 ;
- ; D:/TC/src/output.c:589:         case INST_ALLOC: tac_output(indent, "alloc\t"); break;
-	jmp	.L237	 ;
-	.p2align 4,,10
-	.p2align 3
-.L219:
- ; D:/TC/src/output.c:588:         case INST_PARAM: tac_output(indent, "param\t"); break;
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:588:         case INST_PARAM: tac_output(indent, "param\t"); break;
-	movq	%r14, %r9	 ; outfile,
-	movl	$6, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC135(%rip), %rcx	 ;, tmp255
-	call	fwrite	 ;
- ; D:/TC/src/output.c:588:         case INST_PARAM: tac_output(indent, "param\t"); break;
-	jmp	.L237	 ;
-	.p2align 4,,10
-	.p2align 3
+ ; D:/TC/src/output.c:538:         while ((instruction = (Instruction*)list_pop(block->instructions)) != NULL)
+	movq	8(%rbx), %rcx	 ; block_124->instructions, block_124->instructions
+	call	list_pop	 ;
+	movq	%rax, %rsi	 ; tmp327, instruction
+ ; D:/TC/src/output.c:538:         while ((instruction = (Instruction*)list_pop(block->instructions)) != NULL)
+	testq	%rax, %rax	 ; instruction
+	je	.L268	 ;,
+ ; D:/TC/src/output.c:583:     switch (instruction->type) {
+	cmpl	$25, 24(%rsi)	 ;, instruction_132->type
+	ja	.L218	 ;,
+	movl	24(%rsi), %eax	 ; instruction_132->type, instruction_132->type
+ ; D:/TC/src/output.c:609:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
+	movq	%rdi, %rdx	 ; _131,
+	movq	%r14, %rcx	 ; outfile,
+ ; D:/TC/src/output.c:583:     switch (instruction->type) {
+	movslq	(%r15,%rax,4), %rax	 ;, tmp244
+	addq	%r15, %rax	 ; tmp301, tmp245
+	jmp	*%rax	 ; tmp245
+	.section .rdata,"dr"
+	.align 4
 .L220:
- ; D:/TC/src/output.c:587:         case INST_GET_ELEM: tac_output(indent, "get_elem\t"); break;
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:587:         case INST_GET_ELEM: tac_output(indent, "get_elem\t"); break;
-	movq	%r14, %r9	 ; outfile,
-	movl	$9, %r8d	 ;,
-	movl	$1, %edx	 ;,
-	leaq	.LC134(%rip), %rcx	 ;, tmp254
-	call	fwrite	 ;
- ; D:/TC/src/output.c:587:         case INST_GET_ELEM: tac_output(indent, "get_elem\t"); break;
-	jmp	.L237	 ;
+	.long	.L245-.L220
+	.long	.L244-.L220
+	.long	.L243-.L220
+	.long	.L242-.L220
+	.long	.L241-.L220
+	.long	.L240-.L220
+	.long	.L239-.L220
+	.long	.L238-.L220
+	.long	.L237-.L220
+	.long	.L236-.L220
+	.long	.L235-.L220
+	.long	.L234-.L220
+	.long	.L233-.L220
+	.long	.L232-.L220
+	.long	.L231-.L220
+	.long	.L230-.L220
+	.long	.L229-.L220
+	.long	.L228-.L220
+	.long	.L227-.L220
+	.long	.L226-.L220
+	.long	.L225-.L220
+	.long	.L224-.L220
+	.long	.L223-.L220
+	.long	.L222-.L220
+	.long	.L221-.L220
+	.long	.L219-.L220
+	.text
 	.p2align 4,,10
 	.p2align 3
 .L221:
- ; D:/TC/src/output.c:586:         case INST_GET_ATTR: tac_output(indent, "get_attr\t"); break;
+ ; D:/TC/src/output.c:608:         case INST_STORE: tac_output(indent, "store\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:586:         case INST_GET_ATTR: tac_output(indent, "get_attr\t"); break;
+ ; D:/TC/src/output.c:608:         case INST_STORE: tac_output(indent, "store\t"); break;
 	movq	%r14, %r9	 ; outfile,
-	movl	$9, %r8d	 ;,
+	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC133(%rip), %rcx	 ;, tmp253
+	leaq	.LC146(%rip), %rcx	 ;, tmp271
 	call	fwrite	 ;
- ; D:/TC/src/output.c:586:         case INST_GET_ATTR: tac_output(indent, "get_attr\t"); break;
-	jmp	.L237	 ;
+	.p2align 4,,10
+	.p2align 3
+.L246:
+ ; D:/TC/src/output.c:615:     output_arg(instruction->arg1, outfile);
+	movq	(%rsi), %rcx	 ; instruction_132->arg1, instruction_132->arg1
+	movq	%r14, %rdx	 ; outfile,
+	call	output_arg	 ;
+ ; D:/TC/src/output.c:616:     switch (instruction->type) {
+	movl	24(%rsi), %ecx	 ; instruction_132->type, _137
+ ; D:/TC/src/output.c:616:     switch (instruction->type) {
+	cmpl	$24, %ecx	 ;, _137
+	ja	.L217	 ;,
+	movq	%rbp, %rax	 ; tmp295, _4
+	salq	%cl, %rax	 ; _137, _4
+	testl	$4825087, %eax	 ;, _4
+	jne	.L248	 ;,
+	testl	$25583616, %eax	 ;, _4
+	jne	.L249	 ;,
+	testl	$3145728, %eax	 ;, _4
+	je	.L217	 ;,
+.L250:
+ ; D:/TC/src/output.c:656:     tac_output(0, "\n");
+	xorl	%edx, %edx	 ;
+	movq	%r14, %rcx	 ; outfile,
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:656:     tac_output(0, "\n");
+	movq	%r14, %rdx	 ; outfile,
+	movl	$10, %ecx	 ;,
+	call	fputc	 ;
+	jmp	.L217	 ;
 	.p2align 4,,10
 	.p2align 3
 .L222:
- ; D:/TC/src/output.c:585:         case INST_ASSIGN: tac_output(indent, "assign\t"); break;
+ ; D:/TC/src/output.c:607:         case INST_LOAD: tac_output(indent, "load\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:585:         case INST_ASSIGN: tac_output(indent, "assign\t"); break;
+ ; D:/TC/src/output.c:607:         case INST_LOAD: tac_output(indent, "load\t"); break;
 	movq	%r14, %r9	 ; outfile,
-	movl	$7, %r8d	 ;,
+	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC132(%rip), %rcx	 ;, tmp252
+	leaq	.LC145(%rip), %rcx	 ;, tmp270
 	call	fwrite	 ;
- ; D:/TC/src/output.c:585:         case INST_ASSIGN: tac_output(indent, "assign\t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:607:         case INST_LOAD: tac_output(indent, "load\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L223:
- ; D:/TC/src/output.c:584:         case INST_NOT: tac_output(indent, "not\t"); break;
+ ; D:/TC/src/output.c:606:         case INST_CALL: tac_output(indent, "call\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:584:         case INST_NOT: tac_output(indent, "not\t"); break;
+ ; D:/TC/src/output.c:606:         case INST_CALL: tac_output(indent, "call\t"); break;
 	movq	%r14, %r9	 ; outfile,
-	movl	$4, %r8d	 ;,
+	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC131(%rip), %rcx	 ;, tmp251
+	leaq	.LC144(%rip), %rcx	 ;, tmp269
 	call	fwrite	 ;
- ; D:/TC/src/output.c:584:         case INST_NOT: tac_output(indent, "not\t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:606:         case INST_CALL: tac_output(indent, "call\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L224:
- ; D:/TC/src/output.c:583:         case INST_OR: tac_output(indent, "or \t"); break;
+ ; D:/TC/src/output.c:605:         case INST_RET: tac_output(indent, "ret\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:583:         case INST_OR: tac_output(indent, "or \t"); break;
+ ; D:/TC/src/output.c:605:         case INST_RET: tac_output(indent, "ret\t"); break;
 	movq	%r14, %r9	 ; outfile,
 	movl	$4, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC130(%rip), %rcx	 ;, tmp250
+	leaq	.LC143(%rip), %rcx	 ;, tmp268
 	call	fwrite	 ;
- ; D:/TC/src/output.c:583:         case INST_OR: tac_output(indent, "or \t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:605:         case INST_RET: tac_output(indent, "ret\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L225:
- ; D:/TC/src/output.c:582:         case INST_AND: tac_output(indent, "and\t"); break;
+ ; D:/TC/src/output.c:604:         case INST_JMP: tac_output(indent, "jmp\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:582:         case INST_AND: tac_output(indent, "and\t"); break;
+ ; D:/TC/src/output.c:604:         case INST_JMP: tac_output(indent, "jmp\t"); break;
 	movq	%r14, %r9	 ; outfile,
 	movl	$4, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC129(%rip), %rcx	 ;, tmp249
+	leaq	.LC142(%rip), %rcx	 ;, tmp267
 	call	fwrite	 ;
- ; D:/TC/src/output.c:582:         case INST_AND: tac_output(indent, "and\t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:604:         case INST_JMP: tac_output(indent, "jmp\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L226:
- ; D:/TC/src/output.c:581:         case INST_GE: tac_output(indent, "ge \t"); break;
+ ; D:/TC/src/output.c:603:         case INST_JMP_C: tac_output(indent, "jmp_c\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:581:         case INST_GE: tac_output(indent, "ge \t"); break;
+ ; D:/TC/src/output.c:603:         case INST_JMP_C: tac_output(indent, "jmp_c\t"); break;
 	movq	%r14, %r9	 ; outfile,
-	movl	$4, %r8d	 ;,
+	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC128(%rip), %rcx	 ;, tmp248
+	leaq	.LC141(%rip), %rcx	 ;, tmp266
 	call	fwrite	 ;
- ; D:/TC/src/output.c:581:         case INST_GE: tac_output(indent, "ge \t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:603:         case INST_JMP_C: tac_output(indent, "jmp_c\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L227:
- ; D:/TC/src/output.c:580:         case INST_LE: tac_output(indent, "le \t"); break;
+ ; D:/TC/src/output.c:602:         case INST_ALLOC: tac_output(indent, "alloc\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:580:         case INST_LE: tac_output(indent, "le \t"); break;
+ ; D:/TC/src/output.c:602:         case INST_ALLOC: tac_output(indent, "alloc\t"); break;
 	movq	%r14, %r9	 ; outfile,
-	movl	$4, %r8d	 ;,
+	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC127(%rip), %rcx	 ;, tmp247
+	leaq	.LC140(%rip), %rcx	 ;, tmp265
 	call	fwrite	 ;
- ; D:/TC/src/output.c:580:         case INST_LE: tac_output(indent, "le \t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:602:         case INST_ALLOC: tac_output(indent, "alloc\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L228:
- ; D:/TC/src/output.c:579:         case INST_GT: tac_output(indent, "gt \t"); break;
+ ; D:/TC/src/output.c:601:         case INST_PARAM: tac_output(indent, "param\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:579:         case INST_GT: tac_output(indent, "gt \t"); break;
+ ; D:/TC/src/output.c:601:         case INST_PARAM: tac_output(indent, "param\t"); break;
 	movq	%r14, %r9	 ; outfile,
-	movl	$4, %r8d	 ;,
+	movl	$6, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC126(%rip), %rcx	 ;, tmp246
+	leaq	.LC139(%rip), %rcx	 ;, tmp264
 	call	fwrite	 ;
- ; D:/TC/src/output.c:579:         case INST_GT: tac_output(indent, "gt \t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:601:         case INST_PARAM: tac_output(indent, "param\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L229:
- ; D:/TC/src/output.c:578:         case INST_LT: tac_output(indent, "lt \t"); break;
+ ; D:/TC/src/output.c:600:         case INST_GET_ELEM: tac_output(indent, "get_elem\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:578:         case INST_LT: tac_output(indent, "lt \t"); break;
+ ; D:/TC/src/output.c:600:         case INST_GET_ELEM: tac_output(indent, "get_elem\t"); break;
 	movq	%r14, %r9	 ; outfile,
-	movl	$4, %r8d	 ;,
+	movl	$9, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC125(%rip), %rcx	 ;, tmp245
+	leaq	.LC138(%rip), %rcx	 ;, tmp263
 	call	fwrite	 ;
- ; D:/TC/src/output.c:578:         case INST_LT: tac_output(indent, "lt \t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:600:         case INST_GET_ELEM: tac_output(indent, "get_elem\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L230:
- ; D:/TC/src/output.c:577:         case INST_NE: tac_output(indent, "ne \t"); break;
+ ; D:/TC/src/output.c:599:         case INST_GET_ATTR: tac_output(indent, "get_attr\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:577:         case INST_NE: tac_output(indent, "ne \t"); break;
+ ; D:/TC/src/output.c:599:         case INST_GET_ATTR: tac_output(indent, "get_attr\t"); break;
 	movq	%r14, %r9	 ; outfile,
-	movl	$4, %r8d	 ;,
+	movl	$9, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC124(%rip), %rcx	 ;, tmp244
+	leaq	.LC137(%rip), %rcx	 ;, tmp262
 	call	fwrite	 ;
- ; D:/TC/src/output.c:577:         case INST_NE: tac_output(indent, "ne \t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:599:         case INST_GET_ATTR: tac_output(indent, "get_attr\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L231:
- ; D:/TC/src/output.c:576:         case INST_EQ: tac_output(indent, "eq \t"); break;
+ ; D:/TC/src/output.c:598:         case INST_ASSIGN: tac_output(indent, "assign\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:576:         case INST_EQ: tac_output(indent, "eq \t"); break;
+ ; D:/TC/src/output.c:598:         case INST_ASSIGN: tac_output(indent, "assign\t"); break;
 	movq	%r14, %r9	 ; outfile,
-	movl	$4, %r8d	 ;,
+	movl	$7, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC123(%rip), %rcx	 ;, tmp243
+	leaq	.LC136(%rip), %rcx	 ;, tmp261
 	call	fwrite	 ;
- ; D:/TC/src/output.c:576:         case INST_EQ: tac_output(indent, "eq \t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:598:         case INST_ASSIGN: tac_output(indent, "assign\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L232:
- ; D:/TC/src/output.c:575:         case INST_MOD: tac_output(indent, "mod\t"); break;
+ ; D:/TC/src/output.c:597:         case INST_NOT: tac_output(indent, "not\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:575:         case INST_MOD: tac_output(indent, "mod\t"); break;
+ ; D:/TC/src/output.c:597:         case INST_NOT: tac_output(indent, "not\t"); break;
 	movq	%r14, %r9	 ; outfile,
 	movl	$4, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC122(%rip), %rcx	 ;, tmp242
+	leaq	.LC135(%rip), %rcx	 ;, tmp260
 	call	fwrite	 ;
- ; D:/TC/src/output.c:575:         case INST_MOD: tac_output(indent, "mod\t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:597:         case INST_NOT: tac_output(indent, "not\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L233:
- ; D:/TC/src/output.c:574:         case INST_DIV: tac_output(indent, "div\t"); break;
+ ; D:/TC/src/output.c:596:         case INST_OR: tac_output(indent, "or \t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:574:         case INST_DIV: tac_output(indent, "div\t"); break;
+ ; D:/TC/src/output.c:596:         case INST_OR: tac_output(indent, "or \t"); break;
 	movq	%r14, %r9	 ; outfile,
 	movl	$4, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC121(%rip), %rcx	 ;, tmp241
+	leaq	.LC134(%rip), %rcx	 ;, tmp259
 	call	fwrite	 ;
- ; D:/TC/src/output.c:574:         case INST_DIV: tac_output(indent, "div\t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:596:         case INST_OR: tac_output(indent, "or \t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L234:
- ; D:/TC/src/output.c:573:         case INST_MUL: tac_output(indent, "mul\t"); break;
+ ; D:/TC/src/output.c:595:         case INST_AND: tac_output(indent, "and\t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:573:         case INST_MUL: tac_output(indent, "mul\t"); break;
+ ; D:/TC/src/output.c:595:         case INST_AND: tac_output(indent, "and\t"); break;
 	movq	%r14, %r9	 ; outfile,
 	movl	$4, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC120(%rip), %rcx	 ;, tmp240
+	leaq	.LC133(%rip), %rcx	 ;, tmp258
 	call	fwrite	 ;
- ; D:/TC/src/output.c:573:         case INST_MUL: tac_output(indent, "mul\t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:595:         case INST_AND: tac_output(indent, "and\t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L235:
- ; D:/TC/src/output.c:572:         case INST_SUB: tac_output(indent, "sub\t"); break;
+ ; D:/TC/src/output.c:594:         case INST_GE: tac_output(indent, "ge \t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:572:         case INST_SUB: tac_output(indent, "sub\t"); break;
+ ; D:/TC/src/output.c:594:         case INST_GE: tac_output(indent, "ge \t"); break;
 	movq	%r14, %r9	 ; outfile,
 	movl	$4, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC119(%rip), %rcx	 ;, tmp239
+	leaq	.LC132(%rip), %rcx	 ;, tmp257
 	call	fwrite	 ;
- ; D:/TC/src/output.c:572:         case INST_SUB: tac_output(indent, "sub\t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:594:         case INST_GE: tac_output(indent, "ge \t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L236:
- ; D:/TC/src/output.c:571:         case INST_ADD: tac_output(indent, "add\t"); break;
+ ; D:/TC/src/output.c:593:         case INST_LE: tac_output(indent, "le \t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:571:         case INST_ADD: tac_output(indent, "add\t"); break;
+ ; D:/TC/src/output.c:593:         case INST_LE: tac_output(indent, "le \t"); break;
 	movq	%r14, %r9	 ; outfile,
 	movl	$4, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC118(%rip), %rcx	 ;, tmp238
+	leaq	.LC131(%rip), %rcx	 ;, tmp256
 	call	fwrite	 ;
- ; D:/TC/src/output.c:571:         case INST_ADD: tac_output(indent, "add\t"); break;
-	jmp	.L237	 ;
+ ; D:/TC/src/output.c:593:         case INST_LE: tac_output(indent, "le \t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
-.L210:
- ; D:/TC/src/output.c:596:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
+.L237:
+ ; D:/TC/src/output.c:592:         case INST_GT: tac_output(indent, "gt \t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:596:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
+ ; D:/TC/src/output.c:592:         case INST_GT: tac_output(indent, "gt \t"); break;
 	movq	%r14, %r9	 ; outfile,
-	movl	$10, %r8d	 ;,
+	movl	$4, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC143(%rip), %rcx	 ;, tmp263
+	leaq	.LC130(%rip), %rcx	 ;, tmp255
 	call	fwrite	 ;
- ; D:/TC/src/output.c:596:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
-	jmp	.L208	 ;
+ ; D:/TC/src/output.c:592:         case INST_GT: tac_output(indent, "gt \t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
-.L240:
- ; D:/TC/src/output.c:632:             tac_output(0, " ");
-	xorl	%edx, %edx	 ;
-	movq	%r14, %rcx	 ; outfile,
+.L238:
+ ; D:/TC/src/output.c:591:         case INST_LT: tac_output(indent, "lt \t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:632:             tac_output(0, " ");
-	movq	%r14, %rdx	 ; outfile,
-	movl	$32, %ecx	 ;,
-	call	fputc	 ;
- ; D:/TC/src/output.c:633:             output_arg(instruction->arg2, outfile);
-	movq	8(%rsi), %rcx	 ; instruction_127->arg2, instruction_127->arg2
-	movq	%r14, %rdx	 ; outfile,
-	call	output_arg	 ;
- ; D:/TC/src/output.c:634:             break;
-	jmp	.L241	 ;
+ ; D:/TC/src/output.c:591:         case INST_LT: tac_output(indent, "lt \t"); break;
+	movq	%r14, %r9	 ; outfile,
+	movl	$4, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC129(%rip), %rcx	 ;, tmp254
+	call	fwrite	 ;
+ ; D:/TC/src/output.c:591:         case INST_LT: tac_output(indent, "lt \t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
 .L239:
- ; D:/TC/src/output.c:621:             tac_output(0, " ");
-	xorl	%edx, %edx	 ;
-	movq	%r14, %rcx	 ; outfile,
+ ; D:/TC/src/output.c:590:         case INST_NE: tac_output(indent, "ne \t"); break;
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:621:             tac_output(0, " ");
-	movq	%r14, %rdx	 ; outfile,
-	movl	$32, %ecx	 ;,
-	call	fputc	 ;
- ; D:/TC/src/output.c:622:             output_arg(instruction->arg2, outfile);
-	movq	8(%rsi), %rcx	 ; instruction_127->arg2, instruction_127->arg2
-	movq	%r14, %rdx	 ; outfile,
-	call	output_arg	 ;
- ; D:/TC/src/output.c:623:             tac_output(0, " ");
-	xorl	%edx, %edx	 ;
-	movq	%r14, %rcx	 ; outfile,
-	call	indention_tac	 ;
- ; D:/TC/src/output.c:623:             tac_output(0, " ");
-	movq	%r14, %rdx	 ; outfile,
-	movl	$32, %ecx	 ;,
-	call	fputc	 ;
- ; D:/TC/src/output.c:624:             output_arg(instruction->arg3, outfile);
-	movq	16(%rsi), %rcx	 ; instruction_127->arg3, instruction_127->arg3
-	movq	%r14, %rdx	 ; outfile,
-	call	output_arg	 ;
- ; D:/TC/src/output.c:625:             break;
-	jmp	.L241	 ;
+ ; D:/TC/src/output.c:590:         case INST_NE: tac_output(indent, "ne \t"); break;
+	movq	%r14, %r9	 ; outfile,
+	movl	$4, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC128(%rip), %rcx	 ;, tmp253
+	call	fwrite	 ;
+ ; D:/TC/src/output.c:590:         case INST_NE: tac_output(indent, "ne \t"); break;
+	jmp	.L246	 ;
 	.p2align 4,,10
 	.p2align 3
-.L259:
- ; D:/TC/src/output.c:538:         tac_output(indent, "}\n");
-	movq	%r12, %rdx	 ; _118,
+.L240:
+ ; D:/TC/src/output.c:589:         case INST_EQ: tac_output(indent, "eq \t"); break;
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:589:         case INST_EQ: tac_output(indent, "eq \t"); break;
+	movq	%r14, %r9	 ; outfile,
+	movl	$4, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC127(%rip), %rcx	 ;, tmp252
+	call	fwrite	 ;
+ ; D:/TC/src/output.c:589:         case INST_EQ: tac_output(indent, "eq \t"); break;
+	jmp	.L246	 ;
+	.p2align 4,,10
+	.p2align 3
+.L241:
+ ; D:/TC/src/output.c:588:         case INST_MOD: tac_output(indent, "mod\t"); break;
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:588:         case INST_MOD: tac_output(indent, "mod\t"); break;
+	movq	%r14, %r9	 ; outfile,
+	movl	$4, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC126(%rip), %rcx	 ;, tmp251
+	call	fwrite	 ;
+ ; D:/TC/src/output.c:588:         case INST_MOD: tac_output(indent, "mod\t"); break;
+	jmp	.L246	 ;
+	.p2align 4,,10
+	.p2align 3
+.L242:
+ ; D:/TC/src/output.c:587:         case INST_DIV: tac_output(indent, "div\t"); break;
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:587:         case INST_DIV: tac_output(indent, "div\t"); break;
+	movq	%r14, %r9	 ; outfile,
+	movl	$4, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC125(%rip), %rcx	 ;, tmp250
+	call	fwrite	 ;
+ ; D:/TC/src/output.c:587:         case INST_DIV: tac_output(indent, "div\t"); break;
+	jmp	.L246	 ;
+	.p2align 4,,10
+	.p2align 3
+.L243:
+ ; D:/TC/src/output.c:586:         case INST_MUL: tac_output(indent, "mul\t"); break;
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:586:         case INST_MUL: tac_output(indent, "mul\t"); break;
+	movq	%r14, %r9	 ; outfile,
+	movl	$4, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC124(%rip), %rcx	 ;, tmp249
+	call	fwrite	 ;
+ ; D:/TC/src/output.c:586:         case INST_MUL: tac_output(indent, "mul\t"); break;
+	jmp	.L246	 ;
+	.p2align 4,,10
+	.p2align 3
+.L244:
+ ; D:/TC/src/output.c:585:         case INST_SUB: tac_output(indent, "sub\t"); break;
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:585:         case INST_SUB: tac_output(indent, "sub\t"); break;
+	movq	%r14, %r9	 ; outfile,
+	movl	$4, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC123(%rip), %rcx	 ;, tmp248
+	call	fwrite	 ;
+ ; D:/TC/src/output.c:585:         case INST_SUB: tac_output(indent, "sub\t"); break;
+	jmp	.L246	 ;
+	.p2align 4,,10
+	.p2align 3
+.L245:
+ ; D:/TC/src/output.c:584:         case INST_ADD: tac_output(indent, "add\t"); break;
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:584:         case INST_ADD: tac_output(indent, "add\t"); break;
+	movq	%r14, %r9	 ; outfile,
+	movl	$4, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC122(%rip), %rcx	 ;, tmp247
+	call	fwrite	 ;
+ ; D:/TC/src/output.c:584:         case INST_ADD: tac_output(indent, "add\t"); break;
+	jmp	.L246	 ;
+	.p2align 4,,10
+	.p2align 3
+.L219:
+ ; D:/TC/src/output.c:609:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:609:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
+	movq	%r14, %r9	 ; outfile,
+	movl	$10, %r8d	 ;,
+	movl	$1, %edx	 ;,
+	leaq	.LC147(%rip), %rcx	 ;, tmp272
+	call	fwrite	 ;
+ ; D:/TC/src/output.c:609:         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
+	jmp	.L217	 ;
+	.p2align 4,,10
+	.p2align 3
+.L249:
+ ; D:/TC/src/output.c:645:             tac_output(0, " ");
+	xorl	%edx, %edx	 ;
 	movq	%r14, %rcx	 ; outfile,
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:538:         tac_output(indent, "}\n");
+ ; D:/TC/src/output.c:645:             tac_output(0, " ");
+	movq	%r14, %rdx	 ; outfile,
+	movl	$32, %ecx	 ;,
+	call	fputc	 ;
+ ; D:/TC/src/output.c:646:             output_arg(instruction->arg2, outfile);
+	movq	8(%rsi), %rcx	 ; instruction_132->arg2, instruction_132->arg2
+	movq	%r14, %rdx	 ; outfile,
+	call	output_arg	 ;
+ ; D:/TC/src/output.c:647:             break;
+	jmp	.L250	 ;
+	.p2align 4,,10
+	.p2align 3
+.L248:
+ ; D:/TC/src/output.c:634:             tac_output(0, " ");
+	xorl	%edx, %edx	 ;
+	movq	%r14, %rcx	 ; outfile,
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:634:             tac_output(0, " ");
+	movq	%r14, %rdx	 ; outfile,
+	movl	$32, %ecx	 ;,
+	call	fputc	 ;
+ ; D:/TC/src/output.c:635:             output_arg(instruction->arg2, outfile);
+	movq	8(%rsi), %rcx	 ; instruction_132->arg2, instruction_132->arg2
+	movq	%r14, %rdx	 ; outfile,
+	call	output_arg	 ;
+ ; D:/TC/src/output.c:636:             tac_output(0, " ");
+	xorl	%edx, %edx	 ;
+	movq	%r14, %rcx	 ; outfile,
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:636:             tac_output(0, " ");
+	movq	%r14, %rdx	 ; outfile,
+	movl	$32, %ecx	 ;,
+	call	fputc	 ;
+ ; D:/TC/src/output.c:637:             output_arg(instruction->arg3, outfile);
+	movq	16(%rsi), %rcx	 ; instruction_132->arg3, instruction_132->arg3
+	movq	%r14, %rdx	 ; outfile,
+	call	output_arg	 ;
+ ; D:/TC/src/output.c:638:             break;
+	jmp	.L250	 ;
+	.p2align 4,,10
+	.p2align 3
+.L268:
+ ; D:/TC/src/output.c:540:         tac_output(indent, "}\n");
+	movq	%r12, %rdx	 ; _123,
+	movq	%r14, %rcx	 ; outfile,
+	call	indention_tac	 ;
+ ; D:/TC/src/output.c:540:         tac_output(indent, "}\n");
 	movq	56(%rsp), %rcx	 ; %sfp,
 	movq	%r14, %r9	 ; outfile,
 	movl	$2, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	call	fwrite	 ;
-	jmp	.L203	 ;
+	jmp	.L212	 ;
 	.p2align 4,,10
 	.p2align 3
-.L258:
- ; D:/TC/src/output.c:528:         tac_output(indent, "NULL ");
+.L267:
+ ; D:/TC/src/output.c:530:         tac_output(indent, "NULL ");
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:528:         tac_output(indent, "NULL ");
+ ; D:/TC/src/output.c:530:         tac_output(indent, "NULL ");
 	movq	%r14, %r9	 ; outfile,
 	movl	$5, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC92(%rip), %rcx	 ;, tmp225
+	leaq	.LC95(%rip), %rcx	 ;, tmp234
 	call	fwrite	 ;
-	jmp	.L205	 ;
+	jmp	.L214	 ;
 	.p2align 4,,10
 	.p2align 3
-.L257:
+.L266:
  ; D:/TC/src/output.c:502:         tac_output(indent + 1, "]\n");
 	movq	80(%rsp), %rdx	 ; %sfp,
 	movq	%r14, %rcx	 ; outfile,
@@ -3908,40 +4002,40 @@ output_TAC:
 	movl	$2, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	call	fwrite	 ;
-	jmp	.L202	 ;
+	jmp	.L211	 ;
 	.p2align 4,,10
 	.p2align 3
-.L197:
+.L206:
  ; D:/TC/src/output.c:489:         tac_output(indent + 1, "local: [\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:489:         tac_output(indent + 1, "local: [\n");
 	movq	%r14, %r9	 ; outfile,
  ; D:/TC/src/output.c:492:             output_var(var, outfile, indent + 2);
-	leaq	4(%r13), %rbx	 ;, tmp290
+	leaq	4(%r13), %rbx	 ;, tmp299
  ; D:/TC/src/output.c:489:         tac_output(indent + 1, "local: [\n");
 	movl	$9, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC115(%rip), %rcx	 ;, tmp218
+	leaq	.LC119(%rip), %rcx	 ;, tmp227
 	call	fwrite	 ;
  ; D:/TC/src/output.c:491:         while ((var = (Var*)list_pop(subroutine->local_vars)) != NULL)
-	jmp	.L199	 ;
+	jmp	.L208	 ;
 	.p2align 4,,10
 	.p2align 3
-.L200:
+.L209:
  ; D:/TC/src/output.c:492:             output_var(var, outfile, indent + 2);
-	movq	%rbx, %r8	 ; tmp290,
+	movq	%rbx, %r8	 ; tmp299,
 	movq	%r14, %rdx	 ; outfile,
 	call	output_var	 ;
-.L199:
+.L208:
  ; D:/TC/src/output.c:491:         while ((var = (Var*)list_pop(subroutine->local_vars)) != NULL)
 	movq	24(%rsi), %rcx	 ; subroutine_66->local_vars, subroutine_66->local_vars
 	call	list_pop	 ;
-	movq	%rax, %rcx	 ; tmp315, var
+	movq	%rax, %rcx	 ; tmp324, var
  ; D:/TC/src/output.c:491:         while ((var = (Var*)list_pop(subroutine->local_vars)) != NULL)
 	testq	%rax, %rax	 ; var
-	jne	.L200	 ;,
+	jne	.L209	 ;,
  ; D:/TC/src/output.c:493:         tac_output(indent + 1, "]\n");
-	movq	%rdi, %rdx	 ; _231,
+	movq	%rdi, %rdx	 ; _238,
 	movq	%r14, %rcx	 ; outfile,
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:493:         tac_output(indent + 1, "]\n");
@@ -3950,120 +4044,120 @@ output_TAC:
 	movl	$2, %r8d	 ;,
 	movl	$1, %edx	 ;,
 	call	fwrite	 ;
-	jmp	.L198	 ;
-.L209:
- ; D:/TC/src/output.c:598:             tac_output(indent, "unknown_InstructionType: %u\n", instruction->type);
-	movq	%rdi, %rdx	 ; _126,
+	jmp	.L207	 ;
+.L218:
+ ; D:/TC/src/output.c:611:             tac_output(indent, "unknown_InstructionType: %u\n", instruction->type);
+	movq	%rdi, %rdx	 ; _131,
 	movq	%r14, %rcx	 ; outfile,
 	call	indention_tac	 ;
- ; D:/TC/src/output.c:598:             tac_output(indent, "unknown_InstructionType: %u\n", instruction->type);
-	movl	24(%rsi), %r8d	 ; instruction_127->type,
-	leaq	.LC144(%rip), %rdx	 ;, tmp265
+ ; D:/TC/src/output.c:611:             tac_output(indent, "unknown_InstructionType: %u\n", instruction->type);
+	movl	24(%rsi), %r8d	 ; instruction_132->type,
+	leaq	.LC148(%rip), %rdx	 ;, tmp274
 	movq	%r14, %rcx	 ; outfile,
 	call	fprintf	 ;
- ; D:/TC/src/output.c:600:             return;
-	jmp	.L208	 ;
+ ; D:/TC/src/output.c:613:             return;
+	jmp	.L217	 ;
 	.p2align 4,,10
 	.p2align 3
-.L255:
+.L264:
  ; D:/TC/src/output.c:474:         tac_output(indent + 1, "return_type: \"NULL\"\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:474:         tac_output(indent + 1, "return_type: \"NULL\"\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$20, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC110(%rip), %rcx	 ;, tmp206
+	leaq	.LC114(%rip), %rcx	 ;, tmp215
 	call	fwrite	 ;
-	jmp	.L192	 ;
+	jmp	.L201	 ;
 	.p2align 4,,10
 	.p2align 3
-.L254:
+.L263:
  ; D:/TC/src/output.c:470:         tac_output(indent, "NULL {\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:470:         tac_output(indent, "NULL {\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$7, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC108(%rip), %rcx	 ;, tmp202
+	leaq	.LC112(%rip), %rcx	 ;, tmp211
 	call	fwrite	 ;
-	jmp	.L190	 ;
-.L182:
+	jmp	.L199	 ;
+.L191:
  ; D:/TC/src/output.c:444:         tac_output(indent + 1, "global: [\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:444:         tac_output(indent + 1, "global: [\n");
 	movq	%r14, %r9	 ; outfile,
  ; D:/TC/src/output.c:447:             output_var(var, outfile, indent + 2);
-	leaq	2(%r13), %rbx	 ;, tmp295
+	leaq	2(%r13), %rbx	 ;, tmp304
  ; D:/TC/src/output.c:444:         tac_output(indent + 1, "global: [\n");
 	movl	$10, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC105(%rip), %rcx	 ;, tmp195
+	leaq	.LC109(%rip), %rcx	 ;, tmp204
 	call	fwrite	 ;
 	movq	48(%rsp), %rsi	 ; %sfp, tac
  ; D:/TC/src/output.c:446:         while ((var = (Var*)list_pop(tac->global_vars)) != NULL)
-	jmp	.L184	 ;
+	jmp	.L193	 ;
 	.p2align 4,,10
 	.p2align 3
-.L185:
+.L194:
  ; D:/TC/src/output.c:447:             output_var(var, outfile, indent + 2);
-	movq	%rbx, %r8	 ; tmp295,
+	movq	%rbx, %r8	 ; tmp304,
 	movq	%r14, %rdx	 ; outfile,
 	call	output_var	 ;
-.L184:
+.L193:
  ; D:/TC/src/output.c:446:         while ((var = (Var*)list_pop(tac->global_vars)) != NULL)
 	movq	16(%rsi), %rcx	 ; tac_32(D)->global_vars, tac_32(D)->global_vars
 	call	list_pop	 ;
-	movq	%rax, %rcx	 ; tmp310, var
+	movq	%rax, %rcx	 ; tmp319, var
  ; D:/TC/src/output.c:446:         while ((var = (Var*)list_pop(tac->global_vars)) != NULL)
 	testq	%rax, %rax	 ; var
-	jne	.L185	 ;,
+	jne	.L194	 ;,
  ; D:/TC/src/output.c:448:         tac_output(indent + 1, "]\n");
-	movq	%r12, %rdx	 ; _232,
+	movq	%rbp, %rdx	 ; _239,
 	movq	%r14, %rcx	 ; outfile,
  ; D:/TC/src/output.c:448:         tac_output(indent + 1, "]\n");
-	leaq	.LC101(%rip), %rbx	 ;, tmp283
+	leaq	.LC105(%rip), %r12	 ;, tmp292
  ; D:/TC/src/output.c:448:         tac_output(indent + 1, "]\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:448:         tac_output(indent + 1, "]\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$1, %edx	 ;,
-	movq	%rbx, %rcx	 ; tmp283,
+	movq	%r12, %rcx	 ; tmp292,
 	movl	$2, %r8d	 ;,
 	call	fwrite	 ;
-	jmp	.L183	 ;
-.L253:
+	jmp	.L192	 ;
+.L262:
  ; D:/TC/src/output.c:457:         tac_output(indent + 1, "]\n");
-	movq	88(%rsp), %r12	 ; %sfp, _232
-	movq	64(%rsp), %rbx	 ; %sfp, tmp283
+	movq	88(%rsp), %rbp	 ; %sfp, _239
+	movq	64(%rsp), %r12	 ; %sfp, tmp292
 	movq	%r14, %rcx	 ; outfile,
-	movq	%r12, %rdx	 ; _232,
+	movq	%rbp, %rdx	 ; _239,
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:457:         tac_output(indent + 1, "]\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$1, %edx	 ;,
-	movq	%rbx, %rcx	 ; tmp283,
+	movq	%r12, %rcx	 ; tmp292,
 	movl	$2, %r8d	 ;,
 	call	fwrite	 ;
-	jmp	.L187	 ;
-.L248:
+	jmp	.L196	 ;
+.L257:
  ; D:/TC/src/output.c:438:         tac_output(indent + 1, "entry_point: \"NULL\"\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:438:         tac_output(indent + 1, "entry_point: \"NULL\"\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$20, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC102(%rip), %rcx	 ;, tmp189
+	leaq	.LC106(%rip), %rcx	 ;, tmp198
 	call	fwrite	 ;
-	jmp	.L181	 ;
-.L247:
+	jmp	.L190	 ;
+.L256:
  ; D:/TC/src/output.c:423:         tac_output(indent, "TAC: \"NULL\"\n");
 	call	indention_tac	 ;
  ; D:/TC/src/output.c:423:         tac_output(indent, "TAC: \"NULL\"\n");
 	movq	%r14, %r9	 ; outfile,
 	movl	$12, %r8d	 ;,
 	movl	$1, %edx	 ;,
-	leaq	.LC88(%rip), %rcx	 ;, tmp161
-	jmp	.L246	 ;
+	leaq	.LC91(%rip), %rcx	 ;, tmp166
+	jmp	.L255	 ;
 	.ident	"GCC: (GNU) 13.2.0"
 	.def	indention;	.scl	2;	.type	32;	.endef
 	.def	fprintf;	.scl	2;	.type	32;	.endef

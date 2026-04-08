@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -93,6 +92,61 @@ pointer alloc_memory(size_t size);
 char is_keyword(const string str);
 char string_equal(string a, string b);
 string get_info(void);
+char to_lower(char c);
+char to_upper(char c);
+typedef struct StrNode StrNode;
+struct StrNode {
+    string dir;
+    StrNode* next;
+};
+typedef struct File {
+    StrNode* dirs;
+    string extension;
+    string name;
+    string path;
+} File;
+string get_cwd(void);
+File* create_file(const string path);
+string absolute_path(string path, string base_path);
+string get_file_name(File* path);
+string get_file_extension(File* path);
+string get_file_dir(File* path);
+string get_full_path(File* path);
+void change_file_extension(File* file, const string new_extension);
+void change_file_name(File* file, const string new_name);
+typedef enum TokenType {
+    EOF_TOKEN,
+    IDENTIFIER,
+    INTEGER,
+    FLOAT,
+    STRING,
+    SYMBOL,
+    KEYWORD,
+    COMMENT
+} TokenType;
+typedef struct Token {
+    string lexeme;
+    size_t line, column;
+    TokenType type;
+} Token;
+typedef struct Lexer {
+    string filename;
+    string source;
+    size_t position;
+    size_t length;
+    size_t line;
+    size_t column;
+    Token* peeked_token;
+    size_t peeked_position;
+    size_t peeked_line;
+    size_t peeked_column;
+    Token* current_token;
+} Lexer;
+Lexer* create_lexer(string source, size_t length, string filename);
+Token* get_next_token(Lexer* lexer, char skip_comment);
+Token* peek_next_token(Lexer* lexer, char skip_comment);
+void reset_lexer(Lexer* lexer);
+Token* peek_current_token(Lexer* lexer);
 typedef enum CodeMemberType {
     CODE_IMPORT,
     CODE_FUNCTION,
@@ -169,7 +223,7 @@ typedef struct Primary Primary;
 typedef struct VariableAccess VariableAccess;
 typedef struct List List;
 typedef struct Node Node;
-typedef enum SymbolTableType {
+typedef enum SymbolType {
     SYMBOL_CLASS,
     SYMBOL_FUNCTION,
     SYMBOL_METHOD,
@@ -306,10 +360,36 @@ struct Symbol {
     } ast_node;
     SymbolType kind;
 };
-typedef struct Lexer Lexer;
-typedef struct Parser Parser;
+typedef struct Parser {
+    File* source_file;
+    char in_function;
+    char in_method;
+    char in_class;
+    char in_loop;
+} Parser;
 Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
 void output_code(Code* code, FILE* outfile, size_t indent, char indent_has_next[32]);
+typedef struct Token Token;
+List* create_list(void);
+void list_append(List* list, pointer item);
+List* list_copy(List* original);
+pointer list_pop(List* list);
+pointer list_pop_back(List* list);
+char list_is_empty(List* list);
+Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node);
+SymbolTable* create_symbol_table(SymbolTable* parent);
+Symbol* search_name(SymbolTable* scope, string name);
+Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
+char is_builtin_type(string type);
+void parser_error(const string message, Token* token, string file_name);
+void indention(FILE* out, size_t indent, char is_last, char indent_has_next[32]);
+void indention_tac(FILE* out, size_t indent);
+Parser* create_parser(File* file);
+Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
+string make_method_name(string class_name, string method_name);
+OperatorType string_to_operator(string str);
+int operator_precedence(OperatorType op);
+string operator_to_string(OperatorType op);
 typedef struct TAC {
     List* attribute_tables;
     Symbol* entry_point;
@@ -340,7 +420,8 @@ typedef enum ArgType {
     ARG_BOOL,
     ARG_VOID,
     ARG_LABEL,
-    ARG_SUBROUTINE,
+    ARG_FUNCTION,
+    ARG_METHOD,
     ARG_NONE
 } ArgType;
 typedef struct Arg {
@@ -429,7 +510,7 @@ void tac_function(Function* function, TACStatus* status);
 void tac_method(Method* method, TACStatus* status);
 void tac_class_member(ClassMember* class_member, TACStatus* status);
 void tac_class(Class* class, TACStatus* status);
-void tac_variable(Variable* variable, TACStatus* status, VarType type);
+void tac_variable(Variable* variable, TACStatus* status, char is_attr);
 void tac_statement(Statement* statement, TACStatus* status);
 void tac_if(If* if_, TACStatus* status);
 void tac_else_if(ElseIf* else_if, TACStatus* status);
@@ -439,54 +520,6 @@ Arg* tac_expression(Expression* expression, TACStatus* status);
 Arg* tac_primary(Primary* primary, TACStatus* status);
 Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status);
 void output_TAC(TAC* tac, FILE* outfile, size_t indent);
-typedef struct StrNode StrNode;
-struct StrNode {
-    string dir;
-    StrNode* next;
-};
-typedef struct File {
-    StrNode* dirs;
-    string extension;
-    string name;
-    string path;
-} File;
-string get_cwd(void);
-File* create_file(const string path);
-string absolute_path(string path, string base_path);
-string get_file_name(File* path);
-string get_file_extension(File* path);
-string get_file_dir(File* path);
-string get_full_path(File* path);
-void change_file_extension(File* file, const string new_extension);
-void change_file_name(File* file, const string new_name);
-typedef struct Parser {
-    File* source_file;
-    char in_function;
-    char in_method;
-    char in_class;
-    char in_loop;
-} Parser;
-typedef struct Token Token;
-List* create_list(void);
-void list_append(List* list, pointer item);
-List* list_copy(List* original);
-pointer list_pop(List* list);
-pointer list_pop_back(List* list);
-char list_is_empty(List* list);
-Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node);
-SymbolTable* create_symbol_table(SymbolTable* parent);
-Symbol* search_name(SymbolTable* scope, string name);
-Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
-char is_builtin_type(string type);
-void parser_error(const string message, Token* token, string file_name);
-void indention(FILE* out, size_t indent, char is_last, char indent_has_next[32]);
-void indention_tac(FILE* out, size_t indent);
-Parser* create_parser(File* file);
-Symbol* parse_import_file(string import_name, string source, SymbolTable* scope, File* source_file);
-string make_method_name(string class_name, string method_name);
-OperatorType string_to_operator(string str);
-int operator_precedence(OperatorType op);
-string operator_to_string(OperatorType op);
 static void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, char indent_has_next[32]);
 static void output_import(Import* import, FILE* outfile, size_t indent, char indent_has_next[32]);
 static void output_function(Function* function, FILE* outfile, size_t indent, char indent_has_next[32]);
@@ -949,6 +982,8 @@ void output_var(Var* var, FILE* outfile, size_t indent) {
     }
     if (var->type == NULL)
         indention_tac(outfile, indent), fprintf(outfile, "NULL\t%s\n", var->name);
+    else if (var->original_name)
+        indention_tac(outfile, indent), fprintf(outfile, "%s\t%s(%s)\n", var->type->name, var->name, var->original_name->name);
     else
         indention_tac(outfile, indent), fprintf(outfile, "%s\t%s\n", var->type->name, var->name);
 }
@@ -977,14 +1012,25 @@ void output_arg(Arg* arg, FILE* outfile) {
         return;
     }
     switch (arg->kind) {
-        case ARG_VARIABLE: indention_tac(outfile, 0), fprintf(outfile, "%s", arg->value.variable->name); break;
+        case ARG_VARIABLE:
+            if (arg->value.variable->original_name)
+                indention_tac(outfile, 0), fprintf(outfile, "%s(%s)", arg->value.variable->name, arg->value.variable->original_name->name);
+            else
+                indention_tac(outfile, 0), fprintf(outfile, "%s", arg->value.variable->name);
+            break;
         case ARG_INT: indention_tac(outfile, 0), fprintf(outfile, "%lld", arg->value.int_value); break;
         case ARG_FLOAT: indention_tac(outfile, 0), fprintf(outfile, "%f", arg->value.float_value); break;
-        case ARG_STRING: indention_tac(outfile, 0), fprintf(outfile, "%s", arg->value.string_value); break;
+        case ARG_STRING: indention_tac(outfile, 0), fprintf(outfile, "\"%s\"", arg->value.string_value); break;
         case ARG_BOOL: indention_tac(outfile, 0), fprintf(outfile, "%s", arg->value.bool_value ? "true" : "false"); break;
         case ARG_VOID: indention_tac(outfile, 0), fprintf(outfile, "void"); break;
         case ARG_LABEL: indention_tac(outfile, 0), fprintf(outfile, "%s", arg->value.label->name); break;
-        case ARG_SUBROUTINE: indention_tac(outfile, 0), fprintf(outfile, "%s", arg->value.subroutine->name); break;
+        case ARG_FUNCTION:
+        case ARG_METHOD:
+            if (arg->value.subroutine->original_name)
+                indention_tac(outfile, 0), fprintf(outfile, "%s(%s)", arg->value.subroutine->name, arg->value.subroutine->original_name->name);
+            else
+                indention_tac(outfile, 0), fprintf(outfile, "%s", arg->value.subroutine->name);
+            break;
         case ARG_NONE: indention_tac(outfile, 0), fprintf(outfile, "NONE"); break;
         default: indention_tac(outfile, 0), fprintf(outfile, "unknown_ArgType: %u", arg->kind); break;
     }
@@ -1098,6 +1144,8 @@ void output_attribute(Attribute* attribute, FILE* outfile, size_t indent) {
         indention_tac(outfile, indent), fprintf(outfile, "%s\t", attribute->type->name);
     if (attribute->var == NULL)
         indention_tac(outfile, 0), fprintf(outfile, "NULL ");
+    else if (attribute->var->original_name)
+        indention_tac(outfile, 0), fprintf(outfile, "%s(%s) ", attribute->var->name, attribute->var->original_name->name);
     else
         indention_tac(outfile, 0), fprintf(outfile, "%s ", attribute->var->name);
     indention_tac(outfile, 0), fprintf(outfile, "%zu\n", attribute->offset);

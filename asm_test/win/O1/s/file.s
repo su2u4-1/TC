@@ -103,9 +103,9 @@ absolute_path:
 	jne	.L4
 	jmp	.L3
 .L28:
-	movzbl	1(%rbx), %ebp
-	leal	-97(%rbp), %eax
-	cmpb	$25, %al
+	movzbl	1(%rbx), %eax
+	leal	-97(%rax), %edx
+	cmpb	$25, %dl
 	ja	.L14
 	cmpb	$47, 2(%rbx)
 	je	.L29
@@ -114,9 +114,8 @@ absolute_path:
 	je	.L3
 	jmp	.L4
 .L29:
-	call	__locale_ctype_ptr
-	movsbl	%bpl, %ecx
-	call	toupper
+	movsbl	%al, %ecx
+	call	to_upper
 	movb	%al, (%rbx)
 	movb	$58, 1(%rbx)
 	jmp	.L3
@@ -237,7 +236,7 @@ create_file:
 .L67:
 	call	__getreent
 	movq	24(%rax), %rcx
-	movl	$255, %r8d
+	movq	%r15, %r8
 	leaq	.LC3(%rip), %rdx
 	call	fprintf
 	movl	$255, %r15d
@@ -723,8 +722,7 @@ change_file_name:
 	.def	strlen;	.scl	2;	.type	32;	.endef
 	.def	create_string_not_check;	.scl	2;	.type	32;	.endef
 	.def	memmove;	.scl	2;	.type	32;	.endef
-	.def	__locale_ctype_ptr;	.scl	2;	.type	32;	.endef
-	.def	toupper;	.scl	2;	.type	32;	.endef
+	.def	to_upper;	.scl	2;	.type	32;	.endef
 	.def	sprintf;	.scl	2;	.type	32;	.endef
 	.def	create_string;	.scl	2;	.type	32;	.endef
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef

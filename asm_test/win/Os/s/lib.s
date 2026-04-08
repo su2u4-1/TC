@@ -552,6 +552,26 @@ get_info:
 	popq	%rbp
 	popq	%r12
 	ret
+	.globl	to_lower
+	.def	to_lower;	.scl	2;	.type	32;	.endef
+to_lower:
+	leal	-65(%rcx), %edx
+	movl	%ecx, %eax
+	cmpb	$25, %dl
+	ja	.L62
+	leal	32(%rcx), %eax
+.L62:
+	ret
+	.globl	to_upper
+	.def	to_upper;	.scl	2;	.type	32;	.endef
+to_upper:
+	leal	-97(%rcx), %edx
+	movl	%ecx, %eax
+	cmpb	$25, %dl
+	ja	.L64
+	leal	-32(%rcx), %eax
+.L64:
+	ret
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

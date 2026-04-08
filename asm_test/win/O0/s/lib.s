@@ -1176,6 +1176,44 @@ get_info:
 	movq	-40(%rbp), %rax
 	leave
 	ret
+	.globl	to_lower
+	.def	to_lower;	.scl	2;	.type	32;	.endef
+to_lower:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	movl	%ecx, %eax
+	movb	%al, 16(%rbp)
+	cmpb	$64, 16(%rbp)
+	jle	.L57
+	cmpb	$90, 16(%rbp)
+	jg	.L57
+	movzbl	16(%rbp), %eax
+	addl	$32, %eax
+	jmp	.L59
+.L57:
+	movzbl	16(%rbp), %eax
+.L59:
+	popq	%rbp
+	ret
+	.globl	to_upper
+	.def	to_upper;	.scl	2;	.type	32;	.endef
+to_upper:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	movl	%ecx, %eax
+	movb	%al, 16(%rbp)
+	cmpb	$96, 16(%rbp)
+	jle	.L61
+	cmpb	$122, 16(%rbp)
+	jg	.L61
+	movzbl	16(%rbp), %eax
+	subl	$32, %eax
+	jmp	.L63
+.L61:
+	movzbl	16(%rbp), %eax
+.L63:
+	popq	%rbp
+	ret
 	.section .rdata,"dr"
 	.align 8
 __func__.0:

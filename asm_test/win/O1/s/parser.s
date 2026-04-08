@@ -2109,9 +2109,8 @@ parse_statement:
 	.align 8
 .LC55:
 	.ascii "Expected ';' at end of import statement\0"
-	.align 8
 .LC56:
-	.ascii "Failed to import module '%s' from source '%s'\12\0"
+	.ascii "Failed to import module\0"
 	.align 8
 .LC57:
 	.ascii "Failed to parse import statement\0"
@@ -2196,7 +2195,7 @@ parse_statement:
 	.ascii "Failed to parse class variable\0"
 	.align 8
 .LC85:
-	.ascii "[warning] Unsupported type for class variable '%s': %s\12\0"
+	.ascii "Unsupported type for class variable\0"
 	.align 8
 .LC86:
 	.ascii "Expected ';' after class variable declaration\0"
@@ -2469,12 +2468,12 @@ parse_code:
 	movl	$0, %edx
 	jmp	.L238
 .L349:
-	call	__getreent
-	movq	24(%rax), %rcx
-	movq	%rsi, %r9
-	movq	%rdi, %r8
-	leaq	.LC56(%rip), %rdx
-	call	fprintf
+	movq	(%r15), %rcx
+	call	get_full_path
+	movq	%rax, %r8
+	movq	%rbx, %rdx
+	leaq	.LC56(%rip), %rcx
+	call	parser_error
 	movq	72(%rsp), %r9
 	movq	.refptr.name_void(%rip), %rax
 	movq	(%rax), %r8
@@ -2860,7 +2859,7 @@ parse_code:
 	movl	$2, %edx
 	movq	%rbx, %rcx
 	call	create_symbol
-	movq	%rax, 104(%rsp)
+	movq	%rax, 128(%rsp)
 	call	create_list
 	movq	%rax, %rbp
 	movq	.refptr.SELF_KEYWORD(%rip), %rax
@@ -2869,13 +2868,7 @@ parse_code:
 	movq	%rsi, %r8
 	movl	$3, %edx
 	call	create_symbol
-	movq	%rax, %rdx
-	movl	$0, %r8d
-	movq	%rsi, %rcx
-	call	create_variable
-	movq	%rax, %rdx
-	movq	%rbp, %rcx
-	call	list_append
+	movq	%rax, 104(%rsp)
 	movq	24(%r13), %rax
 	movq	16(%rax), %rcx
 	call	list_copy
@@ -3302,22 +3295,22 @@ parse_code:
 	call	parser_error
 	jmp	.L304
 .L365:
-	movq	(%rbx), %rdx
-	movq	(%rdx), %rax
-	movq	.refptr.name_int(%rip), %rcx
-	cmpq	(%rcx), %rax
+	movq	(%rbx), %rax
+	movq	(%rax), %rax
+	movq	.refptr.name_int(%rip), %rdx
+	cmpq	(%rdx), %rax
 	je	.L306
-	movq	.refptr.name_float(%rip), %rcx
-	cmpq	(%rcx), %rax
+	movq	.refptr.name_float(%rip), %rdx
+	cmpq	(%rdx), %rax
 	je	.L306
-	movq	.refptr.name_string(%rip), %rcx
-	cmpq	(%rcx), %rax
+	movq	.refptr.name_string(%rip), %rdx
+	cmpq	(%rdx), %rax
 	je	.L306
-	movq	.refptr.name_bool(%rip), %rcx
-	cmpq	(%rcx), %rax
+	movq	.refptr.name_bool(%rip), %rdx
+	cmpq	(%rdx), %rax
 	je	.L308
-	movq	.refptr.name_void(%rip), %rcx
-	cmpq	(%rcx), %rax
+	movq	.refptr.name_void(%rip), %rdx
+	cmpq	(%rdx), %rax
 	je	.L308
 	cmpl	$0, 32(%rax)
 	jne	.L310
@@ -3330,15 +3323,12 @@ parse_code:
 	addq	$1, 120(%rsp)
 	jmp	.L305
 .L310:
-	movq	8(%rax), %rsi
-	movq	8(%rdx), %rax
-	movq	8(%rax), %rbx
-	call	__getreent
-	movq	24(%rax), %rcx
-	movq	%rsi, %r9
-	movq	%rbx, %r8
-	leaq	.LC85(%rip), %rdx
-	call	fprintf
+	movq	(%r15), %rcx
+	call	get_full_path
+	movq	%rax, %r8
+	movq	%rsi, %rdx
+	leaq	.LC85(%rip), %rcx
+	call	parser_error
 	jmp	.L305
 .L366:
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax
@@ -3437,18 +3427,9 @@ parse_code:
 	movq	96(%rsp), %rcx
 	call	list_copy
 	movq	%rax, %rsi
-.L319:
-	movq	%rsi, %rcx
-	call	list_pop
-	movq	%rax, %rbx
-	testq	%rax, %rax
-	je	.L374
-	cmpl	$1, 8(%rbx)
-	jne	.L319
-	movq	(%rbx), %rax
-	movq	8(%rax), %r8
 	movq	$0, 32(%rsp)
 	movl	$0, %r9d
+	movq	104(%rsp), %r8
 	movl	$0, %edx
 	movl	$0, %ecx
 	call	create_variable_access
@@ -3463,14 +3444,58 @@ parse_code:
 	movl	$0, %edx
 	movl	$19, %ecx
 	call	create_expression
-	movq	%rax, 128(%rsp)
+	movq	$0, 40(%rsp)
+	movq	%rax, 32(%rsp)
+	movl	$0, %r9d
+	movl	$0, %r8d
+	movl	$0, %edx
+	movl	$0, %ecx
+	call	create_statement
+	movq	%rax, %rdx
+	movq	%r12, %rcx
+	call	list_append
+.L319:
+	movq	%rsi, %rcx
+	call	list_pop
+	movq	%rax, %rbx
+	testq	%rax, %rax
+	je	.L374
+	cmpl	$1, 8(%rbx)
+	jne	.L319
+	movq	(%rbx), %rax
+	movq	8(%rax), %rax
+	movq	%rax, 136(%rsp)
+	movq	$0, 32(%rsp)
+	movl	$0, %r9d
+	movq	104(%rsp), %r8
+	movl	$0, %edx
+	movl	$0, %ecx
+	call	create_variable_access
+	movq	%rax, %rdx
+	movq	$0, 32(%rsp)
+	movl	$0, %r9d
+	movq	136(%rsp), %r8
+	movl	$2, %ecx
+	call	create_variable_access
+	movq	%rax, 32(%rsp)
+	movl	$0, %r9d
+	movl	$0, %r8d
+	movl	$0, %edx
+	movl	$8, %ecx
+	call	create_primary
+	movq	%rax, %r8
+	movl	$0, %r9d
+	movl	$0, %edx
+	movl	$19, %ecx
+	call	create_expression
+	movq	%rax, 136(%rsp)
 	movq	(%rbx), %rax
 	movq	16(%rax), %r9
 	testq	%r9, %r9
 	je	.L375
 .L320:
 	movl	$0, %r8d
-	movq	128(%rsp), %rdx
+	movq	136(%rsp), %rdx
 	movl	$13, %ecx
 	call	create_expression
 	movq	$0, 40(%rsp)
@@ -3504,6 +3529,26 @@ parse_code:
 .L374:
 	call	create_list
 	movq	%rax, %rbx
+	movq	$0, 32(%rsp)
+	movl	$0, %r9d
+	movq	104(%rsp), %r8
+	movl	$0, %edx
+	movl	$0, %ecx
+	call	create_variable_access
+	movq	%rax, 32(%rsp)
+	movl	$0, %r9d
+	movl	$0, %r8d
+	movl	$0, %edx
+	movl	$8, %ecx
+	call	create_primary
+	movq	%rax, %r8
+	movl	$0, %r9d
+	movl	$0, %edx
+	movl	$19, %ecx
+	call	create_expression
+	movq	%rax, %rdx
+	movq	%rbx, %rcx
+	call	list_append
 	movq	%rbp, %rcx
 	call	list_copy
 	movq	%rax, %rsi
@@ -3573,7 +3618,7 @@ parse_code:
 	movq	%rbp, %r9
 	movq	88(%rsp), %rsi
 	movq	%rsi, %r8
-	movq	104(%rsp), %rdx
+	movq	128(%rsp), %rdx
 	movq	%rdi, %rcx
 	call	create_method_use_ptr
 	movl	$0, %r8d
@@ -3668,8 +3713,6 @@ parse_code:
 	.def	parse_import_file;	.scl	2;	.type	32;	.endef
 	.def	create_import;	.scl	2;	.type	32;	.endef
 	.def	create_code_member;	.scl	2;	.type	32;	.endef
-	.def	__getreent;	.scl	2;	.type	32;	.endef
-	.def	fprintf;	.scl	2;	.type	32;	.endef
 	.def	create_function_use_ptr;	.scl	2;	.type	32;	.endef
 	.def	list_copy;	.scl	2;	.type	32;	.endef
 	.def	list_pop;	.scl	2;	.type	32;	.endef

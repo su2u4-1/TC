@@ -31,21 +31,21 @@ absolute_path:
 	pushq	%rbp	;
 	pushq	%rbx	;
 	subq	$8, %rsp	;,
-	movq	%rdi, %rbx	; tmp148, path
-	movq	%rsi, %r12	; tmp149, base_path
+	movq	%rdi, %rbx	; tmp149, path
+	movq	%rsi, %r12	; tmp150, base_path
 ; src/file.c:23:     path = create_string_not_check(path, strlen(path));
 	call	*strlen@GOTPCREL(%rip)	;
-	movq	%rax, %rsi	; tmp150, tmp119
+	movq	%rax, %rsi	; tmp151, tmp120
 ; src/file.c:23:     path = create_string_not_check(path, strlen(path));
 	movq	%rbx, %rdi	; path,
 	call	*create_string_not_check@GOTPCREL(%rip)	;
-	movq	%rax, %rbx	; tmp151, <retval>
+	movq	%rax, %rbx	; tmp152, <retval>
 ; src/file.c:24:     size_t path_len = strlen(path);
 	movq	%rax, %rdi	; <retval>,
 	call	*strlen@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp122, path_len
+	movq	%rax, %rbp	; tmp123, path_len
 ; src/file.c:25:     for (size_t i = 0; i < path_len; i++) {
-	testq	%rax, %rax	; tmp122
+	testq	%rax, %rax	; tmp123
 	je	.L4	;,
 ; src/file.c:25:     for (size_t i = 0; i < path_len; i++) {
 	movl	$0, %edx	;, i
@@ -75,12 +75,12 @@ absolute_path:
 	cmpb	$47, -1(%rbx,%rdx)	;, *_17
 	jne	.L9	;,
 ; src/file.c:33:             memmove(path + i, path + i + 1, path_len - i);
-	movq	%rbp, %rax	; path_len, tmp134
-	subq	%rdx, %rax	; i, tmp134
+	movq	%rbp, %rax	; path_len, tmp135
+	subq	%rdx, %rax	; i, tmp135
 ; src/file.c:33:             memmove(path + i, path + i + 1, path_len - i);
-	leaq	1(%rbx,%rdx), %rsi	;, tmp136
+	leaq	1(%rbx,%rdx), %rsi	;, tmp137
 ; /usr/include/x86_64-linux-gnu/bits/string_fortified.h:36:   return __builtin___memmove_chk (__dest, __src, __len,
-	movq	%rax, %rdx	; tmp134,
+	movq	%rax, %rdx	; tmp135,
 	call	*memmove@GOTPCREL(%rip)	;
 ; src/file.c:34:             path_len--;
 	subq	$1, %rbp	;, path_len
@@ -94,12 +94,12 @@ absolute_path:
 	cmpb	$47, -2(%rbx,%rdx)	;, *_9
 	jne	.L10	;,
 ; src/file.c:28:             memmove(path + i - 1, path + i + 1, path_len - i);
-	movq	%rbp, %rax	; path_len, tmp128
-	subq	%rdx, %rax	; i, tmp128
+	movq	%rbp, %rax	; path_len, tmp129
+	subq	%rdx, %rax	; i, tmp129
 ; src/file.c:28:             memmove(path + i - 1, path + i + 1, path_len - i);
-	leaq	1(%rbx,%rdx), %rsi	;, tmp130
+	leaq	1(%rbx,%rdx), %rsi	;, tmp131
 ; /usr/include/x86_64-linux-gnu/bits/string_fortified.h:36:   return __builtin___memmove_chk (__dest, __src, __len,
-	movq	%rax, %rdx	; tmp128,
+	movq	%rax, %rdx	; tmp129,
 	call	*memmove@GOTPCREL(%rip)	;
 ; src/file.c:29:             path_len -= 2;
 	subq	$2, %rbp	;, path_len
@@ -134,17 +134,18 @@ absolute_path:
 	cmpq	$1, %rbp	;, path_len
 	jbe	.L12	;,
 ; src/file.c:45:     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':') {
-	movzbl	(%rbx), %eax	; *path_54, tmp161
-	subl	$65, %eax	;, tmp137
+	movzbl	(%rbx), %eax	; *path_50, _22
 ; src/file.c:45:     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':') {
-	cmpb	$25, %al	;, tmp137
+	leal	-65(%rax), %edx	;, tmp138
+; src/file.c:45:     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':') {
+	cmpb	$25, %dl	;, tmp138
 	ja	.L13	;,
 ; src/file.c:45:     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':') {
-	cmpb	$58, 1(%rbx)	;, MEM[(char *)path_54 + 1B]
+	cmpb	$58, 1(%rbx)	;, MEM[(char *)path_50 + 1B]
 	je	.L25	;,
 .L13:
 ; src/file.c:55:     if (path_len > 0 && path[0] == '/')
-	cmpb	$47, (%rbx)	;, *path_54
+	cmpb	$47, (%rbx)	;, *path_50
 	je	.L3	;,
 .L4:
 ; src/file.c:57:     if (base_path == NULL)
@@ -158,13 +159,13 @@ absolute_path:
 	leaq	2(%rbp,%rax), %r13	;, total_len
 ; src/file.c:62:     string abs_path = create_string_not_check("", total_len);
 	movq	%r13, %rsi	; total_len,
-	leaq	.LC0(%rip), %rdi	;, tmp145
+	leaq	.LC0(%rip), %rdi	;, tmp146
 	call	*create_string_not_check@GOTPCREL(%rip)	;
-	movq	%rax, %rbp	; tmp155, abs_path
+	movq	%rax, %rbp	; tmp156, abs_path
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:30:   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
 	movq	%rbx, %r9	; <retval>,
 	movq	%r12, %r8	; base_path,
-	leaq	.LC1(%rip), %rcx	;, tmp146
+	leaq	.LC1(%rip), %rcx	;, tmp147
 	movq	$-1, %rdx	;,
 	movl	$2, %esi	;,
 	movq	%rax, %rdi	; abs_path,
@@ -174,11 +175,11 @@ absolute_path:
 	movq	%r13, %rsi	; total_len,
 	movq	%rbp, %rdi	; abs_path,
 	call	*create_string@GOTPCREL(%rip)	;
-	movq	%rax, %rdi	; tmp156, _49
+	movq	%rax, %rdi	; tmp157, _34
 ; src/file.c:64:     return absolute_path(create_string(abs_path, total_len), NULL);
 	movl	$0, %esi	;,
 	call	absolute_path	;
-	movq	%rax, %rbx	; tmp157, <retval>
+	movq	%rax, %rbx	; tmp158, <retval>
 .L3:
 ; src/file.c:65: }
 	movq	%rbx, %rax	; <retval>,
@@ -189,16 +190,19 @@ absolute_path:
 	popq	%r13	;
 	ret	
 .L25:
+; src/file.c:46:         path[0] = to_lower(path[0]);
+	movsbl	%al, %edi	; _22, _22
+	call	*to_lower@GOTPCREL(%rip)	;
 ; src/file.c:47:         memmove(path, path + 1, path_len);
-	leaq	1(%rbx), %rsi	;, tmp140
+	leaq	1(%rbx), %rsi	;, tmp141
 ; /usr/include/x86_64-linux-gnu/bits/string_fortified.h:36:   return __builtin___memmove_chk (__dest, __src, __len,
 	movq	%rbp, %rdx	; path_len,
 	movq	%rbx, %rdi	; <retval>,
 	call	*memmove@GOTPCREL(%rip)	;
 ; src/file.c:48:         path[0] = '/';
-	movb	$47, (%rbx)	;, *path_54
+	movb	$47, (%rbx)	;, *path_50
 ; src/file.c:49:         path[2] = '/';
-	movb	$47, 2(%rbx)	;, MEM[(char *)path_54 + 2B]
+	movb	$47, 2(%rbx)	;, MEM[(char *)path_50 + 2B]
 ; src/file.c:50:         return path;
 	jmp	.L3	;
 .L12:
@@ -211,7 +215,7 @@ absolute_path:
 	movl	$0, %esi	;,
 	movl	$0, %edi	;,
 	call	*getcwd@GOTPCREL(%rip)	;
-	movq	%rax, %r12	; tmp153, base_path
+	movq	%rax, %r12	; tmp154, base_path
 ; src/file.c:59:     if (base_path == NULL)
 	testq	%rax, %rax	; base_path
 	jne	.L15	;,
@@ -277,7 +281,7 @@ create_file:
 ; src/file.c:181:     size_t start = 0;
 	movl	$0, %ebx	;, start
 ; src/file.c:178:     StrNode* dirs_head = NULL;
-	movq	$0, 8(%rsp)	;, %sfp
+	movq	$0, 16(%rsp)	;, %sfp
 ; src/file.c:197:     if (path_len > 0 && path_copy[0] == '/') {
 	cmpb	$47, (%r14)	;, *path_copy_12
 	jne	.L28	;,
@@ -285,7 +289,7 @@ create_file:
 	movl	$16, %edi	;,
 	call	*alloc_memory@GOTPCREL(%rip)	;
 	movq	%rax, %rbx	; tmp218, node
-	movq	%rax, 8(%rsp)	; node, %sfp
+	movq	%rax, 16(%rsp)	; node, %sfp
 ; src/file.c:199:         node->dir = create_string("/", 1);
 	movl	$1, %esi	;,
 	leaq	.LC2(%rip), %rdi	;, tmp150
@@ -299,15 +303,14 @@ create_file:
 	jmp	.L28	;
 .L62:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
-	movl	$255, %ecx	;,
+	movq	%rax, %rcx	; comp_len,
 	leaq	.LC3(%rip), %rdx	;, tmp152
 	movl	$2, %esi	;,
 	movq	stderr(%rip), %rdi	; stderr,
 	movl	$0, %eax	;,
 	call	*__fprintf_chk@GOTPCREL(%rip)	;
-; src/file.c:215:                     comp_len = componentMaxSize - 1;
-	movq	$255, 16(%rsp)	;, %sfp
-; /usr/include/x86_64-linux-gnu/bits/stdio2.h:79:   return __fprintf_chk (__stream, __USE_FORTIFY_LEVEL - 1, __fmt,
+; src/file.c:216:                     comp_len = componentMaxSize - 1;
+	movq	$255, 8(%rsp)	;, %sfp
 	jmp	.L32	;
 .L51:
 ; src/file.c:236:                             StrNode* prev = dirs_head;
@@ -323,13 +326,13 @@ create_file:
 ; src/file.c:237:                             while (prev != NULL && prev->next != dirs_tail)
 	movq	8(%rax), %rdx	; prev_37->next, _38
 ; src/file.c:237:                             while (prev != NULL && prev->next != dirs_tail)
-	movq	8(%rsp), %rcx	; %sfp, node
+	movq	16(%rsp), %rcx	; %sfp, node
 	cmpq	%rcx, %rdx	; node, _38
 	jne	.L52	;,
 ; src/file.c:241:                                 prev->next = 0;
 	movq	$0, 8(%rax)	;, prev_37->next
 ; src/file.c:242:                                 dirs_tail = prev;
-	movq	%rax, 8(%rsp)	; prev, %sfp
+	movq	%rax, 16(%rsp)	; prev, %sfp
 	jmp	.L31	;
 .L35:
 ; src/file.c:245:                     } else if (dirs_head == NULL) {
@@ -348,7 +351,7 @@ create_file:
 ; src/file.c:249:                         node->next = 0;
 	movq	$0, 8(%rbp)	;, node_39->next
 ; src/file.c:251:                         dirs_tail = node;
-	movq	%rbp, 8(%rsp)	; node, %sfp
+	movq	%rbp, 16(%rsp)	; node, %sfp
 	jmp	.L31	;
 .L34:
 ; src/file.c:253:                 } else if (strlen(component) > 0) {
@@ -378,7 +381,7 @@ create_file:
 ; src/file.c:213:                 size_t comp_len = i - start;
 	movq	%rbx, %rax	; start, comp_len
 	subq	%r13, %rax	; start, comp_len
-	movq	%rax, 16(%rsp)	; comp_len, %sfp
+	movq	%rax, 8(%rsp)	; comp_len, %sfp
 ; src/file.c:214:                 if (comp_len >= componentMaxSize) {
 	cmpq	$255, %rax	;, comp_len
 	ja	.L62	;,
@@ -386,12 +389,12 @@ create_file:
 ; src/file.c:219:                 strncpy(component, path_copy + start, comp_len);
 	leaq	(%r14,%r13), %rsi	;, tmp153
 ; /usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:   return __builtin___strncpy_chk (__dest, __src, __len,
-	movq	16(%rsp), %rdx	; %sfp,
+	movq	8(%rsp), %rdx	; %sfp,
 	movq	24(%rsp), %r13	; %sfp, tmp210
 	movq	%r13, %rdi	; tmp210,
 	call	*strncpy@GOTPCREL(%rip)	;
 ; src/file.c:220:                 component[comp_len] = '\0';
-	movq	16(%rsp), %rax	; %sfp, comp_len
+	movq	8(%rsp), %rax	; %sfp, comp_len
 	movb	$0, 32(%rsp,%rax)	;, component[comp_len_25]
 ; src/file.c:222:                 if (strcmp(component, ".") == 0) {
 	leaq	.LC4(%rip), %rsi	;,
@@ -408,7 +411,7 @@ create_file:
 	testl	%eax, %eax	; tmp221
 	jne	.L34	;,
 ; src/file.c:226:                     if (dirs_tail != NULL && dirs_tail != dirs_head) {
-	movq	8(%rsp), %rax	; %sfp, node
+	movq	16(%rsp), %rax	; %sfp, node
 	testq	%rax, %rax	; node
 	je	.L35	;,
 	cmpq	%rbp, %rax	; node, node
@@ -433,10 +436,10 @@ create_file:
 ; src/file.c:231:                             node->next = 0;
 	movq	$0, 8(%r13)	;, node_35->next
 ; src/file.c:232:                             dirs_tail->next = node;
-	movq	8(%rsp), %rax	; %sfp, node
+	movq	16(%rsp), %rax	; %sfp, node
 	movq	%r13, 8(%rax)	; node, dirs_tail_152->next
 ; src/file.c:233:                             dirs_tail = node;
-	movq	%r13, 8(%rsp)	; node, %sfp
+	movq	%r13, 16(%rsp)	; node, %sfp
 	jmp	.L31	;
 .L60:
 ; src/file.c:255:                     StrNode* node = (StrNode*)alloc_memory(sizeof(StrNode));
@@ -445,14 +448,14 @@ create_file:
 	movq	%rax, %r13	; tmp227, node
 ; src/file.c:256:                     node->dir = create_string(component, comp_len);
 	leaq	32(%rsp), %rdi	;, tmp173
-	movq	16(%rsp), %rsi	; %sfp,
+	movq	8(%rsp), %rsi	; %sfp,
 	call	*create_string@GOTPCREL(%rip)	;
 ; src/file.c:256:                     node->dir = create_string(component, comp_len);
 	movq	%rax, 0(%r13)	; tmp228, node_42->dir
 ; src/file.c:257:                     node->next = 0;
 	movq	$0, 8(%r13)	;, node_42->next
 ; src/file.c:259:                     if (dirs_tail != NULL)
-	movq	8(%rsp), %rax	; %sfp, node
+	movq	16(%rsp), %rax	; %sfp, node
 	testq	%rax, %rax	; node
 	je	.L38	;,
 ; src/file.c:260:                         dirs_tail->next = node;
@@ -462,10 +465,10 @@ create_file:
 	testq	%rbp, %rbp	; node
 	je	.L53	;,
 ; src/file.c:262:                     dirs_tail = node;
-	movq	%r13, 8(%rsp)	; node, %sfp
+	movq	%r13, 16(%rsp)	; node, %sfp
 	jmp	.L31	;
 .L53:
-	movq	%r13, 8(%rsp)	; node, %sfp
+	movq	%r13, 16(%rsp)	; node, %sfp
 ; src/file.c:263:                     if (dirs_head == NULL) dirs_head = node;
 	movq	%r13, %rbp	; node, node
 	jmp	.L31	;
@@ -473,7 +476,7 @@ create_file:
 ; src/file.c:272:     file->dirs = dirs_head;
 	movq	%rbp, (%r15)	; node, file_4->dirs
 ; src/file.c:275:     if (dirs_tail != NULL) {
-	movq	8(%rsp), %rax	; %sfp, node
+	movq	16(%rsp), %rax	; %sfp, node
 	testq	%rax, %rax	; node
 	je	.L40	;,
 ; src/file.c:276:         string dot = strrchr(dirs_tail->dir, '.');
@@ -503,16 +506,16 @@ create_file:
 ; src/file.c:282:             file->extension = create_string(dot, strlen(dot));
 	movq	%rbx, %rdi	; dot,
 	call	*create_string@GOTPCREL(%rip)	;
-	movq	%rax, 8(%rsp)	; tmp232, %sfp
+	movq	%rax, 16(%rsp)	; tmp232, %sfp
 ; src/file.c:278:         if (dot != NULL && dot != dirs_tail->dir) {
 	jmp	.L42	;
 .L41:
 ; src/file.c:285:             file->name = dirs_tail->dir;
 	movq	%r12, 16(%r15)	; _46, file_4->name
-	movq	$0, 8(%rsp)	;, %sfp
+	movq	$0, 16(%rsp)	;, %sfp
 .L42:
 ; src/file.c:282:             file->extension = create_string(dot, strlen(dot));
-	movq	8(%rsp), %rax	; %sfp, node
+	movq	16(%rsp), %rax	; %sfp, node
 	movq	%rax, 8(%r15)	; node, file_4->extension
 ; src/file.c:298:     while (current != NULL) {
 	testq	%rbp, %rbp	; node
@@ -623,9 +626,9 @@ create_file:
 ; src/file.c:181:     size_t start = 0;
 	movq	%r12, %rbx	; tmp145, start
 ; src/file.c:178:     StrNode* dirs_head = NULL;
-	movq	$0, 8(%rsp)	;, %sfp
+	movq	$0, 16(%rsp)	;, %sfp
 .L28:
-	movq	8(%rsp), %rbp	; %sfp, node
+	movq	16(%rsp), %rbp	; %sfp, node
 	movq	%rbx, %r13	; start, start
 ; /usr/include/x86_64-linux-gnu/bits/string_fortified.h:95:   return __builtin___strncpy_chk (__dest, __src, __len,
 	leaq	32(%rsp), %rax	;, tmp270
@@ -787,14 +790,14 @@ rebuild_full_path:
 ; src/file.c:125:     string dir_cstr = dir != NULL ? dir : "";
 	testq	%rax, %rax	; dir
 	leaq	.LC0(%rip), %r13	;, tmp132
-	cmovne	%rax, %r13	; dir,, iftmp.6_14
+	cmovne	%rax, %r13	; dir,, iftmp.4_14
 ; src/file.c:126:     string ext_cstr = file->extension != NULL ? file->extension : "";
 	movq	8(%rbx), %r14	; file_18(D)->extension, _1
 ; src/file.c:126:     string ext_cstr = file->extension != NULL ? file->extension : "";
 	testq	%r14, %r14	; _1
 	je	.L88	;,
 ; src/file.c:128:     size_t path_len = strlen(dir_cstr) + 1 + strlen(file->name);
-	movq	%r13, %rdi	; iftmp.6_14,
+	movq	%r13, %rdi	; iftmp.4_14,
 	call	*strlen@GOTPCREL(%rip)	;
 	movq	%rax, %r12	; tmp138, tmp114
 ; src/file.c:128:     size_t path_len = strlen(dir_cstr) + 1 + strlen(file->name);
@@ -817,7 +820,7 @@ rebuild_full_path:
 	testq	%rbp, %rbp	; dir
 	je	.L81	;,
 ; src/file.c:132:     if (dir != NULL && strlen(dir_cstr) > 0)
-	cmpb	$0, 0(%r13)	;, MEM[(const char *)iftmp.6_14]
+	cmpb	$0, 0(%r13)	;, MEM[(const char *)iftmp.4_14]
 	jne	.L89	;,
 .L81:
 ; /usr/include/x86_64-linux-gnu/bits/stdio2.h:30:   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
@@ -851,7 +854,7 @@ rebuild_full_path:
 	subq	$8, %rsp	;,
 	pushq	%r14	; _1
 	movq	16(%rbx), %r9	; file_18(D)->name,
-	movq	%r13, %r8	; iftmp.6_14,
+	movq	%r13, %r8	; iftmp.4_14,
 	leaq	.LC6(%rip), %rcx	;, tmp107
 	movq	$-1, %rdx	;,
 	movl	$2, %esi	;,
@@ -863,7 +866,7 @@ rebuild_full_path:
 	jmp	.L82	;
 .L88:
 ; src/file.c:128:     size_t path_len = strlen(dir_cstr) + 1 + strlen(file->name);
-	movq	%r13, %rdi	; iftmp.6_14,
+	movq	%r13, %rdi	; iftmp.4_14,
 	call	*strlen@GOTPCREL(%rip)	;
 	movq	%rax, %r12	; tmp141, tmp125
 ; src/file.c:128:     size_t path_len = strlen(dir_cstr) + 1 + strlen(file->name);

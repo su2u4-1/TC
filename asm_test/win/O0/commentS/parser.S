@@ -28,19 +28,19 @@ parse_code:
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
- ; D:/TC/src/parser.c:24:     if (builtin_scope == NULL) {
+ ; D:/TC/src/parser.c:23:     if (builtin_scope == NULL) {
 	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp125
 	movq	(%rax), %rax	 ; builtin_scope, builtin_scope.0_1
- ; D:/TC/src/parser.c:24:     if (builtin_scope == NULL) {
+ ; D:/TC/src/parser.c:23:     if (builtin_scope == NULL) {
 	testq	%rax, %rax	 ; builtin_scope.0_1
 	jne	.L2	 ;,
- ; D:/TC/src/parser.c:25:         builtin_scope = create_symbol_table(NULL);
+ ; D:/TC/src/parser.c:24:         builtin_scope = create_symbol_table(NULL);
 	movl	$0, %ecx	 ;,
 	call	create_symbol_table	 ;
- ; D:/TC/src/parser.c:25:         builtin_scope = create_symbol_table(NULL);
+ ; D:/TC/src/parser.c:24:         builtin_scope = create_symbol_table(NULL);
 	movq	.refptr.builtin_scope(%rip), %rdx	 ;, tmp126
 	movq	%rax, (%rdx)	 ; _2, builtin_scope
- ; D:/TC/src/parser.c:26:         name_void = create_symbol(VOID_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+ ; D:/TC/src/parser.c:25:         name_void = create_symbol(VOID_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
 	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp127
 	movq	(%rax), %rdx	 ; builtin_scope, builtin_scope.1_3
 	movq	.refptr.VOID_KEYWORD(%rip), %rax	 ;, tmp128
@@ -50,10 +50,10 @@ parse_code:
 	movl	$6, %edx	 ;,
 	movq	%rax, %rcx	 ; VOID_KEYWORD.2_4,
 	call	create_symbol	 ;
- ; D:/TC/src/parser.c:26:         name_void = create_symbol(VOID_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+ ; D:/TC/src/parser.c:25:         name_void = create_symbol(VOID_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
 	movq	.refptr.name_void(%rip), %rdx	 ;, tmp129
 	movq	%rax, (%rdx)	 ; _5, name_void
- ; D:/TC/src/parser.c:27:         name_int = create_symbol(INT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+ ; D:/TC/src/parser.c:26:         name_int = create_symbol(INT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
 	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp130
 	movq	(%rax), %rdx	 ; builtin_scope, builtin_scope.3_6
 	movq	.refptr.INT_KEYWORD(%rip), %rax	 ;, tmp131
@@ -63,10 +63,10 @@ parse_code:
 	movl	$6, %edx	 ;,
 	movq	%rax, %rcx	 ; INT_KEYWORD.4_7,
 	call	create_symbol	 ;
- ; D:/TC/src/parser.c:27:         name_int = create_symbol(INT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+ ; D:/TC/src/parser.c:26:         name_int = create_symbol(INT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
 	movq	.refptr.name_int(%rip), %rdx	 ;, tmp132
 	movq	%rax, (%rdx)	 ; _8, name_int
- ; D:/TC/src/parser.c:28:         name_float = create_symbol(FLOAT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+ ; D:/TC/src/parser.c:27:         name_float = create_symbol(FLOAT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
 	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp133
 	movq	(%rax), %rdx	 ; builtin_scope, builtin_scope.5_9
 	movq	.refptr.FLOAT_KEYWORD(%rip), %rax	 ;, tmp134
@@ -76,10 +76,10 @@ parse_code:
 	movl	$6, %edx	 ;,
 	movq	%rax, %rcx	 ; FLOAT_KEYWORD.6_10,
 	call	create_symbol	 ;
- ; D:/TC/src/parser.c:28:         name_float = create_symbol(FLOAT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+ ; D:/TC/src/parser.c:27:         name_float = create_symbol(FLOAT_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
 	movq	.refptr.name_float(%rip), %rdx	 ;, tmp135
 	movq	%rax, (%rdx)	 ; _11, name_float
- ; D:/TC/src/parser.c:29:         name_string = create_symbol(STRING_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+ ; D:/TC/src/parser.c:28:         name_string = create_symbol(STRING_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
 	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp136
 	movq	(%rax), %rdx	 ; builtin_scope, builtin_scope.7_12
 	movq	.refptr.STRING_KEYWORD(%rip), %rax	 ;, tmp137
@@ -89,10 +89,10 @@ parse_code:
 	movl	$6, %edx	 ;,
 	movq	%rax, %rcx	 ; STRING_KEYWORD.8_13,
 	call	create_symbol	 ;
- ; D:/TC/src/parser.c:29:         name_string = create_symbol(STRING_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+ ; D:/TC/src/parser.c:28:         name_string = create_symbol(STRING_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
 	movq	.refptr.name_string(%rip), %rdx	 ;, tmp138
 	movq	%rax, (%rdx)	 ; _14, name_string
- ; D:/TC/src/parser.c:30:         name_bool = create_symbol(BOOL_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+ ; D:/TC/src/parser.c:29:         name_bool = create_symbol(BOOL_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
 	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp139
 	movq	(%rax), %rdx	 ; builtin_scope, builtin_scope.9_15
 	movq	.refptr.BOOL_KEYWORD(%rip), %rax	 ;, tmp140
@@ -102,54 +102,54 @@ parse_code:
 	movl	$6, %edx	 ;,
 	movq	%rax, %rcx	 ; BOOL_KEYWORD.10_16,
 	call	create_symbol	 ;
- ; D:/TC/src/parser.c:30:         name_bool = create_symbol(BOOL_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
+ ; D:/TC/src/parser.c:29:         name_bool = create_symbol(BOOL_KEYWORD, SYMBOL_TYPE, NULL, builtin_scope);
 	movq	.refptr.name_bool(%rip), %rdx	 ;, tmp141
 	movq	%rax, (%rdx)	 ; _17, name_bool
 .L2:
- ; D:/TC/src/parser.c:32:     if (now_scope == NULL)
+ ; D:/TC/src/parser.c:31:     if (now_scope == NULL)
 	cmpq	$0, 24(%rbp)	 ;, now_scope
 	jne	.L3	 ;,
- ; D:/TC/src/parser.c:33:         now_scope = builtin_scope;
+ ; D:/TC/src/parser.c:32:         now_scope = builtin_scope;
 	movq	.refptr.builtin_scope(%rip), %rax	 ;, tmp142
 	movq	(%rax), %rax	 ; builtin_scope, tmp143
 	movq	%rax, 24(%rbp)	 ; tmp143, now_scope
 .L3:
- ; D:/TC/src/parser.c:34:     Token* token = NULL;
+ ; D:/TC/src/parser.c:33:     Token* token = NULL;
 	movq	$0, -8(%rbp)	 ;, token
- ; D:/TC/src/parser.c:35:     list(CodeMember*) members = create_list();
+ ; D:/TC/src/parser.c:34:     list(CodeMember*) members = create_list();
 	call	create_list	 ;
 	movq	%rax, -16(%rbp)	 ; tmp144, members
- ; D:/TC/src/parser.c:36:     SymbolTable* global_scope = create_symbol_table(now_scope);
+ ; D:/TC/src/parser.c:35:     SymbolTable* global_scope = create_symbol_table(now_scope);
 	movq	24(%rbp), %rax	 ; now_scope, tmp145
 	movq	%rax, %rcx	 ; tmp145,
 	call	create_symbol_table	 ;
 	movq	%rax, -24(%rbp)	 ; tmp146, global_scope
- ; D:/TC/src/parser.c:37:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:36:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp147
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp147,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp148, token
- ; D:/TC/src/parser.c:38:     while (token != NULL && token->type != EOF_TOKEN) {
+ ; D:/TC/src/parser.c:37:     while (token != NULL && token->type != EOF_TOKEN) {
 	jmp	.L4	 ;
 .L13:
- ; D:/TC/src/parser.c:39:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
+ ; D:/TC/src/parser.c:38:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
 	movq	-8(%rbp), %rax	 ; token, tmp149
 	movl	24(%rax), %eax	 ; token_43->type, _18
- ; D:/TC/src/parser.c:39:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
+ ; D:/TC/src/parser.c:38:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
 	cmpl	$6, %eax	 ;, _18
 	jne	.L5	 ;,
- ; D:/TC/src/parser.c:39:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
+ ; D:/TC/src/parser.c:38:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
 	movq	.refptr.IMPORT_KEYWORD(%rip), %rax	 ;, tmp150
 	movq	(%rax), %rdx	 ; IMPORT_KEYWORD, IMPORT_KEYWORD.11_19
 	movq	-8(%rbp), %rax	 ; token, tmp151
 	movq	(%rax), %rax	 ; token_43->lexeme, _20
 	movq	%rax, %rcx	 ; _20,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:39:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
+ ; D:/TC/src/parser.c:38:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
 	testb	%al, %al	 ; _21
 	je	.L5	 ;,
- ; D:/TC/src/parser.c:40:             Import* import = parse_import(lexer, global_scope, parser);
+ ; D:/TC/src/parser.c:39:             Import* import = parse_import(lexer, global_scope, parser);
 	movq	32(%rbp), %rcx	 ; parser, tmp152
 	movq	-24(%rbp), %rdx	 ; global_scope, tmp153
 	movq	16(%rbp), %rax	 ; lexer, tmp154
@@ -157,16 +157,16 @@ parse_code:
 	movq	%rax, %rcx	 ; tmp154,
 	call	parse_import	 ;
 	movq	%rax, -32(%rbp)	 ; tmp155, import
- ; D:/TC/src/parser.c:41:             if (import == NULL)
+ ; D:/TC/src/parser.c:40:             if (import == NULL)
 	cmpq	$0, -32(%rbp)	 ;, import
 	jne	.L6	 ;,
- ; D:/TC/src/parser.c:42:                 parser_error("Failed to parse import statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:41:                 parser_error("Failed to parse import statement", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp156
 	movq	(%rax), %rax	 ; parser_77(D)->source_file, _22
 	movq	%rax, %rcx	 ; _22,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _23
- ; D:/TC/src/parser.c:42:                 parser_error("Failed to parse import statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:41:                 parser_error("Failed to parse import statement", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp157
 	movq	%rdx, %r8	 ; _23,
 	movq	%rax, %rdx	 ; tmp157,
@@ -174,7 +174,7 @@ parse_code:
 	movq	%rax, %rcx	 ; tmp158,
 	call	parser_error	 ;
 .L6:
- ; D:/TC/src/parser.c:43:             list_append(members, (pointer)create_code_member(CODE_IMPORT, import, NULL, NULL));
+ ; D:/TC/src/parser.c:42:             list_append(members, (pointer)create_code_member(CODE_IMPORT, import, NULL, NULL));
 	movq	-32(%rbp), %rax	 ; import, tmp159
 	movl	$0, %r9d	 ;,
 	movl	$0, %r8d	 ;,
@@ -182,30 +182,30 @@ parse_code:
 	movl	$0, %ecx	 ;,
 	call	create_code_member	 ;
 	movq	%rax, %rdx	 ;, _24
- ; D:/TC/src/parser.c:43:             list_append(members, (pointer)create_code_member(CODE_IMPORT, import, NULL, NULL));
+ ; D:/TC/src/parser.c:42:             list_append(members, (pointer)create_code_member(CODE_IMPORT, import, NULL, NULL));
 	movq	-16(%rbp), %rax	 ; members, tmp160
 	movq	%rax, %rcx	 ; tmp160,
 	call	list_append	 ;
- ; D:/TC/src/parser.c:39:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
+ ; D:/TC/src/parser.c:38:         if (token->type == KEYWORD && string_equal(token->lexeme, IMPORT_KEYWORD)) {
 	jmp	.L7	 ;
 .L5:
- ; D:/TC/src/parser.c:44:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
+ ; D:/TC/src/parser.c:43:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
 	movq	-8(%rbp), %rax	 ; token, tmp161
 	movl	24(%rax), %eax	 ; token_43->type, _25
- ; D:/TC/src/parser.c:44:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
+ ; D:/TC/src/parser.c:43:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
 	cmpl	$6, %eax	 ;, _25
 	jne	.L8	 ;,
- ; D:/TC/src/parser.c:44:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
+ ; D:/TC/src/parser.c:43:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
 	movq	.refptr.FUNC_KEYWORD(%rip), %rax	 ;, tmp162
 	movq	(%rax), %rdx	 ; FUNC_KEYWORD, FUNC_KEYWORD.12_26
 	movq	-8(%rbp), %rax	 ; token, tmp163
 	movq	(%rax), %rax	 ; token_43->lexeme, _27
 	movq	%rax, %rcx	 ; _27,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:44:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
+ ; D:/TC/src/parser.c:43:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
 	testb	%al, %al	 ; _28
 	je	.L8	 ;,
- ; D:/TC/src/parser.c:45:             Function* function = parse_function(lexer, global_scope, parser);
+ ; D:/TC/src/parser.c:44:             Function* function = parse_function(lexer, global_scope, parser);
 	movq	32(%rbp), %rcx	 ; parser, tmp164
 	movq	-24(%rbp), %rdx	 ; global_scope, tmp165
 	movq	16(%rbp), %rax	 ; lexer, tmp166
@@ -213,16 +213,16 @@ parse_code:
 	movq	%rax, %rcx	 ; tmp166,
 	call	parse_function	 ;
 	movq	%rax, -40(%rbp)	 ; tmp167, function
- ; D:/TC/src/parser.c:46:             if (function == NULL)
+ ; D:/TC/src/parser.c:45:             if (function == NULL)
 	cmpq	$0, -40(%rbp)	 ;, function
 	jne	.L9	 ;,
- ; D:/TC/src/parser.c:47:                 parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:46:                 parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp168
 	movq	(%rax), %rax	 ; parser_77(D)->source_file, _29
 	movq	%rax, %rcx	 ; _29,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _30
- ; D:/TC/src/parser.c:47:                 parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:46:                 parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp169
 	movq	%rdx, %r8	 ; _30,
 	movq	%rax, %rdx	 ; tmp169,
@@ -230,7 +230,7 @@ parse_code:
 	movq	%rax, %rcx	 ; tmp170,
 	call	parser_error	 ;
 .L9:
- ; D:/TC/src/parser.c:48:             list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
+ ; D:/TC/src/parser.c:47:             list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
 	movq	-40(%rbp), %rax	 ; function, tmp171
 	movl	$0, %r9d	 ;,
 	movq	%rax, %r8	 ; tmp171,
@@ -238,30 +238,30 @@ parse_code:
 	movl	$1, %ecx	 ;,
 	call	create_code_member	 ;
 	movq	%rax, %rdx	 ;, _31
- ; D:/TC/src/parser.c:48:             list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
+ ; D:/TC/src/parser.c:47:             list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
 	movq	-16(%rbp), %rax	 ; members, tmp172
 	movq	%rax, %rcx	 ; tmp172,
 	call	list_append	 ;
- ; D:/TC/src/parser.c:44:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
+ ; D:/TC/src/parser.c:43:         } else if (token->type == KEYWORD && string_equal(token->lexeme, FUNC_KEYWORD)) {
 	jmp	.L7	 ;
 .L8:
- ; D:/TC/src/parser.c:49:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
+ ; D:/TC/src/parser.c:48:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
 	movq	-8(%rbp), %rax	 ; token, tmp173
 	movl	24(%rax), %eax	 ; token_43->type, _32
- ; D:/TC/src/parser.c:49:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
+ ; D:/TC/src/parser.c:48:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
 	cmpl	$6, %eax	 ;, _32
 	jne	.L10	 ;,
- ; D:/TC/src/parser.c:49:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
+ ; D:/TC/src/parser.c:48:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
 	movq	.refptr.CLASS_KEYWORD(%rip), %rax	 ;, tmp174
 	movq	(%rax), %rdx	 ; CLASS_KEYWORD, CLASS_KEYWORD.13_33
 	movq	-8(%rbp), %rax	 ; token, tmp175
 	movq	(%rax), %rax	 ; token_43->lexeme, _34
 	movq	%rax, %rcx	 ; _34,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:49:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
+ ; D:/TC/src/parser.c:48:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
 	testb	%al, %al	 ; _35
 	je	.L10	 ;,
- ; D:/TC/src/parser.c:50:             Class* class = parse_class(lexer, global_scope, parser);
+ ; D:/TC/src/parser.c:49:             Class* class = parse_class(lexer, global_scope, parser);
 	movq	32(%rbp), %rcx	 ; parser, tmp176
 	movq	-24(%rbp), %rdx	 ; global_scope, tmp177
 	movq	16(%rbp), %rax	 ; lexer, tmp178
@@ -269,16 +269,16 @@ parse_code:
 	movq	%rax, %rcx	 ; tmp178,
 	call	parse_class	 ;
 	movq	%rax, -48(%rbp)	 ; tmp179, class
- ; D:/TC/src/parser.c:51:             if (class == NULL)
+ ; D:/TC/src/parser.c:50:             if (class == NULL)
 	cmpq	$0, -48(%rbp)	 ;, class
 	jne	.L11	 ;,
- ; D:/TC/src/parser.c:52:                 parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:51:                 parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp180
 	movq	(%rax), %rax	 ; parser_77(D)->source_file, _36
 	movq	%rax, %rcx	 ; _36,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _37
- ; D:/TC/src/parser.c:52:                 parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:51:                 parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp181
 	movq	%rdx, %r8	 ; _37,
 	movq	%rax, %rdx	 ; tmp181,
@@ -286,7 +286,7 @@ parse_code:
 	movq	%rax, %rcx	 ; tmp182,
 	call	parser_error	 ;
 .L11:
- ; D:/TC/src/parser.c:53:             list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
+ ; D:/TC/src/parser.c:52:             list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
 	movq	-48(%rbp), %rax	 ; class, tmp183
 	movq	%rax, %r9	 ; tmp183,
 	movl	$0, %r8d	 ;,
@@ -294,20 +294,20 @@ parse_code:
 	movl	$2, %ecx	 ;,
 	call	create_code_member	 ;
 	movq	%rax, %rdx	 ;, _38
- ; D:/TC/src/parser.c:53:             list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
+ ; D:/TC/src/parser.c:52:             list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
 	movq	-16(%rbp), %rax	 ; members, tmp184
 	movq	%rax, %rcx	 ; tmp184,
 	call	list_append	 ;
- ; D:/TC/src/parser.c:49:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
+ ; D:/TC/src/parser.c:48:         } else if (token->type == KEYWORD && string_equal(token->lexeme, CLASS_KEYWORD)) {
 	jmp	.L7	 ;
 .L10:
- ; D:/TC/src/parser.c:55:             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:54:             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp185
 	movq	(%rax), %rax	 ; parser_77(D)->source_file, _39
 	movq	%rax, %rcx	 ; _39,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _40
- ; D:/TC/src/parser.c:55:             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:54:             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp186
 	movq	%rdx, %r8	 ; _40,
 	movq	%rax, %rdx	 ; tmp186,
@@ -315,29 +315,29 @@ parse_code:
 	movq	%rax, %rcx	 ; tmp187,
 	call	parser_error	 ;
 .L7:
- ; D:/TC/src/parser.c:56:         token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:55:         token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp188
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp188,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp189, token
 .L4:
- ; D:/TC/src/parser.c:38:     while (token != NULL && token->type != EOF_TOKEN) {
+ ; D:/TC/src/parser.c:37:     while (token != NULL && token->type != EOF_TOKEN) {
 	cmpq	$0, -8(%rbp)	 ;, token
 	je	.L12	 ;,
- ; D:/TC/src/parser.c:38:     while (token != NULL && token->type != EOF_TOKEN) {
+ ; D:/TC/src/parser.c:37:     while (token != NULL && token->type != EOF_TOKEN) {
 	movq	-8(%rbp), %rax	 ; token, tmp190
 	movl	24(%rax), %eax	 ; token_43->type, _41
- ; D:/TC/src/parser.c:38:     while (token != NULL && token->type != EOF_TOKEN) {
+ ; D:/TC/src/parser.c:37:     while (token != NULL && token->type != EOF_TOKEN) {
 	testl	%eax, %eax	 ; _41
 	jne	.L13	 ;,
 .L12:
- ; D:/TC/src/parser.c:59:     return create_code(members, global_scope);
+ ; D:/TC/src/parser.c:58:     return create_code(members, global_scope);
 	movq	-24(%rbp), %rdx	 ; global_scope, tmp191
 	movq	-16(%rbp), %rax	 ; members, tmp192
 	movq	%rax, %rcx	 ; tmp192,
 	call	create_code	 ;
- ; D:/TC/src/parser.c:60: }
+ ; D:/TC/src/parser.c:59: }
 	leave	
 	ret	
 	.section .rdata,"dr"
@@ -350,9 +350,8 @@ parse_code:
 	.align 8
 .LC6:
 	.ascii "Expected ';' at end of import statement\0"
-	.align 8
 .LC7:
-	.ascii "Failed to import module '%s' from source '%s'\12\0"
+	.ascii "Failed to import module\0"
 	.text
 	.def	parse_import;	.scl	3;	.type	32;	.endef
 parse_import:
@@ -362,140 +361,140 @@ parse_import:
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
- ; D:/TC/src/parser.c:63:     Token* token = NULL;
+ ; D:/TC/src/parser.c:62:     Token* token = NULL;
 	movq	$0, -8(%rbp)	 ;, token
- ; D:/TC/src/parser.c:64:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:63:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp104
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp104,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp105, token
- ; D:/TC/src/parser.c:65:     if (token->type != IDENTIFIER) {
+ ; D:/TC/src/parser.c:64:     if (token->type != IDENTIFIER) {
 	movq	-8(%rbp), %rax	 ; token, tmp106
 	movl	24(%rax), %eax	 ; token_33->type, _1
- ; D:/TC/src/parser.c:65:     if (token->type != IDENTIFIER) {
+ ; D:/TC/src/parser.c:64:     if (token->type != IDENTIFIER) {
 	cmpl	$1, %eax	 ;, _1
 	je	.L16	 ;,
- ; D:/TC/src/parser.c:66:         parser_error("Expected identifier after 'import'", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:65:         parser_error("Expected identifier after 'import'", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp107
 	movq	(%rax), %rax	 ; parser_44(D)->source_file, _2
 	movq	%rax, %rcx	 ; _2,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _3
- ; D:/TC/src/parser.c:66:         parser_error("Expected identifier after 'import'", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:65:         parser_error("Expected identifier after 'import'", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp108
 	movq	%rdx, %r8	 ; _3,
 	movq	%rax, %rdx	 ; tmp108,
 	leaq	.LC4(%rip), %rax	 ;, tmp109
 	movq	%rax, %rcx	 ; tmp109,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:68:         return NULL;
+ ; D:/TC/src/parser.c:67:         return NULL;
 	movl	$0, %eax	 ;, _24
 	jmp	.L17	 ;
 .L16:
- ; D:/TC/src/parser.c:70:     string import_name = token->lexeme;
+ ; D:/TC/src/parser.c:69:     string import_name = token->lexeme;
 	movq	-8(%rbp), %rax	 ; token, tmp110
 	movq	(%rax), %rax	 ; token_33->lexeme, tmp111
 	movq	%rax, -32(%rbp)	 ; tmp111, import_name
- ; D:/TC/src/parser.c:71:     string source = NULL;
+ ; D:/TC/src/parser.c:70:     string source = NULL;
 	movq	$0, -16(%rbp)	 ;, source
- ; D:/TC/src/parser.c:72:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:71:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp112
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp112,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp113, token
- ; D:/TC/src/parser.c:73:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
+ ; D:/TC/src/parser.c:72:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
 	movq	-8(%rbp), %rax	 ; token, tmp114
 	movl	24(%rax), %eax	 ; token_37->type, _4
- ; D:/TC/src/parser.c:73:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
+ ; D:/TC/src/parser.c:72:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
 	cmpl	$6, %eax	 ;, _4
 	jne	.L18	 ;,
- ; D:/TC/src/parser.c:73:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
+ ; D:/TC/src/parser.c:72:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
 	movq	.refptr.FROM_KEYWORD(%rip), %rax	 ;, tmp115
 	movq	(%rax), %rdx	 ; FROM_KEYWORD, FROM_KEYWORD.14_5
 	movq	-8(%rbp), %rax	 ; token, tmp116
 	movq	(%rax), %rax	 ; token_37->lexeme, _6
 	movq	%rax, %rcx	 ; _6,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:73:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
+ ; D:/TC/src/parser.c:72:     if (token->type == KEYWORD && string_equal(token->lexeme, FROM_KEYWORD)) {
 	testb	%al, %al	 ; _7
 	je	.L18	 ;,
- ; D:/TC/src/parser.c:74:         token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:73:         token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp117
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp117,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp118, token
- ; D:/TC/src/parser.c:75:         if (token->type != STRING) {
+ ; D:/TC/src/parser.c:74:         if (token->type != STRING) {
 	movq	-8(%rbp), %rax	 ; token, tmp119
 	movl	24(%rax), %eax	 ; token_40->type, _8
- ; D:/TC/src/parser.c:75:         if (token->type != STRING) {
+ ; D:/TC/src/parser.c:74:         if (token->type != STRING) {
 	cmpl	$4, %eax	 ;, _8
 	je	.L19	 ;,
- ; D:/TC/src/parser.c:76:             parser_error("Expected string literal after 'from'", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:75:             parser_error("Expected string literal after 'from'", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp120
 	movq	(%rax), %rax	 ; parser_44(D)->source_file, _9
 	movq	%rax, %rcx	 ; _9,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _10
- ; D:/TC/src/parser.c:76:             parser_error("Expected string literal after 'from'", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:75:             parser_error("Expected string literal after 'from'", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp121
 	movq	%rdx, %r8	 ; _10,
 	movq	%rax, %rdx	 ; tmp121,
 	leaq	.LC5(%rip), %rax	 ;, tmp122
 	movq	%rax, %rcx	 ; tmp122,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:78:             return NULL;
+ ; D:/TC/src/parser.c:77:             return NULL;
 	movl	$0, %eax	 ;, _24
 	jmp	.L17	 ;
 .L19:
- ; D:/TC/src/parser.c:80:         source = token->lexeme;
+ ; D:/TC/src/parser.c:79:         source = token->lexeme;
 	movq	-8(%rbp), %rax	 ; token, tmp123
 	movq	(%rax), %rax	 ; token_40->lexeme, tmp124
 	movq	%rax, -16(%rbp)	 ; tmp124, source
- ; D:/TC/src/parser.c:81:         token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:80:         token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp125
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp125,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp126, token
 .L18:
- ; D:/TC/src/parser.c:83:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+ ; D:/TC/src/parser.c:82:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp127
 	movl	24(%rax), %eax	 ; token_21->type, _11
- ; D:/TC/src/parser.c:83:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+ ; D:/TC/src/parser.c:82:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _11
 	jne	.L20	 ;,
- ; D:/TC/src/parser.c:83:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+ ; D:/TC/src/parser.c:82:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
 	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax	 ;, tmp128
 	movq	(%rax), %rdx	 ; SEMICOLON_SYMBOL, SEMICOLON_SYMBOL.15_12
 	movq	-8(%rbp), %rax	 ; token, tmp129
 	movq	(%rax), %rax	 ; token_21->lexeme, _13
 	movq	%rax, %rcx	 ; _13,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:83:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
+ ; D:/TC/src/parser.c:82:     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
 	testb	%al, %al	 ; _14
 	jne	.L21	 ;,
 .L20:
- ; D:/TC/src/parser.c:84:         parser_error("Expected ';' at end of import statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:83:         parser_error("Expected ';' at end of import statement", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp130
 	movq	(%rax), %rax	 ; parser_44(D)->source_file, _15
 	movq	%rax, %rcx	 ; _15,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _16
- ; D:/TC/src/parser.c:84:         parser_error("Expected ';' at end of import statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:83:         parser_error("Expected ';' at end of import statement", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp131
 	movq	%rdx, %r8	 ; _16,
 	movq	%rax, %rdx	 ; tmp131,
 	leaq	.LC6(%rip), %rax	 ;, tmp132
 	movq	%rax, %rcx	 ; tmp132,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:86:         return NULL;
+ ; D:/TC/src/parser.c:85:         return NULL;
 	movl	$0, %eax	 ;, _24
 	jmp	.L17	 ;
 .L21:
- ; D:/TC/src/parser.c:89:     name = parse_import_file(import_name, source, now_scope, parser->source_file);
+ ; D:/TC/src/parser.c:88:     name = parse_import_file(import_name, source, now_scope, parser->source_file);
 	movq	32(%rbp), %rax	 ; parser, tmp133
 	movq	(%rax), %r8	 ; parser_44(D)->source_file, _17
 	movq	24(%rbp), %rcx	 ; now_scope, tmp134
@@ -506,22 +505,23 @@ parse_import:
 	movq	%rax, %rcx	 ; tmp136,
 	call	parse_import_file	 ;
 	movq	%rax, -24(%rbp)	 ; tmp137, name
- ; D:/TC/src/parser.c:90:     if (name == NULL) {
+ ; D:/TC/src/parser.c:89:     if (name == NULL) {
 	cmpq	$0, -24(%rbp)	 ;, name
 	jne	.L22	 ;,
- ; D:/TC/src/parser.c:91:         fprintf(stderr, "Failed to import module '%s' from source '%s'\n", import_name, source);
-	call	__getreent	 ;
- ; D:/TC/src/parser.c:91:         fprintf(stderr, "Failed to import module '%s' from source '%s'\n", import_name, source);
-	movq	24(%rax), %rax	 ; _18->_stderr, _19
- ; D:/TC/src/parser.c:91:         fprintf(stderr, "Failed to import module '%s' from source '%s'\n", import_name, source);
-	movq	-16(%rbp), %rcx	 ; source, tmp138
-	movq	-32(%rbp), %rdx	 ; import_name, tmp139
-	movq	%rcx, %r9	 ; tmp138,
-	movq	%rdx, %r8	 ; tmp139,
-	leaq	.LC7(%rip), %rdx	 ;, tmp140
-	movq	%rax, %rcx	 ; _19,
-	call	fprintf	 ;
- ; D:/TC/src/parser.c:92:         name = create_symbol(import_name, SYMBOL_VARIABLE, name_void, now_scope);
+ ; D:/TC/src/parser.c:90:         parser_error("Failed to import module", token, get_full_path(parser->source_file));
+	movq	32(%rbp), %rax	 ; parser, tmp138
+	movq	(%rax), %rax	 ; parser_44(D)->source_file, _18
+	movq	%rax, %rcx	 ; _18,
+	call	get_full_path	 ;
+	movq	%rax, %rdx	 ;, _19
+ ; D:/TC/src/parser.c:90:         parser_error("Failed to import module", token, get_full_path(parser->source_file));
+	movq	-8(%rbp), %rax	 ; token, tmp139
+	movq	%rdx, %r8	 ; _19,
+	movq	%rax, %rdx	 ; tmp139,
+	leaq	.LC7(%rip), %rax	 ;, tmp140
+	movq	%rax, %rcx	 ; tmp140,
+	call	parser_error	 ;
+ ; D:/TC/src/parser.c:91:         name = create_symbol(import_name, SYMBOL_VARIABLE, name_void, now_scope);
 	movq	.refptr.name_void(%rip), %rax	 ;, tmp141
 	movq	(%rax), %rdx	 ; name_void, name_void.16_20
 	movq	24(%rbp), %rcx	 ; now_scope, tmp142
@@ -533,13 +533,13 @@ parse_import:
 	call	create_symbol	 ;
 	movq	%rax, -24(%rbp)	 ; tmp144, name
 .L22:
- ; D:/TC/src/parser.c:95:     return create_import(name, source);
+ ; D:/TC/src/parser.c:94:     return create_import(name, source);
 	movq	-16(%rbp), %rdx	 ; source, tmp145
 	movq	-24(%rbp), %rax	 ; name, tmp146
 	movq	%rax, %rcx	 ; tmp146,
 	call	create_import	 ;
 .L17:
- ; D:/TC/src/parser.c:96: }
+ ; D:/TC/src/parser.c:95: }
 	leave	
 	ret	
 	.section .rdata,"dr"
@@ -584,122 +584,122 @@ parse_function:
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
- ; D:/TC/src/parser.c:99:     Token* token = NULL;
+ ; D:/TC/src/parser.c:98:     Token* token = NULL;
 	movq	$0, -8(%rbp)	 ;, token
- ; D:/TC/src/parser.c:100:     SymbolTable* function_scope = create_symbol_table(now_scope);
+ ; D:/TC/src/parser.c:99:     SymbolTable* function_scope = create_symbol_table(now_scope);
 	movq	24(%rbp), %rax	 ; now_scope, tmp142
 	movq	%rax, %rcx	 ; tmp142,
 	call	create_symbol_table	 ;
 	movq	%rax, -24(%rbp)	 ; tmp143, function_scope
- ; D:/TC/src/parser.c:101:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:100:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp144
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp144,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp145, token
- ; D:/TC/src/parser.c:102:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:101:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	movq	-8(%rbp), %rax	 ; token, tmp146
 	movl	24(%rax), %eax	 ; token_86->type, _1
- ; D:/TC/src/parser.c:102:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:101:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	cmpl	$1, %eax	 ;, _1
 	je	.L24	 ;,
- ; D:/TC/src/parser.c:102:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:101:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	movq	-8(%rbp), %rax	 ; token, tmp147
 	movl	24(%rax), %eax	 ; token_86->type, _2
- ; D:/TC/src/parser.c:102:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:101:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	cmpl	$6, %eax	 ;, _2
 	jne	.L25	 ;,
- ; D:/TC/src/parser.c:102:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:101:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	movq	-8(%rbp), %rax	 ; token, tmp148
 	movq	(%rax), %rax	 ; token_86->lexeme, _3
 	movq	%rax, %rcx	 ; _3,
 	call	is_builtin_type	 ;
- ; D:/TC/src/parser.c:102:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:101:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	testb	%al, %al	 ; _4
 	jne	.L24	 ;,
 .L25:
- ; D:/TC/src/parser.c:103:         parser_error("Expected function return type after 'func'", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:102:         parser_error("Expected function return type after 'func'", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp149
 	movq	(%rax), %rax	 ; parser_88(D)->source_file, _5
 	movq	%rax, %rcx	 ; _5,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _6
- ; D:/TC/src/parser.c:103:         parser_error("Expected function return type after 'func'", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:102:         parser_error("Expected function return type after 'func'", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp150
 	movq	%rdx, %r8	 ; _6,
 	movq	%rax, %rdx	 ; tmp150,
 	leaq	.LC8(%rip), %rax	 ;, tmp151
 	movq	%rax, %rcx	 ; tmp151,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:105:         return NULL;
+ ; D:/TC/src/parser.c:104:         return NULL;
 	movl	$0, %eax	 ;, _63
 	jmp	.L26	 ;
 .L24:
- ; D:/TC/src/parser.c:107:     Symbol* return_type = search_name(now_scope, token->lexeme);
+ ; D:/TC/src/parser.c:106:     Symbol* return_type = search_name(now_scope, token->lexeme);
 	movq	-8(%rbp), %rax	 ; token, tmp152
 	movq	(%rax), %rdx	 ; token_86->lexeme, _7
 	movq	24(%rbp), %rax	 ; now_scope, tmp153
 	movq	%rax, %rcx	 ; tmp153,
 	call	search_name	 ;
 	movq	%rax, -32(%rbp)	 ; tmp154, return_type
- ; D:/TC/src/parser.c:108:     if (return_type == NULL) {
+ ; D:/TC/src/parser.c:107:     if (return_type == NULL) {
 	cmpq	$0, -32(%rbp)	 ;, return_type
 	jne	.L27	 ;,
- ; D:/TC/src/parser.c:109:         parser_error("Unknown function return type", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:108:         parser_error("Unknown function return type", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp155
 	movq	(%rax), %rax	 ; parser_88(D)->source_file, _8
 	movq	%rax, %rcx	 ; _8,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _9
- ; D:/TC/src/parser.c:109:         parser_error("Unknown function return type", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:108:         parser_error("Unknown function return type", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp156
 	movq	%rdx, %r8	 ; _9,
 	movq	%rax, %rdx	 ; tmp156,
 	leaq	.LC9(%rip), %rax	 ;, tmp157
 	movq	%rax, %rcx	 ; tmp157,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:111:         return NULL;
+ ; D:/TC/src/parser.c:110:         return NULL;
 	movl	$0, %eax	 ;, _63
 	jmp	.L26	 ;
 .L27:
- ; D:/TC/src/parser.c:113:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:112:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp158
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp158,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp159, token
- ; D:/TC/src/parser.c:114:     if (token->type != IDENTIFIER) {
+ ; D:/TC/src/parser.c:113:     if (token->type != IDENTIFIER) {
 	movq	-8(%rbp), %rax	 ; token, tmp160
 	movl	24(%rax), %eax	 ; token_95->type, _10
- ; D:/TC/src/parser.c:114:     if (token->type != IDENTIFIER) {
+ ; D:/TC/src/parser.c:113:     if (token->type != IDENTIFIER) {
 	cmpl	$1, %eax	 ;, _10
 	je	.L28	 ;,
- ; D:/TC/src/parser.c:115:         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:114:         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp161
 	movq	(%rax), %rax	 ; parser_88(D)->source_file, _11
 	movq	%rax, %rcx	 ; _11,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _12
- ; D:/TC/src/parser.c:115:         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:114:         parser_error("Expected function name after return type", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp162
 	movq	%rdx, %r8	 ; _12,
 	movq	%rax, %rdx	 ; tmp162,
 	leaq	.LC10(%rip), %rax	 ;, tmp163
 	movq	%rax, %rcx	 ; tmp163,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:117:         return NULL;
+ ; D:/TC/src/parser.c:116:         return NULL;
 	movl	$0, %eax	 ;, _63
 	jmp	.L26	 ;
 .L28:
- ; D:/TC/src/parser.c:119:     Function* function = (Function*)alloc_memory(sizeof(Function));
+ ; D:/TC/src/parser.c:118:     Function* function = (Function*)alloc_memory(sizeof(Function));
 	movl	$40, %ecx	 ;,
 	call	alloc_memory	 ;
 	movq	%rax, -40(%rbp)	 ; tmp164, function
- ; D:/TC/src/parser.c:120:     function->function_scope = function_scope;
+ ; D:/TC/src/parser.c:119:     function->function_scope = function_scope;
 	movq	-40(%rbp), %rax	 ; function, tmp165
 	movq	-24(%rbp), %rdx	 ; function_scope, tmp166
 	movq	%rdx, 32(%rax)	 ; tmp166, function_97->function_scope
- ; D:/TC/src/parser.c:121:     Symbol* name = create_symbol(token->lexeme, SYMBOL_FUNCTION, return_type, function);
+ ; D:/TC/src/parser.c:120:     Symbol* name = create_symbol(token->lexeme, SYMBOL_FUNCTION, return_type, function);
 	movq	-8(%rbp), %rax	 ; token, tmp167
 	movq	(%rax), %rax	 ; token_95->lexeme, _13
 	movq	-40(%rbp), %rcx	 ; function, tmp168
@@ -710,59 +710,59 @@ parse_function:
 	movq	%rax, %rcx	 ; _13,
 	call	create_symbol	 ;
 	movq	%rax, -48(%rbp)	 ; tmp170, name
- ; D:/TC/src/parser.c:122:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:121:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp171
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp171,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp172, token
- ; D:/TC/src/parser.c:123:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:122:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp173
 	movl	24(%rax), %eax	 ; token_102->type, _14
- ; D:/TC/src/parser.c:123:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:122:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _14
 	jne	.L29	 ;,
- ; D:/TC/src/parser.c:123:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:122:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
 	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax	 ;, tmp174
 	movq	(%rax), %rdx	 ; L_PAREN_SYMBOL, L_PAREN_SYMBOL.17_15
 	movq	-8(%rbp), %rax	 ; token, tmp175
 	movq	(%rax), %rax	 ; token_102->lexeme, _16
 	movq	%rax, %rcx	 ; _16,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:123:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:122:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
 	testb	%al, %al	 ; _17
 	jne	.L30	 ;,
 .L29:
- ; D:/TC/src/parser.c:124:         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:123:         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp176
 	movq	(%rax), %rax	 ; parser_88(D)->source_file, _18
 	movq	%rax, %rcx	 ; _18,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _19
- ; D:/TC/src/parser.c:124:         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:123:         parser_error("Expected '(' after function name", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp177
 	movq	%rdx, %r8	 ; _19,
 	movq	%rax, %rdx	 ; tmp177,
 	leaq	.LC11(%rip), %rax	 ;, tmp178
 	movq	%rax, %rcx	 ; tmp178,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:126:         return NULL;
+ ; D:/TC/src/parser.c:125:         return NULL;
 	movl	$0, %eax	 ;, _63
 	jmp	.L26	 ;
 .L30:
- ; D:/TC/src/parser.c:128:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:127:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp179
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp179,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp180, token
- ; D:/TC/src/parser.c:129:     list(Variable*) parameters = create_list();
+ ; D:/TC/src/parser.c:128:     list(Variable*) parameters = create_list();
 	call	create_list	 ;
 	movq	%rax, -56(%rbp)	 ; tmp181, parameters
- ; D:/TC/src/parser.c:130:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:129:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	jmp	.L31	 ;
 .L38:
- ; D:/TC/src/parser.c:131:         Variable* parameter = parse_variable(lexer, function_scope, parser);
+ ; D:/TC/src/parser.c:130:         Variable* parameter = parse_variable(lexer, function_scope, parser);
 	movq	32(%rbp), %rcx	 ; parser, tmp182
 	movq	-24(%rbp), %rdx	 ; function_scope, tmp183
 	movq	16(%rbp), %rax	 ; lexer, tmp184
@@ -770,16 +770,16 @@ parse_function:
 	movq	%rax, %rcx	 ; tmp184,
 	call	parse_variable	 ;
 	movq	%rax, -80(%rbp)	 ; tmp185, parameter
- ; D:/TC/src/parser.c:132:         if (parameter == NULL)
+ ; D:/TC/src/parser.c:131:         if (parameter == NULL)
 	cmpq	$0, -80(%rbp)	 ;, parameter
 	jne	.L32	 ;,
- ; D:/TC/src/parser.c:133:             parser_error("Failed to parse function parameter", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:132:             parser_error("Failed to parse function parameter", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp186
 	movq	(%rax), %rax	 ; parser_88(D)->source_file, _20
 	movq	%rax, %rcx	 ; _20,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _21
- ; D:/TC/src/parser.c:133:             parser_error("Failed to parse function parameter", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:132:             parser_error("Failed to parse function parameter", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp187
 	movq	%rdx, %r8	 ; _21,
 	movq	%rax, %rdx	 ; tmp187,
@@ -788,19 +788,19 @@ parse_function:
 	call	parser_error	 ;
 	jmp	.L33	 ;
 .L32:
- ; D:/TC/src/parser.c:134:         else if (parameter->value != NULL)
+ ; D:/TC/src/parser.c:133:         else if (parameter->value != NULL)
 	movq	-80(%rbp), %rax	 ; parameter, tmp189
 	movq	16(%rax), %rax	 ; parameter_140->value, _22
- ; D:/TC/src/parser.c:134:         else if (parameter->value != NULL)
+ ; D:/TC/src/parser.c:133:         else if (parameter->value != NULL)
 	testq	%rax, %rax	 ; _22
 	je	.L34	 ;,
- ; D:/TC/src/parser.c:135:             parser_error("Function parameters cannot have default values", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:134:             parser_error("Function parameters cannot have default values", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp190
 	movq	(%rax), %rax	 ; parser_88(D)->source_file, _23
 	movq	%rax, %rcx	 ; _23,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _24
- ; D:/TC/src/parser.c:135:             parser_error("Function parameters cannot have default values", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:134:             parser_error("Function parameters cannot have default values", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp191
 	movq	%rdx, %r8	 ; _24,
 	movq	%rax, %rdx	 ; tmp191,
@@ -809,151 +809,151 @@ parse_function:
 	call	parser_error	 ;
 	jmp	.L33	 ;
 .L34:
- ; D:/TC/src/parser.c:137:             list_append(parameters, (pointer)parameter);
+ ; D:/TC/src/parser.c:136:             list_append(parameters, (pointer)parameter);
 	movq	-80(%rbp), %rdx	 ; parameter, tmp193
 	movq	-56(%rbp), %rax	 ; parameters, tmp194
 	movq	%rax, %rcx	 ; tmp194,
 	call	list_append	 ;
 .L33:
- ; D:/TC/src/parser.c:138:         token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:137:         token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp195
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp195,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp196, token
- ; D:/TC/src/parser.c:139:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+ ; D:/TC/src/parser.c:138:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp197
 	movl	24(%rax), %eax	 ; token_147->type, _25
- ; D:/TC/src/parser.c:139:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+ ; D:/TC/src/parser.c:138:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _25
 	jne	.L35	 ;,
- ; D:/TC/src/parser.c:139:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+ ; D:/TC/src/parser.c:138:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
 	movq	.refptr.COMMA_SYMBOL(%rip), %rax	 ;, tmp198
 	movq	(%rax), %rdx	 ; COMMA_SYMBOL, COMMA_SYMBOL.18_26
 	movq	-8(%rbp), %rax	 ; token, tmp199
 	movq	(%rax), %rax	 ; token_147->lexeme, _27
 	movq	%rax, %rcx	 ; _27,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:139:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+ ; D:/TC/src/parser.c:138:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
 	testb	%al, %al	 ; _28
 	je	.L35	 ;,
- ; D:/TC/src/parser.c:140:             token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:139:             token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp200
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp200,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp201, token
- ; D:/TC/src/parser.c:140:             token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:139:             token = get_next_token(lexer, true);
 	jmp	.L31	 ;
 .L35:
- ; D:/TC/src/parser.c:141:         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:140:         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp202
 	movl	24(%rax), %eax	 ; token_147->type, _29
- ; D:/TC/src/parser.c:141:         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:140:         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _29
 	jne	.L37	 ;,
- ; D:/TC/src/parser.c:141:         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:140:         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax	 ;, tmp203
 	movq	(%rax), %rdx	 ; R_PAREN_SYMBOL, R_PAREN_SYMBOL.19_30
 	movq	-8(%rbp), %rax	 ; token, tmp204
 	movq	(%rax), %rax	 ; token_147->lexeme, _31
 	movq	%rax, %rcx	 ; _31,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:141:         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:140:         } else if (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	testb	%al, %al	 ; _32
 	jne	.L31	 ;,
 .L37:
- ; D:/TC/src/parser.c:142:             parser_error("Expected ',' or ')' after function parameter", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:141:             parser_error("Expected ',' or ')' after function parameter", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp205
 	movq	(%rax), %rax	 ; parser_88(D)->source_file, _33
 	movq	%rax, %rcx	 ; _33,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _34
- ; D:/TC/src/parser.c:142:             parser_error("Expected ',' or ')' after function parameter", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:141:             parser_error("Expected ',' or ')' after function parameter", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp206
 	movq	%rdx, %r8	 ; _34,
 	movq	%rax, %rdx	 ; tmp206,
 	leaq	.LC14(%rip), %rax	 ;, tmp207
 	movq	%rax, %rcx	 ; tmp207,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:144:             return NULL;
+ ; D:/TC/src/parser.c:143:             return NULL;
 	movl	$0, %eax	 ;, _63
 	jmp	.L26	 ;
 .L31:
- ; D:/TC/src/parser.c:130:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:129:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp208
 	movl	24(%rax), %eax	 ; token_59->type, _35
- ; D:/TC/src/parser.c:130:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:129:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _35
 	jne	.L38	 ;,
- ; D:/TC/src/parser.c:130:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:129:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax	 ;, tmp209
 	movq	(%rax), %rdx	 ; R_PAREN_SYMBOL, R_PAREN_SYMBOL.20_36
 	movq	-8(%rbp), %rax	 ; token, tmp210
 	movq	(%rax), %rax	 ; token_59->lexeme, _37
 	movq	%rax, %rcx	 ; _37,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:130:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:129:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	testb	%al, %al	 ; _38
 	je	.L38	 ;,
- ; D:/TC/src/parser.c:147:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:146:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp211
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp211,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp212, token
- ; D:/TC/src/parser.c:148:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:147:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp213
 	movl	24(%rax), %eax	 ; token_110->type, _39
- ; D:/TC/src/parser.c:148:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:147:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _39
 	jne	.L39	 ;,
- ; D:/TC/src/parser.c:148:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:147:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax	 ;, tmp214
 	movq	(%rax), %rdx	 ; L_BRACE_SYMBOL, L_BRACE_SYMBOL.21_40
 	movq	-8(%rbp), %rax	 ; token, tmp215
 	movq	(%rax), %rax	 ; token_110->lexeme, _41
 	movq	%rax, %rcx	 ; _41,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:148:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:147:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
 	testb	%al, %al	 ; _42
 	jne	.L40	 ;,
 .L39:
- ; D:/TC/src/parser.c:149:         parser_error("Expected '{' to start function body", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:148:         parser_error("Expected '{' to start function body", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp216
 	movq	(%rax), %rax	 ; parser_88(D)->source_file, _43
 	movq	%rax, %rcx	 ; _43,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _44
- ; D:/TC/src/parser.c:149:         parser_error("Expected '{' to start function body", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:148:         parser_error("Expected '{' to start function body", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp217
 	movq	%rdx, %r8	 ; _44,
 	movq	%rax, %rdx	 ; tmp217,
 	leaq	.LC15(%rip), %rax	 ;, tmp218
 	movq	%rax, %rcx	 ; tmp218,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:151:         return NULL;
+ ; D:/TC/src/parser.c:150:         return NULL;
 	movl	$0, %eax	 ;, _63
 	jmp	.L26	 ;
 .L40:
- ; D:/TC/src/parser.c:153:     list(Statement*) body = create_list();
+ ; D:/TC/src/parser.c:152:     list(Statement*) body = create_list();
 	call	create_list	 ;
 	movq	%rax, -64(%rbp)	 ; tmp219, body
- ; D:/TC/src/parser.c:154:     parser->in_function = true;
+ ; D:/TC/src/parser.c:153:     parser->in_function = true;
 	movq	32(%rbp), %rax	 ; parser, tmp220
 	movb	$1, 8(%rax)	 ;, parser_88(D)->in_function
- ; D:/TC/src/parser.c:155:     bool have_return = false;
+ ; D:/TC/src/parser.c:154:     bool have_return = false;
 	movb	$0, -9(%rbp)	 ;, have_return
- ; D:/TC/src/parser.c:156:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:155:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp221
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp221,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp222, token
- ; D:/TC/src/parser.c:157:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:156:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
 	jmp	.L41	 ;
 .L45:
- ; D:/TC/src/parser.c:158:         Statement* statement = parse_statement(lexer, function_scope, parser);
+ ; D:/TC/src/parser.c:157:         Statement* statement = parse_statement(lexer, function_scope, parser);
 	movq	32(%rbp), %rcx	 ; parser, tmp223
 	movq	-24(%rbp), %rdx	 ; function_scope, tmp224
 	movq	16(%rbp), %rax	 ; lexer, tmp225
@@ -961,16 +961,16 @@ parse_function:
 	movq	%rax, %rcx	 ; tmp225,
 	call	parse_statement	 ;
 	movq	%rax, -72(%rbp)	 ; tmp226, statement
- ; D:/TC/src/parser.c:159:         if (statement == NULL)
+ ; D:/TC/src/parser.c:158:         if (statement == NULL)
 	cmpq	$0, -72(%rbp)	 ;, statement
 	jne	.L42	 ;,
- ; D:/TC/src/parser.c:160:             parser_error("Failed to parse function body statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:159:             parser_error("Failed to parse function body statement", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp227
 	movq	(%rax), %rax	 ; parser_88(D)->source_file, _45
 	movq	%rax, %rcx	 ; _45,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _46
- ; D:/TC/src/parser.c:160:             parser_error("Failed to parse function body statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:159:             parser_error("Failed to parse function body statement", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp228
 	movq	%rdx, %r8	 ; _46,
 	movq	%rax, %rdx	 ; tmp228,
@@ -979,16 +979,16 @@ parse_function:
 	call	parser_error	 ;
 	jmp	.L43	 ;
 .L42:
- ; D:/TC/src/parser.c:161:         else if (have_return)
+ ; D:/TC/src/parser.c:160:         else if (have_return)
 	cmpb	$0, -9(%rbp)	 ;, have_return
 	je	.L43	 ;,
- ; D:/TC/src/parser.c:162:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:161:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp230
 	movq	(%rax), %rax	 ; parser_88(D)->source_file, _47
 	movq	%rax, %rcx	 ; _47,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _48
- ; D:/TC/src/parser.c:162:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:161:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp231
 	movq	%rdx, %r8	 ; _48,
 	movq	%rax, %rdx	 ; tmp231,
@@ -996,65 +996,65 @@ parse_function:
 	movq	%rax, %rcx	 ; tmp232,
 	call	parser_error	 ;
 .L43:
- ; D:/TC/src/parser.c:163:         if (statement != NULL && statement->type == RETURN_STATEMENT)
+ ; D:/TC/src/parser.c:162:         if (statement != NULL && statement->type == RETURN_STATEMENT)
 	cmpq	$0, -72(%rbp)	 ;, statement
 	je	.L44	 ;,
- ; D:/TC/src/parser.c:163:         if (statement != NULL && statement->type == RETURN_STATEMENT)
+ ; D:/TC/src/parser.c:162:         if (statement != NULL && statement->type == RETURN_STATEMENT)
 	movq	-72(%rbp), %rax	 ; statement, tmp233
 	movl	8(%rax), %eax	 ; statement_127->type, _49
- ; D:/TC/src/parser.c:163:         if (statement != NULL && statement->type == RETURN_STATEMENT)
+ ; D:/TC/src/parser.c:162:         if (statement != NULL && statement->type == RETURN_STATEMENT)
 	cmpl	$5, %eax	 ;, _49
 	jne	.L44	 ;,
- ; D:/TC/src/parser.c:164:             have_return = true;
+ ; D:/TC/src/parser.c:163:             have_return = true;
 	movb	$1, -9(%rbp)	 ;, have_return
 .L44:
- ; D:/TC/src/parser.c:165:         list_append(body, (pointer)statement);
+ ; D:/TC/src/parser.c:164:         list_append(body, (pointer)statement);
 	movq	-72(%rbp), %rdx	 ; statement, tmp234
 	movq	-64(%rbp), %rax	 ; body, tmp235
 	movq	%rax, %rcx	 ; tmp235,
 	call	list_append	 ;
- ; D:/TC/src/parser.c:166:         token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:165:         token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp236
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp236,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp237, token
 .L41:
- ; D:/TC/src/parser.c:157:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:156:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp238
 	movl	24(%rax), %eax	 ; token_60->type, _50
- ; D:/TC/src/parser.c:157:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:156:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _50
 	jne	.L45	 ;,
- ; D:/TC/src/parser.c:157:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:156:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax	 ;, tmp239
 	movq	(%rax), %rdx	 ; R_BRACE_SYMBOL, R_BRACE_SYMBOL.22_51
 	movq	-8(%rbp), %rax	 ; token, tmp240
 	movq	(%rax), %rax	 ; token_60->lexeme, _52
 	movq	%rax, %rcx	 ; _52,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:157:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:156:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
 	testb	%al, %al	 ; _53
 	je	.L45	 ;,
- ; D:/TC/src/parser.c:168:     parser->in_function = false;
+ ; D:/TC/src/parser.c:167:     parser->in_function = false;
 	movq	32(%rbp), %rax	 ; parser, tmp241
 	movb	$0, 8(%rax)	 ;, parser_88(D)->in_function
- ; D:/TC/src/parser.c:169:     if (!have_return && return_type != name_void)
+ ; D:/TC/src/parser.c:168:     if (!have_return && return_type != name_void)
 	cmpb	$0, -9(%rbp)	 ;, have_return
 	jne	.L46	 ;,
- ; D:/TC/src/parser.c:169:     if (!have_return && return_type != name_void)
+ ; D:/TC/src/parser.c:168:     if (!have_return && return_type != name_void)
 	movq	.refptr.name_void(%rip), %rax	 ;, tmp242
 	movq	(%rax), %rax	 ; name_void, name_void.23_54
- ; D:/TC/src/parser.c:169:     if (!have_return && return_type != name_void)
+ ; D:/TC/src/parser.c:168:     if (!have_return && return_type != name_void)
 	cmpq	%rax, -32(%rbp)	 ; name_void.23_54, return_type
 	je	.L46	 ;,
- ; D:/TC/src/parser.c:170:         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:169:         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
 	movq	32(%rbp), %rax	 ; parser, tmp243
 	movq	(%rax), %rax	 ; parser_88(D)->source_file, _55
 	movq	%rax, %rcx	 ; _55,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _56
- ; D:/TC/src/parser.c:170:         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:169:         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp244
 	movq	%rdx, %r8	 ; _56,
 	movq	%rax, %rdx	 ; tmp244,
@@ -1062,16 +1062,16 @@ parse_function:
 	movq	%rax, %rcx	 ; tmp245,
 	call	parser_error	 ;
 .L46:
- ; D:/TC/src/parser.c:171:     if (!have_return && return_type == name_void)
+ ; D:/TC/src/parser.c:170:     if (!have_return && return_type == name_void)
 	cmpb	$0, -9(%rbp)	 ;, have_return
 	jne	.L47	 ;,
- ; D:/TC/src/parser.c:171:     if (!have_return && return_type == name_void)
+ ; D:/TC/src/parser.c:170:     if (!have_return && return_type == name_void)
 	movq	.refptr.name_void(%rip), %rax	 ;, tmp246
 	movq	(%rax), %rax	 ; name_void, name_void.24_57
- ; D:/TC/src/parser.c:171:     if (!have_return && return_type == name_void)
+ ; D:/TC/src/parser.c:170:     if (!have_return && return_type == name_void)
 	cmpq	%rax, -32(%rbp)	 ; name_void.24_57, return_type
 	jne	.L47	 ;,
- ; D:/TC/src/parser.c:172:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+ ; D:/TC/src/parser.c:171:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
 	movq	$0, 40(%rsp)	 ;,
 	movq	$0, 32(%rsp)	 ;,
 	movl	$0, %r9d	 ;,
@@ -1080,12 +1080,12 @@ parse_function:
 	movl	$5, %ecx	 ;,
 	call	create_statement	 ;
 	movq	%rax, %rdx	 ;, _58
- ; D:/TC/src/parser.c:172:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+ ; D:/TC/src/parser.c:171:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
 	movq	-64(%rbp), %rax	 ; body, tmp247
 	movq	%rax, %rcx	 ; tmp247,
 	call	list_append	 ;
 .L47:
- ; D:/TC/src/parser.c:174:     return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
+ ; D:/TC/src/parser.c:173:     return create_function_use_ptr(function, name, return_type, parameters, body, function_scope);
 	movq	-56(%rbp), %r9	 ; parameters, tmp248
 	movq	-32(%rbp), %r8	 ; return_type, tmp249
 	movq	-48(%rbp), %rdx	 ; name, tmp250
@@ -1097,7 +1097,7 @@ parse_function:
 	movq	%rax, %rcx	 ; tmp251,
 	call	create_function_use_ptr	 ;
 .L26:
- ; D:/TC/src/parser.c:175: }
+ ; D:/TC/src/parser.c:174: }
 	leave	
 	ret	
 	.section .rdata,"dr"
@@ -1144,14 +1144,14 @@ parse_method:
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; class_name, class_name
 	movq	%r9, 40(%rbp)	 ; parser, parser
- ; D:/TC/src/parser.c:178:     Token* token = NULL;
+ ; D:/TC/src/parser.c:177:     Token* token = NULL;
 	movq	$0, -8(%rbp)	 ;, token
- ; D:/TC/src/parser.c:179:     SymbolTable* method_scope = create_symbol_table(now_scope);
+ ; D:/TC/src/parser.c:178:     SymbolTable* method_scope = create_symbol_table(now_scope);
 	movq	24(%rbp), %rax	 ; now_scope, tmp152
 	movq	%rax, %rcx	 ; tmp152,
 	call	create_symbol_table	 ;
 	movq	%rax, -24(%rbp)	 ; tmp153, method_scope
- ; D:/TC/src/parser.c:180:     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, class_name, method_scope);
+ ; D:/TC/src/parser.c:179:     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, class_name, method_scope);
 	movq	.refptr.SELF_KEYWORD(%rip), %rax	 ;, tmp154
 	movq	(%rax), %rax	 ; SELF_KEYWORD, SELF_KEYWORD.25_1
 	movq	-24(%rbp), %rcx	 ; method_scope, tmp155
@@ -1162,122 +1162,122 @@ parse_method:
 	movq	%rax, %rcx	 ; SELF_KEYWORD.25_1,
 	call	create_symbol	 ;
 	movq	%rax, -32(%rbp)	 ; tmp157, self
- ; D:/TC/src/parser.c:181:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:180:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp158
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp158,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp159, token
- ; D:/TC/src/parser.c:182:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	movq	-8(%rbp), %rax	 ; token, tmp160
 	movl	24(%rax), %eax	 ; token_102->type, _2
- ; D:/TC/src/parser.c:182:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	cmpl	$1, %eax	 ;, _2
 	je	.L49	 ;,
- ; D:/TC/src/parser.c:182:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	movq	-8(%rbp), %rax	 ; token, tmp161
 	movl	24(%rax), %eax	 ; token_102->type, _3
- ; D:/TC/src/parser.c:182:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	cmpl	$6, %eax	 ;, _3
 	jne	.L50	 ;,
- ; D:/TC/src/parser.c:182:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	movq	-8(%rbp), %rax	 ; token, tmp162
 	movq	(%rax), %rax	 ; token_102->lexeme, _4
 	movq	%rax, %rcx	 ; _4,
 	call	is_builtin_type	 ;
- ; D:/TC/src/parser.c:182:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
+ ; D:/TC/src/parser.c:181:     if (token->type != IDENTIFIER && !(token->type == KEYWORD && is_builtin_type(token->lexeme))) {
 	testb	%al, %al	 ; _5
 	jne	.L49	 ;,
 .L50:
- ; D:/TC/src/parser.c:183:         parser_error("Expected method return type after 'method'", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:182:         parser_error("Expected method return type after 'method'", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp163
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _6
 	movq	%rax, %rcx	 ; _6,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _7
- ; D:/TC/src/parser.c:183:         parser_error("Expected method return type after 'method'", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:182:         parser_error("Expected method return type after 'method'", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp164
 	movq	%rdx, %r8	 ; _7,
 	movq	%rax, %rdx	 ; tmp164,
 	leaq	.LC19(%rip), %rax	 ;, tmp165
 	movq	%rax, %rcx	 ; tmp165,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:185:         return NULL;
+ ; D:/TC/src/parser.c:184:         return NULL;
 	movl	$0, %eax	 ;, _73
 	jmp	.L51	 ;
 .L49:
- ; D:/TC/src/parser.c:187:     Symbol* return_type = search_name(now_scope, token->lexeme);
+ ; D:/TC/src/parser.c:186:     Symbol* return_type = search_name(now_scope, token->lexeme);
 	movq	-8(%rbp), %rax	 ; token, tmp166
 	movq	(%rax), %rdx	 ; token_102->lexeme, _8
 	movq	24(%rbp), %rax	 ; now_scope, tmp167
 	movq	%rax, %rcx	 ; tmp167,
 	call	search_name	 ;
 	movq	%rax, -40(%rbp)	 ; tmp168, return_type
- ; D:/TC/src/parser.c:188:     if (return_type == NULL) {
+ ; D:/TC/src/parser.c:187:     if (return_type == NULL) {
 	cmpq	$0, -40(%rbp)	 ;, return_type
 	jne	.L52	 ;,
- ; D:/TC/src/parser.c:189:         parser_error("Unknown return type for method", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:188:         parser_error("Unknown return type for method", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp169
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _9
 	movq	%rax, %rcx	 ; _9,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _10
- ; D:/TC/src/parser.c:189:         parser_error("Unknown return type for method", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:188:         parser_error("Unknown return type for method", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp170
 	movq	%rdx, %r8	 ; _10,
 	movq	%rax, %rdx	 ; tmp170,
 	leaq	.LC20(%rip), %rax	 ;, tmp171
 	movq	%rax, %rcx	 ; tmp171,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:191:         return NULL;
+ ; D:/TC/src/parser.c:190:         return NULL;
 	movl	$0, %eax	 ;, _73
 	jmp	.L51	 ;
 .L52:
- ; D:/TC/src/parser.c:193:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:192:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp172
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp172,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp173, token
- ; D:/TC/src/parser.c:194:     if (token->type != IDENTIFIER) {
+ ; D:/TC/src/parser.c:193:     if (token->type != IDENTIFIER) {
 	movq	-8(%rbp), %rax	 ; token, tmp174
 	movl	24(%rax), %eax	 ; token_111->type, _11
- ; D:/TC/src/parser.c:194:     if (token->type != IDENTIFIER) {
+ ; D:/TC/src/parser.c:193:     if (token->type != IDENTIFIER) {
 	cmpl	$1, %eax	 ;, _11
 	je	.L53	 ;,
- ; D:/TC/src/parser.c:195:         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:194:         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp175
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _12
 	movq	%rax, %rcx	 ; _12,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _13
- ; D:/TC/src/parser.c:195:         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:194:         parser_error("Expected method name after return type", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp176
 	movq	%rdx, %r8	 ; _13,
 	movq	%rax, %rdx	 ; tmp176,
 	leaq	.LC21(%rip), %rax	 ;, tmp177
 	movq	%rax, %rcx	 ; tmp177,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:197:         return NULL;
+ ; D:/TC/src/parser.c:196:         return NULL;
 	movl	$0, %eax	 ;, _73
 	jmp	.L51	 ;
 .L53:
- ; D:/TC/src/parser.c:199:     Method* method = (Method*)alloc_memory(sizeof(Method));
+ ; D:/TC/src/parser.c:198:     Method* method = (Method*)alloc_memory(sizeof(Method));
 	movl	$40, %ecx	 ;,
 	call	alloc_memory	 ;
 	movq	%rax, -48(%rbp)	 ; tmp178, method
- ; D:/TC/src/parser.c:200:     method->method_scope = method_scope;
+ ; D:/TC/src/parser.c:199:     method->method_scope = method_scope;
 	movq	-48(%rbp), %rax	 ; method, tmp179
 	movq	-24(%rbp), %rdx	 ; method_scope, tmp180
 	movq	%rdx, 32(%rax)	 ; tmp180, method_113->method_scope
- ; D:/TC/src/parser.c:201:     Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
+ ; D:/TC/src/parser.c:200:     Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
 	movq	-8(%rbp), %rax	 ; token, tmp181
 	movq	(%rax), %rdx	 ; token_111->lexeme, _14
 	movq	32(%rbp), %rax	 ; class_name, tmp182
 	movq	8(%rax), %rax	 ; class_name_97(D)->name, _15
 	movq	%rax, %rcx	 ; _15,
 	call	make_method_name	 ;
- ; D:/TC/src/parser.c:201:     Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
+ ; D:/TC/src/parser.c:200:     Symbol* name = create_symbol(make_method_name(class_name->name, token->lexeme), SYMBOL_METHOD, return_type, method);
 	movq	-48(%rbp), %rcx	 ; method, tmp183
 	movq	-40(%rbp), %rdx	 ; return_type, tmp184
 	movq	%rcx, %r9	 ; tmp183,
@@ -1286,76 +1286,76 @@ parse_method:
 	movq	%rax, %rcx	 ; _16,
 	call	create_symbol	 ;
 	movq	%rax, -56(%rbp)	 ; tmp185, name
- ; D:/TC/src/parser.c:202:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:201:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp186
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp186,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp187, token
- ; D:/TC/src/parser.c:203:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:202:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp188
 	movl	24(%rax), %eax	 ; token_119->type, _17
- ; D:/TC/src/parser.c:203:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:202:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _17
 	jne	.L54	 ;,
- ; D:/TC/src/parser.c:203:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:202:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
 	movq	.refptr.L_PAREN_SYMBOL(%rip), %rax	 ;, tmp189
 	movq	(%rax), %rdx	 ; L_PAREN_SYMBOL, L_PAREN_SYMBOL.26_18
 	movq	-8(%rbp), %rax	 ; token, tmp190
 	movq	(%rax), %rax	 ; token_119->lexeme, _19
 	movq	%rax, %rcx	 ; _19,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:203:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:202:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_PAREN_SYMBOL)) {
 	testb	%al, %al	 ; _20
 	jne	.L55	 ;,
 .L54:
- ; D:/TC/src/parser.c:204:         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:203:         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp191
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _21
 	movq	%rax, %rcx	 ; _21,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _22
- ; D:/TC/src/parser.c:204:         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:203:         parser_error("Expected '(' after method name", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp192
 	movq	%rdx, %r8	 ; _22,
 	movq	%rax, %rdx	 ; tmp192,
 	leaq	.LC22(%rip), %rax	 ;, tmp193
 	movq	%rax, %rcx	 ; tmp193,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:206:         return NULL;
+ ; D:/TC/src/parser.c:205:         return NULL;
 	movl	$0, %eax	 ;, _73
 	jmp	.L51	 ;
 .L55:
- ; D:/TC/src/parser.c:208:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:207:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp194
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp194,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp195, token
- ; D:/TC/src/parser.c:209:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
+ ; D:/TC/src/parser.c:208:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
 	movq	-8(%rbp), %rax	 ; token, tmp196
 	movl	24(%rax), %eax	 ; token_122->type, _23
- ; D:/TC/src/parser.c:209:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
+ ; D:/TC/src/parser.c:208:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
 	cmpl	$6, %eax	 ;, _23
 	jne	.L56	 ;,
- ; D:/TC/src/parser.c:209:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
+ ; D:/TC/src/parser.c:208:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
 	movq	.refptr.SELF_KEYWORD(%rip), %rax	 ;, tmp197
 	movq	(%rax), %rdx	 ; SELF_KEYWORD, SELF_KEYWORD.27_24
 	movq	-8(%rbp), %rax	 ; token, tmp198
 	movq	(%rax), %rax	 ; token_122->lexeme, _25
 	movq	%rax, %rcx	 ; _25,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:209:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
+ ; D:/TC/src/parser.c:208:     if (token->type != KEYWORD || !string_equal(token->lexeme, SELF_KEYWORD))
 	testb	%al, %al	 ; _26
 	jne	.L57	 ;,
 .L56:
- ; D:/TC/src/parser.c:210:         parser_error("Expected 'self' as first parameter of method", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:209:         parser_error("Expected 'self' as first parameter of method", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp199
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _27
 	movq	%rax, %rcx	 ; _27,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _28
- ; D:/TC/src/parser.c:210:         parser_error("Expected 'self' as first parameter of method", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:209:         parser_error("Expected 'self' as first parameter of method", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp200
 	movq	%rdx, %r8	 ; _28,
 	movq	%rax, %rdx	 ; tmp200,
@@ -1363,54 +1363,54 @@ parse_method:
 	movq	%rax, %rcx	 ; tmp201,
 	call	parser_error	 ;
 .L57:
- ; D:/TC/src/parser.c:211:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:210:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp202
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp202,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp203, token
- ; D:/TC/src/parser.c:212:     list(Variable*) parameters = create_list();
+ ; D:/TC/src/parser.c:211:     list(Variable*) parameters = create_list();
 	call	create_list	 ;
 	movq	%rax, -64(%rbp)	 ; tmp204, parameters
- ; D:/TC/src/parser.c:213:     list_append(parameters, (pointer)create_variable(class_name, self, NULL));
+ ; D:/TC/src/parser.c:212:     list_append(parameters, (pointer)create_variable(class_name, self, NULL));
 	movq	-32(%rbp), %rdx	 ; self, tmp205
 	movq	32(%rbp), %rax	 ; class_name, tmp206
 	movl	$0, %r8d	 ;,
 	movq	%rax, %rcx	 ; tmp206,
 	call	create_variable	 ;
 	movq	%rax, %rdx	 ;, _29
- ; D:/TC/src/parser.c:213:     list_append(parameters, (pointer)create_variable(class_name, self, NULL));
+ ; D:/TC/src/parser.c:212:     list_append(parameters, (pointer)create_variable(class_name, self, NULL));
 	movq	-64(%rbp), %rax	 ; parameters, tmp207
 	movq	%rax, %rcx	 ; tmp207,
 	call	list_append	 ;
- ; D:/TC/src/parser.c:214:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:213:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	jmp	.L58	 ;
 .L66:
- ; D:/TC/src/parser.c:215:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+ ; D:/TC/src/parser.c:214:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp208
 	movl	24(%rax), %eax	 ; token_69->type, _30
- ; D:/TC/src/parser.c:215:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+ ; D:/TC/src/parser.c:214:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _30
 	jne	.L59	 ;,
- ; D:/TC/src/parser.c:215:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+ ; D:/TC/src/parser.c:214:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
 	movq	.refptr.COMMA_SYMBOL(%rip), %rax	 ;, tmp209
 	movq	(%rax), %rdx	 ; COMMA_SYMBOL, COMMA_SYMBOL.28_31
 	movq	-8(%rbp), %rax	 ; token, tmp210
 	movq	(%rax), %rax	 ; token_69->lexeme, _32
 	movq	%rax, %rcx	 ; _32,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:215:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
+ ; D:/TC/src/parser.c:214:         if (token->type == SYMBOL && string_equal(token->lexeme, COMMA_SYMBOL)) {
 	testb	%al, %al	 ; _33
 	je	.L59	 ;,
- ; D:/TC/src/parser.c:216:             token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:215:             token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp211
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp211,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp212, token
- ; D:/TC/src/parser.c:216:             token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:215:             token = get_next_token(lexer, true);
 	nop	
- ; D:/TC/src/parser.c:222:         Variable* parameter = parse_variable(lexer, method_scope, parser);
+ ; D:/TC/src/parser.c:221:         Variable* parameter = parse_variable(lexer, method_scope, parser);
 	movq	40(%rbp), %rcx	 ; parser, tmp219
 	movq	-24(%rbp), %rdx	 ; method_scope, tmp220
 	movq	16(%rbp), %rax	 ; lexer, tmp221
@@ -1418,52 +1418,52 @@ parse_method:
 	movq	%rax, %rcx	 ; tmp221,
 	call	parse_variable	 ;
 	movq	%rax, -72(%rbp)	 ; tmp222, parameter
- ; D:/TC/src/parser.c:223:         if (parameter == NULL)
+ ; D:/TC/src/parser.c:222:         if (parameter == NULL)
 	cmpq	$0, -72(%rbp)	 ;, parameter
 	jne	.L63	 ;,
 	jmp	.L76	 ;
 .L59:
- ; D:/TC/src/parser.c:217:         } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
+ ; D:/TC/src/parser.c:216:         } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
 	movq	-8(%rbp), %rax	 ; token, tmp213
 	movl	24(%rax), %eax	 ; token_69->type, _34
- ; D:/TC/src/parser.c:217:         } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
+ ; D:/TC/src/parser.c:216:         } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
 	cmpl	$5, %eax	 ;, _34
 	jne	.L61	 ;,
- ; D:/TC/src/parser.c:217:         } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
+ ; D:/TC/src/parser.c:216:         } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax	 ;, tmp214
 	movq	(%rax), %rdx	 ; R_PAREN_SYMBOL, R_PAREN_SYMBOL.29_35
 	movq	-8(%rbp), %rax	 ; token, tmp215
 	movq	(%rax), %rax	 ; token_69->lexeme, _36
 	movq	%rax, %rcx	 ; _36,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:217:         } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
+ ; D:/TC/src/parser.c:216:         } else if (token->type == SYMBOL && string_equal(token->lexeme, R_PAREN_SYMBOL)) break;
 	testb	%al, %al	 ; _37
 	jne	.L62	 ;,
 .L61:
- ; D:/TC/src/parser.c:219:             parser_error("Expected ',' or ')' after method parameter", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:218:             parser_error("Expected ',' or ')' after method parameter", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp216
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _38
 	movq	%rax, %rcx	 ; _38,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _39
- ; D:/TC/src/parser.c:219:             parser_error("Expected ',' or ')' after method parameter", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:218:             parser_error("Expected ',' or ')' after method parameter", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp217
 	movq	%rdx, %r8	 ; _39,
 	movq	%rax, %rdx	 ; tmp217,
 	leaq	.LC24(%rip), %rax	 ;, tmp218
 	movq	%rax, %rcx	 ; tmp218,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:220:             return NULL;
+ ; D:/TC/src/parser.c:219:             return NULL;
 	movl	$0, %eax	 ;, _73
 	jmp	.L51	 ;
 .L76:
- ; D:/TC/src/parser.c:224:             parser_error("Failed to parse method parameter", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:223:             parser_error("Failed to parse method parameter", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp223
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _40
 	movq	%rax, %rcx	 ; _40,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _41
- ; D:/TC/src/parser.c:224:             parser_error("Failed to parse method parameter", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:223:             parser_error("Failed to parse method parameter", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp224
 	movq	%rdx, %r8	 ; _41,
 	movq	%rax, %rdx	 ; tmp224,
@@ -1472,19 +1472,19 @@ parse_method:
 	call	parser_error	 ;
 	jmp	.L64	 ;
 .L63:
- ; D:/TC/src/parser.c:225:         else if (parameter->value != NULL)
+ ; D:/TC/src/parser.c:224:         else if (parameter->value != NULL)
 	movq	-72(%rbp), %rax	 ; parameter, tmp226
 	movq	16(%rax), %rax	 ; parameter_137->value, _42
- ; D:/TC/src/parser.c:225:         else if (parameter->value != NULL)
+ ; D:/TC/src/parser.c:224:         else if (parameter->value != NULL)
 	testq	%rax, %rax	 ; _42
 	je	.L65	 ;,
- ; D:/TC/src/parser.c:226:             parser_error("Method parameters cannot have default values", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:225:             parser_error("Method parameters cannot have default values", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp227
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _43
 	movq	%rax, %rcx	 ; _43,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _44
- ; D:/TC/src/parser.c:226:             parser_error("Method parameters cannot have default values", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:225:             parser_error("Method parameters cannot have default values", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp228
 	movq	%rdx, %r8	 ; _44,
 	movq	%rax, %rdx	 ; tmp228,
@@ -1493,97 +1493,97 @@ parse_method:
 	call	parser_error	 ;
 	jmp	.L64	 ;
 .L65:
- ; D:/TC/src/parser.c:228:             list_append(parameters, (pointer)parameter);
+ ; D:/TC/src/parser.c:227:             list_append(parameters, (pointer)parameter);
 	movq	-72(%rbp), %rdx	 ; parameter, tmp230
 	movq	-64(%rbp), %rax	 ; parameters, tmp231
 	movq	%rax, %rcx	 ; tmp231,
 	call	list_append	 ;
 .L64:
- ; D:/TC/src/parser.c:229:         token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:228:         token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp232
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp232,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp233, token
 .L58:
- ; D:/TC/src/parser.c:214:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:213:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp234
 	movl	24(%rax), %eax	 ; token_69->type, _45
- ; D:/TC/src/parser.c:214:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:213:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _45
 	jne	.L66	 ;,
- ; D:/TC/src/parser.c:214:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:213:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	movq	.refptr.R_PAREN_SYMBOL(%rip), %rax	 ;, tmp235
 	movq	(%rax), %rdx	 ; R_PAREN_SYMBOL, R_PAREN_SYMBOL.30_46
 	movq	-8(%rbp), %rax	 ; token, tmp236
 	movq	(%rax), %rax	 ; token_69->lexeme, _47
 	movq	%rax, %rcx	 ; _47,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:214:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
+ ; D:/TC/src/parser.c:213:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_PAREN_SYMBOL)) {
 	testb	%al, %al	 ; _48
 	je	.L66	 ;,
 .L62:
- ; D:/TC/src/parser.c:231:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:230:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp237
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp237,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp238, token
- ; D:/TC/src/parser.c:232:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:231:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp239
 	movl	24(%rax), %eax	 ; token_150->type, _49
- ; D:/TC/src/parser.c:232:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:231:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _49
 	jne	.L67	 ;,
- ; D:/TC/src/parser.c:232:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:231:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
 	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax	 ;, tmp240
 	movq	(%rax), %rdx	 ; L_BRACE_SYMBOL, L_BRACE_SYMBOL.31_50
 	movq	-8(%rbp), %rax	 ; token, tmp241
 	movq	(%rax), %rax	 ; token_150->lexeme, _51
 	movq	%rax, %rcx	 ; _51,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:232:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:231:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
 	testb	%al, %al	 ; _52
 	jne	.L68	 ;,
 .L67:
- ; D:/TC/src/parser.c:233:         parser_error("Expected '{' to start method body", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:232:         parser_error("Expected '{' to start method body", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp242
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _53
 	movq	%rax, %rcx	 ; _53,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _54
- ; D:/TC/src/parser.c:233:         parser_error("Expected '{' to start method body", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:232:         parser_error("Expected '{' to start method body", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp243
 	movq	%rdx, %r8	 ; _54,
 	movq	%rax, %rdx	 ; tmp243,
 	leaq	.LC27(%rip), %rax	 ;, tmp244
 	movq	%rax, %rcx	 ; tmp244,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:235:         return NULL;
+ ; D:/TC/src/parser.c:234:         return NULL;
 	movl	$0, %eax	 ;, _73
 	jmp	.L51	 ;
 .L68:
- ; D:/TC/src/parser.c:237:     list(Statement*) body = create_list();
+ ; D:/TC/src/parser.c:236:     list(Statement*) body = create_list();
 	call	create_list	 ;
 	movq	%rax, -80(%rbp)	 ; tmp245, body
- ; D:/TC/src/parser.c:238:     parser->in_function = true;
+ ; D:/TC/src/parser.c:237:     parser->in_function = true;
 	movq	40(%rbp), %rax	 ; parser, tmp246
 	movb	$1, 8(%rax)	 ;, parser_104(D)->in_function
- ; D:/TC/src/parser.c:239:     parser->in_method = true;
+ ; D:/TC/src/parser.c:238:     parser->in_method = true;
 	movq	40(%rbp), %rax	 ; parser, tmp247
 	movb	$1, 9(%rax)	 ;, parser_104(D)->in_method
- ; D:/TC/src/parser.c:240:     bool have_return = false;
+ ; D:/TC/src/parser.c:239:     bool have_return = false;
 	movb	$0, -9(%rbp)	 ;, have_return
- ; D:/TC/src/parser.c:241:     token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:240:     token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp248
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp248,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp249, token
- ; D:/TC/src/parser.c:242:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:241:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
 	jmp	.L69	 ;
 .L73:
- ; D:/TC/src/parser.c:243:         Statement* statement = parse_statement(lexer, method_scope, parser);
+ ; D:/TC/src/parser.c:242:         Statement* statement = parse_statement(lexer, method_scope, parser);
 	movq	40(%rbp), %rcx	 ; parser, tmp250
 	movq	-24(%rbp), %rdx	 ; method_scope, tmp251
 	movq	16(%rbp), %rax	 ; lexer, tmp252
@@ -1591,16 +1591,16 @@ parse_method:
 	movq	%rax, %rcx	 ; tmp252,
 	call	parse_statement	 ;
 	movq	%rax, -88(%rbp)	 ; tmp253, statement
- ; D:/TC/src/parser.c:244:         if (statement == NULL)
+ ; D:/TC/src/parser.c:243:         if (statement == NULL)
 	cmpq	$0, -88(%rbp)	 ;, statement
 	jne	.L70	 ;,
- ; D:/TC/src/parser.c:245:             parser_error("Failed to parse method body statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:244:             parser_error("Failed to parse method body statement", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp254
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _55
 	movq	%rax, %rcx	 ; _55,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _56
- ; D:/TC/src/parser.c:245:             parser_error("Failed to parse method body statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:244:             parser_error("Failed to parse method body statement", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp255
 	movq	%rdx, %r8	 ; _56,
 	movq	%rax, %rdx	 ; tmp255,
@@ -1609,16 +1609,16 @@ parse_method:
 	call	parser_error	 ;
 	jmp	.L71	 ;
 .L70:
- ; D:/TC/src/parser.c:246:         else if (have_return)
+ ; D:/TC/src/parser.c:245:         else if (have_return)
 	cmpb	$0, -9(%rbp)	 ;, have_return
 	je	.L71	 ;,
- ; D:/TC/src/parser.c:247:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:246:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp257
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _57
 	movq	%rax, %rcx	 ; _57,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _58
- ; D:/TC/src/parser.c:247:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:246:             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp258
 	movq	%rdx, %r8	 ; _58,
 	movq	%rax, %rdx	 ; tmp258,
@@ -1626,68 +1626,68 @@ parse_method:
 	movq	%rax, %rcx	 ; tmp259,
 	call	parser_error	 ;
 .L71:
- ; D:/TC/src/parser.c:248:         if (statement != NULL && statement->type == RETURN_STATEMENT)
+ ; D:/TC/src/parser.c:247:         if (statement != NULL && statement->type == RETURN_STATEMENT)
 	cmpq	$0, -88(%rbp)	 ;, statement
 	je	.L72	 ;,
- ; D:/TC/src/parser.c:248:         if (statement != NULL && statement->type == RETURN_STATEMENT)
+ ; D:/TC/src/parser.c:247:         if (statement != NULL && statement->type == RETURN_STATEMENT)
 	movq	-88(%rbp), %rax	 ; statement, tmp260
 	movl	8(%rax), %eax	 ; statement_169->type, _59
- ; D:/TC/src/parser.c:248:         if (statement != NULL && statement->type == RETURN_STATEMENT)
+ ; D:/TC/src/parser.c:247:         if (statement != NULL && statement->type == RETURN_STATEMENT)
 	cmpl	$5, %eax	 ;, _59
 	jne	.L72	 ;,
- ; D:/TC/src/parser.c:249:             have_return = true;
+ ; D:/TC/src/parser.c:248:             have_return = true;
 	movb	$1, -9(%rbp)	 ;, have_return
 .L72:
- ; D:/TC/src/parser.c:250:         list_append(body, (pointer)statement);
+ ; D:/TC/src/parser.c:249:         list_append(body, (pointer)statement);
 	movq	-88(%rbp), %rdx	 ; statement, tmp261
 	movq	-80(%rbp), %rax	 ; body, tmp262
 	movq	%rax, %rcx	 ; tmp262,
 	call	list_append	 ;
- ; D:/TC/src/parser.c:251:         token = get_next_token(lexer, true);
+ ; D:/TC/src/parser.c:250:         token = get_next_token(lexer, true);
 	movq	16(%rbp), %rax	 ; lexer, tmp263
 	movl	$1, %edx	 ;,
 	movq	%rax, %rcx	 ; tmp263,
 	call	get_next_token	 ;
 	movq	%rax, -8(%rbp)	 ; tmp264, token
 .L69:
- ; D:/TC/src/parser.c:242:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:241:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
 	movq	-8(%rbp), %rax	 ; token, tmp265
 	movl	24(%rax), %eax	 ; token_70->type, _60
- ; D:/TC/src/parser.c:242:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:241:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _60
 	jne	.L73	 ;,
- ; D:/TC/src/parser.c:242:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:241:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
 	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax	 ;, tmp266
 	movq	(%rax), %rdx	 ; R_BRACE_SYMBOL, R_BRACE_SYMBOL.32_61
 	movq	-8(%rbp), %rax	 ; token, tmp267
 	movq	(%rax), %rax	 ; token_70->lexeme, _62
 	movq	%rax, %rcx	 ; _62,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:242:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:241:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
 	testb	%al, %al	 ; _63
 	je	.L73	 ;,
- ; D:/TC/src/parser.c:253:     parser->in_function = false;
+ ; D:/TC/src/parser.c:252:     parser->in_function = false;
 	movq	40(%rbp), %rax	 ; parser, tmp268
 	movb	$0, 8(%rax)	 ;, parser_104(D)->in_function
- ; D:/TC/src/parser.c:254:     parser->in_method = false;
+ ; D:/TC/src/parser.c:253:     parser->in_method = false;
 	movq	40(%rbp), %rax	 ; parser, tmp269
 	movb	$0, 9(%rax)	 ;, parser_104(D)->in_method
- ; D:/TC/src/parser.c:255:     if (!have_return && return_type != name_void)
+ ; D:/TC/src/parser.c:254:     if (!have_return && return_type != name_void)
 	cmpb	$0, -9(%rbp)	 ;, have_return
 	jne	.L74	 ;,
- ; D:/TC/src/parser.c:255:     if (!have_return && return_type != name_void)
+ ; D:/TC/src/parser.c:254:     if (!have_return && return_type != name_void)
 	movq	.refptr.name_void(%rip), %rax	 ;, tmp270
 	movq	(%rax), %rax	 ; name_void, name_void.33_64
- ; D:/TC/src/parser.c:255:     if (!have_return && return_type != name_void)
+ ; D:/TC/src/parser.c:254:     if (!have_return && return_type != name_void)
 	cmpq	%rax, -40(%rbp)	 ; name_void.33_64, return_type
 	je	.L74	 ;,
- ; D:/TC/src/parser.c:256:         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:255:         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
 	movq	40(%rbp), %rax	 ; parser, tmp271
 	movq	(%rax), %rax	 ; parser_104(D)->source_file, _65
 	movq	%rax, %rcx	 ; _65,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _66
- ; D:/TC/src/parser.c:256:         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
+ ; D:/TC/src/parser.c:255:         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
 	movq	-8(%rbp), %rax	 ; token, tmp272
 	movq	%rdx, %r8	 ; _66,
 	movq	%rax, %rdx	 ; tmp272,
@@ -1695,16 +1695,16 @@ parse_method:
 	movq	%rax, %rcx	 ; tmp273,
 	call	parser_error	 ;
 .L74:
- ; D:/TC/src/parser.c:257:     if (!have_return && return_type == name_void)
+ ; D:/TC/src/parser.c:256:     if (!have_return && return_type == name_void)
 	cmpb	$0, -9(%rbp)	 ;, have_return
 	jne	.L75	 ;,
- ; D:/TC/src/parser.c:257:     if (!have_return && return_type == name_void)
+ ; D:/TC/src/parser.c:256:     if (!have_return && return_type == name_void)
 	movq	.refptr.name_void(%rip), %rax	 ;, tmp274
 	movq	(%rax), %rax	 ; name_void, name_void.34_67
- ; D:/TC/src/parser.c:257:     if (!have_return && return_type == name_void)
+ ; D:/TC/src/parser.c:256:     if (!have_return && return_type == name_void)
 	cmpq	%rax, -40(%rbp)	 ; name_void.34_67, return_type
 	jne	.L75	 ;,
- ; D:/TC/src/parser.c:258:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+ ; D:/TC/src/parser.c:257:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
 	movq	$0, 40(%rsp)	 ;,
 	movq	$0, 32(%rsp)	 ;,
 	movl	$0, %r9d	 ;,
@@ -1713,12 +1713,12 @@ parse_method:
 	movl	$5, %ecx	 ;,
 	call	create_statement	 ;
 	movq	%rax, %rdx	 ;, _68
- ; D:/TC/src/parser.c:258:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
+ ; D:/TC/src/parser.c:257:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, NULL, NULL));
 	movq	-80(%rbp), %rax	 ; body, tmp275
 	movq	%rax, %rcx	 ; tmp275,
 	call	list_append	 ;
 .L75:
- ; D:/TC/src/parser.c:260:     return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
+ ; D:/TC/src/parser.c:259:     return create_method_use_ptr(method, name, return_type, parameters, body, method_scope);
 	movq	-64(%rbp), %r9	 ; parameters, tmp276
 	movq	-40(%rbp), %r8	 ; return_type, tmp277
 	movq	-56(%rbp), %rdx	 ; name, tmp278
@@ -1730,7 +1730,7 @@ parse_method:
 	movq	%rax, %rcx	 ; tmp279,
 	call	create_method_use_ptr	 ;
 .L51:
- ; D:/TC/src/parser.c:261: }
+ ; D:/TC/src/parser.c:260: }
 	leave	
 	ret	
 	.section .rdata,"dr"
@@ -1747,7 +1747,7 @@ parse_method:
 	.ascii "Failed to parse class variable\0"
 	.align 8
 .LC34:
-	.ascii "[warning] Unsupported type for class variable '%s': %s\12\0"
+	.ascii "Unsupported type for class variable\0"
 	.align 8
 .LC35:
 	.ascii "Expected ';' after class variable declaration\0"
@@ -1764,744 +1764,767 @@ parse_method:
 parse_class:
 	pushq	%rbp	 ;
 	movq	%rsp, %rbp	 ;,
-	pushq	%rsi	 ;
 	pushq	%rbx	 ;
-	subq	$288, %rsp	 ;,
+	subq	$296, %rsp	 ;,
 	movq	%rcx, 16(%rbp)	 ; lexer, lexer
 	movq	%rdx, 24(%rbp)	 ; now_scope, now_scope
 	movq	%r8, 32(%rbp)	 ; parser, parser
- ; D:/TC/src/parser.c:264:     Token* token = NULL;
+ ; D:/TC/src/parser.c:263:     Token* token = NULL;
 	movq	$0, -24(%rbp)	 ;, token
- ; D:/TC/src/parser.c:265:     SymbolTable* class_scope = create_symbol_table(now_scope);
-	movq	24(%rbp), %rax	 ; now_scope, tmp187
-	movq	%rax, %rcx	 ; tmp187,
+ ; D:/TC/src/parser.c:264:     SymbolTable* class_scope = create_symbol_table(now_scope);
+	movq	24(%rbp), %rax	 ; now_scope, tmp190
+	movq	%rax, %rcx	 ; tmp190,
 	call	create_symbol_table	 ;
-	movq	%rax, -48(%rbp)	 ; tmp188, class_scope
- ; D:/TC/src/parser.c:266:     token = get_next_token(lexer, true);
-	movq	16(%rbp), %rax	 ; lexer, tmp189
+	movq	%rax, -48(%rbp)	 ; tmp191, class_scope
+ ; D:/TC/src/parser.c:265:     token = get_next_token(lexer, true);
+	movq	16(%rbp), %rax	 ; lexer, tmp192
 	movl	$1, %edx	 ;,
-	movq	%rax, %rcx	 ; tmp189,
+	movq	%rax, %rcx	 ; tmp192,
 	call	get_next_token	 ;
-	movq	%rax, -24(%rbp)	 ; tmp190, token
- ; D:/TC/src/parser.c:267:     if (token->type != IDENTIFIER) {
-	movq	-24(%rbp), %rax	 ; token, tmp191
-	movl	24(%rax), %eax	 ; token_135->type, _1
- ; D:/TC/src/parser.c:267:     if (token->type != IDENTIFIER) {
+	movq	%rax, -24(%rbp)	 ; tmp193, token
+ ; D:/TC/src/parser.c:266:     if (token->type != IDENTIFIER) {
+	movq	-24(%rbp), %rax	 ; token, tmp194
+	movl	24(%rax), %eax	 ; token_138->type, _1
+ ; D:/TC/src/parser.c:266:     if (token->type != IDENTIFIER) {
 	cmpl	$1, %eax	 ;, _1
 	je	.L78	 ;,
- ; D:/TC/src/parser.c:268:         parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
-	movq	32(%rbp), %rax	 ; parser, tmp192
-	movq	(%rax), %rax	 ; parser_176(D)->source_file, _2
+ ; D:/TC/src/parser.c:267:         parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
+	movq	32(%rbp), %rax	 ; parser, tmp195
+	movq	(%rax), %rax	 ; parser_179(D)->source_file, _2
 	movq	%rax, %rcx	 ; _2,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _3
- ; D:/TC/src/parser.c:268:         parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
-	movq	-24(%rbp), %rax	 ; token, tmp193
+ ; D:/TC/src/parser.c:267:         parser_error("Expected class name after 'class'", token, get_full_path(parser->source_file));
+	movq	-24(%rbp), %rax	 ; token, tmp196
 	movq	%rdx, %r8	 ; _3,
-	movq	%rax, %rdx	 ; tmp193,
-	leaq	.LC30(%rip), %rax	 ;, tmp194
-	movq	%rax, %rcx	 ; tmp194,
+	movq	%rax, %rdx	 ; tmp196,
+	leaq	.LC30(%rip), %rax	 ;, tmp197
+	movq	%rax, %rcx	 ; tmp197,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:270:         return NULL;
-	movl	$0, %eax	 ;, _108
+ ; D:/TC/src/parser.c:269:         return NULL;
+	movl	$0, %eax	 ;, _111
 	jmp	.L79	 ;
 .L78:
- ; D:/TC/src/parser.c:272:     Class* class = (Class*)alloc_memory(sizeof(Class));
+ ; D:/TC/src/parser.c:271:     Class* class = (Class*)alloc_memory(sizeof(Class));
 	movl	$32, %ecx	 ;,
 	call	alloc_memory	 ;
-	movq	%rax, -56(%rbp)	 ; tmp195, class
- ; D:/TC/src/parser.c:273:     class->class_scope = class_scope;
-	movq	-56(%rbp), %rax	 ; class, tmp196
-	movq	-48(%rbp), %rdx	 ; class_scope, tmp197
-	movq	%rdx, 16(%rax)	 ; tmp197, class_137->class_scope
- ; D:/TC/src/parser.c:274:     Symbol* name = create_symbol(token->lexeme, SYMBOL_CLASS, NULL, class);
-	movq	-24(%rbp), %rax	 ; token, tmp198
-	movq	(%rax), %rax	 ; token_135->lexeme, _4
-	movq	-56(%rbp), %rdx	 ; class, tmp199
-	movq	%rdx, %r9	 ; tmp199,
+	movq	%rax, -56(%rbp)	 ; tmp198, class
+ ; D:/TC/src/parser.c:272:     class->class_scope = class_scope;
+	movq	-56(%rbp), %rax	 ; class, tmp199
+	movq	-48(%rbp), %rdx	 ; class_scope, tmp200
+	movq	%rdx, 16(%rax)	 ; tmp200, class_140->class_scope
+ ; D:/TC/src/parser.c:273:     Symbol* name = create_symbol(token->lexeme, SYMBOL_CLASS, NULL, class);
+	movq	-24(%rbp), %rax	 ; token, tmp201
+	movq	(%rax), %rax	 ; token_138->lexeme, _4
+	movq	-56(%rbp), %rdx	 ; class, tmp202
+	movq	%rdx, %r9	 ; tmp202,
 	movl	$0, %r8d	 ;,
 	movl	$0, %edx	 ;,
 	movq	%rax, %rcx	 ; _4,
 	call	create_symbol	 ;
-	movq	%rax, -64(%rbp)	 ; tmp200, name
- ; D:/TC/src/parser.c:275:     token = get_next_token(lexer, true);
-	movq	16(%rbp), %rax	 ; lexer, tmp201
+	movq	%rax, -64(%rbp)	 ; tmp203, name
+ ; D:/TC/src/parser.c:274:     token = get_next_token(lexer, true);
+	movq	16(%rbp), %rax	 ; lexer, tmp204
 	movl	$1, %edx	 ;,
-	movq	%rax, %rcx	 ; tmp201,
+	movq	%rax, %rcx	 ; tmp204,
 	call	get_next_token	 ;
-	movq	%rax, -24(%rbp)	 ; tmp202, token
- ; D:/TC/src/parser.c:276:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
-	movq	-24(%rbp), %rax	 ; token, tmp203
-	movl	24(%rax), %eax	 ; token_142->type, _5
- ; D:/TC/src/parser.c:276:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	%rax, -24(%rbp)	 ; tmp205, token
+ ; D:/TC/src/parser.c:275:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	-24(%rbp), %rax	 ; token, tmp206
+	movl	24(%rax), %eax	 ; token_145->type, _5
+ ; D:/TC/src/parser.c:275:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
 	cmpl	$5, %eax	 ;, _5
 	jne	.L80	 ;,
- ; D:/TC/src/parser.c:276:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
-	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax	 ;, tmp204
+ ; D:/TC/src/parser.c:275:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+	movq	.refptr.L_BRACE_SYMBOL(%rip), %rax	 ;, tmp207
 	movq	(%rax), %rdx	 ; L_BRACE_SYMBOL, L_BRACE_SYMBOL.35_6
-	movq	-24(%rbp), %rax	 ; token, tmp205
-	movq	(%rax), %rax	 ; token_142->lexeme, _7
+	movq	-24(%rbp), %rax	 ; token, tmp208
+	movq	(%rax), %rax	 ; token_145->lexeme, _7
 	movq	%rax, %rcx	 ; _7,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:276:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:275:     if (token->type != SYMBOL || !string_equal(token->lexeme, L_BRACE_SYMBOL)) {
 	testb	%al, %al	 ; _8
 	jne	.L81	 ;,
 .L80:
- ; D:/TC/src/parser.c:277:         parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
-	movq	32(%rbp), %rax	 ; parser, tmp206
-	movq	(%rax), %rax	 ; parser_176(D)->source_file, _9
+ ; D:/TC/src/parser.c:276:         parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
+	movq	32(%rbp), %rax	 ; parser, tmp209
+	movq	(%rax), %rax	 ; parser_179(D)->source_file, _9
 	movq	%rax, %rcx	 ; _9,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _10
- ; D:/TC/src/parser.c:277:         parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
-	movq	-24(%rbp), %rax	 ; token, tmp207
+ ; D:/TC/src/parser.c:276:         parser_error("Expected '{' to start class body", token, get_full_path(parser->source_file));
+	movq	-24(%rbp), %rax	 ; token, tmp210
 	movq	%rdx, %r8	 ; _10,
-	movq	%rax, %rdx	 ; tmp207,
-	leaq	.LC31(%rip), %rax	 ;, tmp208
-	movq	%rax, %rcx	 ; tmp208,
+	movq	%rax, %rdx	 ; tmp210,
+	leaq	.LC31(%rip), %rax	 ;, tmp211
+	movq	%rax, %rcx	 ; tmp211,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:279:         return NULL;
-	movl	$0, %eax	 ;, _108
+ ; D:/TC/src/parser.c:278:         return NULL;
+	movl	$0, %eax	 ;, _111
 	jmp	.L79	 ;
 .L81:
- ; D:/TC/src/parser.c:281:     list(ClassMember*) members = create_list();
+ ; D:/TC/src/parser.c:280:     list(ClassMember*) members = create_list();
 	call	create_list	 ;
-	movq	%rax, -72(%rbp)	 ; tmp209, members
- ; D:/TC/src/parser.c:282:     token = get_next_token(lexer, true);
-	movq	16(%rbp), %rax	 ; lexer, tmp210
+	movq	%rax, -72(%rbp)	 ; tmp212, members
+ ; D:/TC/src/parser.c:281:     token = get_next_token(lexer, true);
+	movq	16(%rbp), %rax	 ; lexer, tmp213
 	movl	$1, %edx	 ;,
-	movq	%rax, %rcx	 ; tmp210,
+	movq	%rax, %rcx	 ; tmp213,
 	call	get_next_token	 ;
-	movq	%rax, -24(%rbp)	 ; tmp211, token
- ; D:/TC/src/parser.c:283:     size_t size = 0;
+	movq	%rax, -24(%rbp)	 ; tmp214, token
+ ; D:/TC/src/parser.c:282:     size_t size = 0;
 	movq	$0, -32(%rbp)	 ;, size
- ; D:/TC/src/parser.c:284:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+ ; D:/TC/src/parser.c:283:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
 	jmp	.L82	 ;
 .L96:
- ; D:/TC/src/parser.c:285:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
-	movq	-24(%rbp), %rax	 ; token, tmp212
-	movl	24(%rax), %eax	 ; token_103->type, _11
- ; D:/TC/src/parser.c:285:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
+ ; D:/TC/src/parser.c:284:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
+	movq	-24(%rbp), %rax	 ; token, tmp215
+	movl	24(%rax), %eax	 ; token_106->type, _11
+ ; D:/TC/src/parser.c:284:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
 	cmpl	$6, %eax	 ;, _11
 	jne	.L83	 ;,
- ; D:/TC/src/parser.c:285:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
-	movq	.refptr.METHOD_KEYWORD(%rip), %rax	 ;, tmp213
+ ; D:/TC/src/parser.c:284:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
+	movq	.refptr.METHOD_KEYWORD(%rip), %rax	 ;, tmp216
 	movq	(%rax), %rdx	 ; METHOD_KEYWORD, METHOD_KEYWORD.36_12
-	movq	-24(%rbp), %rax	 ; token, tmp214
-	movq	(%rax), %rax	 ; token_103->lexeme, _13
+	movq	-24(%rbp), %rax	 ; token, tmp217
+	movq	(%rax), %rax	 ; token_106->lexeme, _13
 	movq	%rax, %rcx	 ; _13,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:285:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
+ ; D:/TC/src/parser.c:284:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
 	testb	%al, %al	 ; _14
 	je	.L83	 ;,
- ; D:/TC/src/parser.c:286:             Method* method = parse_method(lexer, class_scope, name, parser);
-	movq	32(%rbp), %r8	 ; parser, tmp215
-	movq	-64(%rbp), %rcx	 ; name, tmp216
-	movq	-48(%rbp), %rdx	 ; class_scope, tmp217
-	movq	16(%rbp), %rax	 ; lexer, tmp218
-	movq	%r8, %r9	 ; tmp215,
-	movq	%rcx, %r8	 ; tmp216,
-	movq	%rax, %rcx	 ; tmp218,
+ ; D:/TC/src/parser.c:285:             Method* method = parse_method(lexer, class_scope, name, parser);
+	movq	32(%rbp), %r8	 ; parser, tmp218
+	movq	-64(%rbp), %rcx	 ; name, tmp219
+	movq	-48(%rbp), %rdx	 ; class_scope, tmp220
+	movq	16(%rbp), %rax	 ; lexer, tmp221
+	movq	%r8, %r9	 ; tmp218,
+	movq	%rcx, %r8	 ; tmp219,
+	movq	%rax, %rcx	 ; tmp221,
 	call	parse_method	 ;
-	movq	%rax, -232(%rbp)	 ; tmp219, method
- ; D:/TC/src/parser.c:287:             if (method == NULL)
+	movq	%rax, -232(%rbp)	 ; tmp222, method
+ ; D:/TC/src/parser.c:286:             if (method == NULL)
 	cmpq	$0, -232(%rbp)	 ;, method
 	jne	.L84	 ;,
- ; D:/TC/src/parser.c:288:                 parser_error("Failed to parse class method", token, get_full_path(parser->source_file));
-	movq	32(%rbp), %rax	 ; parser, tmp220
-	movq	(%rax), %rax	 ; parser_176(D)->source_file, _15
+ ; D:/TC/src/parser.c:287:                 parser_error("Failed to parse class method", token, get_full_path(parser->source_file));
+	movq	32(%rbp), %rax	 ; parser, tmp223
+	movq	(%rax), %rax	 ; parser_179(D)->source_file, _15
 	movq	%rax, %rcx	 ; _15,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _16
- ; D:/TC/src/parser.c:288:                 parser_error("Failed to parse class method", token, get_full_path(parser->source_file));
-	movq	-24(%rbp), %rax	 ; token, tmp221
+ ; D:/TC/src/parser.c:287:                 parser_error("Failed to parse class method", token, get_full_path(parser->source_file));
+	movq	-24(%rbp), %rax	 ; token, tmp224
 	movq	%rdx, %r8	 ; _16,
-	movq	%rax, %rdx	 ; tmp221,
-	leaq	.LC32(%rip), %rax	 ;, tmp222
-	movq	%rax, %rcx	 ; tmp222,
+	movq	%rax, %rdx	 ; tmp224,
+	leaq	.LC32(%rip), %rax	 ;, tmp225
+	movq	%rax, %rcx	 ; tmp225,
 	call	parser_error	 ;
 .L84:
- ; D:/TC/src/parser.c:289:             list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
-	movq	-232(%rbp), %rax	 ; method, tmp223
+ ; D:/TC/src/parser.c:288:             list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	movq	-232(%rbp), %rax	 ; method, tmp226
 	movl	$0, %r8d	 ;,
-	movq	%rax, %rdx	 ; tmp223,
+	movq	%rax, %rdx	 ; tmp226,
 	movl	$0, %ecx	 ;,
 	call	create_class_member	 ;
 	movq	%rax, %rdx	 ;, _17
- ; D:/TC/src/parser.c:289:             list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
-	movq	-72(%rbp), %rax	 ; members, tmp224
-	movq	%rax, %rcx	 ; tmp224,
+ ; D:/TC/src/parser.c:288:             list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	movq	-72(%rbp), %rax	 ; members, tmp227
+	movq	%rax, %rcx	 ; tmp227,
 	call	list_append	 ;
- ; D:/TC/src/parser.c:285:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
+ ; D:/TC/src/parser.c:284:         if (token->type == KEYWORD && string_equal(token->lexeme, METHOD_KEYWORD)) {
 	jmp	.L85	 ;
 .L83:
- ; D:/TC/src/parser.c:290:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
-	movq	-24(%rbp), %rax	 ; token, tmp225
-	movl	24(%rax), %eax	 ; token_103->type, _18
- ; D:/TC/src/parser.c:290:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
+ ; D:/TC/src/parser.c:289:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
+	movq	-24(%rbp), %rax	 ; token, tmp228
+	movl	24(%rax), %eax	 ; token_106->type, _18
+ ; D:/TC/src/parser.c:289:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
 	cmpl	$6, %eax	 ;, _18
 	jne	.L86	 ;,
- ; D:/TC/src/parser.c:290:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
-	movq	.refptr.VAR_KEYWORD(%rip), %rax	 ;, tmp226
+ ; D:/TC/src/parser.c:289:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
+	movq	.refptr.VAR_KEYWORD(%rip), %rax	 ;, tmp229
 	movq	(%rax), %rdx	 ; VAR_KEYWORD, VAR_KEYWORD.37_19
-	movq	-24(%rbp), %rax	 ; token, tmp227
-	movq	(%rax), %rax	 ; token_103->lexeme, _20
+	movq	-24(%rbp), %rax	 ; token, tmp230
+	movq	(%rax), %rax	 ; token_106->lexeme, _20
 	movq	%rax, %rcx	 ; _20,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:290:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
+ ; D:/TC/src/parser.c:289:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
 	testb	%al, %al	 ; _21
 	je	.L86	 ;,
- ; D:/TC/src/parser.c:291:             token = get_next_token(lexer, true);
-	movq	16(%rbp), %rax	 ; lexer, tmp228
+ ; D:/TC/src/parser.c:290:             token = get_next_token(lexer, true);
+	movq	16(%rbp), %rax	 ; lexer, tmp231
 	movl	$1, %edx	 ;,
-	movq	%rax, %rcx	 ; tmp228,
+	movq	%rax, %rcx	 ; tmp231,
 	call	get_next_token	 ;
-	movq	%rax, -24(%rbp)	 ; tmp229, token
- ; D:/TC/src/parser.c:292:             parser->in_class = true;
-	movq	32(%rbp), %rax	 ; parser, tmp230
-	movb	$1, 10(%rax)	 ;, parser_176(D)->in_class
- ; D:/TC/src/parser.c:293:             Variable* variable = parse_variable(lexer, class_scope, parser);
-	movq	32(%rbp), %rcx	 ; parser, tmp231
-	movq	-48(%rbp), %rdx	 ; class_scope, tmp232
-	movq	16(%rbp), %rax	 ; lexer, tmp233
-	movq	%rcx, %r8	 ; tmp231,
-	movq	%rax, %rcx	 ; tmp233,
+	movq	%rax, -24(%rbp)	 ; tmp232, token
+ ; D:/TC/src/parser.c:291:             parser->in_class = true;
+	movq	32(%rbp), %rax	 ; parser, tmp233
+	movb	$1, 10(%rax)	 ;, parser_179(D)->in_class
+ ; D:/TC/src/parser.c:292:             Variable* variable = parse_variable(lexer, class_scope, parser);
+	movq	32(%rbp), %rcx	 ; parser, tmp234
+	movq	-48(%rbp), %rdx	 ; class_scope, tmp235
+	movq	16(%rbp), %rax	 ; lexer, tmp236
+	movq	%rcx, %r8	 ; tmp234,
+	movq	%rax, %rcx	 ; tmp236,
 	call	parse_variable	 ;
-	movq	%rax, -240(%rbp)	 ; tmp234, variable
- ; D:/TC/src/parser.c:294:             parser->in_class = false;
-	movq	32(%rbp), %rax	 ; parser, tmp235
-	movb	$0, 10(%rax)	 ;, parser_176(D)->in_class
- ; D:/TC/src/parser.c:295:             if (variable == NULL)
+	movq	%rax, -240(%rbp)	 ; tmp237, variable
+ ; D:/TC/src/parser.c:293:             parser->in_class = false;
+	movq	32(%rbp), %rax	 ; parser, tmp238
+	movb	$0, 10(%rax)	 ;, parser_179(D)->in_class
+ ; D:/TC/src/parser.c:294:             if (variable == NULL)
 	cmpq	$0, -240(%rbp)	 ;, variable
 	jne	.L87	 ;,
- ; D:/TC/src/parser.c:296:                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
-	movq	32(%rbp), %rax	 ; parser, tmp236
-	movq	(%rax), %rax	 ; parser_176(D)->source_file, _22
+ ; D:/TC/src/parser.c:295:                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
+	movq	32(%rbp), %rax	 ; parser, tmp239
+	movq	(%rax), %rax	 ; parser_179(D)->source_file, _22
 	movq	%rax, %rcx	 ; _22,
 	call	get_full_path	 ;
 	movq	%rax, %rdx	 ;, _23
- ; D:/TC/src/parser.c:296:                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
-	movq	-24(%rbp), %rax	 ; token, tmp237
+ ; D:/TC/src/parser.c:295:                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
+	movq	-24(%rbp), %rax	 ; token, tmp240
 	movq	%rdx, %r8	 ; _23,
-	movq	%rax, %rdx	 ; tmp237,
-	leaq	.LC33(%rip), %rax	 ;, tmp238
-	movq	%rax, %rcx	 ; tmp238,
+	movq	%rax, %rdx	 ; tmp240,
+	leaq	.LC33(%rip), %rax	 ;, tmp241
+	movq	%rax, %rcx	 ; tmp241,
 	call	parser_error	 ;
 .L87:
- ; D:/TC/src/parser.c:297:             ClassMember* member = create_class_member(CLASS_VARIABLE, NULL, variable);
-	movq	-240(%rbp), %rax	 ; variable, tmp239
-	movq	%rax, %r8	 ; tmp239,
+ ; D:/TC/src/parser.c:296:             ClassMember* member = create_class_member(CLASS_VARIABLE, NULL, variable);
+	movq	-240(%rbp), %rax	 ; variable, tmp242
+	movq	%rax, %r8	 ; tmp242,
 	movl	$0, %edx	 ;,
 	movl	$1, %ecx	 ;,
 	call	create_class_member	 ;
-	movq	%rax, -248(%rbp)	 ; tmp240, member
- ; D:/TC/src/parser.c:298:             list_append(members, (pointer)member);
-	movq	-248(%rbp), %rdx	 ; member, tmp241
-	movq	-72(%rbp), %rax	 ; members, tmp242
-	movq	%rax, %rcx	 ; tmp242,
+	movq	%rax, -248(%rbp)	 ; tmp243, member
+ ; D:/TC/src/parser.c:297:             list_append(members, (pointer)member);
+	movq	-248(%rbp), %rdx	 ; member, tmp244
+	movq	-72(%rbp), %rax	 ; members, tmp245
+	movq	%rax, %rcx	 ; tmp245,
 	call	list_append	 ;
- ; D:/TC/src/parser.c:299:             if (member->type == CLASS_VARIABLE) {
-	movq	-248(%rbp), %rax	 ; member, tmp243
-	movl	8(%rax), %eax	 ; member_257->type, _24
- ; D:/TC/src/parser.c:299:             if (member->type == CLASS_VARIABLE) {
+ ; D:/TC/src/parser.c:298:             if (member->type == CLASS_VARIABLE) {
+	movq	-248(%rbp), %rax	 ; member, tmp246
+	movl	8(%rax), %eax	 ; member_268->type, _24
+ ; D:/TC/src/parser.c:298:             if (member->type == CLASS_VARIABLE) {
 	cmpl	$1, %eax	 ;, _24
 	jne	.L88	 ;,
- ; D:/TC/src/parser.c:300:                 Symbol* type = member->content.variable->type;
-	movq	-248(%rbp), %rax	 ; member, tmp244
-	movq	(%rax), %rax	 ; member_257->content.variable, _25
- ; D:/TC/src/parser.c:300:                 Symbol* type = member->content.variable->type;
-	movq	(%rax), %rax	 ; _25->type, tmp245
-	movq	%rax, -256(%rbp)	 ; tmp245, type
- ; D:/TC/src/parser.c:301:                 if (type == name_int || type == name_float || type == name_string)
-	movq	.refptr.name_int(%rip), %rax	 ;, tmp246
+ ; D:/TC/src/parser.c:299:                 Symbol* type = member->content.variable->type;
+	movq	-248(%rbp), %rax	 ; member, tmp247
+	movq	(%rax), %rax	 ; member_268->content.variable, _25
+ ; D:/TC/src/parser.c:299:                 Symbol* type = member->content.variable->type;
+	movq	(%rax), %rax	 ; _25->type, tmp248
+	movq	%rax, -256(%rbp)	 ; tmp248, type
+ ; D:/TC/src/parser.c:300:                 if (type == name_int || type == name_float || type == name_string)
+	movq	.refptr.name_int(%rip), %rax	 ;, tmp249
 	movq	(%rax), %rax	 ; name_int, name_int.38_26
- ; D:/TC/src/parser.c:301:                 if (type == name_int || type == name_float || type == name_string)
+ ; D:/TC/src/parser.c:300:                 if (type == name_int || type == name_float || type == name_string)
 	cmpq	%rax, -256(%rbp)	 ; name_int.38_26, type
 	je	.L89	 ;,
- ; D:/TC/src/parser.c:301:                 if (type == name_int || type == name_float || type == name_string)
-	movq	.refptr.name_float(%rip), %rax	 ;, tmp247
+ ; D:/TC/src/parser.c:300:                 if (type == name_int || type == name_float || type == name_string)
+	movq	.refptr.name_float(%rip), %rax	 ;, tmp250
 	movq	(%rax), %rax	 ; name_float, name_float.39_27
- ; D:/TC/src/parser.c:301:                 if (type == name_int || type == name_float || type == name_string)
+ ; D:/TC/src/parser.c:300:                 if (type == name_int || type == name_float || type == name_string)
 	cmpq	%rax, -256(%rbp)	 ; name_float.39_27, type
 	je	.L89	 ;,
- ; D:/TC/src/parser.c:301:                 if (type == name_int || type == name_float || type == name_string)
-	movq	.refptr.name_string(%rip), %rax	 ;, tmp248
+ ; D:/TC/src/parser.c:300:                 if (type == name_int || type == name_float || type == name_string)
+	movq	.refptr.name_string(%rip), %rax	 ;, tmp251
 	movq	(%rax), %rax	 ; name_string, name_string.40_28
- ; D:/TC/src/parser.c:301:                 if (type == name_int || type == name_float || type == name_string)
+ ; D:/TC/src/parser.c:300:                 if (type == name_int || type == name_float || type == name_string)
 	cmpq	%rax, -256(%rbp)	 ; name_string.40_28, type
 	jne	.L90	 ;,
 .L89:
- ; D:/TC/src/parser.c:302:                     size += 8;
+ ; D:/TC/src/parser.c:301:                     size += 8;
 	addq	$8, -32(%rbp)	 ;, size
 	jmp	.L88	 ;
 .L90:
- ; D:/TC/src/parser.c:303:                 else if (type == name_bool || type == name_void)
-	movq	.refptr.name_bool(%rip), %rax	 ;, tmp249
+ ; D:/TC/src/parser.c:302:                 else if (type == name_bool || type == name_void)
+	movq	.refptr.name_bool(%rip), %rax	 ;, tmp252
 	movq	(%rax), %rax	 ; name_bool, name_bool.41_29
- ; D:/TC/src/parser.c:303:                 else if (type == name_bool || type == name_void)
+ ; D:/TC/src/parser.c:302:                 else if (type == name_bool || type == name_void)
 	cmpq	%rax, -256(%rbp)	 ; name_bool.41_29, type
 	je	.L91	 ;,
- ; D:/TC/src/parser.c:303:                 else if (type == name_bool || type == name_void)
-	movq	.refptr.name_void(%rip), %rax	 ;, tmp250
+ ; D:/TC/src/parser.c:302:                 else if (type == name_bool || type == name_void)
+	movq	.refptr.name_void(%rip), %rax	 ;, tmp253
 	movq	(%rax), %rax	 ; name_void, name_void.42_30
- ; D:/TC/src/parser.c:303:                 else if (type == name_bool || type == name_void)
+ ; D:/TC/src/parser.c:302:                 else if (type == name_bool || type == name_void)
 	cmpq	%rax, -256(%rbp)	 ; name_void.42_30, type
 	jne	.L92	 ;,
 .L91:
- ; D:/TC/src/parser.c:304:                     size += 1;
+ ; D:/TC/src/parser.c:303:                     size += 1;
 	addq	$1, -32(%rbp)	 ;, size
 	jmp	.L88	 ;
 .L92:
- ; D:/TC/src/parser.c:305:                 else if (type->kind == SYMBOL_CLASS)
-	movq	-256(%rbp), %rax	 ; type, tmp251
-	movl	32(%rax), %eax	 ; type_259->kind, _31
- ; D:/TC/src/parser.c:305:                 else if (type->kind == SYMBOL_CLASS)
+ ; D:/TC/src/parser.c:304:                 else if (type->kind == SYMBOL_CLASS)
+	movq	-256(%rbp), %rax	 ; type, tmp254
+	movl	32(%rax), %eax	 ; type_270->kind, _31
+ ; D:/TC/src/parser.c:304:                 else if (type->kind == SYMBOL_CLASS)
 	testl	%eax, %eax	 ; _31
 	jne	.L93	 ;,
- ; D:/TC/src/parser.c:306:                     size += 8;  // pointer to object
+ ; D:/TC/src/parser.c:305:                     size += 8;  // pointer to object
 	addq	$8, -32(%rbp)	 ;, size
 	jmp	.L88	 ;
 .L93:
- ; D:/TC/src/parser.c:308:                     fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->name, type->name);
-	movq	-256(%rbp), %rax	 ; type, tmp252
-	movq	8(%rax), %rsi	 ; type_259->name, _32
- ; D:/TC/src/parser.c:308:                     fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->name, type->name);
-	movq	-248(%rbp), %rax	 ; member, tmp253
-	movq	(%rax), %rax	 ; member_257->content.variable, _33
- ; D:/TC/src/parser.c:308:                     fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->name, type->name);
-	movq	8(%rax), %rax	 ; _33->name, _34
- ; D:/TC/src/parser.c:308:                     fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->name, type->name);
-	movq	8(%rax), %rbx	 ; _34->name, _35
- ; D:/TC/src/parser.c:308:                     fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->name, type->name);
-	call	__getreent	 ;
- ; D:/TC/src/parser.c:308:                     fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->name, type->name);
-	movq	24(%rax), %rax	 ; _36->_stderr, _37
- ; D:/TC/src/parser.c:308:                     fprintf(stderr, "[warning] Unsupported type for class variable '%s': %s\n", member->content.variable->name->name, type->name);
-	movq	%rsi, %r9	 ; _32,
-	movq	%rbx, %r8	 ; _35,
-	leaq	.LC34(%rip), %rdx	 ;, tmp254
-	movq	%rax, %rcx	 ; _37,
-	call	fprintf	 ;
+ ; D:/TC/src/parser.c:307:                     parser_error("Unsupported type for class variable", token, get_full_path(parser->source_file));
+	movq	32(%rbp), %rax	 ; parser, tmp255
+	movq	(%rax), %rax	 ; parser_179(D)->source_file, _32
+	movq	%rax, %rcx	 ; _32,
+	call	get_full_path	 ;
+	movq	%rax, %rdx	 ;, _33
+ ; D:/TC/src/parser.c:307:                     parser_error("Unsupported type for class variable", token, get_full_path(parser->source_file));
+	movq	-24(%rbp), %rax	 ; token, tmp256
+	movq	%rdx, %r8	 ; _33,
+	movq	%rax, %rdx	 ; tmp256,
+	leaq	.LC34(%rip), %rax	 ;, tmp257
+	movq	%rax, %rcx	 ; tmp257,
+	call	parser_error	 ;
 .L88:
- ; D:/TC/src/parser.c:310:             token = get_next_token(lexer, true);
-	movq	16(%rbp), %rax	 ; lexer, tmp255
+ ; D:/TC/src/parser.c:309:             token = get_next_token(lexer, true);
+	movq	16(%rbp), %rax	 ; lexer, tmp258
 	movl	$1, %edx	 ;,
-	movq	%rax, %rcx	 ; tmp255,
+	movq	%rax, %rcx	 ; tmp258,
 	call	get_next_token	 ;
-	movq	%rax, -24(%rbp)	 ; tmp256, token
- ; D:/TC/src/parser.c:311:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
-	movq	-24(%rbp), %rax	 ; token, tmp257
-	movl	24(%rax), %eax	 ; token_266->type, _38
- ; D:/TC/src/parser.c:311:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
-	cmpl	$5, %eax	 ;, _38
+	movq	%rax, -24(%rbp)	 ; tmp259, token
+ ; D:/TC/src/parser.c:310:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	movq	-24(%rbp), %rax	 ; token, tmp260
+	movl	24(%rax), %eax	 ; token_277->type, _34
+ ; D:/TC/src/parser.c:310:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	cmpl	$5, %eax	 ;, _34
 	jne	.L94	 ;,
- ; D:/TC/src/parser.c:311:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
-	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax	 ;, tmp258
-	movq	(%rax), %rdx	 ; SEMICOLON_SYMBOL, SEMICOLON_SYMBOL.43_39
-	movq	-24(%rbp), %rax	 ; token, tmp259
-	movq	(%rax), %rax	 ; token_266->lexeme, _40
-	movq	%rax, %rcx	 ; _40,
+ ; D:/TC/src/parser.c:310:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	movq	.refptr.SEMICOLON_SYMBOL(%rip), %rax	 ;, tmp261
+	movq	(%rax), %rdx	 ; SEMICOLON_SYMBOL, SEMICOLON_SYMBOL.43_35
+	movq	-24(%rbp), %rax	 ; token, tmp262
+	movq	(%rax), %rax	 ; token_277->lexeme, _36
+	movq	%rax, %rcx	 ; _36,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:311:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
-	testb	%al, %al	 ; _41
+ ; D:/TC/src/parser.c:310:             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL))
+	testb	%al, %al	 ; _37
 	jne	.L110	 ;,
 .L94:
- ; D:/TC/src/parser.c:312:                 parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
-	movq	32(%rbp), %rax	 ; parser, tmp260
-	movq	(%rax), %rax	 ; parser_176(D)->source_file, _42
-	movq	%rax, %rcx	 ; _42,
+ ; D:/TC/src/parser.c:311:                 parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
+	movq	32(%rbp), %rax	 ; parser, tmp263
+	movq	(%rax), %rax	 ; parser_179(D)->source_file, _38
+	movq	%rax, %rcx	 ; _38,
 	call	get_full_path	 ;
-	movq	%rax, %rdx	 ;, _43
- ; D:/TC/src/parser.c:312:                 parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
-	movq	-24(%rbp), %rax	 ; token, tmp261
-	movq	%rdx, %r8	 ; _43,
-	movq	%rax, %rdx	 ; tmp261,
-	leaq	.LC35(%rip), %rax	 ;, tmp262
-	movq	%rax, %rcx	 ; tmp262,
+	movq	%rax, %rdx	 ;, _39
+ ; D:/TC/src/parser.c:311:                 parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
+	movq	-24(%rbp), %rax	 ; token, tmp264
+	movq	%rdx, %r8	 ; _39,
+	movq	%rax, %rdx	 ; tmp264,
+	leaq	.LC35(%rip), %rax	 ;, tmp265
+	movq	%rax, %rcx	 ; tmp265,
 	call	parser_error	 ;
- ; D:/TC/src/parser.c:290:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
+ ; D:/TC/src/parser.c:289:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
 	jmp	.L110	 ;
 .L86:
- ; D:/TC/src/parser.c:314:             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
-	movq	32(%rbp), %rax	 ; parser, tmp263
-	movq	(%rax), %rax	 ; parser_176(D)->source_file, _44
-	movq	%rax, %rcx	 ; _44,
+ ; D:/TC/src/parser.c:313:             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
+	movq	32(%rbp), %rax	 ; parser, tmp266
+	movq	(%rax), %rax	 ; parser_179(D)->source_file, _40
+	movq	%rax, %rcx	 ; _40,
 	call	get_full_path	 ;
-	movq	%rax, %rdx	 ;, _45
- ; D:/TC/src/parser.c:314:             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
-	movq	-24(%rbp), %rax	 ; token, tmp264
-	movq	%rdx, %r8	 ; _45,
-	movq	%rax, %rdx	 ; tmp264,
-	leaq	.LC36(%rip), %rax	 ;, tmp265
-	movq	%rax, %rcx	 ; tmp265,
+	movq	%rax, %rdx	 ;, _41
+ ; D:/TC/src/parser.c:313:             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
+	movq	-24(%rbp), %rax	 ; token, tmp267
+	movq	%rdx, %r8	 ; _41,
+	movq	%rax, %rdx	 ; tmp267,
+	leaq	.LC36(%rip), %rax	 ;, tmp268
+	movq	%rax, %rcx	 ; tmp268,
 	call	parser_error	 ;
 	jmp	.L85	 ;
 .L110:
- ; D:/TC/src/parser.c:290:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
+ ; D:/TC/src/parser.c:289:         } else if (token->type == KEYWORD && string_equal(token->lexeme, VAR_KEYWORD)) {
 	nop	
 .L85:
- ; D:/TC/src/parser.c:315:         token = get_next_token(lexer, true);
-	movq	16(%rbp), %rax	 ; lexer, tmp266
+ ; D:/TC/src/parser.c:314:         token = get_next_token(lexer, true);
+	movq	16(%rbp), %rax	 ; lexer, tmp269
 	movl	$1, %edx	 ;,
-	movq	%rax, %rcx	 ; tmp266,
+	movq	%rax, %rcx	 ; tmp269,
 	call	get_next_token	 ;
-	movq	%rax, -24(%rbp)	 ; tmp267, token
+	movq	%rax, -24(%rbp)	 ; tmp270, token
 .L82:
- ; D:/TC/src/parser.c:284:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-	movq	-24(%rbp), %rax	 ; token, tmp268
-	movl	24(%rax), %eax	 ; token_103->type, _46
- ; D:/TC/src/parser.c:284:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-	cmpl	$5, %eax	 ;, _46
+ ; D:/TC/src/parser.c:283:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movq	-24(%rbp), %rax	 ; token, tmp271
+	movl	24(%rax), %eax	 ; token_106->type, _42
+ ; D:/TC/src/parser.c:283:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	cmpl	$5, %eax	 ;, _42
 	jne	.L96	 ;,
- ; D:/TC/src/parser.c:284:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax	 ;, tmp269
-	movq	(%rax), %rdx	 ; R_BRACE_SYMBOL, R_BRACE_SYMBOL.44_47
-	movq	-24(%rbp), %rax	 ; token, tmp270
-	movq	(%rax), %rax	 ; token_103->lexeme, _48
-	movq	%rax, %rcx	 ; _48,
+ ; D:/TC/src/parser.c:283:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	movq	.refptr.R_BRACE_SYMBOL(%rip), %rax	 ;, tmp272
+	movq	(%rax), %rdx	 ; R_BRACE_SYMBOL, R_BRACE_SYMBOL.44_43
+	movq	-24(%rbp), %rax	 ; token, tmp273
+	movq	(%rax), %rax	 ; token_106->lexeme, _44
+	movq	%rax, %rcx	 ; _44,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:284:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
-	testb	%al, %al	 ; _49
+ ; D:/TC/src/parser.c:283:     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
+	testb	%al, %al	 ; _45
 	je	.L96	 ;,
- ; D:/TC/src/parser.c:317:     string init_name = make_method_name(name->name, DEFAULT_INIT_NAME);
-	movq	.refptr.DEFAULT_INIT_NAME(%rip), %rax	 ;, tmp271
-	movq	(%rax), %rdx	 ; DEFAULT_INIT_NAME, DEFAULT_INIT_NAME.45_50
-	movq	-64(%rbp), %rax	 ; name, tmp272
-	movq	8(%rax), %rax	 ; name_140->name, _51
-	movq	%rax, %rcx	 ; _51,
+ ; D:/TC/src/parser.c:316:     string init_name = make_method_name(name->name, DEFAULT_INIT_NAME);
+	movq	.refptr.DEFAULT_INIT_NAME(%rip), %rax	 ;, tmp274
+	movq	(%rax), %rdx	 ; DEFAULT_INIT_NAME, DEFAULT_INIT_NAME.45_46
+	movq	-64(%rbp), %rax	 ; name, tmp275
+	movq	8(%rax), %rax	 ; name_143->name, _47
+	movq	%rax, %rcx	 ; _47,
 	call	make_method_name	 ;
-	movq	%rax, -80(%rbp)	 ; tmp273, init_name
- ; D:/TC/src/parser.c:318:     Symbol* init = search_name_use_strcmp(class_scope, init_name);
-	movq	-80(%rbp), %rdx	 ; init_name, tmp274
-	movq	-48(%rbp), %rax	 ; class_scope, tmp275
-	movq	%rax, %rcx	 ; tmp275,
-	call	search_name_use_strcmp	 ;
-	movq	%rax, -40(%rbp)	 ; tmp276, init
- ; D:/TC/src/parser.c:319:     if (init == NULL) {
-	cmpq	$0, -40(%rbp)	 ;, init
-	jne	.L97	 ;,
- ; D:/TC/src/parser.c:320:         Method* method = (Method*)alloc_memory(sizeof(Method));
-	movl	$40, %ecx	 ;,
-	call	alloc_memory	 ;
-	movq	%rax, -88(%rbp)	 ; tmp277, method
- ; D:/TC/src/parser.c:321:         method->method_scope = create_symbol_table(class_scope);
+	movq	%rax, -80(%rbp)	 ; tmp276, init_name
+ ; D:/TC/src/parser.c:317:     Symbol* init = search_name_use_strcmp(class_scope, init_name);
+	movq	-80(%rbp), %rdx	 ; init_name, tmp277
 	movq	-48(%rbp), %rax	 ; class_scope, tmp278
 	movq	%rax, %rcx	 ; tmp278,
+	call	search_name_use_strcmp	 ;
+	movq	%rax, -40(%rbp)	 ; tmp279, init
+ ; D:/TC/src/parser.c:318:     if (init == NULL) {
+	cmpq	$0, -40(%rbp)	 ;, init
+	jne	.L97	 ;,
+ ; D:/TC/src/parser.c:319:         Method* method = (Method*)alloc_memory(sizeof(Method));
+	movl	$40, %ecx	 ;,
+	call	alloc_memory	 ;
+	movq	%rax, -88(%rbp)	 ; tmp280, method
+ ; D:/TC/src/parser.c:320:         method->method_scope = create_symbol_table(class_scope);
+	movq	-48(%rbp), %rax	 ; class_scope, tmp281
+	movq	%rax, %rcx	 ; tmp281,
 	call	create_symbol_table	 ;
- ; D:/TC/src/parser.c:321:         method->method_scope = create_symbol_table(class_scope);
-	movq	-88(%rbp), %rdx	 ; method, tmp279
-	movq	%rax, 32(%rdx)	 ; _52, method_155->method_scope
- ; D:/TC/src/parser.c:322:         init = create_symbol(init_name, SYMBOL_METHOD, name, method);
-	movq	-88(%rbp), %rcx	 ; method, tmp280
-	movq	-64(%rbp), %rdx	 ; name, tmp281
-	movq	-80(%rbp), %rax	 ; init_name, tmp282
-	movq	%rcx, %r9	 ; tmp280,
-	movq	%rdx, %r8	 ; tmp281,
+ ; D:/TC/src/parser.c:320:         method->method_scope = create_symbol_table(class_scope);
+	movq	-88(%rbp), %rdx	 ; method, tmp282
+	movq	%rax, 32(%rdx)	 ; _48, method_158->method_scope
+ ; D:/TC/src/parser.c:321:         init = create_symbol(init_name, SYMBOL_METHOD, name, method);
+	movq	-88(%rbp), %rcx	 ; method, tmp283
+	movq	-64(%rbp), %rdx	 ; name, tmp284
+	movq	-80(%rbp), %rax	 ; init_name, tmp285
+	movq	%rcx, %r9	 ; tmp283,
+	movq	%rdx, %r8	 ; tmp284,
 	movl	$2, %edx	 ;,
-	movq	%rax, %rcx	 ; tmp282,
+	movq	%rax, %rcx	 ; tmp285,
 	call	create_symbol	 ;
-	movq	%rax, -40(%rbp)	 ; tmp283, init
- ; D:/TC/src/parser.c:323:         list(Variable*) parameters = create_list();
+	movq	%rax, -40(%rbp)	 ; tmp286, init
+ ; D:/TC/src/parser.c:322:         list(Variable*) parameters = create_list();
 	call	create_list	 ;
-	movq	%rax, -96(%rbp)	 ; tmp284, parameters
- ; D:/TC/src/parser.c:324:         Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
-	movq	-88(%rbp), %rax	 ; method, tmp285
-	movq	32(%rax), %rcx	 ; method_155->method_scope, _53
- ; D:/TC/src/parser.c:324:         Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
-	movq	.refptr.SELF_KEYWORD(%rip), %rax	 ;, tmp286
-	movq	(%rax), %rax	 ; SELF_KEYWORD, SELF_KEYWORD.46_54
-	movq	-64(%rbp), %rdx	 ; name, tmp287
-	movq	%rcx, %r9	 ; _53,
-	movq	%rdx, %r8	 ; tmp287,
+	movq	%rax, -96(%rbp)	 ; tmp287, parameters
+ ; D:/TC/src/parser.c:323:         Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+	movq	-88(%rbp), %rax	 ; method, tmp288
+	movq	32(%rax), %rcx	 ; method_158->method_scope, _49
+ ; D:/TC/src/parser.c:323:         Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+	movq	.refptr.SELF_KEYWORD(%rip), %rax	 ;, tmp289
+	movq	(%rax), %rax	 ; SELF_KEYWORD, SELF_KEYWORD.46_50
+	movq	-64(%rbp), %rdx	 ; name, tmp290
+	movq	%rcx, %r9	 ; _49,
+	movq	%rdx, %r8	 ; tmp290,
 	movl	$3, %edx	 ;,
-	movq	%rax, %rcx	 ; SELF_KEYWORD.46_54,
+	movq	%rax, %rcx	 ; SELF_KEYWORD.46_50,
 	call	create_symbol	 ;
-	movq	%rax, -104(%rbp)	 ; tmp288, self
- ; D:/TC/src/parser.c:325:         list_append(parameters, (pointer)create_variable(name, self, NULL));
-	movq	-104(%rbp), %rdx	 ; self, tmp289
-	movq	-64(%rbp), %rax	 ; name, tmp290
+	movq	%rax, -104(%rbp)	 ; tmp291, self
+ ; D:/TC/src/parser.c:324:         list_append(parameters, (pointer)create_variable(name, self, NULL));
+	movq	-104(%rbp), %rdx	 ; self, tmp292
+	movq	-64(%rbp), %rax	 ; name, tmp293
 	movl	$0, %r8d	 ;,
-	movq	%rax, %rcx	 ; tmp290,
+	movq	%rax, %rcx	 ; tmp293,
 	call	create_variable	 ;
-	movq	%rax, %rdx	 ;, _55
- ; D:/TC/src/parser.c:325:         list_append(parameters, (pointer)create_variable(name, self, NULL));
-	movq	-96(%rbp), %rax	 ; parameters, tmp291
-	movq	%rax, %rcx	 ; tmp291,
+	movq	%rax, %rdx	 ;, _51
+ ; D:/TC/src/parser.c:324:         list_append(parameters, (pointer)create_variable(name, self, NULL));
+	movq	-96(%rbp), %rax	 ; parameters, tmp294
+	movq	%rax, %rcx	 ; tmp294,
 	call	list_append	 ;
- ; D:/TC/src/parser.c:326:         list(Statement*) body = create_list();
+ ; D:/TC/src/parser.c:325:         list(Statement*) body = create_list();
 	call	create_list	 ;
-	movq	%rax, -112(%rbp)	 ; tmp292, body
- ; D:/TC/src/parser.c:327:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
-	movq	-104(%rbp), %rax	 ; self, tmp293
+	movq	%rax, -112(%rbp)	 ; tmp295, body
+ ; D:/TC/src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	-104(%rbp), %rax	 ; self, tmp296
 	movq	$0, 32(%rsp)	 ;,
 	movl	$0, %r9d	 ;,
-	movq	%rax, %r8	 ; tmp293,
+	movq	%rax, %r8	 ; tmp296,
 	movl	$0, %edx	 ;,
 	movl	$0, %ecx	 ;,
 	call	create_variable_access	 ;
- ; D:/TC/src/parser.c:327:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
-	movq	%rax, 32(%rsp)	 ; _56,
+ ; D:/TC/src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	%rax, 32(%rsp)	 ; _52,
 	movl	$0, %r9d	 ;,
 	movl	$0, %r8d	 ;,
 	movl	$0, %edx	 ;,
 	movl	$8, %ecx	 ;,
 	call	create_primary	 ;
- ; D:/TC/src/parser.c:327:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+ ; D:/TC/src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
 	movl	$0, %r9d	 ;,
-	movq	%rax, %r8	 ; _57,
+	movq	%rax, %r8	 ; _53,
 	movl	$0, %edx	 ;,
 	movl	$19, %ecx	 ;,
 	call	create_expression	 ;
- ; D:/TC/src/parser.c:327:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+ ; D:/TC/src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
 	movq	$0, 40(%rsp)	 ;,
-	movq	%rax, 32(%rsp)	 ; _58,
+	movq	%rax, 32(%rsp)	 ; _54,
 	movl	$0, %r9d	 ;,
 	movl	$0, %r8d	 ;,
 	movl	$0, %edx	 ;,
 	movl	$5, %ecx	 ;,
 	call	create_statement	 ;
-	movq	%rax, %rdx	 ;, _59
- ; D:/TC/src/parser.c:327:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
-	movq	-112(%rbp), %rax	 ; body, tmp294
-	movq	%rax, %rcx	 ; tmp294,
+	movq	%rax, %rdx	 ;, _55
+ ; D:/TC/src/parser.c:326:         list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	-112(%rbp), %rax	 ; body, tmp297
+	movq	%rax, %rcx	 ; tmp297,
 	call	list_append	 ;
- ; D:/TC/src/parser.c:328:         create_method_use_ptr(method, init, name, parameters, body, method->method_scope);
-	movq	-88(%rbp), %rax	 ; method, tmp295
-	movq	32(%rax), %rcx	 ; method_155->method_scope, _60
-	movq	-96(%rbp), %r9	 ; parameters, tmp296
-	movq	-64(%rbp), %r8	 ; name, tmp297
-	movq	-40(%rbp), %rdx	 ; init, tmp298
-	movq	-88(%rbp), %rax	 ; method, tmp299
-	movq	%rcx, 40(%rsp)	 ; _60,
-	movq	-112(%rbp), %rcx	 ; body, tmp300
-	movq	%rcx, 32(%rsp)	 ; tmp300,
-	movq	%rax, %rcx	 ; tmp299,
+ ; D:/TC/src/parser.c:327:         create_method_use_ptr(method, init, name, parameters, body, method->method_scope);
+	movq	-88(%rbp), %rax	 ; method, tmp298
+	movq	32(%rax), %rcx	 ; method_158->method_scope, _56
+	movq	-96(%rbp), %r9	 ; parameters, tmp299
+	movq	-64(%rbp), %r8	 ; name, tmp300
+	movq	-40(%rbp), %rdx	 ; init, tmp301
+	movq	-88(%rbp), %rax	 ; method, tmp302
+	movq	%rcx, 40(%rsp)	 ; _56,
+	movq	-112(%rbp), %rcx	 ; body, tmp303
+	movq	%rcx, 32(%rsp)	 ; tmp303,
+	movq	%rax, %rcx	 ; tmp302,
 	call	create_method_use_ptr	 ;
- ; D:/TC/src/parser.c:329:         list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
-	movq	-88(%rbp), %rax	 ; method, tmp301
+ ; D:/TC/src/parser.c:328:         list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	movq	-88(%rbp), %rax	 ; method, tmp304
 	movl	$0, %r8d	 ;,
-	movq	%rax, %rdx	 ; tmp301,
+	movq	%rax, %rdx	 ; tmp304,
 	movl	$0, %ecx	 ;,
 	call	create_class_member	 ;
-	movq	%rax, %rdx	 ;, _61
- ; D:/TC/src/parser.c:329:         list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
-	movq	-72(%rbp), %rax	 ; members, tmp302
-	movq	%rax, %rcx	 ; tmp302,
+	movq	%rax, %rdx	 ;, _57
+ ; D:/TC/src/parser.c:328:         list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
+	movq	-72(%rbp), %rax	 ; members, tmp305
+	movq	%rax, %rcx	 ; tmp305,
 	call	list_append	 ;
 .L97:
- ; D:/TC/src/parser.c:331:     if (init->kind != SYMBOL_METHOD)
-	movq	-40(%rbp), %rax	 ; init, tmp303
-	movl	32(%rax), %eax	 ; init_107->kind, _62
- ; D:/TC/src/parser.c:331:     if (init->kind != SYMBOL_METHOD)
-	cmpl	$2, %eax	 ;, _62
+ ; D:/TC/src/parser.c:330:     if (init->kind != SYMBOL_METHOD)
+	movq	-40(%rbp), %rax	 ; init, tmp306
+	movl	32(%rax), %eax	 ; init_110->kind, _58
+ ; D:/TC/src/parser.c:330:     if (init->kind != SYMBOL_METHOD)
+	cmpl	$2, %eax	 ;, _58
 	je	.L98	 ;,
- ; D:/TC/src/parser.c:332:         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
-	movq	32(%rbp), %rax	 ; parser, tmp304
-	movq	(%rax), %rax	 ; parser_176(D)->source_file, _63
-	movq	%rax, %rcx	 ; _63,
+ ; D:/TC/src/parser.c:331:         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
+	movq	32(%rbp), %rax	 ; parser, tmp307
+	movq	(%rax), %rax	 ; parser_179(D)->source_file, _59
+	movq	%rax, %rcx	 ; _59,
 	call	get_full_path	 ;
-	movq	%rax, %rdx	 ;, _64
- ; D:/TC/src/parser.c:332:         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
-	movq	-24(%rbp), %rax	 ; token, tmp305
-	movq	%rdx, %r8	 ; _64,
-	movq	%rax, %rdx	 ; tmp305,
-	leaq	.LC37(%rip), %rax	 ;, tmp306
-	movq	%rax, %rcx	 ; tmp306,
+	movq	%rax, %rdx	 ;, _60
+ ; D:/TC/src/parser.c:331:         parser_error("Constructor name conflicts with existing member", token, get_full_path(parser->source_file));
+	movq	-24(%rbp), %rax	 ; token, tmp308
+	movq	%rdx, %r8	 ; _60,
+	movq	%rax, %rdx	 ; tmp308,
+	leaq	.LC37(%rip), %rax	 ;, tmp309
+	movq	%rax, %rcx	 ; tmp309,
 	call	parser_error	 ;
 .L98:
- ; D:/TC/src/parser.c:333:     string constructor_name = make_method_name(name->name, DEFAULT_CONSTRUCTOR_NAME);
-	movq	.refptr.DEFAULT_CONSTRUCTOR_NAME(%rip), %rax	 ;, tmp307
-	movq	(%rax), %rdx	 ; DEFAULT_CONSTRUCTOR_NAME, DEFAULT_CONSTRUCTOR_NAME.47_65
-	movq	-64(%rbp), %rax	 ; name, tmp308
-	movq	8(%rax), %rax	 ; name_140->name, _66
-	movq	%rax, %rcx	 ; _66,
+ ; D:/TC/src/parser.c:332:     string constructor_name = make_method_name(name->name, DEFAULT_CONSTRUCTOR_NAME);
+	movq	.refptr.DEFAULT_CONSTRUCTOR_NAME(%rip), %rax	 ;, tmp310
+	movq	(%rax), %rdx	 ; DEFAULT_CONSTRUCTOR_NAME, DEFAULT_CONSTRUCTOR_NAME.47_61
+	movq	-64(%rbp), %rax	 ; name, tmp311
+	movq	8(%rax), %rax	 ; name_143->name, _62
+	movq	%rax, %rcx	 ; _62,
 	call	make_method_name	 ;
-	movq	%rax, -120(%rbp)	 ; tmp309, constructor_name
- ; D:/TC/src/parser.c:334:     Method* method = (Method*)alloc_memory(sizeof(Method));
+	movq	%rax, -120(%rbp)	 ; tmp312, constructor_name
+ ; D:/TC/src/parser.c:333:     Method* method = (Method*)alloc_memory(sizeof(Method));
 	movl	$40, %ecx	 ;,
 	call	alloc_memory	 ;
-	movq	%rax, -128(%rbp)	 ; tmp310, method
- ; D:/TC/src/parser.c:335:     method->method_scope = create_symbol_table(class_scope);
-	movq	-48(%rbp), %rax	 ; class_scope, tmp311
-	movq	%rax, %rcx	 ; tmp311,
+	movq	%rax, -128(%rbp)	 ; tmp313, method
+ ; D:/TC/src/parser.c:334:     method->method_scope = create_symbol_table(class_scope);
+	movq	-48(%rbp), %rax	 ; class_scope, tmp314
+	movq	%rax, %rcx	 ; tmp314,
 	call	create_symbol_table	 ;
- ; D:/TC/src/parser.c:335:     method->method_scope = create_symbol_table(class_scope);
-	movq	-128(%rbp), %rdx	 ; method, tmp312
-	movq	%rax, 32(%rdx)	 ; _67, method_182->method_scope
- ; D:/TC/src/parser.c:336:     Symbol* constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, method);
-	movq	-128(%rbp), %rcx	 ; method, tmp313
-	movq	-64(%rbp), %rdx	 ; name, tmp314
-	movq	-120(%rbp), %rax	 ; constructor_name, tmp315
-	movq	%rcx, %r9	 ; tmp313,
-	movq	%rdx, %r8	 ; tmp314,
+ ; D:/TC/src/parser.c:334:     method->method_scope = create_symbol_table(class_scope);
+	movq	-128(%rbp), %rdx	 ; method, tmp315
+	movq	%rax, 32(%rdx)	 ; _63, method_185->method_scope
+ ; D:/TC/src/parser.c:335:     Symbol* constructor = create_symbol(constructor_name, SYMBOL_METHOD, name, method);
+	movq	-128(%rbp), %rcx	 ; method, tmp316
+	movq	-64(%rbp), %rdx	 ; name, tmp317
+	movq	-120(%rbp), %rax	 ; constructor_name, tmp318
+	movq	%rcx, %r9	 ; tmp316,
+	movq	%rdx, %r8	 ; tmp317,
 	movl	$2, %edx	 ;,
-	movq	%rax, %rcx	 ; tmp315,
+	movq	%rax, %rcx	 ; tmp318,
 	call	create_symbol	 ;
-	movq	%rax, -136(%rbp)	 ; tmp316, constructor
- ; D:/TC/src/parser.c:337:     list(Variable*) parameters = create_list();
+	movq	%rax, -136(%rbp)	 ; tmp319, constructor
+ ; D:/TC/src/parser.c:336:     list(Variable*) parameters = create_list();
 	call	create_list	 ;
-	movq	%rax, -144(%rbp)	 ; tmp317, parameters
- ; D:/TC/src/parser.c:338:     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
-	movq	-128(%rbp), %rax	 ; method, tmp318
-	movq	32(%rax), %rcx	 ; method_182->method_scope, _68
- ; D:/TC/src/parser.c:338:     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
-	movq	.refptr.SELF_KEYWORD(%rip), %rax	 ;, tmp319
-	movq	(%rax), %rax	 ; SELF_KEYWORD, SELF_KEYWORD.48_69
-	movq	-64(%rbp), %rdx	 ; name, tmp320
-	movq	%rcx, %r9	 ; _68,
-	movq	%rdx, %r8	 ; tmp320,
+	movq	%rax, -144(%rbp)	 ; tmp320, parameters
+ ; D:/TC/src/parser.c:337:     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+	movq	-128(%rbp), %rax	 ; method, tmp321
+	movq	32(%rax), %rcx	 ; method_185->method_scope, _64
+ ; D:/TC/src/parser.c:337:     Symbol* self = create_symbol(SELF_KEYWORD, SYMBOL_VARIABLE, name, method->method_scope);
+	movq	.refptr.SELF_KEYWORD(%rip), %rax	 ;, tmp322
+	movq	(%rax), %rax	 ; SELF_KEYWORD, SELF_KEYWORD.48_65
+	movq	-64(%rbp), %rdx	 ; name, tmp323
+	movq	%rcx, %r9	 ; _64,
+	movq	%rdx, %r8	 ; tmp323,
 	movl	$3, %edx	 ;,
-	movq	%rax, %rcx	 ; SELF_KEYWORD.48_69,
+	movq	%rax, %rcx	 ; SELF_KEYWORD.48_65,
 	call	create_symbol	 ;
-	movq	%rax, -152(%rbp)	 ; tmp321, self
- ; D:/TC/src/parser.c:339:     list_append(parameters, (pointer)create_variable(name, self, NULL));
-	movq	-152(%rbp), %rdx	 ; self, tmp322
-	movq	-64(%rbp), %rax	 ; name, tmp323
-	movl	$0, %r8d	 ;,
-	movq	%rax, %rcx	 ; tmp323,
-	call	create_variable	 ;
-	movq	%rax, %rdx	 ;, _70
- ; D:/TC/src/parser.c:339:     list_append(parameters, (pointer)create_variable(name, self, NULL));
-	movq	-144(%rbp), %rax	 ; parameters, tmp324
-	movq	%rax, %rcx	 ; tmp324,
-	call	list_append	 ;
- ; D:/TC/src/parser.c:340:     list(Variable*) init_params = list_copy(init->ast_node.method->parameters);
+	movq	%rax, -152(%rbp)	 ; tmp324, self
+ ; D:/TC/src/parser.c:338:     list(Variable*) init_params = list_copy(init->ast_node.method->parameters);
 	movq	-40(%rbp), %rax	 ; init, tmp325
-	movq	24(%rax), %rax	 ; init_107->ast_node.method, _71
- ; D:/TC/src/parser.c:340:     list(Variable*) init_params = list_copy(init->ast_node.method->parameters);
-	movq	16(%rax), %rax	 ; _71->parameters, _72
-	movq	%rax, %rcx	 ; _72,
+	movq	24(%rax), %rax	 ; init_110->ast_node.method, _66
+ ; D:/TC/src/parser.c:338:     list(Variable*) init_params = list_copy(init->ast_node.method->parameters);
+	movq	16(%rax), %rax	 ; _66->parameters, _67
+	movq	%rax, %rcx	 ; _67,
 	call	list_copy	 ;
 	movq	%rax, -160(%rbp)	 ; tmp326, init_params
- ; D:/TC/src/parser.c:342:     while ((param = (Variable*)list_pop(init_params)) != NULL) {
+ ; D:/TC/src/parser.c:340:     while ((param = (Variable*)list_pop(init_params)) != NULL) {
 	jmp	.L99	 ;
 .L102:
- ; D:/TC/src/parser.c:343:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
+ ; D:/TC/src/parser.c:341:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
 	movq	.refptr.SELF_KEYWORD(%rip), %rax	 ;, tmp327
-	movq	(%rax), %rdx	 ; SELF_KEYWORD, SELF_KEYWORD.49_73
- ; D:/TC/src/parser.c:343:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
+	movq	(%rax), %rdx	 ; SELF_KEYWORD, SELF_KEYWORD.49_68
+ ; D:/TC/src/parser.c:341:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
 	movq	-168(%rbp), %rax	 ; param, tmp328
-	movq	8(%rax), %rax	 ; param_196->name, _74
- ; D:/TC/src/parser.c:343:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
-	movq	8(%rax), %rax	 ; _74->name, _75
-	movq	%rax, %rcx	 ; _75,
+	movq	8(%rax), %rax	 ; param_197->name, _69
+ ; D:/TC/src/parser.c:341:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
+	movq	8(%rax), %rax	 ; _69->name, _70
+	movq	%rax, %rcx	 ; _70,
 	call	string_equal	 ;
- ; D:/TC/src/parser.c:343:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
-	testb	%al, %al	 ; _76
+ ; D:/TC/src/parser.c:341:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
+	testb	%al, %al	 ; _71
 	jne	.L111	 ;,
- ; D:/TC/src/parser.c:344:         list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
+ ; D:/TC/src/parser.c:342:         list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
 	movq	-168(%rbp), %rax	 ; param, tmp329
-	movq	8(%rax), %rdx	 ; param_196->name, _77
+	movq	8(%rax), %rdx	 ; param_197->name, _72
 	movq	-168(%rbp), %rax	 ; param, tmp330
-	movq	(%rax), %rax	 ; param_196->type, _78
+	movq	(%rax), %rax	 ; param_197->type, _73
 	movl	$0, %r8d	 ;,
-	movq	%rax, %rcx	 ; _78,
+	movq	%rax, %rcx	 ; _73,
 	call	create_variable	 ;
-	movq	%rax, %rdx	 ;, _79
- ; D:/TC/src/parser.c:344:         list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
+	movq	%rax, %rdx	 ;, _74
+ ; D:/TC/src/parser.c:342:         list_append(parameters, (pointer)create_variable(param->type, param->name, NULL));
 	movq	-144(%rbp), %rax	 ; parameters, tmp331
 	movq	%rax, %rcx	 ; tmp331,
 	call	list_append	 ;
 	jmp	.L99	 ;
 .L111:
- ; D:/TC/src/parser.c:343:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
+ ; D:/TC/src/parser.c:341:         if (string_equal(param->name->name, SELF_KEYWORD)) continue;
 	nop	
 .L99:
- ; D:/TC/src/parser.c:342:     while ((param = (Variable*)list_pop(init_params)) != NULL) {
+ ; D:/TC/src/parser.c:340:     while ((param = (Variable*)list_pop(init_params)) != NULL) {
 	movq	-160(%rbp), %rax	 ; init_params, tmp332
 	movq	%rax, %rcx	 ; tmp332,
 	call	list_pop	 ;
 	movq	%rax, -168(%rbp)	 ; tmp333, param
- ; D:/TC/src/parser.c:342:     while ((param = (Variable*)list_pop(init_params)) != NULL) {
+ ; D:/TC/src/parser.c:340:     while ((param = (Variable*)list_pop(init_params)) != NULL) {
 	cmpq	$0, -168(%rbp)	 ;, param
 	jne	.L102	 ;,
- ; D:/TC/src/parser.c:346:     list(statement*) body = create_list();
+ ; D:/TC/src/parser.c:344:     list(Statement*) body = create_list();
 	call	create_list	 ;
 	movq	%rax, -176(%rbp)	 ; tmp334, body
- ; D:/TC/src/parser.c:347:     list(ClassMember*) ms = list_copy(members);
+ ; D:/TC/src/parser.c:345:     list(ClassMember*) ms = list_copy(members);
 	movq	-72(%rbp), %rax	 ; members, tmp335
 	movq	%rax, %rcx	 ; tmp335,
 	call	list_copy	 ;
 	movq	%rax, -184(%rbp)	 ; tmp336, ms
- ; D:/TC/src/parser.c:349:     while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
-	jmp	.L104	 ;
-.L107:
- ; D:/TC/src/parser.c:350:         if (mb->type == CLASS_VARIABLE) {
-	movq	-192(%rbp), %rax	 ; mb, tmp337
-	movl	8(%rax), %eax	 ; mb_202->type, _80
- ; D:/TC/src/parser.c:350:         if (mb->type == CLASS_VARIABLE) {
-	cmpl	$1, %eax	 ;, _80
-	jne	.L104	 ;,
- ; D:/TC/src/parser.c:351:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, mb->content.variable->name, NULL, NULL)), NULL);
-	movq	-192(%rbp), %rax	 ; mb, tmp338
-	movq	(%rax), %rax	 ; mb_202->content.variable, _81
- ; D:/TC/src/parser.c:351:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, mb->content.variable->name, NULL, NULL)), NULL);
-	movq	8(%rax), %rax	 ; _81->name, _82
+ ; D:/TC/src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	-152(%rbp), %rax	 ; self, tmp337
 	movq	$0, 32(%rsp)	 ;,
 	movl	$0, %r9d	 ;,
-	movq	%rax, %r8	 ; _82,
+	movq	%rax, %r8	 ; tmp337,
 	movl	$0, %edx	 ;,
 	movl	$0, %ecx	 ;,
 	call	create_variable_access	 ;
- ; D:/TC/src/parser.c:351:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, mb->content.variable->name, NULL, NULL)), NULL);
+ ; D:/TC/src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	%rax, 32(%rsp)	 ; _75,
+	movl	$0, %r9d	 ;,
+	movl	$0, %r8d	 ;,
+	movl	$0, %edx	 ;,
+	movl	$8, %ecx	 ;,
+	call	create_primary	 ;
+ ; D:/TC/src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movl	$0, %r9d	 ;,
+	movq	%rax, %r8	 ; _76,
+	movl	$0, %edx	 ;,
+	movl	$19, %ecx	 ;,
+	call	create_expression	 ;
+ ; D:/TC/src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	$0, 40(%rsp)	 ;,
+	movq	%rax, 32(%rsp)	 ; _77,
+	movl	$0, %r9d	 ;,
+	movl	$0, %r8d	 ;,
+	movl	$0, %edx	 ;,
+	movl	$0, %ecx	 ;,
+	call	create_statement	 ;
+	movq	%rax, %rdx	 ;, _78
+ ; D:/TC/src/parser.c:347:     list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL), NULL));
+	movq	-176(%rbp), %rax	 ; body, tmp338
+	movq	%rax, %rcx	 ; tmp338,
+	call	list_append	 ;
+ ; D:/TC/src/parser.c:348:     while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
+	jmp	.L104	 ;
+.L107:
+ ; D:/TC/src/parser.c:349:         if (mb->type == CLASS_VARIABLE) {
+	movq	-192(%rbp), %rax	 ; mb, tmp339
+	movl	8(%rax), %eax	 ; mb_208->type, _79
+ ; D:/TC/src/parser.c:349:         if (mb->type == CLASS_VARIABLE) {
+	cmpl	$1, %eax	 ;, _79
+	jne	.L104	 ;,
+ ; D:/TC/src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	movq	-192(%rbp), %rax	 ; mb, tmp340
+	movq	(%rax), %rax	 ; mb_208->content.variable, _80
+ ; D:/TC/src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	movq	8(%rax), %rbx	 ; _80->name, _81
+	movq	-152(%rbp), %rax	 ; self, tmp341
+	movq	$0, 32(%rsp)	 ;,
+	movl	$0, %r9d	 ;,
+	movq	%rax, %r8	 ; tmp341,
+	movl	$0, %edx	 ;,
+	movl	$0, %ecx	 ;,
+	call	create_variable_access	 ;
+ ; D:/TC/src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
+	movq	$0, 32(%rsp)	 ;,
+	movl	$0, %r9d	 ;,
+	movq	%rbx, %r8	 ; _81,
+	movq	%rax, %rdx	 ; _82,
+	movl	$2, %ecx	 ;,
+	call	create_variable_access	 ;
+ ; D:/TC/src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
 	movq	%rax, 32(%rsp)	 ; _83,
 	movl	$0, %r9d	 ;,
 	movl	$0, %r8d	 ;,
 	movl	$0, %edx	 ;,
 	movl	$8, %ecx	 ;,
 	call	create_primary	 ;
- ; D:/TC/src/parser.c:351:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, mb->content.variable->name, NULL, NULL)), NULL);
+ ; D:/TC/src/parser.c:350:             Expression* left = create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_GET_ATTR, create_variable_access(VAR_NAME, NULL, self, NULL, NULL), mb->content.variable->name, NULL, NULL)), NULL);
 	movl	$0, %r9d	 ;,
 	movq	%rax, %r8	 ; _84,
 	movl	$0, %edx	 ;,
 	movl	$19, %ecx	 ;,
 	call	create_expression	 ;
-	movq	%rax, -216(%rbp)	 ; tmp339, left
- ; D:/TC/src/parser.c:352:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
-	movq	-192(%rbp), %rax	 ; mb, tmp340
-	movq	(%rax), %rax	 ; mb_202->content.variable, _85
- ; D:/TC/src/parser.c:352:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	movq	%rax, -216(%rbp)	 ; tmp342, left
+ ; D:/TC/src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	movq	-192(%rbp), %rax	 ; mb, tmp343
+	movq	(%rax), %rax	 ; mb_208->content.variable, _85
+ ; D:/TC/src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
 	movq	16(%rax), %rax	 ; _85->value, _86
- ; D:/TC/src/parser.c:352:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+ ; D:/TC/src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
 	testq	%rax, %rax	 ; _86
 	je	.L105	 ;,
- ; D:/TC/src/parser.c:352:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
-	movq	-192(%rbp), %rax	 ; mb, tmp341
-	movq	(%rax), %rax	 ; mb_202->content.variable, _87
- ; D:/TC/src/parser.c:352:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
-	movq	16(%rax), %rax	 ; _87->value, iftmp.50_109
+ ; D:/TC/src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	movq	-192(%rbp), %rax	 ; mb, tmp344
+	movq	(%rax), %rax	 ; mb_208->content.variable, _87
+ ; D:/TC/src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	movq	16(%rax), %rax	 ; _87->value, iftmp.50_112
 	jmp	.L106	 ;
 .L105:
- ; D:/TC/src/parser.c:352:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+ ; D:/TC/src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
 	movl	$2, %edx	 ;,
-	leaq	.LC38(%rip), %rax	 ;, tmp342
-	movq	%rax, %rcx	 ; tmp342,
+	leaq	.LC38(%rip), %rax	 ;, tmp345
+	movq	%rax, %rcx	 ; tmp345,
 	call	create_string	 ;
- ; D:/TC/src/parser.c:352:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+ ; D:/TC/src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
 	movq	$0, 32(%rsp)	 ;,
 	movl	$0, %r9d	 ;,
 	movl	$0, %r8d	 ;,
 	movq	%rax, %rdx	 ; _88,
 	movl	$0, %ecx	 ;,
 	call	create_primary	 ;
- ; D:/TC/src/parser.c:352:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+ ; D:/TC/src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
 	movl	$0, %r9d	 ;,
 	movq	%rax, %r8	 ; _89,
 	movl	$0, %edx	 ;,
 	movl	$19, %ecx	 ;,
 	call	create_expression	 ;
 .L106:
- ; D:/TC/src/parser.c:352:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
-	movq	%rax, -224(%rbp)	 ; iftmp.50_109, right
- ; D:/TC/src/parser.c:353:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
-	movq	-224(%rbp), %rdx	 ; right, tmp343
-	movq	-216(%rbp), %rax	 ; left, tmp344
-	movq	%rdx, %r9	 ; tmp343,
+ ; D:/TC/src/parser.c:351:             Expression* right = mb->content.variable->value != NULL ? mb->content.variable->value : create_expression(OP_NONE, NULL, create_primary(PRIM_INTEGER, create_string("0", 2), NULL, NULL, NULL), NULL);
+	movq	%rax, -224(%rbp)	 ; iftmp.50_112, right
+ ; D:/TC/src/parser.c:352:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+	movq	-224(%rbp), %rdx	 ; right, tmp346
+	movq	-216(%rbp), %rax	 ; left, tmp347
+	movq	%rdx, %r9	 ; tmp346,
 	movl	$0, %r8d	 ;,
-	movq	%rax, %rdx	 ; tmp344,
+	movq	%rax, %rdx	 ; tmp347,
 	movl	$13, %ecx	 ;,
 	call	create_expression	 ;
- ; D:/TC/src/parser.c:353:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+ ; D:/TC/src/parser.c:352:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
 	movq	$0, 40(%rsp)	 ;,
 	movq	%rax, 32(%rsp)	 ; _90,
 	movl	$0, %r9d	 ;,
@@ -2510,41 +2533,67 @@ parse_class:
 	movl	$0, %ecx	 ;,
 	call	create_statement	 ;
 	movq	%rax, %rdx	 ;, _91
- ; D:/TC/src/parser.c:353:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
-	movq	-176(%rbp), %rax	 ; body, tmp345
-	movq	%rax, %rcx	 ; tmp345,
+ ; D:/TC/src/parser.c:352:             list_append(body, (pointer)create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, create_expression(OP_ASSIGN, left, NULL, right), NULL));
+	movq	-176(%rbp), %rax	 ; body, tmp348
+	movq	%rax, %rcx	 ; tmp348,
 	call	list_append	 ;
 .L104:
- ; D:/TC/src/parser.c:349:     while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
-	movq	-184(%rbp), %rax	 ; ms, tmp346
-	movq	%rax, %rcx	 ; tmp346,
+ ; D:/TC/src/parser.c:348:     while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
+	movq	-184(%rbp), %rax	 ; ms, tmp349
+	movq	%rax, %rcx	 ; tmp349,
 	call	list_pop	 ;
-	movq	%rax, -192(%rbp)	 ; tmp347, mb
- ; D:/TC/src/parser.c:349:     while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
+	movq	%rax, -192(%rbp)	 ; tmp350, mb
+ ; D:/TC/src/parser.c:348:     while ((mb = (ClassMember*)list_pop(ms)) != NULL) {
 	cmpq	$0, -192(%rbp)	 ;, mb
 	jne	.L107	 ;,
- ; D:/TC/src/parser.c:356:     list(Expression*) args = create_list();
+ ; D:/TC/src/parser.c:355:     list(Expression*) args = create_list();
 	call	create_list	 ;
-	movq	%rax, -200(%rbp)	 ; tmp348, args
+	movq	%rax, -200(%rbp)	 ; tmp351, args
+ ; D:/TC/src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	movq	-152(%rbp), %rax	 ; self, tmp352
+	movq	$0, 32(%rsp)	 ;,
+	movl	$0, %r9d	 ;,
+	movq	%rax, %r8	 ; tmp352,
+	movl	$0, %edx	 ;,
+	movl	$0, %ecx	 ;,
+	call	create_variable_access	 ;
+ ; D:/TC/src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	movq	%rax, 32(%rsp)	 ; _92,
+	movl	$0, %r9d	 ;,
+	movl	$0, %r8d	 ;,
+	movl	$0, %edx	 ;,
+	movl	$8, %ecx	 ;,
+	call	create_primary	 ;
+ ; D:/TC/src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	movl	$0, %r9d	 ;,
+	movq	%rax, %r8	 ; _93,
+	movl	$0, %edx	 ;,
+	movl	$19, %ecx	 ;,
+	call	create_expression	 ;
+	movq	%rax, %rdx	 ;, _94
+ ; D:/TC/src/parser.c:356:     list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, self, NULL, NULL)), NULL));
+	movq	-200(%rbp), %rax	 ; args, tmp353
+	movq	%rax, %rcx	 ; tmp353,
+	call	list_append	 ;
  ; D:/TC/src/parser.c:357:     list(Variable*) params = list_copy(parameters);
-	movq	-144(%rbp), %rax	 ; parameters, tmp349
-	movq	%rax, %rcx	 ; tmp349,
+	movq	-144(%rbp), %rax	 ; parameters, tmp354
+	movq	%rax, %rcx	 ; tmp354,
 	call	list_copy	 ;
-	movq	%rax, -208(%rbp)	 ; tmp350, params
+	movq	%rax, -208(%rbp)	 ; tmp355, params
  ; D:/TC/src/parser.c:358:     while ((param = (Variable*)list_pop(params)) != NULL)
 	jmp	.L108	 ;
 .L109:
  ; D:/TC/src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
-	movq	-168(%rbp), %rax	 ; param, tmp351
-	movq	8(%rax), %rax	 ; param_208->name, _92
+	movq	-168(%rbp), %rax	 ; param, tmp356
+	movq	8(%rax), %rax	 ; param_218->name, _95
 	movq	$0, 32(%rsp)	 ;,
 	movl	$0, %r9d	 ;,
-	movq	%rax, %r8	 ; _92,
+	movq	%rax, %r8	 ; _95,
 	movl	$0, %edx	 ;,
 	movl	$0, %ecx	 ;,
 	call	create_variable_access	 ;
  ; D:/TC/src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
-	movq	%rax, 32(%rsp)	 ; _93,
+	movq	%rax, 32(%rsp)	 ; _96,
 	movl	$0, %r9d	 ;,
 	movl	$0, %r8d	 ;,
 	movl	$0, %edx	 ;,
@@ -2552,42 +2601,42 @@ parse_class:
 	call	create_primary	 ;
  ; D:/TC/src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
 	movl	$0, %r9d	 ;,
-	movq	%rax, %r8	 ; _94,
+	movq	%rax, %r8	 ; _97,
 	movl	$0, %edx	 ;,
 	movl	$19, %ecx	 ;,
 	call	create_expression	 ;
-	movq	%rax, %rdx	 ;, _95
+	movq	%rax, %rdx	 ;, _98
  ; D:/TC/src/parser.c:359:         list_append(args, (pointer)create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_NAME, NULL, param->name, NULL, NULL)), NULL));
-	movq	-200(%rbp), %rax	 ; args, tmp352
-	movq	%rax, %rcx	 ; tmp352,
+	movq	-200(%rbp), %rax	 ; args, tmp357
+	movq	%rax, %rcx	 ; tmp357,
 	call	list_append	 ;
 .L108:
  ; D:/TC/src/parser.c:358:     while ((param = (Variable*)list_pop(params)) != NULL)
-	movq	-208(%rbp), %rax	 ; params, tmp353
-	movq	%rax, %rcx	 ; tmp353,
+	movq	-208(%rbp), %rax	 ; params, tmp358
+	movq	%rax, %rcx	 ; tmp358,
 	call	list_pop	 ;
-	movq	%rax, -168(%rbp)	 ; tmp354, param
+	movq	%rax, -168(%rbp)	 ; tmp359, param
  ; D:/TC/src/parser.c:358:     while ((param = (Variable*)list_pop(params)) != NULL)
 	cmpq	$0, -168(%rbp)	 ;, param
 	jne	.L109	 ;,
  ; D:/TC/src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
-	movq	-40(%rbp), %rax	 ; init, tmp355
+	movq	-40(%rbp), %rax	 ; init, tmp360
 	movq	$0, 32(%rsp)	 ;,
 	movl	$0, %r9d	 ;,
-	movq	%rax, %r8	 ; tmp355,
+	movq	%rax, %r8	 ; tmp360,
 	movl	$0, %edx	 ;,
 	movl	$0, %ecx	 ;,
 	call	create_variable_access	 ;
-	movq	%rax, %rdx	 ;, _96
+	movq	%rax, %rdx	 ;, _99
  ; D:/TC/src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
-	movq	-200(%rbp), %rax	 ; args, tmp356
-	movq	%rax, 32(%rsp)	 ; tmp356,
+	movq	-200(%rbp), %rax	 ; args, tmp361
+	movq	%rax, 32(%rsp)	 ; tmp361,
 	movl	$0, %r9d	 ;,
 	movl	$0, %r8d	 ;,
 	movl	$1, %ecx	 ;,
 	call	create_variable_access	 ;
  ; D:/TC/src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
-	movq	%rax, 32(%rsp)	 ; _97,
+	movq	%rax, 32(%rsp)	 ; _100,
 	movl	$0, %r9d	 ;,
 	movl	$0, %r8d	 ;,
 	movl	$0, %edx	 ;,
@@ -2595,61 +2644,59 @@ parse_class:
 	call	create_primary	 ;
  ; D:/TC/src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
 	movl	$0, %r9d	 ;,
-	movq	%rax, %r8	 ; _98,
+	movq	%rax, %r8	 ; _101,
 	movl	$0, %edx	 ;,
 	movl	$19, %ecx	 ;,
 	call	create_expression	 ;
  ; D:/TC/src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
 	movq	$0, 40(%rsp)	 ;,
-	movq	%rax, 32(%rsp)	 ; _99,
+	movq	%rax, 32(%rsp)	 ; _102,
 	movl	$0, %r9d	 ;,
 	movl	$0, %r8d	 ;,
 	movl	$0, %edx	 ;,
 	movl	$5, %ecx	 ;,
 	call	create_statement	 ;
-	movq	%rax, %rdx	 ;, _100
+	movq	%rax, %rdx	 ;, _103
  ; D:/TC/src/parser.c:360:     list_append(body, (pointer)create_statement(RETURN_STATEMENT, NULL, NULL, NULL, create_expression(OP_NONE, NULL, create_primary(PRIM_VARIABLE_ACCESS, NULL, NULL, NULL, create_variable_access(VAR_FUNC_CALL, create_variable_access(VAR_NAME, NULL, init, NULL, NULL), NULL, NULL, args)), NULL), NULL));
-	movq	-176(%rbp), %rax	 ; body, tmp357
-	movq	%rax, %rcx	 ; tmp357,
+	movq	-176(%rbp), %rax	 ; body, tmp362
+	movq	%rax, %rcx	 ; tmp362,
 	call	list_append	 ;
  ; D:/TC/src/parser.c:361:     create_method_use_ptr(method, constructor, name, parameters, body, method->method_scope);
-	movq	-128(%rbp), %rax	 ; method, tmp358
-	movq	32(%rax), %rcx	 ; method_182->method_scope, _101
-	movq	-144(%rbp), %r9	 ; parameters, tmp359
-	movq	-64(%rbp), %r8	 ; name, tmp360
-	movq	-136(%rbp), %rdx	 ; constructor, tmp361
-	movq	-128(%rbp), %rax	 ; method, tmp362
-	movq	%rcx, 40(%rsp)	 ; _101,
-	movq	-176(%rbp), %rcx	 ; body, tmp363
-	movq	%rcx, 32(%rsp)	 ; tmp363,
-	movq	%rax, %rcx	 ; tmp362,
+	movq	-128(%rbp), %rax	 ; method, tmp363
+	movq	32(%rax), %rcx	 ; method_185->method_scope, _104
+	movq	-144(%rbp), %r9	 ; parameters, tmp364
+	movq	-64(%rbp), %r8	 ; name, tmp365
+	movq	-136(%rbp), %rdx	 ; constructor, tmp366
+	movq	-128(%rbp), %rax	 ; method, tmp367
+	movq	%rcx, 40(%rsp)	 ; _104,
+	movq	-176(%rbp), %rcx	 ; body, tmp368
+	movq	%rcx, 32(%rsp)	 ; tmp368,
+	movq	%rax, %rcx	 ; tmp367,
 	call	create_method_use_ptr	 ;
  ; D:/TC/src/parser.c:362:     list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
-	movq	-128(%rbp), %rax	 ; method, tmp364
+	movq	-128(%rbp), %rax	 ; method, tmp369
 	movl	$0, %r8d	 ;,
-	movq	%rax, %rdx	 ; tmp364,
+	movq	%rax, %rdx	 ; tmp369,
 	movl	$0, %ecx	 ;,
 	call	create_class_member	 ;
-	movq	%rax, %rdx	 ;, _102
+	movq	%rax, %rdx	 ;, _105
  ; D:/TC/src/parser.c:362:     list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
-	movq	-72(%rbp), %rax	 ; members, tmp365
-	movq	%rax, %rcx	 ; tmp365,
+	movq	-72(%rbp), %rax	 ; members, tmp370
+	movq	%rax, %rcx	 ; tmp370,
 	call	list_append	 ;
  ; D:/TC/src/parser.c:364:     return create_class_use_ptr(class, name, members, class_scope, size);
-	movq	-48(%rbp), %r9	 ; class_scope, tmp366
-	movq	-72(%rbp), %r8	 ; members, tmp367
-	movq	-64(%rbp), %rdx	 ; name, tmp368
-	movq	-56(%rbp), %rax	 ; class, tmp369
-	movq	-32(%rbp), %rcx	 ; size, tmp370
-	movq	%rcx, 32(%rsp)	 ; tmp370,
-	movq	%rax, %rcx	 ; tmp369,
+	movq	-48(%rbp), %r9	 ; class_scope, tmp371
+	movq	-72(%rbp), %r8	 ; members, tmp372
+	movq	-64(%rbp), %rdx	 ; name, tmp373
+	movq	-56(%rbp), %rax	 ; class, tmp374
+	movq	-32(%rbp), %rcx	 ; size, tmp375
+	movq	%rcx, 32(%rsp)	 ; tmp375,
+	movq	%rax, %rcx	 ; tmp374,
 	call	create_class_use_ptr	 ;
 .L79:
  ; D:/TC/src/parser.c:365: }
-	addq	$288, %rsp	 ;,
-	popq	%rbx	 ;
-	popq	%rsi	 ;
-	popq	%rbp	 ;
+	movq	-8(%rbp), %rbx	 ;,
+	leave	
 	ret	
 	.section .rdata,"dr"
 .LC39:
@@ -6074,8 +6121,6 @@ parse_variable_access:
 	.def	list_append;	.scl	2;	.type	32;	.endef
 	.def	create_code;	.scl	2;	.type	32;	.endef
 	.def	parse_import_file;	.scl	2;	.type	32;	.endef
-	.def	__getreent;	.scl	2;	.type	32;	.endef
-	.def	fprintf;	.scl	2;	.type	32;	.endef
 	.def	create_import;	.scl	2;	.type	32;	.endef
 	.def	is_builtin_type;	.scl	2;	.type	32;	.endef
 	.def	search_name;	.scl	2;	.type	32;	.endef

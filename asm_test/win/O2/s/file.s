@@ -172,15 +172,14 @@ absolute_path:
 	.p2align 4,,10
 	.p2align 3
 .L46:
-	movzbl	1(%rsi), %ebx
-	leal	-97(%rbx), %eax
-	cmpb	$25, %al
+	movzbl	1(%rsi), %eax
+	leal	-97(%rax), %edx
+	cmpb	$25, %dl
 	ja	.L3
 	cmpb	$47, 2(%rsi)
 	jne	.L3
-	call	__locale_ctype_ptr
-	movsbl	%bl, %ecx
-	call	toupper
+	movsbl	%al, %ecx
+	call	to_upper
 	movb	$58, 1(%rsi)
 	movb	%al, (%rsi)
 	jmp	.L3
@@ -374,8 +373,9 @@ create_file:
 	.p2align 4,,10
 	.p2align 3
 .L121:
+	movq	%rdx, 40(%rsp)
 	call	__getreent
-	movl	$255, %r8d
+	movq	40(%rsp), %r8
 	leaq	.LC3(%rip), %rdx
 	movq	24(%rax), %rcx
 	call	fprintf
@@ -817,8 +817,7 @@ change_file_name:
 	.def	memmove;	.scl	2;	.type	32;	.endef
 	.def	sprintf;	.scl	2;	.type	32;	.endef
 	.def	create_string;	.scl	2;	.type	32;	.endef
-	.def	__locale_ctype_ptr;	.scl	2;	.type	32;	.endef
-	.def	toupper;	.scl	2;	.type	32;	.endef
+	.def	to_upper;	.scl	2;	.type	32;	.endef
 	.def	alloc_memory;	.scl	2;	.type	32;	.endef
 	.def	strcpy;	.scl	2;	.type	32;	.endef
 	.def	strncpy;	.scl	2;	.type	32;	.endef
