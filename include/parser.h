@@ -1,6 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "file.h"
+#include "lexer.h"
 #include "lib.h"
 
 #define list(type) List*
@@ -232,8 +234,13 @@ struct Symbol {
     SymbolType kind;
 };
 
-typedef struct Lexer Lexer;
-typedef struct Parser Parser;
+typedef struct Parser {
+    File* source_file;
+    bool in_function;
+    bool in_method;
+    bool in_class;
+    bool in_loop;
+} Parser;
 
 // public functions
 Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser);

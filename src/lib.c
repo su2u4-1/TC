@@ -297,3 +297,11 @@ string get_info(void) {
     sprintf(info, "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu", PLATFORM, struct_memory_used_str, string_memory_used_str, stringCount, memoryBlockCount);
     return info;
 }
+
+inline char to_lower(char c) {
+    return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+}
+
+inline char to_upper(char c) {
+    return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
+}

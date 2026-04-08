@@ -1,19 +1,10 @@
 #ifndef HELPER_H
 #define HELPER_H
 
-#include "file.h"
 #include "parser.h"
 
 #define ast_output(x, is_last, ...) indention(outfile, indent + x, is_last, indent_has_next), fprintf(outfile, __VA_ARGS__)
 #define tac_output(x, ...) indention_tac(outfile, x), fprintf(outfile, __VA_ARGS__)
-
-typedef struct Parser {
-    File* source_file;
-    bool in_function;
-    bool in_method;
-    bool in_class;
-    bool in_loop;
-} Parser;
 
 typedef struct Token Token;
 

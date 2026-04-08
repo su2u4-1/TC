@@ -2,7 +2,6 @@
 #define LIB_H
 
 #include <assert.h>
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -140,5 +139,7 @@ pointer alloc_memory(size_t size);
 bool is_keyword(const string str);
 bool string_equal(string a, string b);
 string get_info(void);
+char to_lower(char c);
+char to_upper(char c);
 
 #endif  // LIB_H
