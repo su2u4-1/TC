@@ -1,14 +1,8 @@
 #ifndef LIB_H
 #define LIB_H
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "object.h"
 
-#define bool char
-#define true 1
-#define false 0
 #define ALIGN_SIZE sizeof(size_t)
 #define defaultMemorySize 1024  // 1 KB
 #define sizeDigit 20
@@ -37,24 +31,6 @@
 #elif PLATFORM == 2 || PLATFORM == 3 || PLATFORM == 4
 #include <unistd.h>  // MinGW or LINUX or MACOS
 #endif
-
-typedef char* string;
-typedef size_t* pointer;
-
-typedef struct MemoryBlock MemoryBlock;
-struct MemoryBlock {
-    size_t size;
-    size_t used;
-    MemoryBlock* next;
-    pointer block;
-};
-
-typedef struct StringList StringList;
-struct StringList {
-    string str;
-    size_t length;
-    StringList* next;
-};
 
 #define keywordCount 22
 #define symbolCount 30
@@ -122,9 +98,6 @@ extern string DIV_ASSIGN_SYMBOL;  // symbol `/=`
 extern string MOD_ASSIGN_SYMBOL;  // symbol `%=`
 extern string AND_SYMBOL;         // symbol `&&`
 extern string OR_SYMBOL;          // symbol `||`
-
-typedef struct SymbolTable SymbolTable;
-typedef struct Symbol Symbol;
 
 extern Symbol* name_void;
 extern Symbol* name_int;

@@ -1,8 +1,10 @@
 #include "parser.h"
 
 #include "create.h"
+#include "file.h"
 #include "helper.h"
 #include "lexer.h"
+#include "lib.h"
 
 // parser functions
 static Import* parse_import(Lexer* lexer, SymbolTable* now_scope, Parser* parser);

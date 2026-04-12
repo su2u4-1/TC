@@ -1,22 +1,9 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include "lib.h"
+#include "object.h"
 
 #define componentMaxSize 256  // Max size for a single path component
-
-typedef struct StrNode StrNode;
-struct StrNode {
-    string dir;
-    StrNode* next;
-};
-
-typedef struct File {
-    StrNode* dirs;
-    string extension;
-    string name;
-    string path;
-} File;
 
 string get_cwd(void);
 File* create_file(const string path);

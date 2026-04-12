@@ -1,7 +1,7 @@
 #ifndef CREATE_H
 #define CREATE_H
 
-#include "parser.h"
+#include "object.h"
 
 // create struct functions
 CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content);

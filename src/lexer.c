@@ -1,5 +1,7 @@
 #include "lexer.h"
 
+#include "lib.h"
+
 Lexer* create_lexer(string source, size_t length, string filename) {
     Lexer* lexer = (Lexer*)alloc_memory(sizeof(Lexer));
     lexer->source = source;

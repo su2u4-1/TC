@@ -2,6 +2,7 @@
 
 #include "create.h"
 #include "helper.h"
+#include "lib.h"
 
 static AttributeTable* create_attribute_table(Symbol* name) {
     // printf("[DEBUG] 191 Starting create_attribute_table\n");

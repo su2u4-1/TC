@@ -1,7 +1,10 @@
 #include "compiler.h"
 
+#include "file.h"
 #include "helper.h"
 #include "lexer.h"
+#include "lib.h"
+#include "parser.h"
 #include "tac.h"
 
 string read_source(FILE* file, size_t* length) {

@@ -1,12 +1,8 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
-#include "lib.h"
+#include "object.h"
 
-typedef struct Token Token;
-typedef struct Lexer Lexer;
-typedef struct TAC TAC;
-typedef struct Code Code;
 string read_source(FILE* file, size_t* length);
 void output_one_token(FILE* file, Token* token);
 void output_token(FILE* file, Lexer* lexer);

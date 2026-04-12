@@ -1,12 +1,10 @@
 #ifndef HELPER_H
 #define HELPER_H
 
-#include "parser.h"
+#include "object.h"
 
 #define ast_output(x, is_last, ...) indention(outfile, indent + x, is_last, indent_has_next), fprintf(outfile, __VA_ARGS__)
 #define tac_output(x, ...) indention_tac(outfile, x), fprintf(outfile, __VA_ARGS__)
-
-typedef struct Token Token;
 
 // list helper functions
 list() create_list(void);

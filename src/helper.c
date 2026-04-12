@@ -1,7 +1,10 @@
 #include "helper.h"
 
 #include "compiler.h"
+#include "file.h"
 #include "lexer.h"
+#include "lib.h"
+#include "parser.h"
 
 // list helper functions
 list() create_list(void) {

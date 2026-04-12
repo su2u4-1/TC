@@ -1,5 +1,7 @@
 #include "create.h"
 
+#include "lib.h"
+
 CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content) {
     CodeMember* code_member = (CodeMember*)alloc_memory(sizeof(CodeMember));
     code_member->type = type;

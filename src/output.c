@@ -1,4 +1,5 @@
 #include "helper.h"
+#include "parser.h"
 #include "tac.h"
 
 // output AST

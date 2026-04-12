@@ -1,5 +1,7 @@
 #include "file.h"
 
+#include "lib.h"
+
 inline string get_cwd(void) {
 #if PLATFORM == 1
     return _getcwd(NULL, 0);  // MSVC
