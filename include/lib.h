@@ -104,9 +104,12 @@ extern Symbol* name_bool;
 extern SymbolTable* builtin_scope;
 
 #define string_equal(a, b) ((a) == (b))
+#define create_string_not_check_nl(data) create_string_check(data, strlen(data), false)
+#define create_string_not_check(data, length) create_string_check(data, length, false)
+#define create_string_nl(data) create_string_check(data, strlen(data), true)
+#define create_string(data, length) create_string_check(data, length, true)
 
-string create_string_not_check(const char* data, size_t length);
-string create_string(const char* data, size_t length);
+string create_string_check(const char* data, size_t length, bool check);
 pointer alloc_memory(size_t size);
 bool is_keyword(const string str);
 string get_info(void);

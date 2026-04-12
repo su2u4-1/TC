@@ -22,7 +22,7 @@ File* create_file(const string path) {
 }
 
 string absolute_path(string path, string base_path) {
-    path = create_string_not_check(path, strlen(path));
+    path = create_string_not_check_nl(path);
     size_t path_len = strlen(path);
     for (size_t i = 0; i < path_len; i++) {
         if (path[i] == '\\') path[i] = '/';
@@ -117,7 +117,7 @@ string get_file_dir(File* path) {
         current = current->next;
     }
 
-    return create_string(dir_path, strlen(dir_path));
+    return create_string_nl(dir_path);
 }
 
 inline string get_full_path(File* path) {
@@ -270,7 +270,7 @@ void normalize_path(File* file) {
             // Has extension
             size_t name_len = (size_t)(dot - dirs_tail->dir);
             file->name = create_string(dirs_tail->dir, name_len);
-            file->extension = create_string(dot, strlen(dot));
+            file->extension = create_string_nl(dot);
         } else {
             // No extension
             file->name = dirs_tail->dir;
@@ -313,5 +313,5 @@ void normalize_path(File* file) {
         current = current->next;
     }
 
-    file->path = create_string(full_path, strlen(full_path));
+    file->path = create_string_nl(full_path);
 }

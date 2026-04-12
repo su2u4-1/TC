@@ -128,7 +128,7 @@ static string alloc_big_memory(size_t size) {
     return block;
 }
 
-static string create_string_check(const char* data, size_t length, bool check) {
+string create_string_check(const char* data, size_t length, bool check) {
     if (!initialized) init();
     if (data == NULL || length == 0) return 0;
     if (check) {
@@ -161,14 +161,6 @@ static string create_string_check(const char* data, size_t length, bool check) {
     return str;
 }
 
-string create_string_not_check(const char* data, size_t length) {
-    return create_string_check(data, length, false);
-}
-
-string create_string(const char* data, size_t length) {
-    return create_string_check(data, length, true);
-}
-
 void init(void) {
     if (initialized) return;
     if (struct_memory == NULL) {
@@ -181,11 +173,11 @@ void init(void) {
     }
     initialized = true;
     for (size_t i = 0; i < keywordCount; ++i)
-        keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
+        keywordList[i] = create_string_not_check_nl(keywordStrings[i]);
     for (size_t i = 0; i < symbolCount; ++i)
-        symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
-    DEFAULT_INIT_NAME = create_string_check("init", 4, false);
-    DEFAULT_CONSTRUCTOR_NAME = create_string_check("$constructor", 13, false);
+        symbolList[i] = create_string_not_check_nl(symbolStrings[i]);
+    DEFAULT_INIT_NAME = create_string_not_check("init", 4);
+    DEFAULT_CONSTRUCTOR_NAME = create_string_not_check("$constructor", 12);
     IMPORT_KEYWORD = keywordList[0];
     FROM_KEYWORD = keywordList[1];
     FUNC_KEYWORD = keywordList[2];
