@@ -157,27 +157,11 @@ Symbol* search_name(SymbolTable* scope, string name) {
     return NULL;
 }
 
-inline bool is_builtin_type(string type) {
-    return string_equal(type, INT_KEYWORD) || string_equal(type, FLOAT_KEYWORD) || string_equal(type, STRING_KEYWORD) || string_equal(type, BOOL_KEYWORD) || string_equal(type, VOID_KEYWORD);
-}
-
-inline void parser_error(const string message, Token* token, string file_name) {
-    fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message);
-}
-
-static void set_bool_list(char bool_list[32], size_t index, bool value) {
-    char word = bool_list[index / 8];
-    bool_list[index / 8] = (char)(value ? (word | (1 << (index % 8))) : (word & ~(1 << (index % 8))));
-}
-
-static inline bool get_bool_list(char bool_list[32], size_t index) {
-    return (bool_list[index / 8] & (1 << (index % 8))) != 0;
-}
-
 void indention(FILE* out, size_t indent, bool is_last, char indent_has_next[32]) {
-    set_bool_list(indent_has_next, indent, !is_last);
+    char word = indent_has_next[indent / 8];
+    indent_has_next[indent / 8] = (char)(!is_last ? (word | (1 << (indent % 8))) : (word & ~(1 << (indent % 8))));
     for (size_t i = 1; i < indent; ++i)
-        fprintf(out, get_bool_list(indent_has_next, i) ? "│   " : "    ");
+        fprintf(out, (indent_has_next[i / 8] & (1 << (i % 8))) ? "│   " : "    ");
     if (indent > 0)
         fprintf(out, is_last ? "└── " : "├── ");
 }
@@ -227,12 +211,6 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
         list_append(scope->symbols, (pointer)name);
     else
         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
-    return name;
-}
-
-string make_method_name(string class_name, string method_name) {
-    string name = create_string("", strlen(class_name) + strlen(method_name) + 2);
-    sprintf(name, "%s.%s", class_name, method_name);
     return name;
 }
 
