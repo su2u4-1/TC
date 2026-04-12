@@ -269,14 +269,29 @@ string get_info(void) {
         stringCount++;
         current = current->next;
     }
-    // max: 47 char
-    string struct_memory_used_str = create_string_check("", 48, false);
-    sprintf(struct_memory_used_str, "%zu/%zu bytes", struct_memory_used + struct_memory->used, struct_memory_count);
-    // max: 47 char
-    string string_memory_used_str = create_string_check("", 48, false);
-    sprintf(string_memory_used_str, "%zu/%zu bytes", string_memory_used + string_memory->used, string_memory_count);
-    // max: 239 char
-    string info = (string)create_string_check("", 240, false);
-    sprintf(info, "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu", PLATFORM, struct_memory_used_str, string_memory_used_str, stringCount, memoryBlockCount);
-    return info;
+    string struct_memory_used_str = string_splice("%zu/%zu bytes", struct_memory_used + struct_memory->used, struct_memory_count);
+    string string_memory_used_str = string_splice("%zu/%zu bytes", string_memory_used + string_memory->used, string_memory_count);
+    return string_splice("Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu", PLATFORM, struct_memory_used_str, string_memory_used_str, stringCount, memoryBlockCount);
+}
+
+string string_splice(string format, ...) {
+    va_list args;
+    va_start(args, format);
+    int length = vsnprintf(NULL, 0, format, args);
+    va_end(args);
+    if (length <= 0) {
+        fprintf(stderr, "Error: Failed to format string\n");
+        return NULL;
+    }
+    char* name = malloc((size_t)length);
+    if (name == NULL) {
+        fprintf(stderr, "Fatal: Cannot allocate memory\n");
+        exit(1);
+    }
+    va_start(args, format);
+    vsnprintf(name, (size_t)length, format, args);
+    va_end(args);
+    string result = create_string(name, (size_t)length);
+    free(name);
+    return result;
 }

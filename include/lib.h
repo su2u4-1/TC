@@ -110,5 +110,6 @@ string create_string(const char* data, size_t length);
 pointer alloc_memory(size_t size);
 bool is_keyword(const string str);
 string get_info(void);
+string string_splice(string format, ...);
 
 #endif  // LIB_H

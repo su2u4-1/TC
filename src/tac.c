@@ -181,11 +181,10 @@ static Var* create_var(Symbol* original_name, Symbol* type, VarType kind, TACSta
         case VAR_SUBROUTINE: id = status->subroutine_count++; break;
         default: id = (size_t)-1; break;
     }
-    var->name = create_string("", 32);
     if (id == (size_t)-1)
-        sprintf(var->name, "$%d-error", kind);
+        var->name = string_splice("$%d-error", kind);
     else
-        sprintf(var->name, "$%c%zu", kind, id);
+        var->name = string_splice("$%c%zu", kind, id);
     var->type = type;
     if (kind == VAR_TEMP || kind == VAR_VAR)
         list_append(status->current_subroutine->local_vars, (pointer)var);

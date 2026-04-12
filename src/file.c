@@ -62,11 +62,8 @@ string absolute_path(string path, string base_path) {
         base_path = get_cwd();
     if (base_path == NULL)
         return path;
-    size_t total_len = strlen(base_path) + 1 + path_len + 1;
-    string abs_path = create_string_not_check("", total_len);
-    sprintf(abs_path, "%s/%s", base_path, path);
     free(base_path);
-    return absolute_path(create_string(abs_path, total_len), NULL);
+    return absolute_path(string_splice("%s/%s", base_path, path), NULL);
 }
 
 inline string get_file_name(File* path) {
@@ -129,17 +126,10 @@ static void rebuild_full_path(File* file) {
     string dir = get_file_dir(file);
     string dir_cstr = dir != NULL ? dir : "";
     string ext_cstr = file->extension != NULL ? file->extension : "";
-
-    size_t path_len = strlen(dir_cstr) + 1 + strlen(file->name);
-    if (file->extension != NULL) path_len += strlen(ext_cstr);
-
-    string new_path = create_string_not_check("", path_len + 1);
     if (dir != NULL && strlen(dir_cstr) > 0)
-        sprintf(new_path, "%s/%s%s", dir_cstr, file->name, ext_cstr);
+        file->path = string_splice("%s/%s%s", dir_cstr, file->name, ext_cstr);
     else
-        sprintf(new_path, "%s%s", file->name, ext_cstr);
-
-    file->path = create_string(new_path, strlen(new_path));
+        file->path = string_splice("%s%s", file->name, ext_cstr);
 }
 
 void change_file_extension(File* file, const string new_extension) {
@@ -157,13 +147,7 @@ void change_file_name(File* file, const string new_name) {
         while (current != NULL) {
             if (current->next == NULL) {
                 // This is the last node - update it
-                string ext_cstr = file->extension != NULL ? file->extension : "";
-                size_t full_name_len = strlen(new_name);
-                if (file->extension != NULL) full_name_len += strlen(ext_cstr);
-
-                string full_name = create_string_not_check("", full_name_len + 1);
-                sprintf(full_name, "%s%s", new_name, ext_cstr);
-                current->dir = create_string(full_name, strlen(full_name));
+                current->dir = string_splice("%s%s", new_name, file->extension != NULL ? file->extension : "");
                 break;
             }
             current = current->next;

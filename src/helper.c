@@ -171,8 +171,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
     string filename;
     if (source == NULL) {
         // import_name += ".tc";
-        string temp_import_name = create_string_not_check("", strlen(import_name) + 4);
-        sprintf(temp_import_name, "%s.tc", import_name);
+        string temp_import_name = string_splice("%s.tc", import_name);
         filename = absolute_path(temp_import_name, std_path);
     } else
         filename = absolute_path(source, get_file_dir(source_file));
@@ -197,15 +196,6 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
     else
         fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
     return name;
-}
-
-string make_method_name(string class_name, string method_name) {
-    size_t length = strlen(class_name) + strlen(method_name) + 2;
-    char* name = malloc(length);
-    sprintf(name, "%s.%s", class_name, method_name);
-    string result = create_string(name, length);
-    free(name);
-    return result;
 }
 
 // operator helper functions
