@@ -214,6 +214,15 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
     return name;
 }
 
+string make_method_name(string class_name, string method_name) {
+    size_t length = strlen(class_name) + strlen(method_name) + 2;
+    char* name = malloc(length);
+    sprintf(name, "%s.%s", class_name, method_name);
+    string result = create_string(name, length);
+    free(name);
+    return result;
+}
+
 // operator helper functions
 OperatorType string_to_operator(string str) {
     if (string_equal(str, ASSIGN_SYMBOL)) return OP_ASSIGN;
