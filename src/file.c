@@ -65,6 +65,7 @@ string absolute_path(string path, string base_path) {
     size_t total_len = strlen(base_path) + 1 + path_len + 1;
     string abs_path = create_string_not_check("", total_len);
     sprintf(abs_path, "%s/%s", base_path, path);
+    free(base_path);
     return absolute_path(create_string(abs_path, total_len), NULL);
 }
 
