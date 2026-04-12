@@ -80,24 +80,29 @@ static size_t string_memory_count = 0;
 
 static void init(void);
 
-static void increase_memory_size(bool for_struct) {
-    MemoryBlock* new_block = (MemoryBlock*)malloc(sizeof(MemoryBlock));
-    if (new_block == NULL) {
+static MemoryBlock* create_memory_block(size_t size) {
+    MemoryBlock* memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
+    if (memory == NULL) {
         fprintf(stderr, "Fatal: Cannot allocate memory\n");
-        MemoryBlock* current = string_memory;
-        while (current != NULL) {
-            MemoryBlock* next = current->next;
-            free(current->block);
-            free(current);
-            current = next;
-        }
         initialized = false;
         exit(1);
     }
-    new_block->block = (pointer)malloc(defaultMemorySize);
-    new_block->size = defaultMemorySize;
-    new_block->used = 0;
-    new_block->next = NULL;
+    memory->block = (size_t*)malloc(size);
+    if (memory->block == NULL) {
+        fprintf(stderr, "Fatal: Cannot allocate memory\n");
+        free(memory);
+        memory = NULL;
+        initialized = false;
+        exit(1);
+    }
+    memory->size = size;
+    memory->used = 0;
+    memory->next = NULL;
+    return memory;
+}
+
+static void increase_memory_size(bool for_struct) {
+    MemoryBlock* new_block = create_memory_block(defaultMemorySize);
     if (for_struct) {
         struct_memory_used += struct_memory->used;
         new_block->next = struct_memory;
@@ -167,29 +172,11 @@ string create_string(const char* data, size_t length) {
 void init(void) {
     if (initialized) return;
     if (struct_memory == NULL) {
-        struct_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
-        if (struct_memory == NULL) {
-            fprintf(stderr, "Fatal: Cannot allocate memory\n");
-            initialized = false;
-            exit(1);
-        }
-        struct_memory->block = (size_t*)malloc(defaultMemorySize);
-        struct_memory->size = defaultMemorySize;
-        struct_memory->used = 0;
-        struct_memory->next = NULL;
+        struct_memory = create_memory_block(defaultMemorySize);
         struct_memory_count = defaultMemorySize;
     }
     if (string_memory == NULL) {
-        string_memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
-        if (string_memory == NULL) {
-            fprintf(stderr, "Fatal: Cannot allocate memory\n");
-            initialized = false;
-            exit(1);
-        }
-        string_memory->block = (pointer)malloc(defaultMemorySize);
-        string_memory->size = defaultMemorySize;
-        string_memory->used = 0;
-        string_memory->next = NULL;
+        string_memory = create_memory_block(defaultMemorySize);
         string_memory_count = defaultMemorySize;
     }
     initialized = true;
@@ -275,10 +262,6 @@ bool is_keyword(const string str) {
     return false;
 }
 
-inline bool string_equal(string a, string b) {
-    return a == b;
-}
-
 string get_info(void) {
     size_t stringCount = 0;
     StringList* current = all_string_list;
@@ -296,12 +279,4 @@ string get_info(void) {
     string info = (string)create_string_check("", 240, false);
     sprintf(info, "Platform: %d, Structure Memory Used: %s, String Memory Used: %s, stringCount: %zu, Memory Block Count: %zu", PLATFORM, struct_memory_used_str, string_memory_used_str, stringCount, memoryBlockCount);
     return info;
-}
-
-inline char to_lower(char c) {
-    return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
-}
-
-inline char to_upper(char c) {
-    return (c >= 'a' && c <= 'z') ? (c - ('a' - 'A')) : c;
 }
