@@ -778,7 +778,7 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
         SymbolTable* scope = base->type->ast_node.scope;
         if (base->type->kind == SYMBOL_CLASS)
             scope = base->type->ast_node.class->class_scope;
-        Symbol* attr = search_name_use_strcmp(scope, variable_access->content.attr_name->name);
+        Symbol* attr = search_name(scope, variable_access->content.attr_name->name);
         if (attr == NULL) {
             fprintf(stderr, "[Warning] Attribute '%s' not found in type '%s'\n", variable_access->content.attr_name->name, base->type->name);
             // printf("[DEBUG] 181 Finished tac_variable_access with error\n");
@@ -824,7 +824,7 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
         return temp;
     } else if (variable_access->type == VAR_FUNC_CALL) {
         if (base->kind == ARG_VARIABLE && base->type->kind == SYMBOL_CLASS) {
-            Symbol* attr = search_name_use_strcmp(base->type->ast_node.class->class_scope, make_method_name(base->type->name, DEFAULT_CONSTRUCTOR_NAME));
+            Symbol* attr = search_name(base->type->ast_node.class->class_scope, make_method_name(base->type->name, DEFAULT_CONSTRUCTOR_NAME));
             base = create_arg(ARG_METHOD, create_var(attr, attr->type, VAR_SUBROUTINE, status));
         }
         if (base->kind != ARG_METHOD && base->kind != ARG_FUNCTION) {

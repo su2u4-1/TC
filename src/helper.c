@@ -127,21 +127,6 @@ SymbolTable* create_symbol_table(SymbolTable* parent) {
     return new_scope;
 }
 
-Symbol* search_name_use_strcmp(SymbolTable* scope, string name) {
-    while (scope != NULL) {
-        list(Symbol*) names = scope->symbols;
-        Node* current = names->head;
-        while (current != NULL) {
-            Symbol* current_name = (Symbol*)current->content;
-            if (strcmp(current_name->name, name) == 0)
-                return current_name;
-            current = current->next;
-        }
-        scope = scope->parent;
-    }
-    return NULL;
-}
-
 Symbol* search_name(SymbolTable* scope, string name) {
     while (scope != NULL) {
         list(Symbol*) names = scope->symbols;
@@ -206,7 +191,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
         return NULL;
     }
-    name = search_name_use_strcmp(code->global_scope, import_name);
+    name = search_name(code->global_scope, import_name);
     if (name != NULL)
         list_append(scope->symbols, (pointer)name);
     else

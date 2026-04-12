@@ -20,7 +20,6 @@ bool list_is_empty(list() list);
 Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node);
 SymbolTable* create_symbol_table(SymbolTable* parent);
 Symbol* search_name(SymbolTable* scope, string name);
-Symbol* search_name_use_strcmp(SymbolTable* scope, string name);
 void indention(FILE* out, size_t indent, bool is_last, char indent_has_next[32]);
 void indention_tac(FILE* out, size_t indent);
 Parser* create_parser(File* file);

@@ -316,7 +316,7 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         token = get_next_token(lexer, true);
     }
     string init_name = make_method_name(name->name, DEFAULT_INIT_NAME);
-    Symbol* init = search_name_use_strcmp(class_scope, init_name);
+    Symbol* init = search_name(class_scope, init_name);
     if (init == NULL) {
         Method* method = (Method*)alloc_memory(sizeof(Method));
         method->method_scope = create_symbol_table(class_scope);
@@ -798,7 +798,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                 parser_error("Cannot call undefined variable", token, get_full_path(parser->source_file));
             else if (base_name->kind == SYMBOL_CLASS) {
                 string name = make_method_name(base_name->name, DEFAULT_CONSTRUCTOR_NAME);
-                base_name = search_name_use_strcmp(base_name->ast_node.class->class_scope, name);
+                base_name = search_name(base_name->ast_node.class->class_scope, name);
                 base = create_variable_access(VAR_GET_ATTR, base, base_name, NULL, NULL);
             }
             if (base_name != NULL && base_name->kind != SYMBOL_FUNCTION && base_name->kind != SYMBOL_METHOD)
@@ -861,7 +861,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                         class_name = current_type->type->name;
                 }
                 string name = make_method_name(class_name, token->lexeme);
-                base_name = search_name_use_strcmp(var_scope, name);
+                base_name = search_name(var_scope, name);
             }
             if (base_name == NULL) {
                 parser_error("Unknown attribute name", token, get_full_path(parser->source_file));

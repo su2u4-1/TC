@@ -123,4 +123,4 @@ TAC {
 }
 
 info by lib:
-    Platform: 2, Structure Memory Used: 26496/27648 bytes, String Memory Used: 3952/4096 bytes, stringCount: 172, Memory Block Count: 1106
+    Platform: 2, Structure Memory Used: 26600/27648 bytes, String Memory Used: 3763/4096 bytes, stringCount: 161, Memory Block Count: 1118
