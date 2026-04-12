@@ -39,13 +39,15 @@ string absolute_path(string path, string base_path) {
     }
 #if PLATFORM == 1 || PLATFORM == 2
     if (path_len > 2 && path[0] == '/' && (path[1] >= 'a' && path[1] <= 'z') && path[2] == '/') {
-        path[0] = to_upper(path[1]);
+        // to upper
+        path[0] = (path[1] >= 'a' && path[1] <= 'z') ? (path[1] - ('a' - 'A')) : path[1];
         path[1] = ':';
         return path;
     }
 #else
     if (path_len > 1 && (path[0] >= 'A' && path[0] <= 'Z') && path[1] == ':') {
-        path[0] = to_lower(path[0]);
+        // to lower
+        path[0] = (path[0] >= 'A' && path[0] <= 'Z') ? (path[0] + ('a' - 'A')) : path[0];
         memmove(path, path + 1, path_len);
         path[0] = '/';
         path[2] = '/';

@@ -3,10 +3,6 @@
 
 #include "object.h"
 
-#define ALIGN_SIZE sizeof(size_t)
-#define defaultMemorySize 1024  // 1 KB
-#define sizeDigit 20
-
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #ifdef _MSC_VER
 #define PLATFORM 1  // MSVC
@@ -32,17 +28,18 @@
 #include <unistd.h>  // MinGW or LINUX or MACOS
 #endif
 
+#define ALIGN_SIZE sizeof(size_t)
+#define defaultMemorySize 1024  // 1 KB
+#define sizeDigit 20
 #define keywordCount 22
 #define symbolCount 30
+
 extern string keywordList[keywordCount];
 extern string symbolList[symbolCount];
-
 extern MemoryBlock* struct_memory;
 extern MemoryBlock* string_memory;
 extern bool initialized;
-
 extern StringList* all_string_list;
-
 extern string DEFAULT_INIT_NAME;
 extern string DEFAULT_CONSTRUCTOR_NAME;
 
@@ -106,13 +103,12 @@ extern Symbol* name_string;
 extern Symbol* name_bool;
 extern SymbolTable* builtin_scope;
 
+#define string_equal(a, b) ((a) == (b))
+
 string create_string_not_check(const char* data, size_t length);
 string create_string(const char* data, size_t length);
 pointer alloc_memory(size_t size);
 bool is_keyword(const string str);
-bool string_equal(string a, string b);
 string get_info(void);
-char to_lower(char c);
-char to_upper(char c);
 
 #endif  // LIB_H
