@@ -430,8 +430,9 @@ void output_TAC(TAC* tac, FILE* outfile, size_t indent) {
         tac_output(indent + 1, "designs: []\n");
     else {
         tac_output(indent + 1, "designs: [\n");
+        list(AttributeTable*) tables = list_copy(tac->attribute_tables);
         AttributeTable* attribute_table;
-        while ((attribute_table = (AttributeTable*)list_pop(tac->attribute_tables)) != NULL)
+        while ((attribute_table = (AttributeTable*)list_pop(tables)) != NULL)
             output_attribute_table(attribute_table, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -443,8 +444,9 @@ void output_TAC(TAC* tac, FILE* outfile, size_t indent) {
         tac_output(indent + 1, "global: []\n");
     else {
         tac_output(indent + 1, "global: [\n");
+        list(Var*) globals = list_copy(tac->global_vars);
         Var* var;
-        while ((var = (Var*)list_pop(tac->global_vars)) != NULL)
+        while ((var = (Var*)list_pop(globals)) != NULL)
             output_var(var, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -452,8 +454,9 @@ void output_TAC(TAC* tac, FILE* outfile, size_t indent) {
         tac_output(indent + 1, "subroutines: []\n");
     else {
         tac_output(indent + 1, "subroutines: [\n");
+        list(Subroutine*) subs = list_copy(tac->subroutines);
         Subroutine* subroutine;
-        while ((subroutine = (Subroutine*)list_pop(tac->subroutines)) != NULL)
+        while ((subroutine = (Subroutine*)list_pop(subs)) != NULL)
             output_subroutine(subroutine, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -479,8 +482,9 @@ void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent) {
         tac_output(indent + 1, "parameters: []\n");
     else {
         tac_output(indent + 1, "parameters: [\n");
+        list(Var*) parameters = list_copy(subroutine->parameters);
         Var* parameter;
-        while ((parameter = (Var*)list_pop(subroutine->parameters)) != NULL)
+        while ((parameter = (Var*)list_pop(parameters)) != NULL)
             output_var(parameter, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -488,8 +492,9 @@ void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent) {
         tac_output(indent + 1, "local: []\n");
     else {
         tac_output(indent + 1, "local: [\n");
+        list(Var*) locals = list_copy(subroutine->local_vars);
         Var* var;
-        while ((var = (Var*)list_pop(subroutine->local_vars)) != NULL)
+        while ((var = (Var*)list_pop(locals)) != NULL)
             output_var(var, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -497,8 +502,9 @@ void output_subroutine(Subroutine* subroutine, FILE* outfile, size_t indent) {
         tac_output(indent + 1, "instructions: []\n");
     else {
         tac_output(indent + 1, "instructions: [\n");
+        list(Block*) blocks = list_copy(subroutine->blocks);
         Block* block;
-        while ((block = (Block*)list_pop(subroutine->blocks)) != NULL)
+        while ((block = (Block*)list_pop(blocks)) != NULL)
             output_block(block, outfile, indent + 2);
         tac_output(indent + 1, "]\n");
     }
@@ -535,8 +541,9 @@ void output_block(Block* block, FILE* outfile, size_t indent) {
         tac_output(0, "{}\n");
     else {
         tac_output(0, "{\n");
+        list(Instruction*) instructions = list_copy(block->instructions);
         Instruction* instruction;
-        while ((instruction = (Instruction*)list_pop(block->instructions)) != NULL)
+        while ((instruction = (Instruction*)list_pop(instructions)) != NULL)
             output_instruction(instruction, outfile, indent + 1);
         tac_output(indent, "}\n");
     }
@@ -673,8 +680,9 @@ void output_attribute_table(AttributeTable* attribute_table, FILE* outfile, size
         tac_output(0, "{}\n");
     else {
         tac_output(0, "{\n");
+        list(Attribute*) attributes = list_copy(attribute_table->attributes);
         Attribute* attribute;
-        while ((attribute = (Attribute*)list_pop(attribute_table->attributes)) != NULL)
+        while ((attribute = (Attribute*)list_pop(attributes)) != NULL)
             output_attribute(attribute, outfile, indent + 1);
         tac_output(indent, "}\n");
     }
