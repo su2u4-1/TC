@@ -26,7 +26,7 @@ touch asm_test/wsl/s/output.s
 touch asm_test/wsl/s/parser.s
 touch asm_test/wsl/s/tac.s
 
-HEADERS=(assert.h stdio.h stdlib.h string.h direct.h unistd.h)
+HEADERS=(assert.h stdio.h stdlib.h string.h direct.h unistd.h stdarg.h)
 
 for h in "${HEADERS[@]}"; do
     name="${h%.h}"

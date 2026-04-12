@@ -26,7 +26,7 @@ type nul > asm_test\win\s\output.s
 type nul > asm_test\win\s\parser.s
 type nul > asm_test\win\s\tac.s
 
-set HEADERS=assert.h stdio.h stdlib.h string.h direct.h unistd.h
+set HEADERS=assert.h stdio.h stdlib.h string.h direct.h unistd.h stdarg.h
 
 for %%h in (%HEADERS%) do (
     (

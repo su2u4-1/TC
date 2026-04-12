@@ -275,6 +275,7 @@ string get_info(void) {
 }
 
 string string_splice(string format, ...) {
+#include <stdarg.h>
     va_list args;
     va_start(args, format);
     int length = vsnprintf(NULL, 0, format, args);
@@ -283,13 +284,13 @@ string string_splice(string format, ...) {
         fprintf(stderr, "Error: Failed to format string\n");
         return NULL;
     }
-    char* name = malloc((size_t)length);
+    char* name = malloc((size_t)length + 1);
     if (name == NULL) {
         fprintf(stderr, "Fatal: Cannot allocate memory\n");
         exit(1);
     }
     va_start(args, format);
-    vsnprintf(name, (size_t)length, format, args);
+    vsnprintf(name, (size_t)length + 1, format, args);
     va_end(args);
     string result = create_string(name, (size_t)length);
     free(name);

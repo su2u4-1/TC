@@ -58,12 +58,14 @@ string absolute_path(string path, string base_path) {
         return path;
     if (path_len > 0 && path[0] == '/')
         return path;
-    if (base_path == NULL)
-        base_path = get_cwd();
+    if (base_path != NULL)
+        return absolute_path(string_splice("%s/%s", base_path, path), NULL);
+    base_path = get_cwd();
     if (base_path == NULL)
         return path;
+    string abs_path = string_splice("%s/%s", base_path, path);
     free(base_path);
-    return absolute_path(string_splice("%s/%s", base_path, path), NULL);
+    return absolute_path(abs_path, NULL);
 }
 
 inline string get_file_name(File* path) {

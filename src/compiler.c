@@ -78,6 +78,7 @@ void output_tac(FILE* file, TAC* tac) {
     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
 }
 void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
+    // printf("Info: Parsing file '%s'\n", name);
     File* file = create_file(name);
     string filename = get_full_path(file);
     size_t length = 0;
@@ -86,10 +87,12 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
         fprintf(stderr, "Error opening file: %s\n", filename);
         return;
     }
+    // printf("Info: Successfully opened file '%s'\n", filename);
     string source = read_source(source_file, &length);
     fclose(source_file);
     Lexer* lexer = create_lexer(source, length, filename);
     if (o_token) {
+        // printf("Info: Outputting tokens for file '%s'\n", filename);
         change_file_extension(file, create_string(".token", 6));
         string out_token_name = get_full_path(file);
         FILE* out_token_file = fopen(out_token_name, "w");
@@ -99,13 +102,18 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
             output_token(out_token_file, lexer);
             fclose(out_token_file);
         }
+        // printf("Info: Finished outputting tokens for file '%s'\n", filename);
     }
     reset_lexer(lexer);
     Parser* parser = create_parser(file);
     Code* ast = NULL;
-    if (o_ast || o_tac)
+    if (o_ast || o_tac) {
+        // printf("Info: Parsing AST for file '%s'\n", filename);
         ast = parse_code(lexer, builtin_scope, parser);
+        // printf("Info: Finished parsing AST for file '%s'\n", filename);
+    }
     if (o_ast) {
+        // printf("Info: Outputting AST for file '%s'\n", filename);
         change_file_extension(file, create_string(".ast", 4));
         string out_ast_name = get_full_path(file);
         change_file_extension(file, create_string(".tc", 3));
@@ -116,8 +124,10 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
             output_ast(out_ast_file, ast);
             fclose(out_ast_file);
         }
+        // printf("Info: Finished outputting AST for file '%s'\n", filename);
     }
     if (o_tac) {
+        // printf("Info: Outputting TAC for file '%s'\n", filename);
         change_file_extension(file, create_string(".tac", 4));
         string out_tac_name = get_full_path(file);
         change_file_extension(file, create_string(".tc", 3));
@@ -129,5 +139,6 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
             output_tac(out_tac_file, tac);
             fclose(out_tac_file);
         }
+        // printf("Info: Finished outputting TAC for file '%s'\n", filename);
     }
 }
