@@ -41,6 +41,10 @@ void output_one_token(FILE* file, Token* token) {
         fprintf(file, "Token(Type: keyword,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
     else if (token->type == COMMENT)
         fprintf(file, "Token(Type: comment,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    if (token->lexeme == NULL) {
+        fprintf(file, "(null)'\n");
+        return;
+    }
     for (size_t i = 0; i < strlen(token->lexeme); ++i) {
         char c = token->lexeme[i];
         if (c == '\0')
