@@ -594,6 +594,7 @@ For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         return NULL;
     }
     list(Statement*) body = create_list();
+    bool prev_in_loop = parser->in_loop;
     parser->in_loop = true;
     token = get_next_token(lexer, true);
     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
@@ -603,7 +604,7 @@ For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         list_append(body, (pointer)statement);
         token = get_next_token(lexer, true);
     }
-    parser->in_loop = false;
+    parser->in_loop = prev_in_loop;
     // printf("[DEBUG] 49 Finished parse_for\n");
     return create_for(initializer, condition, increment, body);
 }
@@ -633,6 +634,7 @@ While* parse_while(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         return NULL;
     }
     list(Statement*) body = create_list();
+    bool prev_in_loop = parser->in_loop;
     parser->in_loop = true;
     token = get_next_token(lexer, true);
     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
@@ -642,7 +644,7 @@ While* parse_while(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         list_append(body, (pointer)statement);
         token = get_next_token(lexer, true);
     }
-    parser->in_loop = false;
+    parser->in_loop = prev_in_loop;
     // printf("[DEBUG] 54 Finished parse_while\n");
     return create_while(condition, body);
 }
