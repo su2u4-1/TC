@@ -175,6 +175,8 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
         filename = absolute_path(temp_import_name, std_path);
     } else
         filename = absolute_path(source, get_file_dir(source_file));
+    File* import_file = create_file(filename);
+    filename = get_full_path(import_file);
     openfile = fopen(filename, "r");
     if (openfile == NULL) {
         fprintf(stderr, "Error opening library file for import: %s\n", filename);
@@ -184,7 +186,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
     size_t length = 0;
     string source_code = read_source(openfile, &length);
     fclose(openfile);
-    Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(create_file(filename)));
+    Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(import_file));
     fprintf(stderr, "Info: Finished parsing lib file for import: %s\n", filename);
     if (code == NULL) {
         fprintf(stderr, "Error parsing library file for import: %s\n", filename);
