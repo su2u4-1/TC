@@ -151,7 +151,8 @@ string create_string_check(const char* data, size_t length, bool check) {
         str = &((char*)(string_memory->block))[string_memory->used];
         string_memory->used += length + 1;
     }
-    strncpy(str, data, length);
+    if (data != NULL && data[0] != '\0' && length > 0)
+        strncpy(str, data, length);
     str[length] = '\0';
     StringList* new_str = (StringList*)alloc_memory(sizeof(StringList));
     new_str->str = str;
@@ -173,9 +174,9 @@ void init(void) {
     }
     initialized = true;
     for (size_t i = 0; i < keywordCount; ++i)
-        keywordList[i] = create_string_not_check_nl(keywordStrings[i]);
+        keywordList[i] = create_string_not_check(keywordStrings[i], 0);
     for (size_t i = 0; i < symbolCount; ++i)
-        symbolList[i] = create_string_not_check_nl(symbolStrings[i]);
+        symbolList[i] = create_string_not_check(symbolStrings[i], 0);
     DEFAULT_INIT_NAME = create_string_not_check("init", 4);
     DEFAULT_CONSTRUCTOR_NAME = create_string_not_check("$constructor", 12);
     IMPORT_KEYWORD = keywordList[0];

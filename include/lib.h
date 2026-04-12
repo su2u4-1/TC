@@ -104,10 +104,12 @@ extern Symbol* name_bool;
 extern SymbolTable* builtin_scope;
 
 #define string_equal(a, b) ((a) == (b))
-#define create_string_not_check_nl(data) create_string_check(data, strlen(data), false)
-#define create_string_not_check(data, length) create_string_check(data, length, false)
-#define create_string_nl(data) create_string_check(data, strlen(data), true)
-#define create_string(data, length) create_string_check(data, length, true)
+#define create_string_not_check(data, length) create_string_check(data, length <= 0 ? strlen(data) : length, false)
+#define create_string(data, length) create_string_check(data, length <= 0 ? strlen(data) : length, true)
+#define is_lower(c) ((c) >= 'a' && (c) <= 'z')
+#define is_upper(c) ((c) >= 'A' && (c) <= 'Z')
+#define is_alphabet(c) (is_lower(c) || is_upper(c))
+#define is_digit(c) ((c) >= '0' && (c) <= '9')
 
 string create_string_check(const char* data, size_t length, bool check);
 pointer alloc_memory(size_t size);

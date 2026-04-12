@@ -69,10 +69,10 @@ static Token* next_token(Lexer* lexer, bool skip_comment) {
         else if (c == '\n') {
             newline(lexer);
             continue;
-        } else if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || c == '_') {
+        } else if (is_alphabet(c) || c == '_') {
             size_t start = lexer->position - 1;
             size_t column_start = lexer->column - 1;
-            while (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || c == '_')
+            while (is_alphabet(c) || is_digit(c) || c == '_')
                 c = get_current_char(lexer);
             move_position(lexer, -1);
             string content = create_string(&lexer->source[start], lexer->position - start);
@@ -80,16 +80,16 @@ static Token* next_token(Lexer* lexer, bool skip_comment) {
                 return create_token(KEYWORD, content, lexer->line, column_start);
             else
                 return create_token(IDENTIFIER, content, lexer->line, column_start);
-        } else if ('0' <= c && c <= '9') {
+        } else if (is_digit(c)) {
             size_t start = lexer->position - 1;
             size_t column_start = lexer->column - 1;
-            while ('0' <= c && c <= '9')
+            while (is_digit(c))
                 c = get_current_char(lexer);
             TokenType type = INTEGER;
             char p = peek_next_char(lexer);
-            if (c == '.' && ('0' <= p && p <= '9')) {
+            if (c == '.' && (is_digit(p))) {
                 c = get_current_char(lexer);
-                while ('0' <= c && c <= '9')
+                while (is_digit(c))
                     c = get_current_char(lexer);
                 type = FLOAT;
             }
