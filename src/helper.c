@@ -94,6 +94,7 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
             break;
     }
     Symbol* result = search_name(scope, name);
+    // TODO: fix this warning
     if (result != NULL)
         fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
@@ -158,8 +159,9 @@ void indention_tac(FILE* out, size_t indent) {
 
 Parser* create_parser(File* file) {
     Parser* new_parser = (Parser*)alloc_memory(sizeof(Parser));
-    new_parser->in_function = false;
+    new_parser->in_subroutine = false;
     new_parser->in_method = false;
+    new_parser->in_class = false;
     new_parser->in_loop = false;
     new_parser->source_file = file;
     return new_parser;

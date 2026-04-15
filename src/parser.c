@@ -152,7 +152,7 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         return NULL;
     }
     list(Statement*) body = create_list();
-    parser->in_function = true;
+    parser->in_subroutine = true;
     bool have_return = false;
     token = get_next_token(lexer, true);
     while (token->type != SYMBOL || !string_equal(token->lexeme, R_BRACE_SYMBOL)) {
@@ -166,7 +166,7 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         list_append(body, (pointer)statement);
         token = get_next_token(lexer, true);
     }
-    parser->in_function = false;
+    parser->in_subroutine = false;
     if (!have_return && return_type != name_void)
         parser_error("Function missing return statement", token, get_full_path(parser->source_file));
     if (!have_return && return_type == name_void)
@@ -236,7 +236,7 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
         return NULL;
     }
     list(Statement*) body = create_list();
-    parser->in_function = true;
+    parser->in_subroutine = true;
     parser->in_method = true;
     bool have_return = false;
     token = get_next_token(lexer, true);
@@ -251,7 +251,7 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
         list_append(body, (pointer)statement);
         token = get_next_token(lexer, true);
     }
-    parser->in_function = false;
+    parser->in_subroutine = false;
     parser->in_method = false;
     if (!have_return && return_type != name_void)
         parser_error("Method missing return statement", token, get_full_path(parser->source_file));
@@ -412,6 +412,11 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
             get_next_token(lexer, true);
             statement = create_statement(VARIABLE_STATEMENT, NULL, NULL, NULL, NULL, parse_variable(lexer, now_scope, parser));
         } else if (string_equal(token->lexeme, RETURN_KEYWORD)) {
+            if (!parser->in_subroutine) {
+                parser_error("Cannot use 'return' outside of a function", token, get_full_path(parser->source_file));
+                // printf("[DEBUG] 29.5 Finished parse_statement with error\n");
+                return NULL;
+            }
             token = get_next_token(lexer, true);
             if (token->type == SYMBOL && string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
                 // printf("[DEBUG] 30 Finished parse_statement\n");
@@ -670,7 +675,8 @@ static Expression* parse_expr_prec(Lexer* lexer, Expression* expr_left, int min_
         while (token->type == SYMBOL) {
             OperatorType next_op = string_to_operator(token->lexeme);
             int next_prec = operator_precedence(next_op);
-            if (next_op == OP_NONE || next_prec <= op_prec)
+            // TODO: fix assign left-associative issue
+            if (next_op == OP_NONE || next_prec < op_prec || (next_prec == op_prec && !is_assignment_operator(next_op)))
                 break;
             right = parse_expr_prec(lexer, right, next_prec, now_scope, parser);
             if (right == NULL) {

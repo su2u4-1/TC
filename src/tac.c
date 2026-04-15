@@ -29,9 +29,6 @@ static size_t get_type_size(Symbol* type) {
     // printf("[DEBUG] 194 Finished get_type_size\n");
     return result;
 }
-static inline bool is_assignment_operator(OperatorType op) {
-    return op == OP_ASSIGN || op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN;
-}
 static InstructionType get_instruction_type(OperatorType op) {
     switch (op) {
         case OP_ADD:
@@ -73,6 +70,7 @@ static TACStatus* create_tac_status(TAC* tac) {
     status->tac = tac;
     status->current_subroutine = NULL;
     status->current_block = NULL;
+    status->current_class = NULL;
     status->end_labels = create_list();
     status->start_labels = create_list();
     status->attr_count = 0;
@@ -186,7 +184,7 @@ static Var* create_var(Symbol* original_name, Symbol* type, VarType kind, TACSta
     else
         var->name = string_splice("$%c%zu", kind, id);
     var->type = type;
-    if (kind == VAR_TEMP || kind == VAR_VAR)
+    if ((kind == VAR_TEMP || kind == VAR_VAR) && status->current_subroutine != NULL)
         list_append(status->current_subroutine->local_vars, (pointer)var);
     // printf("[DEBUG] 211 Finished create_var\n");
     return var;

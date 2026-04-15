@@ -310,7 +310,7 @@ struct Node {
 };
 struct Parser {
     File* source_file;
-    bool in_function;
+    bool in_subroutine;
     bool in_method;
     bool in_class;
     bool in_loop;
