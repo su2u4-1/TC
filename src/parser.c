@@ -675,7 +675,6 @@ static Expression* parse_expr_prec(Lexer* lexer, Expression* expr_left, int min_
         while (token->type == SYMBOL) {
             OperatorType next_op = string_to_operator(token->lexeme);
             int next_prec = operator_precedence(next_op);
-            // TODO: fix assign left-associative issue
             if (next_op == OP_NONE || next_prec < op_prec || (next_prec == op_prec && !is_assignment_operator(next_op)))
                 break;
             right = parse_expr_prec(lexer, right, next_prec, now_scope, parser);

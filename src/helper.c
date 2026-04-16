@@ -94,9 +94,22 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
             break;
     }
     Symbol* result = search_name(scope, name);
-    // TODO: fix this warning
-    if (result != NULL)
-        fprintf(stderr, "[Warning] Name '%s' already exists in the current scope, kind: %u, exists id: %zu, new id %zu\n", name, result->kind, result->id, id_counter + 1);
+    if (result != NULL) {
+        SymbolTable* result_scope = NULL;
+        if (result->kind == SYMBOL_CLASS)
+            result_scope = result->ast_node.class->class_scope;
+        else if (result->kind == SYMBOL_FUNCTION)
+            result_scope = result->ast_node.function->function_scope;
+        else if (result->kind == SYMBOL_METHOD)
+            result_scope = result->ast_node.method->method_scope;
+        else
+            result_scope = result->ast_node.scope;
+        if (result_scope == scope) {
+            fprintf(stderr, "[Error] Name '%s' already exists in the same scope, kind: %u, id: %zu\n", name, result->kind, result->id);
+            return result;
+        } else
+            fprintf(stderr, "[Warning] Name '%s' shadowing existing name in parent scope, existing kind: %u, id: %zu\n", name, result->kind, result->id);
+    }
     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
     new_name->name = name;
     new_name->id = ++id_counter;
