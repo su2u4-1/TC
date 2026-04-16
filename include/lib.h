@@ -3,6 +3,7 @@
 
 #include "object.h"
 
+// TODO: std_path not be hardcoded
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #ifdef _MSC_VER
 #define PLATFORM 1  // MSVC

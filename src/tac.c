@@ -358,6 +358,7 @@ void tac_method(Method* method, TACStatus* status) {
         Statement* stmt = (Statement*)list_pop(statements);
         if (stmt->type != EXPRESSION_STATEMENT || stmt->stmt.expr->operator != OP_NONE || stmt->stmt.expr->prim_left->type != PRIM_VARIABLE_ACCESS || stmt->stmt.expr->prim_left->value.var->type != VAR_NAME) {
             fprintf(stderr, "[Warning] Constructor '%s' does not start with 'self' initialization\n", method->name->name);
+            status->current_subroutine = NULL;
             return;
         }
         Symbol* self = stmt->stmt.expr->prim_left->value.var->content.name;

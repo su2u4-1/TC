@@ -24,46 +24,52 @@ File* create_file(const string path) {
 string absolute_path(string path, string base_path) {
     path = create_string_not_check(path, 0);
     size_t path_len = strlen(path);
+    size_t new_path_len = path_len;
     for (size_t i = 0; i < path_len; i++) {
         if (path[i] == '\\') path[i] = '/';
         if (i > 1 && path[i] == '/' && path[i - 1] == '.' && path[i - 2] == '/') {
-            memmove(path + i - 1, path + i + 1, path_len - i);
-            path_len -= 2;
-            i -= 2;
+            path[i] = '\0';
+            path[i - 1] = '\0';
+            new_path_len -= 2;
         }
         if (i > 0 && path[i] == '/' && path[i - 1] == '/') {
-            memmove(path + i, path + i + 1, path_len - i);
-            path_len--;
-            i--;
+            path[i] = '\0';
+            new_path_len--;
         }
     }
+    string new_path = create_string_not_check("", new_path_len);
+    for (size_t i = 0, j = 0; i < path_len; i++) {
+        if (path[i] != '\0')
+            new_path[j++] = path[i];
+    }
+    new_path[new_path_len] = '\0';
 #if PLATFORM == 1 || PLATFORM == 2
-    if (path_len > 2 && path[0] == '/' && is_lower(path[1]) && path[2] == '/') {
+    // transform `/c/` to `C:/`
+    if (new_path_len > 2 && new_path[0] == '/' && is_lower(new_path[1]) && new_path[2] == '/') {
         // to upper
-        path[0] = is_lower(path[1]) ? (path[1] - ('a' - 'A')) : path[1];
-        path[1] = ':';
-        return path;
+        new_path[0] = is_lower(new_path[1]) ? (new_path[1] - ('a' - 'A')) : new_path[1];
+        new_path[1] = ':';
+        return new_path;
     }
 #else
-    if (path_len > 1 && is_upper(path[0]) && path[1] == ':') {
+    // transform `C:/` to `/c/`
+    if (new_path_len > 2 && is_upper(new_path[0]) && new_path[1] == ':' && new_path[2] == '/') {
         // to lower
-        path[0] = is_upper(path[0]) ? (path[0] + ('a' - 'A')) : path[0];
-        memmove(path, path + 1, path_len);
-        path[0] = '/';
-        path[2] = '/';
-        return path;
+        new_path[1] = is_upper(new_path[0]) ? (new_path[0] + ('a' - 'A')) : new_path[0];
+        new_path[0] = '/';
+        return new_path;
     }
 #endif
-    if (path_len > 1 && is_upper(path[0]) && path[1] == ':')
-        return path;
-    if (path_len > 0 && path[0] == '/')
-        return path;
+    if (new_path_len > 1 && is_upper(new_path[0]) && new_path[1] == ':')
+        return new_path;
+    if (new_path_len > 0 && new_path[0] == '/')
+        return new_path;
     if (base_path != NULL)
-        return absolute_path(string_splice("%s/%s", base_path, path), NULL);
+        return absolute_path(string_splice("%s/%s", base_path, new_path), NULL);
     base_path = get_cwd();
     if (base_path == NULL)
-        return path;
-    string abs_path = string_splice("%s/%s", base_path, path);
+        return new_path;
+    string abs_path = string_splice("%s/%s", base_path, new_path);
     free(base_path);
     return absolute_path(abs_path, NULL);
 }
