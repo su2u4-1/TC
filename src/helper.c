@@ -52,6 +52,12 @@ pointer list_pop(list() list) {
     list->head = head_node->next;
     if (list->head == NULL)
         list->tail = NULL;
+    if (head_node == NULL)
+        return NULL;
+    if (head_node->content == NULL) {
+        fprintf(stderr, "Warning: list_pop returning NULL content\n");
+        return list_pop(list);
+    }
     return head_node->content;
 }
 
