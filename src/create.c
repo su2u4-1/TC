@@ -5,6 +5,7 @@
 CodeMember* create_code_member(CodeMemberType type, Import* import_content, Function* function_content, Class* class_content) {
     CodeMember* code_member = (CodeMember*)alloc_memory(sizeof(CodeMember));
     code_member->type = type;
+    code_member->content.import = NULL;
     if (type == CODE_IMPORT && import_content != NULL)
         code_member->content.import = import_content;
     else if (type == CODE_FUNCTION && function_content != NULL)
