@@ -91,10 +91,12 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
     string source = read_source(source_file, &length);
     fclose(source_file);
     Lexer* lexer = create_lexer(source, length, filename);
+    string tc = create_string(".tc", 3);
     if (o_token) {
         // printf("Info: Outputting tokens for file '%s'\n", filename);
         change_file_extension(file, create_string(".token", 6));
         string out_token_name = get_full_path(file);
+        change_file_extension(file, tc);
         FILE* out_token_file = fopen(out_token_name, "w");
         if (out_token_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_token_name);
@@ -116,7 +118,7 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
         // printf("Info: Outputting AST for file '%s'\n", filename);
         change_file_extension(file, create_string(".ast", 4));
         string out_ast_name = get_full_path(file);
-        change_file_extension(file, create_string(".tc", 3));
+        change_file_extension(file, tc);
         FILE* out_ast_file = fopen(out_ast_name, "w");
         if (out_ast_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_ast_name);
@@ -130,7 +132,7 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
         // printf("Info: Outputting TAC for file '%s'\n", filename);
         change_file_extension(file, create_string(".tac", 4));
         string out_tac_name = get_full_path(file);
-        change_file_extension(file, create_string(".tc", 3));
+        change_file_extension(file, tc);
         FILE* out_tac_file = fopen(out_tac_name, "w");
         if (out_tac_file == NULL)
             fprintf(stderr, "Error opening file: %s\n", out_tac_name);
