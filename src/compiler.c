@@ -84,7 +84,7 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
     size_t length = 0;
     FILE* source_file = fopen(filename, "r");
     if (source_file == NULL) {
-        fprintf(stderr, "Error opening file: %s\n", filename);
+        fprintf(stderr, "[helper Error] at <parse_file> : Error opening file: %s\n", filename);
         return;
     }
     // printf("Info: Successfully opened file '%s'\n", filename);
@@ -99,7 +99,7 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
         change_file_extension(file, tc);
         FILE* out_token_file = fopen(out_token_name, "w");
         if (out_token_file == NULL)
-            fprintf(stderr, "Error opening file: %s\n", out_token_name);
+            fprintf(stderr, "[helper Error] at <parse_file> : Error opening file: %s\n", out_token_name);
         else {
             output_token(out_token_file, lexer);
             fclose(out_token_file);
@@ -121,7 +121,7 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
         change_file_extension(file, tc);
         FILE* out_ast_file = fopen(out_ast_name, "w");
         if (out_ast_file == NULL)
-            fprintf(stderr, "Error opening file: %s\n", out_ast_name);
+            fprintf(stderr, "[helper Error] at <parse_file> : Error opening file: %s\n", out_ast_name);
         else {
             output_ast(out_ast_file, ast);
             fclose(out_ast_file);
@@ -135,7 +135,7 @@ void parse_file(const string name, bool o_token, bool o_ast, bool o_tac) {
         change_file_extension(file, tc);
         FILE* out_tac_file = fopen(out_tac_name, "w");
         if (out_tac_file == NULL)
-            fprintf(stderr, "Error opening file: %s\n", out_tac_name);
+            fprintf(stderr, "[helper Error] at <parse_file> : Error opening file: %s\n", out_tac_name);
         else {
             TAC* tac = tac_code(ast);
             output_tac(out_tac_file, tac);

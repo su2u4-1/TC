@@ -83,13 +83,13 @@ static void init(void);
 static MemoryBlock* create_memory_block(size_t size) {
     MemoryBlock* memory = (MemoryBlock*)malloc(sizeof(MemoryBlock));
     if (memory == NULL) {
-        fprintf(stderr, "Fatal: Cannot allocate memory\n");
+        fprintf(stderr, "[lib Fatal] at <create_memory_block>: Cannot allocate memory\n");
         initialized = false;
         exit(1);
     }
     memory->block = (size_t*)malloc(size);
     if (memory->block == NULL) {
-        fprintf(stderr, "Fatal: Cannot allocate memory\n");
+        fprintf(stderr, "[lib Fatal] at <create_memory_block>: Cannot allocate memory\n");
         free(memory);
         memory = NULL;
         initialized = false;
@@ -120,9 +120,9 @@ static string alloc_big_memory(size_t size) {
     string_memory_count += size;
     string_memory_used += size;
     char* block = (char*)malloc(size);
-    fprintf(stderr, "Info: Allocate big memory block of size %zu bytes\n", size);
+    fprintf(stderr, "[lib Info] at <alloc_big_memory>: Allocate big memory block of size %zu bytes\n", size);
     if (block == NULL) {
-        fprintf(stderr, "Fatal: Cannot allocate memory\n");
+        fprintf(stderr, "[lib Fatal] at <alloc_big_memory>: Cannot allocate memory\n");
         exit(1);
     }
     return block;
@@ -274,12 +274,12 @@ string string_splice(string format, ...) {
     int length = vsnprintf(NULL, 0, format, args);
     va_end(args);
     if (length <= 0) {
-        fprintf(stderr, "Error: Failed to format string\n");
+        fprintf(stderr, "[lib Error] at <string_splice>: Failed to format string\n");
         return NULL;
     }
     char* name = malloc((size_t)length + 1);
     if (name == NULL) {
-        fprintf(stderr, "Fatal: Cannot allocate memory\n");
+        fprintf(stderr, "[lib Fatal] at <string_splice>: Cannot allocate memory\n");
         exit(1);
     }
     va_start(args, format);

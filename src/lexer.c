@@ -2,6 +2,8 @@
 
 #include "lib.h"
 
+#define lexer_error(message, line, column, filename) fprintf(stderr, "[Lexer Error] at %s:%zu:%zu: %s\n", filename, line + 1, column + 1, message)
+
 Lexer* create_lexer(string source, size_t length, string filename) {
     Lexer* lexer = (Lexer*)alloc_memory(sizeof(Lexer));
     lexer->source = source;
@@ -25,10 +27,6 @@ static Token* create_token(TokenType type, string lexeme, size_t line, size_t co
     token->line = line;
     token->column = column;
     return token;
-}
-
-static void lexer_error(const string message, size_t line, size_t column, string filename) {
-    fprintf(stderr, "[Lexer Error] at %s:%zu:%zu: %s\n", filename, line + 1, column + 1, message);
 }
 
 static char get_current_char(Lexer* lexer) {

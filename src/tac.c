@@ -25,7 +25,7 @@ static size_t get_type_size(Symbol* type) {
     else if (type->kind == SYMBOL_CLASS)
         result = type->ast_node.class->size;
     else
-        fprintf(stderr, "[Warning] Unsupported type for size lookup: %s\n", type->name);
+        fprintf(stderr, "[TAC Warning] at <get_type_size>: Unsupported type for size lookup: %s\n", type->name);
     // printf("[DEBUG] 194 Finished get_type_size\n");
     return result;
 }
@@ -199,9 +199,9 @@ static Attribute* create_attribute(Symbol* var, Symbol* type, AttributeTable* ta
         attr->offset = table->size;
         table->size += get_type_size(type);
     } else if (table == NULL)
-        fprintf(stderr, "Error: create_attribute received NULL table\n");
+        fprintf(stderr, "[TAC Error] at <create_attribute>: create_attribute received NULL table\n");
     if (table == NULL || table->attributes == NULL)
-        fprintf(stderr, "Error: create_attribute received NULL table or attributes list\n");
+        fprintf(stderr, "[TAC Error] at <create_attribute>: create_attribute received NULL table or attributes list\n");
     else
         list_append(table->attributes, (pointer)attr);
     // printf("[DEBUG] 213 Finished create_attribute\n");
@@ -257,7 +257,7 @@ static Arg* create_arg(ArgType kind, void* value) {
             break;
         case ARG_NONE:
         default:
-            fprintf(stderr, "[Warning] Unsupported argument type for create_arg: %d\n", kind);
+            fprintf(stderr, "[TAC Warning] at <create_arg>: Unsupported argument type for create_arg: %d\n", kind);
             break;
     }
     arg->is_get = false;
@@ -310,7 +310,7 @@ void tac_import(Import* import, TAC* tac, TACStatus* status) {
         // list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name, import->name->ast_node.class->size));
         tac_class(import->name->ast_node.class, status);
     else
-        fprintf(stderr, "[Warning] Unsupported symbol kind for import: %d\n", import->name->kind);
+        fprintf(stderr, "[TAC Warning] at <tac_import>: Unsupported symbol kind for import: %d\n", import->name->kind);
     // printf("[DEBUG] 144 Finished tac_import\n");
 }
 void tac_function(Function* function, TACStatus* status) {
@@ -357,7 +357,7 @@ void tac_method(Method* method, TACStatus* status) {
     if (strcmp(method->name->name, make_method_name(status->current_class->name->name, DEFAULT_CONSTRUCTOR_NAME)) == 0) {
         Statement* stmt = (Statement*)list_pop(statements);
         if (stmt->type != EXPRESSION_STATEMENT || stmt->stmt.expr->operator != OP_NONE || stmt->stmt.expr->prim_left->type != PRIM_VARIABLE_ACCESS || stmt->stmt.expr->prim_left->value.var->type != VAR_NAME) {
-            fprintf(stderr, "[Warning] Constructor '%s' does not start with 'self' initialization\n", method->name->name);
+            fprintf(stderr, "[TAC Warning] at <tac_method>: Constructor '%s' does not start with 'self' initialization\n", method->name->name);
             status->current_subroutine = NULL;
             return;
         }
@@ -389,7 +389,7 @@ void tac_class(Class* class, TACStatus* status) {
                 tac_variable(member->content.variable, status, true);
                 break;
             default:
-                fprintf(stderr, "[Warning] Unsupported class member type for tac_class: %d\n", member->type);
+                fprintf(stderr, "[TAC Warning] at <tac_class>: Unsupported class member type for tac_class: %d\n", member->type);
                 break;
         }
     }
@@ -442,7 +442,7 @@ void tac_statement(Statement* statement, TACStatus* status) {
                     break;
                 }
             }
-            fprintf(stderr, "[Warning] 'break' statement used outside of loop\n");
+            fprintf(stderr, "[TAC Warning] at <tac_statement>: 'break' statement used outside of loop\n");
             break;
         case CONTINUE_STATEMENT:
             if (!list_is_empty(status->start_labels)) {
@@ -453,10 +453,10 @@ void tac_statement(Statement* statement, TACStatus* status) {
                     break;
                 }
             }
-            fprintf(stderr, "[Warning] 'continue' statement used outside of loop\n");
+            fprintf(stderr, "[TAC Warning] at <tac_statement>: 'continue' statement used outside of loop\n");
             break;
         default:
-            fprintf(stderr, "[Warning] Unsupported statement type for tac_statement: %d\n", statement->type);
+            fprintf(stderr, "[TAC Warning] at <tac_statement>: Unsupported statement type for tac_statement: %d\n", statement->type);
             break;
     }
     // printf("[DEBUG] 154 Finished tac_statement\n");
@@ -662,7 +662,7 @@ Arg* tac_expression(Expression* expression, TACStatus* status) {
             right = temp;
         }
         if (left->kind != ARG_VARIABLE)
-            fprintf(stderr, "[Warning] Left-hand side of assignment is not a variable\n");
+            fprintf(stderr, "[TAC Warning] at <tac_expression>: Left-hand side of assignment is not a variable\n");
         inst = create_instruction(INST_ASSIGN, left, right, NULL);
         if (left->is_get)
             inst = create_instruction(INST_STORE, left, right, NULL);
@@ -722,7 +722,7 @@ Arg* tac_primary(Primary* primary, TACStatus* status) {
             else if (operand->type == name_float)
                 inst = create_instruction(INST_MUL, temp, create_arg(ARG_FLOAT, &neg_one_float), operand);
             else {
-                fprintf(stderr, "[Warning] Unsupported type for negation: %s\n", operand->type->name);
+                fprintf(stderr, "[TAC Warning] at <tac_primary>: Unsupported type for negation: %s\n", operand->type->name);
                 // printf("[DEBUG] 171 Finished tac_primary with error\n");
                 return NULL;
             }
@@ -734,7 +734,7 @@ Arg* tac_primary(Primary* primary, TACStatus* status) {
             // printf("[DEBUG] 173 Starting tac_primary\n");
             return tac_variable_access(primary->value.var, status);
         default:
-            fprintf(stderr, "[Warning] Unsupported primary type for tac_primary: %d\n", primary->type);
+            fprintf(stderr, "[TAC Warning] at <tac_primary>: Unsupported primary type for tac_primary: %d\n", primary->type);
             // printf("[DEBUG] 174 Finished tac_primary with error\n");
             return NULL;
     }
@@ -757,19 +757,19 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
         }
     }
     if (variable_access->base == NULL) {
-        fprintf(stderr, "[Warning] Unsupported variable access with NULL base\n");
+        fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Unsupported variable access with NULL base\n");
         // printf("[DEBUG] 178 Finished tac_variable_access with error\n");
         return NULL;
     }
     Arg* base = load_rvalue(tac_variable_access(variable_access->base, status), status);
     if (base == NULL) {
-        fprintf(stderr, "[Warning] Failed to generate variable access for base\n");
+        fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Failed to generate variable access for base\n");
         // printf("[DEBUG] 179 Finished tac_variable_access with error\n");
         return NULL;
     }
     if (variable_access->type == VAR_GET_ATTR) {
         if (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
-            fprintf(stderr, "[Warning] Attempting to access attribute of non-object type: %s\n", base->type->name);
+            fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Attempting to access attribute of non-object type: %s\n", base->type->name);
             // printf("[DEBUG] 180 Finished tac_variable_access with error\n");
             return NULL;
         }
@@ -778,18 +778,18 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
             scope = base->type->ast_node.class->class_scope;
         Symbol* attr = search_name(scope, variable_access->content.attr_name->name);
         if (attr == NULL) {
-            fprintf(stderr, "[Warning] Attribute '%s' not found in type '%s'\n", variable_access->content.attr_name->name, base->type->name);
+            fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Attribute '%s' not found in type '%s'\n", variable_access->content.attr_name->name, base->type->name);
             // printf("[DEBUG] 181 Finished tac_variable_access with error\n");
             return NULL;
         }
         if (attr->kind == SYMBOL_FUNCTION) {
-            fprintf(stderr, "[Warning] Attempting to access function '%s' as attribute of type '%s'\n", variable_access->content.attr_name->name, base->type->name);
+            fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Attempting to access function '%s' as attribute of type '%s'\n", variable_access->content.attr_name->name, base->type->name);
             return create_arg(ARG_FUNCTION, create_var(attr, attr->type, VAR_SUBROUTINE, status));
         }
         if (attr->kind == SYMBOL_METHOD)
             return create_arg(ARG_METHOD, create_var(attr, attr->type, VAR_SUBROUTINE, status));
         if (attr->kind != SYMBOL_ATTRIBUTE) {
-            fprintf(stderr, "[Warning] Symbol '%s' in type '%s' is not an attribute\n", variable_access->content.attr_name->name, base->type->name);
+            fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Symbol '%s' in type '%s' is not an attribute\n", variable_access->content.attr_name->name, base->type->name);
             // printf("[DEBUG] 182 Finished tac_variable_access with error\n");
             return NULL;
         }
@@ -802,13 +802,13 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
     } else if (variable_access->type == VAR_GET_SEQ) {
         // TODO: arr[index] -> arr.get(index) for user-defined types with getitem method
         if (strcmp(base->type->name, "arr") != 0) {
-            fprintf(stderr, "[Warning] Attempting to index non-array type: %s\n", base->value.variable->original_name->name);
+            fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Attempting to index non-array type: %s\n", base->value.variable->original_name->name);
             // printf("[DEBUG] 185 Finished tac_variable_access with error\n");
             return NULL;
         }
         Arg* index = load_rvalue(tac_expression(variable_access->content.index, status), status);
         if (index == NULL) {
-            fprintf(stderr, "[Warning] Failed to generate variable access for index\n");
+            fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Failed to generate variable access for index\n");
             // printf("[DEBUG] 186 Finished tac_variable_access with error\n");
             return NULL;
         }
@@ -826,7 +826,7 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
             base = create_arg(ARG_METHOD, create_var(attr, attr->type, VAR_SUBROUTINE, status));
         }
         if (base->kind != ARG_METHOD && base->kind != ARG_FUNCTION) {
-            fprintf(stderr, "[Warning] Attempting to call non-function, kind: %u, type name: %s\n", base->kind, base->type->name);
+            fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Attempting to call non-function, kind: %u, type name: %s\n", base->kind, base->type->name);
             // printf("[DEBUG] 188 Finished tac_variable_access with error\n");
             return NULL;
         }
@@ -854,7 +854,7 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
         // printf("[DEBUG] 189 Finished tac_variable_access\n");
         return temp;
     } else {
-        fprintf(stderr, "[Warning] Unsupported variable access type for tac_variable_access: %u\n", variable_access->type);
+        fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Unsupported variable access type for tac_variable_access: %u\n", variable_access->type);
         // printf("[DEBUG] 190 Finished tac_variable_access with error\n");
         return NULL;
     }

@@ -23,7 +23,7 @@ static Node* create_node(pointer content) {
 
 void list_append(list() list, pointer item) {
     if (list == NULL) {
-        fprintf(stderr, "Error: list_append received NULL list\n");
+        fprintf(stderr, "[helper Error] at <list_append>: list_append received NULL list\n");
         return;
     }
     Node* new_node = create_node(item);
@@ -55,7 +55,7 @@ pointer list_pop(list() list) {
     if (head_node == NULL)
         return NULL;
     if (head_node->content == NULL) {
-        fprintf(stderr, "Warning: list_pop returning NULL content\n");
+        fprintf(stderr, "[helper Warning] at <list_pop>: list_pop returning NULL content\n");
         return list_pop(list);
     }
     return head_node->content;
@@ -79,7 +79,7 @@ pointer list_pop_back(list() list) {
     return content;
 }
 
-bool list_is_empty(list() list) {
+inline bool list_is_empty(list() list) {
     return list == NULL || list->head == NULL || list->tail == NULL;
 }
 
@@ -96,7 +96,7 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_ATTRIBUTE:
         case SYMBOL_TYPE: scope = (SymbolTable*)ast_node; break;
         default:
-            fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType: %u\n", kind);
+            fprintf(stderr, "[helper Warning] at <create_symbol>: Creating symbol with unknown SymbolType: %u\n", kind);
             break;
     }
     Symbol* result = search_name(scope, name);
@@ -111,10 +111,10 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         else
             result_scope = result->ast_node.scope;
         if (result_scope == scope) {
-            fprintf(stderr, "[Error] Name '%s' already exists in the same scope, kind: %u, id: %zu\n", name, result->kind, result->id);
+            fprintf(stderr, "[helper Error] at <create_symbol>: Name '%s' already exists in the same scope, kind: %u, id: %zu\n", name, result->kind, result->id);
             return result;
         } else
-            fprintf(stderr, "[Warning] Name '%s' shadowing existing name in parent scope, existing kind: %u, id: %zu\n", name, result->kind, result->id);
+            fprintf(stderr, "[helper Warning] at <create_symbol>: Name '%s' shadowing existing name in parent scope, existing kind: %u, id: %zu\n", name, result->kind, result->id);
     }
     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
     new_name->name = name;
@@ -130,11 +130,12 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_ATTRIBUTE:
         case SYMBOL_TYPE: new_name->ast_node.scope = (SymbolTable*)ast_node; break;
         default:
-            fprintf(stderr, "[Warning] Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
+            new_name->ast_node.scope = NULL;
+            fprintf(stderr, "[helper Warning] at <create_symbol>: Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
             break;
     }
     if (scope == NULL)
-        fprintf(stderr, "[Warning] Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
+        fprintf(stderr, "[helper Warning] at <create_symbol>: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
     else
         list_append(scope->symbols, (pointer)new_name);
     return new_name;
@@ -200,24 +201,24 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
     filename = get_full_path(import_file);
     openfile = fopen(filename, "r");
     if (openfile == NULL) {
-        fprintf(stderr, "Error opening library file for import: %s\n", filename);
+        fprintf(stderr, "[helper Error] at <parse_import_file>: Error opening library file for import: %s\n", filename);
         return NULL;
     }
-    fprintf(stderr, "Info: Starting parsing lib file for import: %s\n", filename);
+    fprintf(stderr, "[helper Info] at <parse_import_file>: Starting parsing lib file for import: %s\n", filename);
     size_t length = 0;
     string source_code = read_source(openfile, &length);
     fclose(openfile);
     Code* code = parse_code(create_lexer(source_code, length, filename), builtin_scope, create_parser(import_file));
-    fprintf(stderr, "Info: Finished parsing lib file for import: %s\n", filename);
+    fprintf(stderr, "[helper Info] at <parse_import_file>: Finished parsing lib file for import: %s\n", filename);
     if (code == NULL) {
-        fprintf(stderr, "Error parsing library file for import: %s\n", filename);
+        fprintf(stderr, "[helper Error] at <parse_import_file>: Error parsing library file for import: %s\n", filename);
         return NULL;
     }
     name = search_name(code->global_scope, import_name);
     if (name != NULL)
         list_append(scope->symbols, (pointer)name);
     else
-        fprintf(stderr, "Error: Imported symbol '%s' was not found in %s\n", import_name, filename);
+        fprintf(stderr, "[helper Error] at <parse_import_file>: Imported symbol '%s' was not found in %s\n", import_name, filename);
     return name;
 }
 

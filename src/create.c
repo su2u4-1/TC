@@ -13,9 +13,9 @@ CodeMember* create_code_member(CodeMemberType type, Import* import_content, Func
     else if (type == CODE_CLASS && class_content != NULL)
         code_member->content.class = class_content;
     else if (import_content == NULL && function_content == NULL && class_content == NULL)
-        fprintf(stderr, "Error creating code member: content is NULL\n");
+        fprintf(stderr, "[create Error] at <create_code_member>: Error creating code member: content is NULL\n");
     else
-        fprintf(stderr, "Error creating code member: unknown type %u\n", type);
+        fprintf(stderr, "[create Error] at <create_code_member>: Error creating code member: unknown type %u\n", type);
     return code_member;
 }
 
@@ -28,7 +28,7 @@ Code* create_code(list(CodeMember*) members, SymbolTable* global_scope) {
 
 Import* create_import(Symbol* name, string source) {
     if (name == NULL) {
-        fprintf(stderr, "Error creating import: name is NULL\n");
+        fprintf(stderr, "[create Error] at <create_import>: Error creating import: name is NULL\n");
         return NULL;
     }
     Import* import = (Import*)alloc_memory(sizeof(Import));
@@ -39,7 +39,7 @@ Import* create_import(Symbol* name, string source) {
 
 Function* create_function_use_ptr(Function* function, Symbol* name, Symbol* return_type, list(Variable*) parameters, list(Statement*) body, SymbolTable* function_scope) {
     if (name == NULL || return_type == NULL) {
-        fprintf(stderr, "Error creating function: name or return_type is NULL\n");
+        fprintf(stderr, "[create Error] at <create_function_use_ptr>: Error creating function: name or return_type is NULL\n");
         return NULL;
     }
     function->name = name;
@@ -52,7 +52,7 @@ Function* create_function_use_ptr(Function* function, Symbol* name, Symbol* retu
 
 Method* create_method_use_ptr(Method* method, Symbol* name, Symbol* return_type, list(Variable*) parameters, list(Statement*) body, SymbolTable* method_scope) {
     if (name == NULL || return_type == NULL) {
-        fprintf(stderr, "Error creating method: name or return_type is NULL\n");
+        fprintf(stderr, "[create Error] at <create_method_use_ptr>: Error creating method: name or return_type is NULL\n");
         return NULL;
     }
     method->name = name;
@@ -72,9 +72,9 @@ ClassMember* create_class_member(ClassMemberType type, Method* method_content, V
         class_member->content.variable = variable_content;
     else {
         if (method_content == NULL && variable_content == NULL)
-            fprintf(stderr, "Error creating class member: content is NULL\n");
+            fprintf(stderr, "[create Error] at <create_class_member>: Error creating class member: content is NULL\n");
         else
-            fprintf(stderr, "Error creating class member: unknown type %u\n", type);
+            fprintf(stderr, "[create Error] at <create_class_member>: Error creating class member: unknown type %u\n", type);
         return NULL;
     }
     return class_member;
@@ -82,7 +82,7 @@ ClassMember* create_class_member(ClassMemberType type, Method* method_content, V
 
 Class* create_class_use_ptr(Class* class, Symbol* name, list(ClassMember*) members, SymbolTable* class_scope, size_t size) {
     if (name == NULL) {
-        fprintf(stderr, "Error creating class: name is NULL\n");
+        fprintf(stderr, "[create Error] at <create_class_use_ptr>: Error creating class: name is NULL\n");
         return NULL;
     }
     class->name = name;
@@ -94,7 +94,7 @@ Class* create_class_use_ptr(Class* class, Symbol* name, list(ClassMember*) membe
 
 Variable* create_variable(Symbol* type, Symbol* name, Expression* value) {
     if (type == NULL || name == NULL) {
-        fprintf(stderr, "Error creating variable: type or name is NULL\n");
+        fprintf(stderr, "[create Error] at <create_variable>: Error creating variable: type or name is NULL\n");
         return NULL;
     }
     Variable* variable = (Variable*)alloc_memory(sizeof(Variable));
@@ -123,9 +123,9 @@ Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, 
         statement->stmt.expr = NULL;
     else {
         if (if_stmt == NULL && while_stmt == NULL && for_stmt == NULL && expr == NULL && var_stmt == NULL)
-            fprintf(stderr, "Error creating statement: content is NULL\n");
+            fprintf(stderr, "[create Error] at <create_statement>: Error creating statement: content is NULL\n");
         else
-            fprintf(stderr, "Error creating statement: unknown type %u\n", type);
+            fprintf(stderr, "[create Error] at <create_statement>: Error creating statement: unknown type %u\n", type);
         return NULL;
     }
     return statement;
@@ -133,7 +133,7 @@ Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, 
 
 If* create_if(Expression* condition, list(Statement*) body, list(ElseIf*) else_if, list(Statement*) else_body) {
     if (condition == NULL) {
-        fprintf(stderr, "Error creating if statement: condition is NULL\n");
+        fprintf(stderr, "[create Error] at <create_if>: Error creating if statement: condition is NULL\n");
         return NULL;
     }
     If* if_ = (If*)alloc_memory(sizeof(If));
@@ -146,7 +146,7 @@ If* create_if(Expression* condition, list(Statement*) body, list(ElseIf*) else_i
 
 ElseIf* create_else_if(Expression* condition, list(Statement*) body) {
     if (condition == NULL) {
-        fprintf(stderr, "Error creating else-if statement: condition is NULL\n");
+        fprintf(stderr, "[create Error] at <create_else_if>: Error creating else-if statement: condition is NULL\n");
         return NULL;
     }
     ElseIf* else_if = (ElseIf*)alloc_memory(sizeof(ElseIf));
@@ -173,7 +173,7 @@ While* create_while(Expression* condition, list(Statement*) body) {
 
 Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
     if ((operator == OP_NONE) != (right == NULL) || (expr_left == NULL && prim_left == NULL)) {
-        fprintf(stderr, "Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
+        fprintf(stderr, "[create Error] at <create_expression>: Error creating expression: operator and operands mismatch, operator == OP_NONE: %s, expr_left == NULL: %s, prim_left == NULL: %s, right == NULL: %s\n",
                 operator == OP_NONE ? "true" : "false",
                 expr_left == NULL ? "true" : "false",
                 prim_left == NULL ? "true" : "false",
@@ -187,7 +187,7 @@ Expression* create_expression(OperatorType operator, Expression* expr_left, Prim
     else if (prim_left != NULL)
         expression->prim_left = prim_left;
     else {
-        fprintf(stderr, "Error creating expression: both expr_left and prim_left are NULL\n");
+        fprintf(stderr, "[create Error] at <create_expression>: Error creating expression: both expr_left and prim_left are NULL\n");
         return NULL;
     }
     expression->right = right;
@@ -207,9 +207,9 @@ Primary* create_primary(PrimaryType type, string str_value, Expression* expr_val
         primary->value.var = variable_value;
     else {
         if (str_value == NULL && expr_value == NULL && prim_value == NULL && variable_value == NULL)
-            fprintf(stderr, "Error creating primary: value is NULL\n");
+            fprintf(stderr, "[create Error] at <create_primary>: Error creating primary: value is NULL\n");
         else
-            fprintf(stderr, "Error creating primary: unknown type %u\n", type);
+            fprintf(stderr, "[create Error] at <create_primary>: Error creating primary: unknown type %u\n", type);
         return NULL;
     }
     return primary;
@@ -217,7 +217,7 @@ Primary* create_primary(PrimaryType type, string str_value, Expression* expr_val
 
 VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* base, Symbol* name_content, Expression* expr_content, list(Expression*) args_content) {
     if ((base == NULL) != (type == VAR_NAME)) {
-        fprintf(stderr, "Error creating variable access: base and type mismatch, base == NULL: %s, type == VAR_NAME: %s\n", base == NULL ? "true" : "false", type == VAR_NAME ? "true" : "false");
+        fprintf(stderr, "[create Error] at <create_variable_access>: Error creating variable access: base and type mismatch, base == NULL: %s, type == VAR_NAME: %s\n", base == NULL ? "true" : "false", type == VAR_NAME ? "true" : "false");
         return NULL;
     }
     VariableAccess* variable_access = (VariableAccess*)alloc_memory(sizeof(VariableAccess));
@@ -233,9 +233,9 @@ VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* 
         variable_access->content.attr_name = name_content;
     else {
         if (name_content == NULL && expr_content == NULL && args_content == NULL)
-            fprintf(stderr, "Error creating variable access: content is NULL\n");
+            fprintf(stderr, "[create Error] at <create_variable_access>: Error creating variable access: content is NULL\n");
         else
-            fprintf(stderr, "Error creating variable access: unknown type %u\n", type);
+            fprintf(stderr, "[create Error] at <create_variable_access>: Error creating variable access: unknown type %u\n", type);
         return NULL;
     }
     return variable_access;
