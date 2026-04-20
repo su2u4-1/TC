@@ -96,7 +96,7 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_ATTRIBUTE:
         case SYMBOL_TYPE: scope = (SymbolTable*)ast_node; break;
         default:
-            fprintf(stderr, "[helper Warning] at <create_symbol>: Creating symbol with unknown SymbolType: %u\n", kind);
+            fprintf(stderr, "[helper Warning] at <create_symbol>: Creating symbol with unknown SymbolType: %s\n", get_enum_str(kind));
             break;
     }
     Symbol* result = search_name(scope, name);
@@ -111,10 +111,10 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         else
             result_scope = result->ast_node.scope;
         if (result_scope == scope) {
-            fprintf(stderr, "[helper Error] at <create_symbol>: Name '%s' already exists in the same scope, kind: %u, id: %zu\n", name, result->kind, result->id);
+            fprintf(stderr, "[helper Error] at <create_symbol>: Name '%s' already exists in the same scope, kind: %s, id: %zu\n", name, get_enum_str(result->kind), result->id);
             return result;
         } else
-            fprintf(stderr, "[helper Warning] at <create_symbol>: Name '%s' shadowing existing name in parent scope, existing kind: %u, id: %zu\n", name, result->kind, result->id);
+            fprintf(stderr, "[helper Warning] at <create_symbol>: Name '%s' shadowing existing name in parent scope, existing kind: %s, id: %zu\n", name, get_enum_str(result->kind), result->id);
     }
     Symbol* new_name = (Symbol*)alloc_memory(sizeof(Symbol));
     new_name->name = name;
@@ -131,11 +131,11 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
         case SYMBOL_TYPE: new_name->ast_node.scope = (SymbolTable*)ast_node; break;
         default:
             new_name->ast_node.scope = NULL;
-            fprintf(stderr, "[helper Warning] at <create_symbol>: Creating symbol with unknown SymbolType for ast_node assignment: %u\n", kind);
+            fprintf(stderr, "[helper Warning] at <create_symbol>: Creating symbol with unknown SymbolType for ast_node assignment: %s\n", get_enum_str(kind));
             break;
     }
     if (scope == NULL)
-        fprintf(stderr, "[helper Warning] at <create_symbol>: Creating symbol '%s' with NULL scope, kind: %u, id: %zu\n", name, kind, new_name->id);
+        fprintf(stderr, "[helper Warning] at <create_symbol>: Creating symbol '%s' with NULL scope, kind: %s, id: %zu\n", name, get_enum_str(kind), new_name->id);
     else
         list_append(scope->symbols, (pointer)new_name);
     return new_name;

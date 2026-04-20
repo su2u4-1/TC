@@ -14,7 +14,7 @@ typedef size_t* pointer;
 #define list(type) List*
 
 typedef enum ArgType {
-    ARG_VARIABLE,
+    ARG_VARIABLE = 0,
     ARG_INT,
     ARG_FLOAT,
     ARG_STRING,
@@ -26,16 +26,16 @@ typedef enum ArgType {
     ARG_NONE
 } ArgType;
 typedef enum ClassMemberType {
-    CLASS_METHOD,
+    CLASS_METHOD = 10,
     CLASS_VARIABLE
 } ClassMemberType;
 typedef enum CodeMemberType {
-    CODE_IMPORT,
+    CODE_IMPORT = 12,
     CODE_FUNCTION,
     CODE_CLASS
 } CodeMemberType;
 typedef enum InstructionType {
-    INST_ADD,       // +
+    INST_ADD = 15,  // +
     INST_SUB,       // -
     INST_MUL,       // *
     INST_DIV,       // /
@@ -63,7 +63,7 @@ typedef enum InstructionType {
     INST_NONE
 } InstructionType;
 typedef enum OperatorType {
-    OP_ADD,         // +
+    OP_ADD = 41,    // +
     OP_SUB,         // -
     OP_MUL,         // *
     OP_DIV,         // /
@@ -85,7 +85,7 @@ typedef enum OperatorType {
     OP_NONE
 } OperatorType;
 typedef enum PrimaryType {
-    PRIM_INTEGER,
+    PRIM_INTEGER = 61,
     PRIM_FLOAT,
     PRIM_STRING,
     PRIM_TRUE,
@@ -96,7 +96,7 @@ typedef enum PrimaryType {
     PRIM_VARIABLE_ACCESS
 } PrimaryType;
 typedef enum StatementType {
-    EXPRESSION_STATEMENT,
+    EXPRESSION_STATEMENT = 70,
     VARIABLE_STATEMENT,
     IF_STATEMENT,
     WHILE_STATEMENT,
@@ -106,7 +106,7 @@ typedef enum StatementType {
     CONTINUE_STATEMENT
 } StatementType;
 typedef enum SymbolType {
-    SYMBOL_CLASS,
+    SYMBOL_CLASS = 78,
     SYMBOL_FUNCTION,
     SYMBOL_METHOD,
     SYMBOL_VARIABLE,
@@ -115,7 +115,7 @@ typedef enum SymbolType {
     SYMBOL_TYPE
 } SymbolType;
 typedef enum TokenType {
-    EOF_TOKEN,
+    EOF_TOKEN = 85,
     IDENTIFIER,
     INTEGER,
     FLOAT,
@@ -125,7 +125,7 @@ typedef enum TokenType {
     COMMENT
 } TokenType;
 typedef enum VariableAccessType {
-    VAR_NAME,
+    VAR_NAME = 93,
     VAR_FUNC_CALL,
     VAR_GET_ATTR,
     VAR_GET_SEQ
@@ -422,5 +422,8 @@ struct While {
     Expression* condition;
     list(Statement*) body;
 };
+
+#define get_enum_str(enum_value) enum_to_string((int)(enum_value))
+string enum_to_string(int enum_value);
 
 #endif  // OBJECT_H

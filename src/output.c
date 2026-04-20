@@ -36,7 +36,7 @@ void output_code_member(CodeMember* code_member, FILE* outfile, size_t indent, c
             output_class(code_member->content.class, outfile, indent + 1, indent_has_next);
             break;
         default:
-            ast_output(0, false, "unknown_CodeMemberType: %u\n", code_member->type);
+            ast_output(0, false, "unknown: %s\n", get_enum_str(code_member->type));
             break;
     }
     // printf("[DEBUG] 79 Finished output_code_member\n");
@@ -110,7 +110,7 @@ void output_class_member(ClassMember* class_member, FILE* outfile, size_t indent
             output_variable(class_member->content.variable, outfile, indent + 1, indent_has_next);
             break;
         default:
-            ast_output(0, false, "unknown_ClassMemberType: %u\n", class_member->type);
+            ast_output(0, false, "unknown_ClassMemberType: %s\n", get_enum_str(class_member->type));
             break;
     }
     // printf("[DEBUG] 89 Finished output_class_member\n");
@@ -183,7 +183,7 @@ void output_statement(Statement* statement, FILE* outfile, size_t indent, char i
             output_expression(statement->stmt.expr, outfile, indent + 1, indent_has_next);
             break;
         default:
-            ast_output(0, false, "unknown_StatementType: %u\n", statement->type);
+            ast_output(0, false, "unknown_StatementType: %s\n", get_enum_str(statement->type));
             break;
     }
     // printf("[DEBUG] 97 Finished output_statement\n");
@@ -313,7 +313,7 @@ void output_primary(Primary* primary, FILE* outfile, size_t indent, char indent_
             output_variable_access(primary->value.var, outfile, indent + 1, indent_has_next);
             break;
         default:
-            ast_output(0, true, "unknown_PrimaryType: %u\n", primary->type);
+            ast_output(0, true, "unknown_PrimaryType: %s\n", get_enum_str(primary->type));
             break;
     }
     // printf("[DEBUG] 109 Finished output_primary\n");
@@ -356,7 +356,7 @@ void output_variable_access(VariableAccess* variable_access, FILE* outfile, size
             output_name(variable_access->content.attr_name, outfile, indent + 1, indent_has_next);
             break;
         default:
-            ast_output(0, true, "unknown_VariableAccessType: %u\n", variable_access->type);
+            ast_output(0, true, "unknown_VariableAccessType: %s\n", get_enum_str(variable_access->type));
             break;
     }
     // printf("[DEBUG] 111 Finished output_variable_access\n");
@@ -577,7 +577,7 @@ void output_arg(Arg* arg, FILE* outfile) {
                 tac_output(0, "%s", arg->value.subroutine->name);
             break;
         case ARG_NONE: tac_output(0, "NONE"); break;
-        default: tac_output(0, "unknown_ArgType: %u", arg->kind); break;
+        default: tac_output(0, "unknown_ArgType: %s", get_enum_str(arg->kind)); break;
     }
     // printf("[DEBUG] 129 Finished output_arg\n");
 }
@@ -616,7 +616,7 @@ void output_instruction(Instruction* instruction, FILE* outfile, size_t indent) 
         case INST_STORE: tac_output(indent, "store\t"); break;
         case INST_NONE: tac_output(indent, "INST_NONE\n"); return;
         default:
-            tac_output(indent, "unknown_InstructionType: %u\n", instruction->type);
+            tac_output(indent, "unknown_InstructionType: %s\n", get_enum_str(instruction->type));
             // printf("[DEBUG] 132 Finished output_instruction with unknown type\n");
             return;
     }

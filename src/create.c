@@ -15,7 +15,7 @@ CodeMember* create_code_member(CodeMemberType type, Import* import_content, Func
     else if (import_content == NULL && function_content == NULL && class_content == NULL)
         fprintf(stderr, "[create Error] at <create_code_member>: Error creating code member: content is NULL\n");
     else
-        fprintf(stderr, "[create Error] at <create_code_member>: Error creating code member: unknown type %u\n", type);
+        fprintf(stderr, "[create Error] at <create_code_member>: Error creating code member: unknown type %s\n", get_enum_str(type));
     return code_member;
 }
 
@@ -74,7 +74,7 @@ ClassMember* create_class_member(ClassMemberType type, Method* method_content, V
         if (method_content == NULL && variable_content == NULL)
             fprintf(stderr, "[create Error] at <create_class_member>: Error creating class member: content is NULL\n");
         else
-            fprintf(stderr, "[create Error] at <create_class_member>: Error creating class member: unknown type %u\n", type);
+            fprintf(stderr, "[create Error] at <create_class_member>: Error creating class member: unknown type %s\n", get_enum_str(type));
         return NULL;
     }
     return class_member;
@@ -125,7 +125,7 @@ Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, 
         if (if_stmt == NULL && while_stmt == NULL && for_stmt == NULL && expr == NULL && var_stmt == NULL)
             fprintf(stderr, "[create Error] at <create_statement>: Error creating statement: content is NULL\n");
         else
-            fprintf(stderr, "[create Error] at <create_statement>: Error creating statement: unknown type %u\n", type);
+            fprintf(stderr, "[create Error] at <create_statement>: Error creating statement: unknown type %s\n", get_enum_str(type));
         return NULL;
     }
     return statement;
@@ -209,7 +209,7 @@ Primary* create_primary(PrimaryType type, string str_value, Expression* expr_val
         if (str_value == NULL && expr_value == NULL && prim_value == NULL && variable_value == NULL)
             fprintf(stderr, "[create Error] at <create_primary>: Error creating primary: value is NULL\n");
         else
-            fprintf(stderr, "[create Error] at <create_primary>: Error creating primary: unknown type %u\n", type);
+            fprintf(stderr, "[create Error] at <create_primary>: Error creating primary: unknown type %s\n", get_enum_str(type));
         return NULL;
     }
     return primary;
@@ -235,7 +235,7 @@ VariableAccess* create_variable_access(VariableAccessType type, VariableAccess* 
         if (name_content == NULL && expr_content == NULL && args_content == NULL)
             fprintf(stderr, "[create Error] at <create_variable_access>: Error creating variable access: content is NULL\n");
         else
-            fprintf(stderr, "[create Error] at <create_variable_access>: Error creating variable access: unknown type %u\n", type);
+            fprintf(stderr, "[create Error] at <create_variable_access>: Error creating variable access: unknown type %s\n", get_enum_str(type));
         return NULL;
     }
     return variable_access;

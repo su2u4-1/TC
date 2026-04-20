@@ -180,7 +180,7 @@ static Var* create_var(Symbol* original_name, Symbol* type, VarType kind, TACSta
         default: id = (size_t)-1; break;
     }
     if (id == (size_t)-1)
-        var->name = string_splice("$%d-error", kind);
+        var->name = string_splice("$%u-error", kind);
     else
         var->name = string_splice("$%c%zu", kind, id);
     var->type = type;
@@ -257,7 +257,7 @@ static Arg* create_arg(ArgType kind, void* value) {
             break;
         case ARG_NONE:
         default:
-            fprintf(stderr, "[TAC Warning] at <create_arg>: Unsupported argument type for create_arg: %d\n", kind);
+            fprintf(stderr, "[TAC Warning] at <create_arg>: Unsupported argument type for create_arg: %s\n", get_enum_str(kind));
             break;
     }
     arg->is_get = false;
@@ -310,7 +310,7 @@ void tac_import(Import* import, TAC* tac, TACStatus* status) {
         // list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name, import->name->ast_node.class->size));
         tac_class(import->name->ast_node.class, status);
     else
-        fprintf(stderr, "[TAC Warning] at <tac_import>: Unsupported symbol kind for import: %d\n", import->name->kind);
+        fprintf(stderr, "[TAC Warning] at <tac_import>: Unsupported symbol kind for import: %s\n", get_enum_str(import->name->kind));
     // printf("[DEBUG] 144 Finished tac_import\n");
 }
 void tac_function(Function* function, TACStatus* status) {
@@ -389,7 +389,7 @@ void tac_class(Class* class, TACStatus* status) {
                 tac_variable(member->content.variable, status, true);
                 break;
             default:
-                fprintf(stderr, "[TAC Warning] at <tac_class>: Unsupported class member type for tac_class: %d\n", member->type);
+                fprintf(stderr, "[TAC Warning] at <tac_class>: Unsupported class member type for tac_class: %s\n", get_enum_str(member->type));
                 break;
         }
     }
@@ -456,7 +456,7 @@ void tac_statement(Statement* statement, TACStatus* status) {
             fprintf(stderr, "[TAC Warning] at <tac_statement>: 'continue' statement used outside of loop\n");
             break;
         default:
-            fprintf(stderr, "[TAC Warning] at <tac_statement>: Unsupported statement type for tac_statement: %d\n", statement->type);
+            fprintf(stderr, "[TAC Warning] at <tac_statement>: Unsupported statement type for tac_statement: %s\n", get_enum_str(statement->type));
             break;
     }
     // printf("[DEBUG] 154 Finished tac_statement\n");
@@ -734,7 +734,7 @@ Arg* tac_primary(Primary* primary, TACStatus* status) {
             // printf("[DEBUG] 173 Starting tac_primary\n");
             return tac_variable_access(primary->value.var, status);
         default:
-            fprintf(stderr, "[TAC Warning] at <tac_primary>: Unsupported primary type for tac_primary: %d\n", primary->type);
+            fprintf(stderr, "[TAC Warning] at <tac_primary>: Unsupported primary type for tac_primary: %s\n", get_enum_str(primary->type));
             // printf("[DEBUG] 174 Finished tac_primary with error\n");
             return NULL;
     }
@@ -826,7 +826,7 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
             base = create_arg(ARG_METHOD, create_var(attr, attr->type, VAR_SUBROUTINE, status));
         }
         if (base->kind != ARG_METHOD && base->kind != ARG_FUNCTION) {
-            fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Attempting to call non-function, kind: %u, type name: %s\n", base->kind, base->type->name);
+            fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Attempting to call non-function, kind: %s, type name: %s\n", get_enum_str(base->kind), base->type->name);
             // printf("[DEBUG] 188 Finished tac_variable_access with error\n");
             return NULL;
         }
@@ -854,7 +854,7 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
         // printf("[DEBUG] 189 Finished tac_variable_access\n");
         return temp;
     } else {
-        fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Unsupported variable access type for tac_variable_access: %u\n", variable_access->type);
+        fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Unsupported variable access type for tac_variable_access: %s\n", get_enum_str(variable_access->type));
         // printf("[DEBUG] 190 Finished tac_variable_access with error\n");
         return NULL;
     }
