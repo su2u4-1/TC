@@ -85,7 +85,7 @@ static MemoryBlock* create_memory_block(size_t size) {
     if (memory == NULL) {
         fprintf(stderr, "[lib Fatal] at <create_memory_block>: Cannot allocate memory\n");
         initialized = false;
-        exit(1);
+        abort();
     }
     memory->block = (size_t*)malloc(size);
     if (memory->block == NULL) {
@@ -93,7 +93,7 @@ static MemoryBlock* create_memory_block(size_t size) {
         free(memory);
         memory = NULL;
         initialized = false;
-        exit(1);
+        abort();
     }
     memory->size = size;
     memory->used = 0;
@@ -123,7 +123,7 @@ static string alloc_big_memory(size_t size) {
     fprintf(stderr, "[lib Info] at <alloc_big_memory>: Allocate big memory block of size %zu bytes\n", size);
     if (block == NULL) {
         fprintf(stderr, "[lib Fatal] at <alloc_big_memory>: Cannot allocate memory\n");
-        exit(1);
+        abort();
     }
     return block;
 }
@@ -280,7 +280,7 @@ string string_splice(string format, ...) {
     char* name = malloc((size_t)length + 1);
     if (name == NULL) {
         fprintf(stderr, "[lib Fatal] at <string_splice>: Cannot allocate memory\n");
-        exit(1);
+        abort();
     }
     va_start(args, format);
     vsnprintf(name, (size_t)length + 1, format, args);
