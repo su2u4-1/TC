@@ -76,10 +76,6 @@ pointer list_pop_back(list() list) {
     return content;
 }
 
-inline bool list_is_empty(list() list) {
-    return list == NULL || list->head == NULL || list->tail == NULL;
-}
-
 // parser helper functions
 Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node) {
     static size_t id_counter = 0;
@@ -186,6 +182,7 @@ Symbol* parse_import_file(string import_name, string source, SymbolTable* scope,
     Symbol* name = NULL;
     FILE* openfile;
     string filename;
+    // TODO: log imported filename
     if (source == NULL) {
         // import_name += ".tc";
         string temp_import_name = string_splice("%s.tc", import_name);

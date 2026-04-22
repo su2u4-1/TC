@@ -9,6 +9,7 @@
 #define parser_error(message, token, file_name) fprintf(stderr, "[Parser Error] at %s:%zu:%zu: %s\n", file_name, token->line + 1, token->column + 1, message)
 #define make_method_name(class_name, method_name) string_splice("%s.%s", class_name, method_name)
 #define is_assignment_operator(op) (op == OP_ASSIGN || op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN)
+#define list_is_empty(list) (list == NULL || list->head == NULL || list->tail == NULL)
 
 // list helper functions
 list() create_list(void);
@@ -16,7 +17,6 @@ void list_append(list() list, pointer item);
 list() list_copy(list() original);
 pointer list_pop(list() list);
 pointer list_pop_back(list() list);
-inline bool list_is_empty(list() list);
 
 // parser helper functions
 Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node);
