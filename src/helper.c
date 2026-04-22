@@ -22,10 +22,7 @@ static Node* create_node(pointer content) {
 }
 
 void list_append(list() list, pointer item) {
-    if (list == NULL) {
-        fprintf(stderr, "[helper Error] at <list_append>: list_append received NULL list\n");
-        return;
-    }
+    assert(list != NULL);
     Node* new_node = create_node(item);
     if (list->head == NULL) {
         list->head = new_node;
@@ -134,10 +131,8 @@ Symbol* create_symbol(string name, SymbolType kind, Symbol* type, void* ast_node
             fprintf(stderr, "[helper Warning] at <create_symbol>: Creating symbol with unknown SymbolType for ast_node assignment: %s\n", get_enum_str(kind));
             break;
     }
-    if (scope == NULL)
-        fprintf(stderr, "[helper Warning] at <create_symbol>: Creating symbol '%s' with NULL scope, kind: %s, id: %zu\n", name, get_enum_str(kind), new_name->id);
-    else
-        list_append(scope->symbols, (pointer)new_name);
+    assert(scope != NULL);
+    list_append(scope->symbols, (pointer)new_name);
     return new_name;
 }
 

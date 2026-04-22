@@ -177,12 +177,9 @@ static Var* create_var(Symbol* original_name, Symbol* type, VarType kind, TACSta
         case VAR_TEMP: id = status->temp_count++; break;
         case VAR_BLOCK: id = status->block_count++; break;
         case VAR_SUBROUTINE: id = status->subroutine_count++; break;
-        default: id = (size_t)-1; break;
+        default: assert(false);
     }
-    if (id == (size_t)-1)
-        var->name = string_splice("$%u-error", kind);
-    else
-        var->name = string_splice("$%c%zu", kind, id);
+    var->name = string_splice("$%c%zu", kind, id);
     var->type = type;
     if ((kind == VAR_TEMP || kind == VAR_VAR) && status->current_subroutine != NULL)
         list_append(status->current_subroutine->local_vars, (pointer)var);
@@ -198,12 +195,9 @@ static Attribute* create_attribute(Symbol* var, Symbol* type, AttributeTable* ta
     if (offset == 0 && table != NULL) {
         attr->offset = table->size;
         table->size += get_type_size(type);
-    } else if (table == NULL)
-        fprintf(stderr, "[TAC Error] at <create_attribute>: create_attribute received NULL table\n");
-    if (table == NULL || table->attributes == NULL)
-        fprintf(stderr, "[TAC Error] at <create_attribute>: create_attribute received NULL table or attributes list\n");
-    else
-        list_append(table->attributes, (pointer)attr);
+    }
+    assert(table != NULL && table->attributes != NULL);
+    list_append(table->attributes, (pointer)attr);
     // printf("[DEBUG] 213 Finished create_attribute\n");
     return attr;
 }
@@ -266,10 +260,7 @@ static Arg* create_arg(ArgType kind, void* value) {
 }
 static Arg* load_rvalue(Arg* arg, TACStatus* status) {
     // printf("[DEBUG] 218 Starting load_rvalue\n");
-    if (arg == NULL) {
-        // printf("[DEBUG] 219 Finished load_rvalue with NULL\n");
-        return NULL;
-    }
+    if (arg == NULL) return NULL;
     if (arg->is_get) {
         Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, arg->type, VAR_TEMP, status));
         list_append(status->current_block->instructions, (pointer)create_instruction(INST_LOAD, temp, arg, NULL));
@@ -307,7 +298,6 @@ void tac_import(Import* import, TAC* tac, TACStatus* status) {
     else if (import->name->kind == SYMBOL_FUNCTION || import->name->kind == SYMBOL_METHOD)
         list_append(tac->global_vars, (pointer)create_var(import->name, import->name->type, VAR_SUBROUTINE, status));
     else if (import->name->kind == SYMBOL_CLASS)
-        // list_append(tac->attribute_tables, (pointer)create_attribute_table(import->name, import->name->ast_node.class->size));
         tac_class(import->name->ast_node.class, status);
     else
         fprintf(stderr, "[TAC Warning] at <tac_import>: Unsupported symbol kind for import: %s\n", get_enum_str(import->name->kind));
@@ -740,6 +730,7 @@ Arg* tac_primary(Primary* primary, TACStatus* status) {
     }
 }
 Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
+    assert(variable_access != NULL);
     // printf("[DEBUG] 175 Starting tac_variable_access\n");
     if (variable_access->type == VAR_NAME && variable_access->content.name != NULL) {
         if (variable_access->content.name->kind == SYMBOL_FUNCTION || variable_access->content.name->kind == SYMBOL_METHOD) {
@@ -756,18 +747,11 @@ Arg* tac_variable_access(VariableAccess* variable_access, TACStatus* status) {
             return result;
         }
     }
-    if (variable_access->base == NULL) {
-        fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Unsupported variable access with NULL base\n");
-        // printf("[DEBUG] 178 Finished tac_variable_access with error\n");
-        return NULL;
-    }
+    assert(variable_access->base != NULL);
     Arg* base = load_rvalue(tac_variable_access(variable_access->base, status), status);
-    if (base == NULL) {
-        fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Failed to generate variable access for base\n");
-        // printf("[DEBUG] 179 Finished tac_variable_access with error\n");
-        return NULL;
-    }
+    assert(base != NULL);
     if (variable_access->type == VAR_GET_ATTR) {
+        assert(base->type != NULL);
         if (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_METHOD) {
             fprintf(stderr, "[TAC Warning] at <tac_variable_access>: Attempting to access attribute of non-object type: %s\n", base->type->name);
             // printf("[DEBUG] 180 Finished tac_variable_access with error\n");
