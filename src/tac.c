@@ -640,11 +640,13 @@ Arg* tac_expression(Expression* expression, TACStatus* status) {
         // printf("[DEBUG] 162 Finished tac_expression\n");
         return result;
     }
+    // TODO: Implement short-circuit control flow for OP_AND / OP_OR using conditional jumps.
     Arg* right = load_rvalue(tac_expression(expression->right, status), status);
     InstructionType op = get_instruction_type(expression->operator);
     Arg* left = tac_expression(expression->expr_left, status);
     Instruction* inst;
     if (is_assignment_operator(expression->operator)) {
+        // TODO: Add assignment compatibility checks before emission.
         if (op != INST_ASSIGN) {
             Arg* temp = create_arg(ARG_VARIABLE, create_var(NULL, left->type, VAR_TEMP, status));
             inst = create_instruction(op, temp, load_rvalue(left, status), right);

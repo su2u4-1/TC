@@ -88,7 +88,6 @@ Variable* create_variable(Symbol* type, Symbol* name, Expression* value) {
 }
 
 Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, For* for_stmt, Expression* expr, Variable* var_stmt) {
-    assert((if_stmt != NULL) + (while_stmt != NULL) + (for_stmt != NULL) + (expr != NULL) + (var_stmt != NULL) == 1);
     Statement* statement = (Statement*)alloc_memory(sizeof(Statement));
     statement->type = type;
     if (type == EXPRESSION_STATEMENT && expr != NULL)
@@ -106,7 +105,10 @@ Statement* create_statement(StatementType type, If* if_stmt, While* while_stmt, 
     else if (type == BREAK_STATEMENT || type == CONTINUE_STATEMENT)
         statement->stmt.expr = NULL;
     else {
-        fprintf(stderr, "[create Error] at <create_statement>: Error creating statement: unknown type %s\n", get_enum_str(type));
+        if (if_stmt == NULL && while_stmt == NULL && for_stmt == NULL && expr == NULL && var_stmt == NULL)
+            fprintf(stderr, "[create Error] at <create_statement>: Error creating statement: content is NULL\n");
+        else
+            fprintf(stderr, "[create Error] at <create_statement>: Error creating statement: unknown type %s\n", get_enum_str(type));
         return NULL;
     }
     return statement;
@@ -148,8 +150,7 @@ While* create_while(Expression* condition, list(Statement*) body) {
 }
 
 Expression* create_expression(OperatorType operator, Expression* expr_left, Primary* prim_left, Expression* right) {
-    assert(operator == OP_NONE && right == NULL);
-    assert(operator != OP_NONE && right != NULL);
+    assert((operator == OP_NONE) == (right == NULL));
     assert((expr_left == NULL) != (prim_left == NULL));
     Expression* expression = (Expression*)alloc_memory(sizeof(Expression));
     expression->operator = operator;
