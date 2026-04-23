@@ -20,49 +20,40 @@ static Expression* parse_expression(Lexer* lexer, SymbolTable* now_scope, Parser
 static Primary* parse_primary(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
 static VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Parser* parser);
 
-typedef enum RecoveryCtx {
-    RECOVER_TOP_LEVEL = 128,
-    RECOVER_STATEMENT,
-    RECOVER_BLOCK
-} RecoveryCtx;
-
-static bool is_sync_token(Token* token, RecoveryCtx ctx) {
+static bool is_sync_token(Token* token, bool is_top_level, bool is_statement) {
     if (token == NULL) return false;
     if (token->type == EOF_TOKEN) return true;
     if (token->type == SYMBOL) {
         if (string_equal(token->lexeme, SEMICOLON_SYMBOL))
-            return ctx == RECOVER_TOP_LEVEL || ctx == RECOVER_STATEMENT;
+            return is_top_level || is_statement;
         if (string_equal(token->lexeme, R_BRACE_SYMBOL))
             return true;
         return false;
     }
     if (token->type != KEYWORD) return false;
-    if (ctx == RECOVER_TOP_LEVEL)
+    if (is_top_level)
         return string_equal(token->lexeme, IMPORT_KEYWORD) || string_equal(token->lexeme, FUNC_KEYWORD) || string_equal(token->lexeme, CLASS_KEYWORD);
     // var, break, continue, elif, else, for, func, if, import, method, return, while
     return string_equal(token->lexeme, VAR_KEYWORD) || string_equal(token->lexeme, BREAK_KEYWORD) || string_equal(token->lexeme, CLASS_KEYWORD) || string_equal(token->lexeme, CONTINUE_KEYWORD) || string_equal(token->lexeme, ELIF_KEYWORD) || string_equal(token->lexeme, ELSE_KEYWORD) || string_equal(token->lexeme, FOR_KEYWORD) || string_equal(token->lexeme, FUNC_KEYWORD) || string_equal(token->lexeme, IF_KEYWORD) || string_equal(token->lexeme, IMPORT_KEYWORD) || string_equal(token->lexeme, METHOD_KEYWORD) || string_equal(token->lexeme, RETURN_KEYWORD) || string_equal(token->lexeme, WHILE_KEYWORD);
 }
-static void panic_mode_recovery(Lexer* lexer, RecoveryCtx ctx) {
+static void panic_mode_recovery(Lexer* lexer, bool is_top_level, bool is_statement) {
     Token* t = peek_current_token(lexer);
     if (t == NULL)
         t = get_next_token(lexer, true);
     while (t != NULL && t->type != EOF_TOKEN) {
-        if (is_sync_token(t, ctx)) return;
+        if (is_sync_token(t, is_top_level, is_statement)) return;
         t = get_next_token(lexer, true);
     }
 }
 
-static Token* token_after_recovery(Lexer* lexer, RecoveryCtx ctx) {
+static Token* token_after_recovery(Lexer* lexer, bool is_top_level) {
     Token* token = peek_current_token(lexer);
     if (token == NULL)
         return get_next_token(lexer, true);
-
     if (token->type == SYMBOL && string_equal(token->lexeme, SEMICOLON_SYMBOL))
         return get_next_token(lexer, true);
-
-    while (ctx == RECOVER_TOP_LEVEL && token->type == SYMBOL && string_equal(token->lexeme, R_BRACE_SYMBOL))
+    while (is_top_level && token->type == SYMBOL && string_equal(token->lexeme, R_BRACE_SYMBOL))
         return get_next_token(lexer, true);
-
     return token;
 }
 
@@ -87,8 +78,8 @@ Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             Import* import = parse_import(lexer, global_scope, parser);
             if (import == NULL) {
                 parser_error("Failed to parse import statement", token, get_full_path(parser->source_file));
-                panic_mode_recovery(lexer, RECOVER_TOP_LEVEL);
-                token = token_after_recovery(lexer, RECOVER_TOP_LEVEL);
+                panic_mode_recovery(lexer, true, false);
+                token = token_after_recovery(lexer, true);
                 continue;
             }
             list_append(members, (pointer)create_code_member(CODE_IMPORT, import, NULL, NULL));
@@ -96,8 +87,8 @@ Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             Function* function = parse_function(lexer, global_scope, parser);
             if (function == NULL) {
                 parser_error("Failed to parse function declaration", token, get_full_path(parser->source_file));
-                panic_mode_recovery(lexer, RECOVER_TOP_LEVEL);
-                token = token_after_recovery(lexer, RECOVER_TOP_LEVEL);
+                panic_mode_recovery(lexer, true, false);
+                token = token_after_recovery(lexer, true);
                 continue;
             }
             list_append(members, (pointer)create_code_member(CODE_FUNCTION, NULL, function, NULL));
@@ -105,15 +96,15 @@ Code* parse_code(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             Class* class = parse_class(lexer, global_scope, parser);
             if (class == NULL) {
                 parser_error("Failed to parse class declaration", token, get_full_path(parser->source_file));
-                panic_mode_recovery(lexer, RECOVER_TOP_LEVEL);
-                token = token_after_recovery(lexer, RECOVER_TOP_LEVEL);
+                panic_mode_recovery(lexer, true, false);
+                token = token_after_recovery(lexer, true);
                 continue;
             }
             list_append(members, (pointer)create_code_member(CODE_CLASS, NULL, NULL, class));
         } else {
             parser_error("Unexpected token in code member", token, get_full_path(parser->source_file));
-            panic_mode_recovery(lexer, RECOVER_TOP_LEVEL);
-            token = token_after_recovery(lexer, RECOVER_TOP_LEVEL);
+            panic_mode_recovery(lexer, true, false);
+            token = token_after_recovery(lexer, true);
             continue;
         }
         token = get_next_token(lexer, true);
@@ -221,8 +212,8 @@ Function* parse_function(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         Statement* statement = parse_statement(lexer, function_scope, parser);
         if (statement == NULL) {
             parser_error("Failed to parse function body statement", token, get_full_path(parser->source_file));
-            panic_mode_recovery(lexer, RECOVER_BLOCK);
-            token = token_after_recovery(lexer, RECOVER_BLOCK);
+            panic_mode_recovery(lexer, false, false);
+            token = token_after_recovery(lexer, false);
             continue;
         } else if (have_return)
             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
@@ -309,8 +300,8 @@ Method* parse_method(Lexer* lexer, SymbolTable* now_scope, Symbol* class_name, P
         Statement* statement = parse_statement(lexer, method_scope, parser);
         if (statement == NULL) {
             parser_error("Failed to parse method body statement", token, get_full_path(parser->source_file));
-            panic_mode_recovery(lexer, RECOVER_BLOCK);
-            token = token_after_recovery(lexer, RECOVER_BLOCK);
+            panic_mode_recovery(lexer, false, false);
+            token = token_after_recovery(lexer, false);
             continue;
         } else if (have_return)
             parser_error("Unreachable code after return statement", token, get_full_path(parser->source_file));
@@ -355,8 +346,8 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             Method* method = parse_method(lexer, class_scope, name, parser);
             if (method == NULL) {
                 parser_error("Failed to parse class method", token, get_full_path(parser->source_file));
-                panic_mode_recovery(lexer, RECOVER_BLOCK);
-                token = token_after_recovery(lexer, RECOVER_BLOCK);
+                panic_mode_recovery(lexer, false, false);
+                token = token_after_recovery(lexer, false);
                 continue;
             }
             list_append(members, (pointer)create_class_member(CLASS_METHOD, method, NULL));
@@ -367,8 +358,8 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             parser->in_class = false;
             if (variable == NULL) {
                 parser_error("Failed to parse class variable", token, get_full_path(parser->source_file));
-                panic_mode_recovery(lexer, RECOVER_BLOCK);
-                token = token_after_recovery(lexer, RECOVER_BLOCK);
+                panic_mode_recovery(lexer, false, false);
+                token = token_after_recovery(lexer, false);
                 continue;
             }
             ClassMember* member = create_class_member(CLASS_VARIABLE, NULL, variable);
@@ -387,14 +378,14 @@ Class* parse_class(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             token = get_next_token(lexer, true);
             if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
                 parser_error("Expected ';' after class variable declaration", token, get_full_path(parser->source_file));
-                panic_mode_recovery(lexer, RECOVER_BLOCK);
-                token = token_after_recovery(lexer, RECOVER_BLOCK);
+                panic_mode_recovery(lexer, false, false);
+                token = token_after_recovery(lexer, false);
                 continue;
             }
         } else {
             parser_error("Unexpected token in class member", token, get_full_path(parser->source_file));
-            panic_mode_recovery(lexer, RECOVER_BLOCK);
-            token = token_after_recovery(lexer, RECOVER_BLOCK);
+            panic_mode_recovery(lexer, false, false);
+            token = token_after_recovery(lexer, false);
             continue;
         }
         token = get_next_token(lexer, true);
@@ -491,21 +482,21 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
         if (string_equal(token->lexeme, IF_KEYWORD)) {
             If* if_statement = parse_if(lexer, now_scope, parser);
             if (if_statement == NULL) {
-                panic_mode_recovery(lexer, RECOVER_BLOCK);
+                panic_mode_recovery(lexer, false, false);
                 return NULL;
             }
             return create_statement(IF_STATEMENT, if_statement, NULL, NULL, NULL, NULL);
         } else if (string_equal(token->lexeme, FOR_KEYWORD)) {
             For* for_statement = parse_for(lexer, now_scope, parser);
             if (for_statement == NULL) {
-                panic_mode_recovery(lexer, RECOVER_BLOCK);
+                panic_mode_recovery(lexer, false, false);
                 return NULL;
             }
             return create_statement(FOR_STATEMENT, NULL, NULL, for_statement, NULL, NULL);
         } else if (string_equal(token->lexeme, WHILE_KEYWORD)) {
             While* while_statement = parse_while(lexer, now_scope, parser);
             if (while_statement == NULL) {
-                panic_mode_recovery(lexer, RECOVER_BLOCK);
+                panic_mode_recovery(lexer, false, false);
                 return NULL;
             }
             return create_statement(WHILE_STATEMENT, NULL, while_statement, NULL, NULL, NULL);
@@ -513,7 +504,7 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
             get_next_token(lexer, true);
             Variable* variable = parse_variable(lexer, now_scope, parser);
             if (variable == NULL) {
-                panic_mode_recovery(lexer, RECOVER_STATEMENT);
+                panic_mode_recovery(lexer, false, true);
                 return NULL;
             }
             statement = create_statement(VARIABLE_STATEMENT, NULL, NULL, NULL, NULL, variable);
@@ -521,7 +512,7 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
             if (!parser->in_subroutine) {
                 parser_error("Cannot use 'return' outside of a function", token, get_full_path(parser->source_file));
                 // printf("[DEBUG] 29.5 Finished parse_statement with error\n");
-                panic_mode_recovery(lexer, RECOVER_STATEMENT);
+                panic_mode_recovery(lexer, false, true);
                 return NULL;
             }
             token = get_next_token(lexer, true);
@@ -531,7 +522,7 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
             }
             Expression* return_value = parse_expression(lexer, now_scope, parser);
             if (return_value == NULL) {
-                panic_mode_recovery(lexer, RECOVER_STATEMENT);
+                panic_mode_recovery(lexer, false, true);
                 return NULL;
             }
             statement = create_statement(RETURN_STATEMENT, NULL, NULL, NULL, return_value, NULL);
@@ -539,7 +530,7 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
             if (!parser->in_loop) {
                 parser_error("Cannot use 'break' outside of a loop", token, get_full_path(parser->source_file));
                 // printf("[DEBUG] 31 Finished parse_statement with error\n");
-                panic_mode_recovery(lexer, RECOVER_STATEMENT);
+                panic_mode_recovery(lexer, false, true);
                 return NULL;
             }
             statement = create_statement(BREAK_STATEMENT, NULL, NULL, NULL, NULL, NULL);
@@ -547,14 +538,14 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
             if (!parser->in_loop) {
                 parser_error("Cannot use 'continue' outside of a loop", token, get_full_path(parser->source_file));
                 // printf("[DEBUG] 32 Finished parse_statement with error\n");
-                panic_mode_recovery(lexer, RECOVER_STATEMENT);
+                panic_mode_recovery(lexer, false, true);
                 return NULL;
             }
             statement = create_statement(CONTINUE_STATEMENT, NULL, NULL, NULL, NULL, NULL);
         } else {
             Expression* expr = parse_expression(lexer, now_scope, parser);
             if (expr == NULL) {
-                panic_mode_recovery(lexer, RECOVER_STATEMENT);
+                panic_mode_recovery(lexer, false, true);
                 return NULL;
             }
             statement = create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, expr, NULL);
@@ -562,7 +553,7 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
     } else {
         Expression* expr = parse_expression(lexer, now_scope, parser);
         if (expr == NULL) {
-            panic_mode_recovery(lexer, RECOVER_STATEMENT);
+            panic_mode_recovery(lexer, false, true);
             return NULL;
         }
         statement = create_statement(EXPRESSION_STATEMENT, NULL, NULL, NULL, expr, NULL);
@@ -570,13 +561,13 @@ Statement* parse_statement(Lexer* lexer, SymbolTable* now_scope, Parser* parser)
     token = peek_current_token(lexer);
     if (statement == NULL) {
         parser_error("Failed to parse statement", token, get_full_path(parser->source_file));
-        panic_mode_recovery(lexer, RECOVER_STATEMENT);
+        panic_mode_recovery(lexer, false, true);
         return NULL;
     }
     token = get_next_token(lexer, true);
     if (token->type != SYMBOL || !string_equal(token->lexeme, SEMICOLON_SYMBOL)) {
         parser_error("Expected ';' after statement", token, get_full_path(parser->source_file));
-        panic_mode_recovery(lexer, RECOVER_STATEMENT);
+        panic_mode_recovery(lexer, false, true);
         return NULL;
     }
     // printf("[DEBUG] 33 Finished parse_statement\n");
@@ -615,8 +606,8 @@ If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         Statement* statement = parse_statement(lexer, now_scope, parser);
         if (statement == NULL) {
             parser_error("Failed to parse if body statement", token, get_full_path(parser->source_file));
-            panic_mode_recovery(lexer, RECOVER_BLOCK);
-            token = token_after_recovery(lexer, RECOVER_BLOCK);
+            panic_mode_recovery(lexer, false, false);
+            token = token_after_recovery(lexer, false);
             continue;
         }
         list_append(body, (pointer)statement);
@@ -657,8 +648,8 @@ If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             Statement* statement = parse_statement(lexer, now_scope, parser);
             if (statement == NULL) {
                 parser_error("Failed to parse else-if body statement", token, get_full_path(parser->source_file));
-                panic_mode_recovery(lexer, RECOVER_BLOCK);
-                token = token_after_recovery(lexer, RECOVER_BLOCK);
+                panic_mode_recovery(lexer, false, false);
+                token = token_after_recovery(lexer, false);
                 continue;
             }
             list_append(elif_body, (pointer)statement);
@@ -682,8 +673,8 @@ If* parse_if(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
             Statement* statement = parse_statement(lexer, now_scope, parser);
             if (statement == NULL) {
                 parser_error("Failed to parse else body statement", token, get_full_path(parser->source_file));
-                panic_mode_recovery(lexer, RECOVER_BLOCK);
-                token = token_after_recovery(lexer, RECOVER_BLOCK);
+                panic_mode_recovery(lexer, false, false);
+                token = token_after_recovery(lexer, false);
                 continue;
             }
             list_append(else_body, (pointer)statement);
@@ -756,8 +747,8 @@ For* parse_for(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         Statement* statement = parse_statement(lexer, now_scope, parser);
         if (statement == NULL) {
             parser_error("Failed to parse for loop body statement", token, get_full_path(parser->source_file));
-            panic_mode_recovery(lexer, RECOVER_BLOCK);
-            token = token_after_recovery(lexer, RECOVER_BLOCK);
+            panic_mode_recovery(lexer, false, false);
+            token = token_after_recovery(lexer, false);
             continue;
         }
         list_append(body, (pointer)statement);
@@ -800,8 +791,8 @@ While* parse_while(Lexer* lexer, SymbolTable* now_scope, Parser* parser) {
         Statement* statement = parse_statement(lexer, now_scope, parser);
         if (statement == NULL) {
             parser_error("Failed to parse while body statement", token, get_full_path(parser->source_file));
-            panic_mode_recovery(lexer, RECOVER_BLOCK);
-            token = token_after_recovery(lexer, RECOVER_BLOCK);
+            panic_mode_recovery(lexer, false, false);
+            token = token_after_recovery(lexer, false);
             continue;
         }
         list_append(body, (pointer)statement);
@@ -972,7 +963,7 @@ VariableAccess* parse_variable_access(Lexer* lexer, SymbolTable* now_scope, Pars
                 Expression* arg = parse_expression(lexer, now_scope, parser);
                 if (arg == NULL) {
                     parser_error("Failed to parse function call argument", token, get_full_path(parser->source_file));
-                    panic_mode_recovery(lexer, RECOVER_STATEMENT);
+                    panic_mode_recovery(lexer, false, true);
                     return NULL;
                 }
                 list_append(args, (pointer)arg);
