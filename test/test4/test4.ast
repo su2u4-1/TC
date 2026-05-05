@@ -1,0 +1,255 @@
+├── function
+│   ├── name
+│   │   ├── name: "test"
+│   │   ├── id: 6
+│   │   ├── kind: "function"
+│   │   └── return_type
+│   │       ├── name: "void"
+│   │       ├── id: 1
+│   │       └── kind: "type"
+│   ├── return_type
+│   │   ├── name: "void"
+│   │   ├── id: 1
+│   │   └── kind: "type"
+│   ├── parameters
+│   └── body
+│       ├── return_statement: "NULL"
+├── function
+│   ├── name
+│   │   ├── name: "main"
+│   │   ├── id: 7
+│   │   ├── kind: "function"
+│   │   └── return_type
+│   │       ├── name: "int"
+│   │       ├── id: 2
+│   │       └── kind: "type"
+│   ├── return_type
+│   │   ├── name: "int"
+│   │   ├── id: 2
+│   │   └── kind: "type"
+│   ├── parameters
+│   └── body
+│       ├── variable_declaration_statement
+│       │   ├── type
+│       │   │   ├── name: "int"
+│       │   │   ├── id: 2
+│       │   │   └── kind: "type"
+│       │   ├── name
+│       │   │   ├── name: "a"
+│       │   │   ├── id: 8
+│       │   │   ├── kind: "variable"
+│       │   │   └── type
+│       │   │       ├── name: "int"
+│       │   │       ├── id: 2
+│       │   │       └── kind: "type"
+│       │   └── value
+│       │       └── primary
+│       │           ├── type: "integer"
+│       │           └── value: 10
+│       ├── variable_declaration_statement
+│       │   ├── type
+│       │   │   ├── name: "string"
+│       │   │   ├── id: 4
+│       │   │   └── kind: "type"
+│       │   ├── name
+│       │   │   ├── name: "b"
+│       │   │   ├── id: 9
+│       │   │   ├── kind: "variable"
+│       │   │   └── type
+│       │   │       ├── name: "string"
+│       │   │       ├── id: 4
+│       │   │       └── kind: "type"
+│       │   └── value
+│       │       └── primary
+│       │           ├── type: "string"
+│       │           └── value: ""
+│       ├── if_statement
+│       │   ├── condition
+│       │   │   ├── operator: "=="
+│       │   │   ├── left
+│       │   │   │   └── primary
+│       │   │   │       ├── type: "variable"
+│       │   │   │       └── value
+│       │   │   │           ├── type: "name"
+│       │   │   │           └── name
+│       │   │   │               ├── name: "a"
+│       │   │   │               ├── id: 8
+│       │   │   │               ├── kind: "variable"
+│       │   │   │               └── type
+│       │   │   │                   ├── name: "int"
+│       │   │   │                   ├── id: 2
+│       │   │   │                   └── kind: "type"
+│       │   │   └── right
+│       │   │       └── primary
+│       │   │           ├── type: "integer"
+│       │   │           └── value: 10
+│       │   ├── body
+│       │   │   ├── expression_statement
+│       │   │   │   └── primary
+│       │   │   │       ├── type: "variable"
+│       │   │   │       └── value
+│       │   │   │           ├── type: "function_call"
+│       │   │   │           ├── function
+│       │   │   │           │   ├── type: "name"
+│       │   │   │           │   └── name
+│       │   │   │           │       ├── name: "test"
+│       │   │   │           │       ├── id: 6
+│       │   │   │           │       ├── kind: "function"
+│       │   │   │           │       └── return_type
+│       │   │   │           │           ├── name: "void"
+│       │   │   │           │           ├── id: 1
+│       │   │   │           │           └── kind: "type"
+│       │   │   │           └── arguments
+│       │   ├── else_if
+│       │   └── else_body
+│       │       ├── expression_statement
+│       │       │   ├── operator: "="
+│       │       │   ├── left
+│       │       │   │   └── primary
+│       │       │   │       ├── type: "variable"
+│       │       │   │       └── value
+│       │       │   │           ├── type: "name"
+│       │       │   │           └── name
+│       │       │   │               ├── name: "a"
+│       │       │   │               ├── id: 8
+│       │       │   │               ├── kind: "variable"
+│       │       │   │               └── type
+│       │       │   │                   ├── name: "int"
+│       │       │   │                   ├── id: 2
+│       │       │   │                   └── kind: "type"
+│       │       │   └── right
+│       │       │       └── primary
+│       │       │           ├── type: "integer"
+│       │       │           └── value: 0
+│       ├── for_statement
+│       │   ├── initializer
+│       │   │   ├── type
+│       │   │   │   ├── name: "int"
+│       │   │   │   ├── id: 2
+│       │   │   │   └── kind: "type"
+│       │   │   ├── name
+│       │   │   │   ├── name: "i"
+│       │   │   │   ├── id: 10
+│       │   │   │   ├── kind: "variable"
+│       │   │   │   └── type
+│       │   │   │       ├── name: "int"
+│       │   │   │       ├── id: 2
+│       │   │   │       └── kind: "type"
+│       │   │   └── value
+│       │   │       └── primary
+│       │   │           ├── type: "integer"
+│       │   │           └── value: 0
+│       │   ├── condition
+│       │   │   ├── operator: "<"
+│       │   │   ├── left
+│       │   │   │   └── primary
+│       │   │   │       ├── type: "variable"
+│       │   │   │       └── value
+│       │   │   │           ├── type: "name"
+│       │   │   │           └── name
+│       │   │   │               ├── name: "i"
+│       │   │   │               ├── id: 10
+│       │   │   │               ├── kind: "variable"
+│       │   │   │               └── type
+│       │   │   │                   ├── name: "int"
+│       │   │   │                   ├── id: 2
+│       │   │   │                   └── kind: "type"
+│       │   │   └── right
+│       │   │       └── primary
+│       │   │           ├── type: "integer"
+│       │   │           └── value: 5
+│       │   ├── increment
+│       │   │   ├── operator: "+="
+│       │   │   ├── left
+│       │   │   │   └── primary
+│       │   │   │       ├── type: "variable"
+│       │   │   │       └── value
+│       │   │   │           ├── type: "name"
+│       │   │   │           └── name
+│       │   │   │               ├── name: "i"
+│       │   │   │               ├── id: 10
+│       │   │   │               ├── kind: "variable"
+│       │   │   │               └── type
+│       │   │   │                   ├── name: "int"
+│       │   │   │                   ├── id: 2
+│       │   │   │                   └── kind: "type"
+│       │   │   └── right
+│       │   │       └── primary
+│       │   │           ├── type: "integer"
+│       │   │           └── value: 1
+│       │   └── body
+│       │       ├── expression_statement
+│       │       │   ├── operator: "+="
+│       │       │   ├── left
+│       │       │   │   └── primary
+│       │       │   │       ├── type: "variable"
+│       │       │   │       └── value
+│       │       │   │           ├── type: "name"
+│       │       │   │           └── name
+│       │       │   │               ├── name: "a"
+│       │       │   │               ├── id: 8
+│       │       │   │               ├── kind: "variable"
+│       │       │   │               └── type
+│       │       │   │                   ├── name: "int"
+│       │       │   │                   ├── id: 2
+│       │       │   │                   └── kind: "type"
+│       │       │   └── right
+│       │       │       └── primary
+│       │       │           ├── type: "variable"
+│       │       │           └── value
+│       │       │               ├── type: "name"
+│       │       │               └── name
+│       │       │                   ├── name: "i"
+│       │       │                   ├── id: 10
+│       │       │                   ├── kind: "variable"
+│       │       │                   └── type
+│       │       │                       ├── name: "int"
+│       │       │                       ├── id: 2
+│       │       │                       └── kind: "type"
+│       ├── while_statement
+│       │   ├── condition
+│       │   │   ├── operator: ">"
+│       │   │   ├── left
+│       │   │   │   └── primary
+│       │   │   │       ├── type: "variable"
+│       │   │   │       └── value
+│       │   │   │           ├── type: "name"
+│       │   │   │           └── name
+│       │   │   │               ├── name: "a"
+│       │   │   │               ├── id: 8
+│       │   │   │               ├── kind: "variable"
+│       │   │   │               └── type
+│       │   │   │                   ├── name: "int"
+│       │   │   │                   ├── id: 2
+│       │   │   │                   └── kind: "type"
+│       │   │   └── right
+│       │   │       └── primary
+│       │   │           ├── type: "integer"
+│       │   │           └── value: 10
+│       │   └── body
+│       │       ├── expression_statement
+│       │       │   ├── operator: "-="
+│       │       │   ├── left
+│       │       │   │   └── primary
+│       │       │   │       ├── type: "variable"
+│       │       │   │       └── value
+│       │       │   │           ├── type: "name"
+│       │       │   │           └── name
+│       │       │   │               ├── name: "a"
+│       │       │   │               ├── id: 8
+│       │       │   │               ├── kind: "variable"
+│       │       │   │               └── type
+│       │       │   │                   ├── name: "int"
+│       │       │   │                   ├── id: 2
+│       │       │   │                   └── kind: "type"
+│       │       │   └── right
+│       │       │       └── primary
+│       │       │           ├── type: "integer"
+│       │       │           └── value: 1
+│       ├── return_statement
+│       │   └── primary
+│       │       ├── type: "integer"
+│       │       └── value: 0
+
+info by lib:
+    Platform: 2, Structure Memory Used: 10808/11264 bytes, String Memory Used: 1083/2048 bytes, stringCount: 89, Memory Block Count: 407

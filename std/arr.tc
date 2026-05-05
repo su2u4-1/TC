@@ -1,0 +1,5 @@
+class arr {
+    method arr init(self, string type_name, int size) {
+        return self;
+    }
+}
