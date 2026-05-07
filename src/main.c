@@ -53,6 +53,12 @@ static Args* parse_args(int argc, char* argv[]) {
             }
         }
     }
+    if (args->source_path == NULL) {
+        fprintf(stderr, "[Error] No source file provided\n");
+        exit(1);
+    } else if (args->output_path == NULL) {
+        args->output_path = create_file(args->source_path->path);
+    }
     return args;
 }
 
