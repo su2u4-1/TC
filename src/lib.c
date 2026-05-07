@@ -304,3 +304,57 @@ static void init_constant(void) {
     SYMBOL_AND = symbolList[28];
     SYMBOL_OR = symbolList[29];
 }
+
+List* list_create(void) {
+    List* self = (List*)alloc_memory(sizeof(List), true);
+    self->head = NULL;
+    self->tail = NULL;
+    return self;
+}
+void list_append(List* self, pointer value) {
+    if (self == NULL) {
+        fprintf(stderr, "[lib Fatal] at <list_append>: List is NULL\n");
+        abort();
+    }
+    ListNode* node = (ListNode*)alloc_memory(sizeof(ListNode), true);
+    node->data = value;
+    node->next = NULL;
+    if (self->tail == NULL) {
+        self->head = node;
+        self->tail = node;
+    } else {
+        self->tail->next = node;
+        self->tail = node;
+    }
+}
+pointer list_pop_front(List* self) {
+    if (self == NULL || self->head == NULL) {
+        fprintf(stderr, "[lib Fatal] at <list_pop_front>: List is empty\n");
+        abort();
+    }
+    pointer value = self->head->data;
+    self->head = self->head->next;
+    if (self->head == NULL) {
+        self->tail = NULL;
+    }
+    return value;
+}
+pointer list_pop_back(List* self) {
+    if (self == NULL || self->head == NULL) {
+        fprintf(stderr, "[lib Fatal] at <list_pop_back>: List is empty\n");
+        abort();
+    }
+    pointer value = self->tail->data;
+    if (self->head == self->tail) {
+        self->head = NULL;
+        self->tail = NULL;
+    } else {
+        ListNode* previous = self->head;
+        while (previous->next != self->tail) {
+            previous = previous->next;
+        }
+        previous->next = NULL;
+        self->tail = previous;
+    }
+    return value;
+}

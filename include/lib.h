@@ -39,7 +39,7 @@ typedef char* string;
 typedef size_t* pointer;
 
 #define DEFAULT_MEMORY_SIZE 1024
-#define ALIGN_SIZE sizeof(size_t)
+#define ALIGN_SIZE ((size_t)__SIZEOF_POINTER__)
 
 typedef struct MemoryBlock MemoryBlock;
 struct MemoryBlock {
@@ -128,5 +128,22 @@ extern string SYMBOL_DIV_ASSIGN;  // symbol `/=`
 extern string SYMBOL_MOD_ASSIGN;  // symbol `%=`
 extern string SYMBOL_AND;         // symbol `&&`
 extern string SYMBOL_OR;          // symbol `||`
+
+#define list(T) List*
+#define list_empty(self) (self == NULL || self->head == NULL)
+
+typedef struct ListNode {
+    pointer data;
+    struct ListNode* next;
+} ListNode;
+typedef struct List {
+    ListNode* head;
+    ListNode* tail;
+} List;
+
+List* list_create(void);
+void list_append(List* self, pointer value);
+pointer list_pop_front(List* self);
+pointer list_pop_back(List* self);
 
 #endif  // LIB_H
