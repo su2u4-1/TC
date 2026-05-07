@@ -96,6 +96,7 @@ static string create_string_check(const char* str, size_t len, bool check) {
     return node->value;
 }
 
+static void init_constant(void);
 void init(void) {
     if (string_memory == NULL)
         string_memory = create_memory_block(DEFAULT_MEMORY_SIZE);
@@ -103,6 +104,7 @@ void init(void) {
         struct_memory = create_memory_block(DEFAULT_MEMORY_SIZE);
     if (string_table == NULL)
         string_table = create_string_table(1024);
+    init_constant();
 }
 
 string create_string(const char* str, size_t len) {
@@ -182,4 +184,123 @@ string get_info(void) {
     }
     string string_info = string_splice("string memory: [used/total: %zu/%zu, blocks: %zu]", used_memory_count, total_memory_count, memory_block_count);
     return string_splice("platform: %d, malloc allocated: %zu, %s, %s", PLATFORM, malloc_allocated, string_info, struct_info);
+}
+
+static const char* keywordStrings[keywordCount] = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void", "var"};
+string keywordList[keywordCount] = {0};
+static const char* symbolStrings[symbolCount] = {"(", ")", "{", "}", ",", "!", ".", "[", "]", ";", "_", "+", "-", "*", "/", "%", "<", ">", "=", "==", "!=", "<=", ">=", "+=", "-=", "*=", "/=", "%=", "&&", "||"};
+string symbolList[symbolCount] = {0};
+
+string KEYWORD_IMPORT = NULL;
+string KEYWORD_FROM = NULL;
+string KEYWORD_FUNC = NULL;
+string KEYWORD_CLASS = NULL;
+string KEYWORD_METHOD = NULL;
+string KEYWORD_SELF = NULL;
+string KEYWORD_IF = NULL;
+string KEYWORD_ELIF = NULL;
+string KEYWORD_ELSE = NULL;
+string KEYWORD_WHILE = NULL;
+string KEYWORD_FOR = NULL;
+string KEYWORD_TRUE = NULL;
+string KEYWORD_FALSE = NULL;
+string KEYWORD_RETURN = NULL;
+string KEYWORD_BREAK = NULL;
+string KEYWORD_CONTINUE = NULL;
+string KEYWORD_INT = NULL;
+string KEYWORD_FLOAT = NULL;
+string KEYWORD_STRING = NULL;
+string KEYWORD_BOOL = NULL;
+string KEYWORD_VOID = NULL;
+string KEYWORD_VAR = NULL;
+string SYMBOL_L_PAREN = NULL;
+string SYMBOL_R_PAREN = NULL;
+string SYMBOL_L_BRACE = NULL;
+string SYMBOL_R_BRACE = NULL;
+string SYMBOL_COMMA = NULL;
+string SYMBOL_NOT = NULL;
+string SYMBOL_DOT = NULL;
+string SYMBOL_L_BRACKET = NULL;
+string SYMBOL_R_BRACKET = NULL;
+string SYMBOL_SEMICOLON = NULL;
+string SYMBOL_UNDERLINE = NULL;
+string SYMBOL_ADD = NULL;
+string SYMBOL_SUB = NULL;
+string SYMBOL_MUL = NULL;
+string SYMBOL_DIV = NULL;
+string SYMBOL_MOD = NULL;
+string SYMBOL_LT = NULL;
+string SYMBOL_GT = NULL;
+string SYMBOL_ASSIGN = NULL;
+string SYMBOL_EQ = NULL;
+string SYMBOL_NE = NULL;
+string SYMBOL_LE = NULL;
+string SYMBOL_GE = NULL;
+string SYMBOL_ADD_ASSIGN = NULL;
+string SYMBOL_SUB_ASSIGN = NULL;
+string SYMBOL_MUL_ASSIGN = NULL;
+string SYMBOL_DIV_ASSIGN = NULL;
+string SYMBOL_MOD_ASSIGN = NULL;
+string SYMBOL_AND = NULL;
+string SYMBOL_OR = NULL;
+
+static void init_constant(void) {
+    for (size_t i = 0; i < keywordCount; ++i) {
+        keywordList[i] = create_string_check(keywordStrings[i], strlen(keywordStrings[i]), false);
+    }
+    KEYWORD_IMPORT = keywordList[0];
+    KEYWORD_FROM = keywordList[1];
+    KEYWORD_FUNC = keywordList[2];
+    KEYWORD_CLASS = keywordList[3];
+    KEYWORD_METHOD = keywordList[4];
+    KEYWORD_SELF = keywordList[5];
+    KEYWORD_IF = keywordList[6];
+    KEYWORD_ELIF = keywordList[7];
+    KEYWORD_ELSE = keywordList[8];
+    KEYWORD_WHILE = keywordList[9];
+    KEYWORD_FOR = keywordList[10];
+    KEYWORD_TRUE = keywordList[11];
+    KEYWORD_FALSE = keywordList[12];
+    KEYWORD_RETURN = keywordList[13];
+    KEYWORD_BREAK = keywordList[14];
+    KEYWORD_CONTINUE = keywordList[15];
+    KEYWORD_INT = keywordList[16];
+    KEYWORD_FLOAT = keywordList[17];
+    KEYWORD_STRING = keywordList[18];
+    KEYWORD_BOOL = keywordList[19];
+    KEYWORD_VOID = keywordList[20];
+    KEYWORD_VAR = keywordList[21];
+    for (size_t i = 0; i < symbolCount; ++i) {
+        symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
+    }
+    SYMBOL_L_PAREN = symbolList[0];
+    SYMBOL_R_PAREN = symbolList[1];
+    SYMBOL_L_BRACE = symbolList[2];
+    SYMBOL_R_BRACE = symbolList[3];
+    SYMBOL_COMMA = symbolList[4];
+    SYMBOL_NOT = symbolList[5];
+    SYMBOL_DOT = symbolList[6];
+    SYMBOL_L_BRACKET = symbolList[7];
+    SYMBOL_R_BRACKET = symbolList[8];
+    SYMBOL_SEMICOLON = symbolList[9];
+    SYMBOL_UNDERLINE = symbolList[10];
+    SYMBOL_ADD = symbolList[11];
+    SYMBOL_SUB = symbolList[12];
+    SYMBOL_MUL = symbolList[13];
+    SYMBOL_DIV = symbolList[14];
+    SYMBOL_MOD = symbolList[15];
+    SYMBOL_LT = symbolList[16];
+    SYMBOL_GT = symbolList[17];
+    SYMBOL_ASSIGN = symbolList[18];
+    SYMBOL_EQ = symbolList[19];
+    SYMBOL_NE = symbolList[20];
+    SYMBOL_LE = symbolList[21];
+    SYMBOL_GE = symbolList[22];
+    SYMBOL_ADD_ASSIGN = symbolList[23];
+    SYMBOL_SUB_ASSIGN = symbolList[24];
+    SYMBOL_MUL_ASSIGN = symbolList[25];
+    SYMBOL_DIV_ASSIGN = symbolList[26];
+    SYMBOL_MOD_ASSIGN = symbolList[27];
+    SYMBOL_AND = symbolList[28];
+    SYMBOL_OR = symbolList[29];
 }

@@ -71,4 +71,62 @@ pointer alloc_memory(size_t size, bool is_struct);
 string string_splice(string format, ...);
 string get_info(void);
 
+#define keywordCount 22
+#define symbolCount 30
+extern string keywordList[keywordCount];
+extern string symbolList[symbolCount];
+
+extern string KEYWORD_IMPORT;     // keyword `import`
+extern string KEYWORD_FROM;       // keyword `from`
+extern string KEYWORD_FUNC;       // keyword `func`
+extern string KEYWORD_CLASS;      // keyword `class`
+extern string KEYWORD_METHOD;     // keyword `method`
+extern string KEYWORD_SELF;       // keyword `self`
+extern string KEYWORD_IF;         // keyword `if`
+extern string KEYWORD_ELIF;       // keyword `elif`
+extern string KEYWORD_ELSE;       // keyword `else`
+extern string KEYWORD_WHILE;      // keyword `while`
+extern string KEYWORD_FOR;        // keyword `for`
+extern string KEYWORD_TRUE;       // keyword `true`
+extern string KEYWORD_FALSE;      // keyword `false`
+extern string KEYWORD_RETURN;     // keyword `return`
+extern string KEYWORD_BREAK;      // keyword `break`
+extern string KEYWORD_CONTINUE;   // keyword `continue`
+extern string KEYWORD_INT;        // keyword `int`
+extern string KEYWORD_FLOAT;      // keyword `float`
+extern string KEYWORD_STRING;     // keyword `string`
+extern string KEYWORD_BOOL;       // keyword `bool`
+extern string KEYWORD_VOID;       // keyword `void`
+extern string KEYWORD_VAR;        // keyword `var`
+extern string SYMBOL_L_PAREN;     // symbol `(`
+extern string SYMBOL_R_PAREN;     // symbol `)`
+extern string SYMBOL_L_BRACE;     // symbol `{`
+extern string SYMBOL_R_BRACE;     // symbol `}`
+extern string SYMBOL_COMMA;       // symbol `,`
+extern string SYMBOL_NOT;         // symbol `!`
+extern string SYMBOL_DOT;         // symbol `.`
+extern string SYMBOL_L_BRACKET;   // symbol `[`
+extern string SYMBOL_R_BRACKET;   // symbol `]`
+extern string SYMBOL_SEMICOLON;   // symbol `;`
+extern string SYMBOL_UNDERLINE;   // symbol `_`
+extern string SYMBOL_ADD;         // symbol `+`
+extern string SYMBOL_SUB;         // symbol `-`
+extern string SYMBOL_MUL;         // symbol `*`
+extern string SYMBOL_DIV;         // symbol `/`
+extern string SYMBOL_MOD;         // symbol `%`
+extern string SYMBOL_LT;          // symbol `<`
+extern string SYMBOL_GT;          // symbol `>`
+extern string SYMBOL_ASSIGN;      // symbol `=`
+extern string SYMBOL_EQ;          // symbol `==`
+extern string SYMBOL_NE;          // symbol `!=`
+extern string SYMBOL_LE;          // symbol `<=`
+extern string SYMBOL_GE;          // symbol `>=`
+extern string SYMBOL_ADD_ASSIGN;  // symbol `+=`
+extern string SYMBOL_SUB_ASSIGN;  // symbol `-=`
+extern string SYMBOL_MUL_ASSIGN;  // symbol `*=`
+extern string SYMBOL_DIV_ASSIGN;  // symbol `/=`
+extern string SYMBOL_MOD_ASSIGN;  // symbol `%=`
+extern string SYMBOL_AND;         // symbol `&&`
+extern string SYMBOL_OR;          // symbol `||`
+
 #endif  // LIB_H
