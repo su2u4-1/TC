@@ -10,6 +10,7 @@ typedef enum {
     TOKEN_STRING,
     TOKEN_SYMBOL,
     TOKEN_KEYWORD,
+    TOKEN_COMMENT,
     TOKEN_EOF,
 } TokenType;
 
@@ -24,14 +25,17 @@ typedef struct Lexer {
     File* source_path;
     size_t line;
     size_t column;
-    size_t position;
+    size_t pos;
+    size_t size;
     string source_code;
-    Token* next_token;
     Token* current_token;
-    Token* prev_token;
+    Token* next_token;
+    bool skip_comment;
 } Lexer;
 
 Token* get_next_token(Lexer* lexer);
+Token* peek_next_token(Lexer* lexer);
+Token* get_current_token(Lexer* lexer);
 Lexer* create_lexer(File* source_path);
 void output_tokens(Lexer* lexer, File* output_path);
 

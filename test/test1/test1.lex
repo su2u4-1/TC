@@ -121,7 +121,7 @@ Token(Type: keyword,     Line: 28, Column: 5)	Lexeme: 'return'
 Token(Type: integer,     Line: 28, Column: 12)	Lexeme: '0'
 Token(Type: symbol,      Line: 28, Column: 13)	Lexeme: ';'
 Token(Type: symbol,      Line: 29, Column: 1)	Lexeme: '}'
-Token(Type: EOF,         Line: 30, Column: 1)
+Token(Type: EOF,         Line: 30, Column: 2)
 
 info by lib:
-    Platform: 2, Structure Memory Used: 6376/7168 bytes, String Memory Used: 1245/2048 bytes, stringCount: 92, Memory Block Count: 225
+    platform: 2, malloc allocated: 10226, string memory: [used/total: 1007/1024, blocks: 1], struct memory: [used/total: 6576/6624, blocks: 6]
