@@ -6,7 +6,7 @@ parameter_list = parameter { "," parameter } ;
 parameter = variable_declaration ;
 attribute = "var" variable_declaration ";" ;
 variable_declaration = type identifier [ "=" expression ] ;
-method = "method" type identifier "(" "self" [ "," parameter_list ] ")" "{" { statement | return_statement } "}" ;
+method = "method" type ( identifier | special_method ) "(" "self" [ "," parameter_list ] ")" "{" { statement | return_statement } "}" ;
 type = builtin_type | identifier | container ;
 statement = "var" variable_declaration ";" | if_statement | while_statement | for_statement | expression ";" | ";" ;
 if_statement = "if" "(" expression ")" "{" { statement } "}" { "elif" "(" expression ")" "{" { statement } "}" } [ "else" "{" { statement } "}" ] ;
@@ -27,9 +27,10 @@ boolean = "true" | "false" ;
 return_statement = "return" [ expression ] ";" ;
 break_statement = "break" ";" ;
 continue_statement = "continue" ";" ;
+special_method = "$" ( "init" | "to_int" | "to_float" | "to_string" | "to_bool" | "add" | "sub" | "mul" | "div" | "mod" | "eq" | "lt" | "gt" | "and" | "or" | "not" | "neg" ) ;
 builtin_type = "int" | "float" | "string" | "bool" | "void" ;
 container = container_type "<" ( type | literal ) { "," ( type | literal ) } ">" ;
-container_type = "arr" | "list" ;
+container_type = "arr" | "list" | "pointer" | "const" ;
 identifier = (alphabet | "_") { alphabet | digit | "_" } ;
 operator = "+" | "-" | "*" | "/" | "%" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||" | "=" | "+=" | "-=" | "*=" | "/=" | "%=" ;
 digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
@@ -37,4 +38,4 @@ alphabet = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l"
 character = any_character_except_ascii_0x22 ;  # ascii 0x22 = `"`
 
 # "(", ")", "{", "}", ",", "!", ".", "[", "]", "\"", ";", "_", "+", "-", "*", "/", "%", "==", "!=", "<", ">", "<=", ">=", "&&", "||", "=", "+=", "-=", "*=", "/=", "%="
-# "import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void", "var"
+# "import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void", "var", "pointer", "const"

@@ -186,10 +186,12 @@ string get_info(void) {
     return string_splice("platform: %d, malloc allocated: %zu, %s, %s", PLATFORM, malloc_allocated, string_info, struct_info);
 }
 
-static const char* keywordStrings[keywordCount] = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void", "var"};
+static const char* keywordStrings[keywordCount] = {"import", "from", "func", "class", "method", "self", "if", "elif", "else", "while", "for", "true", "false", "return", "break", "continue", "int", "float", "string", "bool", "void", "var", "pointer", "const"};
 string keywordList[keywordCount] = {0};
 static const char* symbolStrings[symbolCount] = {"(", ")", "{", "}", ",", "!", ".", "[", "]", ";", "_", "+", "-", "*", "/", "%", "<", ">", "=", "==", "!=", "<=", ">=", "+=", "-=", "*=", "/=", "%=", "&&", "||"};
 string symbolList[symbolCount] = {0};
+static const char* specialStrings[specialCount] = {"$init", "$to_int", "$to_float", "$to_string", "$to_bool", "$add", "$sub", "$mul", "$div", "$mod", "$eq", "$lt", "$gt", "$and", "$or", "$not", "$neg"};
+string specialList[specialCount] = {0};
 
 string KEYWORD_IMPORT = NULL;
 string KEYWORD_FROM = NULL;
@@ -213,6 +215,8 @@ string KEYWORD_STRING = NULL;
 string KEYWORD_BOOL = NULL;
 string KEYWORD_VOID = NULL;
 string KEYWORD_VAR = NULL;
+string KEYWORD_POINTER = NULL;
+string KEYWORD_CONST = NULL;
 string SYMBOL_L_PAREN = NULL;
 string SYMBOL_R_PAREN = NULL;
 string SYMBOL_L_BRACE = NULL;
@@ -243,6 +247,23 @@ string SYMBOL_DIV_ASSIGN = NULL;
 string SYMBOL_MOD_ASSIGN = NULL;
 string SYMBOL_AND = NULL;
 string SYMBOL_OR = NULL;
+string SPECIAL_INIT = NULL;
+string SPECIAL_TO_INT = NULL;
+string SPECIAL_TO_FLOAT = NULL;
+string SPECIAL_TO_STRING = NULL;
+string SPECIAL_TO_BOOL = NULL;
+string SPECIAL_ADD = NULL;
+string SPECIAL_SUB = NULL;
+string SPECIAL_MUL = NULL;
+string SPECIAL_DIV = NULL;
+string SPECIAL_MOD = NULL;
+string SPECIAL_EQ = NULL;
+string SPECIAL_LT = NULL;
+string SPECIAL_GT = NULL;
+string SPECIAL_AND = NULL;
+string SPECIAL_OR = NULL;
+string SPECIAL_NOT = NULL;
+string SPECIAL_NEG = NULL;
 
 static void init_constant(void) {
     for (size_t i = 0; i < keywordCount; ++i) {
@@ -270,6 +291,8 @@ static void init_constant(void) {
     KEYWORD_BOOL = keywordList[19];
     KEYWORD_VOID = keywordList[20];
     KEYWORD_VAR = keywordList[21];
+    KEYWORD_POINTER = keywordList[22];
+    KEYWORD_CONST = keywordList[23];
     for (size_t i = 0; i < symbolCount; ++i) {
         symbolList[i] = create_string_check(symbolStrings[i], strlen(symbolStrings[i]), false);
     }
@@ -303,6 +326,26 @@ static void init_constant(void) {
     SYMBOL_MOD_ASSIGN = symbolList[27];
     SYMBOL_AND = symbolList[28];
     SYMBOL_OR = symbolList[29];
+    for (size_t i = 0; i < specialCount; ++i) {
+        specialList[i] = create_string_check(specialStrings[i], strlen(specialStrings[i]), false);
+    }
+    SPECIAL_INIT = specialList[0];
+    SPECIAL_TO_INT = specialList[1];
+    SPECIAL_TO_FLOAT = specialList[2];
+    SPECIAL_TO_STRING = specialList[3];
+    SPECIAL_TO_BOOL = specialList[4];
+    SPECIAL_ADD = specialList[5];
+    SPECIAL_SUB = specialList[6];
+    SPECIAL_MUL = specialList[7];
+    SPECIAL_DIV = specialList[8];
+    SPECIAL_MOD = specialList[9];
+    SPECIAL_EQ = specialList[10];
+    SPECIAL_LT = specialList[11];
+    SPECIAL_GT = specialList[12];
+    SPECIAL_AND = specialList[13];
+    SPECIAL_OR = specialList[14];
+    SPECIAL_NOT = specialList[15];
+    SPECIAL_NEG = specialList[16];
 }
 
 List* list_create(void) {

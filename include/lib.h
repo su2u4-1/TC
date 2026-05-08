@@ -71,10 +71,12 @@ pointer alloc_memory(size_t size, bool is_struct);
 string string_splice(string format, ...);
 string get_info(void);
 
-#define keywordCount 22
+#define keywordCount 24
 #define symbolCount 30
+#define specialCount 17
 extern string keywordList[keywordCount];
 extern string symbolList[symbolCount];
+extern string specialList[specialCount];
 
 extern string KEYWORD_IMPORT;     // keyword `import`
 extern string KEYWORD_FROM;       // keyword `from`
@@ -98,6 +100,8 @@ extern string KEYWORD_STRING;     // keyword `string`
 extern string KEYWORD_BOOL;       // keyword `bool`
 extern string KEYWORD_VOID;       // keyword `void`
 extern string KEYWORD_VAR;        // keyword `var`
+extern string KEYWORD_POINTER;    // keyword `pointer`
+extern string KEYWORD_CONST;      // keyword `const`
 extern string SYMBOL_L_PAREN;     // symbol `(`
 extern string SYMBOL_R_PAREN;     // symbol `)`
 extern string SYMBOL_L_BRACE;     // symbol `{`
@@ -128,6 +132,23 @@ extern string SYMBOL_DIV_ASSIGN;  // symbol `/=`
 extern string SYMBOL_MOD_ASSIGN;  // symbol `%=`
 extern string SYMBOL_AND;         // symbol `&&`
 extern string SYMBOL_OR;          // symbol `||`
+extern string SPECIAL_INIT;       // special method `$init`
+extern string SPECIAL_TO_INT;     // special method `$to_int`
+extern string SPECIAL_TO_FLOAT;   // special method `$to_float`
+extern string SPECIAL_TO_STRING;  // special method `$to_string`
+extern string SPECIAL_TO_BOOL;    // special method `$to_bool`
+extern string SPECIAL_ADD;        // special method `$add`
+extern string SPECIAL_SUB;        // special method `$sub`
+extern string SPECIAL_MUL;        // special method `$mul`
+extern string SPECIAL_DIV;        // special method `$div`
+extern string SPECIAL_MOD;        // special method `$mod`
+extern string SPECIAL_EQ;         // special method `$eq`
+extern string SPECIAL_LT;         // special method `$lt`
+extern string SPECIAL_GT;         // special method `$gt`
+extern string SPECIAL_AND;        // special method `$and`
+extern string SPECIAL_OR;         // special method `$or`
+extern string SPECIAL_NOT;        // special method `$not`
+extern string SPECIAL_NEG;        // special method `$neg`
 
 #define list(T) List*
 #define list_empty(self) (self == NULL || self->head == NULL)
