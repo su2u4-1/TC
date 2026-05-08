@@ -47,7 +47,7 @@ static Token* get_token(Lexer* lexer) {
             lexer->pos -= 1;
             lexer->column -= 1;
             string content = create_string(&lexer->source_code[start], lexer->pos - start);
-            return create_token(is_keyword(content) ? TOKEN_KEYWORD : TOKEN_IDENTIFIER, content, lexer->line, column_start);
+            return create_token(TOKEN_IDENTIFIER, content, lexer->line, column_start);
         } else if (is_digit(c)) {
             size_t start = lexer->pos - 1;
             size_t column_start = lexer->column - 1;
