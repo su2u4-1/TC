@@ -9,21 +9,33 @@ static bool is_keyword(string str) {
     return false;
 }
 
+static bool is_special(string str) {
+    for (size_t i = 0; i < specialCount; ++i) {
+        if (str == specialList[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+#define is_digit(c) ((c) >= '0' && (c) <= '9')
+#define is_alphabet(c) ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z')
+#define lexer_error(message, line, column, filename) fprintf(stderr, "[lexer Error] at %s:%zu:%zu: %s\n", filename, line + 1, column + 1, message)
+
 static Token* create_token(TokenType type, string lexeme, size_t line, size_t column) {
     Token* token = (Token*)alloc_memory(sizeof(Token), true);
     token->type = type;
     if (type == TOKEN_IDENTIFIER && is_keyword(lexeme)) {
         token->type = TOKEN_KEYWORD;
     }
+    if (type == TOKEN_SPECIAL && !is_special(lexeme)) {
+        return NULL;
+    }
     token->lexeme = lexeme;
     token->line = line;
     token->column = column;
     return token;
 }
-
-#define is_digit(c) ((c) >= '0' && (c) <= '9')
-#define is_alphabet(c) ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z')
-#define lexer_error(message, line, column, filename) fprintf(stderr, "[lexer Error] at %s:%zu:%zu: %s\n", filename, line + 1, column + 1, message)
 
 static Token* get_token(Lexer* lexer) {
     while (true) {
@@ -37,7 +49,8 @@ static Token* get_token(Lexer* lexer) {
             lexer->line++;
             lexer->column = 0;
             continue;
-        } else if (is_alphabet(c) || c == '_') {
+        } else if (is_alphabet(c) || c == '_' || c == '$') {
+            bool is_special = (c == '$');
             size_t start = lexer->pos - 1;
             size_t column_start = lexer->column - 1;
             while (is_alphabet(c) || is_digit(c) || c == '_') {
@@ -47,6 +60,14 @@ static Token* get_token(Lexer* lexer) {
             lexer->pos -= 1;
             lexer->column -= 1;
             string content = create_string(&lexer->source_code[start], lexer->pos - start);
+            if (is_special) {
+                Token* token = create_token(TOKEN_SPECIAL, content, lexer->line, column_start);
+                if (token == NULL) {
+                    lexer_error("Invalid special method", lexer->line, column_start, file_full_path(lexer->source_path));
+                    return create_token(TOKEN_IDENTIFIER, content, lexer->line, column_start);
+                }
+                return token;
+            }
             return create_token(TOKEN_IDENTIFIER, content, lexer->line, column_start);
         } else if (is_digit(c)) {
             size_t start = lexer->pos - 1;

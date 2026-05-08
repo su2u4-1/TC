@@ -12,6 +12,7 @@ typedef enum {
     TOKEN_KEYWORD,
     TOKEN_COMMENT,
     TOKEN_EOF,
+    TOKEN_SPECIAL,
 } TokenType;
 
 typedef struct Token {
