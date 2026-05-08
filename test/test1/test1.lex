@@ -1,4 +1,4 @@
-Token(Type: comment,     Line: 3, Column: 1)	Lexeme: '\n * this test is used to test the lexer.\n '
+Token(Type: comment,     Line: 1, Column: 1)	Lexeme: '\n * this test is used to test the lexer.\n '
 Token(Type: keyword,     Line: 4, Column: 1)	Lexeme: 'import'
 Token(Type: identifier,  Line: 4, Column: 8)	Lexeme: 'print'
 Token(Type: keyword,     Line: 4, Column: 14)	Lexeme: 'from'
@@ -124,4 +124,4 @@ Token(Type: symbol,      Line: 29, Column: 1)	Lexeme: '}'
 Token(Type: EOF,         Line: 30, Column: 2)
 
 info by lib:
-    platform: 2, malloc allocated: 10226, string memory: [used/total: 1007/1024, blocks: 1], struct memory: [used/total: 6576/6624, blocks: 6]
+    platform: 2, malloc allocated: 8978, string memory: [used/total: 1010/1024, blocks: 1], struct memory: [used/total: 6544/6624, blocks: 6]
