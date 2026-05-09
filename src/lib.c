@@ -55,7 +55,7 @@ static void increase_memory(MemoryBlock** block, size_t additional_size) {
 }
 
 static StringTable* create_string_table(size_t capacity) {
-    StringTable* table = (StringTable*)alloc_memory(sizeof(StringTable), true);
+    StringTable* table = create_struct(StringTable);
     table->capacity = capacity;
     table->count = 0;
     table->buckets = calloc(capacity, sizeof(StringNode*));
@@ -83,7 +83,7 @@ static string create_string_check(const char* str, size_t len, bool check) {
             current = current->next;
         }
     }
-    StringNode* node = (StringNode*)alloc_memory(sizeof(StringNode), true);
+    StringNode* node = create_struct(StringNode);
     node->size = len;
     node->hash = hash_value;
     node->next = string_table->buckets[index];
@@ -112,6 +112,17 @@ string create_string(const char* str, size_t len) {
 }
 
 pointer alloc_memory(size_t size, bool is_struct) {
+    if (size >= DEFAULT_MEMORY_SIZE) {
+        pointer ptr = malloc(size);
+        if (ptr == NULL) {
+            fprintf(stderr, "[lib Fatal] at <alloc_memory>: Cannot allocate memory\n");
+            free(ptr);
+            free_all_memory();
+            abort();
+        }
+        malloc_allocated += size;
+        return ptr;
+    }
     MemoryBlock* block = string_memory;
     if (is_struct) {
         block = struct_memory;
@@ -349,7 +360,7 @@ static void init_constant(void) {
 }
 
 List* list_create(void) {
-    List* self = (List*)alloc_memory(sizeof(List), true);
+    List* self = create_struct(List);
     self->head = NULL;
     self->tail = NULL;
     return self;
@@ -359,7 +370,7 @@ void list_append(List* self, pointer value) {
         fprintf(stderr, "[lib Fatal] at <list_append>: List is NULL\n");
         abort();
     }
-    ListNode* node = (ListNode*)alloc_memory(sizeof(ListNode), true);
+    ListNode* node = create_struct(ListNode);
     node->data = value;
     node->next = NULL;
     if (self->tail == NULL) {

@@ -2,7 +2,7 @@
 
 Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info) {
     static size_t symbol_count = 0;
-    Symbol* symbol = (Symbol*)alloc_memory(sizeof(Symbol), true);
+    Symbol* symbol = create_struct(Symbol);
     symbol->name = name;
     symbol->type = type;
     symbol->kind = kind;
@@ -38,7 +38,7 @@ Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info) 
 }
 
 SymbolTable* create_symbol_table(SymbolTableType type, SymbolTable* parent) {
-    SymbolTable* table = (SymbolTable*)alloc_memory(sizeof(SymbolTable), true);
+    SymbolTable* table = create_struct(SymbolTable);
     table->parent = parent;
     table->type = type;
     table->symbols = list_create();

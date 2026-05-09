@@ -23,7 +23,7 @@ static bool is_special(string str) {
 #define lexer_error(message, line, column, filename) fprintf(stderr, "[lexer Error] at %s:%zu:%zu: %s\n", filename, line + 1, column + 1, message)
 
 static Token* create_token(TokenType type, string lexeme, size_t line, size_t column) {
-    Token* token = (Token*)alloc_memory(sizeof(Token), true);
+    Token* token = create_struct(Token);
     token->type = type;
     if (type == TOKEN_IDENTIFIER && is_keyword(lexeme)) {
         token->type = TOKEN_KEYWORD;
@@ -263,7 +263,7 @@ Token* get_current_token(Lexer* lexer) {
 }
 
 Lexer* create_lexer(File* source_path) {
-    Lexer* lexer = (Lexer*)alloc_memory(sizeof(Lexer), true);
+    Lexer* lexer = create_struct(Lexer);
     lexer->source_path = source_path;
     lexer->source_code = read_source_code(source_path, &lexer->size);
     lexer->line = 0;

@@ -18,7 +18,7 @@ typedef struct Args {
 } Args;
 
 static Args* parse_args(int argc, char* argv[]) {
-    Args* args = (Args*)alloc_memory(sizeof(Args), true);
+    Args* args = create_struct(Args);
     memset(args, 0, sizeof(Args));
     for (int i = 1; i < argc; ++i) {
         if (argv[i][0] == '-') {
@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
         lexer = create_lexer(args->source_path);
     }
     if (args->output_flags & OUTPUT_TOKENS) {
-        Lexer* copy_lexer = (Lexer*)alloc_memory(sizeof(Lexer), true);
+        Lexer* copy_lexer = create_struct(Lexer);
         memcpy(copy_lexer, lexer, sizeof(Lexer));
         output_tokens(copy_lexer, args->output_path);
     }

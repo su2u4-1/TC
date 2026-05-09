@@ -66,6 +66,7 @@ extern MemoryBlock* string_memory;
 extern MemoryBlock* struct_memory;
 
 void init(void);
+#define create_struct(T) (T*)alloc_memory(sizeof(T), true)
 string create_string(const char* str, size_t len);
 pointer alloc_memory(size_t size, bool is_struct);
 string string_splice(string format, ...);

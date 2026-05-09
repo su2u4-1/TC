@@ -6,7 +6,7 @@ All the functions implemented here are temporary and will be replaced by formal 
 // TODO: implement file handle functions, and complete struct File
 
 File* create_file(string path) {
-    File* file = (File*)alloc_memory(sizeof(File), true);
+    File* file = create_struct(File);
     file->path = path;
     return file;
 }
