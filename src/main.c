@@ -1,6 +1,7 @@
 #include "file.h"
 #include "lexer.h"
 #include "lib.h"
+#include "parser.h"
 
 typedef enum OutputFlags {
     OUTPUT_NONE = 0,
@@ -64,6 +65,7 @@ static Args* parse_args(int argc, char* argv[]) {
 
 int main(int argc, char* argv[]) {
     init();
+    init_symbol();
 
     Args* args = parse_args(argc, argv);
 

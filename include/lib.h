@@ -168,4 +168,13 @@ void list_append(List* self, pointer value);
 pointer list_pop_front(List* self);
 pointer list_pop_back(List* self);
 
+typedef struct Symbol Symbol;
+extern Symbol* symbol_int;
+extern Symbol* symbol_float;
+extern Symbol* symbol_string;
+extern Symbol* symbol_bool;
+extern Symbol* symbol_void;
+extern Symbol* symbol_pointer;
+extern Symbol* symbol_const;
+
 #endif  // LIB_H

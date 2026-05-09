@@ -14,6 +14,9 @@ typedef enum SymbolType {
 } SymbolType;
 
 typedef struct Symbol Symbol;
+typedef struct Function Function;
+typedef struct Method Method;
+typedef struct Class Class;
 struct Symbol {
     string name;
     /*
@@ -27,11 +30,11 @@ struct Symbol {
     SymbolType kind;
     string id;
     union {
-        // Function* function;  // for function
-        // Method* method;      // for method
-        // Class* class;        // for class
-        size_t offset;  // for variable, attribute, parameter
-        void* other;    // for type, always NULL
+        Function* function;  // for function
+        Method* method;      // for method
+        Class* class;        // for class
+        size_t offset;       // for variable, attribute, parameter
+        void* other;         // for type, always NULL
     } info;
 };
 
@@ -52,5 +55,6 @@ struct SymbolTable {
 
 Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info);
 SymbolTable* create_symbol_table(SymbolTableType type, SymbolTable* parent);
+void init_symbol(void);
 
 #endif  // SYMBOL_TABLE_H

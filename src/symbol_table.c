@@ -44,3 +44,13 @@ SymbolTable* create_symbol_table(SymbolTableType type, SymbolTable* parent) {
     table->symbols = list_create();
     return table;
 }
+
+void init_symbol(void) {
+    symbol_int = create_symbol(KEYWORD_INT, NULL, SYMBOL_TYPE, NULL);
+    symbol_float = create_symbol(KEYWORD_FLOAT, NULL, SYMBOL_TYPE, NULL);
+    symbol_string = create_symbol(KEYWORD_STRING, NULL, SYMBOL_TYPE, NULL);
+    symbol_bool = create_symbol(KEYWORD_BOOL, NULL, SYMBOL_TYPE, NULL);
+    symbol_void = create_symbol(KEYWORD_VOID, NULL, SYMBOL_TYPE, NULL);
+    symbol_pointer = create_symbol(KEYWORD_POINTER, NULL, SYMBOL_TYPE, NULL);
+    symbol_const = create_symbol(KEYWORD_CONST, NULL, SYMBOL_TYPE, NULL);
+}

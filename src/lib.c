@@ -275,6 +275,13 @@ string SPECIAL_AND = NULL;
 string SPECIAL_OR = NULL;
 string SPECIAL_NOT = NULL;
 string SPECIAL_NEG = NULL;
+Symbol* symbol_int = NULL;
+Symbol* symbol_float = NULL;
+Symbol* symbol_string = NULL;
+Symbol* symbol_bool = NULL;
+Symbol* symbol_void = NULL;
+Symbol* symbol_pointer = NULL;
+Symbol* symbol_const = NULL;
 
 static void init_constant(void) {
     for (size_t i = 0; i < keywordCount; ++i) {
@@ -382,7 +389,7 @@ void list_append(List* self, pointer value) {
     }
 }
 pointer list_pop_front(List* self) {
-    if (self == NULL || self->head == NULL) {
+    if (list_empty(self)) {
         fprintf(stderr, "[lib Fatal] at <list_pop_front>: List is empty\n");
         abort();
     }
@@ -394,7 +401,7 @@ pointer list_pop_front(List* self) {
     return value;
 }
 pointer list_pop_back(List* self) {
-    if (self == NULL || self->head == NULL) {
+    if (list_empty(self)) {
         fprintf(stderr, "[lib Fatal] at <list_pop_back>: List is empty\n");
         abort();
     }
