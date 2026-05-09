@@ -419,3 +419,12 @@ pointer list_pop_back(List* self) {
     }
     return value;
 }
+
+bool is_special(string str) {
+    for (size_t i = 0; i < specialCount; ++i) {
+        if (str == specialList[i]) {
+            return true;
+        }
+    }
+    return false;
+}

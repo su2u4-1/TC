@@ -177,4 +177,6 @@ extern Symbol* symbol_void;
 extern Symbol* symbol_pointer;
 extern Symbol* symbol_const;
 
+bool is_special(string str);
+
 #endif  // LIB_H

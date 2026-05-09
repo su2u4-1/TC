@@ -9,15 +9,6 @@ static bool is_keyword(string str) {
     return false;
 }
 
-static bool is_special(string str) {
-    for (size_t i = 0; i < specialCount; ++i) {
-        if (str == specialList[i]) {
-            return true;
-        }
-    }
-    return false;
-}
-
 #define is_digit(c) ((c) >= '0' && (c) <= '9')
 #define is_alphabet(c) ((c) >= 'a' && (c) <= 'z') || ((c) >= 'A' && (c) <= 'Z')
 #define lexer_error(message, line, column, filename) fprintf(stderr, "[lexer Error] at %s:%zu:%zu: %s\n", filename, line + 1, column + 1, message)
