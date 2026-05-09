@@ -1,10 +1,11 @@
 #ifndef AST_H
 #define AST_H
 
-#include "lib.h"
+#include "file.h"
 #include "symbol_table.h"
 
 typedef struct AST {
+    File* file;
     list(CodeMember*) members;
 } AST;
 
