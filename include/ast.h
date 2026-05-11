@@ -120,14 +120,14 @@ struct ClassMember {
 
 struct Statement {
     union {
-        Variable* declare;       // DECLARE
-        If* if_;                 // IF
-        For* for_;               // FOR
-        While* while_;           // WHILE
-        Expression* break_;      // BREAK
-        void* continue_;         // CONTINUE
-        Expression* return_;     // RETURN
-        Expression* expression;  // EXPRESSION
+        list(Variable*) declare;  // DECLARE
+        If* if_;                  // IF
+        For* for_;                // FOR
+        While* while_;            // WHILE
+        void* break_;             // BREAK
+        void* continue_;          // CONTINUE
+        Expression* return_;      // RETURN
+        Expression* expression;   // EXPRESSION
     } statement;
     StatementType type;
 };
@@ -140,7 +140,10 @@ struct If {
 };
 
 struct For {
-    Variable* initializer;
+    union {
+        Variable* decl;
+        Expression* expr;
+    } init;
     Expression* condition;
     Expression* increment;
     list(Statement*) body;
