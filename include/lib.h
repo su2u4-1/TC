@@ -169,6 +169,8 @@ pointer list_pop_front(List* self);
 pointer list_pop_back(List* self);
 
 typedef struct Symbol Symbol;
+typedef struct SymbolTable SymbolTable;
+extern SymbolTable* global_symbol_table;
 extern Symbol* symbol_int;
 extern Symbol* symbol_float;
 extern Symbol* symbol_string;

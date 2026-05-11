@@ -1,6 +1,6 @@
 #include "symbol_table.h"
 
-Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info) {
+Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info, SymbolTable* table) {
     static size_t symbol_count = 0;
     Symbol* symbol = create_struct(Symbol);
     symbol->name = name;
@@ -34,6 +34,9 @@ Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info) 
     }
     symbol->id = string_splice("%s_%zu(%s)", kind_str, symbol_count++, name);
     symbol->info.other = info;
+    if (table != NULL) {
+        list_append(table->symbols, (pointer)symbol);
+    }
     return symbol;
 }
 
@@ -46,11 +49,12 @@ SymbolTable* create_symbol_table(SymbolTableType type, SymbolTable* parent) {
 }
 
 void init_symbol(void) {
-    symbol_int = create_symbol(KEYWORD_INT, NULL, SYMBOL_TYPE, NULL);
-    symbol_float = create_symbol(KEYWORD_FLOAT, NULL, SYMBOL_TYPE, NULL);
-    symbol_string = create_symbol(KEYWORD_STRING, NULL, SYMBOL_TYPE, NULL);
-    symbol_bool = create_symbol(KEYWORD_BOOL, NULL, SYMBOL_TYPE, NULL);
-    symbol_void = create_symbol(KEYWORD_VOID, NULL, SYMBOL_TYPE, NULL);
-    symbol_pointer = create_symbol(KEYWORD_POINTER, NULL, SYMBOL_TYPE, NULL);
-    symbol_const = create_symbol(KEYWORD_CONST, NULL, SYMBOL_TYPE, NULL);
+    global_symbol_table = create_symbol_table(SYMBOL_TABLE_GLOBAL, NULL);
+    symbol_int = create_symbol(KEYWORD_INT, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
+    symbol_float = create_symbol(KEYWORD_FLOAT, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
+    symbol_string = create_symbol(KEYWORD_STRING, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
+    symbol_bool = create_symbol(KEYWORD_BOOL, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
+    symbol_void = create_symbol(KEYWORD_VOID, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
+    symbol_pointer = create_symbol(KEYWORD_POINTER, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
+    symbol_const = create_symbol(KEYWORD_CONST, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
 }

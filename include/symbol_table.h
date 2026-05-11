@@ -53,7 +53,7 @@ struct SymbolTable {
     list(Symbol*) symbols;
 };
 
-Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info);
+Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info, SymbolTable* table);
 SymbolTable* create_symbol_table(SymbolTableType type, SymbolTable* parent);
 void init_symbol(void);
 

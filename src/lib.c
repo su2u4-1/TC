@@ -275,6 +275,7 @@ string SPECIAL_AND = NULL;
 string SPECIAL_OR = NULL;
 string SPECIAL_NOT = NULL;
 string SPECIAL_NEG = NULL;
+SymbolTable* global_symbol_table = NULL;
 Symbol* symbol_int = NULL;
 Symbol* symbol_float = NULL;
 Symbol* symbol_string = NULL;
