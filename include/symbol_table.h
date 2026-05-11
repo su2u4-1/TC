@@ -36,6 +36,7 @@ struct Symbol {
         size_t offset;       // for variable, attribute, parameter
         void* other;         // for type, always NULL
     } info;
+    SymbolTable* table;
 };
 
 typedef enum SymbolTableType {
@@ -55,6 +56,7 @@ struct SymbolTable {
 
 Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info, SymbolTable* table);
 SymbolTable* create_symbol_table(SymbolTableType type, SymbolTable* parent);
+Symbol* search_symbol(SymbolTable* table, string name, bool compare_kind, SymbolType compare_kind_value, Symbol* compare_type);
 void init_symbol(void);
 
 #endif  // SYMBOL_TABLE_H

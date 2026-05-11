@@ -2,7 +2,18 @@
 
 Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info, SymbolTable* table) {
     static size_t symbol_count = 0;
-    Symbol* symbol = create_struct(Symbol);
+    Symbol* symbol = search_symbol(table, name, true, kind, type);
+    if (symbol != NULL) {
+        if (symbol->kind == kind && symbol->type == type) {
+            return symbol;
+        } else if (symbol->table == table) {
+            fprintf(stderr, "[symbol_table Error] Symbol '%s' already exists in the current scope\n", name);
+            return NULL;
+        } else {
+            fprintf(stderr, "[symbol_table Warning] Symbol '%s' already exists in an outer scope, but with a different type or kind. Creating a new symbol in the current scope.\n", name);
+        }
+    }
+    symbol = create_struct(Symbol);
     symbol->name = name;
     symbol->type = type;
     symbol->kind = kind;
@@ -34,6 +45,7 @@ Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info, 
     }
     symbol->id = string_splice("%s_%zu(%s)", kind_str, symbol_count++, name);
     symbol->info.other = info;
+    symbol->table = table;
     if (table != NULL) {
         list_append(table->symbols, (pointer)symbol);
     }
@@ -57,4 +69,30 @@ void init_symbol(void) {
     symbol_void = create_symbol(KEYWORD_VOID, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
     symbol_pointer = create_symbol(KEYWORD_POINTER, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
     symbol_const = create_symbol(KEYWORD_CONST, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
+}
+
+Symbol* search_symbol(SymbolTable* table, string name, bool compare_kind, SymbolType compare_kind_value, Symbol* compare_type) {
+    for (int stage = 0; stage < 3; stage++) {
+        for (SymbolTable* current = table; current != NULL; current = current->parent) {
+            for (ListNode* node = current->symbols->head; node != NULL; node = node->next) {
+                Symbol* symbol = (Symbol*)node->data;
+                if (symbol->name != name) continue;
+                bool match = false;
+                switch (stage) {
+                    case 0:
+                        match = (!compare_kind || symbol->kind == compare_kind_value) && (compare_type == NULL || symbol->type == compare_type);
+                        break;
+                    case 1:
+                        match = (compare_type == NULL || symbol->type == compare_type);
+                        break;
+                    case 2:
+                        match = true;
+                        break;
+                    default: break;
+                }
+                if (match) return symbol;
+            }
+        }
+    }
+    return NULL;
 }

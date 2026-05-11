@@ -17,22 +17,23 @@ Parser* create_parser(Lexer* lexer) {
 }
 
 static CodeMember* create_code_member(CodeMemberType type, pointer member);
-static Import* parse_import(Parser* parser);
-static Class* parse_class(Parser* parser);
-static Function* parse_function(Parser* parser);
+static Import* parse_import(Parser* parser, SymbolTable* table);
+static Class* parse_class(Parser* parser, SymbolTable* table);
+static Function* parse_function(Parser* parser, SymbolTable* table);
 
 AST* parse_code(Parser* parser) {
     AST* ast = create_struct(AST);
     ast->members = list_create();
     ast->file = parser->file;
     Token* token = get_next_token(parser->lexer);
+    SymbolTable* global_table = create_symbol_table(SYMBOL_TABLE_GLOBAL, global_symbol_table);
     while (token != NULL && token->type != TOKEN_EOF) {
         if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_IMPORT) {
-            list_append(ast->members, (pointer)create_code_member(CODE_IMPORT, (pointer)parse_import(parser)));
+            list_append(ast->members, (pointer)create_code_member(CODE_IMPORT, (pointer)parse_import(parser, global_table)));
         } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_CLASS) {
-            list_append(ast->members, (pointer)create_code_member(CODE_CLASS, (pointer)parse_class(parser)));
+            list_append(ast->members, (pointer)create_code_member(CODE_CLASS, (pointer)parse_class(parser, global_table)));
         } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_FUNC) {
-            list_append(ast->members, (pointer)create_code_member(CODE_FUNCTION, (pointer)parse_function(parser)));
+            list_append(ast->members, (pointer)create_code_member(CODE_FUNCTION, (pointer)parse_function(parser, global_table)));
         } else {
             parser_error("Unexpected token", token);
         }
@@ -60,14 +61,14 @@ CodeMember* create_code_member(CodeMemberType type, pointer member) {
     return code_member;
 }
 
-Import* parse_import(Parser* parser) {
+Import* parse_import(Parser* parser, SymbolTable* table) {
     Import* import = create_struct(Import);
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER) {
         parser_error("Expected identifier after 'import'", token);
         return NULL;
     }
-    import->name = create_symbol(token->lexeme, NULL, SYMBOL_VARIABLE, NULL);
+    import->name = create_symbol(token->lexeme, NULL, SYMBOL_VARIABLE, NULL, table);
     token = get_next_token(parser->lexer);
     if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_SEMICOLON) {
         import->path = NULL;
@@ -86,30 +87,31 @@ Import* parse_import(Parser* parser) {
     return import;
 }
 
-static Method* parse_method(Parser* parser);
-static list(Variable*) parse_variable(Parser* parser);
+static Method* parse_method(Parser* parser, SymbolTable* table);
+static list(Variable*) parse_variable(Parser* parser, SymbolTable* table);
 
-Class* parse_class(Parser* parser) {
+Class* parse_class(Parser* parser, SymbolTable* table) {
     Class* class = create_struct(Class);
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER) {
         parser_error("Expected identifier after 'class'", token);
         return NULL;
     }
-    class->name = create_symbol(token->lexeme, NULL, SYMBOL_CLASS, (pointer)class);
+    class->name = create_symbol(token->lexeme, NULL, SYMBOL_CLASS, (pointer)class, table);
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_BRACE) {
         parser_error("Expected '{' after class name", token);
         return NULL;
     }
+    SymbolTable* class_table = create_symbol_table(SYMBOL_TABLE_CLASS, table);
     while (true) {
         token = get_next_token(parser->lexer);
         if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_R_BRACE) {
             break;
         } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_METHOD) {
-            list_append(class->members, (pointer)create_code_member(CLASS_METHOD, (pointer)parse_method(parser)));
+            list_append(class->members, (pointer)create_code_member(CLASS_METHOD, (pointer)parse_method(parser, class_table)));
         } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_VAR) {
-            list(Variable*) vars = parse_variable(parser);
+            list(Variable*) vars = parse_variable(parser, class_table);
             while (!list_empty(vars)) {
                 list_append(class->members, (pointer)create_code_member(CLASS_ATTRIBUTE, list_pop_front(vars)));
             }
@@ -121,41 +123,42 @@ Class* parse_class(Parser* parser) {
 }
 
 #define is_builtin_type(token) (token->type == TOKEN_KEYWORD && (token->lexeme == KEYWORD_INT || token->lexeme == KEYWORD_FLOAT || token->lexeme == KEYWORD_STRING || token->lexeme == KEYWORD_BOOL || token->lexeme == KEYWORD_VOID || token->lexeme == KEYWORD_POINTER || token->lexeme == KEYWORD_CONST))
-static Symbol* parse_type(Parser* parser);
-static Statement* parse_statement(Parser* parser);
+static Symbol* parse_type(Parser* parser, SymbolTable* table);
+static Statement* parse_statement(Parser* parser, SymbolTable* table);
 
-Function* parse_function(Parser* parser) {
+Function* parse_function(Parser* parser, SymbolTable* table) {
     Function* function = create_struct(Function);
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER && !is_builtin_type(token)) {
         parser_error("Expected identifier or type after 'func'", token);
         return NULL;
     }
-    function->type = parse_type(parser);
+    function->type = parse_type(parser, table);
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER) {
         parser_error("Expected identifier after function return type", token);
         return NULL;
     }
-    function->name = create_symbol(token->lexeme, NULL, SYMBOL_FUNCTION, (pointer)function);
+    function->name = create_symbol(token->lexeme, NULL, SYMBOL_FUNCTION, (pointer)function, table);
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
         parser_error("Expected '(' after function name", token);
         return NULL;
     }
     token = get_next_token(parser->lexer);
+    SymbolTable* function_table = create_symbol_table(SYMBOL_TABLE_FUNCTION, table);
     while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
         if (token->type != TOKEN_IDENTIFIER && !is_builtin_type(token)) {
             parser_error("Unexpected token in parameter list", token);
             return NULL;
         }
-        Symbol* param_type = parse_type(parser);
+        Symbol* param_type = parse_type(parser, table);
         token = get_next_token(parser->lexer);
         if (token->type != TOKEN_IDENTIFIER) {
             parser_error("Expected identifier in parameter list", token);
             return NULL;
         }
-        list_append(function->parameters, (pointer)create_symbol(token->lexeme, param_type, SYMBOL_PARAMETER, NULL));
+        list_append(function->parameters, (pointer)create_symbol(token->lexeme, param_type, SYMBOL_PARAMETER, NULL, function_table));
         token = get_next_token(parser->lexer);
         if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_COMMA) {
             token = get_next_token(parser->lexer);
@@ -170,8 +173,9 @@ Function* parse_function(Parser* parser) {
         return NULL;
     }
     token = get_next_token(parser->lexer);
+    SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, function_table);
     while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-        Statement* stmt = parse_statement(parser);
+        Statement* stmt = parse_statement(parser, block_table);
         if (stmt == NULL) {
             parser_error("Unexpected token in function body", token);
             return NULL;
@@ -189,20 +193,20 @@ Function* parse_function(Parser* parser) {
     return function;
 }
 
-Method* parse_method(Parser* parser) {
+Method* parse_method(Parser* parser, SymbolTable* table) {
     Method* method = create_struct(Method);
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER && !is_builtin_type(token)) {
         parser_error("Expected identifier or type after 'method'", token);
         return NULL;
     }
-    method->type = parse_type(parser);
+    method->type = parse_type(parser, table);
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER && token->type != TOKEN_SPECIAL) {
         parser_error("Expected identifier after method return type", token);
         return NULL;
     }
-    method->name = create_symbol(token->lexeme, NULL, SYMBOL_FUNCTION, (pointer)method);
+    method->name = create_symbol(token->lexeme, NULL, SYMBOL_FUNCTION, (pointer)method, table);
     if (token->type == TOKEN_SPECIAL) {
         if (!is_special(token->lexeme)) {
             parser_error("Invalid special method", token);
@@ -216,18 +220,19 @@ Method* parse_method(Parser* parser) {
         return NULL;
     }
     token = get_next_token(parser->lexer);
+    SymbolTable* method_table = create_symbol_table(SYMBOL_TABLE_METHOD, table);
     while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
         if (token->type != TOKEN_IDENTIFIER && !is_builtin_type(token)) {
             parser_error("Unexpected token in parameter list", token);
             return NULL;
         }
-        Symbol* param_type = parse_type(parser);
+        Symbol* param_type = parse_type(parser, table);
         token = get_next_token(parser->lexer);
         if (token->type != TOKEN_IDENTIFIER) {
             parser_error("Expected identifier in parameter list", token);
             return NULL;
         }
-        list_append(method->parameters, (pointer)create_symbol(token->lexeme, param_type, SYMBOL_PARAMETER, NULL));
+        list_append(method->parameters, (pointer)create_symbol(token->lexeme, param_type, SYMBOL_PARAMETER, NULL, method_table));
         token = get_next_token(parser->lexer);
         if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_COMMA) {
             token = get_next_token(parser->lexer);
@@ -242,8 +247,9 @@ Method* parse_method(Parser* parser) {
         return NULL;
     }
     token = get_next_token(parser->lexer);
+    SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, method_table);
     while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-        Statement* stmt = parse_statement(parser);
+        Statement* stmt = parse_statement(parser, block_table);
         if (stmt == NULL) {
             parser_error("Unexpected token in method body", token);
             return NULL;
@@ -264,13 +270,13 @@ Method* parse_method(Parser* parser) {
 static Expression* parse_expression_prec(Parser* parser, int min_precedence);
 #define parse_expression(parser) parse_expression_prec(parser, 1)
 
-list(Variable*) parse_variable(Parser* parser) {
+list(Variable*) parse_variable(Parser* parser, SymbolTable* table) {
     list(Variable*) vars = list_create();
-    Symbol* type = parse_type(parser);
+    Symbol* type = parse_type(parser, table);
     Token* token;
     while ((token = get_next_token(parser->lexer))->type == TOKEN_IDENTIFIER) {
         Variable* var = create_struct(Variable);
-        var->var = create_symbol(token->lexeme, type, SYMBOL_VARIABLE, NULL);
+        var->var = create_symbol(token->lexeme, type, SYMBOL_VARIABLE, NULL, table);
         token = get_next_token(parser->lexer);
         if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_ASSIGN) {
             get_next_token(parser->lexer);  // consume '='
@@ -290,7 +296,7 @@ list(Variable*) parse_variable(Parser* parser) {
     return vars;
 }
 
-Symbol* parse_type(Parser* parser) {
+Symbol* parse_type(Parser* parser, SymbolTable* table) {
     Symbol* type;
     Token* token = get_current_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER && !is_builtin_type(token)) {
@@ -314,13 +320,13 @@ Symbol* parse_type(Parser* parser) {
             type = symbol_const;
         } else {
             parser_error("Unknown built-in type", token);
-            type = NULL;
+            return NULL;
         }
     } else if (token->type == TOKEN_IDENTIFIER) {
-        type = create_symbol(token->lexeme, NULL, SYMBOL_TYPE, NULL);
+        type = create_symbol(token->lexeme, NULL, SYMBOL_TYPE, NULL, table);
     } else {
         parser_error("Unexpected token when parsing type", token);
-        type = NULL;
+        return NULL;
     }
     token = peek_next_token(parser->lexer);
     if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_LT) {
@@ -330,7 +336,7 @@ Symbol* parse_type(Parser* parser) {
             parser_error("Expected type in container type", token);
             return NULL;
         }
-        Symbol* element_type = parse_type(parser);
+        Symbol* element_type = parse_type(parser, table);
         if (element_type == NULL) {
             return NULL;
         }
@@ -344,25 +350,25 @@ Symbol* parse_type(Parser* parser) {
     return type;
 }
 
-static If* parse_if(Parser* parser);
-static For* parse_for(Parser* parser);
-static While* parse_while(Parser* parser);
+static If* parse_if(Parser* parser, SymbolTable* table);
+static For* parse_for(Parser* parser, SymbolTable* table);
+static While* parse_while(Parser* parser, SymbolTable* table);
 
-Statement* parse_statement(Parser* parser) {
+Statement* parse_statement(Parser* parser, SymbolTable* table) {
     Statement* stmt = create_struct(Statement);
     Token* token = get_next_token(parser->lexer);
     bool check_semicolon = true;
     if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_IF) {
         stmt->type = STATEMENT_IF;
-        stmt->statement.if_ = parse_if(parser);
+        stmt->statement.if_ = parse_if(parser, table);
         check_semicolon = false;
     } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_FOR) {
         stmt->type = STATEMENT_FOR;
-        stmt->statement.for_ = parse_for(parser);
+        stmt->statement.for_ = parse_for(parser, table);
         check_semicolon = false;
     } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_WHILE) {
         stmt->type = STATEMENT_WHILE;
-        stmt->statement.while_ = parse_while(parser);
+        stmt->statement.while_ = parse_while(parser, table);
         check_semicolon = false;
     } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_RETURN) {
         stmt->type = STATEMENT_RETURN;
@@ -376,7 +382,7 @@ Statement* parse_statement(Parser* parser) {
         stmt->statement.continue_ = NULL;
     } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_VAR) {
         stmt->type = STATEMENT_DECLARE;
-        stmt->statement.declare = parse_variable(parser);
+        stmt->statement.declare = parse_variable(parser, table);
     } else {
         stmt->type = STATEMENT_EXPRESSION;
         stmt->statement.expression = parse_expression(parser);
@@ -391,7 +397,7 @@ Statement* parse_statement(Parser* parser) {
     return stmt;
 }
 
-If* parse_if(Parser* parser) {
+If* parse_if(Parser* parser, SymbolTable* table) {
     If* if_ = create_struct(If);
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
@@ -411,8 +417,9 @@ If* parse_if(Parser* parser) {
         return NULL;
     }
     token = get_next_token(parser->lexer);
+    SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, table);
     while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-        Statement* stmt = parse_statement(parser);
+        Statement* stmt = parse_statement(parser, block_table);
         if (stmt == NULL) {
             parser_error("Unexpected token in if body", token);
             return NULL;
@@ -448,8 +455,9 @@ If* parse_if(Parser* parser) {
             return NULL;
         }
         token = get_next_token(parser->lexer);
+        SymbolTable* elif_block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, table);
         while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-            Statement* stmt = parse_statement(parser);
+            Statement* stmt = parse_statement(parser, elif_block_table);
             if (stmt == NULL) {
                 parser_error("Unexpected token in elif body", token);
                 return NULL;
@@ -475,8 +483,9 @@ If* parse_if(Parser* parser) {
             return NULL;
         }
         token = get_next_token(parser->lexer);
+        SymbolTable* else_block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, table);
         while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-            Statement* stmt = parse_statement(parser);
+            Statement* stmt = parse_statement(parser, else_block_table);
             if (stmt == NULL) {
                 parser_error("Unexpected token in else body", token);
                 return NULL;
@@ -495,7 +504,7 @@ If* parse_if(Parser* parser) {
     return if_;
 }
 
-For* parse_for(Parser* parser) {
+For* parse_for(Parser* parser, SymbolTable* table) {
     For* for_ = create_struct(For);
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
@@ -503,8 +512,9 @@ For* parse_for(Parser* parser) {
         return NULL;
     }
     token = get_next_token(parser->lexer);
+    SymbolTable* for_table = create_symbol_table(SYMBOL_TABLE_BLOCK, table);
     if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_VAR) {
-        list(Variable*) vars = parse_variable(parser);
+        list(Variable*) vars = parse_variable(parser, for_table);
         if (vars == NULL || vars->head == NULL || vars->head != vars->tail) {
             parser_error("Expected exactly one variable declaration in for loop initializer", token);
             return NULL;
@@ -550,8 +560,9 @@ For* parse_for(Parser* parser) {
         return NULL;
     }
     token = get_next_token(parser->lexer);
+    SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, for_table);
     while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-        Statement* stmt = parse_statement(parser);
+        Statement* stmt = parse_statement(parser, block_table);
         if (stmt == NULL) {
             parser_error("Unexpected token in for loop body", token);
             return NULL;
@@ -569,7 +580,7 @@ For* parse_for(Parser* parser) {
     return for_;
 }
 
-While* parse_while(Parser* parser) {
+While* parse_while(Parser* parser, SymbolTable* table) {
     While* while_ = create_struct(While);
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
@@ -589,8 +600,9 @@ While* parse_while(Parser* parser) {
         return NULL;
     }
     token = get_next_token(parser->lexer);
+    SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, table);
     while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-        Statement* stmt = parse_statement(parser);
+        Statement* stmt = parse_statement(parser, block_table);
         if (stmt == NULL) {
             parser_error("Unexpected token in while body", token);
             return NULL;
