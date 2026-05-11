@@ -113,6 +113,7 @@ struct Method {
 struct Class {
     Symbol* name;
     list(ClassMember*) members;
+    SymbolTable* table;
 };
 
 struct Import {

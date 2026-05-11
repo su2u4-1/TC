@@ -93,6 +93,10 @@ Symbol* search_symbol(SymbolTable* table, string name, bool compare_kind, Symbol
                 if (match) return symbol;
             }
         }
+        if (stage == 0 && !compare_kind && compare_type == NULL)
+            break;
+        if (stage == 1 && compare_type == NULL)
+            break;
     }
     return NULL;
 }
