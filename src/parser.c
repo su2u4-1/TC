@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include "ast.h"
 #include "lexer.h"
 #include "lib.h"
 
@@ -260,7 +261,8 @@ Method* parse_method(Parser* parser) {
     return method;
 }
 
-static Expression* parse_expression(Parser* parser);
+static Expression* parse_expression_prec(Parser* parser, int min_precedence);
+#define parse_expression(parser) parse_expression_prec(parser, 1)
 
 list(Variable*) parse_variable(Parser* parser) {
     list(Variable*) vars = list_create();
@@ -606,7 +608,94 @@ While* parse_while(Parser* parser) {
     return while_;
 }
 
-Expression* parse_expression(Parser* parser) {
-    Expression* exp = create_struct(Expression);
-    return exp;
+static Primary* parse_primary(Parser* parser);
+static int operator_precedence(OperatorType op) {
+    switch (op) {
+        case OP_ASSIGN:      // =
+        case OP_ADD_ASSIGN:  // +=
+        case OP_SUB_ASSIGN:  // -=
+        case OP_MUL_ASSIGN:  // *=
+        case OP_DIV_ASSIGN:  // /=
+        case OP_MOD_ASSIGN:  // %=
+            return 1;
+        case OP_AND:  // &&
+        case OP_OR:   // ||
+            return 2;
+        case OP_EQ:  // ==
+        case OP_NE:  // !=
+        case OP_LT:  // <
+        case OP_GT:  // >
+        case OP_LE:  // <=
+        case OP_GE:  // >=
+            return 3;
+        case OP_ADD:  // +
+        case OP_SUB:  // -
+            return 4;
+        case OP_MUL:  // *
+        case OP_DIV:  // /
+        case OP_MOD:  // %
+            return 5;
+        case OP_NONE:
+        default:
+            return 0;
+    }
+}
+static OperatorType operator(string lexeme) {
+    if (lexeme == SYMBOL_ADD) return OP_ADD;
+    else if (lexeme == SYMBOL_SUB) return OP_SUB;
+    else if (lexeme == SYMBOL_MUL) return OP_MUL;
+    else if (lexeme == SYMBOL_DIV) return OP_DIV;
+    else if (lexeme == SYMBOL_MOD) return OP_MOD;
+    else if (lexeme == SYMBOL_ASSIGN) return OP_ASSIGN;
+    else if (lexeme == SYMBOL_EQ) return OP_EQ;
+    else if (lexeme == SYMBOL_NE) return OP_NE;
+    else if (lexeme == SYMBOL_LT) return OP_LT;
+    else if (lexeme == SYMBOL_GT) return OP_GT;
+    else if (lexeme == SYMBOL_LE) return OP_LE;
+    else if (lexeme == SYMBOL_GE) return OP_GE;
+    else if (lexeme == SYMBOL_ADD_ASSIGN) return OP_ADD_ASSIGN;
+    else if (lexeme == SYMBOL_SUB_ASSIGN) return OP_SUB_ASSIGN;
+    else if (lexeme == SYMBOL_MUL_ASSIGN) return OP_MUL_ASSIGN;
+    else if (lexeme == SYMBOL_DIV_ASSIGN) return OP_DIV_ASSIGN;
+    else if (lexeme == SYMBOL_MOD_ASSIGN) return OP_MOD_ASSIGN;
+    else if (lexeme == SYMBOL_AND) return OP_AND;
+    else if (lexeme == SYMBOL_OR) return OP_OR;
+    else return OP_NONE;
+}
+#define is_right_associative(op) (op == OP_ASSIGN || op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN)
+Expression* parse_expression_prec(Parser* parser, int minp) {
+    // parse first operand
+    Expression* left = create_struct(Expression);
+    left->left.unary = parse_primary(parser);
+    if (left->left.unary == NULL) {
+        parser_error("Expected expression", get_current_token(parser->lexer));
+        return NULL;
+    }
+    left->right = NULL;
+    left->op = OP_NONE;
+    // check if the operator exists and its precedence
+    OperatorType op = OP_NONE;
+    int p = 0;
+    Token* token = peek_next_token(parser->lexer);
+    while (token->type == TOKEN_SYMBOL && (op = operator(token->lexeme)) != OP_NONE && (p = operator_precedence(op)) >= minp) {
+        get_next_token(parser->lexer);  // consume operator
+        // parse scond operand
+        Expression* expr = create_struct(Expression);
+        expr->right = parse_expression_prec(parser, p + (is_right_associative(op) ? 0 : 1));
+        if (expr->right == NULL) {
+            parser_error("Expected expression after operator", token);
+            return NULL;
+        }
+        // create new expression node
+        expr->left.binary = left;
+        expr->op = op;
+        left = expr;
+        token = peek_next_token(parser->lexer);
+    }
+    return left;
+}
+
+Primary* parse_primary(Parser* parser) {
+    Primary* primary = create_struct(Primary);
+    return primary;
 }
