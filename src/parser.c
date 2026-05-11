@@ -175,7 +175,14 @@ Function* parse_function(Parser* parser) {
             parser_error("Unexpected token in function body", token);
             return NULL;
         }
-        list_append(function->body, (pointer)stmt);
+        if (stmt->type == STATEMENT_DECLARE) {
+            list(Variable*) vars = stmt->statement.declare;
+            while (!list_empty(vars)) {
+                list_append(function->body, (pointer)list_pop_front(vars));
+            }
+        } else {
+            list_append(function->body, (pointer)stmt);
+        }
         token = get_next_token(parser->lexer);
     }
     return function;
@@ -240,7 +247,14 @@ Method* parse_method(Parser* parser) {
             parser_error("Unexpected token in method body", token);
             return NULL;
         }
-        list_append(method->body, (pointer)stmt);
+        if (stmt->type == STATEMENT_DECLARE) {
+            list(Variable*) vars = stmt->statement.declare;
+            while (!list_empty(vars)) {
+                list_append(method->body, (pointer)list_pop_front(vars));
+            }
+        } else {
+            list_append(method->body, (pointer)stmt);
+        }
         token = get_next_token(parser->lexer);
     }
     return method;
@@ -328,9 +342,268 @@ Symbol* parse_type(Parser* parser) {
     return type;
 }
 
+static If* parse_if(Parser* parser);
+static For* parse_for(Parser* parser);
+static While* parse_while(Parser* parser);
+
 Statement* parse_statement(Parser* parser) {
     Statement* stmt = create_struct(Statement);
+    Token* token = get_next_token(parser->lexer);
+    bool check_semicolon = true;
+    if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_IF) {
+        stmt->type = STATEMENT_IF;
+        stmt->statement.if_ = parse_if(parser);
+        check_semicolon = false;
+    } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_FOR) {
+        stmt->type = STATEMENT_FOR;
+        stmt->statement.for_ = parse_for(parser);
+        check_semicolon = false;
+    } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_WHILE) {
+        stmt->type = STATEMENT_WHILE;
+        stmt->statement.while_ = parse_while(parser);
+        check_semicolon = false;
+    } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_RETURN) {
+        stmt->type = STATEMENT_RETURN;
+        get_next_token(parser->lexer);  // consume 'return'
+        stmt->statement.return_ = parse_expression(parser);
+    } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_BREAK) {
+        stmt->type = STATEMENT_BREAK;
+        stmt->statement.break_ = NULL;
+    } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_CONTINUE) {
+        stmt->type = STATEMENT_CONTINUE;
+        stmt->statement.continue_ = NULL;
+    } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_VAR) {
+        stmt->type = STATEMENT_DECLARE;
+        stmt->statement.declare = parse_variable(parser);
+    } else {
+        stmt->type = STATEMENT_EXPRESSION;
+        stmt->statement.expression = parse_expression(parser);
+    }
+    if (check_semicolon) {
+        token = get_next_token(parser->lexer);
+        if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_SEMICOLON) {
+            parser_error("Expected ';' after statement", token);
+            return NULL;
+        }
+    }
     return stmt;
+}
+
+If* parse_if(Parser* parser) {
+    If* if_ = create_struct(If);
+    Token* token = get_next_token(parser->lexer);
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
+        parser_error("Expected '(' after 'if'", token);
+        return NULL;
+    }
+    get_next_token(parser->lexer);  // consume '('
+    if_->condition = parse_expression(parser);
+    token = get_next_token(parser->lexer);
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
+        parser_error("Expected ')' after if condition", token);
+        return NULL;
+    }
+    token = get_next_token(parser->lexer);
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_BRACE) {
+        parser_error("Expected '{' to start if body", token);
+        return NULL;
+    }
+    token = get_next_token(parser->lexer);
+    while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
+        Statement* stmt = parse_statement(parser);
+        if (stmt == NULL) {
+            parser_error("Unexpected token in if body", token);
+            return NULL;
+        }
+        if (stmt->type == STATEMENT_DECLARE) {
+            list(Variable*) vars = stmt->statement.declare;
+            while (!list_empty(vars)) {
+                list_append(if_->body, (pointer)list_pop_front(vars));
+            }
+        } else {
+            list_append(if_->body, (pointer)stmt);
+        }
+        token = get_next_token(parser->lexer);
+    }
+    token = peek_next_token(parser->lexer);
+    while (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_ELIF) {
+        If* elif = create_struct(If);
+        get_next_token(parser->lexer);  // consume 'elif'
+        token = get_next_token(parser->lexer);
+        if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
+            parser_error("Expected '(' after 'elif'", token);
+            return NULL;
+        }
+        elif->condition = parse_expression(parser);
+        token = get_next_token(parser->lexer);
+        if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
+            parser_error("Expected ')' after elif condition", token);
+            return NULL;
+        }
+        token = get_next_token(parser->lexer);
+        if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_BRACE) {
+            parser_error("Expected '{' to start elif body", token);
+            return NULL;
+        }
+        token = get_next_token(parser->lexer);
+        while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
+            Statement* stmt = parse_statement(parser);
+            if (stmt == NULL) {
+                parser_error("Unexpected token in elif body", token);
+                return NULL;
+            }
+            if (stmt->type == STATEMENT_DECLARE) {
+                list(Variable*) vars = stmt->statement.declare;
+                while (!list_empty(vars)) {
+                    list_append(elif->body, (pointer)list_pop_front(vars));
+                }
+            } else {
+                list_append(elif->body, (pointer)stmt);
+            }
+            token = get_next_token(parser->lexer);
+        }
+        list_append(if_->elif_list, (pointer)elif);
+        token = peek_next_token(parser->lexer);
+    }
+    if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_ELSE) {
+        get_next_token(parser->lexer);  // consume 'else'
+        token = get_next_token(parser->lexer);
+        if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_BRACE) {
+            parser_error("Expected '{' to start else body", token);
+            return NULL;
+        }
+        token = get_next_token(parser->lexer);
+        while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
+            Statement* stmt = parse_statement(parser);
+            if (stmt == NULL) {
+                parser_error("Unexpected token in else body", token);
+                return NULL;
+            }
+            if (stmt->type == STATEMENT_DECLARE) {
+                list(Variable*) vars = stmt->statement.declare;
+                while (!list_empty(vars)) {
+                    list_append(if_->else_body, (pointer)list_pop_front(vars));
+                }
+            } else {
+                list_append(if_->else_body, (pointer)stmt);
+            }
+            token = get_next_token(parser->lexer);
+        }
+    }
+    return if_;
+}
+
+For* parse_for(Parser* parser) {
+    For* for_ = create_struct(For);
+    Token* token = get_next_token(parser->lexer);
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
+        parser_error("Expected '(' after 'for'", token);
+        return NULL;
+    }
+    token = get_next_token(parser->lexer);
+    if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_VAR) {
+        list(Variable*) vars = parse_variable(parser);
+        if (vars == NULL || vars->head == NULL || vars->head != vars->tail) {
+            parser_error("Expected exactly one variable declaration in for loop initializer", token);
+            return NULL;
+        }
+        for_->init.decl = (Variable*)vars->head->data;
+        token = get_next_token(parser->lexer);
+    } else if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_SEMICOLON) {
+        for_->init.expr = parse_expression(parser);
+        if (for_->init.expr == NULL) {
+            parser_error("Expected expression in for loop initializer", token);
+            return NULL;
+        }
+        token = get_next_token(parser->lexer);
+    }
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_SEMICOLON) {
+        for_->condition = parse_expression(parser);
+        if (for_->condition == NULL) {
+            parser_error("Expected expression in for loop condition", token);
+            return NULL;
+        }
+        token = get_next_token(parser->lexer);
+    }
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_SEMICOLON) {
+        parser_error("Expected ';' after for loop condition", token);
+        return NULL;
+    }
+    token = get_next_token(parser->lexer);
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
+        for_->increment = parse_expression(parser);
+        if (for_->increment == NULL) {
+            parser_error("Expected expression in for loop increment", token);
+            return NULL;
+        }
+        token = get_next_token(parser->lexer);
+    }
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
+        parser_error("Expected ')' after for loop increment", token);
+        return NULL;
+    }
+    token = get_next_token(parser->lexer);
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_BRACE) {
+        parser_error("Expected '{' to start for loop body", token);
+        return NULL;
+    }
+    token = get_next_token(parser->lexer);
+    while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
+        Statement* stmt = parse_statement(parser);
+        if (stmt == NULL) {
+            parser_error("Unexpected token in for loop body", token);
+            return NULL;
+        }
+        if (stmt->type == STATEMENT_DECLARE) {
+            list(Variable*) vars = stmt->statement.declare;
+            while (!list_empty(vars)) {
+                list_append(for_->body, (pointer)list_pop_front(vars));
+            }
+        } else {
+            list_append(for_->body, (pointer)stmt);
+        }
+        token = get_next_token(parser->lexer);
+    }
+    return for_;
+}
+
+While* parse_while(Parser* parser) {
+    While* while_ = create_struct(While);
+    Token* token = get_next_token(parser->lexer);
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
+        parser_error("Expected '(' after 'while'", token);
+        return NULL;
+    }
+    get_next_token(parser->lexer);
+    while_->condition = parse_expression(parser);
+    token = get_next_token(parser->lexer);
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
+        parser_error("Expected ')' after while condition", token);
+        return NULL;
+    }
+    token = get_next_token(parser->lexer);
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_BRACE) {
+        parser_error("Expected '{' to start while body", token);
+        return NULL;
+    }
+    token = get_next_token(parser->lexer);
+    while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
+        Statement* stmt = parse_statement(parser);
+        if (stmt == NULL) {
+            parser_error("Unexpected token in while body", token);
+            return NULL;
+        }
+        if (stmt->type == STATEMENT_DECLARE) {
+            list(Variable*) vars = stmt->statement.declare;
+            while (!list_empty(vars)) {
+                list_append(while_->body, (pointer)list_pop_front(vars));
+            }
+        } else {
+            list_append(while_->body, (pointer)stmt);
+        }
+        token = get_next_token(parser->lexer);
+    }
+    return while_;
 }
 
 Expression* parse_expression(Parser* parser) {
