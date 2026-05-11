@@ -695,7 +695,66 @@ Expression* parse_expression_prec(Parser* parser, int minp) {
     return left;
 }
 
+static VariableAccess* parse_variable_access(Parser* parser);
+
 Primary* parse_primary(Parser* parser) {
     Primary* primary = create_struct(Primary);
+    Token* token = get_current_token(parser->lexer);
+    if (token->type == TOKEN_INTEGER) {
+        primary->value.literal = token->lexeme;
+        primary->type = PRIMARY_INT;
+    } else if (token->type == TOKEN_FLOAT) {
+        primary->value.literal = token->lexeme;
+        primary->type = PRIMARY_FLOAT;
+    } else if (token->type == TOKEN_STRING) {
+        primary->value.literal = token->lexeme;
+        primary->type = PRIMARY_STRING;
+    } else if (token->type == TOKEN_KEYWORD && (token->lexeme == KEYWORD_TRUE || token->lexeme == KEYWORD_FALSE)) {
+        primary->value.literal = token->lexeme;
+        primary->type = PRIMARY_BOOL;
+    } else if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_NOT) {
+        get_next_token(parser->lexer);  // consume '!'
+        primary->value.not = parse_primary(parser);
+        if (primary->value.not == NULL) {
+            parser_error("Expected expression after '!'", token);
+            return NULL;
+        }
+        primary->type = PRIMARY_NOT;
+    } else if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_SUB) {
+        get_next_token(parser->lexer);  // consume '-'
+        primary->value.neg = parse_primary(parser);
+        if (primary->value.neg == NULL) {
+            parser_error("Expected expression after '-'", token);
+            return NULL;
+        }
+        primary->type = PRIMARY_NEG;
+    } else if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_L_PAREN) {
+        get_next_token(parser->lexer);  // consume '('
+        primary->value.exp = parse_expression(parser);
+        if (primary->value.exp == NULL) {
+            parser_error("Expected expression after '('", token);
+            return NULL;
+        }
+        token = get_next_token(parser->lexer);
+        if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
+            parser_error("Expected ')' after expression", token);
+            return NULL;
+        }
+    } else if (token->type == TOKEN_IDENTIFIER || (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_SELF)) {
+        primary->value.var_access = parse_variable_access(parser);
+        if (primary->value.var_access == NULL) {
+            parser_error("Expected variable access", token);
+            return NULL;
+        }
+        primary->type = PRIMARY_VAR_ACCESS;
+    } else {
+        parser_error("Unexpected token in expression", token);
+        return NULL;
+    }
     return primary;
+}
+
+VariableAccess* parse_variable_access(Parser* parser) {
+    VariableAccess* var_access = create_struct(VariableAccess);
+    return var_access;
 }

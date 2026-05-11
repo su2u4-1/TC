@@ -56,6 +56,16 @@ typedef enum VariableAccessType {
     VAR_ACCESS_ATTRIBUTE,
     VAR_ACCESS_INDEX,
 } VariableAccessType;
+typedef enum PrimaryType {
+    PRIMARY_INT,
+    PRIMARY_FLOAT,
+    PRIMARY_STRING,
+    PRIMARY_BOOL,
+    PRIMARY_EXPR,
+    PRIMARY_NEG,
+    PRIMARY_NOT,
+    PRIMARY_VAR_ACCESS,
+} PrimaryType;
 typedef struct CodeMember CodeMember;
 typedef struct Function Function;
 typedef struct Class Class;
@@ -173,9 +183,10 @@ struct Primary {
         string literal;              // literal value, including integer, float, string, "true", "false"
         Expression* exp;             // parenthesized expression
         Primary* neg;                // negative number
-        Primary * not;               // logical not
+        Primary* not;                // logical not
         VariableAccess* var_access;  // variable access
     } value;
+    PrimaryType type;
 };
 
 struct VariableAccess {
