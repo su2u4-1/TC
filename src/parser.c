@@ -145,6 +145,8 @@ ClassMember* create_class_member(ClassMemberType type, pointer member) {
 static Symbol* parse_type(Parser* parser, SymbolTable* table);
 static Statement* parse_statement(Parser* parser, SymbolTable* table);
 
+static bool parse_body(Parser* parser, SymbolTable* table, list(Statement*) body);
+
 Function* parse_function(Parser* parser, SymbolTable* table) {
     Function* function = create_struct(Function);
     Token* token = get_next_token(parser->lexer);
@@ -191,24 +193,9 @@ Function* parse_function(Parser* parser, SymbolTable* table) {
         parser_error("Expected '{' to start function body", token);
         return NULL;
     }
-    token = get_next_token(parser->lexer);
     SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, function_table);
-    while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-        Statement* stmt = parse_statement(parser, block_table);
-        if (stmt == NULL) {
-            parser_error("Unexpected token in function body", token);
-            return NULL;
-        }
-        if (stmt->type == STATEMENT_DECLARE) {
-            list(Variable*) vars = stmt->statement.declare;
-            while (!list_empty(vars)) {
-                list_append(function->body, (pointer)list_pop_front(vars));
-            }
-        } else {
-            list_append(function->body, (pointer)stmt);
-        }
-        token = get_next_token(parser->lexer);
-    }
+    bool result = parse_body(parser, block_table, function->body);
+    if (!result) return NULL;
     return function;
 }
 
@@ -265,24 +252,9 @@ Method* parse_method(Parser* parser, SymbolTable* table) {
         parser_error("Expected '{' to start method body", token);
         return NULL;
     }
-    token = get_next_token(parser->lexer);
     SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, method_table);
-    while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-        Statement* stmt = parse_statement(parser, block_table);
-        if (stmt == NULL) {
-            parser_error("Unexpected token in method body", token);
-            return NULL;
-        }
-        if (stmt->type == STATEMENT_DECLARE) {
-            list(Variable*) vars = stmt->statement.declare;
-            while (!list_empty(vars)) {
-                list_append(method->body, (pointer)list_pop_front(vars));
-            }
-        } else {
-            list_append(method->body, (pointer)stmt);
-        }
-        token = get_next_token(parser->lexer);
-    }
+    bool result = parse_body(parser, block_table, method->body);
+    if (!result) return NULL;
     return method;
 }
 
@@ -400,8 +372,8 @@ Statement* parse_statement(Parser* parser, SymbolTable* table) {
         stmt->type = STATEMENT_CONTINUE;
         stmt->statement.continue_ = NULL;
     } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_VAR) {
-        stmt->type = STATEMENT_DECLARE;
-        stmt->statement.declare = parse_variable(parser, table);
+        stmt->type = STATEMENT_DECLARE_LIST;
+        stmt->statement.declare_list = parse_variable(parser, table);
     } else {
         stmt->type = STATEMENT_EXPRESSION;
         stmt->statement.expression = parse_expression(parser, table);
@@ -435,24 +407,9 @@ If* parse_if(Parser* parser, SymbolTable* table) {
         parser_error("Expected '{' to start if body", token);
         return NULL;
     }
-    token = get_next_token(parser->lexer);
     SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, table);
-    while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-        Statement* stmt = parse_statement(parser, block_table);
-        if (stmt == NULL) {
-            parser_error("Unexpected token in if body", token);
-            return NULL;
-        }
-        if (stmt->type == STATEMENT_DECLARE) {
-            list(Variable*) vars = stmt->statement.declare;
-            while (!list_empty(vars)) {
-                list_append(if_->body, (pointer)list_pop_front(vars));
-            }
-        } else {
-            list_append(if_->body, (pointer)stmt);
-        }
-        token = get_next_token(parser->lexer);
-    }
+    bool result = parse_body(parser, block_table, if_->body);
+    if (!result) return NULL;
     token = peek_next_token(parser->lexer);
     while (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_ELIF) {
         If* elif = create_struct(If);
@@ -473,24 +430,9 @@ If* parse_if(Parser* parser, SymbolTable* table) {
             parser_error("Expected '{' to start elif body", token);
             return NULL;
         }
-        token = get_next_token(parser->lexer);
         SymbolTable* elif_block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, table);
-        while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-            Statement* stmt = parse_statement(parser, elif_block_table);
-            if (stmt == NULL) {
-                parser_error("Unexpected token in elif body", token);
-                return NULL;
-            }
-            if (stmt->type == STATEMENT_DECLARE) {
-                list(Variable*) vars = stmt->statement.declare;
-                while (!list_empty(vars)) {
-                    list_append(elif->body, (pointer)list_pop_front(vars));
-                }
-            } else {
-                list_append(elif->body, (pointer)stmt);
-            }
-            token = get_next_token(parser->lexer);
-        }
+        result = parse_body(parser, elif_block_table, elif->body);
+        if (!result) return NULL;
         list_append(if_->elif_list, (pointer)elif);
         token = peek_next_token(parser->lexer);
     }
@@ -501,24 +443,9 @@ If* parse_if(Parser* parser, SymbolTable* table) {
             parser_error("Expected '{' to start else body", token);
             return NULL;
         }
-        token = get_next_token(parser->lexer);
         SymbolTable* else_block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, table);
-        while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-            Statement* stmt = parse_statement(parser, else_block_table);
-            if (stmt == NULL) {
-                parser_error("Unexpected token in else body", token);
-                return NULL;
-            }
-            if (stmt->type == STATEMENT_DECLARE) {
-                list(Variable*) vars = stmt->statement.declare;
-                while (!list_empty(vars)) {
-                    list_append(if_->else_body, (pointer)list_pop_front(vars));
-                }
-            } else {
-                list_append(if_->else_body, (pointer)stmt);
-            }
-            token = get_next_token(parser->lexer);
-        }
+        result = parse_body(parser, else_block_table, if_->else_body);
+        if (!result) return NULL;
     }
     return if_;
 }
@@ -578,24 +505,9 @@ For* parse_for(Parser* parser, SymbolTable* table) {
         parser_error("Expected '{' to start for loop body", token);
         return NULL;
     }
-    token = get_next_token(parser->lexer);
     SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, for_table);
-    while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-        Statement* stmt = parse_statement(parser, block_table);
-        if (stmt == NULL) {
-            parser_error("Unexpected token in for loop body", token);
-            return NULL;
-        }
-        if (stmt->type == STATEMENT_DECLARE) {
-            list(Variable*) vars = stmt->statement.declare;
-            while (!list_empty(vars)) {
-                list_append(for_->body, (pointer)list_pop_front(vars));
-            }
-        } else {
-            list_append(for_->body, (pointer)stmt);
-        }
-        token = get_next_token(parser->lexer);
-    }
+    bool result = parse_body(parser, block_table, for_->body);
+    if (!result) return NULL;
     return for_;
 }
 
@@ -618,24 +530,9 @@ While* parse_while(Parser* parser, SymbolTable* table) {
         parser_error("Expected '{' to start while body", token);
         return NULL;
     }
-    token = get_next_token(parser->lexer);
     SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, table);
-    while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
-        Statement* stmt = parse_statement(parser, block_table);
-        if (stmt == NULL) {
-            parser_error("Unexpected token in while body", token);
-            return NULL;
-        }
-        if (stmt->type == STATEMENT_DECLARE) {
-            list(Variable*) vars = stmt->statement.declare;
-            while (!list_empty(vars)) {
-                list_append(while_->body, (pointer)list_pop_front(vars));
-            }
-        } else {
-            list_append(while_->body, (pointer)stmt);
-        }
-        token = get_next_token(parser->lexer);
-    }
+    bool result = parse_body(parser, block_table, while_->body);
+    if (!result) return NULL;
     return while_;
 }
 
@@ -859,4 +756,29 @@ VariableAccess* parse_variable_access(Parser* parser, SymbolTable* table) {
         token = peek_next_token(parser->lexer);
     }
     return var;
+}
+
+bool parse_body(Parser* parser, SymbolTable* table, list(Statement*) body) {
+    Token* token = get_next_token(parser->lexer);
+    while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_BRACE) {
+        Statement* stmt = parse_statement(parser, table);
+        if (stmt == NULL) {
+            parser_error("Unexpected token in body", token);
+            return false;
+        }
+        if (stmt->type == STATEMENT_DECLARE_LIST) {
+            list(Variable*) vars = stmt->statement.declare_list;
+            while (!list_empty(vars)) {
+                Variable* var = (Variable*)list_pop_front(vars);
+                Statement* decl_stmt = create_struct(Statement);
+                decl_stmt->type = STATEMENT_DECLARE;
+                decl_stmt->statement.declare = var;
+                list_append(body, (pointer)decl_stmt);
+            }
+        } else {
+            list_append(body, (pointer)stmt);
+        }
+        token = get_next_token(parser->lexer);
+    }
+    return true;
 }

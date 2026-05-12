@@ -19,6 +19,7 @@ typedef enum ClassMemberType {
     CLASS_ATTRIBUTE,
 } ClassMemberType;
 typedef enum StatementType {
+    STATEMENT_DECLARE_LIST,
     STATEMENT_DECLARE,
     STATEMENT_IF,
     STATEMENT_FOR,
@@ -131,14 +132,15 @@ struct ClassMember {
 
 struct Statement {
     union {
-        list(Variable*) declare;  // DECLARE
-        If* if_;                  // IF
-        For* for_;                // FOR
-        While* while_;            // WHILE
-        void* break_;             // BREAK
-        void* continue_;          // CONTINUE
-        Expression* return_;      // RETURN
-        Expression* expression;   // EXPRESSION
+        list(Variable*) declare_list;  // DECLARE_LIST
+        Variable* declare;             // DECLARE
+        If* if_;                       // IF
+        For* for_;                     // FOR
+        While* while_;                 // WHILE
+        void* break_;                  // BREAK
+        void* continue_;               // CONTINUE
+        Expression* return_;           // RETURN
+        Expression* expression;        // EXPRESSION
     } statement;
     StatementType type;
 };
