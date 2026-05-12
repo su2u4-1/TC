@@ -1,6 +1,4 @@
-#include "file.h"
-#include "lexer.h"
-#include "lib.h"
+#include "output.h"
 #include "parser.h"
 
 typedef enum OutputFlags {
@@ -78,8 +76,13 @@ int main(int argc, char* argv[]) {
         memcpy(copy_lexer, lexer, sizeof(Lexer));
         output_tokens(copy_lexer, args->output_path);
     }
+    AST* ast = NULL;
     if (args->output_flags & OUTPUT_AST) {
-        // TODO: AST
+        Parser* parser = create_parser(lexer);
+        ast = parse_code(parser);
+        FILE* ast_file = fopen(change_extension(args->output_path, ".ast"), "w");
+        print_ast(ast, ast_file);
+        fclose(ast_file);
     }
     if (args->output_flags & OUTPUT_IR) {
         // TODO: IR
