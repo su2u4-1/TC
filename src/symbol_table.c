@@ -7,10 +7,10 @@ Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info, 
         if (symbol->kind == kind && symbol->type == type) {
             return symbol;
         } else if (symbol->table == table) {
-            fprintf(stderr, "[symbol_table Error] Symbol '%s' already exists in the current scope\n", name);
+            fprintf(stderr, "[symbol_table Error] at <create_symbol> Symbol '%s' already exists in the current scope\n", name);
             return NULL;
         } else {
-            fprintf(stderr, "[symbol_table Warning] Symbol '%s' already exists in an outer scope, but with a different type or kind. Creating a new symbol in the current scope.\n", name);
+            fprintf(stderr, "[symbol_table Warning] at <create_symbol> Symbol '%s' already exists in an outer scope, but with a different type or kind. Creating a new symbol in the current scope.\n", name);
         }
     }
     symbol = create_struct(Symbol);

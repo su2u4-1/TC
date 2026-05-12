@@ -14,7 +14,7 @@ File* create_file(string path) {
 string read_source_code(File* file, size_t* size) {
     FILE* open_file = fopen(file->path, "r");
     if (open_file == NULL) {
-        fprintf(stderr, "[fill Error] Cannot open file: %s\n", file->path);
+        fprintf(stderr, "[fill Error] at <read_source_code> Cannot open file: %s\n", file->path);
         return NULL;
     }
     fseek(open_file, 0, SEEK_END);
