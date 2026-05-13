@@ -79,6 +79,7 @@ int main(int argc, char* argv[]) {
     AST* ast = NULL;
     if (args->output_flags & OUTPUT_AST) {
         Parser* parser = create_parser(lexer);
+        parser->lexer->skip_comment = true;
         ast = parse_code(parser);
         FILE* ast_file = fopen(change_extension(args->output_path, ".ast"), "w");
         print_ast(ast, ast_file);

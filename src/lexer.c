@@ -235,20 +235,26 @@ Token* get_next_token(Lexer* lexer) {
     if (lexer->next_token != NULL) {
         lexer->current_token = lexer->next_token;
     } else {
+        do {
         lexer->current_token = get_token(lexer);
+        } while (lexer->skip_comment && lexer->current_token->type == TOKEN_COMMENT);
     }
     lexer->next_token = NULL;
     return lexer->current_token;
 }
 Token* peek_next_token(Lexer* lexer) {
     if (lexer->next_token == NULL) {
+        do {
         lexer->next_token = get_token(lexer);
+        } while (lexer->skip_comment && lexer->next_token->type == TOKEN_COMMENT);
     }
     return lexer->next_token;
 }
 Token* get_current_token(Lexer* lexer) {
     if (lexer->current_token == NULL) {
+        do {
         lexer->current_token = get_token(lexer);
+        } while (lexer->skip_comment && lexer->current_token->type == TOKEN_COMMENT);
     }
     return lexer->current_token;
 }
