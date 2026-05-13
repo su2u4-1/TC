@@ -319,7 +319,7 @@ void print_variable_access(VariableAccess* variable_access, FILE* out, size_t in
             OUT(indent, "},\n");
             break;
         case VAR_ACCESS_ATTRIBUTE:
-            OUT(indent, "\"attribute\": \"%s\",\n", variable_access->access.attribute);
+            OUT(indent, "\"attribute\": \"%s\",\n", variable_access->access.attribute->id);
             break;
         case VAR_ACCESS_INDEX:
             OUT(indent, "\"index\": {\n");
