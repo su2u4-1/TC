@@ -4,7 +4,9 @@
 #include "lexer.h"
 #include "lib.h"
 
-#define parser_error(message, token) fprintf(stderr, "[parser Error] at %s:%zu:%zu: %s\n", file_full_path(parser->file), token->line + 1, token->column + 1, message)
+#define parser_error(message, token)                                                                                                  \
+    fprintf(stderr, "[parser Error] at %s:%zu:%zu: %s, ", file_full_path(parser->file), token->line + 1, token->column + 1, message); \
+    output_one_token(token, stderr, false)
 
 Parser* create_parser(Lexer* lexer) {
     lexer->skip_comment = true;
@@ -37,6 +39,7 @@ AST* parse_code(Parser* parser) {
         } else {
             parser_error("Unexpected token", token);
         }
+        token = get_next_token(parser->lexer);
     }
     return ast;
 }

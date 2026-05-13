@@ -236,7 +236,7 @@ Token* get_next_token(Lexer* lexer) {
         lexer->current_token = lexer->next_token;
     } else {
         do {
-        lexer->current_token = get_token(lexer);
+            lexer->current_token = get_token(lexer);
         } while (lexer->skip_comment && lexer->current_token->type == TOKEN_COMMENT);
     }
     lexer->next_token = NULL;
@@ -245,7 +245,7 @@ Token* get_next_token(Lexer* lexer) {
 Token* peek_next_token(Lexer* lexer) {
     if (lexer->next_token == NULL) {
         do {
-        lexer->next_token = get_token(lexer);
+            lexer->next_token = get_token(lexer);
         } while (lexer->skip_comment && lexer->next_token->type == TOKEN_COMMENT);
     }
     return lexer->next_token;
@@ -253,7 +253,7 @@ Token* peek_next_token(Lexer* lexer) {
 Token* get_current_token(Lexer* lexer) {
     if (lexer->current_token == NULL) {
         do {
-        lexer->current_token = get_token(lexer);
+            lexer->current_token = get_token(lexer);
         } while (lexer->skip_comment && lexer->current_token->type == TOKEN_COMMENT);
     }
     return lexer->current_token;
@@ -274,43 +274,63 @@ Lexer* create_lexer(File* source_path) {
 void output_tokens(Lexer* lexer, File* output_path) {
     FILE* file = fopen(change_extension(output_path, ".lex"), "w");
     for (Token* token = get_next_token(lexer); token != NULL; token = get_next_token(lexer)) {
-        if (token->type == TOKEN_EOF) {
-            fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1);
-            break;
-        } else if (token->type == TOKEN_IDENTIFIER) {
-            fprintf(file, "Token(Type: identifier,  Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        } else if (token->type == TOKEN_INTEGER) {
-            fprintf(file, "Token(Type: integer,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        } else if (token->type == TOKEN_FLOAT) {
-            fprintf(file, "Token(Type: float,       Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        } else if (token->type == TOKEN_STRING) {
-            fprintf(file, "Token(Type: string,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        } else if (token->type == TOKEN_SYMBOL) {
-            fprintf(file, "Token(Type: symbol,      Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        } else if (token->type == TOKEN_KEYWORD) {
-            fprintf(file, "Token(Type: keyword,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        } else if (token->type == TOKEN_COMMENT) {
-            fprintf(file, "Token(Type: comment,     Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
-        }
-        if (token->lexeme == NULL) {
-            fprintf(file, "(null)'\n");
-            continue;
-        }
-        for (size_t i = 0; i < strlen(token->lexeme); ++i) {
-            char c = token->lexeme[i];
-            if (c == '\0') {
-                fputs("\\0", file);
-            } else if (c == '\n') {
-                fputs("\\n", file);
-            } else if (c == '\t') {
-                fputs("\\t", file);
-            } else if (c == '\r') {
-                fputs("\\r", file);
-            } else {
-                fputc(c, file);
-            }
-        }
-        fprintf(file, "'\n");
+        output_one_token(token, file, true);
+        if (token->type == TOKEN_EOF) break;
     }
     fprintf(file, "\ninfo by lib:\n    %s\n", get_info());
+    fclose(file);
+}
+
+void output_one_token(Token* token, FILE* file, bool is_lexer_mode) {
+    if (is_lexer_mode) {
+        switch (token->type) {
+            case TOKEN_EOF: fprintf(file, "Token(Type: EOF,         Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1); return;
+            case TOKEN_IDENTIFIER: fputs("Token(Type: identifier,  ", file); break;
+            case TOKEN_INTEGER: fputs("Token(Type: integer,     ", file); break;
+            case TOKEN_FLOAT: fputs("Token(Type: float,       ", file); break;
+            case TOKEN_STRING: fputs("Token(Type: string,      ", file); break;
+            case TOKEN_SYMBOL: fputs("Token(Type: symbol,      ", file); break;
+            case TOKEN_KEYWORD: fputs("Token(Type: keyword,     ", file); break;
+            case TOKEN_COMMENT: fputs("Token(Type: comment,     ", file); break;
+            case TOKEN_SPECIAL: fputs("Token(Type: special,     ", file); break;
+            default: fprintf(file, "Token(Type: unknown,     Line: %zu, Column: %zu)\n", token->line + 1, token->column + 1); return;
+        }
+        fprintf(file, "Line: %zu, Column: %zu)\tLexeme: '", token->line + 1, token->column + 1);
+    } else {
+        switch (token->type) {
+            case TOKEN_EOF: fprintf(file, "(EOF, %zu, %zu, '')\n", token->line + 1, token->column + 1); return;
+            case TOKEN_IDENTIFIER: fputs("(identifier, ", file); break;
+            case TOKEN_INTEGER: fputs("(integer, ", file); break;
+            case TOKEN_FLOAT: fputs("(float, ", file); break;
+            case TOKEN_STRING: fputs("(string, ", file); break;
+            case TOKEN_SYMBOL: fputs("(symbol, ", file); break;
+            case TOKEN_KEYWORD: fputs("(keyword, ", file); break;
+            case TOKEN_COMMENT: fputs("(comment, ", file); break;
+            case TOKEN_SPECIAL: fputs("(special, ", file); break;
+            default: fprintf(file, "(unknown, %zu, %zu, '')\n", token->line + 1, token->column + 1); return;
+        }
+        fprintf(file, "%zu, %zu, '", token->line + 1, token->column + 1);
+    }
+    if (token->lexeme == NULL) {
+        fprintf(file, "(null)'\n");
+    } else {
+        for (size_t i = 0; i < strlen(token->lexeme); ++i) {
+            char c = token->lexeme[i];
+            if (c == '\0')
+                fputs("\\0", file);
+            else if (c == '\n')
+                fputs("\\n", file);
+            else if (c == '\t')
+                fputs("\\t", file);
+            else if (c == '\r')
+                fputs("\\r", file);
+            else
+                fputc(c, file);
+        }
+    }
+    if (is_lexer_mode) {
+        fputs("'\n", file);
+    } else {
+        fputs("')\n", file);
+    }
 }

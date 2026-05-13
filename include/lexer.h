@@ -39,5 +39,6 @@ Token* peek_next_token(Lexer* lexer);
 Token* get_current_token(Lexer* lexer);
 Lexer* create_lexer(File* source_path);
 void output_tokens(Lexer* lexer, File* output_path);
+void output_one_token(Token* token, FILE* file, bool is_lexer_mode);
 
 #endif  // LEXER_H
