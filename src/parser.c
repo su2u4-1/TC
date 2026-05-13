@@ -87,6 +87,11 @@ Import* parse_import(Parser* parser, SymbolTable* table) {
         return NULL;
     }
     import->path = token->lexeme;
+    token = get_next_token(parser->lexer);
+    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_SEMICOLON) {
+        parser_error("Expected ';' after import path", token);
+        return NULL;
+    }
     return import;
 }
 
@@ -96,19 +101,23 @@ static ClassMember* create_class_member(ClassMemberType type, pointer member);
 
 Class* parse_class(Parser* parser, SymbolTable* table) {
     Class* class = create_struct(Class);
+    parser->current_class = class;
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER) {
         parser_error("Expected identifier after 'class'", token);
+        parser->current_class = NULL;
         return NULL;
     }
     class->name = create_symbol(token->lexeme, NULL, SYMBOL_CLASS, (pointer)class, table);
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_BRACE) {
         parser_error("Expected '{' after class name", token);
+        parser->current_class = NULL;
         return NULL;
     }
     SymbolTable* class_table = create_symbol_table(SYMBOL_TABLE_CLASS, table);
     class->table = class_table;
+    class->members = list_create();
     while (true) {
         token = get_next_token(parser->lexer);
         if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_R_BRACE) {
@@ -124,6 +133,7 @@ Class* parse_class(Parser* parser, SymbolTable* table) {
             parser_error("Unexpected token in class body", token);
         }
     }
+    parser->current_class = NULL;
     return class;
 }
 
@@ -152,21 +162,27 @@ static bool parse_body(Parser* parser, SymbolTable* table, list(Statement*) body
 
 Function* parse_function(Parser* parser, SymbolTable* table) {
     Function* function = create_struct(Function);
+    function->body = list_create();
+    function->parameters = list_create();
+    parser->current_function = function;
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER && !is_builtin_type(token)) {
         parser_error("Expected identifier or type after 'func'", token);
+        parser->current_function = NULL;
         return NULL;
     }
     function->type = parse_type(parser, table);
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER) {
         parser_error("Expected identifier after function return type", token);
+        parser->current_function = NULL;
         return NULL;
     }
     function->name = create_symbol(token->lexeme, NULL, SYMBOL_FUNCTION, (pointer)function, table);
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
         parser_error("Expected '(' after function name", token);
+        parser->current_function = NULL;
         return NULL;
     }
     token = get_next_token(parser->lexer);
@@ -174,12 +190,14 @@ Function* parse_function(Parser* parser, SymbolTable* table) {
     while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
         if (token->type != TOKEN_IDENTIFIER && !is_builtin_type(token)) {
             parser_error("Unexpected token in parameter list", token);
+            parser->current_function = NULL;
             return NULL;
         }
         Symbol* param_type = parse_type(parser, table);
         token = get_next_token(parser->lexer);
         if (token->type != TOKEN_IDENTIFIER) {
             parser_error("Expected identifier in parameter list", token);
+            parser->current_function = NULL;
             return NULL;
         }
         list_append(function->parameters, (pointer)create_symbol(token->lexeme, param_type, SYMBOL_PARAMETER, NULL, function_table));
@@ -188,37 +206,46 @@ Function* parse_function(Parser* parser, SymbolTable* table) {
             token = get_next_token(parser->lexer);
         } else if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
             parser_error("Expected ',' or ')' in parameter list", token);
+            parser->current_function = NULL;
             return NULL;
         }
     }
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_BRACE) {
         parser_error("Expected '{' to start function body", token);
+        parser->current_function = NULL;
         return NULL;
     }
     SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, function_table);
     bool result = parse_body(parser, block_table, function->body);
+    parser->current_function = NULL;
     if (!result) return NULL;
     return function;
 }
 
 Method* parse_method(Parser* parser, SymbolTable* table) {
     Method* method = create_struct(Method);
+    method->body = list_create();
+    method->parameters = list_create();
+    parser->current_method = method;
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER && !is_builtin_type(token)) {
         parser_error("Expected identifier or type after 'method'", token);
+        parser->current_method = NULL;
         return NULL;
     }
     method->type = parse_type(parser, table);
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER && token->type != TOKEN_SPECIAL) {
         parser_error("Expected identifier after method return type", token);
+        parser->current_method = NULL;
         return NULL;
     }
     method->name = create_symbol(token->lexeme, NULL, SYMBOL_FUNCTION, (pointer)method, table);
     if (token->type == TOKEN_SPECIAL) {
         if (!is_special(token->lexeme)) {
             parser_error("Invalid special method", token);
+            parser->current_method = NULL;
             return NULL;
         }
         method->special = true;
@@ -226,37 +253,50 @@ Method* parse_method(Parser* parser, SymbolTable* table) {
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
         parser_error("Expected '(' after method name", token);
+        parser->current_method = NULL;
         return NULL;
     }
     token = get_next_token(parser->lexer);
     SymbolTable* method_table = create_symbol_table(SYMBOL_TABLE_METHOD, table);
+    if (token->type != TOKEN_KEYWORD || token->lexeme != KEYWORD_SELF) {
+        parser_error("Expected 'self' as the first parameter", token);
+        parser->current_method = NULL;
+        return NULL;
+    }
+    list_append(method->parameters, (pointer)create_symbol(KEYWORD_SELF, parser->current_class->name, SYMBOL_PARAMETER, NULL, method_table));
+    token = get_next_token(parser->lexer);
     while (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
+        if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_COMMA) {
+            token = get_next_token(parser->lexer);
+        } else if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
+            parser_error("Expected ',' or ')' in parameter list", token);
+            parser->current_method = NULL;
+            return NULL;
+        }
         if (token->type != TOKEN_IDENTIFIER && !is_builtin_type(token)) {
             parser_error("Unexpected token in parameter list", token);
+            parser->current_method = NULL;
             return NULL;
         }
         Symbol* param_type = parse_type(parser, table);
         token = get_next_token(parser->lexer);
         if (token->type != TOKEN_IDENTIFIER) {
             parser_error("Expected identifier in parameter list", token);
+            parser->current_method = NULL;
             return NULL;
         }
         list_append(method->parameters, (pointer)create_symbol(token->lexeme, param_type, SYMBOL_PARAMETER, NULL, method_table));
         token = get_next_token(parser->lexer);
-        if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_COMMA) {
-            token = get_next_token(parser->lexer);
-        } else if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
-            parser_error("Expected ',' or ')' in parameter list", token);
-            return NULL;
-        }
     }
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_BRACE) {
         parser_error("Expected '{' to start method body", token);
+        parser->current_method = NULL;
         return NULL;
     }
     SymbolTable* block_table = create_symbol_table(SYMBOL_TABLE_BLOCK, method_table);
     bool result = parse_body(parser, block_table, method->body);
+    parser->current_method = NULL;
     if (!result) return NULL;
     return method;
 }
@@ -266,8 +306,13 @@ static Expression* parse_expression_prec(Parser* parser, int min_precedence, Sym
 
 list(Variable*) parse_variable(Parser* parser, SymbolTable* table) {
     list(Variable*) vars = list_create();
+    Token* token = get_current_token(parser->lexer);
+    if (token->type != TOKEN_KEYWORD || token->lexeme != KEYWORD_VAR) {
+        parser_error("Expected 'var' at the beginning of variable declaration", token);
+        return vars;
+    }
+    get_next_token(parser->lexer);  // consume 'var'
     Symbol* type = parse_type(parser, table);
-    Token* token;
     while ((token = get_next_token(parser->lexer))->type == TOKEN_IDENTIFIER) {
         Variable* var = create_struct(Variable);
         var->var = create_symbol(token->lexeme, type, SYMBOL_VARIABLE, NULL, table);
@@ -317,7 +362,7 @@ Symbol* parse_type(Parser* parser, SymbolTable* table) {
             return NULL;
         }
     } else if (token->type == TOKEN_IDENTIFIER) {
-        type = create_symbol(token->lexeme, NULL, SYMBOL_TYPE, NULL, table);
+        type = create_symbol(token->lexeme, NULL, SYMBOL_CLASS, NULL, table);
     } else {
         parser_error("Unexpected token when parsing type", token);
         return NULL;
@@ -350,33 +395,34 @@ static While* parse_while(Parser* parser, SymbolTable* table);
 
 Statement* parse_statement(Parser* parser, SymbolTable* table) {
     Statement* stmt = create_struct(Statement);
-    Token* token = get_next_token(parser->lexer);
+    Token* token = get_current_token(parser->lexer);
     bool check_semicolon = true;
-    if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_IF) {
+    if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_IF) {
         stmt->type = STATEMENT_IF;
         stmt->statement.if_ = parse_if(parser, table);
         check_semicolon = false;
-    } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_FOR) {
+    } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_FOR) {
         stmt->type = STATEMENT_FOR;
         stmt->statement.for_ = parse_for(parser, table);
         check_semicolon = false;
-    } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_WHILE) {
+    } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_WHILE) {
         stmt->type = STATEMENT_WHILE;
         stmt->statement.while_ = parse_while(parser, table);
         check_semicolon = false;
-    } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_RETURN) {
+    } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_RETURN) {
         stmt->type = STATEMENT_RETURN;
         get_next_token(parser->lexer);  // consume 'return'
         stmt->statement.return_ = parse_expression(parser, table);
-    } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_BREAK) {
+    } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_BREAK) {
         stmt->type = STATEMENT_BREAK;
         stmt->statement.break_ = NULL;
-    } else if (token->type != TOKEN_KEYWORD && token->lexeme == KEYWORD_CONTINUE) {
+    } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_CONTINUE) {
         stmt->type = STATEMENT_CONTINUE;
         stmt->statement.continue_ = NULL;
     } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_VAR) {
         stmt->type = STATEMENT_DECLARE_LIST;
         stmt->statement.declare_list = parse_variable(parser, table);
+        check_semicolon = false;
     } else {
         stmt->type = STATEMENT_EXPRESSION;
         stmt->statement.expression = parse_expression(parser, table);
@@ -610,6 +656,7 @@ Expression* parse_expression_prec(Parser* parser, int minp, SymbolTable* table) 
     Token* token = peek_next_token(parser->lexer);
     while (token->type == TOKEN_SYMBOL && (op = operator(token->lexeme)) != OP_NONE && (p = operator_precedence(op)) >= minp) {
         get_next_token(parser->lexer);  // consume operator
+        token = get_next_token(parser->lexer);
         // parse scond operand
         Expression* expr = create_struct(Expression);
         expr->right = parse_expression_prec(parser, p + (is_right_associative(op) ? 0 : 1), table);
