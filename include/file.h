@@ -11,5 +11,6 @@ File* create_file(string path);
 string read_source_code(File* file, size_t* size);
 string file_full_path(File* file);
 string change_extension(File* file, const char* new_extension);
+string file_dir_path(File* file);
 
 #endif  // FILE_H
