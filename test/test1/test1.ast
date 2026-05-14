@@ -1,12 +1,24 @@
 {
+    function: {
+        name: "function_7(print)",
+        return_type: "type_4(void)",
+        parameters: [
+            {
+                name: "parameter_8(value)",
+                type: "type_0(int)"
+            },
+        ],
+        body: {
+        }
+    },
     import: {
-        name: "variable_7(print)",
-        path: "../../std/print.tc"
+        name: "function_7(print)",
+        path: "D:/TC/std/print.tc"
     },
     class: {
-        name: "class_8(Test1)",
+        name: "class_9(Test1)",
         variable: {
-            name: "variable_9(a)",
+            name: "variable_10(a)",
             type: "type_0(int)",
             initializer: {
                 primary: {
@@ -15,15 +27,15 @@
             }
         },
         method: {
-            name: "function_10($init)",
-            return_type: "class_8(Test1)",
+            name: "function_11($init)",
+            return_type: "class_9(Test1)",
             parameters: [
                 {
-                    name: "parameter_11(self)",
-                    type: "class_8(Test1)"
+                    name: "parameter_12(self)",
+                    type: "class_9(Test1)"
                 },
                 {
-                    name: "parameter_12(value)",
+                    name: "parameter_13(value)",
                     type: "type_0(int)"
                 },
             ],
@@ -32,55 +44,55 @@
                     left: {
                         primary: {
                             base: {
-                                var: "parameter_11(self)",
+                                var: "parameter_12(self)",
                             },
-                            attribute: "variable_9(a)",
+                            attribute: "variable_10(a)",
                         }
                     },
                     operator: "=",
                     right: {
                         primary: {
-                            var: "parameter_12(value)",
+                            var: "parameter_13(value)",
                         }
                     }
                 },
                 return: {
                     primary: {
-                        var: "parameter_11(self)",
+                        var: "parameter_12(self)",
                     }
                 },
             }
         },
         method: {
-            name: "function_13(get_a)",
+            name: "function_14(get_a)",
             return_type: "type_0(int)",
             parameters: [
                 {
-                    name: "parameter_14(self)",
-                    type: "class_8(Test1)"
+                    name: "parameter_15(self)",
+                    type: "class_9(Test1)"
                 },
             ],
             body: {
                 return: {
                     primary: {
                         base: {
-                            var: "parameter_14(self)",
+                            var: "parameter_15(self)",
                         },
-                        attribute: "variable_9(a)",
+                        attribute: "variable_10(a)",
                     }
                 },
             }
         },
         method: {
-            name: "function_15(set_a)",
+            name: "function_16(set_a)",
             return_type: "type_4(void)",
             parameters: [
                 {
-                    name: "parameter_16(self)",
-                    type: "class_8(Test1)"
+                    name: "parameter_17(self)",
+                    type: "class_9(Test1)"
                 },
                 {
-                    name: "parameter_17(value)",
+                    name: "parameter_18(value)",
                     type: "type_0(int)"
                 },
             ],
@@ -89,15 +101,15 @@
                     left: {
                         primary: {
                             base: {
-                                var: "parameter_16(self)",
+                                var: "parameter_17(self)",
                             },
-                            attribute: "variable_9(a)",
+                            attribute: "variable_10(a)",
                         }
                     },
                     operator: "=",
                     right: {
                         primary: {
-                            var: "parameter_17(value)",
+                            var: "parameter_18(value)",
                         }
                     }
                 },
@@ -105,18 +117,18 @@
         },
     },
     function: {
-        name: "function_18(main)",
+        name: "function_19(main)",
         return_type: "type_0(int)",
         parameters: [
         ],
         body: {
             variable: {
-                name: "variable_19(t)",
-                type: "class_8(Test1)",
+                name: "variable_20(t)",
+                type: "class_9(Test1)",
                 initializer: {
                     primary: {
                         base: {
-                            var: "class_8(Test1)",
+                            var: "class_9(Test1)",
                         },
                         call: {
                             arg[0]: {
@@ -131,16 +143,16 @@
             expression: {
                 primary: {
                     base: {
-                        var: "variable_7(print)",
+                        var: "function_7(print)",
                     },
                     call: {
                         arg[0]: {
                             primary: {
                                 base: {
                                     base: {
-                                        var: "variable_19(t)",
+                                        var: "variable_20(t)",
                                     },
-                                    attribute: "function_13(get_a)",
+                                    attribute: "function_14(get_a)",
                                 },
                                 call: {
                                 },
@@ -153,9 +165,9 @@
                 primary: {
                     base: {
                         base: {
-                            var: "variable_19(t)",
+                            var: "variable_20(t)",
                         },
-                        attribute: "function_15(set_a)",
+                        attribute: "function_16(set_a)",
                     },
                     call: {
                         arg[0]: {
@@ -169,16 +181,16 @@
             expression: {
                 primary: {
                     base: {
-                        var: "variable_7(print)",
+                        var: "function_7(print)",
                     },
                     call: {
                         arg[0]: {
                             primary: {
                                 base: {
                                     base: {
-                                        var: "variable_19(t)",
+                                        var: "variable_20(t)",
                                     },
-                                    attribute: "function_13(get_a)",
+                                    attribute: "function_14(get_a)",
                                 },
                                 call: {
                                 },
@@ -188,7 +200,7 @@
                 }
             },
             variable: {
-                name: "variable_20(_abc123)",
+                name: "variable_21(_abc123)",
                 type: "type_1(float)",
                 initializer: {
                     primary: {
@@ -197,7 +209,7 @@
                 }
             },
             variable: {
-                name: "variable_21(_def456)",
+                name: "variable_22(_def456)",
                 type: "type_0(int)",
                 initializer: {
                     primary: {
@@ -214,4 +226,4 @@
     },
 }
 
-platform: 2, malloc allocated: 20523, string memory: [used/total: 1758/2091, blocks: 2], struct memory: [used/total: 16864/17920, blocks: 14]
+platform: 2, malloc allocated: 23855, string memory: [used/total: 2961/4231, blocks: 3], struct memory: [used/total: 17960/19048, blocks: 15]

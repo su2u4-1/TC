@@ -1,9 +1,5 @@
 #include "parser.h"
 
-#include "ast.h"
-#include "lexer.h"
-#include "lib.h"
-
 #define parser_error(message, token)                                                                                                  \
     fprintf(stderr, "[parser Error] at %s:%zu:%zu: %s, ", file_full_path(parser->file), token->line + 1, token->column + 1, message); \
     output_one_token(token, stderr, false)
@@ -14,12 +10,11 @@ Parser* create_parser(Lexer* lexer) {
     parser->lexer = lexer;
     parser->import_files = list_create();
     parser->file = lexer->source_path;
-    parser->parse_import = false;
     return parser;
 }
 
 static CodeMember* create_code_member(CodeMemberType type, pointer member);
-static Import* parse_import(Parser* parser, SymbolTable* table);
+static Import* parse_import(Parser* parser, SymbolTable* table, AST* ast);
 static Class* parse_class(Parser* parser, SymbolTable* table);
 static Function* parse_function(Parser* parser, SymbolTable* table);
 
@@ -28,14 +23,14 @@ AST* parse_code(Parser* parser) {
     ast->members = list_create();
     ast->file = parser->file;
     Token* token = get_next_token(parser->lexer);
-    SymbolTable* global_table = create_symbol_table(SYMBOL_TABLE_GLOBAL, global_symbol_table);
+    ast->table = create_symbol_table(SYMBOL_TABLE_GLOBAL, global_symbol_table);
     while (token != NULL && token->type != TOKEN_EOF) {
         if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_IMPORT) {
-            list_append(ast->members, (pointer)create_code_member(CODE_IMPORT, (pointer)parse_import(parser, global_table)));
+            list_append(ast->members, (pointer)create_code_member(CODE_IMPORT, (pointer)parse_import(parser, ast->table, ast)));
         } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_CLASS) {
-            list_append(ast->members, (pointer)create_code_member(CODE_CLASS, (pointer)parse_class(parser, global_table)));
+            list_append(ast->members, (pointer)create_code_member(CODE_CLASS, (pointer)parse_class(parser, ast->table)));
         } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_FUNC) {
-            list_append(ast->members, (pointer)create_code_member(CODE_FUNCTION, (pointer)parse_function(parser, global_table)));
+            list_append(ast->members, (pointer)create_code_member(CODE_FUNCTION, (pointer)parse_function(parser, ast->table)));
         } else {
             parser_error("Unexpected token", token);
         }
@@ -64,33 +59,62 @@ CodeMember* create_code_member(CodeMemberType type, pointer member) {
     return code_member;
 }
 
-Import* parse_import(Parser* parser, SymbolTable* table) {
+static Symbol* from_file_import(string name, string path) {
+    File* file = create_file(path);
+    AST* ast = parsed_files->head != NULL ? (AST*)parsed_files->head->data : NULL;
+    while (ast != NULL) {
+        if (strcmp(file_full_path(ast->file), file_full_path(file)) == 0) {
+            break;
+        }
+        ast = (AST*)ast->members->head->data;
+    }
+    if (ast == NULL) {
+        ast = parse_code(create_parser(create_lexer(file)));
+        list_append(parsed_files, (pointer)ast);
+    }
+    Symbol* symbol = search_symbol(ast->table, name, false, 0, NULL);
+    return symbol;
+}
+
+Import* parse_import(Parser* parser, SymbolTable* table, AST* ast) {
     Import* import = create_struct(Import);
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER) {
         parser_error("Expected identifier after 'import'", token);
         return NULL;
     }
-    import->name = create_symbol(token->lexeme, NULL, SYMBOL_VARIABLE, NULL, table);
+    string name = token->lexeme;
     token = get_next_token(parser->lexer);
     if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_SEMICOLON) {
-        import->path = NULL;
-        return import;
+        import->path = std_path;
+    } else {
+        if (token->type != TOKEN_KEYWORD || token->lexeme != KEYWORD_FROM) {
+            parser_error("Expected 'from' after import name", token);
+            return NULL;
+        }
+        token = get_next_token(parser->lexer);
+        if (token->type != TOKEN_STRING) {
+            parser_error("Expected string literal after 'from'", token);
+            return NULL;
+        }
+        import->path = file_full_path(create_file(string_splice("%s/%s", file_dir_path(parser->file), token->lexeme)));
+        token = get_next_token(parser->lexer);
+        if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_SEMICOLON) {
+            parser_error("Expected ';' after import path", token);
+            return NULL;
+        }
     }
-    if (token->type != TOKEN_KEYWORD || token->lexeme != KEYWORD_FROM) {
-        parser_error("Expected 'from' after import name", token);
-        return NULL;
-    }
-    token = get_next_token(parser->lexer);
-    if (token->type != TOKEN_STRING) {
-        parser_error("Expected string literal after 'from'", token);
-        return NULL;
-    }
-    import->path = token->lexeme;
-    token = get_next_token(parser->lexer);
-    if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_SEMICOLON) {
-        parser_error("Expected ';' after import path", token);
-        return NULL;
+    import->name = from_file_import(name, import->path);
+    if (import->name == NULL) {
+        parser_error("Failed to import module", token);
+        import->name = create_symbol(name, NULL, SYMBOL_VARIABLE, NULL, table);
+    } else {
+        list_append(table->symbols, (pointer)import->name);
+        if (import->name->kind == SYMBOL_CLASS) {
+            list_append(ast->members, (pointer)create_code_member(CODE_CLASS, (pointer)import->name->info.class));
+        } else if (import->name->kind == SYMBOL_FUNCTION) {
+            list_append(ast->members, (pointer)create_code_member(CODE_FUNCTION, (pointer)import->name->info.function));
+        }
     }
     return import;
 }
