@@ -179,6 +179,7 @@ extern Symbol* symbol_bool;
 extern Symbol* symbol_void;
 extern Symbol* symbol_pointer;
 extern Symbol* symbol_const;
+extern list(AST*) parsed_files;
 
 bool is_special(string str);
 

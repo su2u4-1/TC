@@ -79,8 +79,8 @@ int main(int argc, char* argv[]) {
     AST* ast = NULL;
     if (args->output_flags & OUTPUT_AST) {
         Parser* parser = create_parser(lexer);
-        parser->lexer->skip_comment = true;
         ast = parse_code(parser);
+        list_append(parsed_files, (pointer)ast);
         FILE* ast_file = fopen(change_extension(args->output_path, ".ast"), "w");
         if (ast_file == NULL) {
             fprintf(stderr, "[Error] Failed to open AST output file\n");

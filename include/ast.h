@@ -7,6 +7,7 @@
 typedef struct AST {
     File* file;
     list(CodeMember*) members;
+    SymbolTable* table;
 } AST;
 
 typedef enum CodeMemberType {

@@ -283,6 +283,7 @@ Symbol* symbol_bool = NULL;
 Symbol* symbol_void = NULL;
 Symbol* symbol_pointer = NULL;
 Symbol* symbol_const = NULL;
+list(AST*) parsed_files = NULL;
 
 static void init_constant(void) {
     for (size_t i = 0; i < keywordCount; ++i) {
@@ -365,6 +366,7 @@ static void init_constant(void) {
     SPECIAL_OR = specialList[14];
     SPECIAL_NOT = specialList[15];
     SPECIAL_NEG = specialList[16];
+    parsed_files = list_create();
 }
 
 List* list_create(void) {
