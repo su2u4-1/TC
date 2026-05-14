@@ -5,7 +5,7 @@ import print from "../../std/print.tc";
 
 class Test1 {
     var int a = 10;
-    method Test1 init(self, int value) {
+    method Test1 $init(self, int value) {
         self.a = value;
         return self;
     }

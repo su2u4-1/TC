@@ -15,14 +15,14 @@ Token(Type: integer,     Line: 7, Column: 17)	Lexeme: '10'
 Token(Type: symbol,      Line: 7, Column: 19)	Lexeme: ';'
 Token(Type: keyword,     Line: 8, Column: 5)	Lexeme: 'method'
 Token(Type: identifier,  Line: 8, Column: 12)	Lexeme: 'Test1'
-Token(Type: identifier,  Line: 8, Column: 18)	Lexeme: 'init'
-Token(Type: symbol,      Line: 8, Column: 22)	Lexeme: '('
-Token(Type: keyword,     Line: 8, Column: 23)	Lexeme: 'self'
-Token(Type: symbol,      Line: 8, Column: 27)	Lexeme: ','
-Token(Type: keyword,     Line: 8, Column: 29)	Lexeme: 'int'
-Token(Type: identifier,  Line: 8, Column: 33)	Lexeme: 'value'
-Token(Type: symbol,      Line: 8, Column: 38)	Lexeme: ')'
-Token(Type: symbol,      Line: 8, Column: 40)	Lexeme: '{'
+Token(Type: special,     Line: 8, Column: 18)	Lexeme: '$init'
+Token(Type: symbol,      Line: 8, Column: 23)	Lexeme: '('
+Token(Type: keyword,     Line: 8, Column: 24)	Lexeme: 'self'
+Token(Type: symbol,      Line: 8, Column: 28)	Lexeme: ','
+Token(Type: keyword,     Line: 8, Column: 30)	Lexeme: 'int'
+Token(Type: identifier,  Line: 8, Column: 34)	Lexeme: 'value'
+Token(Type: symbol,      Line: 8, Column: 39)	Lexeme: ')'
+Token(Type: symbol,      Line: 8, Column: 41)	Lexeme: '{'
 Token(Type: keyword,     Line: 9, Column: 9)	Lexeme: 'self'
 Token(Type: symbol,      Line: 9, Column: 13)	Lexeme: '.'
 Token(Type: identifier,  Line: 9, Column: 14)	Lexeme: 'a'
@@ -124,4 +124,4 @@ Token(Type: symbol,      Line: 29, Column: 1)	Lexeme: '}'
 Token(Type: EOF,         Line: 30, Column: 2)
 
 info by lib:
-    platform: 2, malloc allocated: 10379, string memory: [used/total: 1221/2091, blocks: 2], struct memory: [used/total: 7864/8000, blocks: 7]
+    platform: 2, malloc allocated: 10379, string memory: [used/total: 1217/2091, blocks: 2], struct memory: [used/total: 7832/8000, blocks: 7]

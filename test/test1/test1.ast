@@ -15,7 +15,7 @@
             }
         },
         method: {
-            name: "function_10(init)",
+            name: "function_10($init)",
             return_type: "class_8(Test1)",
             parameters: [
                 {
@@ -214,4 +214,4 @@
     },
 }
 
-platform: 2, malloc allocated: 20483, string memory: [used/total: 1761/2091, blocks: 2], struct memory: [used/total: 16896/17880, blocks: 14]
+platform: 2, malloc allocated: 20523, string memory: [used/total: 1758/2091, blocks: 2], struct memory: [used/total: 16864/17920, blocks: 14]

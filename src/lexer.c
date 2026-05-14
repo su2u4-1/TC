@@ -44,10 +44,10 @@ static Token* get_token(Lexer* lexer) {
             bool is_special = (c == '$');
             size_t start = lexer->pos - 1;
             size_t column_start = lexer->column - 1;
-            while (is_alphabet(c) || is_digit(c) || c == '_') {
+            do {
                 c = lexer->source_code[lexer->pos++];
                 lexer->column++;
-            }
+            } while (is_alphabet(c) || is_digit(c) || c == '_');
             lexer->pos -= 1;
             lexer->column -= 1;
             string content = create_string(&lexer->source_code[start], lexer->pos - start);
