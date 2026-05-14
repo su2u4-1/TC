@@ -734,6 +734,7 @@ Primary* parse_primary(Parser* parser, SymbolTable* table) {
 
 VariableAccess* parse_variable_access(Parser* parser, SymbolTable* table) {
     VariableAccess* var = create_struct(VariableAccess);
+    var->base = NULL;
     Token* token = get_current_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER && !(token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_SELF)) {
         parser_error("Expected identifier or 'self' in variable access", token);
