@@ -87,6 +87,7 @@ int main(int argc, char* argv[]) {
             exit(1);
         }
         print_ast(ast, ast_file);
+        fprintf(ast_file, "\n%s\n", get_info());
         fclose(ast_file);
     }
     if (args->output_flags & OUTPUT_IR) {
