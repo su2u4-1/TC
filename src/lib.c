@@ -391,8 +391,7 @@ void list_append(List* self, pointer value) {
 }
 pointer list_pop_front(List* self) {
     if (list_empty(self)) {
-        fprintf(stderr, "[lib Fatal] at <list_pop_front>: List is empty\n");
-        abort();
+        return NULL;
     }
     pointer value = self->head->data;
     self->head = self->head->next;
@@ -403,8 +402,7 @@ pointer list_pop_front(List* self) {
 }
 pointer list_pop_back(List* self) {
     if (list_empty(self)) {
-        fprintf(stderr, "[lib Fatal] at <list_pop_back>: List is empty\n");
-        abort();
+        return NULL;
     }
     pointer value = self->tail->data;
     if (self->head == self->tail) {
@@ -419,6 +417,12 @@ pointer list_pop_back(List* self) {
         self->tail = previous;
     }
     return value;
+}
+List* list_copy(List* self) {
+    List* list = list_create();
+    list->head = self->head;
+    list->tail = self->tail;
+    return list;
 }
 
 bool is_special(string str) {

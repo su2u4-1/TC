@@ -167,6 +167,7 @@ List* list_create(void);
 void list_append(List* self, pointer value);
 pointer list_pop_front(List* self);
 pointer list_pop_back(List* self);
+List* list_copy(List* self);
 
 typedef struct Symbol Symbol;
 typedef struct SymbolTable SymbolTable;
