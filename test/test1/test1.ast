@@ -1,229 +1,479 @@
 {
     function: {
-        name: "function_7(print)",
-        return_type: "type_4(void)",
-        parameters: [
-            {
-                name: "parameter_8(value)",
-                type: "type_0(int)"
-            },
-        ],
-        body: {
+        name: {
+            name: "print(7)"
+            kind: "function"
+            type: null
+            offset: null
         }
-    },
-    import: {
-        name: "function_7(print)",
-        path: "D:/TC/std/print.tc"
-    },
-    class: {
-        name: "class_9(Test1)",
-        variable: {
-            name: "variable_10(a)",
-            type: "type_0(int)",
-            initializer: {
-                primary: {
-                    literal: 10,
+        return_type: {
+            name: "void(4)"
+            kind: "type"
+            type: null
+            offset: null
+        }
+        parameters: {
+            {
+                name: {
+                    name: "value(8)"
+                    kind: "parameter"
+                    type: "int(0)"
+                    offset: 0
+                }
+                type: {
+                    name: "int(0)"
+                    kind: "type"
+                    type: null
+                    offset: null
                 }
             }
-        },
+        }
+        body: {
+        }
+    }
+    import: {
+        name: {
+            name: "print(7)"
+            kind: "function"
+            type: null
+            offset: null
+        }
+        path: "D:/TC/std/print.tc"
+    }
+    class: {
+        name: {
+            name: "Test1(9)"
+            kind: "class"
+            type: null
+            offset: null
+        }
+        variable: {
+            name: {
+                name: "a(10)"
+                kind: "variable"
+                type: "int(0)"
+                offset: 0
+            }
+            type: {
+                name: "int(0)"
+                kind: "type"
+                type: null
+                offset: null
+            }
+            initializer: {
+                primary: {
+                    literal: 10
+                }
+            }
+        }
         method: {
-            name: "function_11($init)",
-            return_type: "class_9(Test1)",
-            parameters: [
+            name: {
+                name: "$init(11)"
+                kind: "function"
+                type: null
+                offset: null
+            }
+            return_type: {
+                name: "Test1(9)"
+                kind: "class"
+                type: null
+                offset: null
+            }
+            parameters: {
                 {
-                    name: "parameter_12(self)",
-                    type: "class_9(Test1)"
-                },
+                    name: {
+                        name: "self(12)"
+                        kind: "parameter"
+                        type: "Test1(9)"
+                        offset: 0
+                    }
+                    type: {
+                        name: "Test1(9)"
+                        kind: "class"
+                        type: null
+                        offset: null
+                    }
+                }
                 {
-                    name: "parameter_13(value)",
-                    type: "type_0(int)"
-                },
-            ],
+                    name: {
+                        name: "value(13)"
+                        kind: "parameter"
+                        type: "int(0)"
+                        offset: 0
+                    }
+                    type: {
+                        name: "int(0)"
+                        kind: "type"
+                        type: null
+                        offset: null
+                    }
+                }
+            }
             body: {
                 expression: {
                     left: {
                         primary: {
                             base: {
-                                var: "parameter_12(self)",
-                            },
-                            attribute: "variable_10(a)",
+                                var: {
+                                    name: "self(12)"
+                                    kind: "parameter"
+                                    type: "Test1(9)"
+                                    offset: 0
+                                }
+                            }
+                            attribute: {
+                                name: "a(10)"
+                                kind: "variable"
+                                type: "int(0)"
+                                offset: 0
+                            }
                         }
-                    },
-                    operator: "=",
+                    }
+                    operator: "="
                     right: {
                         primary: {
-                            var: "parameter_13(value)",
+                            var: {
+                                name: "value(13)"
+                                kind: "parameter"
+                                type: "int(0)"
+                                offset: 0
+                            }
                         }
                     }
-                },
+                }
                 return: {
                     primary: {
-                        var: "parameter_12(self)",
+                        var: {
+                            name: "self(12)"
+                            kind: "parameter"
+                            type: "Test1(9)"
+                            offset: 0
+                        }
                     }
-                },
+                }
             }
-        },
+        }
         method: {
-            name: "function_14(get_a)",
-            return_type: "type_0(int)",
-            parameters: [
+            name: {
+                name: "get_a(14)"
+                kind: "function"
+                type: null
+                offset: null
+            }
+            return_type: {
+                name: "int(0)"
+                kind: "type"
+                type: null
+                offset: null
+            }
+            parameters: {
                 {
-                    name: "parameter_15(self)",
-                    type: "class_9(Test1)"
-                },
-            ],
+                    name: {
+                        name: "self(15)"
+                        kind: "parameter"
+                        type: "Test1(9)"
+                        offset: 0
+                    }
+                    type: {
+                        name: "Test1(9)"
+                        kind: "class"
+                        type: null
+                        offset: null
+                    }
+                }
+            }
             body: {
                 return: {
                     primary: {
                         base: {
-                            var: "parameter_15(self)",
-                        },
-                        attribute: "variable_10(a)",
+                            var: {
+                                name: "self(15)"
+                                kind: "parameter"
+                                type: "Test1(9)"
+                                offset: 0
+                            }
+                        }
+                        attribute: {
+                            name: "a(10)"
+                            kind: "variable"
+                            type: "int(0)"
+                            offset: 0
+                        }
                     }
-                },
+                }
             }
-        },
+        }
         method: {
-            name: "function_16(set_a)",
-            return_type: "type_4(void)",
-            parameters: [
+            name: {
+                name: "set_a(16)"
+                kind: "function"
+                type: null
+                offset: null
+            }
+            return_type: {
+                name: "void(4)"
+                kind: "type"
+                type: null
+                offset: null
+            }
+            parameters: {
                 {
-                    name: "parameter_17(self)",
-                    type: "class_9(Test1)"
-                },
+                    name: {
+                        name: "self(17)"
+                        kind: "parameter"
+                        type: "Test1(9)"
+                        offset: 0
+                    }
+                    type: {
+                        name: "Test1(9)"
+                        kind: "class"
+                        type: null
+                        offset: null
+                    }
+                }
                 {
-                    name: "parameter_18(value)",
-                    type: "type_0(int)"
-                },
-            ],
+                    name: {
+                        name: "value(18)"
+                        kind: "parameter"
+                        type: "int(0)"
+                        offset: 0
+                    }
+                    type: {
+                        name: "int(0)"
+                        kind: "type"
+                        type: null
+                        offset: null
+                    }
+                }
+            }
             body: {
                 expression: {
                     left: {
                         primary: {
                             base: {
-                                var: "parameter_17(self)",
-                            },
-                            attribute: "variable_10(a)",
-                        }
-                    },
-                    operator: "=",
-                    right: {
-                        primary: {
-                            var: "parameter_18(value)",
+                                var: {
+                                    name: "self(17)"
+                                    kind: "parameter"
+                                    type: "Test1(9)"
+                                    offset: 0
+                                }
+                            }
+                            attribute: {
+                                name: "a(10)"
+                                kind: "variable"
+                                type: "int(0)"
+                                offset: 0
+                            }
                         }
                     }
-                },
+                    operator: "="
+                    right: {
+                        primary: {
+                            var: {
+                                name: "value(18)"
+                                kind: "parameter"
+                                type: "int(0)"
+                                offset: 0
+                            }
+                        }
+                    }
+                }
             }
-        },
-    },
+        }
+    }
     function: {
-        name: "function_19(main)",
-        return_type: "type_0(int)",
-        parameters: [
-        ],
+        name: {
+            name: "main(19)"
+            kind: "function"
+            type: null
+            offset: null
+        }
+        return_type: {
+            name: "int(0)"
+            kind: "type"
+            type: null
+            offset: null
+        }
+        parameters: {
+        }
         body: {
             variable: {
-                name: "variable_20(t)",
-                type: "class_9(Test1)",
+                name: {
+                    name: "t(20)"
+                    kind: "variable"
+                    type: "Test1(9)"
+                    offset: 0
+                }
+                type: {
+                    name: "Test1(9)"
+                    kind: "class"
+                    type: null
+                    offset: null
+                }
                 initializer: {
                     primary: {
                         base: {
-                            var: "class_9(Test1)",
-                        },
+                            var: {
+                                name: "Test1(9)"
+                                kind: "class"
+                                type: null
+                                offset: null
+                            }
+                        }
                         call: {
                             arg[0]: {
                                 primary: {
-                                    literal: 5,
+                                    literal: 5
                                 }
-                            },
-                        },
+                            }
+                        }
                     }
                 }
-            },
+            }
             expression: {
                 primary: {
                     base: {
-                        var: "function_7(print)",
-                    },
+                        var: {
+                            name: "print(7)"
+                            kind: "function"
+                            type: null
+                            offset: null
+                        }
+                    }
                     call: {
                         arg[0]: {
                             primary: {
                                 base: {
                                     base: {
-                                        var: "variable_20(t)",
-                                    },
-                                    attribute: "function_14(get_a)",
-                                },
+                                        var: {
+                                            name: "t(20)"
+                                            kind: "variable"
+                                            type: "Test1(9)"
+                                            offset: 0
+                                        }
+                                    }
+                                    attribute: {
+                                        name: "get_a(14)"
+                                        kind: "function"
+                                        type: null
+                                        offset: null
+                                    }
+                                }
                                 call: {
-                                },
+                                }
                             }
-                        },
-                    },
+                        }
+                    }
                 }
-            },
+            }
             expression: {
                 primary: {
                     base: {
                         base: {
-                            var: "variable_20(t)",
-                        },
-                        attribute: "function_16(set_a)",
-                    },
+                            var: {
+                                name: "t(20)"
+                                kind: "variable"
+                                type: "Test1(9)"
+                                offset: 0
+                            }
+                        }
+                        attribute: {
+                            name: "set_a(16)"
+                            kind: "function"
+                            type: null
+                            offset: null
+                        }
+                    }
                     call: {
                         arg[0]: {
                             primary: {
-                                literal: 20,
+                                literal: 20
                             }
-                        },
-                    },
+                        }
+                    }
                 }
-            },
+            }
             expression: {
                 primary: {
                     base: {
-                        var: "function_7(print)",
-                    },
+                        var: {
+                            name: "print(7)"
+                            kind: "function"
+                            type: null
+                            offset: null
+                        }
+                    }
                     call: {
                         arg[0]: {
                             primary: {
                                 base: {
                                     base: {
-                                        var: "variable_20(t)",
-                                    },
-                                    attribute: "function_14(get_a)",
-                                },
+                                        var: {
+                                            name: "t(20)"
+                                            kind: "variable"
+                                            type: "Test1(9)"
+                                            offset: 0
+                                        }
+                                    }
+                                    attribute: {
+                                        name: "get_a(14)"
+                                        kind: "function"
+                                        type: null
+                                        offset: null
+                                    }
+                                }
                                 call: {
-                                },
+                                }
                             }
-                        },
-                    },
-                }
-            },
-            variable: {
-                name: "variable_21(_abc123)",
-                type: "type_1(float)",
-                initializer: {
-                    primary: {
-                        literal: 30.5,
+                        }
                     }
                 }
-            },
+            }
             variable: {
-                name: "variable_22(_def456)",
-                type: "type_0(int)",
+                name: {
+                    name: "_abc123(21)"
+                    kind: "variable"
+                    type: "float(1)"
+                    offset: 0
+                }
+                type: {
+                    name: "float(1)"
+                    kind: "type"
+                    type: null
+                    offset: null
+                }
                 initializer: {
                     primary: {
-                        literal: 15,
+                        literal: 30.5
                     }
                 }
-            },
+            }
+            variable: {
+                name: {
+                    name: "_def456(22)"
+                    kind: "variable"
+                    type: "int(0)"
+                    offset: 0
+                }
+                type: {
+                    name: "int(0)"
+                    kind: "type"
+                    type: null
+                    offset: null
+                }
+                initializer: {
+                    primary: {
+                        literal: 15
+                    }
+                }
+            }
             return: {
                 primary: {
-                    literal: 0,
+                    literal: 0
                 }
-            },
+            }
         }
-    },
+    }
 }
 
-platform: 2, malloc allocated: 23855, string memory: [used/total: 2961/4231, blocks: 3], struct memory: [used/total: 17960/19048, blocks: 15]
+platform: 2, malloc allocated: 23478, string memory: [used/total: 2568/2618, blocks: 2], struct memory: [used/total: 17224/18640, blocks: 15]
