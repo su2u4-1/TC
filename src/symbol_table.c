@@ -17,33 +17,7 @@ Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info, 
     symbol->name = name;
     symbol->type = type;
     symbol->kind = kind;
-    char* kind_str = "unknown";
-    switch (kind) {
-        case SYMBOL_TYPE:
-            kind_str = "type";
-            break;
-        case SYMBOL_VARIABLE:
-            kind_str = "variable";
-            break;
-        case SYMBOL_FUNCTION:
-            kind_str = "function";
-            break;
-        case SYMBOL_CLASS:
-            kind_str = "class";
-            break;
-        case SYMBOL_METHOD:
-            kind_str = "method";
-            break;
-        case SYMBOL_ATTRIBUTE:
-            kind_str = "attribute";
-            break;
-        case SYMBOL_PARAMETER:
-            kind_str = "parameter";
-            break;
-        default:
-            break;
-    }
-    symbol->id = string_splice("%s_%zu(%s)", kind_str, symbol_count++, name);
+    symbol->id = symbol_count++;
     symbol->info.other = info;
     symbol->table = table;
     if (table != NULL) {

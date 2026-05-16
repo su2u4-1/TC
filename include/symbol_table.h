@@ -28,7 +28,7 @@ struct Symbol {
     */
     Symbol* type;
     SymbolType kind;
-    string id;
+    size_t id;
     union {
         Function* function;  // for function
         Method* method;      // for method
