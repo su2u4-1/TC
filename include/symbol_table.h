@@ -52,6 +52,7 @@ struct SymbolTable {
     SymbolTable* parent;
     SymbolTableType type;
     list(Symbol*) symbols;
+    list(SymbolTable*) children;
 };
 
 Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info, SymbolTable* table);

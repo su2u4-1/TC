@@ -31,6 +31,10 @@ SymbolTable* create_symbol_table(SymbolTableType type, SymbolTable* parent) {
     table->parent = parent;
     table->type = type;
     table->symbols = list_create();
+    table->children = list_create();
+    if (parent != NULL) {
+        list_append(parent->children, (pointer)table);
+    }
     return table;
 }
 
