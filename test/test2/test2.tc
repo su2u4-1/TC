@@ -3,7 +3,7 @@ import arr from "../../std/arr.tc";
 
 class Test2 {
     var int x = 1 + 2 * 3 - 8 / 4;  // 1 + 6 - 2 = 5
-    method Test2 init(self) {
+    method Test2 $init(self) {
         print(self.x);  // should print 5
         return self;
     }
