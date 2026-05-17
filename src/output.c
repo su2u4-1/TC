@@ -254,10 +254,16 @@ void print_variable(Variable* variable, FILE* out, size_t indent) {
 void print_primary(Primary* primary, FILE* out, size_t indent) {
     switch (primary->type) {
         case PRIMARY_INT:
+            OUT(indent, "int literal: %s\n", primary->value.literal);
+            break;
         case PRIMARY_FLOAT:
+            OUT(indent, "float literal: %s\n", primary->value.literal);
+            break;
         case PRIMARY_STRING:
+            OUT(indent, "string literal: %s\n", primary->value.literal);
+            break;
         case PRIMARY_BOOL:
-            OUT(indent, "literal: %s\n", primary->value.literal);
+            OUT(indent, "bool literal: %s\n", primary->value.literal);
             break;
         case PRIMARY_NOT:
             OUT(indent, "not: {\n");

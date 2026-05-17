@@ -43,7 +43,7 @@
             }
             initializer: {
                 primary: {
-                    literal: 10
+                    int literal: 10
                 }
             }
         }
@@ -238,7 +238,7 @@
                         call: {
                             arg[0]: {
                                 primary: {
-                                    literal: 5
+                                    int literal: 5
                                 }
                             }
                         }
@@ -302,7 +302,7 @@
                     call: {
                         arg[0]: {
                             primary: {
-                                literal: 20
+                                int literal: 20
                             }
                         }
                     }
@@ -353,7 +353,7 @@
                 }
                 initializer: {
                     primary: {
-                        literal: 30.5
+                        float literal: 30.5
                     }
                 }
             }
@@ -366,13 +366,13 @@
                 }
                 initializer: {
                     primary: {
-                        literal: 15
+                        int literal: 15
                     }
                 }
             }
             return: {
                 primary: {
-                    literal: 0
+                    int literal: 0
                 }
             }
         }

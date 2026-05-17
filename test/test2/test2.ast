@@ -103,20 +103,20 @@
                 left: {
                     left: {
                         primary: {
-                            literal: 1
+                            int literal: 1
                         }
                     }
                     operator: "+"
                     right: {
                         left: {
                             primary: {
-                                literal: 2
+                                int literal: 2
                             }
                         }
                         operator: "*"
                         right: {
                             primary: {
-                                literal: 3
+                                int literal: 3
                             }
                         }
                     }
@@ -125,13 +125,13 @@
                 right: {
                     left: {
                         primary: {
-                            literal: 8
+                            int literal: 8
                         }
                     }
                     operator: "/"
                     right: {
                         primary: {
-                            literal: 4
+                            int literal: 4
                         }
                     }
                 }
@@ -345,12 +345,12 @@
                         call: {
                             arg[0]: {
                                 primary: {
-                                    literal: int
+                                    string literal: int
                                 }
                             }
                             arg[1]: {
                                 primary: {
-                                    literal: 10
+                                    int literal: 10
                                 }
                             }
                         }
@@ -370,7 +370,7 @@
                         }
                         index: {
                             primary: {
-                                literal: 0
+                                int literal: 0
                             }
                         }
                     }
@@ -378,7 +378,7 @@
                 operator: "="
                 right: {
                     primary: {
-                        literal: 42
+                        int literal: 42
                     }
                 }
             }
@@ -404,7 +404,7 @@
                         arg[0]: {
                             left: {
                                 primary: {
-                                    literal: 2
+                                    int literal: 2
                                 }
                             }
                             operator: "+"
@@ -434,7 +434,7 @@
                                 operator: "*"
                                 right: {
                                     primary: {
-                                        literal: 10
+                                        int literal: 10
                                     }
                                 }
                             }
@@ -511,7 +511,7 @@
                                         }
                                         index: {
                                             primary: {
-                                                literal: 0
+                                                int literal: 0
                                             }
                                         }
                                     }
@@ -519,7 +519,7 @@
                                 operator: "+"
                                 right: {
                                     primary: {
-                                        literal: 10
+                                        int literal: 10
                                     }
                                 }
                             }
@@ -527,13 +527,13 @@
                             right: {
                                 left: {
                                     primary: {
-                                        literal: 2
+                                        int literal: 2
                                     }
                                 }
                                 operator: "*"
                                 right: {
                                     primary: {
-                                        literal: 5
+                                        int literal: 5
                                     }
                                 }
                             }
@@ -579,7 +579,7 @@
             }
             return: {
                 primary: {
-                    literal: 0
+                    int literal: 0
                 }
             }
         }
