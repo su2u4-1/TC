@@ -10,7 +10,7 @@ func int main() {
     } else {
         a = 0;
     }
-    for (int i = 0; i < 5; i += 1) {
+    for (var int i = 0; i < 5; i += 1) {
         a += i;
     }
     while (a > 10) {
