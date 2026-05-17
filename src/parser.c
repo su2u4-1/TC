@@ -1,5 +1,7 @@
 #include "parser.h"
 
+#include "output.h"
+
 #define parser_error(message, token)                                                                                                  \
     fprintf(stderr, "[parser Error] at %s:%zu:%zu: %s, ", file_full_path(parser->file), token->line + 1, token->column + 1, message); \
     output_one_token(token, stderr, false)
@@ -61,19 +63,18 @@ CodeMember* create_code_member(CodeMemberType type, pointer member) {
 
 static Symbol* from_file_import(string name, string path) {
     File* file = create_file(path);
-    AST* ast = parsed_files->head != NULL ? (AST*)parsed_files->head->data : NULL;
-    while (ast != NULL) {
-        if (strcmp(file_full_path(ast->file), file_full_path(file)) == 0) {
+    AST* ast = NULL;
+    foreach (AST*, item, parsed_files) {
+        if (item != NULL && strcmp(file_full_path(item->file), file_full_path(file)) == 0) {
+            ast = item;
             break;
         }
-        ast = (AST*)ast->members->head->data;
     }
     if (ast == NULL) {
         ast = parse_code(create_parser(create_lexer(file)));
         list_append(parsed_files, (pointer)ast);
     }
-    Symbol* symbol = search_symbol(ast->table, name, false, 0, NULL);
-    return symbol;
+    return search_symbol(ast->table, name, false, 0, NULL);
 }
 
 Import* parse_import(Parser* parser, SymbolTable* table, AST* ast) {
@@ -86,7 +87,7 @@ Import* parse_import(Parser* parser, SymbolTable* table, AST* ast) {
     string name = token->lexeme;
     token = get_next_token(parser->lexer);
     if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_SEMICOLON) {
-        import->path = std_path;
+        import->path = file_full_path(create_file(string_splice("%s/%s.tc", std_path, name)));
     } else {
         if (token->type != TOKEN_KEYWORD || token->lexeme != KEYWORD_FROM) {
             parser_error("Expected 'from' after import name", token);
