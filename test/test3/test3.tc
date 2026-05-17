@@ -5,7 +5,7 @@ import print from "../../std/print.tc";
 
 class Test1 {
     var int a = 10;
-    method Test1 init(self, int value) {
+    method Test1 $init(self, int value) {
         self.a = value;
         return self;
     }
@@ -21,7 +21,7 @@ import arr;
 
 class Test2 {
     var int x = 1 + 2 * 3 - 8 / 4;  // 1 + 6 - 2 = 5
-    method Test2 init(self) {
+    method Test2 $init(self) {
         print(self.x);  // should print 5
         return self;
     }

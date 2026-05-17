@@ -1,0 +1,330 @@
+SymbolTable (type: global): {
+    symbols:
+    {
+        name: "int(0)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "float(1)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "string(2)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "bool(3)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "void(4)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "pointer(5)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "const(6)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    sub-tables:
+    SymbolTable (type: global): {
+        symbols:
+        {
+            name: "print(7)"
+            kind: "function"
+            type: null
+            offset: null
+        }
+        {
+            name: "Test1(9)"
+            kind: "class"
+            type: null
+            offset: null
+        }
+        {
+            name: "arr(19)"
+            kind: "class"
+            type: null
+            offset: null
+        }
+        {
+            name: "Test2(24)"
+            kind: "class"
+            type: null
+            offset: null
+        }
+        {
+            name: "main(33)"
+            kind: "function"
+            type: null
+            offset: null
+        }
+        sub-tables:
+        SymbolTable (type: class): {
+            symbols:
+            {
+                name: "a(10)"
+                kind: "variable"
+                type: "int(0)"
+                offset: 0
+            }
+            {
+                name: "$init(11)"
+                kind: "function"
+                type: null
+                offset: null
+            }
+            {
+                name: "get_a(14)"
+                kind: "function"
+                type: null
+                offset: null
+            }
+            {
+                name: "set_a(16)"
+                kind: "function"
+                type: null
+                offset: null
+            }
+            sub-tables:
+            SymbolTable (type: method): {
+                symbols:
+                {
+                    name: "self(12)"
+                    kind: "parameter"
+                    type: "Test1(9)"
+                    offset: 0
+                }
+                {
+                    name: "value(13)"
+                    kind: "parameter"
+                    type: "int(0)"
+                    offset: 0
+                }
+                sub-tables:
+                SymbolTable (type: block): {
+                }
+            }
+            SymbolTable (type: method): {
+                symbols:
+                {
+                    name: "self(15)"
+                    kind: "parameter"
+                    type: "Test1(9)"
+                    offset: 0
+                }
+                sub-tables:
+                SymbolTable (type: block): {
+                }
+            }
+            SymbolTable (type: method): {
+                symbols:
+                {
+                    name: "self(17)"
+                    kind: "parameter"
+                    type: "Test1(9)"
+                    offset: 0
+                }
+                {
+                    name: "value(18)"
+                    kind: "parameter"
+                    type: "int(0)"
+                    offset: 0
+                }
+                sub-tables:
+                SymbolTable (type: block): {
+                }
+            }
+        }
+        SymbolTable (type: class): {
+            symbols:
+            {
+                name: "x(25)"
+                kind: "variable"
+                type: "int(0)"
+                offset: 0
+            }
+            {
+                name: "$init(26)"
+                kind: "function"
+                type: null
+                offset: null
+            }
+            {
+                name: "set_x(28)"
+                kind: "function"
+                type: null
+                offset: null
+            }
+            {
+                name: "get_x(31)"
+                kind: "function"
+                type: null
+                offset: null
+            }
+            sub-tables:
+            SymbolTable (type: method): {
+                symbols:
+                {
+                    name: "self(27)"
+                    kind: "parameter"
+                    type: "Test2(24)"
+                    offset: 0
+                }
+                sub-tables:
+                SymbolTable (type: block): {
+                }
+            }
+            SymbolTable (type: method): {
+                symbols:
+                {
+                    name: "self(29)"
+                    kind: "parameter"
+                    type: "Test2(24)"
+                    offset: 0
+                }
+                {
+                    name: "value(30)"
+                    kind: "parameter"
+                    type: "int(0)"
+                    offset: 0
+                }
+                sub-tables:
+                SymbolTable (type: block): {
+                }
+            }
+            SymbolTable (type: method): {
+                symbols:
+                {
+                    name: "self(32)"
+                    kind: "parameter"
+                    type: "Test2(24)"
+                    offset: 0
+                }
+                sub-tables:
+                SymbolTable (type: block): {
+                }
+            }
+        }
+        SymbolTable (type: function): {
+            sub-tables:
+            SymbolTable (type: block): {
+                symbols:
+                {
+                    name: "t(34)"
+                    kind: "variable"
+                    type: "Test1(9)"
+                    offset: 0
+                }
+                {
+                    name: "_abc123(35)"
+                    kind: "variable"
+                    type: "float(1)"
+                    offset: 0
+                }
+                {
+                    name: "_def456(36)"
+                    kind: "variable"
+                    type: "int(0)"
+                    offset: 0
+                }
+                {
+                    name: "t2(37)"
+                    kind: "variable"
+                    type: "Test2(24)"
+                    offset: 0
+                }
+                {
+                    name: "nums(38)"
+                    kind: "variable"
+                    type: "arr(19)"
+                    offset: 0
+                }
+            }
+        }
+    }
+    SymbolTable (type: global): {
+        symbols:
+        {
+            name: "print(7)"
+            kind: "function"
+            type: null
+            offset: null
+        }
+        sub-tables:
+        SymbolTable (type: function): {
+            symbols:
+            {
+                name: "value(8)"
+                kind: "parameter"
+                type: "int(0)"
+                offset: 0
+            }
+            sub-tables:
+            SymbolTable (type: block): {
+            }
+        }
+    }
+    SymbolTable (type: global): {
+        symbols:
+        {
+            name: "arr(19)"
+            kind: "class"
+            type: null
+            offset: null
+        }
+        sub-tables:
+        SymbolTable (type: class): {
+            symbols:
+            {
+                name: "$init(20)"
+                kind: "function"
+                type: null
+                offset: null
+            }
+            sub-tables:
+            SymbolTable (type: method): {
+                symbols:
+                {
+                    name: "self(21)"
+                    kind: "parameter"
+                    type: "arr(19)"
+                    offset: 0
+                }
+                {
+                    name: "type_name(22)"
+                    kind: "parameter"
+                    type: "string(2)"
+                    offset: 0
+                }
+                {
+                    name: "size(23)"
+                    kind: "parameter"
+                    type: "int(0)"
+                    offset: 0
+                }
+                sub-tables:
+                SymbolTable (type: block): {
+                }
+            }
+        }
+    }
+}
+
+platform: 2, malloc allocated: 41916, string memory: [used/total: 2936/3135, blocks: 3], struct memory: [used/total: 36040/36656, blocks: 26]
