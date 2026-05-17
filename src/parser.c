@@ -469,6 +469,9 @@ Statement* parse_statement(Parser* parser, SymbolTable* table) {
 
 If* parse_if(Parser* parser, SymbolTable* table) {
     If* if_ = create_struct(If);
+    if_->body = list_create();
+    if_->elif_list = list_create();
+    if_->else_body = list_create();
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
         parser_error("Expected '(' after 'if'", token);
@@ -492,6 +495,9 @@ If* parse_if(Parser* parser, SymbolTable* table) {
     token = peek_next_token(parser->lexer);
     while (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_ELIF) {
         If* elif = create_struct(If);
+        elif->body = list_create();
+        elif->elif_list = NULL;
+        elif->else_body = NULL;
         get_next_token(parser->lexer);  // consume 'elif'
         token = get_next_token(parser->lexer);
         if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
@@ -531,6 +537,7 @@ If* parse_if(Parser* parser, SymbolTable* table) {
 
 For* parse_for(Parser* parser, SymbolTable* table) {
     For* for_ = create_struct(For);
+    for_->body = list_create();
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
         parser_error("Expected '(' after 'for'", token);
@@ -547,7 +554,7 @@ For* parse_for(Parser* parser, SymbolTable* table) {
         for_->init.decl = (Variable*)vars->head->data;
         token = get_next_token(parser->lexer);
     } else if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_SEMICOLON) {
-        for_->init.expr = parse_expression(parser, table);
+        for_->init.expr = parse_expression(parser, for_table);
         if (for_->init.expr == NULL) {
             parser_error("Expected expression in for loop initializer", token);
             return NULL;
@@ -555,7 +562,7 @@ For* parse_for(Parser* parser, SymbolTable* table) {
         token = get_next_token(parser->lexer);
     }
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_SEMICOLON) {
-        for_->condition = parse_expression(parser, table);
+        for_->condition = parse_expression(parser, for_table);
         if (for_->condition == NULL) {
             parser_error("Expected expression in for loop condition", token);
             return NULL;
@@ -568,7 +575,7 @@ For* parse_for(Parser* parser, SymbolTable* table) {
     }
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_R_PAREN) {
-        for_->increment = parse_expression(parser, table);
+        for_->increment = parse_expression(parser, for_table);
         if (for_->increment == NULL) {
             parser_error("Expected expression in for loop increment", token);
             return NULL;
@@ -592,6 +599,7 @@ For* parse_for(Parser* parser, SymbolTable* table) {
 
 While* parse_while(Parser* parser, SymbolTable* table) {
     While* while_ = create_struct(While);
+    while_->body = list_create();
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
         parser_error("Expected '(' after 'while'", token);
