@@ -108,9 +108,13 @@ void print_statement(Statement* statement, FILE* out, size_t indent) {
             OUT(indent, "continue: null\n");
             break;
         case STATEMENT_RETURN:
-            OUT(indent, "return: {\n");
-            print_expression(statement->statement.return_, out, indent + 1);
-            OUT(indent, "}\n");
+            if (statement->statement.return_ == NULL) {
+                OUT(indent, "return: null\n");
+            } else {
+                OUT(indent, "return: {\n");
+                print_expression(statement->statement.return_, out, indent + 1);
+                OUT(indent, "}\n");
+            }
             break;
         case STATEMENT_EXPRESSION:
             OUT(indent, "expression: {\n");

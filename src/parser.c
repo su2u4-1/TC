@@ -436,8 +436,13 @@ Statement* parse_statement(Parser* parser, SymbolTable* table) {
         check_semicolon = false;
     } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_RETURN) {
         stmt->type = STATEMENT_RETURN;
-        get_next_token(parser->lexer);  // consume 'return'
-        stmt->statement.return_ = parse_expression(parser, table);
+        token = get_next_token(parser->lexer);  // consume 'return'
+        if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_SEMICOLON) {
+            stmt->statement.return_ = NULL;
+            check_semicolon = false;
+        } else {
+            stmt->statement.return_ = parse_expression(parser, table);
+        }
     } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_BREAK) {
         stmt->type = STATEMENT_BREAK;
         stmt->statement.break_ = NULL;
