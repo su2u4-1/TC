@@ -97,7 +97,14 @@ int main(int argc, char* argv[]) {
         // TODO: compile result
     }
     if (args->output_flags & OUTPUT_SYMBOL_TABLE) {
-        // TODO: symbol table
+        FILE* sym_file = fopen(change_extension(args->output_path, ".sym"), "w");
+        if (sym_file == NULL) {
+            fprintf(stderr, "[Error] Failed to open symbol table output file\n");
+            exit(1);
+        }
+        print_symbol_table(global_symbol_table, sym_file);
+        fprintf(sym_file, "\n%s\n", get_info());
+        fclose(sym_file);
     }
 
     return 0;

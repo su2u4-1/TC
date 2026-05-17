@@ -42,18 +42,11 @@ void print_function(Function* function, FILE* out, size_t indent) {
     OUT(indent + 1, "name: {\n");
     print_symbol(function->name, out, indent + 2);
     OUT(indent + 1, "}\n");
-    OUT(indent + 1, "return_type: {\n");
-    print_symbol(function->type, out, indent + 2);
-    OUT(indent + 1, "}\n");
+    OUT(indent + 1, "return_type: %s(%zu)\n", function->type->name, function->type->id);
     OUT(indent + 1, "parameters: {\n");
     foreach (Symbol*, param, function->parameters) {
         OUT(indent + 2, "{\n");
-        OUT(indent + 3, "name: {\n");
-        print_symbol(param, out, indent + 4);
-        OUT(indent + 3, "}\n");
-        OUT(indent + 3, "type: {\n");
-        print_symbol(param->type, out, indent + 4);
-        OUT(indent + 3, "}\n");
+        print_symbol(param, out, indent + 3);
         OUT(indent + 2, "}\n");
     }
     OUT(indent + 1, "}\n");
@@ -134,18 +127,11 @@ void print_method(Method* method, FILE* out, size_t indent) {
     OUT(indent + 1, "name: {\n");
     print_symbol(method->name, out, indent + 2);
     OUT(indent + 1, "}\n");
-    OUT(indent + 1, "return_type: {\n");
-    print_symbol(method->type, out, indent + 2);
-    OUT(indent + 1, "}\n");
+    OUT(indent + 1, "return_type: %s(%zu)\n", method->type->name, method->type->id);
     OUT(indent + 1, "parameters: {\n");
     foreach (Symbol*, param, method->parameters) {
         OUT(indent + 2, "{\n");
-        OUT(indent + 3, "name: {\n");
-        print_symbol(param, out, indent + 4);
-        OUT(indent + 3, "}\n");
-        OUT(indent + 3, "type: {\n");
-        print_symbol(param->type, out, indent + 4);
-        OUT(indent + 3, "}\n");
+        print_symbol(param, out, indent + 3);
         OUT(indent + 2, "}\n");
     }
     OUT(indent + 1, "}\n");
@@ -251,9 +237,6 @@ void print_variable(Variable* variable, FILE* out, size_t indent) {
     OUT(indent, "variable: {\n");
     OUT(indent + 1, "name: {\n");
     print_symbol(variable->var, out, indent + 2);
-    OUT(indent + 1, "}\n");
-    OUT(indent + 1, "type: {\n");
-    print_symbol(variable->var->type, out, indent + 2);
     OUT(indent + 1, "}\n");
     if (variable->initializer != NULL) {
         OUT(indent + 1, "initializer: {\n");
@@ -397,4 +380,46 @@ string operator_string(OperatorType op) {
         case OP_NONE: return "(none)";
         default: return "(unknown operator)";
     }
+}
+
+static void print_symbol_table_recursive(SymbolTable* table, FILE* out, size_t indent) {
+    switch (table->type) {
+        case SYMBOL_TABLE_GLOBAL:
+            OUT(indent, "SymbolTable (type: global): {\n");
+            break;
+        case SYMBOL_TABLE_FUNCTION:
+            OUT(indent, "SymbolTable (type: function): {\n");
+            break;
+        case SYMBOL_TABLE_CLASS:
+            OUT(indent, "SymbolTable (type: class): {\n");
+            break;
+        case SYMBOL_TABLE_METHOD:
+            OUT(indent, "SymbolTable (type: method): {\n");
+            break;
+        case SYMBOL_TABLE_BLOCK:
+            OUT(indent, "SymbolTable (type: block): {\n");
+            break;
+        default:
+            OUT(indent, "SymbolTable (type: unknown): {\n");
+            break;
+    }
+    if (!list_empty(table->symbols)) {
+        OUT(indent + 1, "symbols:\n");
+        foreach (Symbol*, symbol, table->symbols) {
+            OUT(indent + 1, "{\n");
+            print_symbol(symbol, out, indent + 2);
+            OUT(indent + 1, "}\n");
+        }
+    }
+    if (!list_empty(table->children)) {
+        OUT(indent + 1, "sub-tables:\n");
+        foreach (SymbolTable*, child, table->children) {
+            print_symbol_table_recursive(child, out, indent + 1);
+        }
+    }
+    OUT(indent, "}\n");
+}
+
+void print_symbol_table(SymbolTable* table, FILE* out) {
+    print_symbol_table_recursive(table, out, 0);
 }

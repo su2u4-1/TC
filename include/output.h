@@ -10,5 +10,6 @@
 
 void print_ast(AST* ast, FILE* out);
 void remove_trailing_comma(FILE* out);
+void print_symbol_table(SymbolTable* table, FILE* out);
 
 #endif  // OUTPUT_H

@@ -6,26 +6,13 @@
             type: null
             offset: null
         }
-        return_type: {
-            name: "void(4)"
-            kind: "type"
-            type: null
-            offset: null
-        }
+        return_type: void(4)
         parameters: {
             {
-                name: {
-                    name: "value(8)"
-                    kind: "parameter"
-                    type: "int(0)"
-                    offset: 0
-                }
-                type: {
-                    name: "int(0)"
-                    kind: "type"
-                    type: null
-                    offset: null
-                }
+                name: "value(8)"
+                kind: "parameter"
+                type: "int(0)"
+                offset: 0
             }
         }
         body: {
@@ -54,12 +41,6 @@
                 type: "int(0)"
                 offset: 0
             }
-            type: {
-                name: "int(0)"
-                kind: "type"
-                type: null
-                offset: null
-            }
             initializer: {
                 primary: {
                     literal: 10
@@ -73,40 +54,19 @@
                 type: null
                 offset: null
             }
-            return_type: {
-                name: "Test1(9)"
-                kind: "class"
-                type: null
-                offset: null
-            }
+            return_type: Test1(9)
             parameters: {
                 {
-                    name: {
-                        name: "self(12)"
-                        kind: "parameter"
-                        type: "Test1(9)"
-                        offset: 0
-                    }
-                    type: {
-                        name: "Test1(9)"
-                        kind: "class"
-                        type: null
-                        offset: null
-                    }
+                    name: "self(12)"
+                    kind: "parameter"
+                    type: "Test1(9)"
+                    offset: 0
                 }
                 {
-                    name: {
-                        name: "value(13)"
-                        kind: "parameter"
-                        type: "int(0)"
-                        offset: 0
-                    }
-                    type: {
-                        name: "int(0)"
-                        kind: "type"
-                        type: null
-                        offset: null
-                    }
+                    name: "value(13)"
+                    kind: "parameter"
+                    type: "int(0)"
+                    offset: 0
                 }
             }
             body: {
@@ -160,26 +120,13 @@
                 type: null
                 offset: null
             }
-            return_type: {
-                name: "int(0)"
-                kind: "type"
-                type: null
-                offset: null
-            }
+            return_type: int(0)
             parameters: {
                 {
-                    name: {
-                        name: "self(15)"
-                        kind: "parameter"
-                        type: "Test1(9)"
-                        offset: 0
-                    }
-                    type: {
-                        name: "Test1(9)"
-                        kind: "class"
-                        type: null
-                        offset: null
-                    }
+                    name: "self(15)"
+                    kind: "parameter"
+                    type: "Test1(9)"
+                    offset: 0
                 }
             }
             body: {
@@ -210,40 +157,19 @@
                 type: null
                 offset: null
             }
-            return_type: {
-                name: "void(4)"
-                kind: "type"
-                type: null
-                offset: null
-            }
+            return_type: void(4)
             parameters: {
                 {
-                    name: {
-                        name: "self(17)"
-                        kind: "parameter"
-                        type: "Test1(9)"
-                        offset: 0
-                    }
-                    type: {
-                        name: "Test1(9)"
-                        kind: "class"
-                        type: null
-                        offset: null
-                    }
+                    name: "self(17)"
+                    kind: "parameter"
+                    type: "Test1(9)"
+                    offset: 0
                 }
                 {
-                    name: {
-                        name: "value(18)"
-                        kind: "parameter"
-                        type: "int(0)"
-                        offset: 0
-                    }
-                    type: {
-                        name: "int(0)"
-                        kind: "type"
-                        type: null
-                        offset: null
-                    }
+                    name: "value(18)"
+                    kind: "parameter"
+                    type: "int(0)"
+                    offset: 0
                 }
             }
             body: {
@@ -288,12 +214,7 @@
             type: null
             offset: null
         }
-        return_type: {
-            name: "int(0)"
-            kind: "type"
-            type: null
-            offset: null
-        }
+        return_type: int(0)
         parameters: {
         }
         body: {
@@ -303,12 +224,6 @@
                     kind: "variable"
                     type: "Test1(9)"
                     offset: 0
-                }
-                type: {
-                    name: "Test1(9)"
-                    kind: "class"
-                    type: null
-                    offset: null
                 }
                 initializer: {
                     primary: {
@@ -436,12 +351,6 @@
                     type: "float(1)"
                     offset: 0
                 }
-                type: {
-                    name: "float(1)"
-                    kind: "type"
-                    type: null
-                    offset: null
-                }
                 initializer: {
                     primary: {
                         literal: 30.5
@@ -454,12 +363,6 @@
                     kind: "variable"
                     type: "int(0)"
                     offset: 0
-                }
-                type: {
-                    name: "int(0)"
-                    kind: "type"
-                    type: null
-                    offset: null
                 }
                 initializer: {
                     primary: {
@@ -476,4 +379,4 @@
     }
 }
 
-platform: 2, malloc allocated: 23478, string memory: [used/total: 2568/2618, blocks: 2], struct memory: [used/total: 17224/18640, blocks: 15]
+platform: 2, malloc allocated: 23542, string memory: [used/total: 2568/2618, blocks: 2], struct memory: [used/total: 17768/18704, blocks: 15]
