@@ -1,6 +1,21 @@
 #!/bin/bash
 # build.sh - collect all .c from src and .h from include, then run gcc
 
+DEBUG_MODE=0
+
+for arg in "$@"; do
+    case "$arg" in
+        -d)
+            DEBUG_MODE=1
+            ;;
+        *)
+            echo "Unknown option: $arg"
+            echo "Usage: $0 [-d]"
+            exit 1
+            ;;
+    esac
+done
+
 # --- Build Flags ---
 # Set any of these to an empty string to disable the flag.
 FLAG_DEBUG="-g"
@@ -8,6 +23,12 @@ FLAG_OPTIMIZE="-O2"
 FLAG_WALL="-Wall"
 FLAG_WEXTRA="-Wextra"
 # --- End Build Flags ---
+
+if [ "$DEBUG_MODE" -eq 1 ]; then
+    FLAG_OPTIMIZE=""
+else
+    FLAG_DEBUG=""
+fi
 
 SRCDIR="src"
 INCDIR="include"
@@ -35,6 +56,12 @@ fi
 
 # Create output directory if it doesn't exist
 mkdir -p "$OUTDIR"
+
+if [ "$DEBUG_MODE" -eq 1 ]; then
+    echo "Build mode: debug"
+else
+    echo "Build mode: release"
+fi
 
 # Combine GCC flags, filtering out empty strings
 GCC_FLAGS=""

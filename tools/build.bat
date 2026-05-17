@@ -3,6 +3,22 @@ rem build.bat - collect all .c from src and .h from include, then run gcc
 
 setlocal enabledelayedexpansion
 
+set "DEBUG_MODE=0"
+
+:parse_args
+if "%~1"=="" goto args_done
+if /I "%~1"=="-d" (
+    set "DEBUG_MODE=1"
+) else (
+    echo Unknown option: %~1
+    echo Usage: %~nx0 [-d]
+    exit /b 1
+)
+shift
+goto parse_args
+
+:args_done
+
 rem --- Build Flags ---
 rem Set any of these to an empty string to disable the flag.
 set "FLAG_DEBUG=-g"
@@ -10,6 +26,12 @@ set "FLAG_OPTIMIZE=-O2"
 set "FLAG_WALL=-Wall"
 set "FLAG_WEXTRA=-Wextra"
 rem --- End Build Flags ---
+
+if "%DEBUG_MODE%"=="1" (
+    set "FLAG_OPTIMIZE="
+) else (
+    set "FLAG_DEBUG="
+)
 
 set "SRCDIR=src"
 set "INCDIR=include"
@@ -44,6 +66,12 @@ if "%SOURCES%"=="" (
 if not exist "%OUTDIR%" mkdir "%OUTDIR%"
 
 set "GCC_FLAGS=%FLAG_WALL% %FLAG_WEXTRA% %FLAG_OPTIMIZE% %FLAG_DEBUG%"
+
+if "%DEBUG_MODE%"=="1" (
+    echo Build mode: debug
+) else (
+    echo Build mode: release
+)
 
 rem Show the full command
 echo Build command: gcc %GCC_FLAGS% -I"%INCDIR%" %SOURCES% -o "%OUTDIR%\%OUTEXE%"
