@@ -677,7 +677,7 @@
                         call: {
                             arg[0]: {
                                 primary: {
-                                    string literal: int
+                                    string literal: "int"
                                 }
                             }
                             arg[1]: {

@@ -260,7 +260,7 @@ void print_primary(Primary* primary, FILE* out, size_t indent) {
             OUT(indent, "float literal: %s\n", primary->value.literal);
             break;
         case PRIMARY_STRING:
-            OUT(indent, "string literal: %s\n", primary->value.literal);
+            OUT(indent, "string literal: \"%s\"\n", primary->value.literal);
             break;
         case PRIMARY_BOOL:
             OUT(indent, "bool literal: %s\n", primary->value.literal);

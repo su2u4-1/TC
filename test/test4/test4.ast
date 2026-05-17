@@ -46,7 +46,7 @@
                 }
                 initializer: {
                     primary: {
-                        string literal: 
+                        string literal: ""
                     }
                 }
             }
