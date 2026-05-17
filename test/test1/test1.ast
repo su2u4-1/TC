@@ -379,4 +379,4 @@
     }
 }
 
-platform: 2, malloc allocated: 23542, string memory: [used/total: 2568/2618, blocks: 2], struct memory: [used/total: 17768/18704, blocks: 15]
+platform: 2, malloc allocated: 23374, string memory: [used/total: 2568/2618, blocks: 2], struct memory: [used/total: 17784/18536, blocks: 15]

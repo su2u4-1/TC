@@ -26,11 +26,11 @@ Token(Type: symbol,      Line: 5, Column: 34)	Lexeme: ';'
 Token(Type: comment,     Line: 5, Column: 37)	Lexeme: ' 1 + 6 - 2 = 5'
 Token(Type: keyword,     Line: 6, Column: 5)	Lexeme: 'method'
 Token(Type: identifier,  Line: 6, Column: 12)	Lexeme: 'Test2'
-Token(Type: identifier,  Line: 6, Column: 18)	Lexeme: 'init'
-Token(Type: symbol,      Line: 6, Column: 22)	Lexeme: '('
-Token(Type: keyword,     Line: 6, Column: 23)	Lexeme: 'self'
-Token(Type: symbol,      Line: 6, Column: 27)	Lexeme: ')'
-Token(Type: symbol,      Line: 6, Column: 29)	Lexeme: '{'
+Token(Type: special,     Line: 6, Column: 18)	Lexeme: '$init'
+Token(Type: symbol,      Line: 6, Column: 23)	Lexeme: '('
+Token(Type: keyword,     Line: 6, Column: 24)	Lexeme: 'self'
+Token(Type: symbol,      Line: 6, Column: 28)	Lexeme: ')'
+Token(Type: symbol,      Line: 6, Column: 30)	Lexeme: '{'
 Token(Type: identifier,  Line: 7, Column: 9)	Lexeme: 'print'
 Token(Type: symbol,      Line: 7, Column: 14)	Lexeme: '('
 Token(Type: keyword,     Line: 7, Column: 15)	Lexeme: 'self'
@@ -163,7 +163,7 @@ Token(Type: keyword,     Line: 26, Column: 5)	Lexeme: 'return'
 Token(Type: integer,     Line: 26, Column: 12)	Lexeme: '0'
 Token(Type: symbol,      Line: 26, Column: 13)	Lexeme: ';'
 Token(Type: symbol,      Line: 27, Column: 1)	Lexeme: '}'
-Token(Type: EOF,         Line: 28, Column: 1)
+Token(Type: EOF,         Line: 28, Column: 2)
 
 info by lib:
-    Platform: 2, Structure Memory Used: 7888/8192 bytes, String Memory Used: 1398/2048 bytes, stringCount: 99, Memory Block Count: 274
+    platform: 2, malloc allocated: 13453, string memory: [used/total: 1817/2733, blocks: 2], struct memory: [used/total: 9248/10368, blocks: 9]
