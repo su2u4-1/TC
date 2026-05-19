@@ -1,5 +1,6 @@
 #include "output.h"
 #include "parser.h"
+#include "symbol_table.h"
 
 typedef enum OutputFlags {
     OUTPUT_NONE = 0,
@@ -80,6 +81,7 @@ int main(int argc, char* argv[]) {
     if (args->output_flags & OUTPUT_AST) {
         Parser* parser = create_parser(lexer);
         ast = parse_code(parser);
+        // TODO: analyzer
         list_append(parsed_files, (pointer)ast);
         FILE* ast_file = fopen(change_extension(args->output_path, ".ast"), "w");
         if (ast_file == NULL) {

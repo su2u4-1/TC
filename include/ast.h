@@ -2,7 +2,6 @@
 #define AST_H
 
 #include "file.h"
-#include "symbol_table.h"
 
 typedef struct AST {
     File* file;

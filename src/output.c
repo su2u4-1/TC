@@ -1,6 +1,6 @@
 #include "output.h"
 
-#include "ast.h"
+#include "symbol_table.h"
 
 static void print_function(Function* function, FILE* out, size_t indent);
 static void print_class(Class* class, FILE* out, size_t indent);

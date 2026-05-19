@@ -1,6 +1,7 @@
 #include "parser.h"
 
 #include "output.h"
+#include "symbol_table.h"
 
 #define parser_error(message, token)                                                                                                  \
     fprintf(stderr, "[parser Error] at %s:%zu:%zu: %s, ", file_full_path(parser->file), token->line + 1, token->column + 1, message); \
