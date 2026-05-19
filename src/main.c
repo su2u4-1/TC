@@ -1,3 +1,4 @@
+#include "analyzer.h"
 #include "output.h"
 #include "parser.h"
 #include "symbol_table.h"
@@ -81,16 +82,18 @@ int main(int argc, char* argv[]) {
     if (args->output_flags & OUTPUT_AST) {
         Parser* parser = create_parser(lexer);
         ast = parse_code(parser);
-        // TODO: analyzer
-        list_append(parsed_files, (pointer)ast);
-        FILE* ast_file = fopen(change_extension(args->output_path, ".ast"), "w");
-        if (ast_file == NULL) {
-            fprintf(stderr, "[Error] Failed to open AST output file\n");
-            exit(1);
+        ast = analyzer(ast);
+        if (ast != NULL) {
+            list_append(parsed_files, (pointer)ast);
+            FILE* ast_file = fopen(change_extension(args->output_path, ".ast"), "w");
+            if (ast_file == NULL) {
+                fprintf(stderr, "[Error] Failed to open AST output file\n");
+                exit(1);
+            }
+            print_ast(ast, ast_file);
+            fprintf(ast_file, "\n%s\n", get_info());
+            fclose(ast_file);
         }
-        print_ast(ast, ast_file);
-        fprintf(ast_file, "\n%s\n", get_info());
-        fclose(ast_file);
     }
     if (args->output_flags & OUTPUT_IR) {
         // TODO: IR
