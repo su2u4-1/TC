@@ -26,6 +26,9 @@
 #define std_path "NOT SUPPORTED"
 #endif
 
+// TODO: let pointer_size be determined by the environment
+#define pointer_size 4
+
 #if PLATFORM == 1
 #include <direct.h>  // MSVC
 #elif PLATFORM == 2 || PLATFORM == 3 || PLATFORM == 4

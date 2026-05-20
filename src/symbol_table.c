@@ -18,11 +18,31 @@ Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info, 
     symbol->type = type;
     symbol->kind = kind;
     symbol->id = symbol_count++;
-    symbol->info.other = info;
-    symbol->table = table;
-    if (table != NULL) {
-        list_append(table->symbols, (pointer)symbol);
+    switch (kind) {
+        case SYMBOL_FUNCTION:
+            symbol->info.function = (Function*)info;
+            break;
+        case SYMBOL_METHOD:
+            symbol->info.method = (Method*)info;
+            break;
+        case SYMBOL_CLASS:
+            symbol->info.class = (Class*)info;
+            break;
+        case SYMBOL_VARIABLE:
+        case SYMBOL_ATTRIBUTE:
+        case SYMBOL_PARAMETER:
+            symbol->info.offset = (size_t)info;
+            break;
+        case SYMBOL_TYPE:
+            symbol->info.size = (size_t)info;
+            break;
+        default:
+            fprintf(stderr, "[symbol_table Warning] at <create_symbol> Unknown symbol kind '%d' for symbol '%s'\n", kind, name);
+            break;
     }
+    symbol->table = table;
+    if (table != NULL)
+        list_append(table->symbols, (pointer)symbol);
     return symbol;
 }
 
@@ -32,21 +52,20 @@ SymbolTable* create_symbol_table(SymbolTableType type, SymbolTable* parent) {
     table->type = type;
     table->symbols = list_create();
     table->children = list_create();
-    if (parent != NULL) {
+    if (parent != NULL)
         list_append(parent->children, (pointer)table);
-    }
     return table;
 }
 
 void init_symbol(void) {
     global_symbol_table = create_symbol_table(SYMBOL_TABLE_GLOBAL, NULL);
-    symbol_int = create_symbol(KEYWORD_INT, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
-    symbol_float = create_symbol(KEYWORD_FLOAT, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
-    symbol_string = create_symbol(KEYWORD_STRING, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
-    symbol_bool = create_symbol(KEYWORD_BOOL, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
-    symbol_void = create_symbol(KEYWORD_VOID, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
-    symbol_pointer = create_symbol(KEYWORD_POINTER, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
-    symbol_const = create_symbol(KEYWORD_CONST, NULL, SYMBOL_TYPE, NULL, global_symbol_table);
+    symbol_int = create_symbol(KEYWORD_INT, NULL, SYMBOL_TYPE, (pointer)pointer_size, global_symbol_table);
+    symbol_float = create_symbol(KEYWORD_FLOAT, NULL, SYMBOL_TYPE, (pointer)pointer_size, global_symbol_table);
+    symbol_string = create_symbol(KEYWORD_STRING, NULL, SYMBOL_TYPE, (pointer)pointer_size, global_symbol_table);
+    symbol_bool = create_symbol(KEYWORD_BOOL, NULL, SYMBOL_TYPE, (pointer)1, global_symbol_table);
+    symbol_void = create_symbol(KEYWORD_VOID, NULL, SYMBOL_TYPE, (pointer)1, global_symbol_table);
+    symbol_pointer = create_symbol(KEYWORD_POINTER, NULL, SYMBOL_TYPE, (pointer)pointer_size, global_symbol_table);
+    symbol_const = create_symbol(KEYWORD_CONST, NULL, SYMBOL_TYPE, (pointer)pointer_size, global_symbol_table);
 }
 
 Symbol* search_symbol(SymbolTable* table, string name, bool compare_kind, SymbolType compare_kind_value, Symbol* compare_type) {

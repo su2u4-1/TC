@@ -34,7 +34,7 @@ struct Symbol {
         Method* method;      // for method
         Class* class;        // for class
         size_t offset;       // for variable, attribute, parameter
-        void* other;         // for type, always NULL
+        size_t size;         // for type
     } info;
     SymbolTable* table;
 };

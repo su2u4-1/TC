@@ -1,6 +1,9 @@
 #include "analyzer.h"
 
 #include "output.h"
+#include "symbol_table.h"
+
+static void fill_symbol_offset(SymbolTable* table);
 
 static void analyze_import(Import* import);
 static void analyze_class(Class* class);
@@ -23,6 +26,7 @@ AST* analyzer(AST* ast) {
     assert(ast->members != NULL);
     assert(!list_empty(ast->members));
     assert(ast->table != NULL);
+    fill_symbol_offset(ast->table);
     foreach (CodeMember*, member, ast->members) {
         switch (member->type) {
             case CODE_CLASS: analyze_class(member->member.class); break;
@@ -32,6 +36,21 @@ AST* analyzer(AST* ast) {
         }
     }
     return ast;
+}
+
+void fill_symbol_offset(SymbolTable* table) {
+    assert(table != NULL);
+    size_t offset = 0;
+    foreach (Symbol*, symbol, table->symbols) {
+        if (symbol->kind == SYMBOL_VARIABLE || symbol->kind == SYMBOL_PARAMETER || symbol->kind == SYMBOL_ATTRIBUTE) {
+            symbol->info.offset = offset;
+            assert(symbol->type != NULL);
+            assert(symbol->type->kind == SYMBOL_TYPE || symbol->type->kind == SYMBOL_CLASS);
+            offset += (symbol->type->kind == SYMBOL_TYPE) ? symbol->type->info.size : pointer_size;
+        }
+    }
+    foreach (SymbolTable*, child, table->children)
+        fill_symbol_offset(child);
 }
 
 void analyze_import(Import* import) {
@@ -48,7 +67,13 @@ void analyze_class(Class* class) {
     assert(class->name != NULL);
     assert(class->members != NULL);
     assert(!list_empty(class->members));
-    assert(class->table != NULL);
+    foreach (ClassMember*, member, class->members) {
+        switch (member->type) {
+            case CLASS_METHOD: analyze_method(member->member.method); break;
+            case CLASS_ATTRIBUTE: analyze_variable(member->member.attribute); break;
+            default: assert(false);
+        }
+    }
 }
 
 void analyze_function(Function* function) {
@@ -58,4 +83,11 @@ void analyze_function(Function* function) {
     assert(function->parameters != NULL);
     assert(function->body != NULL);
     assert(!list_empty(function->body));
+    analyze_type(function->type);
+    foreach (Symbol*, symbol, function->parameters) {
+        assert(symbol->type != NULL);
+        analyze_type(symbol);
+        assert(symbol->name != NULL);
+        assert(symbol->kind == SYMBOL_PARAMETER);
+    }
 }
