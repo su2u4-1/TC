@@ -538,6 +538,7 @@ If* parse_if(Parser* parser, SymbolTable* table) {
 
 For* parse_for(Parser* parser, SymbolTable* table) {
     For* for_ = create_struct(For);
+    for_->init.decl = NULL;
     for_->body = list_create();
     Token* token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
@@ -553,6 +554,7 @@ For* parse_for(Parser* parser, SymbolTable* table) {
             return NULL;
         }
         for_->init.decl = (Variable*)vars->head->data;
+        for_->is_decl = true;
         token = get_next_token(parser->lexer);
     } else if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_SEMICOLON) {
         for_->init.expr = parse_expression(parser, for_table);
@@ -560,6 +562,7 @@ For* parse_for(Parser* parser, SymbolTable* table) {
             parser_error("Expected expression in for loop initializer", token);
             return NULL;
         }
+        for_->is_decl = false;
         token = get_next_token(parser->lexer);
     }
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_SEMICOLON) {

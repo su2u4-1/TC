@@ -160,6 +160,7 @@ struct For {
     Expression* condition;
     Expression* increment;
     list(Statement*) body;
+    bool is_decl;  // true if init is decl, false if init is expr
 };
 
 struct While {
