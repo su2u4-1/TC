@@ -5,6 +5,7 @@
 #include "symbol_table.h"
 
 static void fill_symbol_offset(SymbolTable* table);
+static size_t get_type_size(Symbol* type);
 
 static void analyze_import(Import* import);
 static void analyze_class(Class* class);
@@ -20,6 +21,7 @@ static void analyze_for(For* for_);
 static void analyze_while(While* while_);
 static void analyze_primary(Primary* primary);
 static void analyze_variable_access(VariableAccess* variable_access);
+static void analyze_symbol(Symbol* symbol);
 
 AST* analyzer(AST* ast) {
     assert(ast != NULL);
@@ -40,6 +42,15 @@ AST* analyzer(AST* ast) {
     return ast;
 }
 
+size_t get_type_size(Symbol* type) {
+    if (type->kind == SYMBOL_CLASS)
+        return pointer_size;
+    // TODO: support array and other container types
+    // if (strcmp(type->type->name, "arr") == 0)
+    //     return type->info.size * get_type_size(type->type);
+    return type->info.size;
+}
+
 void fill_symbol_offset(SymbolTable* table) {
     assert(table != NULL);
     size_t offset = 0;
@@ -48,7 +59,7 @@ void fill_symbol_offset(SymbolTable* table) {
             symbol->info.offset = offset;
             assert(symbol->type != NULL);
             assert(symbol->type->kind == SYMBOL_TYPE || symbol->type->kind == SYMBOL_CLASS);
-            offset += (symbol->type->kind == SYMBOL_TYPE) ? symbol->type->info.size : pointer_size;
+            offset += get_type_size(symbol->type);
         }
     }
     foreach (SymbolTable*, child, table->children)
@@ -61,12 +72,12 @@ void analyze_import(Import* import) {
     FILE* file = fopen(import->path, "r");
     assert(file != NULL);
     fclose(file);
-    assert(import->name != NULL);
+    analyze_symbol(import->name);
 }
 
 void analyze_class(Class* class) {
     assert(class != NULL);
-    assert(class->name != NULL);
+    analyze_symbol(class->name);
     assert(class->members != NULL);
     if (!list_empty(class->members)) {
         foreach (ClassMember*, member, class->members) {
@@ -81,15 +92,12 @@ void analyze_class(Class* class) {
 
 void analyze_function(Function* function) {
     assert(function != NULL);
-    assert(function->name != NULL);
-    assert(function->type != NULL);
-    assert(function->parameters != NULL);
+    analyze_symbol(function->name);
     analyze_type(function->type);
+    assert(function->parameters != NULL);
     if (!list_empty(function->parameters)) {
         foreach (Symbol*, symbol, function->parameters) {
-            assert(symbol->type != NULL);
-            analyze_type(symbol);
-            assert(symbol->name != NULL);
+            analyze_symbol(symbol);
             assert(symbol->kind == SYMBOL_PARAMETER);
         }
     }
@@ -98,14 +106,11 @@ void analyze_function(Function* function) {
 
 void analyze_method(Method* method) {
     assert(method != NULL);
-    assert(method->name != NULL);
-    assert(method->type != NULL);
-    assert(!list_empty(method->parameters));
+    analyze_symbol(method->name);
     analyze_type(method->type);
+    assert(!list_empty(method->parameters));
     foreach (Symbol*, symbol, method->parameters) {
-        assert(symbol->type != NULL);
-        analyze_type(symbol);
-        assert(symbol->name != NULL);
+        analyze_symbol(symbol);
         assert(symbol->kind == SYMBOL_PARAMETER);
     }
     analyze_body(method->body);
@@ -113,15 +118,23 @@ void analyze_method(Method* method) {
 
 void analyze_variable(Variable* variable) {
     assert(variable != NULL);
-    assert(variable->var != NULL);
-    assert(variable->var->type != NULL);
+    analyze_symbol(variable->var);
     analyze_type(variable->var->type);
     if (variable->initializer != NULL)
         analyze_expression(variable->initializer);
 }
 
 void analyze_type(Symbol* type) {
-    // TODO
+    assert(type != NULL);
+    assert(type->name != NULL);
+    assert(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS);
+    if (type->type != NULL) {
+        assert(type->kind == SYMBOL_TYPE);
+        // TODO: check type is container type
+        analyze_type(type->type);
+    }
+    if (type->kind == SYMBOL_CLASS)
+        assert(type->info.class != NULL);
 }
 
 void analyze_statement(Statement* statement) {
@@ -168,7 +181,13 @@ void analyze_body(list(Statement*) body) {
 }
 
 void analyze_expression(Expression* expression) {
-    // TODO
+    assert(expression != NULL);
+    if (expression->op == OP_NONE) {
+        analyze_primary(expression->left.unary);
+    } else {
+        analyze_expression(expression->left.binary);
+        analyze_expression(expression->right);
+    }
 }
 
 void analyze_if(If* if_) {
@@ -212,9 +231,62 @@ void analyze_while(While* while_) {
 }
 
 void analyze_primary(Primary* primary) {
-    // TODO
+    assert(primary != NULL);
+    switch (primary->type) {
+        case PRIMARY_INT:
+        case PRIMARY_FLOAT:
+        case PRIMARY_STRING:
+        case PRIMARY_BOOL:
+            assert(primary->value.literal != NULL);
+            break;
+        case PRIMARY_NOT:
+            analyze_primary(primary->value.not);
+            break;
+        case PRIMARY_NEG:
+            analyze_primary(primary->value.neg);
+            break;
+        case PRIMARY_EXPR:
+            analyze_expression(primary->value.exp);
+            break;
+        case PRIMARY_VAR_ACCESS:
+            analyze_variable_access(primary->value.var_access);
+            break;
+        default:
+            assert(false);
+    }
 }
 
 void analyze_variable_access(VariableAccess* variable_access) {
-    // TODO
+    assert(variable_access != NULL);
+    if (variable_access->base != NULL)
+        analyze_variable_access(variable_access->base);
+    switch (variable_access->type) {
+        case VAR_ACCESS_VAR:
+            assert(variable_access->access.var != NULL);
+            analyze_symbol(variable_access->access.var);
+            assert(variable_access->base == NULL);
+            break;
+        case VAR_ACCESS_CALL:
+            assert(variable_access->access.args != NULL);
+            foreach (Expression*, arg, variable_access->access.args)
+                analyze_expression(arg);
+            break;
+        case VAR_ACCESS_ATTRIBUTE:
+            assert(variable_access->access.attribute != NULL);
+            analyze_symbol(variable_access->access.attribute);
+            break;
+        case VAR_ACCESS_INDEX:
+            assert(variable_access->access.index != NULL);
+            analyze_expression(variable_access->access.index);
+            break;
+        default:
+            assert(false);
+    }
+}
+
+void analyze_symbol(Symbol* symbol) {
+    assert(symbol != NULL);
+    assert(symbol->name != NULL);
+    if (symbol->type != NULL)
+        analyze_type(symbol->type);
 }
