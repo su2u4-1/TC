@@ -157,6 +157,9 @@ extern string SPECIAL_NEG;        // special method `$neg`
 
 #define list(T) List*
 #define list_empty(self) (self == NULL || self->head == NULL)
+#define foreach(type, item, list)               \
+    List* temp_##item##_list = list_copy(list); \
+    for (type item = (type)list_pop_front(temp_##item##_list); item != NULL; item = (type)list_pop_front(temp_##item##_list))
 
 typedef struct ListNode {
     pointer data;

@@ -1,7 +1,5 @@
 #include "analyzer.h"
 
-#include "lib.h"
-#include "output.h"
 #include "symbol_table.h"
 
 static void fill_symbol_offset(SymbolTable* table);

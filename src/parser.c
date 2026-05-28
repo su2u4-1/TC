@@ -1,6 +1,5 @@
 #include "parser.h"
 
-#include "output.h"
 #include "symbol_table.h"
 
 #define parser_error(message, token)                                                                                                  \
