@@ -70,6 +70,9 @@ void init(void);
 #define create_struct(T) (T*)alloc_memory(sizeof(T), true)
 string create_string(const char* str, size_t len);
 pointer alloc_memory(size_t size, bool is_struct);
+#if defined(__GNUC__) || defined(__clang__)
+__attribute__((format(printf, 1, 2)))
+#endif
 string string_splice(string format, ...);
 string get_info(void);
 

@@ -37,7 +37,7 @@ Symbol* create_symbol(string name, Symbol* type, SymbolType kind, pointer info, 
             symbol->info.size = (size_t)info;
             break;
         default:
-            fprintf(stderr, "[symbol_table Warning] at <create_symbol> Unknown symbol kind '%d' for symbol '%s'\n", kind, name);
+            fprintf(stderr, "[symbol_table Warning] at <create_symbol> Unknown symbol kind '%u' for symbol '%s'\n", kind, name);
             break;
     }
     symbol->table = table;
