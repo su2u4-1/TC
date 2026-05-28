@@ -2,6 +2,7 @@
 #define LIB_H
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,9 +36,6 @@
 #include <unistd.h>  // MinGW or LINUX or MACOS
 #endif
 
-#define bool char
-#define true 1
-#define false 0
 typedef char* string;
 typedef size_t* pointer;
 
