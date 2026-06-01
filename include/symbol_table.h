@@ -22,9 +22,8 @@ struct Symbol {
     /*
     attribute, parameter, variable: type
     function, method: return type
-    type(if is container): element type
-    type(otherwise): NULL
-    class: NULL
+    type/class (if is container): element type
+    type/class (otherwise): NULL
     */
     Symbol* type;
     SymbolType kind;
