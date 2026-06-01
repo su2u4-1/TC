@@ -252,7 +252,7 @@ void print_variable(Variable* variable, FILE* out, size_t indent) {
     OUT(indent, "}\n");
 }
 void print_primary(Primary* primary, FILE* out, size_t indent) {
-    switch (primary->type) {
+    switch (primary->kind) {
         case PRIMARY_INT:
             OUT(indent, "int literal: %s\n", primary->value.literal);
             break;
@@ -294,7 +294,7 @@ void print_variable_access(VariableAccess* variable_access, FILE* out, size_t in
         print_variable_access(variable_access->base, out, indent + 1);
         OUT(indent, "}\n");
     }
-    switch (variable_access->type) {
+    switch (variable_access->kind) {
         case VAR_ACCESS_VAR:
             OUT(indent, "var: {\n");
             print_symbol(variable_access->access.var, out, indent + 1);
@@ -387,6 +387,8 @@ string operator_string(OperatorType op) {
         case OP_MOD_ASSIGN: return "%=";
         case OP_AND: return "&&";
         case OP_OR: return "||";
+        case OP_NEG: return "-";
+        case OP_NOT: return "!";
         case OP_NONE: return "(none)";
         default: return "(unknown operator)";
     }

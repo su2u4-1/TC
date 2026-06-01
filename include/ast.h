@@ -49,6 +49,8 @@ typedef enum OperatorType {
     OP_MOD_ASSIGN,
     OP_AND,
     OP_OR,
+    OP_NEG,
+    OP_NOT,
     OP_NONE,
 } OperatorType;
 typedef enum VariableAccessType {
@@ -175,6 +177,7 @@ struct Expression {
     } left;
     Expression* right;
     OperatorType op;
+    Symbol* type;
 };
 
 struct Variable {
@@ -190,7 +193,8 @@ struct Primary {
         Primary* not;                // logical not
         VariableAccess* var_access;  // variable access
     } value;
-    PrimaryType type;
+    Symbol* type;
+    PrimaryType kind;
 };
 
 struct VariableAccess {
@@ -201,7 +205,8 @@ struct VariableAccess {
         Symbol* attribute;       // attribute or method access
         Expression* index;       // container access
     } access;
-    VariableAccessType type;
+    Symbol* type;
+    VariableAccessType kind;
 };
 
 #endif  // AST_H

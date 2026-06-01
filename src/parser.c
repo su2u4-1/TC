@@ -121,7 +121,7 @@ Import* parse_import(Parser* parser, SymbolTable* table, AST* ast) {
 }
 
 static Method* parse_method(Parser* parser, SymbolTable* table);
-static list(Variable*) parse_variable(Parser* parser, SymbolTable* table);
+static list(Variable*) parse_variable(Parser* parser, SymbolTable* table, SymbolType kind);
 static ClassMember* create_class_member(ClassMemberType type, pointer member);
 
 Class* parse_class(Parser* parser, SymbolTable* table) {
@@ -150,7 +150,7 @@ Class* parse_class(Parser* parser, SymbolTable* table) {
         } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_METHOD) {
             list_append(class->members, (pointer)create_class_member(CLASS_METHOD, (pointer)parse_method(parser, class_table)));
         } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_VAR) {
-            list(Variable*) vars = parse_variable(parser, class_table);
+            list(Variable*) vars = parse_variable(parser, class_table, SYMBOL_ATTRIBUTE);
             while (!list_empty(vars)) {
                 list_append(class->members, (pointer)create_class_member(CLASS_ATTRIBUTE, list_pop_front(vars)));
             }
@@ -203,7 +203,7 @@ Function* parse_function(Parser* parser, SymbolTable* table) {
         parser->current_function = NULL;
         return NULL;
     }
-    function->name = create_symbol(token->lexeme, NULL, SYMBOL_FUNCTION, (pointer)function, table);
+    function->name = create_symbol(token->lexeme, function->type, SYMBOL_FUNCTION, (pointer)function, table);
     token = get_next_token(parser->lexer);
     if (token->type != TOKEN_SYMBOL || token->lexeme != SYMBOL_L_PAREN) {
         parser_error("Expected '(' after function name", token);
@@ -266,7 +266,7 @@ Method* parse_method(Parser* parser, SymbolTable* table) {
         parser->current_method = NULL;
         return NULL;
     }
-    method->name = create_symbol(token->lexeme, NULL, SYMBOL_FUNCTION, (pointer)method, table);
+    method->name = create_symbol(token->lexeme, method->type, SYMBOL_METHOD, (pointer)method, table);
     if (token->type == TOKEN_SPECIAL) {
         if (!is_special(token->lexeme)) {
             parser_error("Invalid special method", token);
@@ -329,7 +329,8 @@ Method* parse_method(Parser* parser, SymbolTable* table) {
 static Expression* parse_expression_prec(Parser* parser, int min_precedence, SymbolTable* table);
 #define parse_expression(parser, table) parse_expression_prec(parser, 1, table)
 
-list(Variable*) parse_variable(Parser* parser, SymbolTable* table) {
+list(Variable*) parse_variable(Parser* parser, SymbolTable* table, SymbolType kind) {
+    assert(kind == SYMBOL_VARIABLE || kind == SYMBOL_ATTRIBUTE);
     list(Variable*) vars = list_create();
     Token* token = get_current_token(parser->lexer);
     if (token->type != TOKEN_KEYWORD || token->lexeme != KEYWORD_VAR) {
@@ -340,7 +341,7 @@ list(Variable*) parse_variable(Parser* parser, SymbolTable* table) {
     Symbol* type = parse_type(parser, table);
     while ((token = get_next_token(parser->lexer))->type == TOKEN_IDENTIFIER) {
         Variable* var = create_struct(Variable);
-        var->var = create_symbol(token->lexeme, type, SYMBOL_VARIABLE, NULL, table);
+        var->var = create_symbol(token->lexeme, type, kind, NULL, table);
         token = get_next_token(parser->lexer);
         if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_ASSIGN) {
             get_next_token(parser->lexer);  // consume '='
@@ -387,7 +388,7 @@ Symbol* parse_type(Parser* parser, SymbolTable* table) {
             return NULL;
         }
     } else if (token->type == TOKEN_IDENTIFIER) {
-        type = create_symbol(token->lexeme, NULL, SYMBOL_CLASS, NULL, table);
+        type = search_symbol(table, token->lexeme, true, SYMBOL_CLASS, NULL);
     } else {
         parser_error("Unexpected token when parsing type", token);
         return NULL;
@@ -451,7 +452,7 @@ Statement* parse_statement(Parser* parser, SymbolTable* table) {
         stmt->statement.continue_ = NULL;
     } else if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_VAR) {
         stmt->type = STATEMENT_DECLARE_LIST;
-        stmt->statement.declare_list = parse_variable(parser, table);
+        stmt->statement.declare_list = parse_variable(parser, table, SYMBOL_VARIABLE);
         check_semicolon = false;
     } else {
         stmt->type = STATEMENT_EXPRESSION;
@@ -547,7 +548,7 @@ For* parse_for(Parser* parser, SymbolTable* table) {
     token = get_next_token(parser->lexer);
     SymbolTable* for_table = create_symbol_table(SYMBOL_TABLE_BLOCK, table);
     if (token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_VAR) {
-        list(Variable*) vars = parse_variable(parser, for_table);
+        list(Variable*) vars = parse_variable(parser, for_table, SYMBOL_VARIABLE);
         if (vars == NULL || vars->head == NULL || vars->head != vars->tail) {
             parser_error("Expected exactly one variable declaration in for loop initializer", token);
             return NULL;
@@ -653,6 +654,8 @@ static int operator_precedence(OperatorType op) {
         case OP_DIV:  // /
         case OP_MOD:  // %
             return 5;
+        case OP_NOT:  // !
+        case OP_NEG:  // -
         case OP_NONE:
         default:
             return 0;
@@ -684,6 +687,7 @@ static OperatorType operator(string lexeme) {
 Expression* parse_expression_prec(Parser* parser, int minp, SymbolTable* table) {
     // parse first operand
     Expression* left = create_struct(Expression);
+    left->type = NULL;
     left->left.unary = parse_primary(parser, table);
     if (left->left.unary == NULL) {
         parser_error("Expected expression", get_current_token(parser->lexer));
@@ -700,6 +704,7 @@ Expression* parse_expression_prec(Parser* parser, int minp, SymbolTable* table) 
         token = get_next_token(parser->lexer);
         // parse scond operand
         Expression* expr = create_struct(Expression);
+        expr->type = NULL;
         expr->right = parse_expression_prec(parser, p + (is_right_associative(op) ? 0 : 1), table);
         if (expr->right == NULL) {
             parser_error("Expected expression after operator", token);
@@ -718,19 +723,20 @@ static VariableAccess* parse_variable_access(Parser* parser, SymbolTable* table)
 
 Primary* parse_primary(Parser* parser, SymbolTable* table) {
     Primary* primary = create_struct(Primary);
+    primary->type = NULL;
     Token* token = get_current_token(parser->lexer);
     if (token->type == TOKEN_INTEGER) {
         primary->value.literal = token->lexeme;
-        primary->type = PRIMARY_INT;
+        primary->kind = PRIMARY_INT;
     } else if (token->type == TOKEN_FLOAT) {
         primary->value.literal = token->lexeme;
-        primary->type = PRIMARY_FLOAT;
+        primary->kind = PRIMARY_FLOAT;
     } else if (token->type == TOKEN_STRING) {
         primary->value.literal = token->lexeme;
-        primary->type = PRIMARY_STRING;
+        primary->kind = PRIMARY_STRING;
     } else if (token->type == TOKEN_KEYWORD && (token->lexeme == KEYWORD_TRUE || token->lexeme == KEYWORD_FALSE)) {
         primary->value.literal = token->lexeme;
-        primary->type = PRIMARY_BOOL;
+        primary->kind = PRIMARY_BOOL;
     } else if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_NOT) {
         get_next_token(parser->lexer);  // consume '!'
         primary->value.not = parse_primary(parser, table);
@@ -738,7 +744,7 @@ Primary* parse_primary(Parser* parser, SymbolTable* table) {
             parser_error("Expected expression after '!'", token);
             return NULL;
         }
-        primary->type = PRIMARY_NOT;
+        primary->kind = PRIMARY_NOT;
     } else if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_SUB) {
         get_next_token(parser->lexer);  // consume '-'
         primary->value.neg = parse_primary(parser, table);
@@ -746,7 +752,7 @@ Primary* parse_primary(Parser* parser, SymbolTable* table) {
             parser_error("Expected expression after '-'", token);
             return NULL;
         }
-        primary->type = PRIMARY_NEG;
+        primary->kind = PRIMARY_NEG;
     } else if (token->type == TOKEN_SYMBOL && token->lexeme == SYMBOL_L_PAREN) {
         get_next_token(parser->lexer);  // consume '('
         primary->value.exp = parse_expression(parser, table);
@@ -765,7 +771,7 @@ Primary* parse_primary(Parser* parser, SymbolTable* table) {
             parser_error("Expected variable access", token);
             return NULL;
         }
-        primary->type = PRIMARY_VAR_ACCESS;
+        primary->kind = PRIMARY_VAR_ACCESS;
     } else {
         parser_error("Unexpected token in expression", token);
         return NULL;
@@ -775,6 +781,7 @@ Primary* parse_primary(Parser* parser, SymbolTable* table) {
 
 VariableAccess* parse_variable_access(Parser* parser, SymbolTable* table) {
     VariableAccess* var = create_struct(VariableAccess);
+    var->type = NULL;
     var->base = NULL;
     Token* token = get_current_token(parser->lexer);
     if (token->type != TOKEN_IDENTIFIER && !(token->type == TOKEN_KEYWORD && token->lexeme == KEYWORD_SELF)) {
@@ -786,13 +793,14 @@ VariableAccess* parse_variable_access(Parser* parser, SymbolTable* table) {
         parser_error("Undefined variable", token);
         return NULL;
     }
-    var->type = VAR_ACCESS_VAR;
+    var->kind = VAR_ACCESS_VAR;
     token = peek_next_token(parser->lexer);
     while (token->type == TOKEN_SYMBOL && (token->lexeme == SYMBOL_DOT || token->lexeme == SYMBOL_L_BRACKET || token->lexeme == SYMBOL_L_PAREN)) {
         VariableAccess* access = create_struct(VariableAccess);
+        access->type = NULL;
         access->base = var;
         if (token->lexeme == SYMBOL_DOT) {
-            access->type = VAR_ACCESS_ATTRIBUTE;
+            access->kind = VAR_ACCESS_ATTRIBUTE;
             get_next_token(parser->lexer);  // consume '.'
             token = get_next_token(parser->lexer);
             if (token->type != TOKEN_IDENTIFIER) {
@@ -810,7 +818,7 @@ VariableAccess* parse_variable_access(Parser* parser, SymbolTable* table) {
                 return NULL;
             }
         } else if (token->lexeme == SYMBOL_L_BRACKET) {
-            access->type = VAR_ACCESS_INDEX;
+            access->kind = VAR_ACCESS_INDEX;
             get_next_token(parser->lexer);  // consume '['
             get_next_token(parser->lexer);
             access->access.index = parse_expression(parser, table);
@@ -824,7 +832,7 @@ VariableAccess* parse_variable_access(Parser* parser, SymbolTable* table) {
                 return NULL;
             }
         } else if (token->lexeme == SYMBOL_L_PAREN) {
-            access->type = VAR_ACCESS_CALL;
+            access->kind = VAR_ACCESS_CALL;
             access->access.args = list_create();
             get_next_token(parser->lexer);  // consume '('
             token = get_next_token(parser->lexer);
