@@ -189,4 +189,4 @@ SymbolTable (type: global): {
     }
 }
 
-platform: 2, malloc allocated: 25222, string memory: [used/total: 2840/4262, blocks: 3], struct memory: [used/total: 19384/20352, blocks: 16]
+platform: 2, malloc allocated: 25222, string memory: [used/total: 2840/4262, blocks: 3], struct memory: [used/total: 19576/20352, blocks: 16]

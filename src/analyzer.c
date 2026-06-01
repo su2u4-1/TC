@@ -337,15 +337,48 @@ void analyze_variable_access(VariableAccess* variable_access) {
             break;
         case VAR_ACCESS_CALL:
             assert(variable_access->access.args != NULL);
-            foreach (Expression*, arg, variable_access->access.args)
+            size_t arg_count = 0;
+            foreach (Expression*, arg, variable_access->access.args) {
                 analyze_expression(arg);
+                ++arg_count;
+            }
             VariableAccess* base = variable_access->base;
             assert((base->kind == VAR_ACCESS_VAR && (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_CLASS)) ||
                    (base->kind == VAR_ACCESS_ATTRIBUTE && base->type->kind == SYMBOL_METHOD));
-            if (base->type->kind == SYMBOL_CLASS)
+            union {
+                Function* function;
+                Method* method;
+            } callee;
+            bool is_method = true;
+            if (base->type->kind == SYMBOL_CLASS) {
                 variable_access->type = base->type;
-            else
+                callee.method = search_symbol(base->type->info.class->table, SPECIAL_INIT, true, SYMBOL_METHOD, NULL)->info.method;
+            } else {
                 variable_access->type = base->type->type;
+                if (base->type->kind == SYMBOL_FUNCTION) {
+                    callee.function = base->type->info.function;
+                    is_method = false;
+                } else if (base->type->kind == SYMBOL_METHOD)
+                    callee.method = base->type->info.method;
+                else
+                    assert(false);
+            }
+            Symbol** param_type = malloc(sizeof(Symbol*) * arg_count);
+            size_t param_count = 0;
+            foreach (Symbol*, param, is_method ? callee.method->parameters : callee.function->parameters) {
+                assert(param->kind == SYMBOL_PARAMETER);
+                param_type[param_count++] = param->type;
+            }
+            if (is_method) --param_count;
+            Symbol* name = is_method ? callee.method->name : callee.function->name;
+            if (arg_count != param_count)
+                fprintf(stderr, "[analyzer Warning] Argument count mismatch in %s call '%s', expected %zu, got %zu\n", is_method ? "method" : "function", name->name, param_count, arg_count);
+            arg_count = is_method ? 1 : 0;
+            foreach (Expression*, arg, variable_access->access.args) {
+                assert(arg->type != NULL);
+                if (arg->type != param_type[arg_count++])
+                    fprintf(stderr, "[analyzer Warning] Type mismatch in %s call '%s', expected '%s', got '%s'\n", is_method ? "method" : "function", name->name, param_type[arg_count - 1]->name, arg->type->name);
+            }
             break;
         case VAR_ACCESS_ATTRIBUTE:
             assert(variable_access->access.attribute != NULL);
