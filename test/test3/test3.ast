@@ -233,7 +233,7 @@
                     name: "size(22)"
                     kind: "parameter"
                     type: "int(0)"
-                    offset: 0
+                    offset: 4
                 }
             }
             body: {
@@ -907,4 +907,4 @@
     }
 }
 
-platform: 2, malloc allocated: 44442, string memory: [used/total: 2636/3135, blocks: 3], struct memory: [used/total: 37720/39152, blocks: 27]
+platform: 2, malloc allocated: 44442, string memory: [used/total: 2636/3135, blocks: 3], struct memory: [used/total: 37960/39152, blocks: 27]

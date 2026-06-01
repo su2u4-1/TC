@@ -211,7 +211,7 @@ SymbolTable (type: global): {
                     name: "size(12)"
                     kind: "parameter"
                     type: "int(0)"
-                    offset: 0
+                    offset: 4
                 }
                 sub-tables:
                 SymbolTable (type: block): {
@@ -221,4 +221,4 @@ SymbolTable (type: global): {
     }
 }
 
-platform: 2, malloc allocated: 31910, string memory: [used/total: 3469/4726, blocks: 3], struct memory: [used/total: 25904/26448, blocks: 20]
+platform: 2, malloc allocated: 31910, string memory: [used/total: 3469/4726, blocks: 3], struct memory: [used/total: 26144/26448, blocks: 20]

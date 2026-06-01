@@ -53,7 +53,7 @@
                     name: "size(12)"
                     kind: "parameter"
                     type: "int(0)"
-                    offset: 0
+                    offset: 4
                 }
             }
             body: {
@@ -575,4 +575,4 @@
     }
 }
 
-platform: 2, malloc allocated: 31910, string memory: [used/total: 3197/4726, blocks: 3], struct memory: [used/total: 25392/26448, blocks: 20]
+platform: 2, malloc allocated: 31910, string memory: [used/total: 3197/4726, blocks: 3], struct memory: [used/total: 25632/26448, blocks: 20]

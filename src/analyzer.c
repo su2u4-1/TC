@@ -1,5 +1,6 @@
 #include "analyzer.h"
 
+#include "lib.h"
 #include "symbol_table.h"
 
 static void fill_symbol_offset(SymbolTable* table, size_t base_offset);
@@ -27,7 +28,9 @@ AST* analyzer(AST* ast) {
     assert(ast->file != NULL);
     assert(ast->members != NULL);
     assert(ast->table != NULL);
-    fill_symbol_offset(ast->table, 0);
+    foreach (SymbolTable*, table, global_symbol_table->children) {
+        fill_symbol_offset(table, 0);
+    }
     if (!list_empty(ast->members)) {
         foreach (CodeMember*, member, ast->members) {
             switch (member->type) {
@@ -105,6 +108,12 @@ void analyze_import(Import* import) {
     assert(file != NULL);
     fclose(file);
     analyze_symbol(import->name);
+    if (import->name->kind == SYMBOL_CLASS)
+        assert(import->name->info.class != NULL);
+    else if (import->name->kind == SYMBOL_FUNCTION)
+        assert(import->name->info.function != NULL);
+    else
+        assert(false);
 }
 
 void analyze_class(Class* class) {
