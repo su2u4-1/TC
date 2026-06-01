@@ -3,7 +3,7 @@
         name: {
             name: "print(7)"
             kind: "function"
-            type: null
+            type: "void(4)"
             offset: null
         }
         return_type: void(4)
@@ -22,7 +22,7 @@
         name: {
             name: "print(7)"
             kind: "function"
-            type: null
+            type: "void(4)"
             offset: null
         }
         path: "D:/TC/std/print.tc"
@@ -37,7 +37,7 @@
         variable: {
             name: {
                 name: "a(10)"
-                kind: "variable"
+                kind: "attribute"
                 type: "int(0)"
                 offset: 0
             }
@@ -50,8 +50,8 @@
         method: {
             name: {
                 name: "$init(11)"
-                kind: "function"
-                type: null
+                kind: "method"
+                type: "Test1(9)"
                 offset: null
             }
             return_type: Test1(9)
@@ -66,7 +66,7 @@
                     name: "value(13)"
                     kind: "parameter"
                     type: "int(0)"
-                    offset: 0
+                    offset: 4
                 }
             }
             body: {
@@ -83,7 +83,7 @@
                             }
                             attribute: {
                                 name: "a(10)"
-                                kind: "variable"
+                                kind: "attribute"
                                 type: "int(0)"
                                 offset: 0
                             }
@@ -96,7 +96,7 @@
                                 name: "value(13)"
                                 kind: "parameter"
                                 type: "int(0)"
-                                offset: 0
+                                offset: 4
                             }
                         }
                     }
@@ -116,8 +116,8 @@
         method: {
             name: {
                 name: "get_a(14)"
-                kind: "function"
-                type: null
+                kind: "method"
+                type: "int(0)"
                 offset: null
             }
             return_type: int(0)
@@ -142,7 +142,7 @@
                         }
                         attribute: {
                             name: "a(10)"
-                            kind: "variable"
+                            kind: "attribute"
                             type: "int(0)"
                             offset: 0
                         }
@@ -153,8 +153,8 @@
         method: {
             name: {
                 name: "set_a(16)"
-                kind: "function"
-                type: null
+                kind: "method"
+                type: "void(4)"
                 offset: null
             }
             return_type: void(4)
@@ -169,7 +169,7 @@
                     name: "value(18)"
                     kind: "parameter"
                     type: "int(0)"
-                    offset: 0
+                    offset: 4
                 }
             }
             body: {
@@ -186,7 +186,7 @@
                             }
                             attribute: {
                                 name: "a(10)"
-                                kind: "variable"
+                                kind: "attribute"
                                 type: "int(0)"
                                 offset: 0
                             }
@@ -199,7 +199,7 @@
                                 name: "value(18)"
                                 kind: "parameter"
                                 type: "int(0)"
-                                offset: 0
+                                offset: 4
                             }
                         }
                     }
@@ -211,14 +211,14 @@
         name: {
             name: "arr(19)"
             kind: "class"
-            type: null
+            type: "int(0)"
             offset: null
         }
         method: {
             name: {
                 name: "$init(20)"
-                kind: "function"
-                type: null
+                kind: "method"
+                type: "arr(19)"
                 offset: null
             }
             return_type: arr(19)
@@ -230,13 +230,7 @@
                     offset: 0
                 }
                 {
-                    name: "type_name(22)"
-                    kind: "parameter"
-                    type: "string(2)"
-                    offset: 0
-                }
-                {
-                    name: "size(23)"
+                    name: "size(22)"
                     kind: "parameter"
                     type: "int(0)"
                     offset: 0
@@ -260,22 +254,22 @@
         name: {
             name: "arr(19)"
             kind: "class"
-            type: null
+            type: "int(0)"
             offset: null
         }
         path: "D:/TC/std/arr.tc"
     }
     class: {
         name: {
-            name: "Test2(24)"
+            name: "Test2(23)"
             kind: "class"
             type: null
             offset: null
         }
         variable: {
             name: {
-                name: "x(25)"
-                kind: "variable"
+                name: "x(24)"
+                kind: "attribute"
                 type: "int(0)"
                 offset: 0
             }
@@ -319,17 +313,17 @@
         }
         method: {
             name: {
-                name: "$init(26)"
-                kind: "function"
-                type: null
+                name: "$init(25)"
+                kind: "method"
+                type: "Test2(23)"
                 offset: null
             }
-            return_type: Test2(24)
+            return_type: Test2(23)
             parameters: {
                 {
-                    name: "self(27)"
+                    name: "self(26)"
                     kind: "parameter"
-                    type: "Test2(24)"
+                    type: "Test2(23)"
                     offset: 0
                 }
             }
@@ -340,7 +334,7 @@
                             var: {
                                 name: "print(7)"
                                 kind: "function"
-                                type: null
+                                type: "void(4)"
                                 offset: null
                             }
                         }
@@ -349,15 +343,15 @@
                                 primary: {
                                     base: {
                                         var: {
-                                            name: "self(27)"
+                                            name: "self(26)"
                                             kind: "parameter"
-                                            type: "Test2(24)"
+                                            type: "Test2(23)"
                                             offset: 0
                                         }
                                     }
                                     attribute: {
-                                        name: "x(25)"
-                                        kind: "variable"
+                                        name: "x(24)"
+                                        kind: "attribute"
                                         type: "int(0)"
                                         offset: 0
                                     }
@@ -369,9 +363,9 @@
                 return: {
                     primary: {
                         var: {
-                            name: "self(27)"
+                            name: "self(26)"
                             kind: "parameter"
-                            type: "Test2(24)"
+                            type: "Test2(23)"
                             offset: 0
                         }
                     }
@@ -380,24 +374,24 @@
         }
         method: {
             name: {
-                name: "set_x(28)"
-                kind: "function"
-                type: null
+                name: "set_x(27)"
+                kind: "method"
+                type: "void(4)"
                 offset: null
             }
             return_type: void(4)
             parameters: {
                 {
-                    name: "self(29)"
+                    name: "self(28)"
                     kind: "parameter"
-                    type: "Test2(24)"
+                    type: "Test2(23)"
                     offset: 0
                 }
                 {
-                    name: "value(30)"
+                    name: "value(29)"
                     kind: "parameter"
                     type: "int(0)"
-                    offset: 0
+                    offset: 4
                 }
             }
             body: {
@@ -406,15 +400,15 @@
                         primary: {
                             base: {
                                 var: {
-                                    name: "self(29)"
+                                    name: "self(28)"
                                     kind: "parameter"
-                                    type: "Test2(24)"
+                                    type: "Test2(23)"
                                     offset: 0
                                 }
                             }
                             attribute: {
-                                name: "x(25)"
-                                kind: "variable"
+                                name: "x(24)"
+                                kind: "attribute"
                                 type: "int(0)"
                                 offset: 0
                             }
@@ -424,10 +418,10 @@
                     right: {
                         primary: {
                             var: {
-                                name: "value(30)"
+                                name: "value(29)"
                                 kind: "parameter"
                                 type: "int(0)"
-                                offset: 0
+                                offset: 4
                             }
                         }
                     }
@@ -436,17 +430,17 @@
         }
         method: {
             name: {
-                name: "get_x(31)"
-                kind: "function"
-                type: null
+                name: "get_x(30)"
+                kind: "method"
+                type: "int(0)"
                 offset: null
             }
             return_type: int(0)
             parameters: {
                 {
-                    name: "self(32)"
+                    name: "self(31)"
                     kind: "parameter"
-                    type: "Test2(24)"
+                    type: "Test2(23)"
                     offset: 0
                 }
             }
@@ -455,15 +449,15 @@
                     primary: {
                         base: {
                             var: {
-                                name: "self(32)"
+                                name: "self(31)"
                                 kind: "parameter"
-                                type: "Test2(24)"
+                                type: "Test2(23)"
                                 offset: 0
                             }
                         }
                         attribute: {
-                            name: "x(25)"
-                            kind: "variable"
+                            name: "x(24)"
+                            kind: "attribute"
                             type: "int(0)"
                             offset: 0
                         }
@@ -474,9 +468,9 @@
     }
     function: {
         name: {
-            name: "main(33)"
+            name: "main(32)"
             kind: "function"
-            type: null
+            type: "int(0)"
             offset: null
         }
         return_type: int(0)
@@ -485,7 +479,7 @@
         body: {
             variable: {
                 name: {
-                    name: "t(34)"
+                    name: "t(33)"
                     kind: "variable"
                     type: "Test1(9)"
                     offset: 0
@@ -516,7 +510,7 @@
                         var: {
                             name: "print(7)"
                             kind: "function"
-                            type: null
+                            type: "void(4)"
                             offset: null
                         }
                     }
@@ -526,7 +520,7 @@
                                 base: {
                                     base: {
                                         var: {
-                                            name: "t(34)"
+                                            name: "t(33)"
                                             kind: "variable"
                                             type: "Test1(9)"
                                             offset: 0
@@ -534,8 +528,8 @@
                                     }
                                     attribute: {
                                         name: "get_a(14)"
-                                        kind: "function"
-                                        type: null
+                                        kind: "method"
+                                        type: "int(0)"
                                         offset: null
                                     }
                                 }
@@ -551,7 +545,7 @@
                     base: {
                         base: {
                             var: {
-                                name: "t(34)"
+                                name: "t(33)"
                                 kind: "variable"
                                 type: "Test1(9)"
                                 offset: 0
@@ -559,8 +553,8 @@
                         }
                         attribute: {
                             name: "set_a(16)"
-                            kind: "function"
-                            type: null
+                            kind: "method"
+                            type: "void(4)"
                             offset: null
                         }
                     }
@@ -579,7 +573,7 @@
                         var: {
                             name: "print(7)"
                             kind: "function"
-                            type: null
+                            type: "void(4)"
                             offset: null
                         }
                     }
@@ -589,7 +583,7 @@
                                 base: {
                                     base: {
                                         var: {
-                                            name: "t(34)"
+                                            name: "t(33)"
                                             kind: "variable"
                                             type: "Test1(9)"
                                             offset: 0
@@ -597,8 +591,8 @@
                                     }
                                     attribute: {
                                         name: "get_a(14)"
-                                        kind: "function"
-                                        type: null
+                                        kind: "method"
+                                        type: "int(0)"
                                         offset: null
                                     }
                                 }
@@ -611,10 +605,10 @@
             }
             variable: {
                 name: {
-                    name: "_abc123(35)"
+                    name: "_abc123(34)"
                     kind: "variable"
                     type: "float(1)"
-                    offset: 0
+                    offset: 4
                 }
                 initializer: {
                     primary: {
@@ -624,10 +618,10 @@
             }
             variable: {
                 name: {
-                    name: "_def456(36)"
+                    name: "_def456(35)"
                     kind: "variable"
                     type: "int(0)"
-                    offset: 0
+                    offset: 8
                 }
                 initializer: {
                     primary: {
@@ -637,16 +631,16 @@
             }
             variable: {
                 name: {
-                    name: "t2(37)"
+                    name: "t2(36)"
                     kind: "variable"
-                    type: "Test2(24)"
-                    offset: 0
+                    type: "Test2(23)"
+                    offset: 12
                 }
                 initializer: {
                     primary: {
                         base: {
                             var: {
-                                name: "Test2(24)"
+                                name: "Test2(23)"
                                 kind: "class"
                                 type: null
                                 offset: null
@@ -659,10 +653,10 @@
             }
             variable: {
                 name: {
-                    name: "nums(38)"
+                    name: "nums(37)"
                     kind: "variable"
                     type: "arr(19)"
-                    offset: 0
+                    offset: 16
                 }
                 initializer: {
                     primary: {
@@ -670,17 +664,12 @@
                             var: {
                                 name: "arr(19)"
                                 kind: "class"
-                                type: null
+                                type: "int(0)"
                                 offset: null
                             }
                         }
                         call: {
                             arg[0]: {
-                                primary: {
-                                    string literal: "int"
-                                }
-                            }
-                            arg[1]: {
                                 primary: {
                                     int literal: 10
                                 }
@@ -694,10 +683,10 @@
                     primary: {
                         base: {
                             var: {
-                                name: "nums(38)"
+                                name: "nums(37)"
                                 kind: "variable"
                                 type: "arr(19)"
-                                offset: 0
+                                offset: 16
                             }
                         }
                         index: {
@@ -719,16 +708,16 @@
                     base: {
                         base: {
                             var: {
-                                name: "t2(37)"
+                                name: "t2(36)"
                                 kind: "variable"
-                                type: "Test2(24)"
-                                offset: 0
+                                type: "Test2(23)"
+                                offset: 12
                             }
                         }
                         attribute: {
-                            name: "set_x(28)"
-                            kind: "function"
-                            type: null
+                            name: "set_x(27)"
+                            kind: "method"
+                            type: "void(4)"
                             offset: null
                         }
                     }
@@ -746,16 +735,16 @@
                                         base: {
                                             base: {
                                                 var: {
-                                                    name: "t2(37)"
+                                                    name: "t2(36)"
                                                     kind: "variable"
-                                                    type: "Test2(24)"
-                                                    offset: 0
+                                                    type: "Test2(23)"
+                                                    offset: 12
                                                 }
                                             }
                                             attribute: {
-                                                name: "get_x(31)"
-                                                kind: "function"
-                                                type: null
+                                                name: "get_x(30)"
+                                                kind: "method"
+                                                type: "int(0)"
                                                 offset: null
                                             }
                                         }
@@ -780,7 +769,7 @@
                         var: {
                             name: "print(7)"
                             kind: "function"
-                            type: null
+                            type: "void(4)"
                             offset: null
                         }
                     }
@@ -790,16 +779,16 @@
                                 base: {
                                     base: {
                                         var: {
-                                            name: "t2(37)"
+                                            name: "t2(36)"
                                             kind: "variable"
-                                            type: "Test2(24)"
-                                            offset: 0
+                                            type: "Test2(23)"
+                                            offset: 12
                                         }
                                     }
                                     attribute: {
-                                        name: "get_x(31)"
-                                        kind: "function"
-                                        type: null
+                                        name: "get_x(30)"
+                                        kind: "method"
+                                        type: "int(0)"
                                         offset: null
                                     }
                                 }
@@ -815,16 +804,16 @@
                     base: {
                         base: {
                             var: {
-                                name: "t2(37)"
+                                name: "t2(36)"
                                 kind: "variable"
-                                type: "Test2(24)"
-                                offset: 0
+                                type: "Test2(23)"
+                                offset: 12
                             }
                         }
                         attribute: {
-                            name: "set_x(28)"
-                            kind: "function"
-                            type: null
+                            name: "set_x(27)"
+                            kind: "method"
+                            type: "void(4)"
                             offset: null
                         }
                     }
@@ -835,10 +824,10 @@
                                     primary: {
                                         base: {
                                             var: {
-                                                name: "nums(38)"
+                                                name: "nums(37)"
                                                 kind: "variable"
                                                 type: "arr(19)"
-                                                offset: 0
+                                                offset: 16
                                             }
                                         }
                                         index: {
@@ -879,7 +868,7 @@
                         var: {
                             name: "print(7)"
                             kind: "function"
-                            type: null
+                            type: "void(4)"
                             offset: null
                         }
                     }
@@ -889,16 +878,16 @@
                                 base: {
                                     base: {
                                         var: {
-                                            name: "t2(37)"
+                                            name: "t2(36)"
                                             kind: "variable"
-                                            type: "Test2(24)"
-                                            offset: 0
+                                            type: "Test2(23)"
+                                            offset: 12
                                         }
                                     }
                                     attribute: {
-                                        name: "get_x(31)"
-                                        kind: "function"
-                                        type: null
+                                        name: "get_x(30)"
+                                        kind: "method"
+                                        type: "int(0)"
                                         offset: null
                                     }
                                 }
@@ -918,4 +907,4 @@
     }
 }
 
-platform: 2, malloc allocated: 41916, string memory: [used/total: 2664/3135, blocks: 3], struct memory: [used/total: 35400/36656, blocks: 26]
+platform: 2, malloc allocated: 44442, string memory: [used/total: 2636/3135, blocks: 3], struct memory: [used/total: 37720/39152, blocks: 27]

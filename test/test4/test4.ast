@@ -3,7 +3,7 @@
         name: {
             name: "test(7)"
             kind: "function"
-            type: null
+            type: "void(4)"
             offset: null
         }
         return_type: void(4)
@@ -17,7 +17,7 @@
         name: {
             name: "main(8)"
             kind: "function"
-            type: null
+            type: "int(0)"
             offset: null
         }
         return_type: int(0)
@@ -42,7 +42,7 @@
                     name: "b(10)"
                     kind: "variable"
                     type: "string(2)"
-                    offset: 0
+                    offset: 4
                 }
                 initializer: {
                     primary: {
@@ -76,7 +76,7 @@
                                 var: {
                                     name: "test(7)"
                                     kind: "function"
-                                    type: null
+                                    type: "void(4)"
                                     offset: null
                                 }
                             }
@@ -115,7 +115,7 @@
                             name: "i(11)"
                             kind: "variable"
                             type: "int(0)"
-                            offset: 0
+                            offset: 8
                         }
                         initializer: {
                             primary: {
@@ -131,7 +131,7 @@
                                 name: "i(11)"
                                 kind: "variable"
                                 type: "int(0)"
-                                offset: 0
+                                offset: 8
                             }
                         }
                     }
@@ -149,7 +149,7 @@
                                 name: "i(11)"
                                 kind: "variable"
                                 type: "int(0)"
-                                offset: 0
+                                offset: 8
                             }
                         }
                     }
@@ -179,7 +179,7 @@
                                     name: "i(11)"
                                     kind: "variable"
                                     type: "int(0)"
-                                    offset: 0
+                                    offset: 8
                                 }
                             }
                         }
@@ -235,4 +235,4 @@
     }
 }
 
-platform: 2, malloc allocated: 15794, string memory: [used/total: 1546/2354, blocks: 2], struct memory: [used/total: 12480/13024, blocks: 11]
+platform: 2, malloc allocated: 17282, string memory: [used/total: 1546/2354, blocks: 2], struct memory: [used/total: 13368/14480, blocks: 12]

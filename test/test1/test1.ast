@@ -3,7 +3,7 @@
         name: {
             name: "print(7)"
             kind: "function"
-            type: null
+            type: "void(4)"
             offset: null
         }
         return_type: void(4)
@@ -22,7 +22,7 @@
         name: {
             name: "print(7)"
             kind: "function"
-            type: null
+            type: "void(4)"
             offset: null
         }
         path: "D:/TC/std/print.tc"
@@ -37,7 +37,7 @@
         variable: {
             name: {
                 name: "a(10)"
-                kind: "variable"
+                kind: "attribute"
                 type: "int(0)"
                 offset: 0
             }
@@ -50,8 +50,8 @@
         method: {
             name: {
                 name: "$init(11)"
-                kind: "function"
-                type: null
+                kind: "method"
+                type: "Test1(9)"
                 offset: null
             }
             return_type: Test1(9)
@@ -66,7 +66,7 @@
                     name: "value(13)"
                     kind: "parameter"
                     type: "int(0)"
-                    offset: 0
+                    offset: 4
                 }
             }
             body: {
@@ -83,7 +83,7 @@
                             }
                             attribute: {
                                 name: "a(10)"
-                                kind: "variable"
+                                kind: "attribute"
                                 type: "int(0)"
                                 offset: 0
                             }
@@ -96,7 +96,7 @@
                                 name: "value(13)"
                                 kind: "parameter"
                                 type: "int(0)"
-                                offset: 0
+                                offset: 4
                             }
                         }
                     }
@@ -116,8 +116,8 @@
         method: {
             name: {
                 name: "get_a(14)"
-                kind: "function"
-                type: null
+                kind: "method"
+                type: "int(0)"
                 offset: null
             }
             return_type: int(0)
@@ -142,7 +142,7 @@
                         }
                         attribute: {
                             name: "a(10)"
-                            kind: "variable"
+                            kind: "attribute"
                             type: "int(0)"
                             offset: 0
                         }
@@ -153,8 +153,8 @@
         method: {
             name: {
                 name: "set_a(16)"
-                kind: "function"
-                type: null
+                kind: "method"
+                type: "void(4)"
                 offset: null
             }
             return_type: void(4)
@@ -169,7 +169,7 @@
                     name: "value(18)"
                     kind: "parameter"
                     type: "int(0)"
-                    offset: 0
+                    offset: 4
                 }
             }
             body: {
@@ -186,7 +186,7 @@
                             }
                             attribute: {
                                 name: "a(10)"
-                                kind: "variable"
+                                kind: "attribute"
                                 type: "int(0)"
                                 offset: 0
                             }
@@ -199,7 +199,7 @@
                                 name: "value(18)"
                                 kind: "parameter"
                                 type: "int(0)"
-                                offset: 0
+                                offset: 4
                             }
                         }
                     }
@@ -211,7 +211,7 @@
         name: {
             name: "main(19)"
             kind: "function"
-            type: null
+            type: "int(0)"
             offset: null
         }
         return_type: int(0)
@@ -251,7 +251,7 @@
                         var: {
                             name: "print(7)"
                             kind: "function"
-                            type: null
+                            type: "void(4)"
                             offset: null
                         }
                     }
@@ -269,8 +269,8 @@
                                     }
                                     attribute: {
                                         name: "get_a(14)"
-                                        kind: "function"
-                                        type: null
+                                        kind: "method"
+                                        type: "int(0)"
                                         offset: null
                                     }
                                 }
@@ -294,8 +294,8 @@
                         }
                         attribute: {
                             name: "set_a(16)"
-                            kind: "function"
-                            type: null
+                            kind: "method"
+                            type: "void(4)"
                             offset: null
                         }
                     }
@@ -314,7 +314,7 @@
                         var: {
                             name: "print(7)"
                             kind: "function"
-                            type: null
+                            type: "void(4)"
                             offset: null
                         }
                     }
@@ -332,8 +332,8 @@
                                     }
                                     attribute: {
                                         name: "get_a(14)"
-                                        kind: "function"
-                                        type: null
+                                        kind: "method"
+                                        type: "int(0)"
                                         offset: null
                                     }
                                 }
@@ -349,7 +349,7 @@
                     name: "_abc123(21)"
                     kind: "variable"
                     type: "float(1)"
-                    offset: 0
+                    offset: 4
                 }
                 initializer: {
                     primary: {
@@ -362,7 +362,7 @@
                     name: "_def456(22)"
                     kind: "variable"
                     type: "int(0)"
-                    offset: 0
+                    offset: 8
                 }
                 initializer: {
                     primary: {
@@ -379,4 +379,4 @@
     }
 }
 
-platform: 2, malloc allocated: 23374, string memory: [used/total: 2568/2618, blocks: 2], struct memory: [used/total: 17784/18536, blocks: 15]
+platform: 2, malloc allocated: 25222, string memory: [used/total: 2568/2618, blocks: 2], struct memory: [used/total: 18856/20352, blocks: 16]

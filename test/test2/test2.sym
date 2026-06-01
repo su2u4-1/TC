@@ -48,61 +48,61 @@ SymbolTable (type: global): {
         {
             name: "print(7)"
             kind: "function"
-            type: null
+            type: "void(4)"
             offset: null
         }
         {
             name: "arr(9)"
             kind: "class"
-            type: null
+            type: "int(0)"
             offset: null
         }
         {
-            name: "Test2(14)"
+            name: "Test2(13)"
             kind: "class"
             type: null
             offset: null
         }
         {
-            name: "main(23)"
+            name: "main(22)"
             kind: "function"
-            type: null
+            type: "int(0)"
             offset: null
         }
         sub-tables:
         SymbolTable (type: class): {
             symbols:
             {
-                name: "x(15)"
-                kind: "variable"
+                name: "x(14)"
+                kind: "attribute"
                 type: "int(0)"
                 offset: 0
             }
             {
-                name: "$init(16)"
-                kind: "function"
-                type: null
+                name: "$init(15)"
+                kind: "method"
+                type: "Test2(13)"
                 offset: null
             }
             {
-                name: "set_x(18)"
-                kind: "function"
-                type: null
+                name: "set_x(17)"
+                kind: "method"
+                type: "void(4)"
                 offset: null
             }
             {
-                name: "get_x(21)"
-                kind: "function"
-                type: null
+                name: "get_x(20)"
+                kind: "method"
+                type: "int(0)"
                 offset: null
             }
             sub-tables:
             SymbolTable (type: method): {
                 symbols:
                 {
-                    name: "self(17)"
+                    name: "self(16)"
                     kind: "parameter"
-                    type: "Test2(14)"
+                    type: "Test2(13)"
                     offset: 0
                 }
                 sub-tables:
@@ -112,16 +112,16 @@ SymbolTable (type: global): {
             SymbolTable (type: method): {
                 symbols:
                 {
-                    name: "self(19)"
+                    name: "self(18)"
                     kind: "parameter"
-                    type: "Test2(14)"
+                    type: "Test2(13)"
                     offset: 0
                 }
                 {
-                    name: "value(20)"
+                    name: "value(19)"
                     kind: "parameter"
                     type: "int(0)"
-                    offset: 0
+                    offset: 4
                 }
                 sub-tables:
                 SymbolTable (type: block): {
@@ -130,9 +130,9 @@ SymbolTable (type: global): {
             SymbolTable (type: method): {
                 symbols:
                 {
-                    name: "self(22)"
+                    name: "self(21)"
                     kind: "parameter"
-                    type: "Test2(14)"
+                    type: "Test2(13)"
                     offset: 0
                 }
                 sub-tables:
@@ -145,16 +145,16 @@ SymbolTable (type: global): {
             SymbolTable (type: block): {
                 symbols:
                 {
-                    name: "t(24)"
+                    name: "t(23)"
                     kind: "variable"
-                    type: "Test2(14)"
+                    type: "Test2(13)"
                     offset: 0
                 }
                 {
-                    name: "nums(25)"
+                    name: "nums(24)"
                     kind: "variable"
                     type: "arr(9)"
-                    offset: 0
+                    offset: 4
                 }
             }
         }
@@ -164,7 +164,7 @@ SymbolTable (type: global): {
         {
             name: "print(7)"
             kind: "function"
-            type: null
+            type: "void(4)"
             offset: null
         }
         sub-tables:
@@ -186,7 +186,7 @@ SymbolTable (type: global): {
         {
             name: "arr(9)"
             kind: "class"
-            type: null
+            type: "int(0)"
             offset: null
         }
         sub-tables:
@@ -194,8 +194,8 @@ SymbolTable (type: global): {
             symbols:
             {
                 name: "$init(10)"
-                kind: "function"
-                type: null
+                kind: "method"
+                type: "arr(9)"
                 offset: null
             }
             sub-tables:
@@ -208,13 +208,7 @@ SymbolTable (type: global): {
                     offset: 0
                 }
                 {
-                    name: "type_name(12)"
-                    kind: "parameter"
-                    type: "string(2)"
-                    offset: 0
-                }
-                {
-                    name: "size(13)"
+                    name: "size(12)"
                     kind: "parameter"
                     type: "int(0)"
                     offset: 0
@@ -227,4 +221,4 @@ SymbolTable (type: global): {
     }
 }
 
-platform: 2, malloc allocated: 31530, string memory: [used/total: 3499/4730, blocks: 3], struct memory: [used/total: 24496/26064, blocks: 20]
+platform: 2, malloc allocated: 31910, string memory: [used/total: 3469/4726, blocks: 3], struct memory: [used/total: 25904/26448, blocks: 20]

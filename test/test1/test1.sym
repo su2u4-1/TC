@@ -48,7 +48,7 @@ SymbolTable (type: global): {
         {
             name: "print(7)"
             kind: "function"
-            type: null
+            type: "void(4)"
             offset: null
         }
         {
@@ -60,7 +60,7 @@ SymbolTable (type: global): {
         {
             name: "main(19)"
             kind: "function"
-            type: null
+            type: "int(0)"
             offset: null
         }
         sub-tables:
@@ -68,26 +68,26 @@ SymbolTable (type: global): {
             symbols:
             {
                 name: "a(10)"
-                kind: "variable"
+                kind: "attribute"
                 type: "int(0)"
                 offset: 0
             }
             {
                 name: "$init(11)"
-                kind: "function"
-                type: null
+                kind: "method"
+                type: "Test1(9)"
                 offset: null
             }
             {
                 name: "get_a(14)"
-                kind: "function"
-                type: null
+                kind: "method"
+                type: "int(0)"
                 offset: null
             }
             {
                 name: "set_a(16)"
-                kind: "function"
-                type: null
+                kind: "method"
+                type: "void(4)"
                 offset: null
             }
             sub-tables:
@@ -103,7 +103,7 @@ SymbolTable (type: global): {
                     name: "value(13)"
                     kind: "parameter"
                     type: "int(0)"
-                    offset: 0
+                    offset: 4
                 }
                 sub-tables:
                 SymbolTable (type: block): {
@@ -133,7 +133,7 @@ SymbolTable (type: global): {
                     name: "value(18)"
                     kind: "parameter"
                     type: "int(0)"
-                    offset: 0
+                    offset: 4
                 }
                 sub-tables:
                 SymbolTable (type: block): {
@@ -154,13 +154,13 @@ SymbolTable (type: global): {
                     name: "_abc123(21)"
                     kind: "variable"
                     type: "float(1)"
-                    offset: 0
+                    offset: 4
                 }
                 {
                     name: "_def456(22)"
                     kind: "variable"
                     type: "int(0)"
-                    offset: 0
+                    offset: 8
                 }
             }
         }
@@ -170,7 +170,7 @@ SymbolTable (type: global): {
         {
             name: "print(7)"
             kind: "function"
-            type: null
+            type: "void(4)"
             offset: null
         }
         sub-tables:
@@ -189,4 +189,4 @@ SymbolTable (type: global): {
     }
 }
 
-platform: 2, malloc allocated: 23374, string memory: [used/total: 2840/4262, blocks: 3], struct memory: [used/total: 18200/18536, blocks: 15]
+platform: 2, malloc allocated: 25222, string memory: [used/total: 2840/4262, blocks: 3], struct memory: [used/total: 19272/20352, blocks: 16]

@@ -48,13 +48,13 @@ SymbolTable (type: global): {
         {
             name: "test(7)"
             kind: "function"
-            type: null
+            type: "void(4)"
             offset: null
         }
         {
             name: "main(8)"
             kind: "function"
-            type: null
+            type: "int(0)"
             offset: null
         }
         sub-tables:
@@ -77,7 +77,7 @@ SymbolTable (type: global): {
                     name: "b(10)"
                     kind: "variable"
                     type: "string(2)"
-                    offset: 0
+                    offset: 4
                 }
                 sub-tables:
                 SymbolTable (type: block): {
@@ -90,7 +90,7 @@ SymbolTable (type: global): {
                         name: "i(11)"
                         kind: "variable"
                         type: "int(0)"
-                        offset: 0
+                        offset: 8
                     }
                     sub-tables:
                     SymbolTable (type: block): {
@@ -103,4 +103,4 @@ SymbolTable (type: global): {
     }
 }
 
-platform: 2, malloc allocated: 15794, string memory: [used/total: 1818/2354, blocks: 2], struct memory: [used/total: 12768/13024, blocks: 11]
+platform: 2, malloc allocated: 17282, string memory: [used/total: 1818/2354, blocks: 2], struct memory: [used/total: 13656/14480, blocks: 12]
