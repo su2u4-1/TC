@@ -1,5 +1,5 @@
 class arr {
-    method arr $init(self, string type_name, int size) {
+    method arr $init(self, int size) {
         return self;
     }
 }

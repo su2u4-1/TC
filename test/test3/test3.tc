@@ -43,7 +43,7 @@ func int main() {
     var int _def456 = 15;
 
     var Test2 t2 = Test2();
-    var arr nums = arr("int", 10);
+    var arr<int> nums = arr(10);
     nums[0] = 42;
     t2.set_x(2 + t2.get_x() * 10);  // 2 + 5 * 10 = 52
     print(t2.get_x());  // should print 52
