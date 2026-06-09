@@ -80,7 +80,7 @@ string get_info(void);
 
 #define keywordCount 24
 #define symbolCount 30
-#define specialCount 17
+#define specialCount 20
 extern string keywordList[keywordCount];
 extern string symbolList[symbolCount];
 extern string specialList[specialCount];
@@ -150,8 +150,11 @@ extern string SPECIAL_MUL;        // special method `$mul`
 extern string SPECIAL_DIV;        // special method `$div`
 extern string SPECIAL_MOD;        // special method `$mod`
 extern string SPECIAL_EQ;         // special method `$eq`
+extern string SPECIAL_NE;         // special method `$ne`
 extern string SPECIAL_LT;         // special method `$lt`
+extern string SPECIAL_GE;         // special method `$ge`
 extern string SPECIAL_GT;         // special method `$gt`
+extern string SPECIAL_LE;         // special method `$le`
 extern string SPECIAL_AND;        // special method `$and`
 extern string SPECIAL_OR;         // special method `$or`
 extern string SPECIAL_NOT;        // special method `$not`

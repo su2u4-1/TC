@@ -67,8 +67,146 @@ void fill_symbol_offset(SymbolTable* table, size_t base_offset) {
         fill_symbol_offset(child, offset);
 }
 
+#define is_arithmetic_op(op) (op == OP_ADD || op == OP_SUB || op == OP_MUL || op == OP_DIV || op == OP_MOD)
+#define is_arithmetic_assign_op(op) (op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN)
+#define is_comparison_op(op) (op == OP_LT || op == OP_GT || op == OP_LE || op == OP_GE)
+#define is_equality_op(op) (op == OP_EQ || op == OP_NE)
+#define is_logical_op(op) (op == OP_AND || op == OP_OR)
 static bool is_number_type(Symbol* type) {
     return type == symbol_int || type == symbol_float || type == symbol_bool;
+}
+static Symbol* types_compatible(Symbol* left, Symbol* right) {
+    if (right == NULL || left == NULL)
+        return NULL;
+    if (left == right)
+        return left;
+    if (is_number_type(left) && is_number_type(right)) {
+        if (left == symbol_float || right == symbol_float)
+            return symbol_float;
+        if (left == symbol_int || right == symbol_int)
+            return symbol_int;
+        return symbol_bool;
+    }
+    return NULL;
+}
+static Symbol* find_method(SymbolTable* table, OperatorType op) {
+    switch (op) {
+        case OP_ADD: return search_symbol(table, SPECIAL_ADD, true, SYMBOL_METHOD, NULL);
+        case OP_SUB: return search_symbol(table, SPECIAL_SUB, true, SYMBOL_METHOD, NULL);
+        case OP_MUL: return search_symbol(table, SPECIAL_MUL, true, SYMBOL_METHOD, NULL);
+        case OP_DIV: return search_symbol(table, SPECIAL_DIV, true, SYMBOL_METHOD, NULL);
+        case OP_MOD: return search_symbol(table, SPECIAL_MOD, true, SYMBOL_METHOD, NULL);
+        case OP_EQ: return search_symbol(table, SPECIAL_EQ, true, SYMBOL_METHOD, NULL);
+        case OP_NE: return search_symbol(table, SPECIAL_NE, true, SYMBOL_METHOD, NULL);
+        case OP_LT: return search_symbol(table, SPECIAL_LT, true, SYMBOL_METHOD, NULL);
+        case OP_GE: return search_symbol(table, SPECIAL_GE, true, SYMBOL_METHOD, NULL);
+        case OP_GT: return search_symbol(table, SPECIAL_GT, true, SYMBOL_METHOD, NULL);
+        case OP_LE: return search_symbol(table, SPECIAL_LE, true, SYMBOL_METHOD, NULL);
+        case OP_AND: return search_symbol(table, SPECIAL_AND, true, SYMBOL_METHOD, NULL);
+        case OP_OR: return search_symbol(table, SPECIAL_OR, true, SYMBOL_METHOD, NULL);
+        case OP_NOT: return search_symbol(table, SPECIAL_NOT, true, SYMBOL_METHOD, NULL);
+        case OP_NEG: return search_symbol(table, SPECIAL_NEG, true, SYMBOL_METHOD, NULL);
+        default: return NULL;
+    }
+}
+static bool method_compatibility(Symbol* method, Symbol* other) {
+    size_t param_count = 0;
+    Symbol* second_param = NULL;
+    foreach (Symbol*, param, method->info.method->parameters) {
+        if (param_count == 0)
+            assert(param->name == KEYWORD_SELF);
+        else if (param_count == 1)
+            second_param = param;
+        param_count++;
+    }
+    assert(param_count == 2);
+    assert(second_param != NULL);
+    return types_compatible(second_param->type, other) != NULL;
+}
+// TODO: complete new method create
+static void auto_fill_comparison_method(Class* class) {
+    Symbol* eq = find_method(class->table, OP_EQ);
+    Symbol* ne = find_method(class->table, OP_NE);
+    Symbol* lt = find_method(class->table, OP_LT);
+    Symbol* ge = find_method(class->table, OP_GE);
+    Symbol* gt = find_method(class->table, OP_GT);
+    Symbol* le = find_method(class->table, OP_LE);
+    bool changed = true;
+    while (changed) {
+        changed = false;
+        if (eq && ne == NULL) {
+            // self.ne(other) = !self.eq(other)
+            changed = true;
+        }
+        if (ne && eq == NULL) {
+            // self.eq(other) = !self.ne(other)
+            changed = true;
+        }
+        if (lt && ge == NULL) {
+            // self.ge(other) = self.lt(other)
+            changed = true;
+        }
+        if (ge && lt == NULL) {
+            // self.lt(other) = self.ge(other)
+            changed = true;
+        }
+        if (gt && le == NULL) {
+            // self.le(other) = self.gt(other)
+            changed = true;
+        }
+        if (le && gt == NULL) {
+            // self.gt(other) = self.le(other)
+            changed = true;
+        }
+        if (gt && eq && ge == NULL) {
+            // self.ge(other) = self.gt(other) || self.eq(other)
+            changed = true;
+        }
+        if (lt && eq && le == NULL) {
+            // self.le(other) = self.lt(other) || self.eq(other)
+            changed = true;
+        }
+        if (ge && eq && gt == NULL) {
+            // self.gt(other) = self.ge(other) && !self.eq(other)
+            changed = true;
+        }
+        if (le && eq && lt == NULL) {
+            // self.lt(other) = self.le(other) && !self.eq(other)
+            changed = true;
+        }
+        if (lt && gt && eq == NULL) {
+            // self.eq(other) = !(self.lt(other) || self.gt(other))
+            changed = true;
+        }
+        if (lt && gt && ne == NULL) {
+            // self.ne(other) = self.lt(other) || self.gt(other)
+            changed = true;
+        }
+        if (ge && lt && eq == NULL) {
+            // self.eq(other) = !(self.lt(other) || !self.ge(other))
+            changed = true;
+        }
+        if (le && gt && eq == NULL) {
+            // self.eq(other) = !(self.gt(other) || !self.le(other))
+            changed = true;
+        }
+        if (ge && gt) {
+            // self.gt(other) = self.gt(other)
+            changed = true;
+        }
+        if (le && lt) {
+            // self.lt(other) = self.lt(other)
+            changed = true;
+        }
+    }
+    if (!eq && !ne && !lt && !le && !gt && !ge) {
+        // self.eq(other) = object identity comparison
+        // self.ne(other) = !self.eq(other)
+        // self.lt(other) = false
+        // self.le(other) = self.eq(other)
+        // self.gt(other) = false
+        // self.ge(other) = self.eq(other)
+    }
 }
 Symbol* calculate_type(Symbol* left, Symbol* right, OperatorType op) {
     assert(left != NULL);
@@ -76,27 +214,58 @@ Symbol* calculate_type(Symbol* left, Symbol* right, OperatorType op) {
     if (right == NULL) {
         if (op == OP_NONE)
             return left;
-        if ((left == symbol_int || left == symbol_float) && (op == OP_NEG))
+        if ((left == symbol_int || left == symbol_float) && op == OP_NEG)
             return left;
         if (op == OP_NOT)
             return symbol_bool;
+        if (left->kind == SYMBOL_CLASS) {
+            Symbol* method = find_method(left->info.class->table, op);
+            if (method != NULL) {
+                assert(!list_empty(method->info.method->parameters) && method->info.method->parameters->head == method->info.method->parameters->tail);
+                assert(((Symbol*)method->info.method->parameters->head->data)->name == KEYWORD_SELF);
+                return method->type;
+            }
+        }
+        assert(false);
     }
     assert(right != NULL);
     assert(right->kind == SYMBOL_TYPE || right->kind == SYMBOL_CLASS);
-    if (op == OP_AND || op == OP_OR || op == OP_EQ || op == OP_NE)
+    if (is_logical_op(op))
         return symbol_bool;
-    if (left == right) {
-        if (op == OP_ASSIGN)
+    if (is_equality_op(op)) {
+        if (left == right || types_compatible(left, right) != NULL)
+            return symbol_bool;
+    }
+    if (is_comparison_op(op)) {
+        if (is_number_type(left) && is_number_type(right))
+            return symbol_bool;
+    }
+    if (is_arithmetic_op(op)) {
+        if (left == right && is_number_type(left))
             return left;
-        if (is_number_type(left) && (op == OP_ADD_ASSIGN || op == OP_SUB_ASSIGN || op == OP_MUL_ASSIGN || op == OP_DIV_ASSIGN || op == OP_MOD_ASSIGN))
-            return left;
-        if (is_number_type(left) && (op == OP_ADD || op == OP_SUB || op == OP_MUL || op == OP_DIV || op == OP_MOD))
+        if (is_number_type(left) && is_number_type(right))
+            return types_compatible(left, right);
+    }
+    if (op == OP_ASSIGN) {
+        if (left == right || types_compatible(left, right) != NULL)
             return left;
     }
-    if (is_number_type(left) && is_number_type(right) && (op == OP_EQ || op == OP_NE || op == OP_LT || op == OP_GT || op == OP_LE || op == OP_GE))
-        return symbol_bool;
+    if (is_arithmetic_assign_op(op)) {
+        if (is_number_type(left) && (left == right || types_compatible(left, right) != NULL))
+            return left;
+    }
+    if (left->kind == SYMBOL_CLASS) {
+        Symbol* method = find_method(left->info.class->table, op);
+        if (method != NULL && method_compatibility(method, right))
+            return method->type;
+    }
+    if (right->kind == SYMBOL_CLASS) {
+        Symbol* method = find_method(right->info.class->table, op);
+        if (method != NULL && method_compatibility(method, left))
+            return method->type;
+    }
+    assert(false);
     // TODO: support more type combinations and operators
-    // assert(false);
     fprintf(stderr, "[DEBUG] Warning: Type mismatch, left: '%s', right: '%s', op: '%u'\n", left->name, right->name, op);
     return symbol_void;
 }
@@ -150,9 +319,13 @@ void analyze_method(Method* method) {
     analyze_symbol(method->name);
     analyze_type(method->type);
     assert(!list_empty(method->parameters));
+    size_t param_count = 0;
     foreach (Symbol*, symbol, method->parameters) {
         analyze_symbol(symbol);
         assert(symbol->kind == SYMBOL_PARAMETER);
+        if (param_count == 0)
+            assert(symbol->name == KEYWORD_SELF);
+        param_count++;
     }
     analyze_body(method->body);
 }
@@ -297,7 +470,7 @@ void analyze_primary(Primary* primary) {
             break;
         case PRIMARY_NOT:
             analyze_primary(primary->value.not);
-            primary->type = calculate_type(primary->value.neg->type, NULL, OP_NOT);
+            primary->type = calculate_type(primary->value.not->type, NULL, OP_NOT);
             break;
         case PRIMARY_NEG:
             analyze_primary(primary->value.neg);
