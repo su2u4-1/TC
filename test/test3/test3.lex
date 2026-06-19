@@ -275,4 +275,4 @@ Token(Type: symbol,      Line: 53, Column: 1)	Lexeme: '}'
 Token(Type: EOF,         Line: 54, Column: 2)
 
 info by lib:
-    platform: 2, malloc allocated: 18106, string memory: [used/total: 1252/2063, blocks: 2], struct memory: [used/total: 13120/14400, blocks: 12]
+    platform: 2, malloc allocated: 17005, string memory: [used/total: 1264/2050, blocks: 2], struct memory: [used/total: 13216/13344, blocks: 11]

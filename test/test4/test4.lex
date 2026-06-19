@@ -85,4 +85,4 @@ Token(Type: symbol,      Line: 20, Column: 1)	Lexeme: '}'
 Token(Type: EOF,         Line: 21, Column: 2)
 
 info by lib:
-    platform: 2, malloc allocated: 9234, string memory: [used/total: 1278/2354, blocks: 2], struct memory: [used/total: 6144/6624, blocks: 6]
+    platform: 2, malloc allocated: 9354, string memory: [used/total: 1290/2354, blocks: 2], struct memory: [used/total: 6240/6744, blocks: 6]
