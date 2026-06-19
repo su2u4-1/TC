@@ -123,7 +123,121 @@ static bool method_compatibility(Symbol* method, Symbol* other) {
     assert(second_param != NULL);
     return types_compatible(second_param->type, other) != NULL;
 }
-// TODO: complete new method create
+static Symbol* method_other_type(Symbol* method) {
+    size_t param_count = 0;
+    Symbol* second_param = NULL;
+    foreach (Symbol*, param, method->info.method->parameters) {
+        if (param_count == 0)
+            assert(param->name == KEYWORD_SELF);
+        else if (param_count == 1)
+            second_param = param;
+        param_count++;
+    }
+    assert(param_count == 2);
+    assert(second_param != NULL);
+    return second_param->type;
+}
+static VariableAccess* create_variable_access_var(Symbol* symbol) {
+    VariableAccess* variable_access = create_struct(VariableAccess);
+    variable_access->base = NULL;
+    variable_access->access.var = symbol;
+    variable_access->kind = VAR_ACCESS_VAR;
+    variable_access->type = NULL;
+    return variable_access;
+}
+static VariableAccess* create_variable_access_attribute(VariableAccess* base, Symbol* attribute) {
+    VariableAccess* variable_access = create_struct(VariableAccess);
+    variable_access->base = base;
+    variable_access->access.attribute = attribute;
+    variable_access->kind = VAR_ACCESS_ATTRIBUTE;
+    variable_access->type = NULL;
+    return variable_access;
+}
+static VariableAccess* create_variable_access_call(VariableAccess* base, Expression* argument) {
+    VariableAccess* variable_access = create_struct(VariableAccess);
+    variable_access->base = base;
+    variable_access->access.args = list_create();
+    variable_access->kind = VAR_ACCESS_CALL;
+    variable_access->type = NULL;
+    list_append(variable_access->access.args, (pointer)argument);
+    return variable_access;
+}
+static Primary* create_primary_var_access(VariableAccess* variable_access) {
+    Primary* primary = create_struct(Primary);
+    primary->kind = PRIMARY_VAR_ACCESS;
+    primary->value.var_access = variable_access;
+    primary->type = NULL;
+    return primary;
+}
+static Expression* create_expression_from_primary(Primary* primary) {
+    Expression* expression = create_struct(Expression);
+    expression->left.unary = primary;
+    expression->op = OP_NONE;
+    expression->right = NULL;
+    expression->type = NULL;
+    return expression;
+}
+static Symbol* create_comparison_method(Class* class, string method_name, Symbol* method_1, Symbol* method_2) {
+    assert(class != NULL);
+    assert(class->table != NULL);
+    assert(method_name != NULL);
+    assert(method_1 != NULL);
+    Method* method = create_struct(Method);
+    method->body = list_create();
+    method->parameters = list_create();
+    method->special = true;
+    method->type = symbol_bool;
+
+    SymbolTable* method_table = create_symbol_table(SYMBOL_TABLE_METHOD, class->table);
+    Symbol* self_symbol = create_symbol(KEYWORD_SELF, class->name, SYMBOL_PARAMETER, NULL, method_table);
+    Symbol* other_type = method_other_type(method_1);
+    if (method_2 != NULL) {
+        Symbol* second_other_type = method_other_type(method_2);
+        Symbol* compatible_type = types_compatible(other_type, second_other_type);
+        assert(compatible_type != NULL);
+        other_type = compatible_type;
+    }
+    Symbol* other_symbol = create_symbol(create_string("other", 5), other_type, SYMBOL_PARAMETER, NULL, method_table);
+    list_append(method->parameters, (pointer)self_symbol);
+    list_append(method->parameters, (pointer)other_symbol);
+
+    VariableAccess* self_access = create_variable_access_var(self_symbol);
+    VariableAccess* call_1_base = create_variable_access_attribute(self_access, method_1);
+    Expression* other_argument = create_expression_from_primary(create_primary_var_access(create_variable_access_var(other_symbol)));
+    VariableAccess* call_1_access = create_variable_access_call(call_1_base, other_argument);
+
+    Expression* return_expression = NULL;
+    if (method_2 == NULL) {
+        Primary* call_primary = create_primary_var_access(call_1_access);
+        Primary* not_primary = create_struct(Primary);
+        not_primary->kind = PRIMARY_NOT;
+        not_primary->value.not = call_primary;
+        not_primary->type = NULL;
+        return_expression = create_expression_from_primary(not_primary);
+    } else {
+        VariableAccess* call_2_base = create_variable_access_attribute(create_variable_access_var(self_symbol), method_2);
+        Expression* other_argument_2 = create_expression_from_primary(create_primary_var_access(create_variable_access_var(other_symbol)));
+        VariableAccess* call_2_access = create_variable_access_call(call_2_base, other_argument_2);
+        Expression* left_expression = create_expression_from_primary(create_primary_var_access(call_1_access));
+        Expression* right_expression = create_expression_from_primary(create_primary_var_access(call_2_access));
+        return_expression = create_struct(Expression);
+        return_expression->left.binary = left_expression;
+        return_expression->op = OP_OR;
+        return_expression->right = right_expression;
+        return_expression->type = NULL;
+    }
+    Statement* statement = create_struct(Statement);
+    statement->statement.return_ = return_expression;
+    statement->type = STATEMENT_RETURN;
+    list_append(method->body, (pointer)statement);
+
+    method->name = create_symbol(method_name, method->type, SYMBOL_METHOD, (pointer)method, class->table);
+    ClassMember* class_member = create_struct(ClassMember);
+    class_member->type = CLASS_METHOD;
+    class_member->member.method = method;
+    list_append(class->members, (pointer)class_member);
+    return method->name;
+}
 static void auto_fill_comparison_method(Class* class) {
     Symbol* eq = find_method(class->table, OP_EQ);
     Symbol* ne = find_method(class->table, OP_NE);
@@ -131,81 +245,67 @@ static void auto_fill_comparison_method(Class* class) {
     Symbol* ge = find_method(class->table, OP_GE);
     Symbol* gt = find_method(class->table, OP_GT);
     Symbol* le = find_method(class->table, OP_LE);
-    bool changed = true;
-    while (changed) {
-        changed = false;
-        if (eq && ne == NULL) {
-            // self.ne(other) = !self.eq(other)
-            changed = true;
-        }
-        if (ne && eq == NULL) {
-            // self.eq(other) = !self.ne(other)
-            changed = true;
-        }
-        if (lt && ge == NULL) {
-            // self.ge(other) = self.lt(other)
-            changed = true;
-        }
-        if (ge && lt == NULL) {
-            // self.lt(other) = self.ge(other)
-            changed = true;
-        }
-        if (gt && le == NULL) {
-            // self.le(other) = self.gt(other)
-            changed = true;
-        }
-        if (le && gt == NULL) {
-            // self.gt(other) = self.le(other)
-            changed = true;
-        }
-        if (gt && eq && ge == NULL) {
-            // self.ge(other) = self.gt(other) || self.eq(other)
-            changed = true;
-        }
-        if (lt && eq && le == NULL) {
-            // self.le(other) = self.lt(other) || self.eq(other)
-            changed = true;
-        }
-        if (ge && eq && gt == NULL) {
-            // self.gt(other) = self.ge(other) && !self.eq(other)
-            changed = true;
-        }
-        if (le && eq && lt == NULL) {
-            // self.lt(other) = self.le(other) && !self.eq(other)
-            changed = true;
-        }
-        if (lt && gt && eq == NULL) {
-            // self.eq(other) = !(self.lt(other) || self.gt(other))
-            changed = true;
-        }
-        if (lt && gt && ne == NULL) {
-            // self.ne(other) = self.lt(other) || self.gt(other)
-            changed = true;
-        }
-        if (ge && lt && eq == NULL) {
-            // self.eq(other) = !(self.lt(other) || !self.ge(other))
-            changed = true;
-        }
-        if (le && gt && eq == NULL) {
-            // self.eq(other) = !(self.gt(other) || !self.le(other))
-            changed = true;
-        }
-        if (ge && gt) {
-            // self.gt(other) = self.gt(other)
-            changed = true;
-        }
-        if (le && lt) {
-            // self.lt(other) = self.lt(other)
-            changed = true;
-        }
+    // TODO: support comparison object address
+    if (!eq && !ne && (!(lt || ge) || !(gt || le))) {
+        // eq = object identity comparison
     }
-    if (!eq && !ne && !lt && !le && !gt && !ge) {
-        // self.eq(other) = object identity comparison
-        // self.ne(other) = !self.eq(other)
-        // self.lt(other) = false
-        // self.le(other) = self.eq(other)
-        // self.gt(other) = false
-        // self.ge(other) = self.eq(other)
+    while (true) {
+        Symbol** method_0 = NULL;
+        Symbol* method_1 = NULL;
+        Symbol* method_2 = NULL;
+        string method_name = NULL;
+        if (!eq && ne) {  // eq = !ne
+            method_0 = &eq;
+            method_1 = ne;
+            method_name = SPECIAL_EQ;
+        }
+        if (!ne && eq) {  // ne = !eq
+            method_0 = &ne;
+            method_1 = eq;
+            method_name = SPECIAL_NE;
+        }
+        if (!lt && ge) {  // lt = !ge
+            method_0 = &lt;
+            method_1 = ge;
+            method_name = SPECIAL_LT;
+        }
+        if (!ge && lt) {  // ge = !lt
+            method_0 = &ge;
+            method_1 = lt;
+            method_name = SPECIAL_GE;
+        }
+        if (!gt && le) {  // gt = !le
+            method_0 = &gt;
+            method_1 = le;
+            method_name = SPECIAL_GT;
+        }
+        if (!le && gt) {  // le = !gt
+            method_0 = &le;
+            method_1 = gt;
+            method_name = SPECIAL_LE;
+        }
+        if (!le && eq && lt) {  // le = eq || lt
+            method_0 = &le;
+            method_1 = eq;
+            method_2 = lt;
+            method_name = SPECIAL_LE;
+        }
+        if (!ge && eq && gt) {  // ge = eq || gt
+            method_0 = &ge;
+            method_1 = eq;
+            method_2 = gt;
+            method_name = SPECIAL_GE;
+        }
+        if (!ne && lt && gt) {  // ne = lt || gt
+            method_0 = &ne;
+            method_1 = lt;
+            method_2 = gt;
+            method_name = SPECIAL_NE;
+        }
+        if (method_name == NULL)
+            break;
+        assert(method_0 != NULL);
+        *method_0 = create_comparison_method(class, method_name, method_1, method_2);
     }
 }
 Symbol* calculate_type(Symbol* left, Symbol* right, OperatorType op) {
@@ -289,6 +389,7 @@ void analyze_class(Class* class) {
     assert(class != NULL);
     analyze_symbol(class->name);
     assert(class->members != NULL);
+    auto_fill_comparison_method(class);
     if (!list_empty(class->members)) {
         foreach (ClassMember*, member, class->members) {
             switch (member->type) {
