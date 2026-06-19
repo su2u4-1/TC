@@ -201,7 +201,7 @@ static const char* keywordStrings[keywordCount] = {"import", "from", "func", "cl
 string keywordList[keywordCount] = {0};
 static const char* symbolStrings[symbolCount] = {"(", ")", "{", "}", ",", "!", ".", "[", "]", ";", "_", "+", "-", "*", "/", "%", "<", ">", "=", "==", "!=", "<=", ">=", "+=", "-=", "*=", "/=", "%=", "&&", "||"};
 string symbolList[symbolCount] = {0};
-static const char* specialStrings[specialCount] = {"$init", "$to_int", "$to_float", "$to_string", "$to_bool", "$add", "$sub", "$mul", "$div", "$mod", "$eq", "$lt", "$gt", "$and", "$or", "$not", "$neg"};
+static const char* specialStrings[specialCount] = {"$init", "$to_int", "$to_float", "$to_string", "$to_bool", "$add", "$sub", "$mul", "$div", "$mod", "$eq", "$ne", "$lt", "$ge", "$gt", "$le", "$and", "$or", "$not", "$neg"};
 string specialList[specialCount] = {0};
 
 string KEYWORD_IMPORT = NULL;
@@ -269,8 +269,11 @@ string SPECIAL_MUL = NULL;
 string SPECIAL_DIV = NULL;
 string SPECIAL_MOD = NULL;
 string SPECIAL_EQ = NULL;
+string SPECIAL_NE = NULL;
 string SPECIAL_LT = NULL;
+string SPECIAL_GE = NULL;
 string SPECIAL_GT = NULL;
+string SPECIAL_LE = NULL;
 string SPECIAL_AND = NULL;
 string SPECIAL_OR = NULL;
 string SPECIAL_NOT = NULL;
@@ -360,12 +363,15 @@ static void init_constant(void) {
     SPECIAL_DIV = specialList[8];
     SPECIAL_MOD = specialList[9];
     SPECIAL_EQ = specialList[10];
-    SPECIAL_LT = specialList[11];
-    SPECIAL_GT = specialList[12];
-    SPECIAL_AND = specialList[13];
-    SPECIAL_OR = specialList[14];
-    SPECIAL_NOT = specialList[15];
-    SPECIAL_NEG = specialList[16];
+    SPECIAL_NE = specialList[11];
+    SPECIAL_LT = specialList[12];
+    SPECIAL_GE = specialList[13];
+    SPECIAL_GT = specialList[14];
+    SPECIAL_LE = specialList[15];
+    SPECIAL_AND = specialList[16];
+    SPECIAL_OR = specialList[17];
+    SPECIAL_NOT = specialList[18];
+    SPECIAL_NEG = specialList[19];
     parsed_files = list_create();
 }
 
