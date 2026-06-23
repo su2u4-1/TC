@@ -23,6 +23,9 @@ static void analyze_primary(Primary* primary);
 static void analyze_variable_access(VariableAccess* variable_access);
 static void analyze_symbol(Symbol* symbol);
 
+static int loop_depth = 0;
+static Symbol* return_type = NULL;
+
 AST* analyzer(AST* ast) {
     assert(ast != NULL);
     assert(ast->file != NULL);
@@ -365,7 +368,6 @@ Symbol* calculate_type(Symbol* left, Symbol* right, OperatorType op) {
             return method->type;
     }
     assert(false);
-    // TODO: support more type combinations and operators
     fprintf(stderr, "[DEBUG] Warning: Type mismatch, left: '%s', right: '%s', op: '%u'\n", left->name, right->name, op);
     return symbol_void;
 }
@@ -405,6 +407,7 @@ void analyze_function(Function* function) {
     assert(function != NULL);
     analyze_symbol(function->name);
     analyze_type(function->type);
+    return_type = function->type;
     assert(function->parameters != NULL);
     if (!list_empty(function->parameters)) {
         foreach (Symbol*, symbol, function->parameters) {
@@ -413,12 +416,14 @@ void analyze_function(Function* function) {
         }
     }
     analyze_body(function->body);
+    return_type = NULL;
 }
 
 void analyze_method(Method* method) {
     assert(method != NULL);
     analyze_symbol(method->name);
     analyze_type(method->type);
+    return_type = method->type;
     assert(!list_empty(method->parameters));
     size_t param_count = 0;
     foreach (Symbol*, symbol, method->parameters) {
@@ -429,6 +434,7 @@ void analyze_method(Method* method) {
         param_count++;
     }
     analyze_body(method->body);
+    return_type = NULL;
 }
 
 void analyze_variable(Variable* variable) {
@@ -445,7 +451,8 @@ void analyze_type(Symbol* type) {
     assert(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS);
     if (type->type != NULL) {
         assert(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS);
-        // TODO: check type is container type
+        // assume that the container types only include arr, list, const and pointer
+        assert(type->name == KEYWORD_CONST || type->name == KEYWORD_POINTER || strcmp(type->name, "arr") == 0 || strcmp(type->name, "list") == 0);
         analyze_type(type->type);
     }
     if (type->kind == SYMBOL_CLASS)
@@ -474,10 +481,13 @@ void analyze_statement(Statement* statement) {
             break;
         case STATEMENT_BREAK:
         case STATEMENT_CONTINUE:
+            assert(loop_depth > 0);
             break;
         case STATEMENT_RETURN:
             if (statement->statement.return_ != NULL)
                 analyze_expression(statement->statement.return_);
+            assert(return_type != NULL);
+            assert(statement->statement.return_ == NULL || types_compatible(return_type, statement->statement.return_->type) != NULL);
             break;
         case STATEMENT_EXPRESSION:
             analyze_expression(statement->statement.expression);
@@ -528,6 +538,8 @@ void analyze_if(If* if_) {
 
 void analyze_for(For* for_) {
     assert(for_ != NULL);
+    assert(loop_depth >= 0);
+    loop_depth++;
     if (for_->init.decl != NULL) {
         if (for_->is_decl) {
             analyze_variable(for_->init.decl);
@@ -541,12 +553,18 @@ void analyze_for(For* for_) {
     if (for_->increment != NULL)
         analyze_expression(for_->increment);
     analyze_body(for_->body);
+    loop_depth--;
+    assert(loop_depth >= 0);
 }
 
 void analyze_while(While* while_) {
     assert(while_ != NULL);
+    assert(loop_depth >= 0);
+    loop_depth++;
     analyze_expression(while_->condition);
     analyze_body(while_->body);
+    loop_depth--;
+    assert(loop_depth >= 0);
 }
 
 void analyze_primary(Primary* primary) {
@@ -637,11 +655,11 @@ void analyze_variable_access(VariableAccess* variable_access) {
                 else
                     assert(false);
             }
-            Symbol** param_type = malloc(sizeof(Symbol*) * arg_count);
+            Symbol** param_types = calloc(arg_count, sizeof(Symbol*));
             size_t param_count = 0;
             foreach (Symbol*, param, is_method ? callee.method->parameters : callee.function->parameters) {
                 assert(param->kind == SYMBOL_PARAMETER);
-                param_type[param_count++] = param->type;
+                param_types[param_count++] = param->type;
             }
             if (is_method) --param_count;
             Symbol* name = is_method ? callee.method->name : callee.function->name;
@@ -649,9 +667,11 @@ void analyze_variable_access(VariableAccess* variable_access) {
                 fprintf(stderr, "[analyzer Warning] Argument count mismatch in %s call '%s', expected %zu, got %zu\n", is_method ? "method" : "function", name->name, param_count, arg_count);
             arg_count = is_method ? 1 : 0;
             foreach (Expression*, arg, variable_access->access.args) {
+                Symbol* param_type = param_types[arg_count++];
                 assert(arg->type != NULL);
-                if (arg->type != param_type[arg_count++])
-                    fprintf(stderr, "[analyzer Warning] Type mismatch in %s call '%s', expected '%s', got '%s'\n", is_method ? "method" : "function", name->name, param_type[arg_count - 1]->name, arg->type->name);
+                assert(param_type != NULL);
+                if (arg->type != param_type)
+                    fprintf(stderr, "[analyzer Warning] Type mismatch in %s call '%s', expected '%s', got '%s'\n", is_method ? "method" : "function", name->name, param_type->name, arg->type->name);
             }
             break;
         case VAR_ACCESS_ATTRIBUTE:
