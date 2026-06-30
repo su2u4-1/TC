@@ -3,6 +3,19 @@
 #include "lib.h"
 #include "symbol_table.h"
 
+static bool has_error = false;
+
+#define print_analyzer_error(message) (void)(fprintf(stderr, "[analyzer Error] at %s: " message "\n", file)), has_error = true
+#define analyzer_check(condition, message, run) \
+    do {                                        \
+        if (!(condition)) {                     \
+            print_analyzer_error(message);      \
+            run;                                \
+        }                                       \
+    } while (0)
+#define check_not_null(member) assert(member != NULL)
+#define check_is_null(member) assert(member == NULL)
+
 static void fill_symbol_offset(SymbolTable* table, size_t base_offset);
 static size_t get_type_size(Symbol* type);
 static Symbol* calculate_type(Symbol* left, Symbol* right, OperatorType op);
@@ -21,16 +34,23 @@ static void analyze_for(For* for_);
 static void analyze_while(While* while_);
 static void analyze_primary(Primary* primary);
 static void analyze_variable_access(VariableAccess* variable_access);
+static void analyze_var_access_var(VariableAccess* variable_access);
+static void analyze_var_access_call(VariableAccess* variable_access);
+static void analyze_var_access_attribute(VariableAccess* variable_access);
+static void analyze_var_access_index(VariableAccess* variable_access);
 static void analyze_symbol(Symbol* symbol);
 
 static int loop_depth = 0;
 static Symbol* return_type = NULL;
+static string file = NULL;
 
 AST* analyzer(AST* ast) {
-    assert(ast != NULL);
-    assert(ast->file != NULL);
-    assert(ast->members != NULL);
-    assert(ast->table != NULL);
+    check_not_null(ast);
+    check_not_null(ast->file);
+    file = file_full_path(ast->file);
+    check_not_null(ast->members);
+    check_not_null(ast->table);
+    has_error = false;
     foreach (SymbolTable*, table, global_symbol_table->children) {
         fill_symbol_offset(table, 0);
     }
@@ -44,6 +64,7 @@ AST* analyzer(AST* ast) {
             }
         }
     }
+    if (has_error) return NULL;
     return ast;
 }
 
@@ -54,17 +75,17 @@ size_t get_type_size(Symbol* type) {
 }
 
 void fill_symbol_offset(SymbolTable* table, size_t base_offset) {
-    assert(table != NULL);
+    check_not_null(table);
     size_t offset = base_offset;
     if (table->type == SYMBOL_TABLE_CLASS || table->type == SYMBOL_TABLE_FUNCTION || table->type == SYMBOL_TABLE_METHOD)
         offset = 0;
     foreach (Symbol*, symbol, table->symbols) {
-        if (symbol->kind == SYMBOL_VARIABLE || symbol->kind == SYMBOL_PARAMETER || symbol->kind == SYMBOL_ATTRIBUTE) {
-            symbol->info.offset = offset;
-            assert(symbol->type != NULL);
-            assert(symbol->type->kind == SYMBOL_TYPE || symbol->type->kind == SYMBOL_CLASS);
-            offset += get_type_size(symbol->type);
-        }
+        if (symbol->kind != SYMBOL_VARIABLE && symbol->kind != SYMBOL_PARAMETER && symbol->kind != SYMBOL_ATTRIBUTE)
+            continue;
+        symbol->info.offset = offset;
+        check_not_null(symbol->type);
+        analyzer_check(symbol->type->kind == SYMBOL_TYPE || symbol->type->kind == SYMBOL_CLASS, "Symbol type must be a type or class", return);
+        offset += get_type_size(symbol->type);
     }
     foreach (SymbolTable*, child, table->children)
         fill_symbol_offset(child, offset);
@@ -112,32 +133,18 @@ static Symbol* find_method(SymbolTable* table, OperatorType op) {
         default: return NULL;
     }
 }
-static bool method_compatibility(Symbol* method, Symbol* other) {
-    size_t param_count = 0;
-    Symbol* second_param = NULL;
-    foreach (Symbol*, param, method->info.method->parameters) {
-        if (param_count == 0)
-            assert(param->name == KEYWORD_SELF);
-        else if (param_count == 1)
-            second_param = param;
-        param_count++;
-    }
-    assert(param_count == 2);
-    assert(second_param != NULL);
-    return types_compatible(second_param->type, other) != NULL;
-}
 static Symbol* method_other_type(Symbol* method) {
     size_t param_count = 0;
     Symbol* second_param = NULL;
     foreach (Symbol*, param, method->info.method->parameters) {
         if (param_count == 0)
-            assert(param->name == KEYWORD_SELF);
+            analyzer_check(param->name == KEYWORD_SELF, "First parameter of method must be 'self'", return NULL);
         else if (param_count == 1)
             second_param = param;
         param_count++;
     }
-    assert(param_count == 2);
-    assert(second_param != NULL);
+    analyzer_check(param_count == 2, "Binary operations method must have exactly two parameters", return NULL);
+    analyzer_check(second_param != NULL, "Second parameter of binary operations special method must not be NULL", return NULL);
     return second_param->type;
 }
 static VariableAccess* create_variable_access_var(Symbol* symbol) {
@@ -181,10 +188,10 @@ static Expression* create_expression_from_primary(Primary* primary) {
     return expression;
 }
 static Symbol* create_comparison_method(Class* class, string method_name, Symbol* method_1, Symbol* method_2) {
-    assert(class != NULL);
-    assert(class->table != NULL);
-    assert(method_name != NULL);
-    assert(method_1 != NULL);
+    check_not_null(class);
+    check_not_null(class->table);
+    check_not_null(method_name);
+    check_not_null(method_1);
     Method* method = create_struct(Method);
     method->body = list_create();
     method->parameters = list_create();
@@ -197,7 +204,7 @@ static Symbol* create_comparison_method(Class* class, string method_name, Symbol
     if (method_2 != NULL) {
         Symbol* second_other_type = method_other_type(method_2);
         Symbol* compatible_type = types_compatible(other_type, second_other_type);
-        assert(compatible_type != NULL);
+        analyzer_check(compatible_type != NULL, "The second parameter types of the two comparison methods must be compatible", return NULL);
         other_type = compatible_type;
     }
     Symbol* other_symbol = create_symbol(create_string("other", 5), other_type, SYMBOL_PARAMETER, NULL, method_table);
@@ -307,90 +314,90 @@ static void auto_fill_comparison_method(Class* class) {
         }
         if (method_name == NULL)
             break;
-        assert(method_0 != NULL);
+        check_not_null(method_0);
         *method_0 = create_comparison_method(class, method_name, method_1, method_2);
     }
 }
 Symbol* calculate_type(Symbol* left, Symbol* right, OperatorType op) {
-    assert(left != NULL);
-    assert(left->kind == SYMBOL_TYPE || left->kind == SYMBOL_CLASS);
+    // left type check
+    check_not_null(left);
+    if (left == symbol_void && right == NULL) return symbol_void;
+    analyzer_check(left != symbol_void, "Cannot perform operations on void type", return symbol_void);
+    analyzer_check(left->kind == SYMBOL_TYPE || left->kind == SYMBOL_CLASS, "Left operand type must be a type or class", return symbol_void);
+
+    // unary operation
     if (right == NULL) {
-        if (op == OP_NONE)
-            return left;
-        if ((left == symbol_int || left == symbol_float) && op == OP_NEG)
-            return left;
-        if (op == OP_NOT)
-            return symbol_bool;
+        if (op == OP_NONE) return left;
+        if ((left == symbol_int || left == symbol_float) && op == OP_NEG) return left;
+        if (op == OP_NOT) return symbol_bool;
+        // TODO: I think here has some issues
         if (left->kind == SYMBOL_CLASS) {
             Symbol* method = find_method(left->info.class->table, op);
             if (method != NULL) {
-                assert(!list_empty(method->info.method->parameters) && method->info.method->parameters->head == method->info.method->parameters->tail);
-                assert(((Symbol*)method->info.method->parameters->head->data)->name == KEYWORD_SELF);
+                analyzer_check(!list_empty(method->info.method->parameters) && method->info.method->parameters->head == method->info.method->parameters->tail,
+                               "Init method must have exactly one parameter", return symbol_void);
+                analyzer_check(((Symbol*)method->info.method->parameters->head->data)->name == KEYWORD_SELF, "First parameter of method must be 'self'", return symbol_void);
                 return method->type;
             }
         }
-        assert(false);
+        print_analyzer_error("Invalid unary operation");
+        return symbol_void;
     }
-    assert(right != NULL);
-    assert(right->kind == SYMBOL_TYPE || right->kind == SYMBOL_CLASS);
+
+    // right type check
+    check_not_null(right);
+    analyzer_check(right != symbol_void, "Cannot perform operations on void type", return symbol_void);
+    analyzer_check(right->kind == SYMBOL_TYPE || right->kind == SYMBOL_CLASS, "Right operand type must be a type or class", return symbol_void);
+
+    // binary operation
     if (is_logical_op(op))
         return symbol_bool;
-    if (is_equality_op(op)) {
-        if (left == right || types_compatible(left, right) != NULL)
-            return symbol_bool;
-    }
-    if (is_comparison_op(op)) {
-        if (is_number_type(left) && is_number_type(right))
-            return symbol_bool;
-    }
-    if (is_arithmetic_op(op)) {
-        if (left == right && is_number_type(left))
-            return left;
-        if (is_number_type(left) && is_number_type(right))
-            return types_compatible(left, right);
-    }
-    if (op == OP_ASSIGN) {
-        if (left == right || types_compatible(left, right) != NULL)
-            return left;
-    }
-    if (is_arithmetic_assign_op(op)) {
-        if (is_number_type(left) && (left == right || types_compatible(left, right) != NULL))
-            return left;
-    }
+    if (is_equality_op(op) && types_compatible(left, right) != NULL)
+        return symbol_bool;
+    if (is_comparison_op(op) && is_number_type(left) && is_number_type(right))
+        return symbol_bool;
+    if (is_arithmetic_op(op) && is_number_type(left) && is_number_type(right))
+        return types_compatible(left, right);
+    if (op == OP_ASSIGN && types_compatible(left, right) != NULL)
+        return left;
+    if (is_arithmetic_assign_op(op) && is_number_type(left) && types_compatible(left, right) != NULL)
+        return left;
+
     if (left->kind == SYMBOL_CLASS) {
         Symbol* method = find_method(left->info.class->table, op);
-        if (method != NULL && method_compatibility(method, right))
+        if (method != NULL && types_compatible(method_other_type(method), right) != NULL)
             return method->type;
     }
     if (right->kind == SYMBOL_CLASS) {
         Symbol* method = find_method(right->info.class->table, op);
-        if (method != NULL && method_compatibility(method, left))
+        if (method != NULL && types_compatible(method_other_type(method), left) != NULL)
             return method->type;
     }
-    assert(false);
-    fprintf(stderr, "[DEBUG] Warning: Type mismatch, left: '%s', right: '%s', op: '%u'\n", left->name, right->name, op);
+
+    print_analyzer_error("Invalid binary operation");
+    fprintf(stderr, "[analyzer Warning]: Type mismatch, left: '%s', right: '%s', op: '%u'\n", left->name, right->name, op);
     return symbol_void;
 }
 
 void analyze_import(Import* import) {
-    assert(import != NULL);
-    assert(import->path != NULL);
-    FILE* file = fopen(import->path, "r");
-    assert(file != NULL);
-    fclose(file);
+    check_not_null(import);
+    check_not_null(import->path);
+    FILE* import_file = fopen(import->path, "r");
+    analyzer_check(import_file != NULL, "Failed to open import file", return);
+    fclose(import_file);
     analyze_symbol(import->name);
     if (import->name->kind == SYMBOL_CLASS)
-        assert(import->name->info.class != NULL);
+        analyzer_check(import->name->info.class != NULL, "Imported class symbol must have class info", );
     else if (import->name->kind == SYMBOL_FUNCTION)
-        assert(import->name->info.function != NULL);
+        analyzer_check(import->name->info.function != NULL, "Imported function symbol must have function info", );
     else
-        assert(false);
+        print_analyzer_error("Imported symbol must be a class or function");
 }
 
 void analyze_class(Class* class) {
-    assert(class != NULL);
+    check_not_null(class);
     analyze_symbol(class->name);
-    assert(class->members != NULL);
+    check_not_null(class->members);
     auto_fill_comparison_method(class);
     if (!list_empty(class->members)) {
         foreach (ClassMember*, member, class->members) {
@@ -404,11 +411,11 @@ void analyze_class(Class* class) {
 }
 
 void analyze_function(Function* function) {
-    assert(function != NULL);
+    check_not_null(function);
     analyze_symbol(function->name);
     analyze_type(function->type);
     return_type = function->type;
-    assert(function->parameters != NULL);
+    check_not_null(function->parameters);
     if (!list_empty(function->parameters)) {
         foreach (Symbol*, symbol, function->parameters) {
             analyze_symbol(symbol);
@@ -420,17 +427,17 @@ void analyze_function(Function* function) {
 }
 
 void analyze_method(Method* method) {
-    assert(method != NULL);
+    check_not_null(method);
     analyze_symbol(method->name);
     analyze_type(method->type);
     return_type = method->type;
-    assert(!list_empty(method->parameters));
+    analyzer_check(!list_empty(method->parameters), "Method must have at least one parameter (self)", return);
     size_t param_count = 0;
     foreach (Symbol*, symbol, method->parameters) {
         analyze_symbol(symbol);
         assert(symbol->kind == SYMBOL_PARAMETER);
         if (param_count == 0)
-            assert(symbol->name == KEYWORD_SELF);
+            analyzer_check(symbol->name == KEYWORD_SELF, "First parameter of method must be 'self'", return);
         param_count++;
     }
     analyze_body(method->body);
@@ -438,67 +445,60 @@ void analyze_method(Method* method) {
 }
 
 void analyze_variable(Variable* variable) {
-    assert(variable != NULL);
+    check_not_null(variable);
     analyze_symbol(variable->var);
     analyze_type(variable->var->type);
     if (variable->initializer != NULL)
         analyze_expression(variable->initializer);
 }
 
+static bool is_container_type(Symbol* type) {
+    return type->name == KEYWORD_CONST || type->name == KEYWORD_POINTER || strcmp(type->name, "arr") == 0 || strcmp(type->name, "list") == 0;
+}
 void analyze_type(Symbol* type) {
-    assert(type != NULL);
-    assert(type->name != NULL);
-    assert(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS);
+    check_not_null(type);
+    check_not_null(type->name);
+    analyzer_check(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS, "Symbol must be a type or class", abort());
     if (type->type != NULL) {
-        assert(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS);
+        analyzer_check(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS, "Symbol type must be a type or class", abort());
         // assume that the container types only include arr, list, const and pointer
-        assert(type->name == KEYWORD_CONST || type->name == KEYWORD_POINTER || strcmp(type->name, "arr") == 0 || strcmp(type->name, "list") == 0);
+        analyzer_check(is_container_type(type), "Container types must be const, pointer, arr or list", return);
         analyze_type(type->type);
     }
     if (type->kind == SYMBOL_CLASS)
-        assert(type->info.class != NULL);
+        analyzer_check(type->info.class != NULL, "Class symbol must have class info", );
 }
 
 void analyze_statement(Statement* statement) {
-    assert(statement != NULL);
+    check_not_null(statement);
     switch (statement->type) {
         case STATEMENT_DECLARE_LIST:
-            assert(!list_empty(statement->statement.declare_list));
+            analyzer_check(!list_empty(statement->statement.declare_list), "Declare list statement must not be empty", return);
             foreach (Variable*, var, statement->statement.declare_list)
                 analyze_variable(var);
             break;
-        case STATEMENT_DECLARE:
-            analyze_variable(statement->statement.declare);
-            break;
-        case STATEMENT_IF:
-            analyze_if(statement->statement.if_);
-            break;
-        case STATEMENT_FOR:
-            analyze_for(statement->statement.for_);
-            break;
-        case STATEMENT_WHILE:
-            analyze_while(statement->statement.while_);
-            break;
+        case STATEMENT_DECLARE: analyze_variable(statement->statement.declare); break;
+        case STATEMENT_IF: analyze_if(statement->statement.if_); break;
+        case STATEMENT_FOR: analyze_for(statement->statement.for_); break;
+        case STATEMENT_WHILE: analyze_while(statement->statement.while_); break;
         case STATEMENT_BREAK:
         case STATEMENT_CONTINUE:
-            assert(loop_depth > 0);
+            analyzer_check(loop_depth > 0, "Break and continue statements must be inside a loop", return);
             break;
         case STATEMENT_RETURN:
             if (statement->statement.return_ != NULL)
                 analyze_expression(statement->statement.return_);
-            assert(return_type != NULL);
-            assert(statement->statement.return_ == NULL || types_compatible(return_type, statement->statement.return_->type) != NULL);
+            analyzer_check(return_type != NULL, "Return statement must be inside a function or method", );
+            analyzer_check((statement->statement.return_ == NULL && return_type == symbol_void) || types_compatible(return_type, statement->statement.return_->type) != NULL,
+                           "Return statement type must be compatible with function or method return type", );
             break;
-        case STATEMENT_EXPRESSION:
-            analyze_expression(statement->statement.expression);
-            break;
-        default:
-            assert(false);
+        case STATEMENT_EXPRESSION: analyze_expression(statement->statement.expression); break;
+        default: assert(false);
     }
 }
 
 void analyze_body(list(Statement*) body) {
-    assert(body != NULL);
+    check_not_null(body);
     if (list_empty(body)) return;
     foreach (Statement*, statement, body) {
         analyze_statement(statement);
@@ -506,8 +506,8 @@ void analyze_body(list(Statement*) body) {
 }
 
 void analyze_expression(Expression* expression) {
-    assert(expression != NULL);
-    assert(expression->type == NULL);
+    check_not_null(expression);
+    check_is_null(expression->type);  // why???
     if (expression->op == OP_NONE) {
         analyze_primary(expression->left.unary);
         expression->type = calculate_type(expression->left.unary->type, NULL, OP_NONE);
@@ -516,18 +516,18 @@ void analyze_expression(Expression* expression) {
         analyze_expression(expression->right);
         expression->type = calculate_type(expression->left.binary->type, expression->right->type, expression->op);
     }
-    assert(expression->type != NULL);
+    analyzer_check(expression->type != NULL, "Expression type must not be NULL", );
 }
 
 void analyze_if(If* if_) {
-    assert(if_ != NULL);
+    check_not_null(if_);
     analyze_expression(if_->condition);
     analyze_body(if_->body);
     if (!list_empty(if_->elif_list)) {
         foreach (If*, elif, if_->elif_list) {
-            assert(elif != NULL);
-            assert(elif->else_body == NULL);
-            assert(elif->elif_list == NULL);
+            check_not_null(elif);
+            check_is_null(elif->else_body);
+            check_is_null(elif->elif_list);
             analyze_expression(elif->condition);
             analyze_body(elif->body);
         }
@@ -537,17 +537,13 @@ void analyze_if(If* if_) {
 }
 
 void analyze_for(For* for_) {
-    assert(for_ != NULL);
+    check_not_null(for_);
     assert(loop_depth >= 0);
     loop_depth++;
-    if (for_->init.decl != NULL) {
-        if (for_->is_decl) {
-            analyze_variable(for_->init.decl);
-        } else {
-            assert(for_->init.expr != NULL);
-            analyze_expression(for_->init.expr);
-        }
-    }
+    if (for_->is_decl && for_->init.decl != NULL)
+        analyze_variable(for_->init.decl);
+    else if (!for_->is_decl && for_->init.expr != NULL)
+        analyze_expression(for_->init.expr);
     if (for_->condition != NULL)
         analyze_expression(for_->condition);
     if (for_->increment != NULL)
@@ -558,7 +554,7 @@ void analyze_for(For* for_) {
 }
 
 void analyze_while(While* while_) {
-    assert(while_ != NULL);
+    check_not_null(while_);
     assert(loop_depth >= 0);
     loop_depth++;
     analyze_expression(while_->condition);
@@ -568,23 +564,23 @@ void analyze_while(While* while_) {
 }
 
 void analyze_primary(Primary* primary) {
-    assert(primary != NULL);
-    assert(primary->type == NULL);
+    check_not_null(primary);
+    check_is_null(primary->type);
     switch (primary->kind) {
         case PRIMARY_INT:
-            assert(primary->value.literal != NULL);
+            check_not_null(primary->value.literal);
             primary->type = symbol_int;
             break;
         case PRIMARY_FLOAT:
-            assert(primary->value.literal != NULL);
+            check_not_null(primary->value.literal);
             primary->type = symbol_float;
             break;
         case PRIMARY_STRING:
-            assert(primary->value.literal != NULL);
+            check_not_null(primary->value.literal);
             primary->type = symbol_string;
             break;
         case PRIMARY_BOOL:
-            assert(primary->value.literal != NULL);
+            check_not_null(primary->value.literal);
             primary->type = symbol_bool;
             break;
         case PRIMARY_NOT:
@@ -603,130 +599,147 @@ void analyze_primary(Primary* primary) {
             analyze_variable_access(primary->value.var_access);
             primary->type = primary->value.var_access->type;
             break;
-        default:
-            assert(false);
+        default: assert(false);
     }
-    assert(primary->type != NULL);
+    check_not_null(primary->type);
 }
 
-void analyze_variable_access(VariableAccess* variable_access) {
-    assert(variable_access != NULL);
-    assert(variable_access->type == NULL);
-    if (variable_access->base != NULL)
-        analyze_variable_access(variable_access->base);
-    switch (variable_access->kind) {
-        case VAR_ACCESS_VAR:
-            assert(variable_access->access.var != NULL);
-            analyze_symbol(variable_access->access.var);
-            assert(variable_access->base == NULL);
-            Symbol* var = variable_access->access.var;
-            if (var->kind == SYMBOL_VARIABLE || var->kind == SYMBOL_PARAMETER || var->kind == SYMBOL_ATTRIBUTE)
-                variable_access->type = var->type;
-            else if (var->kind == SYMBOL_FUNCTION || var->kind == SYMBOL_METHOD || var->kind == SYMBOL_CLASS)
-                variable_access->type = var;
-            else
-                assert(false);
-            break;
-        case VAR_ACCESS_CALL:
-            assert(variable_access->access.args != NULL);
-            size_t arg_count = 0;
-            foreach (Expression*, arg, variable_access->access.args) {
-                analyze_expression(arg);
-                ++arg_count;
-            }
-            VariableAccess* base = variable_access->base;
-            assert((base->kind == VAR_ACCESS_VAR && (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_CLASS)) ||
-                   (base->kind == VAR_ACCESS_ATTRIBUTE && base->type->kind == SYMBOL_METHOD));
-            union {
-                Function* function;
-                Method* method;
-            } callee;
-            bool is_method = true;
-            if (base->type->kind == SYMBOL_CLASS) {
-                variable_access->type = base->type;
-                callee.method = search_symbol(base->type->info.class->table, SPECIAL_INIT, true, SYMBOL_METHOD, NULL)->info.method;
-            } else {
-                variable_access->type = base->type->type;
-                if (base->type->kind == SYMBOL_FUNCTION) {
-                    callee.function = base->type->info.function;
-                    is_method = false;
-                } else if (base->type->kind == SYMBOL_METHOD)
-                    callee.method = base->type->info.method;
-                else
-                    assert(false);
-            }
-            Symbol** param_types = calloc(arg_count, sizeof(Symbol*));
-            size_t param_count = 0;
-            foreach (Symbol*, param, is_method ? callee.method->parameters : callee.function->parameters) {
-                assert(param->kind == SYMBOL_PARAMETER);
-                param_types[param_count++] = param->type;
-            }
-            if (is_method) --param_count;
-            Symbol* name = is_method ? callee.method->name : callee.function->name;
-            if (arg_count != param_count)
-                fprintf(stderr, "[analyzer Warning] Argument count mismatch in %s call '%s', expected %zu, got %zu\n", is_method ? "method" : "function", name->name, param_count, arg_count);
-            arg_count = is_method ? 1 : 0;
-            foreach (Expression*, arg, variable_access->access.args) {
-                Symbol* param_type = param_types[arg_count++];
-                assert(arg->type != NULL);
-                assert(param_type != NULL);
-                if (arg->type != param_type)
-                    fprintf(stderr, "[analyzer Warning] Type mismatch in %s call '%s', expected '%s', got '%s'\n", is_method ? "method" : "function", name->name, param_type->name, arg->type->name);
-            }
-            break;
-        case VAR_ACCESS_ATTRIBUTE:
-            assert(variable_access->access.attribute != NULL);
-            analyze_symbol(variable_access->access.attribute);
-            assert(variable_access->base->type->kind == SYMBOL_CLASS);
-            if (variable_access->access.attribute->kind == SYMBOL_METHOD)
-                variable_access->type = variable_access->access.attribute;
-            else if (variable_access->access.attribute->kind == SYMBOL_ATTRIBUTE)
-                variable_access->type = variable_access->access.attribute->type;
-            else
-                assert(false);
-            break;
-        case VAR_ACCESS_INDEX:
-            assert(variable_access->access.index != NULL);
-            analyze_expression(variable_access->access.index);
-            Symbol* type = variable_access->base->type;
-            assert(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS);
-            assert(type->type != NULL);
-            variable_access->type = type->type;
-            break;
-        default:
-            assert(false);
+static void analyze_var_access_var(VariableAccess* variable_access) {
+    check_not_null(variable_access->access.var);
+    analyze_symbol(variable_access->access.var);
+    check_is_null(variable_access->base);
+    Symbol* var = variable_access->access.var;
+    if (var->kind == SYMBOL_VARIABLE || var->kind == SYMBOL_PARAMETER || var->kind == SYMBOL_ATTRIBUTE)
+        variable_access->type = var->type;
+    else if (var->kind == SYMBOL_FUNCTION || var->kind == SYMBOL_METHOD || var->kind == SYMBOL_CLASS)
+        variable_access->type = var;
+    else
+        assert(false);
+}
+#define max(a, b) ((a) > (b) ? (a) : (b))
+static void analyze_var_access_call(VariableAccess* variable_access) {
+    check_not_null(variable_access->base);
+    check_not_null(variable_access->access.args);
+    size_t arg_count = 0;
+    foreach (Expression*, arg, variable_access->access.args) {
+        analyze_expression(arg);
+        ++arg_count;
     }
-    assert(variable_access->type != NULL);
+    VariableAccess* base = variable_access->base;
+    analyzer_check((base->kind == VAR_ACCESS_VAR && (base->type->kind == SYMBOL_FUNCTION || base->type->kind == SYMBOL_CLASS)) ||
+                       (base->kind == VAR_ACCESS_ATTRIBUTE && base->type->kind == SYMBOL_METHOD),
+                   "Base of call must be a function, method or class", return);
+    union {
+        Function* function;
+        Method* method;
+    } callee;
+    bool is_method = true;
+    variable_access->type = base->type->type;
+    if (base->type->kind == SYMBOL_CLASS) {
+        variable_access->type = base->type;
+        callee.method = search_symbol(base->type->info.class->table, SPECIAL_INIT, true, SYMBOL_METHOD, NULL)->info.method;
+    } else if (base->type->kind == SYMBOL_FUNCTION) {
+        callee.function = base->type->info.function;
+        is_method = false;
+    } else if (base->type->kind == SYMBOL_METHOD)
+        callee.method = base->type->info.method;
+    else
+        assert(false);
+    size_t param_count = 0;
+    foreach (Symbol*, param, is_method ? callee.method->parameters : callee.function->parameters) param_count++;
+    Symbol** param_types = calloc(max(arg_count, param_count), sizeof(Symbol*));
+    int i = 0;
+    foreach (Symbol*, param, is_method ? callee.method->parameters : callee.function->parameters) {
+        assert(param->kind == SYMBOL_PARAMETER);
+        param_types[i++] = param->type;
+    }
+    if (is_method) --param_count;
+    Symbol* name = is_method ? callee.method->name : callee.function->name;
+    analyzer_check(arg_count == param_count, "Argument count must match callee parameter count",
+                   fprintf(stderr, "    Argument count mismatch in %s call '%s', expected %zu, got %zu\n",
+                           (is_method ? "method" : "function"), name->name, param_count, arg_count));
+    i = is_method ? 1 : 0;
+    foreach (Expression*, arg, variable_access->access.args) {
+        Symbol* param_type = param_types[i++];
+        check_not_null(arg->type);
+        check_not_null(param_type);
+        analyzer_check(types_compatible(arg->type, param_type), "Argument type must match callee parameter type",
+                       fprintf(stderr, "    Type mismatch in %s call '%s', expected '%s', got '%s'\n",
+                               (is_method ? "method" : "function"), name->name, param_type->name, arg->type->name));
+    }
+    free(param_types);
+}
+static void analyze_var_access_attribute(VariableAccess* variable_access) {
+    check_not_null(variable_access->base);
+    check_not_null(variable_access->access.attribute);
+    analyze_symbol(variable_access->access.attribute);
+    analyzer_check(variable_access->base->type->kind == SYMBOL_CLASS, "Base of attribute access must be a class", return);
+    if (variable_access->access.attribute->kind == SYMBOL_METHOD)
+        variable_access->type = variable_access->access.attribute;
+    else if (variable_access->access.attribute->kind == SYMBOL_ATTRIBUTE)
+        variable_access->type = variable_access->access.attribute->type;
+    else
+        assert(false);
+}
+static void analyze_var_access_index(VariableAccess* variable_access) {
+    check_not_null(variable_access->base);
+    check_not_null(variable_access->access.index);
+    analyze_expression(variable_access->access.index);
+    analyzer_check(types_compatible(variable_access->access.index->type, symbol_int) == symbol_int, "Index must be of type int", return);
+    Symbol* type = variable_access->base->type;
+    analyzer_check(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS, "The type of the elements within the container is not a type or class", return);
+    check_not_null(type->type);
+    variable_access->type = type->type;
+}
+void analyze_variable_access(VariableAccess* variable_access) {
+    check_not_null(variable_access);
+    check_is_null(variable_access->type);
+    if (variable_access->base != NULL) analyze_variable_access(variable_access->base);
+    switch (variable_access->kind) {
+        case VAR_ACCESS_VAR: analyze_var_access_var(variable_access); break;
+        case VAR_ACCESS_CALL: analyze_var_access_call(variable_access); break;
+        case VAR_ACCESS_ATTRIBUTE: analyze_var_access_attribute(variable_access); break;
+        case VAR_ACCESS_INDEX: analyze_var_access_index(variable_access); break;
+        default: assert(false);
+    }
+    check_not_null(variable_access->type);
 }
 
 void analyze_symbol(Symbol* symbol) {
-    assert(symbol != NULL);
-    assert(symbol->name != NULL);
+    check_not_null(symbol);
+    check_not_null(symbol->name);
     switch (symbol->kind) {
         case SYMBOL_TYPE:
+            if (is_container_type(symbol))
+                check_not_null(symbol->type);
+            else
+                check_is_null(symbol->type);
             break;
         case SYMBOL_VARIABLE:
-            assert(symbol->type != NULL);
+            check_not_null(symbol->type);
             break;
         case SYMBOL_FUNCTION:
-            assert(symbol->type != NULL);
-            assert(symbol->info.function != NULL);
+            check_not_null(symbol->type);
+            check_not_null(symbol->info.function);
             break;
         case SYMBOL_CLASS:
-            assert(symbol->info.class != NULL);
+            check_not_null(symbol->info.class);
+            if (is_container_type(symbol))
+                check_not_null(symbol->type);
+            else
+                check_is_null(symbol->type);
             break;
         case SYMBOL_METHOD:
-            assert(symbol->type != NULL);
-            assert(symbol->info.method != NULL);
+            check_not_null(symbol->type);
+            check_not_null(symbol->info.method);
             break;
         case SYMBOL_ATTRIBUTE:
-            assert(symbol->type != NULL);
+            check_not_null(symbol->type);
             break;
         case SYMBOL_PARAMETER:
-            assert(symbol->type != NULL);
+            check_not_null(symbol->type);
             break;
-        default:
-            assert(false);
+        default: assert(false);
     }
     if (symbol->type != NULL)
         analyze_type(symbol->type);

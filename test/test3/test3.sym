@@ -321,4 +321,4 @@ SymbolTable (type: global): {
     }
 }
 
-platform: 2, malloc allocated: 45079, string memory: [used/total: 2920/3244, blocks: 3], struct memory: [used/total: 39208/39680, blocks: 27]
+platform: 2, malloc allocated: 43327, string memory: [used/total: 2920/3244, blocks: 3], struct memory: [used/total: 36184/37960, blocks: 26]
