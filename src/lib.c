@@ -408,30 +408,6 @@ pointer list_pop_front(List* self) {
     }
     return value;
 }
-pointer list_pop_back(List* self) {
-    if (list_empty(self)) {
-        return NULL;
-    }
-    pointer value = self->tail->data;
-    if (self->head == self->tail) {
-        self->head = NULL;
-        self->tail = NULL;
-    } else {
-        ListNode* previous = self->head;
-        while (previous->next != self->tail) {
-            previous = previous->next;
-        }
-        previous->next = NULL;
-        self->tail = previous;
-    }
-    return value;
-}
-List* list_copy(List* self) {
-    List* list = list_create();
-    list->head = self->head;
-    list->tail = self->tail;
-    return list;
-}
 
 bool is_special(string str) {
     for (size_t i = 0; i < specialCount; ++i) {

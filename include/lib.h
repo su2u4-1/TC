@@ -162,9 +162,10 @@ extern string SPECIAL_NEG;        // special method `$neg`
 
 #define list(T) List*
 #define list_empty(self) (self == NULL || self->head == NULL)
-#define foreach(type, item, list)                                                \
-    for (List* temp_list = list_copy(list); temp_list != NULL; temp_list = NULL) \
-        for (type item = (type)list_pop_front(temp_list); item != NULL; item = (type)list_pop_front(temp_list))
+#define foreach(type, item, list)                                                        \
+    for (List* _foreach_list = (list); !list_empty(_foreach_list); _foreach_list = NULL) \
+        for (ListNode* _node = _foreach_list->head; _node != NULL; _node = _node->next)  \
+            for (type item = (type)_node->data; item != NULL; item = NULL)
 
 typedef struct ListNode {
     pointer data;
@@ -178,8 +179,6 @@ typedef struct List {
 List* list_create(void);
 void list_append(List* self, pointer value);
 pointer list_pop_front(List* self);
-pointer list_pop_back(List* self);
-List* list_copy(List* self);
 
 typedef struct Symbol Symbol;
 typedef struct SymbolTable SymbolTable;
