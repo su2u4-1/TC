@@ -1,0 +1,17 @@
+class Test {
+    var int a = 10;
+    var float b = 20.5;
+    var float c = 30;
+    var int d = 40.5;
+}
+
+func int f(int a, int b) { return 0; }
+
+func int main() {
+    var int a = f(1.2, 5);
+    return 0;
+}
+
+func int f(int a, int b) {
+    return a + b;
+}

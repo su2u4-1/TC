@@ -1,0 +1,145 @@
+SymbolTable (type: global): {
+    symbols:
+    {
+        name: "int(0)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "float(1)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "string(2)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "bool(3)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "void(4)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "pointer(5)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    {
+        name: "const(6)"
+        kind: "type"
+        type: null
+        offset: null
+    }
+    sub-tables:
+    SymbolTable (type: global): {
+        symbols:
+        {
+            name: "Test(7)"
+            kind: "class"
+            type: null
+            offset: null
+        }
+        {
+            name: "f(12)"
+            kind: "function"
+            type: "int(0)"
+            offset: null
+        }
+        {
+            name: "main(15)"
+            kind: "function"
+            type: "int(0)"
+            offset: null
+        }
+        sub-tables:
+        SymbolTable (type: class): {
+            symbols:
+            {
+                name: "a(8)"
+                kind: "attribute"
+                type: "int(0)"
+                offset: 0
+            }
+            {
+                name: "b(9)"
+                kind: "attribute"
+                type: "float(1)"
+                offset: 4
+            }
+            {
+                name: "c(10)"
+                kind: "attribute"
+                type: "float(1)"
+                offset: 8
+            }
+            {
+                name: "d(11)"
+                kind: "attribute"
+                type: "int(0)"
+                offset: 12
+            }
+        }
+        SymbolTable (type: function): {
+            symbols:
+            {
+                name: "a(13)"
+                kind: "parameter"
+                type: "int(0)"
+                offset: 0
+            }
+            {
+                name: "b(14)"
+                kind: "parameter"
+                type: "int(0)"
+                offset: 4
+            }
+            sub-tables:
+            SymbolTable (type: block): {
+            }
+        }
+        SymbolTable (type: function): {
+            sub-tables:
+            SymbolTable (type: block): {
+                symbols:
+                {
+                    name: "a(16)"
+                    kind: "variable"
+                    type: "int(0)"
+                    offset: 0
+                }
+            }
+        }
+        SymbolTable (type: function): {
+            symbols:
+            {
+                name: "a(17)"
+                kind: "parameter"
+                type: "int(0)"
+                offset: 0
+            }
+            {
+                name: "b(18)"
+                kind: "parameter"
+                type: "int(0)"
+                offset: 4
+            }
+            sub-tables:
+            SymbolTable (type: block): {
+            }
+        }
+    }
+}
+
+platform: 2, malloc allocated: 15966, string memory: [used/total: 1811/2318, blocks: 2], struct memory: [used/total: 12440/13232, blocks: 11]

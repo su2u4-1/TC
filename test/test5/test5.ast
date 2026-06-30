@@ -1,0 +1,192 @@
+{
+    class: {
+        name: {
+            name: "Test(7)"
+            kind: "class"
+            type: null
+            offset: null
+        }
+        variable: {
+            name: {
+                name: "a(8)"
+                kind: "attribute"
+                type: "int(0)"
+                offset: 0
+            }
+            initializer: {
+                primary: {
+                    int literal: 10
+                }
+            }
+        }
+        variable: {
+            name: {
+                name: "b(9)"
+                kind: "attribute"
+                type: "float(1)"
+                offset: 4
+            }
+            initializer: {
+                primary: {
+                    float literal: 20.5
+                }
+            }
+        }
+        variable: {
+            name: {
+                name: "c(10)"
+                kind: "attribute"
+                type: "float(1)"
+                offset: 8
+            }
+            initializer: {
+                primary: {
+                    int literal: 30
+                }
+            }
+        }
+        variable: {
+            name: {
+                name: "d(11)"
+                kind: "attribute"
+                type: "int(0)"
+                offset: 12
+            }
+            initializer: {
+                primary: {
+                    float literal: 40.5
+                }
+            }
+        }
+    }
+    function: {
+        name: {
+            name: "f(12)"
+            kind: "function"
+            type: "int(0)"
+            offset: null
+        }
+        return_type: int(0)
+        parameters: {
+            {
+                name: "a(13)"
+                kind: "parameter"
+                type: "int(0)"
+                offset: 0
+            }
+            {
+                name: "b(14)"
+                kind: "parameter"
+                type: "int(0)"
+                offset: 4
+            }
+        }
+        body: {
+            return: {
+                primary: {
+                    int literal: 0
+                }
+            }
+        }
+    }
+    function: {
+        name: {
+            name: "main(15)"
+            kind: "function"
+            type: "int(0)"
+            offset: null
+        }
+        return_type: int(0)
+        parameters: {
+        }
+        body: {
+            variable: {
+                name: {
+                    name: "a(16)"
+                    kind: "variable"
+                    type: "int(0)"
+                    offset: 0
+                }
+                initializer: {
+                    primary: {
+                        base: {
+                            var: {
+                                name: "f(12)"
+                                kind: "function"
+                                type: "int(0)"
+                                offset: null
+                            }
+                        }
+                        call: {
+                            arg[0]: {
+                                primary: {
+                                    float literal: 1.2
+                                }
+                            }
+                            arg[1]: {
+                                primary: {
+                                    int literal: 5
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return: {
+                primary: {
+                    int literal: 0
+                }
+            }
+        }
+    }
+    function: {
+        name: {
+            name: "f(12)"
+            kind: "function"
+            type: "int(0)"
+            offset: null
+        }
+        return_type: int(0)
+        parameters: {
+            {
+                name: "a(17)"
+                kind: "parameter"
+                type: "int(0)"
+                offset: 0
+            }
+            {
+                name: "b(18)"
+                kind: "parameter"
+                type: "int(0)"
+                offset: 4
+            }
+        }
+        body: {
+            return: {
+                left: {
+                    primary: {
+                        var: {
+                            name: "a(17)"
+                            kind: "parameter"
+                            type: "int(0)"
+                            offset: 0
+                        }
+                    }
+                }
+                operator: "+"
+                right: {
+                    primary: {
+                        var: {
+                            name: "b(18)"
+                            kind: "parameter"
+                            type: "int(0)"
+                            offset: 4
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+platform: 2, malloc allocated: 15966, string memory: [used/total: 1539/2318, blocks: 2], struct memory: [used/total: 12312/13232, blocks: 11]
