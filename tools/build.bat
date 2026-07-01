@@ -21,16 +21,13 @@ goto parse_args
 
 rem --- Build Flags ---
 rem Set any of these to an empty string to disable the flag.
-set "FLAG_DEBUG=-g"
-set "FLAG_OPTIMIZE=-O2"
-set "FLAG_WALL=-Wall"
-set "FLAG_WEXTRA=-Wextra"
+set "OTHER_FLAG=-Wall -Wextra"
 rem --- End Build Flags ---
 
 if "%DEBUG_MODE%"=="1" (
-    set "FLAG_OPTIMIZE="
+    set "FLAG_DEBUG=-g -O0"
 ) else (
-    set "FLAG_DEBUG="
+    set "FLAG_DEBUG=-O3"
 )
 
 set "SRCDIR=src"
@@ -65,7 +62,7 @@ if "%SOURCES%"=="" (
 
 if not exist "%OUTDIR%" mkdir "%OUTDIR%"
 
-set "GCC_FLAGS=%FLAG_WALL% %FLAG_WEXTRA% %FLAG_OPTIMIZE% %FLAG_DEBUG%"
+set "GCC_FLAGS=%OTHER_FLAG% %FLAG_OPTIMIZE%"
 
 if "%DEBUG_MODE%"=="1" (
     echo Build mode: debug

@@ -3,31 +3,26 @@
 
 DEBUG_MODE=0
 
-for arg in "$@"; do
-    case "$arg" in
+while [ $# -gt 0 ]; do
+    case "$1" in
         -d)
             DEBUG_MODE=1
             ;;
         *)
-            echo "Unknown option: $arg"
+            echo "Unknown option: $1"
             echo "Usage: $0 [-d]"
             exit 1
             ;;
     esac
+    shift
 done
 
-# --- Build Flags ---
-# Set any of these to an empty string to disable the flag.
-FLAG_DEBUG="-g"
-FLAG_OPTIMIZE="-O2"
-FLAG_WALL="-Wall"
-FLAG_WEXTRA="-Wextra"
-# --- End Build Flags ---
+OTHER_FLAG="-Wall -Wextra"
 
 if [ "$DEBUG_MODE" -eq 1 ]; then
-    FLAG_OPTIMIZE=""
+    FLAG_DEBUG="-g -O0"
 else
-    FLAG_DEBUG=""
+    FLAG_DEBUG="-O3"
 fi
 
 SRCDIR="src"
@@ -35,7 +30,6 @@ INCDIR="include"
 OUTDIR="build"
 OUTEXE="program"
 
-# Check if source and include directories exist
 if [ ! -d "$SRCDIR" ]; then
     echo "Source directory \"$SRCDIR\" not found."
     exit 1
@@ -45,16 +39,22 @@ if [ ! -d "$INCDIR" ]; then
     exit 1
 fi
 
-# Find all .c files
-SOURCES=$(find "$SRCDIR" -name "*.c")
+SOURCES=()
+HEADERS=()
 
-# Check if any source files were found
-if [ -z "$SOURCES" ]; then
+while IFS= read -r -d '' source_file; do
+    SOURCES+=("$source_file")
+done < <(find "$SRCDIR" -type f -name "*.c" -print0)
+
+while IFS= read -r -d '' header_file; do
+    HEADERS+=("$header_file")
+done < <(find "$INCDIR" -type f -name "*.h" -print0)
+
+if [ "${#SOURCES[@]}" -eq 0 ]; then
     echo "No .c files found under \"$SRCDIR\"."
     exit 1
 fi
 
-# Create output directory if it doesn't exist
 mkdir -p "$OUTDIR"
 
 if [ "$DEBUG_MODE" -eq 1 ]; then
@@ -63,19 +63,11 @@ else
     echo "Build mode: release"
 fi
 
-# Combine GCC flags, filtering out empty strings
-GCC_FLAGS=""
-for flag in "$FLAG_WALL" "$FLAG_WEXTRA" "$FLAG_OPTIMIZE" "$FLAG_DEBUG"; do
-    if [ -n "$flag" ]; then
-        GCC_FLAGS="$GCC_FLAGS $flag"
-    fi
-done
+GCC_FLAGS="$OTHER_FLAG"
 
-# Show the full command
-echo "Build command: gcc$GCC_FLAGS -I\"$INCDIR\" $SOURCES -o \"$OUTDIR/$OUTEXE\""
+echo "Build command: gcc $GCC_FLAGS -I\"$INCDIR\" ${SOURCES[*]} -o \"$OUTDIR/$OUTEXE\""
 
-# Actually compile
-gcc $GCC_FLAGS -I"$INCDIR" $SOURCES -o "$OUTDIR/$OUTEXE"
+gcc $GCC_FLAGS -I"$INCDIR" "${SOURCES[@]}" -o "$OUTDIR/$OUTEXE"
 if [ $? -ne 0 ]; then
     echo "Build failed."
     exit 1
