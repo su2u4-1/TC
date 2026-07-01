@@ -3,3 +3,4 @@
 .vscode/
 build/
 compile_flags.txt
+temp/

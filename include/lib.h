@@ -5,7 +5,6 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 // TODO: let std_path be determined by the environment
 #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)

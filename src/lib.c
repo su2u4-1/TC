@@ -132,7 +132,7 @@ pointer alloc_memory(size_t size, bool is_struct) {
         if (block->size - block->used >= size) {
             pointer ptr = (void*)(block->data + block->used);
             if (is_struct)
-                assert((uintptr_t)ptr % ALIGN_SIZE == 0);
+                assert((size_t)ptr % ALIGN_SIZE == 0);
             if (block->size - block->used >= size) {
                 block->used += size;
                 return ptr;
