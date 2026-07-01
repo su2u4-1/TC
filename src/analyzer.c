@@ -465,7 +465,7 @@ void analyze_type(Symbol* type) {
         analyze_type(type->type);
     }
     if (type->kind == SYMBOL_CLASS)
-        analyzer_check(type->info.class != NULL, "Class symbol must have class info", );
+        check_not_null(type->info.class);
 }
 
 void analyze_statement(Statement* statement) {
@@ -515,7 +515,7 @@ void analyze_expression(Expression* expression) {
         analyze_expression(expression->right);
         expression->type = calculate_type(expression->left.binary->type, expression->right->type, expression->op);
     }
-    analyzer_check(expression->type != NULL, "Expression type must not be NULL", );
+    analyzer_check(expression->type != NULL, "Expression type must not be NULL", expression->type = symbol_void);
 }
 
 void analyze_if(If* if_) {
@@ -600,7 +600,7 @@ void analyze_primary(Primary* primary) {
             break;
         default: assert(false);
     }
-    check_not_null(primary->type);
+    analyzer_check(primary->type != NULL, "Primary expression type could not be determined", primary->type = symbol_void);
 }
 
 static void analyze_var_access_var(VariableAccess* variable_access) {
@@ -619,6 +619,7 @@ static void analyze_var_access_var(VariableAccess* variable_access) {
 static void analyze_var_access_call(VariableAccess* variable_access) {
     check_not_null(variable_access->base);
     check_not_null(variable_access->access.args);
+    analyzer_check(variable_access->base->type != NULL, "Base of call has no type", return);
     size_t arg_count = 0;
     foreach (Expression*, arg, variable_access->access.args) {
         analyze_expression(arg);
@@ -673,6 +674,7 @@ static void analyze_var_access_call(VariableAccess* variable_access) {
 static void analyze_var_access_attribute(VariableAccess* variable_access) {
     check_not_null(variable_access->base);
     check_not_null(variable_access->access.attribute);
+    analyzer_check(variable_access->base->type != NULL, "Base of attribute access has no type", return);
     analyze_symbol(variable_access->access.attribute);
     analyzer_check(variable_access->base->type->kind == SYMBOL_CLASS, "Base of attribute access must be a class", return);
     if (variable_access->access.attribute->kind == SYMBOL_METHOD)
@@ -685,6 +687,7 @@ static void analyze_var_access_attribute(VariableAccess* variable_access) {
 static void analyze_var_access_index(VariableAccess* variable_access) {
     check_not_null(variable_access->base);
     check_not_null(variable_access->access.index);
+    analyzer_check(variable_access->base->type != NULL, "Base of index access has no type", return);
     analyze_expression(variable_access->access.index);
     analyzer_check(types_compatible(variable_access->access.index->type, symbol_int) == symbol_int, "Index must be of type int", return);
     Symbol* type = variable_access->base->type;
@@ -703,7 +706,7 @@ void analyze_variable_access(VariableAccess* variable_access) {
         case VAR_ACCESS_INDEX: analyze_var_access_index(variable_access); break;
         default: assert(false);
     }
-    check_not_null(variable_access->type);
+    analyzer_check(variable_access->type != NULL, "Variable access type could not be determined", variable_access->type = symbol_void);
 }
 
 void analyze_symbol(Symbol* symbol) {
