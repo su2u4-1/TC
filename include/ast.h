@@ -109,7 +109,7 @@ struct Method {
     /*
     initialization: $init
     type conversion: $to_int, $to_float, $to_string, $to_bool
-    operator overloading: $<op>$<target_type>, e.g. $add$int, $add$float
+    operator overloading: $add, $sub, ...
      */
 };
 
@@ -198,7 +198,7 @@ struct Primary {
 };
 
 struct VariableAccess {
-    VariableAccess* base;  // if type == simple variable access, base = NULL;
+    VariableAccess* base;  // if kind == VAR_ACCESS_VAR, base = NULL;
     union {
         Symbol* var;             // simple variable access
         list(Expression*) args;  // function or method call
