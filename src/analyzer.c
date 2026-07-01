@@ -84,7 +84,7 @@ void fill_symbol_offset(SymbolTable* table, size_t base_offset) {
             continue;
         symbol->info.offset = offset;
         check_not_null(symbol->type);
-        analyzer_check(symbol->type->kind == SYMBOL_TYPE || symbol->type->kind == SYMBOL_CLASS, "Symbol type must be a type or class", return);
+        assert(symbol->type->kind == SYMBOL_TYPE || symbol->type->kind == SYMBOL_CLASS);
         offset += get_type_size(symbol->type);
     }
     foreach (SymbolTable*, child, table->children)
@@ -120,6 +120,14 @@ static Symbol* find_method(SymbolTable* table, OperatorType op) {
         case OP_MUL: return search_symbol(table, SPECIAL_MUL, true, SYMBOL_METHOD, NULL);
         case OP_DIV: return search_symbol(table, SPECIAL_DIV, true, SYMBOL_METHOD, NULL);
         case OP_MOD: return search_symbol(table, SPECIAL_MOD, true, SYMBOL_METHOD, NULL);
+        case OP_ASSIGN:
+        case OP_ADD_ASSIGN:
+        case OP_SUB_ASSIGN:
+        case OP_MUL_ASSIGN:
+        case OP_DIV_ASSIGN:
+        case OP_MOD_ASSIGN:
+        case OP_NONE:
+            return NULL;
         case OP_EQ: return search_symbol(table, SPECIAL_EQ, true, SYMBOL_METHOD, NULL);
         case OP_NE: return search_symbol(table, SPECIAL_NE, true, SYMBOL_METHOD, NULL);
         case OP_LT: return search_symbol(table, SPECIAL_LT, true, SYMBOL_METHOD, NULL);
@@ -134,6 +142,9 @@ static Symbol* find_method(SymbolTable* table, OperatorType op) {
     }
 }
 static Symbol* method_other_type(Symbol* method) {
+    check_not_null(method);
+    check_not_null(method->info.method);
+    check_not_null(method->info.method->parameters);
     size_t param_count = 0;
     Symbol* second_param = NULL;
     foreach (Symbol*, param, method->info.method->parameters) {
@@ -323,7 +334,7 @@ Symbol* calculate_type(Symbol* left, Symbol* right, OperatorType op) {
     check_not_null(left);
     if (left == symbol_void && right == NULL) return symbol_void;
     analyzer_check(left != symbol_void, "Cannot perform operations on void type", return symbol_void);
-    analyzer_check(left->kind == SYMBOL_TYPE || left->kind == SYMBOL_CLASS, "Left operand type must be a type or class", return symbol_void);
+    assert(left->kind == SYMBOL_TYPE || left->kind == SYMBOL_CLASS);
 
     // unary operation
     if (right == NULL) {
@@ -331,6 +342,7 @@ Symbol* calculate_type(Symbol* left, Symbol* right, OperatorType op) {
         if (left->kind == SYMBOL_CLASS) {
             Symbol* method = find_method(left->info.class->table, op);
             if (method != NULL) {
+                check_not_null(method->info.method);
                 analyzer_check(!list_empty(method->info.method->parameters) && method->info.method->parameters->head == method->info.method->parameters->tail,
                                "Unary operation special method must have exactly one parameter", return symbol_void);
                 analyzer_check(((Symbol*)method->info.method->parameters->head->data)->name == KEYWORD_SELF, "First parameter of method must be 'self'", return symbol_void);
@@ -346,7 +358,7 @@ Symbol* calculate_type(Symbol* left, Symbol* right, OperatorType op) {
     // right type check
     check_not_null(right);
     analyzer_check(right != symbol_void, "Cannot perform operations on void type", return symbol_void);
-    analyzer_check(right->kind == SYMBOL_TYPE || right->kind == SYMBOL_CLASS, "Right operand type must be a type or class", return symbol_void);
+    assert(right->kind == SYMBOL_TYPE || right->kind == SYMBOL_CLASS);
 
     // binary operation
     if (is_logical_op(op))
@@ -386,9 +398,9 @@ void analyze_import(Import* import) {
     fclose(import_file);
     analyze_symbol(import->name);
     if (import->name->kind == SYMBOL_CLASS)
-        analyzer_check(import->name->info.class != NULL, "Imported class symbol must have class info", );
+        check_not_null(import->name->info.class);
     else if (import->name->kind == SYMBOL_FUNCTION)
-        analyzer_check(import->name->info.function != NULL, "Imported function symbol must have function info", );
+        check_not_null(import->name->info.function);
     else
         print_analyzer_error("Imported symbol must be a class or function");
 }
@@ -447,8 +459,11 @@ void analyze_variable(Variable* variable) {
     check_not_null(variable);
     analyze_symbol(variable->var);
     analyze_type(variable->var->type);
-    if (variable->initializer != NULL)
+    if (variable->initializer != NULL) {
         analyze_expression(variable->initializer);
+        analyzer_check(types_compatible(variable->var->type, variable->initializer->type) != NULL,
+                       "Variable initializer type must be compatible with variable type", );
+    }
 }
 
 static bool is_container_type(Symbol* type) {
@@ -457,9 +472,8 @@ static bool is_container_type(Symbol* type) {
 void analyze_type(Symbol* type) {
     check_not_null(type);
     check_not_null(type->name);
-    analyzer_check(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS, "Symbol must be a type or class", abort());
+    assert(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS);
     if (type->type != NULL) {
-        analyzer_check(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS, "Symbol type must be a type or class", abort());
         // assume that the container types only include arr, list, const and pointer
         analyzer_check(is_container_type(type), "Container types must be const, pointer, arr or list", return);
         analyze_type(type->type);
@@ -488,8 +502,12 @@ void analyze_statement(Statement* statement) {
             if (statement->statement.return_ != NULL)
                 analyze_expression(statement->statement.return_);
             analyzer_check(return_type != NULL, "Return statement must be inside a function or method", );
-            analyzer_check((statement->statement.return_ == NULL && return_type == symbol_void) || types_compatible(return_type, statement->statement.return_->type) != NULL,
-                           "Return statement type must be compatible with function or method return type", );
+            if (statement->statement.return_ == NULL) {
+                analyzer_check(return_type == symbol_void, "Return statement type must be compatible with function or method return type", );
+            } else {
+                analyzer_check(types_compatible(return_type, statement->statement.return_->type) != NULL,
+                               "Return statement type must be compatible with function or method return type", );
+            }
             break;
         case STATEMENT_EXPRESSION: analyze_expression(statement->statement.expression); break;
         default: assert(false);
@@ -508,9 +526,13 @@ void analyze_expression(Expression* expression) {
     check_not_null(expression);
     check_is_null(expression->type);  // why???
     if (expression->op == OP_NONE) {
+        check_not_null(expression->left.unary);
+        check_is_null(expression->right);
         analyze_primary(expression->left.unary);
         expression->type = calculate_type(expression->left.unary->type, NULL, OP_NONE);
     } else {
+        check_not_null(expression->left.binary);
+        check_not_null(expression->right);
         analyze_expression(expression->left.binary);
         analyze_expression(expression->right);
         expression->type = calculate_type(expression->left.binary->type, expression->right->type, expression->op);
@@ -520,11 +542,17 @@ void analyze_expression(Expression* expression) {
 
 void analyze_if(If* if_) {
     check_not_null(if_);
+    check_not_null(if_->condition);
+    check_not_null(if_->body);
+    check_not_null(if_->elif_list);
+    check_not_null(if_->else_body);
     analyze_expression(if_->condition);
     analyze_body(if_->body);
     if (!list_empty(if_->elif_list)) {
         foreach (If*, elif, if_->elif_list) {
             check_not_null(elif);
+            check_not_null(elif->condition);
+            check_not_null(elif->body);
             check_is_null(elif->else_body);
             check_is_null(elif->elif_list);
             analyze_expression(elif->condition);
@@ -538,6 +566,7 @@ void analyze_if(If* if_) {
 void analyze_for(For* for_) {
     check_not_null(for_);
     assert(loop_depth >= 0);
+    check_not_null(for_->body);
     loop_depth++;
     if (for_->is_decl && for_->init.decl != NULL)
         analyze_variable(for_->init.decl);
@@ -555,6 +584,8 @@ void analyze_for(For* for_) {
 void analyze_while(While* while_) {
     check_not_null(while_);
     assert(loop_depth >= 0);
+    check_not_null(while_->condition);
+    check_not_null(while_->body);
     loop_depth++;
     analyze_expression(while_->condition);
     analyze_body(while_->body);
@@ -616,6 +647,7 @@ static void analyze_var_access_var(VariableAccess* variable_access) {
         assert(false);
 }
 #define max(a, b) ((a) > (b) ? (a) : (b))
+#define min(a, b) ((a) < (b) ? (a) : (b))
 static void analyze_var_access_call(VariableAccess* variable_access) {
     check_not_null(variable_access->base);
     check_not_null(variable_access->access.args);
@@ -634,34 +666,36 @@ static void analyze_var_access_call(VariableAccess* variable_access) {
         Method* method;
     } callee;
     bool is_method = true;
-    variable_access->type = base->type->type;
     if (base->type->kind == SYMBOL_CLASS) {
-        variable_access->type = base->type;
         Symbol* init_method = search_symbol(base->type->info.class->table, SPECIAL_INIT, true, SYMBOL_METHOD, NULL);
         analyzer_check(init_method != NULL, "Class call must define '$init' special method", return);
+        check_not_null(init_method->info.method);
         callee.method = init_method->info.method;
     } else if (base->type->kind == SYMBOL_FUNCTION) {
+        check_not_null(base->type->info.function);
         callee.function = base->type->info.function;
         is_method = false;
-    } else if (base->type->kind == SYMBOL_METHOD)
+    } else if (base->type->kind == SYMBOL_METHOD) {
+        check_not_null(base->type->info.method);
         callee.method = base->type->info.method;
-    else
+    } else {
         assert(false);
+    }
     size_t param_count = 0;
     foreach (Symbol*, param, is_method ? callee.method->parameters : callee.function->parameters) param_count++;
     Symbol** param_types = calloc(max(arg_count, param_count), sizeof(Symbol*));
-    int i = 0;
+    size_t i = 0;
     foreach (Symbol*, param, is_method ? callee.method->parameters : callee.function->parameters) {
         assert(param->kind == SYMBOL_PARAMETER);
         param_types[i++] = param->type;
     }
-    if (is_method) --param_count;
     Symbol* name = is_method ? callee.method->name : callee.function->name;
-    analyzer_check(arg_count == param_count, "Argument count must match callee parameter count",
-                   fprintf(stderr, "    Argument count mismatch in %s call '%s', expected %zu, got %zu\n",
-                           (is_method ? "method" : "function"), name->name, param_count, arg_count));
+    size_t compare_count = min(arg_count, param_count);
+    if (is_method) --param_count;
     i = is_method ? 1 : 0;
     foreach (Expression*, arg, variable_access->access.args) {
+        if (i >= compare_count)
+            break;
         Symbol* param_type = param_types[i++];
         check_not_null(arg->type);
         check_not_null(param_type);
@@ -669,6 +703,13 @@ static void analyze_var_access_call(VariableAccess* variable_access) {
                        fprintf(stderr, "    Type mismatch in %s call '%s', expected '%s', got '%s'\n",
                                (is_method ? "method" : "function"), name->name, param_type->name, arg->type->name));
     }
+    analyzer_check(arg_count == param_count, "Argument count must match callee parameter count",
+                   fprintf(stderr, "    Argument count mismatch in %s call '%s', expected %zu, got %zu\n",
+                           (is_method ? "method" : "function"), name->name, param_count, arg_count));
+    if (base->type->kind == SYMBOL_CLASS)
+        variable_access->type = base->type;
+    else
+        variable_access->type = base->type->type;
     free(param_types);
 }
 static void analyze_var_access_attribute(VariableAccess* variable_access) {
@@ -691,7 +732,7 @@ static void analyze_var_access_index(VariableAccess* variable_access) {
     analyze_expression(variable_access->access.index);
     analyzer_check(types_compatible(variable_access->access.index->type, symbol_int) == symbol_int, "Index must be of type int", return);
     Symbol* type = variable_access->base->type;
-    analyzer_check(type->kind == SYMBOL_TYPE || type->kind == SYMBOL_CLASS, "The type of the elements within the container is not a type or class", return);
+    analyzer_check(is_container_type(type), "Index access base must be a container type", return);
     check_not_null(type->type);
     variable_access->type = type->type;
 }
