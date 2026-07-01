@@ -328,18 +328,17 @@ Symbol* calculate_type(Symbol* left, Symbol* right, OperatorType op) {
     // unary operation
     if (right == NULL) {
         if (op == OP_NONE) return left;
-        if ((left == symbol_int || left == symbol_float) && op == OP_NEG) return left;
-        if (op == OP_NOT) return symbol_bool;
-        // TODO: I think here has some issues
         if (left->kind == SYMBOL_CLASS) {
             Symbol* method = find_method(left->info.class->table, op);
             if (method != NULL) {
                 analyzer_check(!list_empty(method->info.method->parameters) && method->info.method->parameters->head == method->info.method->parameters->tail,
-                               "Init method must have exactly one parameter", return symbol_void);
+                               "Unary operation special method must have exactly one parameter", return symbol_void);
                 analyzer_check(((Symbol*)method->info.method->parameters->head->data)->name == KEYWORD_SELF, "First parameter of method must be 'self'", return symbol_void);
                 return method->type;
             }
         }
+        if ((left == symbol_int || left == symbol_float) && op == OP_NEG) return left;
+        if (op == OP_NOT) return symbol_bool;
         print_analyzer_error("Invalid unary operation");
         return symbol_void;
     }
@@ -637,7 +636,9 @@ static void analyze_var_access_call(VariableAccess* variable_access) {
     variable_access->type = base->type->type;
     if (base->type->kind == SYMBOL_CLASS) {
         variable_access->type = base->type;
-        callee.method = search_symbol(base->type->info.class->table, SPECIAL_INIT, true, SYMBOL_METHOD, NULL)->info.method;
+        Symbol* init_method = search_symbol(base->type->info.class->table, SPECIAL_INIT, true, SYMBOL_METHOD, NULL);
+        analyzer_check(init_method != NULL, "Class call must define '$init' special method", return);
+        callee.method = init_method->info.method;
     } else if (base->type->kind == SYMBOL_FUNCTION) {
         callee.function = base->type->info.function;
         is_method = false;
