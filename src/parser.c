@@ -702,7 +702,7 @@ Expression* parse_expression_prec(Parser* parser, int minp, SymbolTable* table) 
     while (token->type == TOKEN_SYMBOL && (op = operator(token->lexeme)) != OP_NONE && (p = operator_precedence(op)) >= minp) {
         get_next_token(parser->lexer);  // consume operator
         token = get_next_token(parser->lexer);
-        // parse scond operand
+        // parse second operand
         Expression* expr = create_struct(Expression);
         expr->type = NULL;
         expr->right = parse_expression_prec(parser, p + (is_right_associative(op) ? 0 : 1), table);
