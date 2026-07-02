@@ -161,10 +161,10 @@ extern string SPECIAL_NEG;        // special method `$neg`
 
 #define list(T) List*
 #define list_empty(self) (self == NULL || self->head == NULL)
-#define foreach(type, item, list)                                                        \
-    for (List* _foreach_list = (list); !list_empty(_foreach_list); _foreach_list = NULL) \
-        for (ListNode* _node = _foreach_list->head; _node != NULL; _node = _node->next)  \
-            for (type item = (type)_node->data; item != NULL; item = NULL)
+#define foreach(type, item, list)                                                                             \
+    for (List* item##_list = (list); !list_empty(item##_list); item##_list = NULL)                            \
+        for (ListNode* item##_node = item##_list->head; item##_node != NULL; item##_node = item##_node->next) \
+            for (type item = (type)item##_node->data; item != NULL; item = NULL)
 
 typedef struct ListNode {
     pointer data;

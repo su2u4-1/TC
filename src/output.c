@@ -152,8 +152,8 @@ void print_if(If* if_, FILE* out, size_t indent) {
     print_expression(if_->condition, out, indent + 2);
     OUT(indent + 1, "}\n");
     OUT(indent + 1, "body: {\n");
-    foreach (Statement*, stmt0, if_->body) {
-        print_statement(stmt0, out, indent + 2);
+    foreach (Statement*, stmt, if_->body) {
+        print_statement(stmt, out, indent + 2);
     }
     OUT(indent + 1, "}\n");
     OUT(indent + 1, "elif_list: {\n");
@@ -163,16 +163,16 @@ void print_if(If* if_, FILE* out, size_t indent) {
         print_expression(elif->condition, out, indent + 4);
         OUT(indent + 3, "}\n");
         OUT(indent + 3, "body: {\n");
-        foreach (Statement*, stmt1, elif->body) {
-            print_statement(stmt1, out, indent + 4);
+        foreach (Statement*, stmt, elif->body) {
+            print_statement(stmt, out, indent + 4);
         }
         OUT(indent + 3, "}\n");
         OUT(indent + 2, "}\n");
     }
     OUT(indent + 1, "}\n");
     OUT(indent + 1, "else_body: {\n");
-    foreach (Statement*, stmt2, if_->else_body) {
-        print_statement(stmt2, out, indent + 2);
+    foreach (Statement*, stmt, if_->else_body) {
+        print_statement(stmt, out, indent + 2);
     }
     OUT(indent + 1, "}\n");
     OUT(indent, "}\n");
