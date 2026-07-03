@@ -522,9 +522,50 @@ void analyze_body(list(Statement*) body) {
     }
 }
 
+static bool lvalue_expression(Expression* expression);
+static bool lvalue_var_access(VariableAccess* variable_access) {
+    check_not_null(variable_access);
+    switch (variable_access->kind) {
+        case VAR_ACCESS_CALL:
+            return false;
+        case VAR_ACCESS_VAR:
+        case VAR_ACCESS_ATTRIBUTE:
+        case VAR_ACCESS_INDEX:
+            return true;
+        default:
+            assert(false);
+            return false;
+    }
+}
+static bool lvalue_primary(Primary* primary) {
+    check_not_null(primary);
+    switch (primary->kind) {
+        case PRIMARY_VAR_ACCESS:
+            return lvalue_var_access(primary->value.var_access);
+        case PRIMARY_EXPR:
+            return lvalue_expression(primary->value.exp);
+        case PRIMARY_INT:
+        case PRIMARY_FLOAT:
+        case PRIMARY_STRING:
+        case PRIMARY_BOOL:
+        case PRIMARY_NEG:
+        case PRIMARY_NOT:
+            return false;
+        default:
+            assert(false);
+            return false;
+    }
+}
+bool lvalue_expression(Expression* expression) {
+    check_not_null(expression);
+    if (expression->op == OP_NONE)
+        return lvalue_primary(expression->left.unary);
+    assert(expression->op != OP_ASSIGN && !is_arithmetic_assign_op(expression->op));
+    return false;
+}
 void analyze_expression(Expression* expression) {
     check_not_null(expression);
-    check_is_null(expression->type);  // why???
+    check_is_null(expression->type);
     if (expression->op == OP_NONE) {
         check_not_null(expression->left.unary);
         check_is_null(expression->right);
@@ -536,6 +577,8 @@ void analyze_expression(Expression* expression) {
         analyze_expression(expression->left.binary);
         analyze_expression(expression->right);
         expression->type = calculate_type(expression->left.binary->type, expression->right->type, expression->op);
+        if (expression->op == OP_ASSIGN || is_arithmetic_assign_op(expression->op))
+            analyzer_check(lvalue_expression(expression->left.binary), "Left side of assignment must be an lvalue", );
     }
     analyzer_check(expression->type != NULL, "Expression type must not be NULL", expression->type = symbol_void);
 }
